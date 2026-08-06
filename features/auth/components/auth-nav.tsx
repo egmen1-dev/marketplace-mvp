@@ -101,7 +101,8 @@ export function AuthNav({ user }: AuthNavProps) {
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuSeparator />
-        <form action={signOutAction}>
+        {/* Form action required so Next.js handles NEXT_REDIRECT from signOut */}
+        <form action={signOutAction} className="w-full">
           <button
             type="submit"
             className="flex w-full cursor-default items-center gap-2 rounded-md px-1.5 py-1 text-sm text-destructive outline-none hover:bg-destructive/10"
