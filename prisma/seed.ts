@@ -551,6 +551,24 @@ async function main() {
     },
   });
 
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@demo.lot" },
+    update: {
+      name: "Демо Админ",
+      role: UserRole.ADMIN,
+      passwordHash,
+      isBlocked: false,
+    },
+    create: {
+      email: "admin@demo.lot",
+      name: "Демо Админ",
+      role: UserRole.ADMIN,
+      passwordHash,
+      image: "https://i.pravatar.cc/150?u=admin@demo.lot",
+    },
+  });
+  void adminUser;
+
   // BUYER must not have seller access — remove legacy demo buyer store if present.
   await prisma.sellerProfile.deleteMany({
     where: {
@@ -782,6 +800,7 @@ async function main() {
   console.log(`Demo seller: seller@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Demo buyer:  buyer@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Private:     private@demo.lot / ${DEMO_PASSWORD}`);
+  console.log(`Demo admin:  admin@demo.lot / ${DEMO_PASSWORD}`);
 }
 
 main()

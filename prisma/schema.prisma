@@ -96,6 +96,8 @@ model User {
   /// Buyer profile city (delivery / display)
   city          String?
   role          UserRole       @default(BUYER)
+  /// Soft block — blocked users cannot sign in
+  isBlocked     Boolean        @default(false)
   emailVerified DateTime?
   /// Avatar URL (Auth.js `image` field; used as profile avatarUrl)
   image         String?
@@ -111,8 +113,10 @@ model User {
   productViews         ProductView[]
   inventoryHistory     InventoryHistory[]
   orderStatusChanges   OrderStatusHistory[]
+  adminActionLogs      AdminActionLog[]
 
   @@index([role])
+  @@index([isBlocked])
   @@map("users")
 }
 
@@ -131,6 +135,8 @@ model SellerProfile {
   /// Aggregate store rating 0–5 (placeholder until reviews land)
   rating           Decimal    @default(0) @db.Decimal(3, 2)
   isVerified       Boolean    @default(false)
+  /// Admin-blocked store — hidden from public catalog listings
+  isBlocked        Boolean    @default(false)
   /// SHOP = storefront; INDIVIDUAL = private seller
   kind             SellerKind @default(SHOP)
   createdAt        DateTime   @default(now())
@@ -141,6 +147,7 @@ model SellerProfile {
 
   @@index([slug])
   @@index([kind])
+  @@index([isBlocked])
   @@map("seller_profiles")
 }
 
@@ -490,4 +497,25 @@ model Delivery {
   @@index([method])
   @@index([trackingNumber])
   @@map("deliveries")
+}
+
+// ─── Admin audit ─────────────────────────────────────────────────────────────
+
+/// Simple audit trail for marketplace owner actions (no secrets / payments).
+model AdminActionLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  action     String
+  entityType String
+  entityId   String
+  /// Optional non-sensitive metadata (JSON string)
+  meta       String?
+  createdAt  DateTime @default(now())
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("admin_action_logs")
 }

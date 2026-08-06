@@ -99,6 +99,7 @@ export function attachErrorCollector(page: Page): PageErrorCollector {
 export const DEMO = {
   sellerEmail: "seller@demo.lot",
   buyerEmail: "buyer@demo.lot",
+  adminEmail: "admin@demo.lot",
   password: "demo1234",
 } as const;
 

@@ -21,7 +21,8 @@ export type StripeWebhookResult = {
 
 /**
  * Verify Stripe webhook signature and process supported events.
- * Source of truth for marking orders PAID via `finalizePaidOrder`.
+ * Source of truth for marking orders PAID via `finalizePaidOrder`
+ * (stock decrements only here — never on Order NEW).
  *
  * Amount / currency / stock failures return `rejected: true` without throwing,
  * so the route can respond 200 and avoid infinite retries that re-mutate state.

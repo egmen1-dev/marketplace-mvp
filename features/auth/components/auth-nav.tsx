@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { Clock, Heart, LogOut, Package, Settings, Store, User } from "lucide-react";
+import {
+  Clock,
+  Heart,
+  LogOut,
+  Package,
+  Settings,
+  Shield,
+  Store,
+  User,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -99,6 +108,12 @@ export function AuthNav({ user }: AuthNavProps) {
           <DropdownMenuItem render={<Link href={ROUTES.SELLER} />}>
             <Store className="size-4" />
             Кабинет продавца
+          </DropdownMenuItem>
+        ) : null}
+        {user.role === "ADMIN" ? (
+          <DropdownMenuItem render={<Link href={ROUTES.ADMIN} />}>
+            <Shield className="size-4" />
+            Админ-панель
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuSeparator />

@@ -42,9 +42,19 @@ export const ROUTES = {
   SELLER_SETTINGS: "/seller/settings",
   /** Public storefront — append `/${idOrSlug}` */
   SELLER_PUBLIC: "/seller",
+  ADMIN: "/admin",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_SELLERS: "/admin/sellers",
+  ADMIN_PRODUCTS: "/admin/products",
+  ADMIN_ORDERS: "/admin/orders",
+  ADMIN_CATEGORIES: "/admin/categories",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
 } as const;
+
+export function adminOrderPath(id: string) {
+  return `${ROUTES.ADMIN_ORDERS}/${id}`;
+}
 
 export function sellerProductEditPath(id: string) {
   return `${ROUTES.SELLER_PRODUCTS}/${id}/edit`;

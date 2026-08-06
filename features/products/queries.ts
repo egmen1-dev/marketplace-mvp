@@ -144,7 +144,10 @@ async function buildWhere(
     where.sellerId = filters.sellerId;
   }
 
-  const sellerWhere: Prisma.SellerProfileWhereInput = {};
+  // Hide admin-blocked stores from public catalog (seller's own views pass sellerId).
+  const sellerWhere: Prisma.SellerProfileWhereInput = {
+    isBlocked: false,
+  };
   if (!filters.sellerId && filters.seller) {
     if (/^c[a-z0-9]{24}$/i.test(filters.seller)) {
       where.sellerId = filters.seller;
@@ -155,9 +158,7 @@ async function buildWhere(
   if (filters.sellerKind) {
     sellerWhere.kind = filters.sellerKind;
   }
-  if (Object.keys(sellerWhere).length > 0) {
-    where.seller = sellerWhere;
-  }
+  where.seller = sellerWhere;
 
   if (filters.categoryId) {
     const ids = await resolveCategoryIdsIncludingDescendants(filters.categoryId);

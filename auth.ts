@@ -29,6 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user?.passwordHash) return null;
+        if (user.isBlocked) return null;
 
         const valid = await verifyPassword(
           parsed.data.password,
@@ -71,9 +72,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { id: userId },
           select: {
             role: true,
+            isBlocked: true,
             sellerProfile: { select: { id: true } },
           },
         });
+        if (dbUser?.isBlocked) {
+          return {};
+        }
         if (dbUser) {
           token.role = dbUser.role as UserRole;
           token.sellerProfileId = dbUser.sellerProfile?.id ?? null;

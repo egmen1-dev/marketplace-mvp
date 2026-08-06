@@ -141,7 +141,8 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 
 Test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 
-Demo buyer: `buyer@demo.lot` / `demo1234`.
+Demo buyer: `buyer@demo.lot` / `demo1234`.  
+Demo admin: `admin@demo.lot` / `demo1234` (после seed) — панель `/admin`.
 
 Webhook events handled: `checkout.session.completed`, `payment_intent.succeeded` (idempotent).
 
@@ -203,9 +204,26 @@ npm run db:studio    # Prisma Studio
 
 ## Prisma domain models
 
-`User`, `SellerProfile`, `Category`, `Product`, `ProductImage`, `Cart`, `CartItem`, `Order`, `OrderItem`, `Payment`, `Address`, `Delivery`
+`User`, `SellerProfile`, `Category`, `Product`, `ProductImage`, `Cart`, `CartItem`, `Order`, `OrderItem`, `Payment`, `Address`, `Delivery`, `AdminActionLog`
 
 Enums: `UserRole`, `ProductStatus`, `OrderStatus`, `PaymentStatus`, `DeliveryProvider`, `DeliveryMethod`, `DeliveryStatus`, `AddressType`
+
+### Demo accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| Buyer | `buyer@demo.lot` | `demo1234` |
+| Seller | `seller@demo.lot` | `demo1234` |
+| Private seller | `private@demo.lot` | `demo1234` |
+| Admin | `admin@demo.lot` | `demo1234` |
+
+Admin panel: `/admin` (DB role `ADMIN` required). Create via seed or:
+
+```bash
+npx prisma db seed
+# or promote manually in Prisma Studio / SQL:
+# UPDATE users SET role = 'ADMIN' WHERE email = 'you@example.com';
+```
 
 ---
 

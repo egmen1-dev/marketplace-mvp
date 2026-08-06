@@ -12,6 +12,7 @@ const PROTECTED_PREFIXES = [
   "/favorites",
   "/history",
   "/settings",
+  "/admin",
 ] as const;
 
 function isProtectedPath(pathname: string): boolean {
@@ -56,6 +57,8 @@ export const config = {
   matcher: [
     "/seller",
     "/seller/:path*",
+    "/admin",
+    "/admin/:path*",
     "/account",
     "/account/:path*",
     "/profile",
