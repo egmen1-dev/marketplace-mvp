@@ -7,6 +7,7 @@ import { z } from "zod";
  *
  * AUTH_SECRET is always required when `getEnv()` runs. In production
  * (NODE_ENV=production or VERCEL=1) a missing value fails loudly at parse.
+ * Never log AUTH_SECRET or other secrets.
  */
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
@@ -82,8 +83,45 @@ export function getEnv(): Env {
   return cached;
 }
 
+/** Reset cached env (tests only). */
+export function __resetEnvCacheForTests(): void {
+  cached = null;
+}
+
+/**
+ * Canonical public app origin (no trailing slash).
+ * Prefer NEXT_PUBLIC_APP_URL, then AUTH_URL / NEXTAUTH_URL, then Vercel URL.
+ * Normalizes localhost vs 127.0.0.1 conflicts by preferring the configured URL as-is.
+ */
+export function getCanonicalAppUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.AUTH_URL,
+    process.env.NEXTAUTH_URL,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : undefined,
+  ];
+
+  for (const raw of candidates) {
+    const trimmed = raw?.trim();
+    if (!trimmed) continue;
+    try {
+      const withProtocol = trimmed.startsWith("http")
+        ? trimmed
+        : `https://${trimmed}`;
+      const url = new URL(withProtocol);
+      return url.origin;
+    } catch {
+      continue;
+    }
+  }
+
+  return "http://localhost:3000";
+}
+
 /** Public (client-safe) config — no secrets. */
 export const publicEnv = {
-  appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  appUrl: getCanonicalAppUrl(),
   stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
 } as const;

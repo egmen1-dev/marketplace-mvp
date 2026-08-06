@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Logo } from "@/components/brand";
 import { Separator } from "@/components/ui/separator";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -46,17 +47,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-3">
-            <Link href={ROUTES.HOME} className="flex items-center gap-2.5">
-              <span
-                aria-hidden
-                className="flex size-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground"
-              >
-                Л
-              </span>
-              <span className="font-heading text-lg font-semibold tracking-tight">
-                {APP_NAME}
-              </span>
-            </Link>
+            <Logo variant="full" size={32} />
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
               Современный маркетплейс — покупайте и продавайте в одном месте.
             </p>

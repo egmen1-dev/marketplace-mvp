@@ -1,10 +1,14 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import type { UserRole } from "@prisma/client";
 
 import { authConfig } from "@/auth.config";
 import { verifyPassword } from "@/features/auth/lib/password";
 import { signInSchema } from "@/features/auth/schemas";
 import { prisma } from "@/lib/prisma";
+
+/** Refresh role / sellerProfileId from DB at most every 5 minutes. */
+const ROLE_REFRESH_MS = 5 * 60 * 1000;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -43,4 +47,44 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id!;
+        token.role = user.role;
+        token.sellerProfileId = user.sellerProfileId;
+        token.roleCheckedAt = Date.now();
+        return token;
+      }
+
+      const userId = token.id as string | undefined;
+      if (!userId) return token;
+
+      const lastCheck = (token.roleCheckedAt as number | undefined) ?? 0;
+      if (Date.now() - lastCheck < ROLE_REFRESH_MS) {
+        return token;
+      }
+
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            role: true,
+            sellerProfile: { select: { id: true } },
+          },
+        });
+        if (dbUser) {
+          token.role = dbUser.role as UserRole;
+          token.sellerProfileId = dbUser.sellerProfile?.id ?? null;
+        }
+        token.roleCheckedAt = Date.now();
+      } catch {
+        // Keep existing token claims if DB is briefly unavailable.
+        token.roleCheckedAt = Date.now();
+      }
+
+      return token;
+    },
+  },
 });

@@ -14,6 +14,10 @@ export {
   buildProductImagePathname,
   buildAvatarImagePathname,
   validateImageFile,
+  detectImageMimeFromMagic,
+  pathnameFromBlobUrl,
+  isProductPathOwnedBySeller,
+  isAvatarPathOwnedByUser,
 } from "./validate";
 
 let cached: StorageProvider | null = null;

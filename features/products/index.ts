@@ -12,7 +12,6 @@ export {
   createProduct,
   updateProduct,
   deleteProduct,
-  resolveDefaultSellerId,
   resolveListStatusFilter,
   canViewProduct,
   ProductServiceError,

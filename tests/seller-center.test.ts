@@ -45,7 +45,22 @@ describe("BUYER cannot open seller dashboard (session helper)", () => {
       })),
     }));
     vi.doMock("@/lib/prisma", () => ({
-      prisma: { sellerProfile: { findUnique: vi.fn() } },
+      prisma: {
+        user: {
+          findUnique: vi.fn(async () => ({
+            id: "u_buyer",
+            email: "buyer@demo.lot",
+            name: "Buyer",
+            image: null,
+            role: UserRole.BUYER,
+            sellerProfile: null,
+          })),
+        },
+        sellerProfile: { findUnique: vi.fn() },
+      },
+    }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     }));
 
     const { requireSellerSession, SellerRequiredError } = await import(

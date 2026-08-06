@@ -1,23 +1,12 @@
 import type { MetadataRoute } from "next";
 import { ProductStatus } from "@prisma/client";
 
-import { prisma } from "@/lib/prisma";
 import { ROUTES } from "@/lib/constants";
-
-function siteOrigin(): string {
-  const fromEnv =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.AUTH_URL ||
-    process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (fromEnv) {
-    const raw = fromEnv.startsWith("http") ? fromEnv : `https://${fromEnv}`;
-    return raw.replace(/\/$/, "");
-  }
-  return "http://localhost:3000";
-}
+import { getCanonicalAppUrl } from "@/lib/env";
+import { prisma } from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const origin = siteOrigin();
+  const origin = getCanonicalAppUrl();
   const now = new Date();
 
   const staticEntries: MetadataRoute.Sitemap = [

@@ -22,6 +22,7 @@ import { categoryPagePath } from "@/features/catalog/paths";
 import { setInventoryQuantity } from "@/features/orders/lib/inventory-sync";
 import { PAGINATION, ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { pathnameFromBlobUrl } from "@/lib/storage";
 
 export type ProductViewer = {
   userId?: string;
@@ -419,15 +420,6 @@ export async function listSimilarProducts(
   return [...primary, ...fillers].map(mapProductListItem);
 }
 
-/** Demo seller used when create payload omits sellerId (seeded store). */
-export async function resolveDefaultSellerId(): Promise<string | null> {
-  const profile = await prisma.sellerProfile.findFirst({
-    where: { slug: "demo-store" },
-    select: { id: true },
-  });
-  return profile?.id ?? null;
-}
-
 async function uniqueSlug(
   sellerId: string,
   title: string,
@@ -496,11 +488,11 @@ export async function createProduct(
   input: CreateProductInput,
   options?: { actorUserId?: string | null },
 ): Promise<ProductDetail> {
-  const sellerId = input.sellerId ?? (await resolveDefaultSellerId());
+  const sellerId = input.sellerId;
   if (!sellerId) {
     throw new ProductServiceError(
       "SELLER_REQUIRED",
-      "Не указан продавец (sellerId) и нет демо-продавца в БД",
+      "Не указан продавец (sellerId)",
       400,
     );
   }
@@ -547,6 +539,7 @@ export async function createProduct(
         images: {
           create: input.images.map((img, index) => ({
             url: img.url,
+            pathname: img.pathname ?? pathnameFromBlobUrl(img.url),
             alt: img.alt ?? input.title,
             sortOrder: index,
             isPrimary: index === 0,
@@ -657,6 +650,7 @@ export async function updateProduct(
           images: {
             create: input.images.map((img, index) => ({
               url: img.url,
+              pathname: img.pathname ?? pathnameFromBlobUrl(img.url),
               alt: img.alt ?? input.title ?? existing.name,
               sortOrder: index,
               isPrimary: index === 0,

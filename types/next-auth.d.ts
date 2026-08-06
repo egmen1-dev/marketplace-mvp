@@ -21,5 +21,7 @@ declare module "next-auth/jwt" {
     id: string;
     role: UserRole;
     sellerProfileId: string | null;
+    /** Epoch ms when role was last loaded from DB (auth.ts refresh). */
+    roleCheckedAt?: number;
   }
 }

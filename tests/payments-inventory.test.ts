@@ -28,6 +28,7 @@ vi.mock("@/lib/prisma", () => {
       currency: string;
       payment: {
         id: string;
+        status: PaymentStatus;
         paidAt: Date | null;
       } | null;
     },
@@ -59,23 +60,35 @@ vi.mock("@/lib/prisma", () => {
   };
 });
 
-describe("C1 + M3 + webhook paid path", () => {
+vi.mock("@/lib/logger", () => ({
+  log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+}));
+
+describe("finalizePaidOrder / webhook paid path", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("does not commit inventory again when order already PAID (idempotent)", async () => {
     const prismaMod = await import("@/lib/prisma");
-    const state = (prismaMod as unknown as { __mockState: {
-      order: {
-        id: string;
-        userId: string;
-        status: OrderStatus;
-        total: Prisma.Decimal;
-        currency: string;
-        payment: { id: string; paidAt: Date | null } | null;
-      } | null;
-    } }).__mockState;
+    const state = (
+      prismaMod as unknown as {
+        __mockState: {
+          order: {
+            id: string;
+            userId: string;
+            status: OrderStatus;
+            total: Prisma.Decimal;
+            currency: string;
+            payment: {
+              id: string;
+              status: PaymentStatus;
+              paidAt: Date | null;
+            } | null;
+          } | null;
+        };
+      }
+    ).__mockState;
 
     state.order = {
       id: "ord_1",
@@ -83,31 +96,32 @@ describe("C1 + M3 + webhook paid path", () => {
       status: OrderStatus.PAID,
       total: new Prisma.Decimal("100.00"),
       currency: "RUB",
-      payment: { id: "pay_1", paidAt: new Date("2024-01-01") },
+      payment: {
+        id: "pay_1",
+        status: PaymentStatus.SUCCEEDED,
+        paidAt: new Date("2024-01-01"),
+      },
     };
 
-    const { markOrderPaidFromCheckoutSession } = await import(
-      "@/features/payments/create-checkout-session"
+    const { finalizePaidOrder } = await import(
+      "@/features/orders/lib/finalize-paid-order"
     );
 
-    const session = {
-      id: "cs_1",
-      amount_total: 10_000,
+    const result = await finalizePaidOrder({
+      orderId: "ord_1",
+      amountTotal: 10_000,
       currency: "rub",
-      metadata: { orderId: "ord_1" },
-      client_reference_id: "ord_1",
-      payment_intent: "pi_1",
-    } as unknown as Stripe.Checkout.Session;
-
-    const result = await markOrderPaidFromCheckoutSession(session);
+      stripeSessionId: "cs_1",
+      stripePaymentIntentId: "pi_1",
+      source: "checkout.session",
+    });
 
     expect(result).toEqual({ orderId: "ord_1", alreadyPaid: true });
     expect(commitInventory).not.toHaveBeenCalled();
   });
 
-  it("commits inventory and marks PAID when amount matches", async () => {
+  it("commits inventory and marks PAID when amount + currency match", async () => {
     vi.resetModules();
-    // Re-apply mocks after resetModules
     const commitInventoryLocal = vi.fn(async () => undefined);
     vi.doMock("@/features/orders/lib/inventory", () => ({
       commitInventory: commitInventoryLocal,
@@ -150,24 +164,27 @@ describe("C1 + M3 + webhook paid path", () => {
         payment: { findFirst: vi.fn() },
       },
     }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+    }));
 
-    const { markOrderPaidFromCheckoutSession } = await import(
-      "@/features/payments/create-checkout-session"
+    const { finalizePaidOrder } = await import(
+      "@/features/orders/lib/finalize-paid-order"
     );
 
-    const session = {
-      id: "cs_2",
-      amount_total: 10_000,
+    const result = await finalizePaidOrder({
+      orderId: "ord_2",
+      amountTotal: 10_000,
       currency: "rub",
-      metadata: { orderId: "ord_2" },
-      client_reference_id: "ord_2",
-      payment_intent: "pi_2",
-    } as unknown as Stripe.Checkout.Session;
-
-    const result = await markOrderPaidFromCheckoutSession(session);
+      stripeSessionId: "cs_2",
+      source: "checkout.session",
+    });
 
     expect(result).toEqual({ orderId: "ord_2", alreadyPaid: false });
-    expect(commitInventoryLocal).toHaveBeenCalledWith("ord_2", expect.anything());
+    expect(commitInventoryLocal).toHaveBeenCalledWith(
+      "ord_2",
+      expect.anything(),
+    );
     expect(orderUpdate).toHaveBeenCalledWith({
       where: { id: "ord_2" },
       data: { status: OrderStatus.PAID },
@@ -175,7 +192,7 @@ describe("C1 + M3 + webhook paid path", () => {
     expect(paymentUpsert).toHaveBeenCalled();
   });
 
-  it("rejects mark-paid when Stripe amount mismatches order total", async () => {
+  it("rejects when Stripe amount mismatches order total (no PAID, no stock)", async () => {
     vi.resetModules();
     const commitInventoryLocal = vi.fn(async () => undefined);
     vi.doMock("@/features/orders/lib/inventory", () => ({
@@ -214,41 +231,178 @@ describe("C1 + M3 + webhook paid path", () => {
         payment: { findFirst: vi.fn() },
       },
     }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+    }));
+
+    const { finalizePaidOrder } = await import(
+      "@/features/orders/lib/finalize-paid-order"
+    );
+    const { PaymentServiceError } = await import("@/features/payments/errors");
+
+    await expect(
+      finalizePaidOrder({
+        orderId: "ord_3",
+        amountTotal: 999,
+        currency: "rub",
+        stripeSessionId: "cs_3",
+        source: "checkout.session",
+      }),
+    ).rejects.toBeInstanceOf(PaymentServiceError);
+    expect(commitInventoryLocal).not.toHaveBeenCalled();
+  });
+
+  it("rejects currency mismatch", async () => {
+    vi.resetModules();
+    const commitInventoryLocal = vi.fn(async () => undefined);
+    vi.doMock("@/features/orders/lib/inventory", () => ({
+      commitInventory: commitInventoryLocal,
+      InventoryError: class InventoryError extends Error {
+        code: string;
+        status: number;
+        constructor(code: string, message: string, status = 409) {
+          super(message);
+          this.code = code;
+          this.status = status;
+          this.name = "InventoryError";
+        }
+      },
+    }));
+    vi.doMock("@/lib/prisma", () => ({
+      prisma: {
+        $transaction: async (fn: (tx: unknown) => Promise<unknown>) => {
+          const tx = {
+            order: {
+              findUnique: async () => ({
+                id: "ord_4",
+                userId: "u1",
+                status: OrderStatus.NEW,
+                total: new Prisma.Decimal("100.00"),
+                currency: "RUB",
+                payment: null,
+              }),
+              update: vi.fn(),
+            },
+            payment: { update: vi.fn(), upsert: vi.fn() },
+          };
+          return fn(tx);
+        },
+      },
+    }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+    }));
+
+    const { finalizePaidOrder } = await import(
+      "@/features/orders/lib/finalize-paid-order"
+    );
+    await import("@/features/payments/errors");
+
+    await expect(
+      finalizePaidOrder({
+        orderId: "ord_4",
+        amountTotal: 10_000,
+        currency: "usd",
+        source: "checkout.session",
+      }),
+    ).rejects.toMatchObject({ code: "CURRENCY_MISMATCH" });
+    expect(commitInventoryLocal).not.toHaveBeenCalled();
+  });
+
+  it("markOrderPaidFromCheckoutSession wires metadata order id", async () => {
+    vi.resetModules();
+    const finalizePaidOrder = vi.fn(async () => ({
+      orderId: "ord_meta",
+      alreadyPaid: false,
+    }));
+    vi.doMock("@/features/orders/lib/finalize-paid-order", () => ({
+      finalizePaidOrder,
+      finalizeInputFromCheckoutSession: (
+        session: Stripe.Checkout.Session,
+        orderId: string,
+      ) => ({
+        orderId,
+        amountTotal: session.amount_total,
+        currency: session.currency,
+        stripeSessionId: session.id,
+        source: "checkout.session" as const,
+      }),
+      finalizeInputFromPaymentIntent: vi.fn(),
+    }));
+    vi.doMock("@/lib/prisma", () => ({
+      prisma: { payment: { findFirst: vi.fn() } },
+    }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+    }));
+    vi.doMock("@/lib/env", () => ({
+      getEnv: () => ({ NEXT_PUBLIC_APP_URL: "http://localhost:3000" }),
+      getCanonicalAppUrl: () => "http://localhost:3000",
+    }));
+    vi.doMock("@/lib/stripe", () => ({
+      getStripe: vi.fn(),
+      isStripeConfigured: () => true,
+    }));
 
     const { markOrderPaidFromCheckoutSession } = await import(
       "@/features/payments/create-checkout-session"
     );
-    const { PaymentServiceError } = await import(
-      "@/features/payments/errors"
-    );
 
     const session = {
-      id: "cs_3",
-      amount_total: 999,
+      id: "cs_meta",
+      amount_total: 10_000,
       currency: "rub",
-      metadata: { orderId: "ord_3" },
-      client_reference_id: "ord_3",
+      metadata: { orderId: "ord_meta" },
+      client_reference_id: null,
       payment_intent: null,
     } as unknown as Stripe.Checkout.Session;
 
-    await expect(markOrderPaidFromCheckoutSession(session)).rejects.toBeInstanceOf(
-      PaymentServiceError,
-    );
-    expect(commitInventoryLocal).not.toHaveBeenCalled();
+    const result = await markOrderPaidFromCheckoutSession(session);
+    expect(result.orderId).toBe("ord_meta");
+    expect(finalizePaidOrder).toHaveBeenCalled();
   });
 });
 
-describe("C1 inventory helpers", () => {
-  it("reserveInventory is a no-op (does not touch stock)", async () => {
+describe("inventory helpers", () => {
+  it("does not export fake reserveInventory", async () => {
     vi.resetModules();
     vi.doUnmock("@/features/orders/lib/inventory");
-    const { reserveInventory, releaseInventory } = await import(
-      "@/features/orders/lib/inventory"
-    );
-    await expect(reserveInventory("ord_x")).resolves.toBeUndefined();
-    await expect(releaseInventory("ord_x")).resolves.toBeUndefined();
+    const inv = await import("@/features/orders/lib/inventory");
+    expect("reserveInventory" in inv).toBe(false);
+    expect("releaseInventory" in inv).toBe(false);
+    expect(typeof inv.commitInventory).toBe("function");
   });
 });
 
-// silence unused PaymentStatus import in some bundlers
+describe("decrementInventory atomic guard", () => {
+  it("throws OUT_OF_STOCK when quantity insufficient (no negative)", async () => {
+    vi.resetModules();
+    const { decrementInventory } = await import(
+      "@/features/orders/lib/inventory-sync"
+    );
+
+    const tx = {
+      productInventory: {
+        findUnique: vi.fn(async () => ({
+          productId: "p1",
+          quantity: 1,
+          reservedQuantity: 0,
+        })),
+        updateMany: vi.fn(async () => ({ count: 0 })),
+        findUniqueOrThrow: vi.fn(),
+        create: vi.fn(),
+      },
+      product: {
+        findUnique: vi.fn(async () => ({ status: "ACTIVE", stock: 1 })),
+        update: vi.fn(),
+      },
+      inventoryHistory: { create: vi.fn() },
+    };
+
+    await expect(
+      decrementInventory(tx as never, { productId: "p1", amount: 2 }),
+    ).rejects.toThrow("OUT_OF_STOCK");
+  });
+});
+
 void PaymentStatus;

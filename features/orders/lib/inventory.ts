@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 
 import { decrementInventory } from "@/features/orders/lib/inventory-sync";
-import { prisma } from "@/lib/prisma";
 
 type Tx = Prisma.TransactionClient;
 
@@ -17,31 +16,11 @@ export class InventoryError extends Error {
 }
 
 /**
- * Soft-hold architecture for a future TTL reservation layer.
- *
- * Today this does **not** reduce sellable stock. Creating an order
- * (status NEW) only validates availability; stock is decremented in
- * `commitInventory` when the order is marked PAID.
- */
-export async function reserveInventory(
-  orderId: string,
-  tx?: Tx,
-): Promise<void> {
-  void orderId;
-  void tx;
-}
-
-export async function releaseInventory(
-  orderId: string,
-  tx?: Tx,
-): Promise<void> {
-  void orderId;
-  void tx;
-}
-
-/**
  * Decrement inventory for all line items of a paid order.
- * Updates ProductInventory + Product.stock (+ history) in the same transaction.
+ * Called only from `finalizePaidOrder` inside a transaction.
+ * Updates ProductInventory + Product.stock (+ history).
+ *
+ * Stock is never reduced at Order NEW creation — only on confirmed payment.
  */
 export async function commitInventory(
   orderId: string,
@@ -76,10 +55,4 @@ export async function commitInventory(
       throw err;
     }
   }
-}
-
-export async function commitInventoryStandalone(orderId: string): Promise<void> {
-  await prisma.$transaction(async (tx) => {
-    await commitInventory(orderId, tx);
-  });
 }

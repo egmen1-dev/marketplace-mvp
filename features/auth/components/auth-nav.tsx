@@ -94,7 +94,8 @@ export function AuthNav({ user }: AuthNavProps) {
           <Settings className="size-4" />
           Настройки
         </DropdownMenuItem>
-        {user.sellerProfileId ? (
+        {(user.role === "SELLER" || user.role === "ADMIN") &&
+        user.sellerProfileId ? (
           <DropdownMenuItem render={<Link href={ROUTES.SELLER} />}>
             <Store className="size-4" />
             Кабинет продавца

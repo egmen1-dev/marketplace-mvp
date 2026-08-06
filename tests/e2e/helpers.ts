@@ -3,14 +3,13 @@ import { expect, type Page, type Request, type Response } from "@playwright/test
 /**
  * Documented allowlist — Chrome/Next noise that is not an app regression.
  * Real app exceptions still fail via pageerror / unexpected console text.
+ *
+ * Hydration #418 was caused by ThemeToggle reading resolvedTheme for
+ * aria-label/title before mount (server HTML ≠ first client paint).
+ * Fixed in ThemeToggle — do not re-allowlist #418.
  */
 const ALLOWED_CONSOLE_ERROR_PATTERNS: RegExp[] = [
   /Extra attributes from the server/i,
-  /Hydration failed/i,
-  /There was an error while hydrating/i,
-  /Minified React error #418/i,
-  /Minified React error #423/i,
-  /Minified React error #425/i,
   /ResizeObserver loop/i,
   /^Failed to load resource: the server responded with a status of 404/i,
   // Optional Blob uploads may 503 when BLOB_READ_WRITE_TOKEN is unset (P2 infra)

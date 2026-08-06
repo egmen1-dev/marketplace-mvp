@@ -6,14 +6,25 @@ import {
   resolveListStatusFilter,
 } from "@/features/products/queries";
 import { toStripeAmount } from "@/features/payments/lib/amounts";
+import {
+  detectImageMimeFromMagic,
+  isProductPathOwnedBySeller,
+  isAvatarPathOwnedByUser,
+  validateImageFile,
+} from "@/lib/storage/validate";
+import { StorageError } from "@/lib/storage/types";
 
-describe("C2 product visibility", () => {
+describe("product visibility", () => {
   it("anonymous cannot see DRAFT products", () => {
-    expect(
-      canViewProduct(ProductStatus.DRAFT, "seller_1", null),
-    ).toBe(false);
+    expect(canViewProduct(ProductStatus.DRAFT, "seller_1", null)).toBe(false);
     expect(
       canViewProduct(ProductStatus.DRAFT, "seller_1", undefined),
+    ).toBe(false);
+  });
+
+  it("anonymous cannot see ARCHIVED products", () => {
+    expect(
+      canViewProduct(ProductStatus.ARCHIVED, "seller_1", null),
     ).toBe(false);
   });
 
@@ -49,6 +60,13 @@ describe("C2 product visibility", () => {
     );
   });
 
+  it("buyer cannot escalate status filter via query", () => {
+    const buyer = { role: UserRole.BUYER, sellerProfileId: null };
+    expect(
+      resolveListStatusFilter(ProductStatus.DRAFT, buyer, undefined),
+    ).toBe(ProductStatus.ACTIVE);
+  });
+
   it("owner seller may request ALL for own catalog", () => {
     const viewer = {
       role: UserRole.SELLER,
@@ -58,13 +76,13 @@ describe("C2 product visibility", () => {
   });
 });
 
-describe("C3 BUYER cannot create product (seller session)", () => {
+describe("roles — BUYER blocked from seller ops", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
   });
 
-  it("requireSellerSession rejects BUYER role", async () => {
+  it("requireSellerSession rejects BUYER role (DB authoritative)", async () => {
     vi.doMock("@/auth", () => ({
       auth: vi.fn(async () => ({
         user: {
@@ -78,10 +96,23 @@ describe("C3 BUYER cannot create product (seller session)", () => {
     }));
     vi.doMock("@/lib/prisma", () => ({
       prisma: {
+        user: {
+          findUnique: vi.fn(async () => ({
+            id: "u1",
+            email: "buyer@demo.lot",
+            name: "Buyer",
+            image: null,
+            role: UserRole.BUYER,
+            sellerProfile: null,
+          })),
+        },
         sellerProfile: {
           findUnique: vi.fn(),
         },
       },
+    }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     }));
 
     const { requireSellerSession, SellerRequiredError } = await import(
@@ -92,11 +123,166 @@ describe("C3 BUYER cannot create product (seller session)", () => {
       SellerRequiredError,
     );
   });
+
+  it("requireSellerSession uses DB role even if JWT says SELLER", async () => {
+    vi.doMock("@/auth", () => ({
+      auth: vi.fn(async () => ({
+        user: {
+          id: "u2",
+          email: "ex@demo.lot",
+          name: "Ex",
+          role: UserRole.SELLER,
+          sellerProfileId: "sp_old",
+        },
+      })),
+    }));
+    vi.doMock("@/lib/prisma", () => ({
+      prisma: {
+        user: {
+          findUnique: vi.fn(async () => ({
+            id: "u2",
+            email: "ex@demo.lot",
+            name: "Ex",
+            image: null,
+            role: UserRole.BUYER,
+            sellerProfile: null,
+          })),
+        },
+      },
+    }));
+    vi.doMock("@/lib/logger", () => ({
+      log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+    }));
+
+    const { requireSellerSession, SellerRequiredError } = await import(
+      "@/features/auth/session"
+    );
+
+    await expect(requireSellerSession()).rejects.toBeInstanceOf(
+      SellerRequiredError,
+    );
+  });
+
+  it("updateProduct rejects foreign sellerId", async () => {
+    vi.doMock("@/lib/prisma", () => ({
+      prisma: {
+        product: {
+          findUnique: vi.fn(async () => ({
+            id: "prod_1",
+            sellerId: "seller_owner",
+            name: "X",
+            stock: 1,
+          })),
+        },
+      },
+    }));
+
+    const { updateProduct } = await import("@/features/products/queries");
+
+    await expect(
+      updateProduct("prod_1", "other_seller", { title: "Hacked" }),
+    ).rejects.toMatchObject({
+      code: "FORBIDDEN",
+      status: 403,
+    });
+  });
+
+  it("createProduct requires sellerId (no demo fallback)", async () => {
+    const { createProduct } = await import("@/features/products/queries");
+
+    await expect(
+      createProduct({
+        title: "No seller",
+        price: 100,
+        status: ProductStatus.DRAFT,
+        images: [],
+        stock: 0,
+        condition: "NEW",
+      } as never),
+    ).rejects.toMatchObject({
+      code: "SELLER_REQUIRED",
+    });
+  });
 });
 
-describe("M3 Stripe amount helpers", () => {
-  it("converts major units to kopecks", () => {
+describe("AUTH_SECRET production validation", () => {
+  it("getEnv throws when AUTH_SECRET missing", async () => {
+    vi.resetModules();
+    const prev = process.env.AUTH_SECRET;
+    const prevDb = process.env.DATABASE_URL;
+    delete process.env.AUTH_SECRET;
+    process.env.DATABASE_URL =
+      process.env.DATABASE_URL ??
+      "postgresql://u:p@localhost:5432/db?schema=public";
+
+    const { getEnv, __resetEnvCacheForTests } = await import("@/lib/env");
+    __resetEnvCacheForTests();
+
+    expect(() => getEnv()).toThrow(/AUTH_SECRET is required/);
+
+    if (prev !== undefined) process.env.AUTH_SECRET = prev;
+    else delete process.env.AUTH_SECRET;
+    if (prevDb !== undefined) process.env.DATABASE_URL = prevDb;
+    __resetEnvCacheForTests();
+  });
+});
+
+describe("upload ownership + magic bytes", () => {
+  it("detects JPEG / PNG magic bytes", () => {
+    expect(
+      detectImageMimeFromMagic(new Uint8Array([0xff, 0xd8, 0xff, 0xe0])),
+    ).toBe("image/jpeg");
+    expect(
+      detectImageMimeFromMagic(
+        new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      ),
+    ).toBe("image/png");
+  });
+
+  it("rejects non-image magic bytes", () => {
+    expect(() =>
+      validateImageFile({
+        name: "x.jpg",
+        type: "image/jpeg",
+        size: 100,
+        magicBytes: new Uint8Array([0x00, 0x01, 0x02, 0x03]),
+      }),
+    ).toThrow(StorageError);
+  });
+
+  it("seller path ownership is scoped to sellerId prefix", () => {
+    expect(
+      isProductPathOwnedBySeller("products/seller_a/uuid.jpg", "seller_a"),
+    ).toBe(true);
+    expect(
+      isProductPathOwnedBySeller("products/seller_b/uuid.jpg", "seller_a"),
+    ).toBe(false);
+    expect(isAvatarPathOwnedByUser("avatars/user_1/a.png", "user_1")).toBe(
+      true,
+    );
+    expect(isAvatarPathOwnedByUser("avatars/user_2/a.png", "user_1")).toBe(
+      false,
+    );
+  });
+});
+
+describe("Stripe amount helpers", () => {
+  it("converts major units to kopecks (integer)", () => {
     expect(toStripeAmount(4990)).toBe(499_000);
     expect(toStripeAmount(10.5)).toBe(1050);
+    expect(Number.isInteger(toStripeAmount(99.99))).toBe(true);
+  });
+});
+
+describe("e2e hydration allowlist", () => {
+  it("does not allowlist React hydration #418", async () => {
+    const fs = await import("node:fs/promises");
+    const path = await import("node:path");
+    const helpers = await fs.readFile(
+      path.join(process.cwd(), "tests/e2e/helpers.ts"),
+      "utf8",
+    );
+    expect(helpers).not.toMatch(/Minified React error #418/);
+    expect(helpers).not.toMatch(/Hydration failed/);
   });
 });

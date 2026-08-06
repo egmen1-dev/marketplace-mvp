@@ -1,3 +1,4 @@
+import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import {
@@ -10,11 +11,16 @@ import {
   buildAvatarImagePathname,
   buildProductImagePathname,
   getStorage,
+  isAvatarPathOwnedByUser,
   isBlobConfigured,
+  isProductPathOwnedBySeller,
+  pathnameFromBlobUrl,
   PRODUCT_IMAGE_LIMITS,
   StorageError,
   validateImageFile,
 } from "@/lib/storage";
+import { log } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
 
 function authErrorResponse(err: unknown): NextResponse | null {
   if (err instanceof AuthRequiredError) {
@@ -39,11 +45,22 @@ function storageErrorResponse(err: unknown): NextResponse | null {
   return null;
 }
 
+function blobNotConfiguredResponse(): NextResponse {
+  return NextResponse.json(
+    {
+      error:
+        "Загрузка изображений временно недоступна: хранилище не настроено. Можно сохранить товар без фото — будет показан placeholder. Администратору: добавьте BLOB_READ_WRITE_TOKEN.",
+      code: "NOT_CONFIGURED",
+    },
+    { status: 503 },
+  );
+}
+
 /**
  * POST /api/uploads
  * multipart/form-data with field `file`
- * - purpose=avatar: any authenticated user → avatars/
- * - default: seller session → products/
+ * - purpose=avatar: any authenticated user → avatars/{userId}/
+ * - default: seller session → products/{sellerId}/
  * Returns `{ url, pathname }`.
  */
 export async function POST(request: Request) {
@@ -63,12 +80,15 @@ export async function POST(request: Request) {
       typeof purposeRaw === "string" ? purposeRaw.trim().toLowerCase() : "";
     const isAvatar = purpose === "avatar";
 
+    let ownerId: string;
     try {
       if (isAvatar) {
         const user = await getSessionUser();
         if (!user) throw new AuthRequiredError();
+        ownerId = user.id;
       } else {
-        await requireSellerSession();
+        const seller = await requireSellerSession();
+        ownerId = seller.sellerProfileId;
       }
     } catch (err) {
       const res = authErrorResponse(err);
@@ -77,14 +97,7 @@ export async function POST(request: Request) {
     }
 
     if (!isBlobConfigured()) {
-      return NextResponse.json(
-        {
-          error:
-            "Хранилище изображений не настроено. Добавьте BLOB_READ_WRITE_TOKEN (Vercel → Storage → Blob).",
-          code: "NOT_CONFIGURED",
-        },
-        { status: 503 },
-      );
+      return blobNotConfiguredResponse();
     }
 
     const file = formData.get("file");
@@ -95,6 +108,8 @@ export async function POST(request: Request) {
       );
     }
 
+    const header = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+
     let contentType: ReturnType<typeof validateImageFile>["contentType"];
     let extension: string;
     try {
@@ -102,6 +117,7 @@ export async function POST(request: Request) {
         name: file.name,
         type: file.type,
         size: file.size,
+        magicBytes: header,
       }));
     } catch (err) {
       const res = storageErrorResponse(err);
@@ -110,8 +126,8 @@ export async function POST(request: Request) {
     }
 
     const pathname = isAvatar
-      ? buildAvatarImagePathname(extension)
-      : buildProductImagePathname(extension);
+      ? buildAvatarImagePathname(extension, ownerId)
+      : buildProductImagePathname(extension, ownerId);
     const storage = getStorage();
     const result = await storage.upload({
       data: file,
@@ -127,7 +143,9 @@ export async function POST(request: Request) {
   } catch (err) {
     const storageRes = storageErrorResponse(err);
     if (storageRes) return storageRes;
-    console.error("[POST /api/uploads]", err);
+    log.error("upload_failed", {
+      message: err instanceof Error ? err.message : "unknown",
+    });
     return NextResponse.json(
       { error: "Не удалось загрузить изображение" },
       { status: 500 },
@@ -137,9 +155,10 @@ export async function POST(request: Request) {
 
 /**
  * DELETE /api/uploads?url=...
- * Removes a blob we own.
- * - Avatar URLs (avatars/): any authenticated owner session
- * - Product images: seller session
+ * Ownership required:
+ * - Avatar: pathname under avatars/{userId}/
+ * - Product: pathname under products/{sellerId}/ OR image row owned by seller's product
+ * - ADMIN: may delete any owned-storage URL
  */
 export async function DELETE(request: Request) {
   try {
@@ -152,30 +171,13 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const isAvatarUrl = /\/avatars\//.test(url);
-
-    try {
-      if (isAvatarUrl) {
-        const user = await getSessionUser();
-        if (!user) throw new AuthRequiredError();
-      } else {
-        await requireSellerSession();
-      }
-    } catch (err) {
-      const res = authErrorResponse(err);
-      if (res) return res;
-      throw err;
+    const session = await getSessionUser();
+    if (!session) {
+      return NextResponse.json({ error: "Требуется вход" }, { status: 401 });
     }
 
     if (!isBlobConfigured()) {
-      return NextResponse.json(
-        {
-          error:
-            "Хранилище изображений не настроено. Добавьте BLOB_READ_WRITE_TOKEN.",
-          code: "NOT_CONFIGURED",
-        },
-        { status: 503 },
-      );
+      return blobNotConfiguredResponse();
     }
 
     const storage = getStorage();
@@ -186,12 +188,74 @@ export async function DELETE(request: Request) {
       );
     }
 
+    const pathname =
+      pathnameFromBlobUrl(url) ??
+      (
+        await prisma.productImage.findFirst({
+          where: { url },
+          select: { pathname: true },
+        })
+      )?.pathname ??
+      null;
+
+    const isAvatarUrl = Boolean(
+      pathname?.startsWith("avatars/") || /\/avatars\//.test(url),
+    );
+
+    let allowed = false;
+
+    if (session.role === UserRole.ADMIN) {
+      allowed = true;
+    } else if (isAvatarUrl) {
+      allowed = pathname
+        ? isAvatarPathOwnedByUser(pathname, session.id)
+        : false;
+    } else {
+      let sellerProfileId = session.sellerProfileId;
+      try {
+        const seller = await requireSellerSession();
+        sellerProfileId = seller.sellerProfileId;
+      } catch (err) {
+        const res = authErrorResponse(err);
+        if (res) return res;
+        throw err;
+      }
+
+      if (pathname && isProductPathOwnedBySeller(pathname, sellerProfileId!)) {
+        allowed = true;
+      } else {
+        const image = await prisma.productImage.findFirst({
+          where: { url },
+          select: {
+            product: { select: { sellerId: true } },
+          },
+        });
+        if (image?.product.sellerId === sellerProfileId) {
+          allowed = true;
+        }
+      }
+    }
+
+    if (!allowed) {
+      log.warn("upload_ownership_violation", {
+        userId: session.id,
+        role: session.role,
+        pathname: pathname ?? undefined,
+      });
+      return NextResponse.json(
+        { error: "Нельзя удалить чужое изображение", code: "FORBIDDEN" },
+        { status: 403 },
+      );
+    }
+
     await storage.deleteByUrl(url);
     return NextResponse.json({ ok: true });
   } catch (err) {
     const storageRes = storageErrorResponse(err);
     if (storageRes) return storageRes;
-    console.error("[DELETE /api/uploads]", err);
+    log.error("upload_delete_failed", {
+      message: err instanceof Error ? err.message : "unknown",
+    });
     return NextResponse.json(
       { error: "Не удалось удалить изображение" },
       { status: 500 },

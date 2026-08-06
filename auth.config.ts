@@ -37,17 +37,15 @@ export const authConfig = {
       if (!pathname.startsWith("/seller")) return true;
       // Public storefront pages are open
       if (!isSellerCabinetPath(pathname)) return true;
-      if (!auth?.user?.id) return false;
-      const role = auth.user.role;
-      if (role !== "SELLER" && role !== "ADMIN") return false;
-      if (!auth.user.sellerProfileId) return false;
-      return true;
+      // Cabinet: require login only. Role/ownership verified via DB in pages/actions.
+      return Boolean(auth?.user?.id);
     },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id!;
         token.role = user.role;
         token.sellerProfileId = user.sellerProfileId;
+        token.roleCheckedAt = Date.now();
       }
       return token;
     },

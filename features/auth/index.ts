@@ -10,6 +10,7 @@ export {
 export { SignInForm, SignUpForm, AuthNav } from "./components";
 export {
   getSessionUser,
+  loadUserAuthFromDb,
   requireUserSession,
   requireSellerSession,
   requireAdminSession,

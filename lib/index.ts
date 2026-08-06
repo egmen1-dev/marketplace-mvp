@@ -1,6 +1,7 @@
 export { prisma } from "./prisma";
 export { cn } from "./utils";
-export { getEnv, publicEnv } from "./env";
+export { getEnv, publicEnv, getCanonicalAppUrl } from "./env";
+export { log } from "./logger";
 export { APP_NAME, DEFAULT_CURRENCY, PAGINATION, ROUTES } from "./constants";
 export {
   PRODUCT_IMAGE_LIMITS,

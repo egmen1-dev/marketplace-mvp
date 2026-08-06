@@ -12,12 +12,13 @@ export {
   listOrdersForUser,
   OrderServiceError,
 } from "./queries";
+export { commitInventory, InventoryError } from "./lib/inventory";
 export {
-  reserveInventory,
-  releaseInventory,
-  commitInventory,
-  InventoryError,
-} from "./lib/inventory";
+  finalizePaidOrder,
+  finalizePaidOrderInTx,
+  type FinalizePaidOrderInput,
+  type FinalizePaidOrderResult,
+} from "./lib/finalize-paid-order";
 export {
   setInventoryQuantity,
   decrementInventory,

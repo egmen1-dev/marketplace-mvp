@@ -9,6 +9,7 @@ import { z } from "zod";
 const imageSchema = z.object({
   url: z.string().url("Некорректный URL изображения"),
   alt: z.string().max(200).optional().nullable(),
+  pathname: z.string().max(500).optional().nullable(),
 });
 
 export const productSortSchema = z.enum([
@@ -52,8 +53,7 @@ export const createProductSchema = z.object({
     .max(10, "Максимум 10 изображений")
     .default([]),
   /**
-   * SellerProfile.id. Prefer resolving from the authenticated session;
-   * optional only for internal/demo callers.
+   * SellerProfile.id — required for create; resolved from authenticated session.
    */
   sellerId: z.string().cuid("Некорректный sellerId").optional(),
   stock: z.coerce.number().int().min(0).default(0),

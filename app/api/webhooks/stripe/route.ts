@@ -26,6 +26,8 @@ export async function POST(request: Request) {
       type: result.type,
       orderId: result.orderId ?? undefined,
       alreadyPaid: result.alreadyPaid ?? undefined,
+      rejected: result.rejected ?? undefined,
+      reason: result.reason ?? undefined,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Webhook error";

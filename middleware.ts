@@ -41,18 +41,11 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  // Auth required; role + SellerProfile enforced server-side (DB) in cabinet layout.
+  // JWT role alone is not authoritative after promotions / demotions.
   if (!req.auth?.user?.id) {
     const url = new URL(ROUTES.AUTH_SIGN_IN, req.nextUrl.origin);
     url.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(url);
-  }
-
-  const role = req.auth.user.role;
-  const isSellerRole = role === "SELLER" || role === "ADMIN";
-
-  if (!isSellerRole || !req.auth.user.sellerProfileId) {
-    const url = new URL(ROUTES.HOME, req.nextUrl.origin);
-    url.searchParams.set("error", "seller_required");
     return NextResponse.redirect(url);
   }
 

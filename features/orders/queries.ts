@@ -8,7 +8,6 @@ import {
   OrderStatus,
 } from "@prisma/client";
 
-import { reserveInventory } from "@/features/orders/lib/inventory";
 import { generateOrderNumber } from "@/features/orders/lib/order-number";
 import type { CheckoutFormInput } from "@/features/orders/schemas";
 import type {
@@ -226,14 +225,14 @@ export async function getOrderForUser(
 
 /**
  * Create order from the user's DB cart in a single transaction:
- * validate stock → quote CDEK delivery → snapshot prices → Delivery row →
- * optional soft reserve (no stock decrement) → clear cart.
+ * validate stock availability → quote CDEK delivery → snapshot prices →
+ * Delivery row → clear cart.
  *
- * Stock is **not** decremented here. `commitInventory` runs when Stripe marks
- * the order PAID. Failed / abandoned / cancelled payments leave stock unchanged.
+ * Stock is **not** decremented here. `finalizePaidOrder` decrements stock
+ * only after confirmed Stripe payment. Failed / abandoned / cancelled
+ * payments leave stock unchanged.
  *
  * Delivery cost is re-quoted on the server (never trust the client).
- * Stripe Checkout later includes `order.shippingCost` as a line item.
  */
 export async function createOrderFromCart(
   userId: string,
@@ -449,9 +448,6 @@ export async function createOrderFromCart(
           estimatedDelivery,
         },
       });
-
-      // Soft-hold hook for future TTL reservations — does not reduce stock.
-      await reserveInventory(created.id, tx);
 
       await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
       await tx.cart.update({

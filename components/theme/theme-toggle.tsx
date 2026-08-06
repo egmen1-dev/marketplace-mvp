@@ -11,6 +11,10 @@ type ThemeToggleProps = {
   className?: string;
 };
 
+/**
+ * Theme-dependent attributes (icon, aria-label) render only after mount
+ * so SSR HTML matches the first client paint and avoids React #418.
+ */
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -19,8 +23,13 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     setMounted(true);
   }, []);
 
-  const isDark = resolvedTheme === "dark";
-  const label = isDark ? "Светлая тема" : "Тёмная тема";
+  const isDark = mounted && resolvedTheme === "dark";
+  // Stable until mounted — must match server HTML.
+  const label = mounted
+    ? isDark
+      ? "Светлая тема"
+      : "Тёмная тема"
+    : "Переключить тему";
 
   return (
     <Button
