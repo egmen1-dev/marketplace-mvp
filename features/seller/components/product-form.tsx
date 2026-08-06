@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { ProductCondition, ProductStatus } from "@prisma/client";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
 import { CategoryPicker } from "@/features/seller/components/category-picker";
 import { ProductImageUploader } from "@/features/seller/components/product-image-uploader";
 import { isLowStock } from "@/features/orders/lib/inventory-sync";
+import { toastError } from "@/lib/toasts";
 
 const initialState: ProductActionState = { ok: false };
 
@@ -53,6 +54,15 @@ export function ProductForm({ categories, mode, product }: ProductFormProps) {
     boundUpdate ?? createProductAction,
     initialState,
   );
+  const toastedError = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (state.error && state.error !== toastedError.current) {
+      toastedError.current = state.error;
+      toastError(state.error);
+    }
+    if (!state.error) toastedError.current = null;
+  }, [state.error]);
 
   const initialImageUrls = useMemo(
     () => product?.images?.map((img) => img.url) ?? [],

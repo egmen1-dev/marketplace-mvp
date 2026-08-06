@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { OrderStatus } from "@prisma/client";
 
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import { requireSellerSession } from "@/features/auth";
 import { formatOrderDate, formatOrderStatus, OrderStatusBadge } from "@/features/orders";
 import { formatPrice } from "@/features/products/mappers";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
+import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { listSellerOrders } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -81,6 +83,10 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      <Suspense fallback={null}>
+        <SellerToastFlash />
+      </Suspense>
+
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
           Заказы

@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Pencil, Plus } from "lucide-react";
+import { Suspense } from "react";
+import { ExternalLink, Pencil, Plus } from "lucide-react";
 import { ProductStatus } from "@prisma/client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,14 +28,23 @@ import {
   ArchiveProductButton,
   DuplicateProductButton,
 } from "@/features/seller/components/product-row-actions";
-import { isLowStock } from "@/features/orders/lib/inventory-sync";
+import { StockEditor } from "@/features/seller/components/stock-editor";
+import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Мои товары",
 };
+
+const STATUS_TABS: { value: ProductStatus | "ALL"; label: string }[] = [
+  { value: "ALL", label: "Все" },
+  { value: ProductStatus.ACTIVE, label: "Активные" },
+  { value: ProductStatus.DRAFT, label: "Черновики" },
+  { value: ProductStatus.ARCHIVED, label: "Архив" },
+];
 
 function formatCreatedAt(iso: string) {
   return new Intl.DateTimeFormat("ru-RU", {
@@ -45,7 +54,11 @@ function formatCreatedAt(iso: string) {
   }).format(new Date(iso));
 }
 
-export default async function SellerProductsPage() {
+type PageProps = {
+  searchParams: Promise<{ q?: string; status?: string; toast?: string }>;
+};
+
+export default async function SellerProductsPage({ searchParams }: PageProps) {
   let sellerProfileId: string;
   try {
     const seller = await requireSellerSession();
@@ -62,6 +75,15 @@ export default async function SellerProductsPage() {
     throw err;
   }
 
+  const params = await searchParams;
+  const query = params.q?.trim() || undefined;
+  const statusRaw = params.status?.toUpperCase();
+  const status: ProductStatus | "ALL" =
+    statusRaw &&
+    (STATUS_TABS.some((t) => t.value === statusRaw) || statusRaw === "ALL")
+      ? (statusRaw as ProductStatus | "ALL")
+      : "ALL";
+
   let products: Awaited<ReturnType<typeof listProducts>> = {
     items: [],
     total: 0,
@@ -74,7 +96,8 @@ export default async function SellerProductsPage() {
   try {
     products = await listProducts({
       sellerId: sellerProfileId,
-      status: "ALL",
+      status,
+      query,
       pageSize: 100,
       sort: "newest",
     });
@@ -83,15 +106,27 @@ export default async function SellerProductsPage() {
     dbError = "Не удалось загрузить товары";
   }
 
+  function tabHref(value: ProductStatus | "ALL") {
+    const q = new URLSearchParams();
+    if (value !== "ALL") q.set("status", value);
+    if (query) q.set("q", query);
+    const qs = q.toString();
+    return qs ? `${ROUTES.SELLER_PRODUCTS}?${qs}` : ROUTES.SELLER_PRODUCTS;
+  }
+
   return (
     <div className="flex flex-col gap-6">
+      <Suspense fallback={null}>
+        <SellerToastFlash />
+      </Suspense>
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-semibold tracking-tight">
             Товары
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Все статусы. В каталоге видны только активные.
+            Поиск, фильтры и склад. В каталоге видны только активные.
           </p>
         </div>
         <Button
@@ -102,6 +137,48 @@ export default async function SellerProductsPage() {
           Добавить товар
         </Button>
       </div>
+
+      <div className="flex flex-wrap gap-1">
+        {STATUS_TABS.map((tab) => {
+          const active = status === tab.value;
+          return (
+            <Link
+              key={tab.value}
+              href={tabHref(tab.value)}
+              className={cn(
+                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                active
+                  ? "bg-primary/15 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              {tab.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      <form className="flex flex-wrap items-end gap-3" method="get">
+        {status !== "ALL" ? (
+          <input type="hidden" name="status" value={status} />
+        ) : null}
+        <label className="flex min-w-[200px] flex-1 flex-col gap-1 text-xs text-muted-foreground">
+          Поиск
+          <input
+            type="search"
+            name="q"
+            defaultValue={query ?? ""}
+            placeholder="Название или категория"
+            className="h-10 rounded-xl border border-input bg-surface px-3 text-sm text-foreground"
+          />
+        </label>
+        <button
+          type="submit"
+          className="h-10 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground"
+        >
+          Найти
+        </button>
+      </form>
 
       <Card>
         <CardHeader>
@@ -118,19 +195,22 @@ export default async function SellerProductsPage() {
           ) : products.items.length === 0 ? (
             <div className="flex flex-col items-start gap-4 py-8">
               <p className="text-sm text-muted-foreground">
-                Пока нет товаров. Создайте первое объявление — оно сразу
-                появится в каталоге.
+                {query || status !== "ALL"
+                  ? "Нет товаров по выбранным фильтрам."
+                  : "Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге."}
               </p>
-              <Button
-                nativeButton={false}
-                render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
-              >
-                <Plus data-icon="inline-start" />
-                Создать товар
-              </Button>
+              {!query && status === "ALL" ? (
+                <Button
+                  nativeButton={false}
+                  render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
+                >
+                  <Plus data-icon="inline-start" />
+                  Создать товар
+                </Button>
+              ) : null}
             </div>
           ) : (
-            <table className="w-full min-w-[720px] text-left text-sm">
+            <table className="w-full min-w-[800px] text-left text-sm">
               <thead>
                 <tr className="border-b border-border text-xs text-muted-foreground">
                   <th className="pb-3 pr-3 font-medium">Фото</th>
@@ -178,15 +258,10 @@ export default async function SellerProductsPage() {
                         {formatPrice(product.price)}
                       </td>
                       <td className="py-3 pr-3">
-                        <span className="tabular-nums">{product.stock}</span>
-                        {isLowStock(product.stock) ? (
-                          <Badge
-                            variant="outline"
-                            className="ml-2 text-amber-700 dark:text-amber-300"
-                          >
-                            Мало
-                          </Badge>
-                        ) : null}
+                        <StockEditor
+                          productId={product.id}
+                          stock={product.stock}
+                        />
                       </td>
                       <td className="py-3 pr-3">
                         <ProductStatusBadge status={product.status} />
@@ -196,6 +271,20 @@ export default async function SellerProductsPage() {
                       </td>
                       <td className="py-3">
                         <div className="flex flex-wrap gap-0.5">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            nativeButton={false}
+                            render={
+                              <Link
+                                href={`${ROUTES.PRODUCT}/${product.id}`}
+                                target="_blank"
+                              />
+                            }
+                          >
+                            <ExternalLink data-icon="inline-start" />
+                            Открыть
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"

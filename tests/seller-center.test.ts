@@ -262,6 +262,60 @@ describe("inventory sync", () => {
     expect(isLowStock(LOW_STOCK_THRESHOLD + 1)).toBe(false);
   });
 
+  it("maps availability labels", async () => {
+    const { getInventoryAvailability } = await import(
+      "@/features/orders/lib/inventory-sync"
+    );
+    expect(getInventoryAvailability(0)).toBe("OUT");
+    expect(getInventoryAvailability(3)).toBe("LOW");
+    expect(getInventoryAvailability(10)).toBe("IN_STOCK");
+  });
+
+  it("setInventoryQuantity clamps negatives to zero", async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
+
+    const inventoryUpsert = vi.fn(async () => undefined);
+    const productUpdate = vi.fn(async () => undefined);
+    const historyCreate = vi.fn(async () => undefined);
+    const inventoryFind = vi.fn(async () => ({ quantity: 4 }));
+    const productFind = vi.fn(async () => ({ status: ProductStatus.ACTIVE }));
+
+    const tx = {
+      productInventory: {
+        findUnique: inventoryFind,
+        upsert: inventoryUpsert,
+      },
+      product: {
+        update: productUpdate,
+        findUnique: productFind,
+      },
+      inventoryHistory: { create: historyCreate },
+    };
+
+    const { setInventoryQuantity } = await import(
+      "@/features/orders/lib/inventory-sync"
+    );
+
+    const result = await setInventoryQuantity(tx as never, {
+      productId: "p1",
+      quantity: -5,
+      actorUserId: "u1",
+    });
+
+    expect(result).toEqual({ quantity: 0, delta: -4 });
+    expect(inventoryUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        create: expect.objectContaining({ quantity: 0 }),
+        update: { quantity: 0 },
+      }),
+    );
+    expect(productUpdate).toHaveBeenCalledWith({
+      where: { id: "p1" },
+      data: { stock: 0 },
+    });
+  });
+
   it("setInventoryQuantity mirrors Product.stock and writes history", async () => {
     vi.resetModules();
     vi.clearAllMocks();

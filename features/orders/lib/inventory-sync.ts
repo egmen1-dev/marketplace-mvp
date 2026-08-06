@@ -171,3 +171,12 @@ export async function decrementInventory(
 export function isLowStock(quantity: number): boolean {
   return quantity > 0 && quantity <= LOW_STOCK_THRESHOLD;
 }
+
+export type InventoryAvailability = "IN_STOCK" | "LOW" | "OUT";
+
+/** Seller-facing stock label: В наличии / Заканчивается / Нет в наличии. */
+export function getInventoryAvailability(quantity: number): InventoryAvailability {
+  if (quantity <= 0) return "OUT";
+  if (quantity <= LOW_STOCK_THRESHOLD) return "LOW";
+  return "IN_STOCK";
+}

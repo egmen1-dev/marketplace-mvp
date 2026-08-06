@@ -22,11 +22,13 @@ import {
   createProductSchema,
   updateProductSchema,
 } from "@/features/products/schemas";
+import { setInventoryQuantity } from "@/features/orders/lib/inventory-sync";
 import {
   SellerServiceError,
   updateSellerOrderStatus,
   updateSellerSettings,
 } from "@/features/seller/queries";
+import { prisma } from "@/lib/prisma";
 import { ROUTES } from "@/lib/constants";
 
 export type ProductActionState = {
@@ -138,7 +140,7 @@ export async function createProductAction(
   revalidatePath(ROUTES.SELLER);
   revalidatePath(ROUTES.SELLER_DASHBOARD);
   revalidatePath(ROUTES.SELLER_PRODUCTS);
-  redirect(ROUTES.SELLER_PRODUCTS);
+  redirect(`${ROUTES.SELLER_PRODUCTS}?toast=saved`);
 }
 
 export async function updateProductAction(
@@ -186,7 +188,61 @@ export async function updateProductAction(
   revalidatePath(ROUTES.SELLER_DASHBOARD);
   revalidatePath(ROUTES.SELLER_PRODUCTS);
   revalidatePath(`${ROUTES.PRODUCT}/${productId}`);
-  redirect(ROUTES.SELLER_PRODUCTS);
+  redirect(`${ROUTES.SELLER_PRODUCTS}?toast=saved`);
+}
+
+export async function updateProductStockAction(
+  productId: string,
+  quantity: number,
+): Promise<ProductActionState> {
+  let sellerProfileId: string;
+  let userId: string;
+  try {
+    const seller = await requireSellerSession();
+    sellerProfileId = seller.sellerProfileId;
+    userId = seller.userId;
+  } catch (err) {
+    const authErr = authErrorMessage(err);
+    if (authErr) return authErr;
+    throw err;
+  }
+
+  if (!Number.isFinite(quantity) || quantity < 0) {
+    return { ok: false, error: "Остаток не может быть отрицательным" };
+  }
+
+  const qty = Math.floor(quantity);
+
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { id: true, sellerId: true },
+    });
+    if (!product) {
+      return { ok: false, error: "Товар не найден" };
+    }
+    if (product.sellerId !== sellerProfileId) {
+      return { ok: false, error: "Нет доступа к этому товару" };
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await setInventoryQuantity(tx, {
+        productId,
+        quantity: qty,
+        actorUserId: userId,
+        note: "Корректировка остатка продавцом",
+      });
+    });
+  } catch (err) {
+    console.error("[updateProductStockAction]", err);
+    return { ok: false, error: "Не удалось обновить остаток" };
+  }
+
+  revalidatePath(ROUTES.SELLER_PRODUCTS);
+  revalidatePath(ROUTES.SELLER_DASHBOARD);
+  revalidatePath(ROUTES.CATALOG);
+  revalidatePath(`${ROUTES.PRODUCT}/${productId}`);
+  return { ok: true };
 }
 
 export async function deleteProductAction(

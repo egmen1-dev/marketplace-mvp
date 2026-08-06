@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { deleteProductAction } from "@/features/seller/actions";
 import { ROUTES } from "@/lib/constants";
+import { TOAST, toastError } from "@/lib/toasts";
+import { toast } from "sonner";
 
 type DeleteProductButtonProps = {
   productId: string;
@@ -38,9 +40,11 @@ export function DeleteProductButton({
       const result = await deleteProductAction(productId);
       if (!result.ok) {
         setError(result.error ?? "Не удалось удалить");
+        toastError(result.error);
         return;
       }
       setOpen(false);
+      toast.success(TOAST.PRODUCT_DELETED);
       router.push(ROUTES.SELLER_PRODUCTS);
       router.refresh();
     });

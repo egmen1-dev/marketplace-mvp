@@ -3,6 +3,7 @@
 export {
   createProductAction,
   updateProductAction,
+  updateProductStockAction,
   deleteProductAction,
   archiveProductAction,
   duplicateProductAction,
@@ -27,6 +28,9 @@ export {
   DuplicateProductButton,
   SellerSettingsForm,
   SellerOrderStatusActions,
+  InventoryStatusBadge,
+  StockEditor,
+  SellerToastFlash,
 } from "./components";
 export {
   getSellerDashboardStats,
