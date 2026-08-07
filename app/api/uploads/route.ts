@@ -111,7 +111,13 @@ async function handleClientTokenUpload(request: Request): Promise<NextResponse> 
   });
 
   try {
+    const rwToken = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+    if (!rwToken) {
+      return blobNotConfiguredResponse();
+    }
+
     const jsonResponse = await handleUpload({
+      token: rwToken,
       body,
       request,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
@@ -158,36 +164,32 @@ async function handleClientTokenUpload(request: Request): Promise<NextResponse> 
           throw new Error("Допустимы JPEG, PNG, WebP и GIF");
         }
 
+        // Absolute expiry — relative values like `60000` cause Access denied.
+        const validUntil = Date.now() + 60 * 60 * 1000;
+
         log.info("upload_token_issued", {
           method: "POST",
           purpose,
           ownerId,
           pathname,
-          contentType: "token",
           maxBytes: PRODUCT_IMAGE_LIMITS.maxBytes,
-          multipart: Boolean(
-            body.type === "blob.generate-client-token" &&
-              body.payload?.multipart,
-          ),
+          validUntil,
         });
-
-        // Explicit production callback so onUploadCompleted can run (logging only).
-        const appUrl =
-          process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-          (process.env.VERCEL_PROJECT_PRODUCTION_URL
-            ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-            : undefined);
 
         return {
           allowedContentTypes: [
-            ...PRODUCT_IMAGE_LIMITS.mimeTypes,
+            "image/jpeg",
             "image/jpg",
+            "image/png",
+            "image/webp",
+            "image/gif",
+            "image/*",
           ],
           maximumSizeInBytes: PRODUCT_IMAGE_LIMITS.maxBytes,
           addRandomSuffix: false,
-          allowOverwrite: false,
+          allowOverwrite: true,
+          validUntil,
           tokenPayload: JSON.stringify({ purpose, ownerId }),
-          ...(appUrl ? { callbackUrl: `${appUrl}/api/uploads` } : {}),
         };
       },
       onUploadCompleted: async ({ blob }) => {

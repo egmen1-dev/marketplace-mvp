@@ -48,14 +48,6 @@ function extensionForFile(file: File): string | null {
   return byMime[file.type.toLowerCase()] ?? null;
 }
 
-function resolveContentType(file: File, ext: string): string {
-  const allowed = PRODUCT_IMAGE_LIMITS.mimeTypes as readonly string[];
-  const declared = (file.type || "").toLowerCase();
-  if (declared === "image/jpg") return "image/jpeg";
-  if (declared && allowed.includes(declared)) return declared;
-  return MIME_BY_EXT[ext] ?? "image/jpeg";
-}
-
 function mapBlobUploadError(err: unknown): Error {
   const message = err instanceof Error ? err.message : "";
 
@@ -65,7 +57,12 @@ function mapBlobUploadError(err: unknown): Error {
   if (/not configured|503/i.test(message)) {
     return new Error(UPLOAD_UNAVAILABLE_MESSAGE);
   }
-  if (/content.?type|not allowed|mime|invalid type/i.test(message)) {
+  if (/access denied|valid token|client token has expired/i.test(message)) {
+    return new Error(
+      "Не удалось авторизовать загрузку. Обновите страницу и попробуйте снова.",
+    );
+  }
+  if (/content.?type|not allowed|mime|invalid type|mismatch/i.test(message)) {
     return new Error(
       "Недопустимый тип файла. Используйте JPEG, PNG, WebP или GIF.",
     );
@@ -83,7 +80,6 @@ function mapBlobUploadError(err: unknown): Error {
       message,
     )
   ) {
-    // Strip noisy SDK prefix when present
     const cleaned = message.replace(/^Vercel Blob:\s*/i, "").trim();
     if (cleaned) return new Error(cleaned);
   }
@@ -92,10 +88,8 @@ function mapBlobUploadError(err: unknown): Error {
 
 /**
  * Direct-to-Blob upload (bypasses Vercel serverless ~4.5MB body limit / 413).
- * Server only issues a short-lived client token via POST /api/uploads (JSON).
- *
- * Note: do NOT force multipart for typical product photos (≤20MB). Client PUT
- * goes straight to Blob CDN; multipart has caused mid-size (5–10MB) failures.
+ * Re-wraps the File so MIME always matches the pathname extension — mismatches
+ * often surface as Blob "Access denied".
  */
 export async function uploadImageFromClient(
   file: File,
@@ -118,12 +112,16 @@ export async function uploadImageFromClient(
     throw new Error(`«${file.name}»: только JPEG, PNG, WebP, GIF`);
   }
 
-  const contentType = resolveContentType(file, ext);
+  const contentType = MIME_BY_EXT[ext] ?? "image/jpeg";
   const pathname = `${options.pathPrefix}${crypto.randomUUID()}${ext}`;
   const handleUploadUrl = `${window.location.origin}/api/uploads`;
+  const typedFile =
+    file.type === contentType
+      ? file
+      : new File([file], `upload${ext}`, { type: contentType });
 
   try {
-    const blob = await upload(pathname, file, {
+    const blob = await upload(pathname, typedFile, {
       access: "public",
       handleUploadUrl,
       contentType,
