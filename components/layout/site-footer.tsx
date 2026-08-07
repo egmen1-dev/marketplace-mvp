@@ -13,6 +13,7 @@ const footerLinks = [
       { href: ROUTES.CATEGORIES, label: "Категории" },
       { href: ROUTES.CART, label: "Корзина" },
       { href: ROUTES.ORDERS, label: "Заказы" },
+      { href: ROUTES.FAVORITES, label: "Избранное" },
     ],
   },
   {
@@ -20,6 +21,7 @@ const footerLinks = [
     items: [
       { href: ROUTES.SELLER, label: "Кабинет" },
       { href: ROUTES.SELL, label: "Как продавать" },
+      { href: ROUTES.SELLER_NEW_PRODUCT, label: "Добавить товар" },
     ],
   },
   {
@@ -28,6 +30,8 @@ const footerLinks = [
       { href: ROUTES.ABOUT, label: "О нас" },
       { href: ROUTES.SUPPORT, label: "Поддержка" },
       { href: ROUTES.CONTACTS, label: "Контакты" },
+      { href: ROUTES.PRIVACY, label: "Политика конфиденциальности" },
+      { href: ROUTES.TERMS, label: "Пользовательское соглашение" },
     ],
   },
 ] as const;
@@ -37,12 +41,11 @@ type SiteFooterProps = {
 };
 
 export function SiteFooter({ className }: SiteFooterProps) {
+  const year = new Date().getFullYear();
+
   return (
     <footer
-      className={cn(
-        "mt-auto border-t border-border bg-surface",
-        className,
-      )}
+      className={cn("mt-auto border-t border-border bg-surface", className)}
     >
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -63,7 +66,7 @@ export function SiteFooter({ className }: SiteFooterProps) {
                   <li key={`${group.title}-${item.label}`}>
                     <Link
                       href={item.href}
-                      className="text-sm text-muted-foreground transition-colors duration-[var(--duration-fast)] hover:text-primary"
+                      className="text-sm text-muted-foreground transition-colors duration-[var(--duration-fast)] hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       {item.label}
                     </Link>
@@ -76,22 +79,34 @@ export function SiteFooter({ className }: SiteFooterProps) {
 
         <Separator className="my-8" />
 
-        <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {APP_NAME}. Все права защищены.
+            © {year} {APP_NAME}. Все права защищены.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
             <Link
               href={ROUTES.PRIVACY}
-              className="transition-colors hover:text-foreground"
+              className="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              Политика
+              Политика конфиденциальности
             </Link>
             <Link
               href={ROUTES.TERMS}
-              className="transition-colors hover:text-foreground"
+              className="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              Условия
+              Пользовательское соглашение
+            </Link>
+            <Link
+              href={ROUTES.SUPPORT}
+              className="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Поддержка
+            </Link>
+            <Link
+              href={ROUTES.CONTACTS}
+              className="transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Контакты
             </Link>
           </div>
         </div>

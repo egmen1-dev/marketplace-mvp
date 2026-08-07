@@ -22,7 +22,7 @@ const showcaseCategories = [
 ] as const;
 
 const showcaseBenefits = [
-  { icon: ShieldCheck, label: "Безопасная оплата" },
+  { icon: ShieldCheck, label: "Безопасная покупка" },
   { icon: Truck, label: "Доставка СДЭК" },
   { icon: Package, label: "Тысячи товаров" },
 ] as const;

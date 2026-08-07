@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ImageOff } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -17,10 +17,13 @@ type ProductImageProps = {
   className?: string;
   /** Wrapper classes (aspect ratio, bg, overflow). */
   containerClassName?: string;
+  /** Show «Нет фото» under the icon (hide on tiny thumbs). */
+  fallbackLabel?: boolean;
 };
 
 /**
- * Product photo with object-cover, aspect-friendly container, and graceful fallback.
+ * Product photo with object-cover and graceful fallback.
+ * Broken / missing URLs switch to ProductImageFallback (no browser broken-image icon).
  */
 export function ProductImage({
   src,
@@ -32,6 +35,7 @@ export function ProductImage({
   priority,
   className,
   containerClassName,
+  fallbackLabel = true,
 }: ProductImageProps) {
   const [failed, setFailed] = useState(false);
   const showImage = Boolean(src) && !failed;
@@ -39,7 +43,7 @@ export function ProductImage({
   return (
     <div
       className={cn(
-        "overflow-hidden bg-surface-elevated",
+        "overflow-hidden bg-muted/50",
         !containerClassName?.includes("absolute") && "relative",
         containerClassName,
       )}
@@ -57,23 +61,44 @@ export function ProductImage({
           onError={() => setFailed(true)}
         />
       ) : (
-        <ProductImageFallback />
+        <ProductImageFallback showLabel={fallbackLabel} />
       )}
     </div>
   );
 }
 
-export function ProductImageFallback({ className }: { className?: string }) {
+type ProductImageFallbackProps = {
+  className?: string;
+  /** Short «Нет фото» label — omit on compact thumbnails. */
+  showLabel?: boolean;
+};
+
+/** Unified neutral placeholder for missing or failed product photos. */
+export function ProductImageFallback({
+  className,
+  showLabel = true,
+}: ProductImageFallbackProps) {
   return (
     <div
-      aria-hidden
+      role="img"
+      aria-label="Нет фото"
       className={cn(
-        "absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/25 via-muted to-surface",
+        "absolute inset-0 flex flex-col items-center justify-center gap-1 bg-muted/70 dark:bg-muted/50",
         className,
       )}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgb(255_106_0_/_16%),transparent_55%)]" />
-      <ImageOff className="relative size-8 text-muted-foreground/50" />
+      <ImageIcon
+        className={cn(
+          "shrink-0 text-muted-foreground/55",
+          showLabel ? "size-7 sm:size-8" : "size-5",
+        )}
+        aria-hidden
+      />
+      {showLabel ? (
+        <span className="px-2 text-center text-[10px] font-medium tracking-wide text-muted-foreground/80 sm:text-[11px]">
+          Нет фото
+        </span>
+      ) : null}
     </div>
   );
 }

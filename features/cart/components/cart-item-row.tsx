@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/components/cart-provider";
 import { QtyStepper } from "@/features/cart/components/qty-stepper";
 import type { CartLineItem } from "@/features/cart/types";
+import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
 import { TOAST, toastError } from "@/lib/toasts";
@@ -28,22 +28,15 @@ export function CartItemRow({ item }: CartItemRowProps) {
     <article className="flex gap-4 border-b border-border/80 py-5 last:border-0">
       <Link
         href={href}
-        className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-surface-elevated sm:size-24"
+        className="relative size-20 shrink-0 overflow-hidden rounded-xl sm:size-24"
       >
-        {product.primaryImage ? (
-          <Image
-            src={product.primaryImage.url}
-            alt={product.primaryImage.alt ?? product.title}
-            fill
-            sizes="96px"
-            className="object-cover"
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-surface"
-          />
-        )}
+        <ProductImage
+          src={product.primaryImage?.url}
+          alt={product.primaryImage?.alt ?? product.title}
+          sizes="96px"
+          containerClassName="absolute inset-0"
+          fallbackLabel={false}
+        />
       </Link>
 
       <div className="flex min-w-0 flex-1 flex-col gap-3">

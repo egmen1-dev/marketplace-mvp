@@ -6,9 +6,11 @@ export {
   listCategoryTree,
   getCategoryBySlug,
   resolveCategoryIdsIncludingDescendants,
+  getMarketplaceStats,
   type CategoryListItem,
   type CategoryTreeNode,
   type CategoryDetail,
+  type MarketplaceStats,
 } from "./queries";
 export { categoryPagePath } from "./paths";
 export {

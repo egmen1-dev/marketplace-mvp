@@ -50,7 +50,7 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
           Каталог
         </Button>
 
-        <div className="mx-1 hidden min-w-0 flex-1 md:block lg:mx-4">
+        <div className="mx-1 hidden min-w-0 flex-1 md:block lg:mx-4 lg:max-w-xl xl:max-w-2xl">
           <HeaderSearch variant="bar" />
         </div>
 
@@ -101,7 +101,7 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
                   {item.label}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem render={<Link href={ROUTES.CATALOG} />}>
+              <DropdownMenuItem render={<Link href={ROUTES.FAVORITES} />}>
                 <Heart className="size-4" />
                 Избранное
               </DropdownMenuItem>

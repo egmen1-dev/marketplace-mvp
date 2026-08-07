@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -18,6 +17,7 @@ import {
   requireSellerSession,
   SellerRequiredError,
 } from "@/features/auth";
+import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import { listProducts } from "@/features/products/queries";
 import {
@@ -229,21 +229,14 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                   return (
                     <tr key={product.id} className="align-middle">
                       <td className="py-3 pr-3">
-                        <div className="relative size-12 overflow-hidden rounded-lg bg-surface-elevated">
-                          {image ? (
-                            <Image
-                              src={image.url}
-                              alt={image.alt ?? product.title}
-                              fill
-                              className="object-cover"
-                              sizes="48px"
-                            />
-                          ) : (
-                            <div
-                              aria-hidden
-                              className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-surface"
-                            />
-                          )}
+                        <div className="relative size-12 overflow-hidden rounded-lg">
+                          <ProductImage
+                            src={image?.url}
+                            alt={image?.alt ?? product.title}
+                            sizes="48px"
+                            containerClassName="absolute inset-0"
+                            fallbackLabel={false}
+                          />
                         </div>
                       </td>
                       <td className="py-3 pr-3">

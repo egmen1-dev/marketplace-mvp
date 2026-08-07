@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
@@ -18,6 +17,7 @@ import {
   type CreateOrderActionState,
 } from "@/features/orders/actions";
 import { DeliverySection } from "@/features/orders/components/delivery-section";
+import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import type { DeliveryQuote } from "@/lib/delivery/types";
 import { ROUTES } from "@/lib/constants";
@@ -223,23 +223,14 @@ export function CheckoutForm({
               key={item.productId}
               className="flex gap-4 border-b border-border/80 py-5 last:border-0"
             >
-              <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-surface-elevated sm:size-20">
-                {item.product.primaryImage ? (
-                  <Image
-                    src={item.product.primaryImage.url}
-                    alt={
-                      item.product.primaryImage.alt ?? item.product.title
-                    }
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-surface"
-                  />
-                )}
+              <div className="relative size-16 shrink-0 overflow-hidden rounded-xl sm:size-20">
+                <ProductImage
+                  src={item.product.primaryImage?.url}
+                  alt={item.product.primaryImage?.alt ?? item.product.title}
+                  sizes="80px"
+                  containerClassName="absolute inset-0"
+                  fallbackLabel={false}
+                />
               </div>
               <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                 <p className="font-heading text-sm font-medium leading-snug">

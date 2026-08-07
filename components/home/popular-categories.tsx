@@ -60,7 +60,7 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
   const bySlug = new Map(categories.map((c) => [c.slug, c]));
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-16">
+    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
       <div
         className="animate-fade-up mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
         style={{ animationDelay: "80ms" }}
@@ -70,7 +70,7 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
             Популярные категории
           </h2>
           <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-            Быстрый вход в каталог по самым востребованным направлениям.
+            Выберите направление и начните поиск.
           </p>
         </div>
         <Button
@@ -95,11 +95,11 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
             <Link
               key={item.slug}
               href={categoryPagePath(item.slug)}
-              className="animate-fade-up group"
+              className="animate-fade-up group cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ animationDelay: `${100 + index * 45}ms` }}
             >
-              <article className="flex h-full flex-col gap-4 rounded-2xl bg-card/80 p-4 ring-1 ring-border transition-[box-shadow,transform,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] hover:-translate-y-0.5 hover:shadow-card-hover hover:ring-primary/35">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary transition-transform duration-[var(--duration-base)] group-hover:scale-105">
+              <article className="flex h-full flex-col gap-4 rounded-2xl border border-transparent bg-card/80 p-4 ring-1 ring-border transition-[box-shadow,transform,background-color,border-color,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] group-hover:-translate-y-1 group-hover:border-primary/25 group-hover:bg-card group-hover:shadow-card-hover group-hover:ring-primary/35 group-active:translate-y-0 dark:group-hover:bg-card">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary transition-transform duration-[var(--duration-base)] ease-[var(--ease-out-premium)] group-hover:scale-110">
                   <Icon className="size-6" aria-hidden />
                 </div>
                 <div>

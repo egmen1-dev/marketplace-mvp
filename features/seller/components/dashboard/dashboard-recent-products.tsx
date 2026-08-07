@@ -81,6 +81,7 @@ export function DashboardRecentProducts({
                         alt={image?.alt ?? product.title}
                         sizes="48px"
                         containerClassName="absolute inset-0"
+                        fallbackLabel={false}
                       />
                     </div>
                     <div className="min-w-0">

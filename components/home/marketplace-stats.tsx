@@ -1,0 +1,42 @@
+type MarketplaceStatsProps = {
+  products: number;
+  sellers: number;
+  categories: number;
+};
+
+/**
+ * Compact live marketplace counters. Render only when parent has real DB totals.
+ */
+export function MarketplaceStats({
+  products,
+  sellers,
+  categories,
+}: MarketplaceStatsProps) {
+  const items = [
+    { label: "Товаров", value: products },
+    { label: "Продавцов", value: sellers },
+    { label: "Категорий", value: categories },
+  ].filter((item) => item.value > 0);
+
+  if (items.length === 0) return null;
+
+  return (
+    <section
+      className="border-y border-border bg-surface/40"
+      aria-label="Статистика площадки"
+    >
+      <div className="mx-auto grid max-w-7xl grid-cols-3 gap-2 px-4 py-6 sm:gap-6 sm:px-6 sm:py-8">
+        {items.map((item) => (
+          <div key={item.label} className="text-center">
+            <p className="font-heading text-xl font-semibold tracking-tight tabular-nums text-foreground sm:text-2xl">
+              {item.value.toLocaleString("ru-RU")}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
+              {item.label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

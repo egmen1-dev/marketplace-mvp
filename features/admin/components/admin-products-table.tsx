@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -22,6 +21,7 @@ import {
   setProductStatusAction,
 } from "@/features/admin/actions";
 import type { AdminProductRow } from "@/features/admin/queries";
+import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import { ProductStatusBadge } from "@/features/seller/components/product-status-badge";
 import { ROUTES } from "@/lib/constants";
@@ -55,16 +55,14 @@ export function AdminProductsTable({
           {products.map((product) => (
             <tr key={product.id}>
               <td className="px-2 py-3">
-                <div className="relative size-12 overflow-hidden rounded-lg bg-muted">
-                  {product.imageUrl ? (
-                    <Image
-                      src={product.imageUrl}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="48px"
-                    />
-                  ) : null}
+                <div className="relative size-12 overflow-hidden rounded-lg">
+                  <ProductImage
+                    src={product.imageUrl}
+                    alt={product.name}
+                    sizes="48px"
+                    containerClassName="absolute inset-0"
+                    fallbackLabel={false}
+                  />
                 </div>
               </td>
               <td className="px-2 py-3">

@@ -20,8 +20,8 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
 
   if (!current) {
     return (
-      <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-border sm:aspect-[4/5] lg:aspect-square">
-        <ProductImageFallback />
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted/50 ring-1 ring-border sm:aspect-[4/5] lg:aspect-square">
+        <ProductImageFallback showLabel />
       </div>
     );
   }
@@ -60,6 +60,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                 alt={img.alt ?? `${title} ${index + 1}`}
                 sizes="80px"
                 containerClassName="absolute inset-0"
+                fallbackLabel={false}
               />
             </button>
           ))}

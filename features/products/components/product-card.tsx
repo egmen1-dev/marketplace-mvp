@@ -38,7 +38,7 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
   return (
     <article
       className={cn(
-        "group animate-fade-up flex flex-col overflow-hidden rounded-2xl bg-card shadow-card ring-1 ring-border transition-[box-shadow,transform] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] hover:-translate-y-1 hover:shadow-card-hover",
+        "group animate-fade-up flex flex-col overflow-hidden rounded-2xl border border-transparent bg-card shadow-card ring-1 ring-border transition-[box-shadow,transform,border-color,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] hover:-translate-y-1 hover:border-primary/20 hover:shadow-card-hover hover:ring-primary/35",
         className,
       )}
       style={style}

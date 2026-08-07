@@ -304,3 +304,19 @@ export async function resolveCategoryIdsIncludingDescendants(
 
   return collectDescendantIds(nodes, row.id, { activeOnly: true });
 }
+
+export type MarketplaceStats = {
+  products: number;
+  sellers: number;
+  categories: number;
+};
+
+/** Cheap aggregate counts for homepage proof (ACTIVE products only). */
+export async function getMarketplaceStats(): Promise<MarketplaceStats> {
+  const [products, sellers, categories] = await Promise.all([
+    prisma.product.count({ where: { status: ProductStatus.ACTIVE } }),
+    prisma.sellerProfile.count(),
+    prisma.category.count({ where: { isActive: true } }),
+  ]);
+  return { products, sellers, categories };
+}

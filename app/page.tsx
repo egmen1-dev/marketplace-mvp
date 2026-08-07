@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 import {
   HeroSearch,
   HeroShowcase,
+  MarketplaceStats,
   PopularCategories,
   TrustSection,
 } from "@/components/home";
@@ -15,28 +16,43 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { listRootCategories } from "@/features/catalog";
+import {
+  getMarketplaceStats,
+  listRootCategories,
+} from "@/features/catalog";
 import { listProducts, ProductCard } from "@/features/products";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
+const sellerBenefits = [
+  "Разместить товар за несколько минут",
+  "Управление товарами в личном кабинете",
+  "Доставка через СДЭК",
+] as const;
+
 export default async function HomePage() {
   let categories: Awaited<ReturnType<typeof listRootCategories>> = [];
   let products: Awaited<ReturnType<typeof listProducts>>["items"] = [];
+  let stats: Awaited<ReturnType<typeof getMarketplaceStats>> | null = null;
 
   try {
-    const [cats, productResult] = await Promise.all([
+    const [cats, productResult, marketplaceStats] = await Promise.all([
       listRootCategories({ activeOnly: true }),
       listProducts({ status: "ACTIVE", pageSize: 8, page: 1, sort: "popular" }),
+      getMarketplaceStats(),
     ]);
     categories = cats;
     products = productResult.items;
+    stats = marketplaceStats;
   } catch (err) {
     console.error("[home]", err);
   }
 
   const featured = products[0] ?? null;
+  const showStats =
+    stats != null &&
+    (stats.products > 0 || stats.sellers > 0 || stats.categories > 0);
 
   return (
     <div className="flex flex-col">
@@ -74,7 +90,7 @@ export default async function HomePage() {
               className="animate-fade-up max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
               style={{ animationDelay: "200ms" }}
             >
-              Тысячи товаров от магазинов и продавцов с удобной доставкой
+              Товары от магазинов и продавцов — с удобной доставкой СДЭК
             </p>
 
             <div
@@ -114,8 +130,16 @@ export default async function HomePage() {
 
       <PopularCategories categories={categories} />
 
+      {showStats && stats ? (
+        <MarketplaceStats
+          products={stats.products}
+          sellers={stats.sellers}
+          categories={stats.categories}
+        />
+      ) : null}
+
       <section className="border-t border-border bg-surface/50">
-        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-16">
+        <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
           <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -170,9 +194,9 @@ export default async function HomePage() {
 
       <TrustSection />
 
-      <section className="mx-auto w-full max-w-7xl px-4 pb-14 sm:px-6 sm:pb-20">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16">
         <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary/15 via-card to-card ring-primary/20 hover:translate-y-0 hover:shadow-card">
-          <CardContent className="flex flex-col items-start gap-6 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+          <CardContent className="grid gap-8 p-6 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] sm:items-center sm:gap-10 sm:p-8 lg:p-10">
             <div className="max-w-lg">
               <h2 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
                 Готовы продавать на {APP_NAME}?
@@ -180,16 +204,34 @@ export default async function HomePage() {
               <p className="mt-2 text-sm text-muted-foreground sm:text-base">
                 Откройте кабинет продавца и разместите первый товар за минуту.
               </p>
+              <ul className="mt-5 flex flex-col gap-2.5">
+                {sellerBenefits.map((text) => (
+                  <li
+                    key={text}
+                    className="flex items-start gap-2.5 text-sm text-foreground"
+                  >
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                      <Check className="size-3" strokeWidth={2.5} aria-hidden />
+                    </span>
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <Button
-              size="lg"
-              className="shrink-0 rounded-xl"
-              nativeButton={false}
-              render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
-            >
-              Добавить товар
-              <ArrowRight data-icon="inline-end" />
-            </Button>
+            <div className="flex flex-col items-stretch gap-3 sm:items-end">
+              <Button
+                size="lg"
+                className="rounded-xl sm:min-w-[200px]"
+                nativeButton={false}
+                render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
+              >
+                Добавить товар
+                <ArrowRight data-icon="inline-end" />
+              </Button>
+              <p className="text-center text-xs text-muted-foreground sm:text-right">
+                Нужен кабинет продавца — система направит при входе.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </section>
