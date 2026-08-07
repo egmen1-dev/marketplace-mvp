@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
   ArrowLeft,
-  BadgeCheck,
   MapPin,
   Package,
   ShieldCheck,
@@ -26,9 +25,11 @@ import {
   ProductPurchasePanel,
   SimilarProducts,
 } from "@/features/products";
+import { ProductSellerCard } from "@/features/seller/components/product-seller-card";
+import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { ComingSoonButton } from "@/components/layout/coming-soon-button";
-import { APP_NAME, ROUTES, sellerPublicPath } from "@/lib/constants";
+import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -81,15 +82,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let product: Awaited<ReturnType<typeof getProductById>> = null;
   let session: Awaited<ReturnType<typeof getSessionUser>> = null;
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
+  let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
-      similar = await listSimilarProducts(product.id, {
-        categoryId: product.category?.id,
-        limit: 8,
-      });
+      [similar, sellerTrust] = await Promise.all([
+        listSimilarProducts(product.id, {
+          categoryId: product.category?.id,
+          limit: 8,
+        }),
+        getSellerTrustProfile(product.seller.slug),
+      ]);
     }
   } catch (err) {
     console.error("[product]", err);
@@ -181,36 +186,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             stock={product.stock}
           />
 
-          <div className="rounded-2xl border border-border bg-surface/70 p-4 sm:p-5">
-            <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <BadgeCheck className="size-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs tracking-wide text-muted-foreground uppercase">
-                  Продавец
-                </p>
-                <p className="mt-0.5 font-heading text-lg font-medium">
-                  <Link
-                    href={sellerPublicPath(product.seller.slug)}
-                    className="underline-offset-4 hover:underline"
-                  >
-                    {product.seller.storeName}
-                  </Link>
-                  {product.seller.isVerified ? (
-                    <span className="ml-2 text-xs font-normal text-primary">
-                      проверен
-                    </span>
-                  ) : null}
-                </p>
-                {product.seller.user.name ? (
-                  <p className="mt-0.5 text-sm text-muted-foreground">
-                    {product.seller.user.name}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-          </div>
+          {sellerTrust ? (
+            <ProductSellerCard seller={sellerTrust} />
+          ) : null}
 
           <div className="grid gap-3 sm:grid-cols-3">
             <InfoChip

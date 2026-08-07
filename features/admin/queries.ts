@@ -607,7 +607,10 @@ export async function setSellerVerified(params: {
 
   await prisma.sellerProfile.update({
     where: { id: params.sellerId },
-    data: { isVerified: params.isVerified },
+    data: {
+      isVerified: params.isVerified,
+      verifiedAt: params.isVerified ? new Date() : null,
+    },
   });
 
   await logAdminAction({

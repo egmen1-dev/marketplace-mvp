@@ -10,6 +10,10 @@ import { toPriceNumber } from "@/features/products/mappers";
 import { mapProductListItem } from "@/features/products/mappers";
 import type { ProductListItem } from "@/features/products/types";
 import {
+  getSellerTrustProfile,
+  type SellerTrustProfile,
+} from "@/features/seller/lib/reputation";
+import {
   canTransitionOrderStatus,
 } from "@/features/seller/lib/order-transitions";
 import { isLowStock, LOW_STOCK_THRESHOLD } from "@/features/orders/lib/inventory-sync";
@@ -355,55 +359,65 @@ export async function updateSellerSettings(
   };
 }
 
+export type PublicSellerPageData = {
+  trust: SellerTrustProfile;
+  products: ProductListItem[];
+};
+
+export async function getPublicSellerPageData(
+  idOrSlug: string,
+): Promise<PublicSellerPageData | null> {
+  const trust = await getSellerTrustProfile(idOrSlug);
+  if (!trust) return null;
+
+  const products = await prisma.product.findMany({
+    where: { sellerId: trust.id, status: ProductStatus.ACTIVE },
+    orderBy: [{ views: "desc" }, { createdAt: "desc" }],
+    take: 48,
+    include: {
+      category: { select: { id: true, name: true, slug: true } },
+      images: {
+        orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
+        take: 1,
+      },
+      seller: { select: { id: true, storeName: true, slug: true } },
+    },
+  });
+
+  return {
+    trust,
+    products: products.map(mapProductListItem),
+  };
+}
+
+/** @deprecated Prefer getPublicSellerPageData — kept for metadata helpers. */
 export async function getPublicSellerProfile(
   idOrSlug: string,
 ): Promise<{
   profile: SellerPublicProfile;
   products: ProductListItem[];
 } | null> {
-  const profile = await prisma.sellerProfile.findFirst({
-    where: {
-      OR: [{ id: idOrSlug }, { slug: idOrSlug }],
-    },
-  });
-  if (!profile) return null;
+  const data = await getPublicSellerPageData(idOrSlug);
+  if (!data) return null;
 
-  const [productCount, products] = await Promise.all([
-    prisma.product.count({
-      where: { sellerId: profile.id, status: ProductStatus.ACTIVE },
-    }),
-    prisma.product.findMany({
-      where: { sellerId: profile.id, status: ProductStatus.ACTIVE },
-      orderBy: [{ views: "desc" }, { createdAt: "desc" }],
-      take: 24,
-      include: {
-        category: { select: { id: true, name: true, slug: true } },
-        images: {
-          orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
-          take: 1,
-        },
-        seller: { select: { id: true, storeName: true, slug: true } },
-      },
-    }),
-  ]);
-
+  const { trust, products } = data;
   return {
     profile: {
-      id: profile.id,
-      storeName: profile.storeName,
-      slug: profile.slug,
-      description: profile.description,
-      logoUrl: profile.logoUrl,
-      rating: toPriceNumber(profile.rating),
-      isVerified: profile.isVerified,
-      productCount,
-      joinedAt: profile.createdAt.toISOString(),
-      phone: profile.phone,
-      email: profile.email,
-      address: profile.address,
-      shippingDefaults: profile.shippingDefaults,
+      id: trust.id,
+      storeName: trust.storeName,
+      slug: trust.slug,
+      description: trust.description,
+      logoUrl: trust.logoUrl,
+      rating: 0,
+      isVerified: trust.isVerified,
+      productCount: trust.metrics.activeProducts,
+      joinedAt: trust.joinedAt,
+      phone: null,
+      email: null,
+      address: null,
+      shippingDefaults: null,
     },
-    products: products.map(mapProductListItem),
+    products,
   };
 }
 

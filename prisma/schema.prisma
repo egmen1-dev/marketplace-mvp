@@ -135,6 +135,8 @@ model SellerProfile {
   /// Aggregate store rating 0–5 (placeholder until reviews land)
   rating           Decimal    @default(0) @db.Decimal(3, 2)
   isVerified       Boolean    @default(false)
+  /// Set when admin verifies the seller; cleared on unverify
+  verifiedAt       DateTime?
   /// Admin-blocked store — hidden from public catalog listings
   isBlocked        Boolean    @default(false)
   /// SHOP = storefront; INDIVIDUAL = private seller

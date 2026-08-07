@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Star } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "@/features/cart/components";
 import { FavoriteToggleButton } from "@/features/favorites/components/favorite-toggle-button";
 import { ProductImage } from "@/features/products/components/product-image";
+import { ProductCardSellerLink } from "@/features/seller/components/seller-public-header";
 import {
   formatPrice,
   hasDiscount,
@@ -14,11 +15,8 @@ import {
   isNewProduct,
 } from "@/features/products/mappers";
 import type { ProductListItem } from "@/features/products/types";
-import { ROUTES, sellerPublicPath } from "@/lib/constants";
+import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-
-/** Presentational demo rating for marketplace cards (no DB field yet). */
-const DEMO_RATING = 4.8;
 
 type ProductCardProps = {
   product: ProductListItem;
@@ -93,6 +91,15 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-3 sm:p-3.5">
+        <h3 className="line-clamp-2 min-h-[2.5rem] text-sm leading-snug font-medium">
+          <Link
+            href={href}
+            className="transition-colors hover:text-primary focus-visible:text-primary"
+          >
+            {product.title}
+          </Link>
+        </h3>
+
         <div className="flex items-baseline gap-2">
           <p className="font-heading text-lg leading-none font-semibold tracking-tight text-foreground sm:text-xl">
             {formatPrice(product.price, product.currency)}
@@ -104,49 +111,23 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
           ) : null}
         </div>
 
-        <div
-          className="flex items-center gap-1 text-xs text-muted-foreground"
-          title="Демо-рейтинг для витрины"
-        >
-          <Star
-            className="size-3.5 fill-primary text-primary"
-            aria-hidden
-          />
-          <span className="font-medium text-foreground tabular-nums">
-            {DEMO_RATING.toFixed(1)}
-          </span>
-        </div>
+        <ProductCardSellerLink
+          storeName={product.seller.storeName}
+          slug={product.seller.slug}
+        />
 
-        <h3 className="line-clamp-2 min-h-[2.5rem] text-sm leading-snug font-medium">
-          <Link
-            href={href}
-            className="transition-colors hover:text-primary focus-visible:text-primary"
-          >
-            {product.title}
-          </Link>
-        </h3>
-
-        <div className="mt-auto flex flex-col gap-0.5 text-xs text-muted-foreground">
-          <Link
-            href={sellerPublicPath(product.seller.slug)}
-            className="line-clamp-1 transition-colors hover:text-primary"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {product.seller.storeName}
-          </Link>
-          {product.city ? (
-            <p className="flex items-center gap-1">
-              <MapPin className="size-3 shrink-0" aria-hidden />
-              <span className="line-clamp-1">{product.city}</span>
-            </p>
-          ) : null}
-        </div>
+        {product.city ? (
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            <MapPin className="size-3 shrink-0" aria-hidden />
+            <span className="line-clamp-1">{product.city}</span>
+          </p>
+        ) : null}
 
         <AddToCartButton
           productId={product.id}
           stock={product.stock}
           size="sm"
-          className="mt-2"
+          className="mt-auto pt-2"
           label="В корзину"
         />
       </div>

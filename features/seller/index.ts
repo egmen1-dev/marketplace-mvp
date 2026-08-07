@@ -46,11 +46,28 @@ export {
   getSellerSettings,
   updateSellerSettings,
   getPublicSellerProfile,
+  getPublicSellerPageData,
   SellerServiceError,
   isLowStock,
   LOW_STOCK_THRESHOLD,
 } from "./queries";
-export type { SellerActivityItem } from "./queries";
+export type { SellerActivityItem, PublicSellerPageData } from "./queries";
+export {
+  getSellerTrustProfile,
+  getSellerReputationMetrics,
+  resolveSellerBadges,
+  getVisibleSellerMetrics,
+  formatSellerKindLabel,
+  formatSellerJoinedDate,
+  sellerBadgeLabel,
+  NEW_SELLER_DAYS,
+} from "./lib/reputation";
+export type {
+  SellerTrustProfile,
+  SellerTrustMetrics,
+  SellerBadgeVariant,
+  SellerMetricItem,
+} from "./lib/reputation";
 export {
   canTransitionOrderStatus,
   getAllowedOrderTransitions,

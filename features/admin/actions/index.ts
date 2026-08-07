@@ -221,7 +221,10 @@ export async function setSellerVerifiedAction(
 
   await prisma.sellerProfile.update({
     where: { id: sellerId },
-    data: { isVerified },
+    data: {
+      isVerified,
+      verifiedAt: isVerified ? new Date() : null,
+    },
   });
 
   await logAdminAction({
@@ -232,6 +235,7 @@ export async function setSellerVerifiedAction(
   });
 
   revalidatePath(ROUTES.ADMIN_SELLERS);
+  revalidatePath(`${ROUTES.SELLER_PUBLIC}/${sellerId}`);
   return { ok: true };
 }
 

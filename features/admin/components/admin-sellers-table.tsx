@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,9 +69,9 @@ export function AdminSellersTable({ sellers }: { sellers: AdminSellerRow[] }) {
                     <Badge variant="destructive">Блок</Badge>
                   ) : null}
                   {seller.isVerified ? (
-                    <Badge variant="default">Verified</Badge>
+                    <Badge variant="default">Проверен</Badge>
                   ) : (
-                    <Badge variant="outline">Не верифицирован</Badge>
+                    <Badge variant="outline">Не подтверждён</Badge>
                   )}
                 </div>
               </td>
@@ -117,12 +118,19 @@ function VerifySellerButton({ seller }: { seller: AdminSellerRow }) {
       disabled={pending}
       onClick={() => {
         startTransition(async () => {
-          await setSellerVerifiedAction(seller.id, next);
+          const result = await setSellerVerifiedAction(seller.id, next);
+          if (!result.ok) {
+            toast.error(result.error ?? "Не удалось изменить статус");
+            return;
+          }
+          toast.success(
+            next ? "Продавец подтвержден" : "Подтверждение снято",
+          );
           router.refresh();
         });
       }}
     >
-      {seller.isVerified ? "Снять verified" : "Верифицировать"}
+      {seller.isVerified ? "Снять подтверждение" : "Подтвердить"}
     </Button>
   );
 }
