@@ -13,7 +13,8 @@ const buttonVariants = cva(
         outline:
           "border-border bg-transparent text-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",        ghost:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
         destructive:
           "bg-destructive/15 text-destructive hover:bg-destructive/25 focus-visible:border-destructive/40 focus-visible:ring-destructive/30",
@@ -25,12 +26,20 @@ const buttonVariants = cva(
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-11 gap-2 px-5 text-base has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
+        /** Marketplace primary purchase CTAs — finger-friendly (48–52px). */
+        cta: "h-12 min-h-12 gap-2 rounded-xl px-5 text-base font-semibold sm:h-[3.25rem] sm:min-h-[3.25rem] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4 [&_svg:not([class*='size-'])]:size-5",
+        /** Product card / compact marketplace CTA (min 48px). */
+        "cta-card":
+          "h-12 min-h-12 gap-2 rounded-xl px-4 text-sm font-semibold sm:text-base [&_svg:not([class*='size-'])]:size-[1.125rem]",
         icon: "size-9",
         "icon-xs":
           "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
         "icon-sm":
           "size-8 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-11",
+        /** Header toolbar actions — 44×44 hit target, ~22px glyph. */
+        "icon-header":
+          "size-11 rounded-xl [&_svg:not([class*='size-'])]:size-[1.375rem]",
       },
     },
     defaultVariants: {

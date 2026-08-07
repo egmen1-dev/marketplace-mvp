@@ -9,6 +9,7 @@ import { CartItemRow } from "@/features/cart/components/cart-item-row";
 import { useCart } from "@/features/cart/components/cart-provider";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
+import { pluralizeProductWord } from "@/lib/i18n";
 
 export function CartPageView() {
   const { cart, isLoading, itemCount } = useCart();
@@ -22,8 +23,7 @@ export function CartPageView() {
         </h1>
         {!isLoading && itemCount > 0 ? (
           <p className="mt-1 text-sm text-muted-foreground">
-            {itemCount}{" "}
-            {pluralizeItems(itemCount)}
+            {itemCount} {pluralizeProductWord(itemCount)}
           </p>
         ) : null}
       </div>
@@ -55,7 +55,8 @@ export function CartPageView() {
             </p>
           </div>
           <Button
-            size="lg"
+            size="cta"
+            className="w-full"
             nativeButton={false}
             render={<Link href={ROUTES.CATALOG} />}
           >
@@ -85,7 +86,7 @@ export function CartPageView() {
             </div>
 
             <Button
-              size="lg"
+              size="cta"
               className="mt-6 w-full"
               disabled={cart.items.length === 0}
               nativeButton={false}
@@ -101,12 +102,4 @@ export function CartPageView() {
       )}
     </div>
   );
-}
-
-function pluralizeItems(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "товар";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "товара";
-  return "товаров";
 }

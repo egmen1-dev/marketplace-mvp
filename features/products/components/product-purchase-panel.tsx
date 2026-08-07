@@ -125,11 +125,11 @@ export function ProductPurchasePanel({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2.5 sm:flex-row">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
         <Button
           type="button"
-          size="lg"
-          className="h-12 flex-1 rounded-xl text-base"
+          size="cta"
+          className="flex-1"
           disabled={outOfStock || busy}
           aria-busy={action === "buy"}
           onClick={() => void handleBuy()}
@@ -148,9 +148,9 @@ export function ProductPurchasePanel({
         </Button>
         <Button
           type="button"
-          size="lg"
+          size="cta"
           variant="secondary"
-          className="h-12 flex-1 rounded-xl text-base"
+          className="flex-1"
           disabled={outOfStock || busy}
           aria-busy={action === "add"}
           onClick={() => void handleAdd()}

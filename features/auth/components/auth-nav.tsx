@@ -10,6 +10,7 @@ import {
   User,
 } from "lucide-react";
 
+import { headerActionClassName } from "@/components/layout/header-action";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,8 +37,8 @@ export function AuthNav({ user }: AuthNavProps) {
           render={
             <Button
               variant="ghost"
-              size="icon-sm"
-              className="size-10 text-muted-foreground md:size-8"
+              size="icon-header"
+              className={headerActionClassName()}
               aria-label="Профиль"
               title="Профиль"
             />
@@ -68,8 +69,8 @@ export function AuthNav({ user }: AuthNavProps) {
         render={
           <Button
             variant="ghost"
-            size="icon-sm"
-            className="size-10 text-muted-foreground md:size-8"
+            size="icon-header"
+            className={headerActionClassName()}
             aria-label="Профиль"
             title={label}
           />

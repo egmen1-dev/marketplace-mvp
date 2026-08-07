@@ -137,8 +137,8 @@ export function ProductCard({
         <AddToCartButton
           productId={product.id}
           stock={product.stock}
-          size="sm"
-          className="mt-auto pt-2"
+          size="cta-card"
+          className="mt-auto pt-3"
           label="В корзину"
         />
       </div>

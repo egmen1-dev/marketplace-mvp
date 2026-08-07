@@ -292,7 +292,7 @@ export function CheckoutForm({
 
         <Button
           type="submit"
-          size="lg"
+          size="cta"
           className="mt-6 w-full"
           disabled={!canPay}
         >

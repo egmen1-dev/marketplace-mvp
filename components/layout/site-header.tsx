@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Heart, LayoutGrid, Menu, Search } from "lucide-react";
 
 import { Logo } from "@/components/brand";
+import { headerActionClassName } from "@/components/layout/header-action";
 import { HeaderSearch } from "@/components/layout/header-search";
 import { MobileMenuThemeItem } from "@/components/layout/mobile-menu-theme-item";
 import { ThemeToggle } from "@/components/theme";
@@ -42,7 +43,7 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
         className,
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-6">
         <Logo variant="responsive" size={36} className="shrink-0" />
 
         <Button
@@ -56,15 +57,16 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
           Каталог
         </Button>
 
-        <div className="mx-1 hidden min-w-0 flex-1 md:block lg:mx-4 lg:max-w-xl xl:max-w-2xl">
+        {/* Bounded search width — avoids a huge empty gap before actions */}
+        <div className="mx-1 hidden min-w-0 flex-1 md:block md:max-w-md lg:mx-3 lg:max-w-lg xl:max-w-xl">
           <HeaderSearch variant="bar" />
         </div>
 
-        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+        <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
           <Button
             variant="ghost"
-            size="icon-sm"
-            className="hidden size-8 text-muted-foreground md:inline-flex"
+            size="icon-header"
+            className={headerActionClassName("hidden md:inline-flex")}
             aria-label="Избранное"
             title="Избранное"
             nativeButton={false}
@@ -74,9 +76,9 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
             <Heart />
           </Button>
 
-          <HeaderCartButton className="size-10 md:size-8" />
+          <HeaderCartButton />
 
-          <ThemeToggle className="hidden size-8 md:inline-flex" />
+          <ThemeToggle className="hidden md:inline-flex" />
 
           <AuthNav user={user} />
 
@@ -85,9 +87,10 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
               render={
                 <Button
                   variant="ghost"
-                  size="icon-sm"
-                  className="size-10 text-muted-foreground md:hidden"
+                  size="icon-header"
+                  className={headerActionClassName("md:hidden")}
                   aria-label="Меню"
+                  title="Меню"
                   data-testid="header-mobile-menu"
                 />
               }

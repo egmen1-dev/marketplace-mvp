@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+import { headerActionClassName } from "@/components/layout/header-action";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 type ThemeToggleProps = {
   className?: string;
@@ -35,14 +35,14 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     <Button
       type="button"
       variant="ghost"
-      size="icon-sm"
-      className={cn("text-muted-foreground", className)}
+      size="icon-header"
+      className={headerActionClassName(className)}
       aria-label={label}
       title={label}
       disabled={!mounted}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
-      {mounted && isDark ? <Sun /> : <Moon />}
+      {mounted && isDark ? <Sun aria-hidden /> : <Moon aria-hidden />}
     </Button>
   );
 }

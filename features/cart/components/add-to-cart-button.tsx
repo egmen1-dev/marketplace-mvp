@@ -13,7 +13,7 @@ type AddToCartButtonProps = {
   productId: string;
   stock: number;
   quantity?: number;
-  size?: "default" | "sm" | "lg";
+  size?: "default" | "sm" | "lg" | "cta" | "cta-card";
   variant?: "default" | "secondary" | "outline";
   className?: string;
   label?: string;
@@ -23,7 +23,7 @@ export function AddToCartButton({
   productId,
   stock,
   quantity = 1,
-  size = "default",
+  size = "cta-card",
   variant = "default",
   className,
   label = "В корзину",

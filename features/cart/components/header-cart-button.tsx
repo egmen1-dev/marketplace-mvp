@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Loader2, ShoppingBag } from "lucide-react";
 
+import { headerActionClassName } from "@/components/layout/header-action";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/components/cart-provider";
 import { ROUTES } from "@/lib/constants";
@@ -20,8 +21,9 @@ export function HeaderCartButton({ className }: HeaderCartButtonProps) {
   return (
     <Button
       variant="ghost"
-      size="icon-sm"
-      className={cn("relative text-muted-foreground", className)}
+      size="icon-header"
+      className={headerActionClassName("relative", className)}
+      title="Корзина"
       nativeButton={false}
       render={
         <Link
@@ -37,12 +39,17 @@ export function HeaderCartButton({ className }: HeaderCartButtonProps) {
       }
     >
       {isLoading ? (
-        <Loader2 className="size-4 animate-spin" aria-hidden />
+        <Loader2 className="size-[1.375rem] animate-spin" aria-hidden />
       ) : (
-        <ShoppingBag />
+        <ShoppingBag aria-hidden />
       )}
       {showBadge ? (
-        <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+        <span
+          className={cn(
+            "absolute top-1 right-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-bold text-primary-foreground shadow-sm ring-2 ring-background",
+          )}
+          aria-hidden
+        >
           {itemCount > 99 ? "99+" : itemCount}
         </span>
       ) : null}
