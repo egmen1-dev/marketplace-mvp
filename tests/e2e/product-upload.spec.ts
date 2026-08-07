@@ -35,7 +35,8 @@ async function mockUploadsConfigured(page: import("@playwright/test").Page) {
           maxBytes: 20 * 1024 * 1024,
           mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
           configured: true,
-          productPathPrefix: "products/e2e-seller/",
+          // Intentionally omit productPathPrefix — page must supply pathPrefix prop.
+          productPathPrefix: null,
           avatarPathPrefix: "avatars/e2e-user/",
         }),
       });
@@ -49,7 +50,6 @@ async function mockUploadsConfigured(page: import("@playwright/test").Page) {
       });
       return;
     }
-    // Client-token JSON or legacy multipart — tests use window mock for bytes.
     await route.fulfill({
       status: 200,
       contentType: "application/json",

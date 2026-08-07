@@ -35,9 +35,16 @@ type ProductFormProps = {
   categories: CategoryListItem[];
   mode: "create" | "edit";
   product?: ProductDetail;
+  /** `products/{sellerProfileId}/` for client-direct Blob uploads */
+  uploadPathPrefix: string;
 };
 
-export function ProductForm({ categories, mode, product }: ProductFormProps) {
+export function ProductForm({
+  categories,
+  mode,
+  product,
+  uploadPathPrefix,
+}: ProductFormProps) {
   const [categoryId, setCategoryId] = useState(
     product?.category?.id ?? "",
   );
@@ -84,6 +91,7 @@ export function ProductForm({ categories, mode, product }: ProductFormProps) {
           initialUrls={initialImageUrls}
           error={state.fieldErrors?.images?.[0]}
           disabled={pending}
+          pathPrefix={uploadPathPrefix}
         />
 
         <div className="flex flex-col gap-2">
@@ -318,8 +326,16 @@ export function ProductForm({ categories, mode, product }: ProductFormProps) {
 /** @deprecated Use ProductForm */
 export function ProductCreateForm({
   categories,
+  uploadPathPrefix,
 }: {
   categories: CategoryListItem[];
+  uploadPathPrefix: string;
 }) {
-  return <ProductForm categories={categories} mode="create" />;
+  return (
+    <ProductForm
+      categories={categories}
+      mode="create"
+      uploadPathPrefix={uploadPathPrefix}
+    />
+  );
 }

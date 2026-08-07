@@ -66,6 +66,8 @@ type ProductImageUploaderProps = {
   initialUrls?: string[];
   error?: string;
   disabled?: boolean;
+  /** Server-provided path prefix `products/{sellerId}/` — avoids false "unavailable" when GET omits session. */
+  pathPrefix?: string | null;
 };
 
 const ACCEPT = PRODUCT_IMAGE_LIMITS.mimeTypes.join(",");
@@ -167,6 +169,7 @@ export function ProductImageUploader({
   initialUrls = [],
   error,
   disabled,
+  pathPrefix: pathPrefixProp = null,
 }: ProductImageUploaderProps) {
   const inputId = useId();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -182,9 +185,9 @@ export function ProductImageUploader({
     null,
   );
   const [localError, setLocalError] = useState<string | null>(null);
-  const [uploadAvailable, setUploadAvailable] = useState<boolean | null>(null);
+  const [blobConfigured, setBlobConfigured] = useState<boolean | null>(null);
   const [productPathPrefix, setProductPathPrefix] = useState<string | null>(
-    null,
+    pathPrefixProp,
   );
   const [isOver, setIsOver] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -194,42 +197,60 @@ export function ProductImageUploader({
   );
 
   const remaining = PRODUCT_IMAGE_LIMITS.maxCount - items.length;
+  const resolvedPrefix = productPathPrefix || pathPrefixProp;
+  const uploadAvailable =
+    blobConfigured !== false && Boolean(resolvedPrefix);
   const uploadsDisabled =
     disabled || uploading || remaining <= 0 || uploadAvailable === false;
+
+  useEffect(() => {
+    if (pathPrefixProp) {
+      setProductPathPrefix(pathPrefixProp);
+    }
+  }, [pathPrefixProp]);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
-        const res = await fetch("/api/uploads");
+        const res = await fetch("/api/uploads", { credentials: "same-origin" });
         const data = (await res.json().catch(() => ({}))) as {
           configured?: boolean;
           productPathPrefix?: string | null;
         };
-        if (!cancelled) {
-          const configured = data.configured !== false;
-          const prefix =
-            typeof data.productPathPrefix === "string" &&
-            data.productPathPrefix.length > 0
-              ? data.productPathPrefix
-              : null;
-          setProductPathPrefix(prefix);
-          setUploadAvailable(configured && Boolean(prefix));
-          if (!configured || !prefix) {
-            setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
-          }
+        if (cancelled) return;
+
+        const configured = data.configured === true;
+        setBlobConfigured(configured);
+
+        const prefixFromApi =
+          typeof data.productPathPrefix === "string" &&
+          data.productPathPrefix.length > 0
+            ? data.productPathPrefix
+            : null;
+        if (prefixFromApi) {
+          setProductPathPrefix(prefixFromApi);
+        }
+
+        if (!configured) {
+          setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
+        } else {
+          // Prefix comes from the server page prop; missing API prefix is not a Blob outage.
+          setLocalError((prev) =>
+            prev === UPLOAD_UNAVAILABLE_MESSAGE ? null : prev,
+          );
         }
       } catch {
         if (!cancelled) {
-          // Unknown — allow attempt; upload helper will surface a friendly error.
-          setUploadAvailable(true);
+          // Keep server-provided prefix; allow attempt if we already have one.
+          setBlobConfigured((prev) => prev ?? true);
         }
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [pathPrefixProp]);
 
   const removeItem = useCallback(async (id: string) => {
     setItems((prev) => {
@@ -237,6 +258,7 @@ export function ProductImageUploader({
       if (target?.isNew) {
         void fetch(`/api/uploads?url=${encodeURIComponent(target.url)}`, {
           method: "DELETE",
+          credentials: "same-origin",
         }).catch(() => {
           /* best-effort cleanup */
         });
@@ -250,8 +272,15 @@ export function ProductImageUploader({
       const list = Array.from(files);
       if (!list.length) return;
 
-      if (uploadAvailable === false || !productPathPrefix) {
+      const prefix = productPathPrefix || pathPrefixProp;
+      if (blobConfigured === false) {
         setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
+        return;
+      }
+      if (!prefix) {
+        setLocalError(
+          "Не удалось определить профиль продавца для загрузки. Обновите страницу.",
+        );
         return;
       }
 
@@ -283,7 +312,7 @@ export function ProductImageUploader({
           const file = valid[i]!;
           try {
             const result = await uploadImageFromClient(file, {
-              pathPrefix: productPathPrefix,
+              pathPrefix: prefix,
               purpose: "product",
             });
             uploaded.push({
@@ -298,7 +327,7 @@ export function ProductImageUploader({
                 ? sanitizeUploadError(err.message)
                 : "Не удалось загрузить изображение";
             if (message === UPLOAD_UNAVAILABLE_MESSAGE) {
-              setUploadAvailable(false);
+              setBlobConfigured(false);
             }
             throw new Error(message);
           }
@@ -308,6 +337,7 @@ export function ProductImageUploader({
         for (const img of uploaded) {
           void fetch(`/api/uploads?url=${encodeURIComponent(img.url)}`, {
             method: "DELETE",
+            credentials: "same-origin",
           }).catch(() => undefined);
         }
         setLocalError(
@@ -321,7 +351,7 @@ export function ProductImageUploader({
         if (fileRef.current) fileRef.current.value = "";
       }
     },
-    [remaining, uploadAvailable, productPathPrefix],
+    [remaining, blobConfigured, productPathPrefix, pathPrefixProp],
   );
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -425,14 +455,16 @@ export function ProductImageUploader({
           <p className="text-sm font-medium text-foreground">
             {uploading
               ? `Загрузка ${progress?.done ?? 0}/${progress?.total ?? 0}…`
-              : uploadAvailable === false
+              : blobConfigured === false
                 ? UPLOAD_UNAVAILABLE_MESSAGE
-                : remaining <= 0
-                  ? "Достигнут лимит фото"
-                  : "Перетащите фото сюда или нажмите"}
+                : !resolvedPrefix
+                  ? "Подготовка загрузки…"
+                  : remaining <= 0
+                    ? "Достигнут лимит фото"
+                    : "Перетащите фото сюда или нажмите"}
           </p>
           <p className="text-xs text-muted-foreground">
-            {uploadAvailable === false
+            {blobConfigured === false
               ? "Можно сохранить товар без фото — будет показана заглушка"
               : "Можно выбрать несколько файлов сразу"}
           </p>

@@ -22,7 +22,8 @@ export const metadata = {
 };
 
 export default async function NewProductPage() {
-  await requireSellerCabinetAccess(ROUTES.SELLER_NEW_PRODUCT);
+  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_NEW_PRODUCT);
+  const uploadPathPrefix = `products/${seller.sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`;
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
   let dbError: string | null = null;
@@ -65,7 +66,11 @@ export default async function NewProductPage() {
           {dbError ? (
             <p className="text-sm text-destructive">{dbError}</p>
           ) : (
-            <ProductForm categories={categories} mode="create" />
+            <ProductForm
+              categories={categories}
+              mode="create"
+              uploadPathPrefix={uploadPathPrefix}
+            />
           )}
         </CardContent>
       </Card>

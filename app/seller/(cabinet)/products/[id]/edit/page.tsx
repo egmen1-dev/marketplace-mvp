@@ -89,6 +89,7 @@ export default async function EditProductPage({
             categories={categories}
             mode="edit"
             product={product}
+            uploadPathPrefix={`products/${sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`}
           />
         </CardContent>
       </Card>
