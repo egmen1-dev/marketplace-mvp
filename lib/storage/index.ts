@@ -3,6 +3,7 @@ import type { StorageProvider } from "./types";
 
 export {
   PRODUCT_IMAGE_LIMITS,
+  PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
   StorageError,
   type AllowedImageMime,
   type StorageProvider,

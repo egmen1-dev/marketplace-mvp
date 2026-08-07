@@ -30,7 +30,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { PRODUCT_IMAGE_LIMITS } from "@/lib/storage/types";
+import {
+  PRODUCT_IMAGE_LIMITS,
+  PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
+} from "@/lib/storage/types";
 import { cn } from "@/lib/utils";
 
 export type UploaderImage = {
@@ -52,7 +55,7 @@ const MAX_MB = PRODUCT_IMAGE_LIMITS.maxBytes / (1024 * 1024);
 
 function clientValidate(file: File): string | null {
   if (file.size > PRODUCT_IMAGE_LIMITS.maxBytes) {
-    return `«${file.name}» больше ${MAX_MB} МБ`;
+    return PRODUCT_IMAGE_TOO_LARGE_MESSAGE;
   }
   const ext = /\.[a-zA-Z0-9]+$/.exec(file.name)?.[0]?.toLowerCase();
   const allowedExt = PRODUCT_IMAGE_LIMITS.extensions as readonly string[];
@@ -227,6 +230,9 @@ export function ProductImageUploader({
             code?: string;
           };
           if (!res.ok || !data.url) {
+            if (data.code === "TOO_LARGE") {
+              throw new Error(PRODUCT_IMAGE_TOO_LARGE_MESSAGE);
+            }
             throw new Error(
               data.error ??
                 (res.status === 503

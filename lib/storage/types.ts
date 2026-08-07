@@ -2,7 +2,7 @@
 
 export const PRODUCT_IMAGE_LIMITS = {
   maxCount: 10,
-  maxBytes: 5 * 1024 * 1024,
+  maxBytes: 20 * 1024 * 1024,
   mimeTypes: [
     "image/jpeg",
     "image/png",
@@ -11,6 +11,10 @@ export const PRODUCT_IMAGE_LIMITS = {
   ] as const,
   extensions: [".jpg", ".jpeg", ".png", ".webp", ".gif"] as const,
 } as const;
+
+/** User-facing message when an image exceeds PRODUCT_IMAGE_LIMITS.maxBytes */
+export const PRODUCT_IMAGE_TOO_LARGE_MESSAGE =
+  "Максимальный размер изображения — 20 МБ";
 
 export type AllowedImageMime =
   (typeof PRODUCT_IMAGE_LIMITS.mimeTypes)[number];

@@ -1,5 +1,6 @@
 import {
   PRODUCT_IMAGE_LIMITS,
+  PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
   StorageError,
   type AllowedImageMime,
 } from "./types";
@@ -103,7 +104,7 @@ export function validateImageFile(file: {
   if (file.size > PRODUCT_IMAGE_LIMITS.maxBytes) {
     throw new StorageError(
       "TOO_LARGE",
-      `Файл больше ${PRODUCT_IMAGE_LIMITS.maxBytes / (1024 * 1024)} МБ`,
+      PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
       400,
     );
   }

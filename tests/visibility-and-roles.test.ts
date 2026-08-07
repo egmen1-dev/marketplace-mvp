@@ -12,7 +12,7 @@ import {
   isAvatarPathOwnedByUser,
   validateImageFile,
 } from "@/lib/storage/validate";
-import { StorageError } from "@/lib/storage/types";
+import { StorageError, PRODUCT_IMAGE_TOO_LARGE_MESSAGE } from "@/lib/storage/types";
 
 describe("product visibility", () => {
   it("anonymous cannot see DRAFT products", () => {
@@ -248,6 +248,91 @@ describe("upload ownership + magic bytes", () => {
         magicBytes: new Uint8Array([0x00, 0x01, 0x02, 0x03]),
       }),
     ).toThrow(StorageError);
+  });
+
+  it("allows PNG around 12MB and rejects over 20MB with friendly message", () => {
+    const pngMagic = new Uint8Array([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+    ]);
+    const twelveMb = 12 * 1024 * 1024;
+    const overLimit = 20 * 1024 * 1024 + 1;
+
+    expect(
+      validateImageFile({
+        name: "large.png",
+        type: "image/png",
+        size: twelveMb,
+        magicBytes: pngMagic,
+      }),
+    ).toEqual({ contentType: "image/png", extension: ".png" });
+
+    expect(() =>
+      validateImageFile({
+        name: "huge.png",
+        type: "image/png",
+        size: overLimit,
+        magicBytes: pngMagic,
+      }),
+    ).toThrow(PRODUCT_IMAGE_TOO_LARGE_MESSAGE);
+
+    try {
+      validateImageFile({
+        name: "huge.png",
+        type: "image/png",
+        size: overLimit,
+        magicBytes: pngMagic,
+      });
+      throw new Error("expected TOO_LARGE");
+    } catch (err) {
+      expect(err).toBeInstanceOf(StorageError);
+      expect((err as StorageError).code).toBe("TOO_LARGE");
+      expect((err as StorageError).message).toBe(
+        PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
+      );
+    }
+  });
+
+  it("allows jpg/jpeg/png/webp extensions", () => {
+    const jpegMagic = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]);
+    const pngMagic = new Uint8Array([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+    ]);
+    const webpMagic = new Uint8Array([
+      0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50,
+    ]);
+
+    expect(
+      validateImageFile({
+        name: "a.jpg",
+        type: "image/jpeg",
+        size: 1024,
+        magicBytes: jpegMagic,
+      }).extension,
+    ).toBe(".jpg");
+    expect(
+      validateImageFile({
+        name: "a.jpeg",
+        type: "image/jpeg",
+        size: 1024,
+        magicBytes: jpegMagic,
+      }).contentType,
+    ).toBe("image/jpeg");
+    expect(
+      validateImageFile({
+        name: "a.png",
+        type: "image/png",
+        size: 1024,
+        magicBytes: pngMagic,
+      }).contentType,
+    ).toBe("image/png");
+    expect(
+      validateImageFile({
+        name: "a.webp",
+        type: "image/webp",
+        size: 1024,
+        magicBytes: webpMagic,
+      }).contentType,
+    ).toBe("image/webp");
   });
 
   it("seller path ownership is scoped to sellerId prefix", () => {
