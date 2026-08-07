@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AuthNav, getSessionUser } from "@/features/auth";
+import { AuthNav, getSessionUser, type SessionUser } from "@/features/auth";
 import { HeaderCartButton } from "@/features/cart/components";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -25,10 +25,13 @@ const navItems = [
 
 type SiteHeaderProps = {
   className?: string;
+  /** When provided by layout, skips a second session read. */
+  user?: SessionUser | null;
 };
 
-export async function SiteHeader({ className }: SiteHeaderProps) {
-  const user = await getSessionUser();
+export async function SiteHeader({ className, user: userProp }: SiteHeaderProps) {
+  const user =
+    userProp !== undefined ? userProp : await getSessionUser();
 
   return (
     <header

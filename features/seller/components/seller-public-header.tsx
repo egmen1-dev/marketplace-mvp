@@ -105,7 +105,6 @@ export function ProductCardSellerLink({
         "line-clamp-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase transition-colors hover:text-primary",
         className,
       )}
-      onClick={(e) => e.stopPropagation()}
     >
       {storeName}
     </Link>

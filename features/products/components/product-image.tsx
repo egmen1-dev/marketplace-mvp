@@ -1,9 +1,7 @@
-"use client";
-
 import Image from "next/image";
-import { useState } from "react";
 import { ImageIcon } from "lucide-react";
 
+import { resolvePublicImageUrl } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 type ProductImageProps = {
@@ -14,6 +12,7 @@ type ProductImageProps = {
   height?: number;
   sizes?: string;
   priority?: boolean;
+  quality?: number;
   className?: string;
   /** Wrapper classes (aspect ratio, bg, overflow). */
   containerClassName?: string;
@@ -22,8 +21,8 @@ type ProductImageProps = {
 };
 
 /**
- * Product photo with object-cover and graceful fallback.
- * Broken / missing URLs switch to ProductImageFallback (no browser broken-image icon).
+ * Product photo with object-cover and graceful fallback for missing src.
+ * Server-compatible (no client hooks) — keeps homepage / catalog JS smaller.
  */
 export function ProductImage({
   src,
@@ -32,13 +31,14 @@ export function ProductImage({
   width,
   height,
   sizes,
-  priority,
+  priority = false,
+  quality = 75,
   className,
   containerClassName,
   fallbackLabel = true,
 }: ProductImageProps) {
-  const [failed, setFailed] = useState(false);
-  const showImage = Boolean(src) && !failed;
+  const resolved = resolvePublicImageUrl(src);
+  const showImage = Boolean(resolved);
 
   return (
     <div
@@ -50,15 +50,17 @@ export function ProductImage({
     >
       {showImage ? (
         <Image
-          src={src!}
+          src={resolved!}
           alt={alt}
           fill={fill}
           width={fill ? undefined : width}
           height={fill ? undefined : height}
           sizes={sizes}
           priority={priority}
+          quality={quality}
+          fetchPriority={priority ? "high" : "auto"}
+          loading={priority ? undefined : "lazy"}
           className={cn("object-cover", className)}
-          onError={() => setFailed(true)}
         />
       ) : (
         <ProductImageFallback showLabel={fallbackLabel} />

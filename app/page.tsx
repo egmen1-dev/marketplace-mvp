@@ -16,14 +16,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ProductCard } from "@/features/products";
 import {
-  getMarketplaceStats,
-  listRootCategories,
-} from "@/features/catalog";
-import { listProducts, ProductCard } from "@/features/products";
+  getHomeMarketplaceStats,
+  getHomePopularProducts,
+  getHomeRootCategories,
+} from "@/lib/home/cached-data";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
-export const dynamic = "force-dynamic";
+/** ISR-friendly homepage data (layout session streams separately). */
+export const revalidate = 60;
 
 const sellerBenefits = [
   "Разместить товар за несколько минут",
@@ -32,15 +34,16 @@ const sellerBenefits = [
 ] as const;
 
 export default async function HomePage() {
-  let categories: Awaited<ReturnType<typeof listRootCategories>> = [];
-  let products: Awaited<ReturnType<typeof listProducts>>["items"] = [];
-  let stats: Awaited<ReturnType<typeof getMarketplaceStats>> | null = null;
+  let categories: Awaited<ReturnType<typeof getHomeRootCategories>> = [];
+  let products: Awaited<ReturnType<typeof getHomePopularProducts>>["items"] =
+    [];
+  let stats: Awaited<ReturnType<typeof getHomeMarketplaceStats>> | null = null;
 
   try {
     const [cats, productResult, marketplaceStats] = await Promise.all([
-      listRootCategories({ activeOnly: true }),
-      listProducts({ status: "ACTIVE", pageSize: 8, page: 1, sort: "popular" }),
-      getMarketplaceStats(),
+      getHomeRootCategories(),
+      getHomePopularProducts(),
+      getHomeMarketplaceStats(),
     ]);
     categories = cats;
     products = productResult.items;
@@ -72,24 +75,16 @@ export default async function HomePage() {
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12 lg:py-24">
           <div className="flex flex-col gap-6 sm:gap-7">
-            <p
-              className="animate-fade-up font-heading text-sm font-medium tracking-[0.22em] text-primary uppercase"
-              style={{ animationDelay: "40ms" }}
-            >
+            <p className="font-heading text-sm font-medium tracking-[0.22em] text-primary uppercase">
               {APP_NAME}
             </p>
 
-            <h1
-              className="animate-fade-up max-w-2xl font-heading text-3xl leading-[1.12] font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem]"
-              style={{ animationDelay: "120ms" }}
-            >
+            {/* No fade-up on LCP text — opacity:0 delays Largest Contentful Paint */}
+            <h1 className="max-w-2xl font-heading text-3xl leading-[1.12] font-semibold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem]">
               Покупайте и продавайте всё в одном месте
             </h1>
 
-            <p
-              className="animate-fade-up max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
-              style={{ animationDelay: "200ms" }}
-            >
+            <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               Товары от магазинов и продавцов — с удобной доставкой СДЭК
             </p>
 
@@ -128,17 +123,21 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <PopularCategories categories={categories} />
+      <div className="content-visibility-auto">
+        <PopularCategories categories={categories} />
+      </div>
 
       {showStats && stats ? (
-        <MarketplaceStats
-          products={stats.products}
-          sellers={stats.sellers}
-          categories={stats.categories}
-        />
+        <div className="content-visibility-auto">
+          <MarketplaceStats
+            products={stats.products}
+            sellers={stats.sellers}
+            categories={stats.categories}
+          />
+        </div>
       ) : null}
 
-      <section className="border-t border-border bg-surface/50">
+      <section className="content-visibility-auto border-t border-border bg-surface/50">
         <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
           <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -192,9 +191,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <TrustSection />
+      <div className="content-visibility-auto">
+        <TrustSection />
+      </div>
 
-      <section className="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16">
+      <section className="content-visibility-auto mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16">
         <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary/15 via-card to-card ring-primary/20 hover:translate-y-0 hover:shadow-card">
           <CardContent className="grid gap-8 p-6 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] sm:items-center sm:gap-10 sm:p-8 lg:p-10">
             <div className="max-w-lg">

@@ -10,6 +10,7 @@ import {
   collectDescendantIds,
   productCountWithDescendants,
 } from "@/features/catalog/tree";
+import { resolvePublicImageUrl } from "@/lib/images";
 import { prisma } from "@/lib/prisma";
 
 export type CategoryListItem = {
@@ -133,7 +134,7 @@ export async function listCategories(options?: {
     name: row.name,
     slug: row.slug,
     description: row.description,
-    imageUrl: row.imageUrl,
+    imageUrl: resolvePublicImageUrl(row.imageUrl),
     parentId: row.parentId,
     level: row.level,
     productCount: countMap.get(row.id) ?? 0,
@@ -160,7 +161,7 @@ export async function listRootCategories(options?: {
       name: row.name,
       slug: row.slug,
       description: row.description,
-      imageUrl: row.imageUrl,
+      imageUrl: resolvePublicImageUrl(row.imageUrl),
       parentId: row.parentId,
       level: row.level,
       productCount: productCountWithDescendants(
@@ -197,7 +198,7 @@ export async function listCategoryTree(options?: {
       name: row.name,
       slug: row.slug,
       description: row.description,
-      imageUrl: row.imageUrl,
+      imageUrl: resolvePublicImageUrl(row.imageUrl),
       parentId: row.parentId,
       level: row.level,
       productCount: productCountWithDescendants(
@@ -267,6 +268,7 @@ export async function getCategoryBySlug(
 
   return {
     ...category,
+    imageUrl: resolvePublicImageUrl(category.imageUrl),
     productCount: productCountWithDescendants(
       treeNodes,
       category.id,

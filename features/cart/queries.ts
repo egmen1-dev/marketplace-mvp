@@ -13,6 +13,7 @@ import type {
 } from "@/features/cart/types";
 import { toPriceNumber } from "@/features/products/mappers";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
+import { resolvePublicImageUrl } from "@/lib/images";
 import { prisma } from "@/lib/prisma";
 
 const cartProductSelect = {
@@ -53,7 +54,7 @@ function mapCartProduct(row: CartProductRow): CartProductSnapshot {
     primaryImage: image
       ? {
           id: image.id,
-          url: image.url,
+          url: resolvePublicImageUrl(image.url) ?? image.url,
           alt: image.alt,
           sortOrder: image.sortOrder,
           isPrimary: image.isPrimary,

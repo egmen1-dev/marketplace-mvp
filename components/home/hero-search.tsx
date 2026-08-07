@@ -132,7 +132,8 @@ export function HeroSearch({ className }: HeroSearchProps) {
             placeholder="Найти товар, бренд или категорию"
             aria-label="Поиск товаров"
             aria-autocomplete="list"
-            aria-controls={listId}
+            aria-controls={showSuggest ? listId : undefined}
+            aria-expanded={showSuggest}
             autoComplete="off"
             className="h-12 rounded-xl border-border/80 bg-surface-elevated/90 pl-10 text-base shadow-card backdrop-blur-sm placeholder:text-muted-foreground/80 focus-visible:shadow-glow"
           />

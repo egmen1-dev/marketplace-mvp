@@ -1,0 +1,9 @@
+.playwright-browsers
+.next
+.next-034
+node_modules
+tmp
+test-results
+playwright-report
+coverage
+.screenshots

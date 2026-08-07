@@ -1,6 +1,5 @@
-"use client";
-
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -21,10 +20,20 @@ import { cn } from "@/lib/utils";
 type ProductCardProps = {
   product: ProductListItem;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
+  /** Eager-load card image (above-the-fold grids only). */
+  imagePriority?: boolean;
 };
 
-export function ProductCard({ product, className, style }: ProductCardProps) {
+/**
+ * Catalog / home product card — Server Component shell with client actions.
+ */
+export function ProductCard({
+  product,
+  className,
+  style,
+  imagePriority = false,
+}: ProductCardProps) {
   const href = `${ROUTES.PRODUCT}/${product.id}`;
   const image = product.primaryImage;
   const compareAt = product.compareAt;
@@ -50,6 +59,8 @@ export function ProductCard({ product, className, style }: ProductCardProps) {
             src={image?.url}
             alt={image?.alt ?? product.title}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            priority={imagePriority}
+            quality={70}
             containerClassName="aspect-[3/4] sm:aspect-[4/5]"
             className="transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out-premium)] group-hover:scale-[1.06]"
           />

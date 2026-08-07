@@ -21,9 +21,10 @@ const prisma = new PrismaClient();
 /** Demo login — also shown on /auth/sign-in. */
 const DEMO_PASSWORD = "demo1234";
 
-/** Unsplash placeholders — stable seed URLs. */
-function img(id: string, w = 800) {
-  return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+/** Local optimized seed assets (see public/images/seed). */
+function img(id: string, _width?: number) {
+  void _width;
+  return `/images/seed/${id}.jpg`;
 }
 
 type SeedCategory = {

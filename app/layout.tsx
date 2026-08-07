@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Manrope, Unbounded } from "next/font/google";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import { AuthGateToast } from "@/components/layout/auth-gate-toast";
 import { SiteFooter, SiteHeader } from "@/components/layout";
@@ -18,18 +18,27 @@ const manrope = Manrope({
   variable: "--font-sans",
   subsets: ["latin", "cyrillic"],
   display: "swap",
+  weight: ["400", "500", "600"],
+  adjustFontFallback: true,
+  preload: true,
 });
 
+/** Heading face — not preloaded so LCP text can paint on Manrope fallback first. */
 const unbounded = Unbounded({
   variable: "--font-heading",
   subsets: ["latin", "cyrillic"],
   display: "swap",
+  weight: ["500", "600"],
+  adjustFontFallback: true,
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
+  adjustFontFallback: true,
 });
 
 const appUrl = getCanonicalAppUrl();
@@ -67,7 +76,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const user = await getSessionUser();
 
@@ -84,7 +93,7 @@ export default async function RootLayout({
         >
           <CartProvider isAuthenticated={Boolean(user)}>
             <FavoritesProvider isAuthenticated={Boolean(user)}>
-              <SiteHeader />
+              <SiteHeader user={user} />
               <main className="flex-1">{children}</main>
               <SiteFooter />
               <Suspense fallback={null}>

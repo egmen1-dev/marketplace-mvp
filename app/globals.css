@@ -209,6 +209,12 @@
   .animate-hero-glow {
     animation: hero-glow 8s ease-in-out infinite alternate;
   }
+
+  /* Skip layout/paint for offscreen homepage sections (keeps LCP free). */
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 520px;
+  }
 }
 
 @keyframes fade-up {

@@ -5,6 +5,7 @@ import type {
   ProductImageDto,
   ProductListItem,
 } from "@/features/products/types";
+import { resolvePublicImageUrl } from "@/lib/images";
 
 /** Russian labels for product condition (состояние). */
 export const PRODUCT_CONDITION_LABELS: Record<ProductCondition, string> = {
@@ -138,7 +139,7 @@ type DetailRow = ListRow & {
 function mapImage(img: ImageRow): ProductImageDto {
   return {
     id: img.id,
-    url: img.url,
+    url: resolvePublicImageUrl(img.url) ?? img.url,
     alt: img.alt,
     sortOrder: img.sortOrder,
     isPrimary: img.isPrimary,

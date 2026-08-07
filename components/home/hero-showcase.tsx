@@ -45,10 +45,8 @@ export function HeroShowcase({ featured }: HeroShowcaseProps) {
   const image = featured?.primaryImage;
 
   return (
-    <div
-      className="animate-fade-up relative mx-auto w-full max-w-md lg:max-w-none"
-      style={{ animationDelay: "220ms" }}
-    >
+    /* No entrance fade — LCP hero image must paint at full opacity immediately */
+    <div className="relative mx-auto w-full max-w-md lg:max-w-none">
       <div
         aria-hidden
         className="pointer-events-none absolute -inset-4 rounded-[2rem] bg-[radial-gradient(ellipse_at_30%_20%,rgb(255_106_0_/_18%),transparent_55%)]"
@@ -63,7 +61,9 @@ export function HeroShowcase({ featured }: HeroShowcaseProps) {
             <ProductImage
               src={image?.url}
               alt={image?.alt ?? title}
-              sizes="160px"
+              sizes="(max-width: 1024px) 42vw, 200px"
+              priority
+              quality={75}
               containerClassName="aspect-[4/5]"
               className="transition-transform duration-[var(--duration-slow)] group-hover:scale-[1.04]"
             />
