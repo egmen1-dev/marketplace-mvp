@@ -31,10 +31,17 @@ export {
   InventoryStatusBadge,
   StockEditor,
   SellerToastFlash,
+  DashboardEmptyState,
+  DashboardKpiCards,
+  DashboardQuickActions,
+  DashboardRecentOrders,
+  DashboardRecentProducts,
+  DashboardActivity,
 } from "./components";
 export {
   getSellerDashboardStats,
   listSellerOrders,
+  listSellerDashboardActivity,
   updateSellerOrderStatus,
   getSellerSettings,
   updateSellerSettings,
@@ -43,6 +50,7 @@ export {
   isLowStock,
   LOW_STOCK_THRESHOLD,
 } from "./queries";
+export type { SellerActivityItem } from "./queries";
 export {
   canTransitionOrderStatus,
   getAllowedOrderTransitions,

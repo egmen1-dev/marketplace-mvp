@@ -5,6 +5,7 @@ import {
   UserRole,
 } from "@prisma/client";
 
+import { ORDER_STATUS_LABELS } from "@/features/orders/lib/status";
 import { toPriceNumber } from "@/features/products/mappers";
 import { mapProductListItem } from "@/features/products/mappers";
 import type { ProductListItem } from "@/features/products/types";
@@ -404,6 +405,76 @@ export async function getPublicSellerProfile(
     },
     products: products.map(mapProductListItem),
   };
+}
+
+
+export type SellerActivityItem = {
+  id: string;
+  type: "product_created" | "price_changed" | "order_status";
+  title: string;
+  description: string | null;
+  createdAt: string;
+};
+
+/** Presentation-only feed — real product/order events only, no fakes. */
+export async function listSellerDashboardActivity(
+  sellerProfileId: string,
+  limit = 8,
+): Promise<SellerActivityItem[]> {
+  const [products, statusRows] = await Promise.all([
+    prisma.product.findMany({
+      where: { sellerId: sellerProfileId },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: { id: true, name: true, createdAt: true },
+    }),
+    prisma.orderStatusHistory.findMany({
+      where: {
+        order: {
+          items: { some: { product: { sellerId: sellerProfileId } } },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        fromStatus: true,
+        toStatus: true,
+        createdAt: true,
+        order: { select: { orderNumber: true } },
+      },
+    }),
+  ]);
+
+  const items: SellerActivityItem[] = [
+    ...products.map((p) => ({
+      id: `product-created-${p.id}`,
+      type: "product_created" as const,
+      title: "Создан товар",
+      description: p.name,
+      createdAt: p.createdAt.toISOString(),
+    })),
+    ...statusRows.map((row) => {
+      const toLabel = ORDER_STATUS_LABELS[row.toStatus] ?? row.toStatus;
+      const fromLabel = row.fromStatus
+        ? (ORDER_STATUS_LABELS[row.fromStatus] ?? row.fromStatus)
+        : null;
+      return {
+        id: `order-status-${row.id}`,
+        type: "order_status" as const,
+        title: `Статус заказа ${row.order.orderNumber}`,
+        description: fromLabel ? `${fromLabel} → ${toLabel}` : toLabel,
+        createdAt: row.createdAt.toISOString(),
+      };
+    }),
+  ];
+
+  return items
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, limit);
 }
 
 export { isLowStock, LOW_STOCK_THRESHOLD };
