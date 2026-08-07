@@ -32,12 +32,13 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
 
   return (
     <header
+      data-testid="site-header"
       className={cn(
         "sticky top-0 z-40 border-b border-border/80 bg-background/80 backdrop-blur-md",
         className,
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-4 sm:px-6">
         <Logo variant="responsive" size={36} className="shrink-0" />
 
         <Button
@@ -45,6 +46,7 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
           className="hidden shrink-0 rounded-xl md:inline-flex"
           nativeButton={false}
           render={<Link href={ROUTES.CATALOG} />}
+          data-testid="header-catalog"
         >
           <LayoutGrid data-icon="inline-start" />
           Каталог
@@ -60,11 +62,12 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
           <Button
             variant="ghost"
             size="icon-sm"
-            className="text-muted-foreground"
+            className="size-10 text-muted-foreground md:size-8"
             aria-label="Избранное"
-            title="Избранное — скоро"
+            title="Избранное"
             nativeButton={false}
-            render={<Link href={ROUTES.CATALOG} />}
+            render={<Link href={ROUTES.FAVORITES} />}
+            data-testid="header-favorites"
           >
             <Heart />
           </Button>
@@ -81,8 +84,9 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="text-muted-foreground md:hidden"
+                  className="size-10 text-muted-foreground md:hidden md:size-8"
                   aria-label="Меню"
+                  data-testid="header-mobile-menu"
                 />
               }
             >
@@ -97,6 +101,11 @@ export async function SiteHeader({ className }: SiteHeaderProps) {
                 <DropdownMenuItem
                   key={item.href}
                   render={<Link href={item.href} />}
+                  data-testid={
+                    item.href === ROUTES.CATALOG
+                      ? "mobile-nav-catalog"
+                      : undefined
+                  }
                 >
                   {item.label}
                 </DropdownMenuItem>

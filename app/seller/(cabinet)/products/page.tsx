@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ExternalLink, Pencil, Plus } from "lucide-react";
 import { ProductStatus } from "@prisma/client";
@@ -13,9 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  AuthRequiredError,
-  requireSellerSession,
-  SellerRequiredError,
+  requireSellerCabinetAccess,
 } from "@/features/auth";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
@@ -59,21 +56,8 @@ type PageProps = {
 };
 
 export default async function SellerProductsPage({ searchParams }: PageProps) {
-  let sellerProfileId: string;
-  try {
-    const seller = await requireSellerSession();
-    sellerProfileId = seller.sellerProfileId;
-  } catch (err) {
-    if (err instanceof AuthRequiredError) {
-      redirect(
-        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(ROUTES.SELLER_PRODUCTS)}`,
-      );
-    }
-    if (err instanceof SellerRequiredError) {
-      redirect(ROUTES.HOME);
-    }
-    throw err;
-  }
+  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_PRODUCTS);
+  const sellerProfileId = seller.sellerProfileId;
 
   const params = await searchParams;
   const query = params.q?.trim() || undefined;

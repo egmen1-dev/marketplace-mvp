@@ -176,3 +176,25 @@ export class AdminRequiredError extends Error {
     this.name = "AdminRequiredError";
   }
 }
+
+/**
+ * Seller cabinet gate for RSC: DB-checked role + profile, then redirect.
+ * Layout should call this; pages may call again for sellerProfileId.
+ */
+export async function requireSellerCabinetAccess(callbackPath: string) {
+  const { redirect } = await import("next/navigation");
+  const { ROUTES } = await import("@/lib/constants");
+  try {
+    return await requireSellerSession();
+  } catch (err) {
+    if (err instanceof AuthRequiredError) {
+      redirect(
+        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(callbackPath)}`,
+      );
+    }
+    if (err instanceof SellerRequiredError) {
+      redirect(`${ROUTES.HOME}?error=seller_required`);
+    }
+    throw err;
+  }
+}

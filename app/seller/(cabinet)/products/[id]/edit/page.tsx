@@ -10,9 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  AuthRequiredError,
-  requireSellerSession,
-  SellerRequiredError,
+  requireSellerCabinetAccess,
 } from "@/features/auth";
 import { listCategories } from "@/features/catalog";
 import {
@@ -38,21 +36,8 @@ export default async function EditProductPage({
 }: EditProductPageProps) {
   const { id } = await params;
 
-  let sellerProfileId: string;
-  try {
-    const seller = await requireSellerSession();
-    sellerProfileId = seller.sellerProfileId;
-  } catch (err) {
-    if (err instanceof AuthRequiredError) {
-      redirect(
-        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(sellerProductEditPath(id))}`,
-      );
-    }
-    if (err instanceof SellerRequiredError) {
-      redirect(ROUTES.HOME);
-    }
-    throw err;
-  }
+  const seller = await requireSellerCabinetAccess(sellerProductEditPath(id));
+  const sellerProfileId = seller.sellerProfileId;
 
   let product: Awaited<ReturnType<typeof getOwnedProduct>>;
   try {

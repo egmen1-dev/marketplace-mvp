@@ -10,7 +10,7 @@ test.describe("catalog search & theme & responsive", () => {
 
     await expect(page).toHaveURL(/q=/);
     await expect(
-      page.getByText(/тепловая|Тепловые|пушк/i).first(),
+      page.getByRole("main").getByText(/тепловая|Тепловые|пушк/i).first(),
     ).toBeVisible({ timeout: 20_000 });
 
     errors.assertClean();
@@ -50,10 +50,24 @@ test.describe("catalog search & theme & responsive", () => {
       const errors = attachErrorCollector(page);
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("/");
-      await expect(page.getByRole("banner")).toBeVisible();
-      await expect(page.getByText("Лот").first()).toBeVisible();
-      await page.goto("/catalog");
-      await expect(page.locator("body")).toBeVisible();
+
+      const header = page.getByTestId("site-header");
+      await expect(header).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: "Лот" }).first(),
+      ).toBeVisible();
+      await expect(page.getByTestId("brand-wordmark").first()).toBeVisible();
+
+      // Mobile: catalog via menu; tablet/desktop: header catalog control.
+      if (vp.width < 768) {
+        await page.getByRole("button", { name: "Меню" }).click();
+        await page.getByRole("menuitem", { name: "Каталог" }).click();
+      } else {
+        await page.getByRole("link", { name: /Каталог/i }).first().click();
+      }
+
+      await expect(page).toHaveURL(/\/catalog/);
+      await expect(page.getByRole("main")).toBeVisible();
       errors.assertClean();
     });
   }

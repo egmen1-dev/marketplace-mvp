@@ -1,6 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 
-import { requireSellerSession } from "@/features/auth";
+import { requireSellerCabinetAccess } from "@/features/auth";
 import { listProducts } from "@/features/products/queries";
 import {
   DashboardActivity,
@@ -14,6 +14,7 @@ import {
   listSellerDashboardActivity,
   listSellerOrders,
 } from "@/features/seller/queries";
+import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export const metadata = {
 };
 
 export default async function SellerDashboardPage() {
-  const seller = await requireSellerSession();
+  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_DASHBOARD);
 
   let stats = {
     totalProducts: 0,

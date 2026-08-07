@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { requireSellerSession } from "@/features/auth";
+import { requireSellerCabinetAccess } from "@/features/auth";
 import { formatOrderDate, formatOrderStatus, OrderStatusBadge } from "@/features/orders";
 import { formatPrice } from "@/features/products/mappers";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
@@ -40,7 +40,7 @@ type PageProps = {
 };
 
 export default async function SellerOrdersPage({ searchParams }: PageProps) {
-  const seller = await requireSellerSession();
+  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_ORDERS);
   const params = await searchParams;
 
   const statusRaw = params.status?.toUpperCase();

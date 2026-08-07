@@ -111,11 +111,18 @@ export function Logo({
       <LogoIcon size={px} />
       {showWordmark ? (
         <span
+          data-testid="brand-wordmark"
           className={cn(
             "font-heading font-semibold tracking-[-0.03em] text-foreground",
-            responsiveWordmark && "hidden sm:inline",
+            // Keep brand visible on mobile; only tighten gap on xs.
+            responsiveWordmark && "max-sm:tracking-[-0.04em]",
           )}
-          style={{ fontSize: wordmarkPx, lineHeight: 1 }}
+          style={{
+            fontSize: responsiveWordmark
+              ? Math.max(14, Math.round(px * 0.42))
+              : wordmarkPx,
+            lineHeight: 1,
+          }}
         >
           {APP_NAME}
         </span>

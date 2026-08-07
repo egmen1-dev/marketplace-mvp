@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,9 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  AuthRequiredError,
-  requireSellerSession,
-  SellerRequiredError,
+  requireSellerCabinetAccess,
 } from "@/features/auth";
 import { listCategories } from "@/features/catalog";
 import { ProductForm } from "@/features/seller";
@@ -25,19 +22,7 @@ export const metadata = {
 };
 
 export default async function NewProductPage() {
-  try {
-    await requireSellerSession();
-  } catch (err) {
-    if (err instanceof AuthRequiredError) {
-      redirect(
-        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(ROUTES.SELLER_NEW_PRODUCT)}`,
-      );
-    }
-    if (err instanceof SellerRequiredError) {
-      redirect(ROUTES.HOME);
-    }
-    throw err;
-  }
+  await requireSellerCabinetAccess(ROUTES.SELLER_NEW_PRODUCT);
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
   let dbError: string | null = null;

@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { requireSellerSession } from "@/features/auth";
+import { requireSellerCabinetAccess } from "@/features/auth";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export const metadata = {
 };
 
 export default async function SellerAnalyticsPage() {
-  await requireSellerSession();
+  await requireSellerCabinetAccess(ROUTES.SELLER_ANALYTICS);
 
   return (
     <div className="flex flex-col gap-6">

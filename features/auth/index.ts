@@ -13,6 +13,7 @@ export {
   loadUserAuthFromDb,
   requireUserSession,
   requireSellerSession,
+  requireSellerCabinetAccess,
   requireAdminSession,
   AuthRequiredError,
   SellerRequiredError,

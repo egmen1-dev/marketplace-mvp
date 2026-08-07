@@ -8,7 +8,7 @@ test.describe("seller cabinet", () => {
     await signIn(page, DEMO.buyerEmail);
     await page.goto("/seller/dashboard");
     await expect(page).not.toHaveURL(/\/seller\/dashboard/);
-    await expect(page).toHaveURL(/error=seller_required|\/($|\?)/);
+    await expect(page).toHaveURL(/error=seller_required/);
     errors.assertClean();
   });
 

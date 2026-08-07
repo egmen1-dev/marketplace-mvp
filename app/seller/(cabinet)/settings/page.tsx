@@ -7,10 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { requireSellerSession } from "@/features/auth";
+import { requireSellerCabinetAccess } from "@/features/auth";
 import { SellerSettingsForm } from "@/features/seller/components/seller-settings-form";
 import { getSellerSettings } from "@/features/seller/queries";
-import { sellerPublicPath } from "@/lib/constants";
+import { ROUTES, sellerPublicPath } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ export const metadata = {
 };
 
 export default async function SellerSettingsPage() {
-  const seller = await requireSellerSession();
+  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_SETTINGS);
   const settings = await getSellerSettings(seller.sellerProfileId);
 
   return (
