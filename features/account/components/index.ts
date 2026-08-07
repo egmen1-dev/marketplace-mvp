@@ -1,4 +1,5 @@
 export { AccountSidebar } from "./account-sidebar";
+export { AccountMobileNav } from "./account-mobile-nav";
 export { AccountShell } from "./account-shell";
 export { AccountDashboard } from "./account-dashboard";
 export { ProfileView } from "./profile-view";

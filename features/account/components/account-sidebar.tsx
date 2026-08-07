@@ -19,7 +19,9 @@ const NAV_ITEMS = [
     label: "Мой профиль",
     icon: UserRound,
     match: (path: string) =>
-      path === ROUTES.PROFILE || path.startsWith(`${ROUTES.PROFILE}/edit`),
+      path === ROUTES.PROFILE ||
+      path.startsWith(`${ROUTES.PROFILE}/`) ||
+      path === ROUTES.ACCOUNT,
   },
   {
     href: ROUTES.FAVORITES,
@@ -61,12 +63,12 @@ export function AccountSidebar() {
       <p className="mb-2 px-3 font-heading text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase">
         Кабинет
       </p>
-      <ul className="flex gap-1 overflow-x-auto pb-1 sm:flex-col sm:overflow-visible sm:pb-0">
+      <ul className="flex flex-col gap-1">
         {NAV_ITEMS.map((item) => {
           const active = item.match(pathname);
           const Icon = item.icon;
           return (
-            <li key={item.href} className="shrink-0">
+            <li key={item.href}>
               <Link
                 href={item.href}
                 className={cn(

@@ -26,7 +26,7 @@ export function OrderDetailView({
     paymentSuccess && order.status === "NEW";
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-12">
+    <div className="flex flex-col gap-8">
       <PaymentProcessingRefresh active={showProcessing} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

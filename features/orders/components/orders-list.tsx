@@ -16,7 +16,7 @@ type OrdersListProps = {
 export function OrdersList({ orders }: OrdersListProps) {
   if (orders.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-16 text-center">
+      <div className="animate-fade-up flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-16 text-center">
         <Package className="size-10 text-muted-foreground" />
         <div>
           <p className="font-heading text-lg font-medium">Заказов пока нет</p>

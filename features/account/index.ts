@@ -17,6 +17,7 @@ export { updateProfileSchema, type UpdateProfileInput } from "./schemas";
 export type { UserProfile, ProfileUpdateResult } from "./types";
 export {
   AccountSidebar,
+  AccountMobileNav,
   AccountShell,
   AccountDashboard,
   ProfileView,
