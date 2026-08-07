@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -45,14 +46,15 @@ export function AuthNav({ user }: AuthNavProps) {
           <User />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-44">
-          <DropdownMenuLabel>Профиль</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem render={<Link href={ROUTES.AUTH_SIGN_IN} />}>
-            Войти
-          </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href={ROUTES.AUTH_SIGN_UP} />}>
-            Регистрация
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Профиль</DropdownMenuLabel>
+            <DropdownMenuItem render={<Link href={ROUTES.AUTH_SIGN_IN} />}>
+              Войти
+            </DropdownMenuItem>
+            <DropdownMenuItem render={<Link href={ROUTES.AUTH_SIGN_UP} />}>
+              Регистрация
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -76,46 +78,50 @@ export function AuthNav({ user }: AuthNavProps) {
         <User />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-52">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium text-foreground">{label}</span>
-            <span className="text-xs text-muted-foreground">{user.email}</span>
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-medium text-foreground">{label}</span>
+              <span className="text-xs text-muted-foreground">{user.email}</span>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link href={ROUTES.PROFILE} />}>
-          <User className="size-4" />
-          Профиль
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href={ROUTES.FAVORITES} />}>
-          <Heart className="size-4" />
-          Избранное
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href={ROUTES.HISTORY} />}>
-          <Clock className="size-4" />
-          История
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href={ROUTES.ORDERS} />}>
-          <Package className="size-4" />
-          Заказы
-        </DropdownMenuItem>
-        <DropdownMenuItem render={<Link href={ROUTES.SETTINGS} />}>
-          <Settings className="size-4" />
-          Настройки
-        </DropdownMenuItem>
-        {(user.role === "SELLER" || user.role === "ADMIN") &&
-        user.sellerProfileId ? (
-          <DropdownMenuItem render={<Link href={ROUTES.SELLER} />}>
-            <Store className="size-4" />
-            Кабинет продавца
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href={ROUTES.PROFILE} />}>
+            <User className="size-4" />
+            Профиль
           </DropdownMenuItem>
-        ) : null}
-        {user.role === "ADMIN" ? (
-          <DropdownMenuItem render={<Link href={ROUTES.ADMIN} />}>
-            <Shield className="size-4" />
-            Админ-панель
+          <DropdownMenuItem render={<Link href={ROUTES.FAVORITES} />}>
+            <Heart className="size-4" />
+            Избранное
           </DropdownMenuItem>
-        ) : null}
+          <DropdownMenuItem render={<Link href={ROUTES.HISTORY} />}>
+            <Clock className="size-4" />
+            История
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={ROUTES.ORDERS} />}>
+            <Package className="size-4" />
+            Заказы
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={ROUTES.SETTINGS} />}>
+            <Settings className="size-4" />
+            Настройки
+          </DropdownMenuItem>
+          {(user.role === "SELLER" || user.role === "ADMIN") &&
+          user.sellerProfileId ? (
+            <DropdownMenuItem render={<Link href={ROUTES.SELLER} />}>
+              <Store className="size-4" />
+              Кабинет продавца
+            </DropdownMenuItem>
+          ) : null}
+          {user.role === "ADMIN" ? (
+            <DropdownMenuItem render={<Link href={ROUTES.ADMIN} />}>
+              <Shield className="size-4" />
+              Админ-панель
+            </DropdownMenuItem>
+          ) : null}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         {/* Form action required so Next.js handles NEXT_REDIRECT from signOut */}
         <form action={signOutAction} className="w-full">
