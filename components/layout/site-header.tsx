@@ -63,6 +63,11 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
         </div>
 
         <div className="ml-auto flex items-center gap-1 sm:gap-1.5">
+          <HeaderSearch
+            variant="icon"
+            className={headerActionClassName("md:hidden")}
+          />
+
           <Button
             variant="ghost"
             size="icon-header"

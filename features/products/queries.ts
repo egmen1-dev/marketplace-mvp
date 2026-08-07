@@ -20,9 +20,31 @@ import type {
 import { resolveCategoryIdsIncludingDescendants } from "@/features/catalog/queries";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { setInventoryQuantity } from "@/features/orders/lib/inventory-sync";
+import {
+  searchTokenVariants,
+  tokenizeSearchQuery,
+} from "@/features/products/search-query";
 import { PAGINATION, ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { pathnameFromBlobUrl } from "@/lib/storage";
+
+/** Prisma OR clause matching a single search token (and its stem variants). */
+function tokenMatchOr(
+  token: string,
+): Prisma.ProductWhereInput["OR"] {
+  const variants = searchTokenVariants(token);
+  const or: Prisma.ProductWhereInput[] = [];
+  for (const v of variants) {
+    or.push(
+      { name: { contains: v, mode: "insensitive" } },
+      { description: { contains: v, mode: "insensitive" } },
+      { category: { name: { contains: v, mode: "insensitive" } } },
+      { category: { slug: { contains: v, mode: "insensitive" } } },
+      { seller: { storeName: { contains: v, mode: "insensitive" } } },
+    );
+  }
+  return or;
+}
 
 export type ProductViewer = {
   userId?: string;
@@ -202,14 +224,13 @@ async function buildWhere(
   }
 
   if (filters.query) {
-    const q = filters.query.trim();
-    where.OR = [
-      { name: { contains: q, mode: "insensitive" } },
-      { description: { contains: q, mode: "insensitive" } },
-      { category: { name: { contains: q, mode: "insensitive" } } },
-      { category: { slug: { contains: q, mode: "insensitive" } } },
-      { seller: { storeName: { contains: q, mode: "insensitive" } } },
-    ];
+    const tokens = tokenizeSearchQuery(filters.query);
+    if (tokens.length === 1) {
+      where.OR = tokenMatchOr(tokens[0]);
+    } else if (tokens.length > 1) {
+      // Every token must match somewhere (title, description, category, seller).
+      where.AND = tokens.map((token) => ({ OR: tokenMatchOr(token) }));
+    }
   }
 
   return where;
@@ -289,14 +310,20 @@ export async function suggestCatalog(
   if (!q) return [];
 
   const take = Math.min(Math.max(limit, 1), 20);
+  const tokens = tokenizeSearchQuery(q);
+  const primary = tokens[0] ?? q.toLowerCase();
+  const variants = searchTokenVariants(primary);
+
+  const categoryOr: Prisma.CategoryWhereInput[] = variants.flatMap((v) => [
+    { name: { contains: v, mode: "insensitive" as const } },
+    { slug: { contains: v, mode: "insensitive" as const } },
+    { description: { contains: v, mode: "insensitive" as const } },
+  ]);
+
   const categories = await prisma.category.findMany({
     where: {
       isActive: true,
-      OR: [
-        { name: { contains: q, mode: "insensitive" } },
-        { slug: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-      ],
+      OR: categoryOr,
     },
     select: { id: true, name: true, slug: true },
     take: Math.min(4, take),
@@ -305,16 +332,18 @@ export async function suggestCatalog(
 
   const categoryIds = categories.map((c) => c.id);
 
+  const productOr: Prisma.ProductWhereInput[] = variants.flatMap((v) => [
+    { name: { contains: v, mode: "insensitive" as const } },
+    { description: { contains: v, mode: "insensitive" as const } },
+  ]);
+  if (categoryIds.length > 0) {
+    productOr.push({ categoryId: { in: categoryIds } });
+  }
+
   const products = await prisma.product.findMany({
     where: {
       status: ProductStatus.ACTIVE,
-      OR: [
-        { name: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-        ...(categoryIds.length > 0
-          ? [{ categoryId: { in: categoryIds } }]
-          : []),
-      ],
+      OR: productOr,
     },
     select: { id: true, name: true, slug: true },
     take,

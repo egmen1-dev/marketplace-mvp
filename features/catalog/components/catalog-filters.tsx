@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { ProductCondition } from "@prisma/client";
 import { Filter, X } from "lucide-react";
@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { CategoryTreeNode } from "@/features/catalog/queries";
 import {
-  buildCatalogHref,
+  buildListingHref,
   CATALOG_SORT_OPTIONS,
   hasActiveCatalogFilters,
   parseCatalogParams,
@@ -37,6 +37,8 @@ type CatalogFiltersPanelProps = {
   cities: string[];
   sellers: ProductSellerOption[];
   className?: string;
+  /** When on `/category/[slug]`, preselect and keep SEO path. */
+  lockedCategorySlug?: string;
 };
 
 type FilterFormState = {
@@ -307,21 +309,24 @@ function FilterFields({
         </select>
       </div>
 
-      <label
-        htmlFor={`${idPrefix}-inStock`}
-        className="flex cursor-pointer items-center gap-2.5 text-sm"
-      >
-        <input
-          id={`${idPrefix}-inStock`}
-          type="checkbox"
-          checked={form.inStock}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, inStock: e.target.checked }))
-          }
-          className="size-4 rounded border-input accent-primary"
-        />
-        Только в наличии
-      </label>
+      <div className="flex flex-col gap-2">
+        <Label>Наличие</Label>
+        <label
+          htmlFor={`${idPrefix}-inStock`}
+          className="flex cursor-pointer items-center gap-2.5 text-sm"
+        >
+          <input
+            id={`${idPrefix}-inStock`}
+            type="checkbox"
+            checked={form.inStock}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, inStock: e.target.checked }))
+            }
+            className="size-4 rounded border-input accent-primary"
+          />
+          Только в наличии
+        </label>
+      </div>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${idPrefix}-sort`}>Сортировка</Label>
@@ -342,8 +347,12 @@ function FilterFields({
   );
 }
 
-function useCatalogFilterForm(categoryTree: CategoryTreeNode[]) {
+function useCatalogFilterForm(
+  categoryTree: CategoryTreeNode[],
+  lockedCategorySlug?: string,
+) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
   const [form, setForm] = useState(() =>
@@ -354,25 +363,29 @@ function useCatalogFilterForm(categoryTree: CategoryTreeNode[]) {
   );
 
   useEffect(() => {
-    setForm(
-      stateFromSearchParams(
-        new URLSearchParams(searchParams.toString()),
-        categoryTree,
-      ),
+    const next = stateFromSearchParams(
+      new URLSearchParams(searchParams.toString()),
+      categoryTree,
     );
-  }, [searchParams, categoryTree]);
+    if (lockedCategorySlug && !next.category && !next.subcategory) {
+      next.category = lockedCategorySlug;
+    }
+    setForm(next);
+  }, [searchParams, categoryTree, lockedCategorySlug]);
 
   const syncFromUrl = useCallback(() => {
-    setForm(
-      stateFromSearchParams(
-        new URLSearchParams(searchParams.toString()),
-        categoryTree,
-      ),
+    const next = stateFromSearchParams(
+      new URLSearchParams(searchParams.toString()),
+      categoryTree,
     );
-  }, [searchParams, categoryTree]);
+    if (lockedCategorySlug && !next.category && !next.subcategory) {
+      next.category = lockedCategorySlug;
+    }
+    setForm(next);
+  }, [searchParams, categoryTree, lockedCategorySlug]);
 
   const apply = useCallback(() => {
-    const href = buildCatalogHref({
+    const href = buildListingHref(pathname, {
       q: form.q.trim() || undefined,
       category: form.category || undefined,
       subcategory: form.subcategory || undefined,
@@ -389,12 +402,12 @@ function useCatalogFilterForm(categoryTree: CategoryTreeNode[]) {
     startTransition(() => {
       router.push(href);
     });
-  }, [form, router]);
+  }, [form, router, pathname]);
 
   const clear = useCallback(() => {
     setForm({
       q: "",
-      category: "",
+      category: lockedCategorySlug ?? "",
       subcategory: "",
       priceMin: "",
       priceMax: "",
@@ -406,13 +419,17 @@ function useCatalogFilterForm(categoryTree: CategoryTreeNode[]) {
       sort: "popular",
     });
     startTransition(() => {
-      router.push(ROUTES.CATALOG);
+      router.push(
+        lockedCategorySlug
+          ? buildListingHref(`${ROUTES.CATEGORY}/${lockedCategorySlug}`, {})
+          : ROUTES.CATALOG,
+      );
     });
-  }, [router]);
+  }, [router, lockedCategorySlug]);
 
   const parsed = parseCatalogParams({
     q: searchParams.get("q") ?? undefined,
-    category: searchParams.get("category") ?? undefined,
+    category: searchParams.get("category") ?? lockedCategorySlug ?? undefined,
     subcategory: searchParams.get("subcategory") ?? undefined,
     priceMin: searchParams.get("priceMin") ?? undefined,
     priceMax: searchParams.get("priceMax") ?? undefined,
@@ -425,6 +442,17 @@ function useCatalogFilterForm(categoryTree: CategoryTreeNode[]) {
     page: searchParams.get("page") ?? undefined,
   });
 
+  const active = hasActiveCatalogFilters(
+    lockedCategorySlug
+      ? {
+          ...parsed,
+          category: undefined,
+          rootCategory: undefined,
+          subcategory: undefined,
+        }
+      : parsed,
+  );
+
   return {
     form,
     setForm,
@@ -432,7 +460,7 @@ function useCatalogFilterForm(categoryTree: CategoryTreeNode[]) {
     clear,
     syncFromUrl,
     pending,
-    active: hasActiveCatalogFilters(parsed),
+    active,
   };
 }
 
@@ -441,9 +469,12 @@ export function CatalogFiltersSidebar({
   cities,
   sellers,
   className,
+  lockedCategorySlug,
 }: CatalogFiltersPanelProps) {
-  const { form, setForm, apply, clear, pending, active } =
-    useCatalogFilterForm(categoryTree);
+  const { form, setForm, apply, clear, pending, active } = useCatalogFilterForm(
+    categoryTree,
+    lockedCategorySlug,
+  );
 
   return (
     <aside
@@ -484,9 +515,10 @@ export function CatalogFiltersMobile({
   categoryTree,
   cities,
   sellers,
+  lockedCategorySlug,
 }: CatalogFiltersPanelProps) {
   const { form, setForm, apply, clear, syncFromUrl, pending, active } =
-    useCatalogFilterForm(categoryTree);
+    useCatalogFilterForm(categoryTree, lockedCategorySlug);
   const [open, setOpen] = useState(false);
 
   return (
@@ -500,7 +532,12 @@ export function CatalogFiltersMobile({
       >
         <DialogTrigger
           render={
-            <Button variant="outline" size="sm" className="gap-2" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              data-testid="catalog-filters-mobile"
+            />
           }
         >
           <Filter className="size-4" />
@@ -509,11 +546,14 @@ export function CatalogFiltersMobile({
             <span className="size-1.5 rounded-full bg-primary" aria-hidden />
           ) : null}
         </DialogTrigger>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        <DialogContent
+          className="max-h-[85vh] overflow-y-auto sm:max-w-md"
+          data-testid="catalog-filters-drawer"
+        >
           <DialogHeader>
-            <DialogTitle>Фильтры каталога</DialogTitle>
+            <DialogTitle>Фильтры</DialogTitle>
             <DialogDescription>
-              Категория, цена, город, состояние и тип продавца.
+              Категория, цена, продавец и наличие.
             </DialogDescription>
           </DialogHeader>
           <FilterFields
@@ -543,6 +583,7 @@ export function CatalogFiltersMobile({
                 setOpen(false);
               }}
               disabled={pending}
+              data-testid="catalog-filters-apply"
             >
               {pending ? "Применяем…" : "Показать"}
             </Button>
@@ -568,6 +609,7 @@ export function CatalogFiltersMobile({
 
 export function CatalogSortSelect({ className }: { className?: string }) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
   const current = parseCatalogParams({
@@ -577,6 +619,7 @@ export function CatalogSortSelect({ className }: { className?: string }) {
   return (
     <select
       aria-label="Сортировка"
+      data-testid="catalog-sort"
       className={cn(selectClassName(), "w-auto min-w-[11rem]", className)}
       value={current}
       disabled={pending}
@@ -587,8 +630,9 @@ export function CatalogSortSelect({ className }: { className?: string }) {
         else next.set("sort", value);
         next.delete("page");
         const qs = next.toString();
+        const href = qs ? `${pathname}?${qs}` : pathname;
         startTransition(() => {
-          router.push(qs ? `${ROUTES.CATALOG}?${qs}` : ROUTES.CATALOG);
+          router.push(href);
         });
       }}
     >

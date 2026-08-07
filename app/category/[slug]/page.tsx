@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CatalogBreadcrumbs } from "@/features/catalog/components/catalog-breadcrumbs";
+import { CatalogEmptyState } from "@/features/catalog/components/catalog-empty-state";
 import {
   CatalogFiltersMobile,
   CatalogFiltersSidebar,
@@ -20,6 +21,7 @@ import {
   categoryPagePath,
   getCategoryBySlug,
   listCategoryTree,
+  listRootCategories,
 } from "@/features/catalog";
 import type { CatalogSearchParams } from "@/features/catalog/types";
 import {
@@ -34,6 +36,7 @@ import {
   listProducts,
   ProductCard,
 } from "@/features/products";
+import { pluralizeProductWord } from "@/lib/i18n";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type CategoryPageProps = {
@@ -84,6 +87,7 @@ export default async function CategoryPage({
   let cities: string[] = [];
   let sellers: Awaited<ReturnType<typeof listProductSellers>> = [];
   let result: Awaited<ReturnType<typeof listProducts>> | null = null;
+  let popularCategories: Awaited<ReturnType<typeof listRootCategories>> = [];
   let dbError: string | null = null;
 
   try {
@@ -92,26 +96,31 @@ export default async function CategoryPage({
       notFound();
     }
 
-    [categoryTree, cities, sellers, result] = await Promise.all([
-      listCategoryTree({ activeOnly: true }),
-      listProductCities(),
-      listProductSellers(),
-      listProducts({
-        category: slug,
-        query: filters.q,
-        city: filters.city,
-        seller: filters.seller,
-        sellerKind: filters.sellerKind,
-        condition: filters.condition,
-        priceMin: filters.priceMin,
-        priceMax: filters.priceMax,
-        inStock: filters.inStock,
-        sort: filters.sort,
-        page: filters.page,
-        pageSize: CATALOG_PAGE_SIZE,
-        status: "ACTIVE",
-      }),
-    ]);
+    [categoryTree, cities, sellers, result, popularCategories] =
+      await Promise.all([
+        listCategoryTree({ activeOnly: true }),
+        listProductCities(),
+        listProductSellers(),
+        listProducts({
+          category: slug,
+          query: filters.q,
+          city: filters.city,
+          seller: filters.seller,
+          sellerKind: filters.sellerKind,
+          condition: filters.condition,
+          priceMin: filters.priceMin,
+          priceMax: filters.priceMax,
+          inStock: filters.inStock,
+          sort: filters.sort,
+          page: filters.page,
+          pageSize: CATALOG_PAGE_SIZE,
+          status: "ACTIVE",
+        }),
+        listRootCategories({ activeOnly: true }),
+      ]);
+    popularCategories = popularCategories
+      .filter((c) => c.productCount > 0 && c.slug !== slug)
+      .slice(0, 6);
   } catch (err) {
     console.error("[category]", err);
     dbError = "Не удалось загрузить категорию.";
@@ -167,11 +176,16 @@ export default async function CategoryPage({
           <h1 className="font-heading text-3xl font-semibold tracking-tight">
             {category?.name ?? "Категория"}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+          <p
+            className="mt-1 text-sm text-muted-foreground sm:text-base"
+            data-testid="catalog-result-count"
+          >
             {result
-              ? `${result.total} товар${plural(result.total)}`
+              ? activeFilters || filters.q
+                ? `Найдено ${result.total} ${pluralizeProductWord(result.total)}`
+                : `${result.total} ${pluralizeProductWord(result.total)}`
               : category
-                ? `${category.productCount} товар${plural(category.productCount)}`
+                ? `${category.productCount} ${pluralizeProductWord(category.productCount)}`
                 : null}
             {filters.q ? ` · «${filters.q}»` : null}
           </p>
@@ -215,6 +229,7 @@ export default async function CategoryPage({
             categoryTree={categoryTree}
             cities={cities}
             sellers={sellers}
+            lockedCategorySlug={slug}
           />
         </Suspense>
 
@@ -225,6 +240,7 @@ export default async function CategoryPage({
                 categoryTree={categoryTree}
                 cities={cities}
                 sellers={sellers}
+                lockedCategorySlug={slug}
               />
             </Suspense>
             <Suspense
@@ -244,27 +260,23 @@ export default async function CategoryPage({
               </CardHeader>
             </Card>
           ) : items.length === 0 ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Ничего не найдено</CardTitle>
-                <CardDescription>
-                  {activeFilters ? (
-                    <>
-                      Попробуйте изменить фильтры или{" "}
-                      <Link
-                        href={categoryPagePath(slug)}
-                        className="text-primary underline-offset-4 hover:underline"
-                      >
-                        сбросить
-                      </Link>
-                      .
-                    </>
-                  ) : (
-                    "В этой категории пока нет активных товаров."
-                  )}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <CatalogEmptyState
+              title="Ничего не нашли"
+              description={
+                activeFilters
+                  ? "Попробуйте изменить фильтры или сбросить их."
+                  : "В этой категории пока нет активных товаров — загляните в каталог или другие разделы."
+              }
+              showCatalogCta
+              resetHref={
+                activeFilters ? categoryPagePath(slug) : undefined
+              }
+              resetLabel="Сбросить фильтры"
+              popularCategories={popularCategories.map((c) => ({
+                name: c.name,
+                slug: c.slug,
+              }))}
+            />
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {items.map((product, index) => (
@@ -308,12 +320,4 @@ export default async function CategoryPage({
       </div>
     </div>
   );
-}
-
-function plural(n: number) {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "а";
-  return "ов";
 }

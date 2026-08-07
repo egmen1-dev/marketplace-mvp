@@ -93,18 +93,27 @@ function SuggestList({
 }) {
   if (!loading && items.length === 0) return null;
 
+  const categories = items.filter((i) => i.type === "category");
+  const products = items.filter((i) => i.type === "product");
+
   return (
     <ul
       id={listId}
       role="listbox"
       className="absolute top-[calc(100%+6px)] right-0 left-0 z-50 max-h-72 overflow-y-auto rounded-xl border border-border bg-card py-1 shadow-card"
+      data-testid="search-suggest"
     >
       {loading && items.length === 0 ? (
         <li className="px-3.5 py-2.5 text-sm text-muted-foreground">
           Ищем…
         </li>
       ) : null}
-      {items.map((item) => (
+      {categories.length > 0 ? (
+        <li className="px-3.5 pt-2 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+          Категории
+        </li>
+      ) : null}
+      {categories.map((item) => (
         <li key={`${item.type}-${item.id}`} role="option" aria-selected={false}>
           <Link
             href={item.href}
@@ -112,9 +121,22 @@ function SuggestList({
             className="flex flex-col gap-0.5 px-3.5 py-2 text-sm transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:outline-none"
           >
             <span className="font-medium text-foreground">{item.title}</span>
-            <span className="text-xs text-muted-foreground">
-              {item.type === "category" ? "Категория" : "Товар"}
-            </span>
+          </Link>
+        </li>
+      ))}
+      {products.length > 0 ? (
+        <li className="px-3.5 pt-2 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+          Товары
+        </li>
+      ) : null}
+      {products.map((item) => (
+        <li key={`${item.type}-${item.id}`} role="option" aria-selected={false}>
+          <Link
+            href={item.href}
+            onClick={onPick}
+            className="flex flex-col gap-0.5 px-3.5 py-2 text-sm transition-colors hover:bg-surface focus-visible:bg-surface focus-visible:outline-none"
+          >
+            <span className="font-medium text-foreground">{item.title}</span>
           </Link>
         </li>
       ))}
@@ -214,9 +236,10 @@ export function HeaderSearch({
         render={
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-header"
             className={cn("text-muted-foreground", className)}
             aria-label="Поиск"
+            data-testid="header-search-mobile"
           />
         }
       >

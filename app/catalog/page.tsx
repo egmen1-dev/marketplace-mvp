@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CatalogBreadcrumbs } from "@/features/catalog/components/catalog-breadcrumbs";
+import { CatalogEmptyState } from "@/features/catalog/components/catalog-empty-state";
 import {
   CatalogFiltersMobile,
   CatalogFiltersSidebar,
@@ -19,6 +20,7 @@ import {
   categoryPagePath,
   getCategoryBySlug,
   listCategoryTree,
+  listRootCategories,
 } from "@/features/catalog";
 import type { CatalogSearchParams } from "@/features/catalog/types";
 import {
@@ -33,6 +35,7 @@ import {
   listProducts,
   ProductCard,
 } from "@/features/products";
+import { pluralizeProductWord } from "@/lib/i18n";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type CatalogPageProps = {
@@ -59,10 +62,11 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   let sellers: Awaited<ReturnType<typeof listProductSellers>> = [];
   let result: Awaited<ReturnType<typeof listProducts>> | null = null;
   let activeCategory: Awaited<ReturnType<typeof getCategoryBySlug>> = null;
+  let popularCategories: Awaited<ReturnType<typeof listRootCategories>> = [];
   let dbError: string | null = null;
 
   try {
-    const [tree, cityList, sellerList, productResult, categoryDetail] =
+    const [tree, cityList, sellerList, productResult, categoryDetail, roots] =
       await Promise.all([
         listCategoryTree({ activeOnly: true }),
         listProductCities(),
@@ -85,12 +89,16 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         filters.category
           ? getCategoryBySlug(filters.category, { activeOnly: true })
           : Promise.resolve(null),
+        listRootCategories({ activeOnly: true }),
       ]);
     categoryTree = tree;
     cities = cityList;
     sellers = sellerList;
     result = productResult;
     activeCategory = categoryDetail;
+    popularCategories = roots
+      .filter((c) => c.productCount > 0)
+      .slice(0, 6);
   } catch (err) {
     console.error("[catalog]", err);
     dbError = "Не удалось загрузить каталог. Проверьте подключение к БД.";
@@ -129,6 +137,13 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       : []),
   ];
 
+  const resultLabel =
+    result != null
+      ? filters.q || activeFilters
+        ? `Найдено ${result.total} ${pluralizeProductWord(result.total)}`
+        : `${result.total} ${pluralizeProductWord(result.total)}`
+      : "Витрина маркетплейса";
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
       <CatalogBreadcrumbs
@@ -144,10 +159,11 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           <h1 className="font-heading text-3xl font-semibold tracking-tight">
             {title}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-            {result
-              ? `${result.total} товар${plural(result.total)}`
-              : "Витрина маркетплейса"}
+          <p
+            className="mt-1 text-sm text-muted-foreground sm:text-base"
+            data-testid="catalog-result-count"
+          >
+            {resultLabel}
             {filters.q ? ` · «${filters.q}»` : null}
           </p>
         </div>
@@ -208,36 +224,21 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               </CardHeader>
             </Card>
           ) : items.length === 0 ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Ничего не найдено</CardTitle>
-                <CardDescription>
-                  {activeFilters ? (
-                    <>
-                      Попробуйте изменить фильтры или{" "}
-                      <Link
-                        href={ROUTES.CATALOG}
-                        className="text-primary underline-offset-4 hover:underline"
-                      >
-                        сбросить все
-                      </Link>
-                      .
-                    </>
-                  ) : (
-                    <>
-                      В каталоге пока нет товаров. Загляните в{" "}
-                      <Link
-                        href={ROUTES.CATEGORIES}
-                        className="text-primary underline-offset-4 hover:underline"
-                      >
-                        категории
-                      </Link>{" "}
-                      или вернитесь позже.
-                    </>
-                  )}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <CatalogEmptyState
+              title="Ничего не нашли"
+              description={
+                activeFilters
+                  ? "Попробуйте изменить фильтры или запрос — либо сбросьте все параметры."
+                  : "В каталоге пока нет товаров. Загляните в популярные категории чуть позже."
+              }
+              showCatalogCta
+              resetHref={activeFilters ? ROUTES.CATALOG : undefined}
+              resetLabel="Сбросить все"
+              popularCategories={popularCategories.map((c) => ({
+                name: c.name,
+                slug: c.slug,
+              }))}
+            />
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {items.map((product, index) => (
@@ -281,12 +282,4 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       </div>
     </div>
   );
-}
-
-function plural(n: number) {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "а";
-  return "ов";
 }

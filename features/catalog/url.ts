@@ -19,7 +19,7 @@ export const CATALOG_SORT_OPTIONS: {
   label: string;
 }[] = [
   { value: "popular", label: "Популярные" },
-  { value: "newest", label: "Сначала новые" },
+  { value: "newest", label: "Новые" },
   { value: "price_asc", label: "Цена: по возрастанию" },
   { value: "price_desc", label: "Цена: по убыванию" },
 ];
@@ -142,6 +142,39 @@ export function buildCatalogHref(opts: CatalogHrefOpts = {}): string {
 
   const qs = sp.toString();
   return qs ? `${ROUTES.CATALOG}?${qs}` : ROUTES.CATALOG;
+}
+
+/** Build listing href for `/catalog` or `/category/[slug]` (keeps SEO path). */
+export function buildListingHref(
+  pathname: string,
+  opts: CatalogHrefOpts = {},
+): string {
+  const categoryMatch = pathname.match(/^\/category\/([^/?#]+)/);
+  if (categoryMatch) {
+    const slug = decodeURIComponent(categoryMatch[1]);
+    // Path owns category — keep other filters in query string.
+    const withoutCategory: CatalogHrefOpts = {
+      ...opts,
+      category: undefined,
+      subcategory: undefined,
+    };
+    // If user picked a different category in the form, leave the SEO path.
+    if (opts.subcategory && opts.subcategory !== slug) {
+      return categoryPagePathWithQuery(opts.subcategory, withoutCategory);
+    }
+    if (opts.category && opts.category !== slug && !opts.subcategory) {
+      return categoryPagePathWithQuery(opts.category, withoutCategory);
+    }
+    return categoryPagePathWithQuery(slug, withoutCategory);
+  }
+  return buildCatalogHref(opts);
+}
+
+function categoryPagePathWithQuery(slug: string, opts: CatalogHrefOpts): string {
+  const catalogHref = buildCatalogHref(opts);
+  const qs = catalogHref.includes("?") ? catalogHref.split("?")[1] : "";
+  const base = `${ROUTES.CATEGORY}/${encodeURIComponent(slug)}`;
+  return qs ? `${base}?${qs}` : base;
 }
 
 export function catalogFiltersToHref(filters: CatalogFilters): string {
