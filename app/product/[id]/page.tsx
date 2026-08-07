@@ -1,14 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import {
-  ArrowLeft,
-  MapPin,
-  Package,
-  ShieldCheck,
-  Star,
-  Truck,
-} from "lucide-react";
+import { ArrowLeft, MapPin, Package, Truck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,6 +83,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       [similar, sellerTrust] = await Promise.all([
         listSimilarProducts(product.id, {
           categoryId: product.category?.id,
+          price: product.price,
           limit: 8,
         }),
         getSellerTrustProfile(product.seller.slug),
@@ -101,7 +95,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (!product) notFound();
 
-  // Fire-and-forget popularity counter (ACTIVE PDP views).
   if (product.status === "ACTIVE") {
     incrementProductViews(product.id);
     if (session) {
@@ -114,8 +107,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const showOldPrice =
     product.compareAt != null && product.compareAt > product.price;
 
+  const hasDescription = Boolean(product.description?.trim());
+  const dimensionParts = [
+    product.lengthCm != null ? `${product.lengthCm} см` : null,
+    product.widthCm != null ? `${product.widthCm} см` : null,
+    product.heightCm != null ? `${product.heightCm} см` : null,
+  ].filter(Boolean);
+  const dimensions =
+    dimensionParts.length > 0 ? dimensionParts.join(" × ") : null;
+
+  const sellerShipping = sellerTrust?.shippingDefaults?.trim() || null;
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-7xl px-4 py-6 pb-28 sm:px-6 sm:py-10 md:pb-10">
       <Button
         variant="ghost"
         size="sm"
@@ -131,29 +135,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <ProductGallery images={product.images} title={product.title} />
 
         <div className="flex flex-col gap-6">
+          {/* 2–4: name → price → buy */}
           <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              {product.category ? (
-                <Badge
-                  variant="secondary"
-                  className="w-fit"
-                  render={
-                    <Link
-                      href={categoryPagePath(product.category.slug)}
-                    />
-                  }
-                >
-                  {product.category.name}
-                </Badge>
-              ) : null}
-            </div>
+            {product.category ? (
+              <Badge
+                variant="secondary"
+                className="w-fit"
+                render={
+                  <Link href={categoryPagePath(product.category.slug)} />
+                }
+              >
+                {product.category.name}
+              </Badge>
+            ) : null}
 
-            <h1 className="font-heading text-2xl leading-tight font-semibold tracking-tight sm:text-3xl lg:text-4xl">
+            <h1
+              className="font-heading text-2xl leading-tight font-semibold tracking-tight sm:text-3xl lg:text-4xl"
+              data-testid="pdp-title"
+            >
               {product.title}
             </h1>
 
             <div className="flex flex-wrap items-baseline gap-3">
-              <p className="font-heading text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
+              <p
+                className="font-heading text-3xl font-semibold tracking-tight text-primary sm:text-4xl"
+                data-testid="pdp-price"
+              >
                 {formatPrice(product.price, product.currency)}
               </p>
               {showOldPrice ? (
@@ -174,51 +181,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <ProductPurchasePanel
             productId={product.id}
             stock={product.stock}
+            price={product.price}
+            currency={product.currency}
           />
 
+          {/* 6: seller trust */}
           {sellerTrust ? (
             <ProductSellerCard seller={sellerTrust} />
           ) : null}
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <InfoChip
-              icon={<Truck className="size-4" />}
-              title="Доставка"
-              text="СДЭК · пункты выдачи"
-            />
-            <InfoChip
-              icon={<ShieldCheck className="size-4" />}
-              title="Гарантия"
-              text="Безопасная сделка"
-            />
-            <InfoChip
-              icon={<Package className="size-4" />}
-              title="Возврат"
-              text="14 дней на возврат"
-            />
-          </div>
         </div>
       </div>
 
       <Separator className="my-10 sm:my-14" />
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <section className="flex flex-col gap-3">
-          <h2 className="font-heading text-xl font-semibold tracking-tight">
-            Описание
-          </h2>
-          {product.description ? (
+        {hasDescription ? (
+          <section className="flex flex-col gap-3" data-testid="pdp-description">
+            <h2 className="font-heading text-xl font-semibold tracking-tight">
+              Описание
+            </h2>
             <p className="text-base leading-relaxed text-muted-foreground whitespace-pre-wrap">
               {product.description}
             </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              Продавец пока не добавил описание.
-            </p>
-          )}
-        </section>
+          </section>
+        ) : null}
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3" data-testid="pdp-specs">
           <h2 className="font-heading text-xl font-semibold tracking-tight">
             Характеристики
           </h2>
@@ -233,6 +221,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {product.category ? (
               <SpecRow label="Категория" value={product.category.name} />
             ) : null}
+            {product.weight != null ? (
+              <SpecRow label="Вес" value={`${product.weight} кг`} />
+            ) : null}
+            {dimensions ? (
+              <SpecRow label="Габариты" value={dimensions} />
+            ) : null}
             <SpecRow
               label="Наличие"
               value={
@@ -241,44 +235,46 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           </dl>
         </section>
-      </div>
 
-      <section className="mt-10 sm:mt-14">
-        <h2 className="font-heading text-xl font-semibold tracking-tight">
-          Отзывы
-        </h2>
-        <div className="mt-4 rounded-2xl border border-dashed border-border bg-surface/40 px-5 py-10 text-center">
-          <Star className="mx-auto size-8 text-muted-foreground/40" />
-          <p className="mt-3 font-heading text-base font-medium">
-            Отзывы скоро появятся
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Покупатели смогут делиться впечатлениями после заказа.
-          </p>
-        </div>
-      </section>
+        <section
+          className={hasDescription ? "lg:col-span-2" : undefined}
+          data-testid="pdp-delivery"
+        >
+          <h2 className="font-heading text-xl font-semibold tracking-tight">
+            Доставка
+          </h2>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="flex items-start gap-2.5 rounded-xl border border-border bg-card/40 p-4">
+              <Truck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+              <div>
+                <p className="text-sm font-medium text-foreground">СДЭК</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Пункты выдачи и курьерская доставка. Стоимость считается при
+                  оформлении заказа.
+                </p>
+              </div>
+            </div>
+            {sellerShipping ? (
+              <div className="flex items-start gap-2.5 rounded-xl border border-border bg-card/40 p-4">
+                <Package
+                  className="mt-0.5 size-4 shrink-0 text-primary"
+                  aria-hidden
+                />
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    Условия продавца
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted-foreground whitespace-pre-wrap">
+                    {sellerShipping}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      </div>
 
       <SimilarProducts products={similar} />
-    </div>
-  );
-}
-
-function InfoChip({
-  icon,
-  title,
-  text,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="flex items-start gap-2.5 rounded-xl border border-border bg-card/40 p-3">
-      <span className="mt-0.5 text-primary">{icon}</span>
-      <div>
-        <p className="text-sm font-medium text-foreground">{title}</p>
-        <p className="text-xs text-muted-foreground">{text}</p>
-      </div>
     </div>
   );
 }

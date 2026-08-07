@@ -23,6 +23,8 @@ export type SellerTrustProfile = {
   isVerified: boolean;
   verifiedAt: string | null;
   joinedAt: string;
+  /** Free-text seller shipping notes — only shown when set. */
+  shippingDefaults: string | null;
   metrics: SellerTrustMetrics;
 };
 
@@ -173,6 +175,7 @@ export async function getSellerTrustProfile(
       verifiedAt: true,
       createdAt: true,
       isBlocked: true,
+      shippingDefaults: true,
     },
   });
 
@@ -190,6 +193,7 @@ export async function getSellerTrustProfile(
     isVerified: profile.isVerified,
     verifiedAt: profile.verifiedAt?.toISOString() ?? null,
     joinedAt: profile.createdAt.toISOString(),
+    shippingDefaults: profile.shippingDefaults,
     metrics,
   };
 }

@@ -178,6 +178,7 @@ describe("public seller page data", () => {
         isVerified: true,
         verifiedAt: null,
         joinedAt: new Date().toISOString(),
+        shippingDefaults: null,
         metrics: {
           totalProducts: 1,
           activeProducts: 1,

@@ -28,6 +28,7 @@ export function ProductSellerCard({ seller, className }: ProductSellerCardProps)
         "rounded-2xl border border-border bg-surface/70 p-4 sm:p-5",
         className,
       )}
+      data-testid="pdp-seller"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-surface-elevated sm:size-[72px]">

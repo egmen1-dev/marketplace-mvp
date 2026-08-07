@@ -12,13 +12,17 @@ type SimilarProductsProps = {
 export function SimilarProducts({ products }: SimilarProductsProps) {
   if (products.length === 0) {
     return (
-      <section id="similar" className="mt-10 scroll-mt-24 sm:mt-14">
+      <section
+        id="similar"
+        className="mt-10 scroll-mt-24 sm:mt-14"
+        data-testid="pdp-similar-empty"
+      >
         <h2 className="font-heading text-xl font-semibold tracking-tight">
           Похожие товары
         </h2>
         <div className="mt-4 flex flex-col items-start gap-3 rounded-2xl border border-dashed border-border bg-surface/40 px-5 py-8">
           <p className="text-sm text-muted-foreground">
-            Похожих товаров пока нет — загляните в каталог.
+            В этой категории пока нет похожих предложений — загляните в каталог.
           </p>
           <Button
             size="sm"
@@ -33,7 +37,11 @@ export function SimilarProducts({ products }: SimilarProductsProps) {
   }
 
   return (
-    <section id="similar" className="mt-10 scroll-mt-24 sm:mt-14">
+    <section
+      id="similar"
+      className="mt-10 scroll-mt-24 sm:mt-14"
+      data-testid="pdp-similar"
+    >
       <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <h2 className="font-heading text-xl font-semibold tracking-tight">
           Похожие товары

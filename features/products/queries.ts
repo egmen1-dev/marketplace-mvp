@@ -4,6 +4,7 @@ import {
   mapProductDetail,
   mapProductListItem,
   slugify,
+  toPriceNumber,
 } from "@/features/products/mappers";
 import type {
   CreateProductInput,
@@ -402,52 +403,50 @@ export async function getProductById(
 }
 
 /**
- * Similar products for PDP: same category first, then popular ACTIVE fillers.
+ * Similar products for PDP: same category, exclude current, prefer similar price.
+ * No cross-category fillers (avoids unrelated “fake similar” items).
  */
 export async function listSimilarProducts(
   productId: string,
   options?: {
     categoryId?: string | null;
+    price?: number | null;
     limit?: number;
   },
 ): Promise<ProductListItem[]> {
   const limit = Math.min(Math.max(options?.limit ?? 8, 1), 16);
-  const exclude = { id: { not: productId } } satisfies Prisma.ProductWhereInput;
-  const active = { status: ProductStatus.ACTIVE } satisfies Prisma.ProductWhereInput;
+  if (!options?.categoryId) return [];
 
-  const primaryWhere: Prisma.ProductWhereInput = {
-    ...exclude,
-    ...active,
-    ...(options?.categoryId
-      ? { categoryId: options.categoryId }
-      : {}),
-  };
-
-  const primary = await prisma.product.findMany({
-    where: primaryWhere,
-    include: listInclude,
-    orderBy: [{ views: "desc" }, { favoritesCount: "desc" }, { createdAt: "desc" }],
-    take: limit,
-  });
-
-  if (primary.length >= limit || !options?.categoryId) {
-    return primary.map(mapProductListItem);
-  }
-
-  const foundIds = new Set(primary.map((p) => p.id));
-  foundIds.add(productId);
-
-  const fillers = await prisma.product.findMany({
+  const rows = await prisma.product.findMany({
     where: {
-      ...active,
-      id: { notIn: [...foundIds] },
+      id: { not: productId },
+      status: ProductStatus.ACTIVE,
+      categoryId: options.categoryId,
+      seller: { isBlocked: false },
     },
     include: listInclude,
-    orderBy: [{ views: "desc" }, { favoritesCount: "desc" }],
-    take: limit - primary.length,
+    take: Math.min(limit * 4, 48),
+    orderBy: [{ views: "desc" }, { createdAt: "desc" }],
   });
 
-  return [...primary, ...fillers].map(mapProductListItem);
+  if (rows.length === 0) return [];
+
+  const targetPrice =
+    options.price != null && Number.isFinite(options.price)
+      ? options.price
+      : null;
+
+  const sorted = [...rows].sort((a, b) => {
+    if (targetPrice != null) {
+      const da = Math.abs(toPriceNumber(a.price) - targetPrice);
+      const db = Math.abs(toPriceNumber(b.price) - targetPrice);
+      if (da !== db) return da - db;
+    }
+    if (b.views !== a.views) return b.views - a.views;
+    return b.createdAt.getTime() - a.createdAt.getTime();
+  });
+
+  return sorted.slice(0, limit).map(mapProductListItem);
 }
 
 async function uniqueSlug(
