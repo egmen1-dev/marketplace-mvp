@@ -38,7 +38,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         <CardHeader>
           <CardTitle>Авторизация</CardTitle>
           <CardDescription>
-            Email и пароль. Демо: seller@demo.lot / demo1234
+            Email и пароль. Для проверки: seller@demo.lot / demo1234
           </CardDescription>
         </CardHeader>
         <CardContent>

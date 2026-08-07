@@ -112,7 +112,7 @@ export default async function HomePage() {
                 variant="outline"
                 className="rounded-xl"
                 nativeButton={false}
-                render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
+                render={<Link href={ROUTES.SELL} />}
               >
                 Продать товар
               </Button>
@@ -162,16 +162,14 @@ export default async function HomePage() {
           {products.length === 0 ? (
             <Card>
               <CardHeader>
-                <CardTitle>Пока пусто</CardTitle>
+                <CardTitle>Пока нет товаров</CardTitle>
                 <CardDescription>
-                  Запустите{" "}
-                  <code className="text-xs">npx prisma migrate dev</code> и{" "}
-                  <code className="text-xs">npm run db:seed</code>, либо{" "}
+                  Загляните позже или{" "}
                   <Link
-                    href={ROUTES.SELLER_NEW_PRODUCT}
+                    href={ROUTES.SELL}
                     className="text-primary underline-offset-4 hover:underline"
                   >
-                    добавьте товар
+                    разместите первый товар
                   </Link>
                   .
                 </CardDescription>

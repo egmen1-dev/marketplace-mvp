@@ -1,3 +1,9 @@
+import {
+  pluralizeCategoryWord,
+  pluralizeProductWord,
+  pluralizeSellerWord,
+} from "@/lib/i18n";
+
 type MarketplaceStatsProps = {
   products: number;
   sellers: number;
@@ -13,9 +19,9 @@ export function MarketplaceStats({
   categories,
 }: MarketplaceStatsProps) {
   const items = [
-    { label: "Товаров", value: products },
-    { label: "Продавцов", value: sellers },
-    { label: "Категорий", value: categories },
+    { label: pluralizeProductWord(products), value: products },
+    { label: pluralizeSellerWord(sellers), value: sellers },
+    { label: pluralizeCategoryWord(categories), value: categories },
   ].filter((item) => item.value > 0);
 
   if (items.length === 0) return null;
@@ -32,7 +38,7 @@ export function MarketplaceStats({
               {item.value.toLocaleString("ru-RU")}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-              {item.label}
+              {item.label.charAt(0).toUpperCase() + item.label.slice(1)}
             </p>
           </div>
         ))}

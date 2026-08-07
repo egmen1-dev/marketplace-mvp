@@ -37,7 +37,7 @@ export function AuthNav({ user }: AuthNavProps) {
             <Button
               variant="ghost"
               size="icon-sm"
-              className="text-muted-foreground"
+              className="size-10 text-muted-foreground md:size-8"
               aria-label="Профиль"
               title="Профиль"
             />
@@ -69,7 +69,7 @@ export function AuthNav({ user }: AuthNavProps) {
           <Button
             variant="ghost"
             size="icon-sm"
-            className="text-muted-foreground"
+            className="size-10 text-muted-foreground md:size-8"
             aria-label="Профиль"
             title={label}
           />

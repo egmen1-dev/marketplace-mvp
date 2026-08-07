@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Heart, LayoutGrid, Menu } from "lucide-react";
+import { Heart, LayoutGrid, Menu, Search } from "lucide-react";
 
 import { Logo } from "@/components/brand";
 import { HeaderSearch } from "@/components/layout/header-search";
+import { MobileMenuThemeItem } from "@/components/layout/mobile-menu-theme-item";
 import { ThemeToggle } from "@/components/theme";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,10 +18,10 @@ import { HeaderCartButton } from "@/features/cart/components";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { href: ROUTES.CATALOG, label: "Каталог" },
-  { href: ROUTES.SELLER, label: "Продавцу" },
+const menuLinks = [
+  { href: ROUTES.SELL, label: "Продавать" },
   { href: ROUTES.ORDERS, label: "Заказы" },
+  { href: ROUTES.CATEGORIES, label: "Категории" },
 ] as const;
 
 type SiteHeaderProps = {
@@ -46,7 +47,7 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
 
         <Button
           size="sm"
-          className="hidden shrink-0 rounded-xl md:inline-flex"
+          className="shrink-0 rounded-xl"
           nativeButton={false}
           render={<Link href={ROUTES.CATALOG} />}
           data-testid="header-catalog"
@@ -60,12 +61,10 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
         </div>
 
         <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
-          <HeaderSearch variant="icon" className="md:hidden" />
-
           <Button
             variant="ghost"
             size="icon-sm"
-            className="size-10 text-muted-foreground md:size-8"
+            className="hidden size-8 text-muted-foreground md:inline-flex"
             aria-label="Избранное"
             title="Избранное"
             nativeButton={false}
@@ -75,9 +74,9 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
             <Heart />
           </Button>
 
-          <HeaderCartButton />
+          <HeaderCartButton className="size-10 md:size-8" />
 
-          <ThemeToggle />
+          <ThemeToggle className="hidden size-8 md:inline-flex" />
 
           <AuthNav user={user} />
 
@@ -87,7 +86,7 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="size-10 text-muted-foreground md:hidden md:size-8"
+                  className="size-10 text-muted-foreground md:hidden"
                   aria-label="Меню"
                   data-testid="header-mobile-menu"
                 />
@@ -95,28 +94,35 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
             >
               <Menu />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-48">
+            <DropdownMenuContent align="end" className="min-w-52">
               <div className="px-1.5 py-1.5">
                 <Logo variant="full" size={28} asLink={false} />
               </div>
               <DropdownMenuSeparator />
-              {navItems.map((item) => (
+              <DropdownMenuItem
+                render={<Link href={ROUTES.CATALOG} />}
+                data-testid="mobile-nav-catalog"
+              >
+                <Search className="size-4" />
+                Поиск
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<Link href={ROUTES.FAVORITES} />}
+                data-testid="mobile-nav-favorites"
+              >
+                <Heart className="size-4" />
+                Избранное
+              </DropdownMenuItem>
+              {menuLinks.map((item) => (
                 <DropdownMenuItem
                   key={item.href}
                   render={<Link href={item.href} />}
-                  data-testid={
-                    item.href === ROUTES.CATALOG
-                      ? "mobile-nav-catalog"
-                      : undefined
-                  }
                 >
                   {item.label}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem render={<Link href={ROUTES.FAVORITES} />}>
-                <Heart className="size-4" />
-                Избранное
-              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <MobileMenuThemeItem />
               {!user ? (
                 <>
                   <DropdownMenuSeparator />

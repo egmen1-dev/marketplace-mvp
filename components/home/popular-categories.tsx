@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { categoryPagePath } from "@/features/catalog/paths";
 import type { CategoryListItem } from "@/features/catalog/queries";
 import { ROUTES } from "@/lib/constants";
+import { pluralizeProductCount } from "@/lib/i18n";
 
 const POPULAR: {
   name: string;
@@ -108,7 +109,7 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {typeof count === "number"
-                      ? `${count} товаров`
+                      ? pluralizeProductCount(count)
                       : item.hint}
                   </p>
                 </div>

@@ -6,6 +6,7 @@ import { Loader2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/components/cart-provider";
 import { ROUTES } from "@/lib/constants";
+import { pluralizeProductCount } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type HeaderCartButtonProps = {
@@ -29,7 +30,7 @@ export function HeaderCartButton({ className }: HeaderCartButtonProps) {
             isLoading
               ? "Корзина, загрузка"
               : showBadge
-                ? `Корзина, ${itemCount} товаров`
+                ? `Корзина, ${pluralizeProductCount(itemCount)}`
                 : "Корзина"
           }
         />

@@ -1,37 +1,18 @@
 import Link from "next/link";
-import {
-  BadgeCheck,
-  Package,
-  ShieldCheck,
-  Truck,
-} from "lucide-react";
+import { Truck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { categoryPagePath } from "@/features/catalog/paths";
 import { formatPrice } from "@/features/products/mappers";
 import { ProductImage } from "@/features/products/components/product-image";
 import type { ProductListItem } from "@/features/products/types";
 import { ROUTES } from "@/lib/constants";
-
-const showcaseCategories = [
-  { name: "Инструменты", slug: "tools" },
-  { name: "Электроника", slug: "electronics" },
-  { name: "Дом", slug: "home" },
-  { name: "Авто", slug: "auto" },
-] as const;
-
-const showcaseBenefits = [
-  { icon: ShieldCheck, label: "Безопасная покупка" },
-  { icon: Truck, label: "Доставка СДЭК" },
-  { icon: Package, label: "Тысячи товаров" },
-] as const;
 
 type HeroShowcaseProps = {
   featured?: ProductListItem | null;
 };
 
 /**
- * Right-side marketplace collage: product preview, category chips, benefits.
+ * Right-side hero: featured product + one trust signal (no duplicate trust grid).
  */
 export function HeroShowcase({ featured }: HeroShowcaseProps) {
   const href = featured
@@ -45,7 +26,6 @@ export function HeroShowcase({ featured }: HeroShowcaseProps) {
   const image = featured?.primaryImage;
 
   return (
-    /* No entrance fade — LCP hero image must paint at full opacity immediately */
     <div className="relative mx-auto w-full max-w-md lg:max-w-none">
       <div
         aria-hidden
@@ -83,52 +63,17 @@ export function HeroShowcase({ featured }: HeroShowcaseProps) {
                 {seller}
               </p>
             </div>
-            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="rounded-md bg-primary/15 px-2 py-0.5 font-medium text-primary">
+            <div className="mt-3">
+              <span className="rounded-md bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
                 В наличии
               </span>
-              <span>· в корзину с карточки</span>
             </div>
           </div>
         </Link>
 
-        <div className="flex flex-wrap gap-2">
-          {showcaseCategories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={categoryPagePath(cat.slug)}
-              className="rounded-xl bg-surface-elevated/80 px-3 py-1.5 text-xs font-medium text-foreground ring-1 ring-border transition-colors duration-[var(--duration-fast)] hover:bg-accent hover:text-accent-foreground hover:ring-primary/30"
-            >
-              {cat.name}
-            </Link>
-          ))}
-          <Link
-            href={ROUTES.CATEGORIES}
-            className="rounded-xl px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:underline"
-          >
-            Все →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          {showcaseBenefits.map((item) => (
-            <div
-              key={item.label}
-              className="flex flex-col items-start gap-1.5 rounded-xl bg-card/70 px-2.5 py-2.5 ring-1 ring-border"
-            >
-              <item.icon className="size-4 text-primary" aria-hidden />
-              <span className="text-[11px] leading-snug font-medium text-foreground">
-                {item.label}
-              </span>
-            </div>
-          ))}
-        </div>
-
         <div className="flex items-center gap-2 rounded-xl bg-primary/10 px-3 py-2.5 text-xs text-foreground ring-1 ring-primary/20">
-          <BadgeCheck className="size-4 shrink-0 text-primary" aria-hidden />
-          <span>
-            Продавцы и магазины с понятным статусом товаров на витрине
-          </span>
+          <Truck className="size-4 shrink-0 text-primary" aria-hidden />
+          <span>Доставка через пункты СДЭК</span>
         </div>
       </div>
     </div>

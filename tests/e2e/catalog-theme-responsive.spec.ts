@@ -58,13 +58,8 @@ test.describe("catalog search & theme & responsive", () => {
       ).toBeVisible();
       await expect(page.getByTestId("brand-wordmark").first()).toBeVisible();
 
-      // Mobile: catalog via menu; tablet/desktop: header catalog control.
-      if (vp.width < 768) {
-        await page.getByRole("button", { name: "Меню" }).click();
-        await page.getByRole("menuitem", { name: "Каталог" }).click();
-      } else {
-        await page.getByRole("link", { name: /Каталог/i }).first().click();
-      }
+      // Mobile: catalog is in the header; tablet/desktop: same control.
+      await page.getByTestId("header-catalog").click();
 
       await expect(page).toHaveURL(/\/catalog/);
       await expect(page.getByRole("main")).toBeVisible();

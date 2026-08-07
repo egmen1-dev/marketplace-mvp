@@ -28,6 +28,7 @@ import {
 import { StockEditor } from "@/features/seller/components/stock-editor";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
+import { pluralizeProductCount } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -169,7 +170,7 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
           <CardTitle>Список товаров</CardTitle>
           <CardDescription>
             {products.total > 0
-              ? `${products.total} ${products.total === 1 ? "товар" : "товаров"}`
+              ? pluralizeProductCount(products.total)
               : "Управление объявлениями магазина"}
           </CardDescription>
         </CardHeader>

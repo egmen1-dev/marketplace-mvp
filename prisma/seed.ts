@@ -507,13 +507,13 @@ async function main() {
   const sellerUser = await prisma.user.upsert({
     where: { email: "seller@demo.lot" },
     update: {
-      name: "Демо Продавец",
+      name: "Алексей",
       role: UserRole.SELLER,
       passwordHash,
     },
     create: {
       email: "seller@demo.lot",
-      name: "Демо Продавец",
+      name: "Алексей",
       role: UserRole.SELLER,
       passwordHash,
       image: "https://i.pravatar.cc/150?u=seller@demo.lot",
@@ -523,13 +523,13 @@ async function main() {
   const privateSellerUser = await prisma.user.upsert({
     where: { email: "private@demo.lot" },
     update: {
-      name: "Частный Продавец",
+      name: "Иван",
       role: UserRole.SELLER,
       passwordHash,
     },
     create: {
       email: "private@demo.lot",
-      name: "Частный Продавец",
+      name: "Иван",
       role: UserRole.SELLER,
       passwordHash,
       image: "https://i.pravatar.cc/150?u=private@demo.lot",
@@ -539,13 +539,13 @@ async function main() {
   const buyerUser = await prisma.user.upsert({
     where: { email: "buyer@demo.lot" },
     update: {
-      name: "Демо Покупатель",
+      name: "Анна",
       role: UserRole.BUYER,
       passwordHash,
     },
     create: {
       email: "buyer@demo.lot",
-      name: "Демо Покупатель",
+      name: "Анна",
       role: UserRole.BUYER,
       passwordHash,
       image: "https://i.pravatar.cc/150?u=buyer@demo.lot",
@@ -555,14 +555,14 @@ async function main() {
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@demo.lot" },
     update: {
-      name: "Демо Админ",
+      name: "Администратор",
       role: UserRole.ADMIN,
       passwordHash,
       isBlocked: false,
     },
     create: {
       email: "admin@demo.lot",
-      name: "Демо Админ",
+      name: "Администратор",
       role: UserRole.ADMIN,
       passwordHash,
       image: "https://i.pravatar.cc/150?u=admin@demo.lot",
@@ -570,45 +570,97 @@ async function main() {
   });
   void adminUser;
 
-  // BUYER must not have seller access — remove legacy demo buyer store if present.
+  // BUYER must not have seller access — remove legacy buyer store if present.
   await prisma.sellerProfile.deleteMany({
     where: {
       OR: [{ userId: buyerUser.id }, { slug: "buyer-demo-store" }],
     },
   });
 
-  const sellerProfile = await prisma.sellerProfile.upsert({
-    where: { slug: "demo-store" },
-    update: {
-      storeName: "Demo Store",
-      description: "Демо-магазин для сида маркетплейса",
-      isVerified: true,
-      kind: SellerKind.SHOP,
+  // Migrate legacy demo-store → raizz (neutral client-facing name).
+  let sellerProfile = await prisma.sellerProfile.findUnique({
+    where: { userId: sellerUser.id },
+  });
+
+  if (sellerProfile) {
+    // Free target slug if held by another row
+    if (sellerProfile.slug !== "raizz") {
+      await prisma.sellerProfile.updateMany({
+        where: {
+          slug: "raizz",
+          NOT: { id: sellerProfile.id },
+        },
+        data: { slug: `raizz-legacy-${Date.now()}` },
+      });
+    }
+    sellerProfile = await prisma.sellerProfile.update({
+      where: { id: sellerProfile.id },
+      data: {
+        storeName: "RAIZZ",
+        slug: "raizz",
+        description: "Магазин инструментов и техники",
+        isVerified: true,
+        kind: SellerKind.SHOP,
+        logoUrl: "https://i.pravatar.cc/150?u=raizz-store",
+      },
+    });
+  } else {
+    const legacyShop = await prisma.sellerProfile.findFirst({
+      where: { slug: { in: ["raizz", "demo-store"] } },
+    });
+    if (legacyShop) {
+      sellerProfile = await prisma.sellerProfile.update({
+        where: { id: legacyShop.id },
+        data: {
+          userId: sellerUser.id,
+          storeName: "RAIZZ",
+          slug: "raizz",
+          description: "Магазин инструментов и техники",
+          isVerified: true,
+          kind: SellerKind.SHOP,
+          logoUrl: "https://i.pravatar.cc/150?u=raizz-store",
+        },
+      });
+    } else {
+      sellerProfile = await prisma.sellerProfile.create({
+        data: {
+          userId: sellerUser.id,
+          storeName: "RAIZZ",
+          slug: "raizz",
+          description: "Магазин инструментов и техники",
+          isVerified: true,
+          kind: SellerKind.SHOP,
+          logoUrl: "https://i.pravatar.cc/150?u=raizz-store",
+        },
+      });
+    }
+  }
+
+  // Rename any leftover Demo Store rows (should not appear in UI).
+  await prisma.sellerProfile.updateMany({
+    where: {
+      storeName: { contains: "Demo" },
+      NOT: { id: sellerProfile.id },
     },
-    create: {
-      userId: sellerUser.id,
-      storeName: "Demo Store",
-      slug: "demo-store",
-      description: "Демо-магазин для сида маркетплейса",
-      isVerified: true,
-      kind: SellerKind.SHOP,
-      logoUrl: "https://i.pravatar.cc/150?u=demo-store",
+    data: {
+      storeName: "Магазин инструментов",
+      description: "Магазин на площадке Лот",
     },
   });
 
   const privateProfile = await prisma.sellerProfile.upsert({
     where: { slug: "private-seller" },
     update: {
-      storeName: "Иван · частные объявления",
-      description: "Частный продавец",
+      storeName: "Техника и дом",
+      description: "Частные объявления: техника и товары для дома",
       isVerified: false,
       kind: SellerKind.INDIVIDUAL,
     },
     create: {
       userId: privateSellerUser.id,
-      storeName: "Иван · частные объявления",
+      storeName: "Техника и дом",
       slug: "private-seller",
-      description: "Частный продавец",
+      description: "Частные объявления: техника и товары для дома",
       isVerified: false,
       kind: SellerKind.INDIVIDUAL,
       logoUrl: "https://i.pravatar.cc/150?u=private-seller",
@@ -616,7 +668,8 @@ async function main() {
   });
 
   const sellerBySlug = new Map<string, string>([
-    ["demo-store", sellerProfile.id],
+    ["raizz", sellerProfile.id],
+    ["demo-store", sellerProfile.id], // legacy product refs during seed
     ["private-seller", privateProfile.id],
   ]);
 
@@ -715,7 +768,7 @@ async function main() {
     }
 
     const sellerId =
-      sellerBySlug.get(product.sellerSlug ?? "demo-store") ?? sellerProfile.id;
+      sellerBySlug.get(product.sellerSlug ?? "raizz") ?? sellerProfile.id;
 
     const existing = await prisma.product.findUnique({
       where: {
