@@ -43,11 +43,11 @@ test.describe("catalog search filters sort mobile", () => {
 
     await expect(page).toHaveURL(/priceMin=1000/);
     await expect(page).toHaveURL(/priceMax=20000/);
-    await expect(page.getByTestId("catalog-sort")).toHaveValue("price_asc");
+    await expect(page.getByTestId("catalog-sort").first()).toHaveValue("price_asc");
 
     await page.reload();
     await expect(page).toHaveURL(/priceMin=1000/);
-    await expect(page.getByTestId("catalog-sort")).toHaveValue("price_asc");
+    await expect(page.getByTestId("catalog-sort").first()).toHaveValue("price_asc");
     await expect(page.getByRole("main")).toBeVisible();
 
     errors.assertClean();
@@ -58,9 +58,9 @@ test.describe("catalog search filters sort mobile", () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/catalog");
 
-    await page.getByTestId("catalog-sort").selectOption("price_asc");
+    await page.getByTestId("catalog-sort").first().selectOption("price_asc");
     await expect(page).toHaveURL(/sort=price_asc/);
-    await expect(page.getByTestId("catalog-sort")).toHaveValue("price_asc");
+    await expect(page.getByTestId("catalog-sort").first()).toHaveValue("price_asc");
 
     errors.assertClean();
   });

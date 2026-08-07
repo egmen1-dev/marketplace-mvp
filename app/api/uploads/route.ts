@@ -49,7 +49,7 @@ function blobNotConfiguredResponse(): NextResponse {
   return NextResponse.json(
     {
       error:
-        "Загрузка изображений временно недоступна: хранилище не настроено. Можно сохранить товар без фото — будет показан placeholder. Администратору: добавьте BLOB_READ_WRITE_TOKEN.",
+        "Загрузка изображений временно недоступна. Можно сохранить товар без фото — вместо него будет показана заглушка.",
       code: "NOT_CONFIGURED",
     },
     { status: 503 },

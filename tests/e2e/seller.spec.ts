@@ -23,7 +23,7 @@ test.describe("seller cabinet", () => {
       timeout: 20_000,
     });
 
-    await page.getByLabel("Поиск категории").fill("тепловая");
+    await page.getByLabel("Поиск категории").first().fill("тепловая");
     await page
       .getByRole("button", { name: /Тепловые пушки/i })
       .first()

@@ -28,7 +28,8 @@ export default async function SellerAnalyticsPage() {
           Аналитика
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Расширенные отчёты появятся позже. Сейчас сводка на главной.
+          Расширенные отчёты появятся позже. Актуальная сводка — на главной
+          кабинета.
         </p>
       </div>
 
@@ -36,18 +37,18 @@ export default async function SellerAnalyticsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="size-5" aria-hidden />
-            Скоро
+            Сводка магазина
           </CardTitle>
           <CardDescription>
-            Динамика продаж, конверсия и топ товаров.
+            Заказы, товары и активность доступны на дашборде продавца.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Button
             nativeButton={false}
-            render={<Link href={`${ROUTES.SELLER_DASHBOARD}#sales-chart`} />}
+            render={<Link href={ROUTES.SELLER_DASHBOARD} />}
           >
-            Открыть график на главной
+            Открыть кабинет
           </Button>
         </CardContent>
       </Card>

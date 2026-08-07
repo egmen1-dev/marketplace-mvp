@@ -31,7 +31,7 @@ export default async function NewProductPage() {
     categories = await listCategories();
   } catch (err) {
     console.error("[seller/products/new]", err);
-    dbError = "База данных недоступна. Запустите migrate + seed.";
+    dbError = "Не удалось загрузить категории. Попробуйте обновить страницу позже.";
   }
 
   return (
@@ -50,8 +50,7 @@ export default async function NewProductPage() {
           Новый товар
         </h1>
         <p className="text-sm text-muted-foreground">
-          Цена в рублях. После публикации товар сразу появится в каталоге со
-          статусом ACTIVE.
+          Укажите цену в рублях. После публикации товар сразу появится в каталоге.
         </p>
       </div>
 

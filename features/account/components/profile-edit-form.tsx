@@ -42,9 +42,17 @@ export function ProfileEditForm({
       body.set("file", file);
       body.set("purpose", "avatar");
       const res = await fetch("/api/uploads", { method: "POST", body });
-      const data = (await res.json()) as { url?: string; error?: string };
+      const data = (await res.json()) as {
+        url?: string;
+        error?: string;
+        code?: string;
+      };
       if (!res.ok || !data.url) {
-        setError(data.error ?? "Не удалось загрузить аватар");
+        setError(
+          data.code === "NOT_CONFIGURED"
+            ? "Загрузка аватара временно недоступна"
+            : (data.error ?? "Не удалось загрузить аватар"),
+        );
         return;
       }
       setAvatarUrl(data.url);

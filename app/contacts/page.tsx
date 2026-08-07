@@ -10,7 +10,7 @@ export default function ContactsPage() {
   return (
     <PlaceholderPage
       title="Контакты"
-      description="По вопросам заказов и сотрудничества напишите на support@lot.example. Форма обратной связи появится в следующих релизах."
+      description="По вопросам заказа укажите номер заказа в личном кабинете — так быстрее разобраться. По сотрудничеству и работе продавцов откройте кабинет продавца или страницу «Продать товар»."
       primaryHref={ROUTES.SUPPORT}
       primaryLabel="В поддержку"
     />

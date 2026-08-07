@@ -236,7 +236,7 @@ export function ProductImageUploader({
             throw new Error(
               data.error ??
                 (res.status === 503
-                  ? "Хранилище не настроено (BLOB_READ_WRITE_TOKEN)"
+                  ? "Загрузка изображений временно недоступна"
                   : "Ошибка загрузки"),
             );
           }

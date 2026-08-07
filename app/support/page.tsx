@@ -10,7 +10,7 @@ export default function SupportPage() {
   return (
     <PlaceholderPage
       title="Поддержка"
-      description="Чат и тикеты в разработке. Пока пишите на support@lot.example — ответим по email. Для статуса заказа зайдите в «Мои заказы»."
+      description="Статус заказа, доставка и возврат — в разделе «Мои заказы». Продавцам: управление товарами и заказами — в кабинете продавца. Общие вопросы — на странице «Контакты»."
       primaryHref={ROUTES.ORDERS}
       primaryLabel="Мои заказы"
     />

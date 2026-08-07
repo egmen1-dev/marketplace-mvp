@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { ComingSoonButton } from "@/components/layout/coming-soon-button";
 import { Button } from "@/components/ui/button";
 import {
   AccountShell,
@@ -36,8 +35,8 @@ export default async function SettingsPage() {
     >
       <div className="animate-fade-up space-y-4 rounded-2xl border border-border bg-card/60 p-5 shadow-card sm:p-6">
         <p className="text-sm text-muted-foreground">
-          Основные настройки профиля — имя, телефон, город и аватар — находятся
-          на странице профиля.
+          Имя, телефон, город и аватар редактируются в профиле. Email используется
+          для входа и уведомлений по заказам.
         </p>
         <div className="rounded-xl border border-border/80 bg-surface/40 px-4 py-3 text-sm">
           <p>
@@ -45,16 +44,12 @@ export default async function SettingsPage() {
             <span className="font-medium">{profile.email}</span>
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            nativeButton={false}
-            render={<Link href={`${ROUTES.PROFILE}?edit=1`} />}
-          >
-            Редактировать профиль
-          </Button>
-          <ComingSoonButton label="Сменить email" variant="outline" />
-          <ComingSoonButton label="Сменить пароль" variant="outline" />
-        </div>
+        <Button
+          nativeButton={false}
+          render={<Link href={`${ROUTES.PROFILE}?edit=1`} />}
+        >
+          Редактировать профиль
+        </Button>
       </div>
     </AccountShell>
   );

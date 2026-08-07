@@ -44,7 +44,8 @@ export function FavoritesGrid({ products }: FavoritesGridProps) {
             В избранном пока пусто
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Нажимайте ♥ на карточках товаров, чтобы сохранить их здесь.
+            Нажимайте «в избранное» на карточках товаров, чтобы сохранить их
+            здесь.
           </p>
         </div>
         <Button

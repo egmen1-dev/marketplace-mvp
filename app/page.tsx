@@ -100,7 +100,7 @@ export default async function HomePage() {
               style={{ animationDelay: "360ms" }}
             >
               <Button
-                size="sm"
+                size="cta"
                 className="rounded-xl"
                 nativeButton={false}
                 render={<Link href={ROUTES.CATALOG} />}
@@ -108,7 +108,7 @@ export default async function HomePage() {
                 Открыть каталог
               </Button>
               <Button
-                size="sm"
+                size="cta"
                 variant="outline"
                 className="rounded-xl"
                 nativeButton={false}

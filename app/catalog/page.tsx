@@ -101,7 +101,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       .slice(0, 6);
   } catch (err) {
     console.error("[catalog]", err);
-    dbError = "Не удалось загрузить каталог. Проверьте подключение к БД.";
+    dbError = "Не удалось загрузить каталог. Попробуйте обновить страницу.";
   }
 
   const items = result?.items ?? [];

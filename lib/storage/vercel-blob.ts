@@ -14,7 +14,7 @@ function requireToken(): string {
   if (!token?.trim()) {
     throw new StorageError(
       "NOT_CONFIGURED",
-      "Хранилище изображений не настроено. Добавьте BLOB_READ_WRITE_TOKEN (Vercel Blob) в .env или в переменные окружения проекта на Vercel.",
+      "Загрузка изображений временно недоступна. Попробуйте позже или сохраните товар без фото.",
       503,
     );
   }
