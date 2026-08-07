@@ -1,14 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 export function Toaster({ ...props }: ToasterProps) {
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Match ThemeProvider defaultTheme until mounted — avoids hydration #418.
+  const theme = (
+    mounted ? (resolvedTheme ?? "light") : "light"
+  ) as ToasterProps["theme"];
 
   return (
     <Sonner
-      theme={(resolvedTheme as ToasterProps["theme"]) ?? "system"}
+      theme={theme}
       className="toaster group"
       position="bottom-right"
       richColors

@@ -54,6 +54,8 @@ test.describe("product page conversion", () => {
     await openFirstCatalogProduct(page);
 
     await expect(page.getByTestId("pdp-buy")).toBeVisible();
+    // Let client hydration settle before scroll (avoids flaky #418 races).
+    await page.waitForLoadState("networkidle");
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(400);
 
