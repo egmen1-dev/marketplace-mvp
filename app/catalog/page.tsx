@@ -225,14 +225,14 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                     </>
                   ) : (
                     <>
-                      В каталоге пока пусто —{" "}
+                      В каталоге пока нет товаров. Загляните в{" "}
                       <Link
-                        href={ROUTES.SELLER_NEW_PRODUCT}
+                        href={ROUTES.CATEGORIES}
                         className="text-primary underline-offset-4 hover:underline"
                       >
-                        добавьте первый товар
-                      </Link>
-                      .
+                        категории
+                      </Link>{" "}
+                      или вернитесь позже.
                     </>
                   )}
                 </CardDescription>

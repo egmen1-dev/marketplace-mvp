@@ -119,7 +119,9 @@ export function CatalogMenuDesktop({ tree }: CatalogMenuProps) {
             </Link>
           </div>
           {tree.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Пока нет категорий.</p>
+            <p className="text-sm text-muted-foreground">
+              Категории скоро появятся.
+            </p>
           ) : (
             <div className="grid max-h-[min(70vh,28rem)] grid-cols-2 gap-6 overflow-y-auto lg:grid-cols-3">
               {tree.map((node) => (

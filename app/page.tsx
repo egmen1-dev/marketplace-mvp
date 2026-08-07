@@ -164,14 +164,14 @@ export default async function HomePage() {
               <CardHeader>
                 <CardTitle>Пока нет товаров</CardTitle>
                 <CardDescription>
-                  Загляните позже или{" "}
+                  Загляните в{" "}
                   <Link
-                    href={ROUTES.SELL}
+                    href={ROUTES.CATALOG}
                     className="text-primary underline-offset-4 hover:underline"
                   >
-                    разместите первый товар
-                  </Link>
-                  .
+                    каталог
+                  </Link>{" "}
+                  чуть позже — новые предложения появляются каждый день.
                 </CardDescription>
               </CardHeader>
             </Card>

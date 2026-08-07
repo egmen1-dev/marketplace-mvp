@@ -72,9 +72,16 @@ export default async function CategoriesPage() {
       ) : categories.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Пока пусто</CardTitle>
+            <CardTitle>Категории скоро появятся</CardTitle>
             <CardDescription>
-              Категории появятся после seed базы данных.
+              Загляните в{" "}
+              <Link
+                href={ROUTES.CATALOG}
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                каталог
+              </Link>{" "}
+              или вернитесь позже.
             </CardDescription>
           </CardHeader>
         </Card>

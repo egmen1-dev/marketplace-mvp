@@ -16,16 +16,39 @@ test.describe("catalog search & theme & responsive", () => {
     errors.assertClean();
   });
 
+  test("first visit defaults to light theme", async ({ page }) => {
+    const errors = attachErrorCollector(page);
+    await page.addInitScript(() => {
+      try {
+        localStorage.removeItem("theme");
+      } catch {
+        /* ignore */
+      }
+    });
+    await page.goto("/");
+
+    const html = page.locator("html");
+    await expect
+      .poll(async () => {
+        const cls = (await html.getAttribute("class")) ?? "";
+        return cls.includes("dark") ? "dark" : "light";
+      }, { timeout: 10_000 })
+      .toBe("light");
+
+    errors.assertClean();
+  });
+
   test("theme toggle persists across reload", async ({ page }) => {
     const errors = attachErrorCollector(page);
     await page.goto("/");
 
     const html = page.locator("html");
-    const before = await html.getAttribute("class");
     const toggle = page.getByRole("button", {
       name: /Тёмная тема|Светлая тема/,
     });
     await expect(toggle).toBeEnabled({ timeout: 10_000 });
+
+    const before = await html.getAttribute("class");
     await toggle.click();
 
     await expect

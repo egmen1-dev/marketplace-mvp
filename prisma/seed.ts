@@ -295,7 +295,7 @@ const products: Array<{
     views: 67,
     favoritesCount: 10,
     images: [img("photo-1504148455328-c376907d081c")],
-    sellerSlug: "private-seller",
+    sellerSlug: "home-tech",
   },
   {
     name: "Рюкзак Urban Compact",
@@ -309,7 +309,7 @@ const products: Array<{
     views: 33,
     favoritesCount: 5,
     images: [img("photo-1553062407-98eeb64c6a62")],
-    sellerSlug: "private-seller",
+    sellerSlug: "home-tech",
   },
   {
     name: "Куртка SoftShell Trail",
@@ -425,10 +425,212 @@ const products: Array<{
     categorySlug: "perfume",
     stock: 22,
     city: "Москва",
-    condition: ProductCondition.REFURBISHED,
+    condition: ProductCondition.NEW,
     views: 15,
     favoritesCount: 2,
     images: [img("photo-1541643600914-78b084683601")],
+    sellerSlug: "home-tech",
+  },
+  {
+    name: "Тепловая пушка HeatMax 3 кВт",
+    slug: "heat-gun-heatmax-3kw",
+    description:
+      "Электрическая тепловая пушка для гаража и стройплощадки — быстрый прогрев.",
+    price: 8990,
+    compareAt: 10990,
+    categorySlug: "heat-guns",
+    stock: 14,
+    city: "Москва",
+    condition: ProductCondition.NEW,
+    views: 156,
+    favoritesCount: 19,
+    images: [img("photo-1504148455328-c376907d081c")],
+    sellerSlug: "tools-pro",
+  },
+  {
+    name: "Краска интерьерная ProWall 10 л",
+    slug: "paint-prowall-10l",
+    description: "Матовая краска для стен и потолков, белая, моющаяся.",
+    price: 3290,
+    categorySlug: "paints",
+    stock: 48,
+    city: "Казань",
+    condition: ProductCondition.NEW,
+    views: 41,
+    favoritesCount: 6,
+    images: [img("photo-1616486338812-3dadae4b4ace")],
+    sellerSlug: "tools-pro",
+  },
+  {
+    name: "Набор саморезов и дюбелей FixBox",
+    slug: "fasteners-fixbox",
+    description: "Универсальный набор крепежа 500 шт. в органайзере.",
+    price: 890,
+    categorySlug: "fasteners",
+    stock: 120,
+    city: "Самара",
+    condition: ProductCondition.NEW,
+    views: 73,
+    favoritesCount: 8,
+    images: [img("photo-1530124566582-a618bc2615dc")],
+    sellerSlug: "tools-pro",
+  },
+  {
+    name: "Перфоратор RockDrill SDS+",
+    slug: "rotary-hammer-rockdrill",
+    description: "Перфоратор 850 Вт с патроном SDS+ для бетона и кирпича.",
+    price: 11990,
+    compareAt: 13990,
+    categorySlug: "rotary-hammers",
+    stock: 9,
+    city: "Екатеринбург",
+    condition: ProductCondition.NEW,
+    views: 98,
+    favoritesCount: 15,
+    images: [img("photo-1572981779307-38b8cabb2407")],
+    sellerSlug: "tools-pro",
+  },
+  {
+    name: "Набор гаечных ключей ProTorque",
+    slug: "wrench-set-protorque",
+    description: "Комбинированные ключи 6–32 мм, 25 предметов, кейс.",
+    price: 4590,
+    categorySlug: "wrenches",
+    stock: 28,
+    city: "Москва",
+    condition: ProductCondition.NEW,
+    views: 54,
+    favoritesCount: 9,
+    images: [img("photo-1504148455328-c376907d081c")],
+    sellerSlug: "tools-pro",
+  },
+  {
+    name: "Ноутбук AeroBook 14",
+    slug: "laptop-aerobook-14",
+    description: 'Ультрабук 14" IPS, 16 ГБ ОЗУ, SSD 512 ГБ — для работы и учёбы.',
+    price: 64990,
+    compareAt: 72990,
+    categorySlug: "laptops",
+    stock: 11,
+    city: "Москва",
+    condition: ProductCondition.NEW,
+    views: 203,
+    favoritesCount: 28,
+    images: [img("photo-1498049794561-7780e7231661")],
+    sellerSlug: "tech-store",
+  },
+  {
+    name: "Смартфон Pixelium X 128 ГБ",
+    slug: "smartphone-pixelium-x",
+    description: "OLED 120 Гц, тройная камера, быстрая зарядка 67 Вт.",
+    price: 34990,
+    categorySlug: "smartphones",
+    stock: 16,
+    city: "Санкт-Петербург",
+    condition: ProductCondition.NEW,
+    views: 177,
+    favoritesCount: 24,
+    images: [img("photo-1511919884226-fd3cad546d65")],
+    sellerSlug: "tech-store",
+  },
+  {
+    name: "Диван-кровать Nord Compact",
+    slug: "sofa-bed-nord",
+    description: "Раскладной диван с ящиком для белья, обивка велюр.",
+    price: 28990,
+    compareAt: 34990,
+    categorySlug: "furniture",
+    stock: 5,
+    city: "Москва",
+    condition: ProductCondition.NEW,
+    views: 88,
+    favoritesCount: 13,
+    images: [img("photo-1556228578-0d85b1a4d571")],
+    sellerSlug: "home-tech",
+  },
+  {
+    name: "Комплект постельного SoftCotton",
+    slug: "bedding-softcotton",
+    description: "Еврокомплект из сатина: пододеяльник, простыня, 2 наволочки.",
+    price: 4590,
+    categorySlug: "home-textile",
+    stock: 33,
+    city: "Новосибирск",
+    condition: ProductCondition.NEW,
+    views: 46,
+    favoritesCount: 7,
+    images: [img("photo-1616486338812-3dadae4b4ace")],
+    sellerSlug: "home-tech",
+  },
+  {
+    name: "Светодиодная лента HomeLED 5 м",
+    slug: "led-strip-homeled",
+    description: "RGB-лента с пультом и блоком питания, клейкая основа.",
+    price: 1490,
+    categorySlug: "lighting",
+    stock: 70,
+    city: "Казань",
+    condition: ProductCondition.NEW,
+    views: 62,
+    favoritesCount: 11,
+    images: [img("photo-1507473885765-e6ed057f782c")],
+    sellerSlug: "home-tech",
+  },
+  {
+    name: "Щётка для дисков AutoShine",
+    slug: "wheel-brush-autoshine",
+    description: "Мягкая щётка для чистки литых дисков без царапин.",
+    price: 690,
+    categorySlug: "auto-care",
+    stock: 95,
+    city: "Самара",
+    condition: ProductCondition.NEW,
+    views: 34,
+    favoritesCount: 5,
+    images: [img("photo-1492144534655-ae79c964c9d7")],
+    sellerSlug: "raizz",
+  },
+  {
+    name: "Гантели неопреновые 2×5 кг",
+    slug: "dumbbells-neoprene-5kg",
+    description: "Пара гантелей с неопреновым покрытием для домашней тренировки.",
+    price: 2490,
+    categorySlug: "fitness",
+    stock: 40,
+    city: "Москва",
+    condition: ProductCondition.NEW,
+    views: 58,
+    favoritesCount: 10,
+    images: [img("photo-1517836357463-d25dfeac3438")],
+    sellerSlug: "raizz",
+  },
+  {
+    name: "Крем для лица HydraDay SPF30",
+    slug: "face-cream-hydraday",
+    description: "Увлажняющий дневной крем с защитой от солнца, 50 мл.",
+    price: 1890,
+    categorySlug: "skincare",
+    stock: 55,
+    city: "Санкт-Петербург",
+    condition: ProductCondition.NEW,
+    views: 29,
+    favoritesCount: 4,
+    images: [img("photo-1596462502278-27bfdc403348")],
+    sellerSlug: "home-tech",
+  },
+  {
+    name: "Обогреватель керамический WarmRoom",
+    slug: "heater-warmroom",
+    description: "Напольный керамический обогреватель с термостатом, 1500 Вт.",
+    price: 5990,
+    categorySlug: "heaters",
+    stock: 18,
+    city: "Екатеринбург",
+    condition: ProductCondition.NEW,
+    views: 77,
+    favoritesCount: 12,
+    images: [img("photo-1441984904996-e0b2414e6631")],
+    sellerSlug: "tools-pro",
   },
 ];
 
@@ -651,19 +853,95 @@ async function main() {
   const privateProfile = await prisma.sellerProfile.upsert({
     where: { slug: "private-seller" },
     update: {
-      storeName: "Техника и дом",
-      description: "Частные объявления: техника и товары для дома",
-      isVerified: false,
+      storeName: "Дом и техника",
+      description: "Товары для дома, свет, мебель и уход",
+      isVerified: true,
       kind: SellerKind.INDIVIDUAL,
+      logoUrl: "https://i.pravatar.cc/150?u=home-tech-store",
     },
     create: {
       userId: privateSellerUser.id,
-      storeName: "Техника и дом",
+      storeName: "Дом и техника",
       slug: "private-seller",
-      description: "Частные объявления: техника и товары для дома",
-      isVerified: false,
+      description: "Товары для дома, свет, мебель и уход",
+      isVerified: true,
       kind: SellerKind.INDIVIDUAL,
-      logoUrl: "https://i.pravatar.cc/150?u=private-seller",
+      logoUrl: "https://i.pravatar.cc/150?u=home-tech-store",
+    },
+  });
+
+  // Extra demo shops so the marketplace looks populated.
+  const toolsProUser = await prisma.user.upsert({
+    where: { email: "toolspro@demo.lot" },
+    update: {
+      name: "Сергей",
+      role: UserRole.SELLER,
+      passwordHash,
+    },
+    create: {
+      email: "toolspro@demo.lot",
+      name: "Сергей",
+      role: UserRole.SELLER,
+      passwordHash,
+      image: "https://i.pravatar.cc/150?u=toolspro@demo.lot",
+    },
+  });
+
+  const toolsProProfile = await prisma.sellerProfile.upsert({
+    where: { slug: "tools-pro" },
+    update: {
+      storeName: "Инструменты PRO",
+      description: "Профессиональный инструмент и материалы для ремонта",
+      isVerified: true,
+      kind: SellerKind.SHOP,
+      logoUrl: "https://i.pravatar.cc/150?u=tools-pro-store",
+      userId: toolsProUser.id,
+    },
+    create: {
+      userId: toolsProUser.id,
+      storeName: "Инструменты PRO",
+      slug: "tools-pro",
+      description: "Профессиональный инструмент и материалы для ремонта",
+      isVerified: true,
+      kind: SellerKind.SHOP,
+      logoUrl: "https://i.pravatar.cc/150?u=tools-pro-store",
+    },
+  });
+
+  const techStoreUser = await prisma.user.upsert({
+    where: { email: "techstore@demo.lot" },
+    update: {
+      name: "Мария",
+      role: UserRole.SELLER,
+      passwordHash,
+    },
+    create: {
+      email: "techstore@demo.lot",
+      name: "Мария",
+      role: UserRole.SELLER,
+      passwordHash,
+      image: "https://i.pravatar.cc/150?u=techstore@demo.lot",
+    },
+  });
+
+  const techStoreProfile = await prisma.sellerProfile.upsert({
+    where: { slug: "tech-store" },
+    update: {
+      storeName: "Tech Store",
+      description: "Ноутбуки, смартфоны и гаджеты с официальной гарантией",
+      isVerified: true,
+      kind: SellerKind.SHOP,
+      logoUrl: "https://i.pravatar.cc/150?u=tech-store",
+      userId: techStoreUser.id,
+    },
+    create: {
+      userId: techStoreUser.id,
+      storeName: "Tech Store",
+      slug: "tech-store",
+      description: "Ноутбуки, смартфоны и гаджеты с официальной гарантией",
+      isVerified: true,
+      kind: SellerKind.SHOP,
+      logoUrl: "https://i.pravatar.cc/150?u=tech-store",
     },
   });
 
@@ -671,6 +949,9 @@ async function main() {
     ["raizz", sellerProfile.id],
     ["demo-store", sellerProfile.id], // legacy product refs during seed
     ["private-seller", privateProfile.id],
+    ["home-tech", privateProfile.id],
+    ["tools-pro", toolsProProfile.id],
+    ["tech-store", techStoreProfile.id],
   ]);
 
   const categoryBySlug = new Map<string, string>();
@@ -849,11 +1130,16 @@ async function main() {
   console.log(
     `Done. activeRoots=${counts[0]}, activeSubs=${counts[1]}, activeCategories=${counts[2]}, products=${counts[3]}, images=${counts[4]}`,
   );
-  console.log(`SellerProfile id: ${sellerProfile.id} (SHOP)`);
-  console.log(`Private seller id: ${privateProfile.id} (INDIVIDUAL)`);
+  console.log(`Sellers: RAIZZ, Дом и техника, Инструменты PRO, Tech Store`);
+  console.log(`SellerProfile id: ${sellerProfile.id} (RAIZZ)`);
+  console.log(`Home-tech id: ${privateProfile.id} (Дом и техника)`);
+  console.log(`Tools PRO id: ${toolsProProfile.id}`);
+  console.log(`Tech Store id: ${techStoreProfile.id}`);
   console.log(`Demo seller: seller@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Demo buyer:  buyer@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Private:     private@demo.lot / ${DEMO_PASSWORD}`);
+  console.log(`Tools PRO:   toolspro@demo.lot / ${DEMO_PASSWORD}`);
+  console.log(`Tech Store:  techstore@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Demo admin:  admin@demo.lot / ${DEMO_PASSWORD}`);
 }
 
