@@ -165,7 +165,18 @@ async function handleClientTokenUpload(request: Request): Promise<NextResponse> 
           pathname,
           contentType: "token",
           maxBytes: PRODUCT_IMAGE_LIMITS.maxBytes,
+          multipart: Boolean(
+            body.type === "blob.generate-client-token" &&
+              body.payload?.multipart,
+          ),
         });
+
+        // Explicit production callback so onUploadCompleted can run (logging only).
+        const appUrl =
+          process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+          (process.env.VERCEL_PROJECT_PRODUCTION_URL
+            ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+            : undefined);
 
         return {
           allowedContentTypes: [
@@ -176,22 +187,27 @@ async function handleClientTokenUpload(request: Request): Promise<NextResponse> 
           addRandomSuffix: false,
           allowOverwrite: false,
           tokenPayload: JSON.stringify({ purpose, ownerId }),
+          ...(appUrl ? { callbackUrl: `${appUrl}/api/uploads` } : {}),
         };
       },
       onUploadCompleted: async ({ blob }) => {
-        log.info("upload_blob_completed", {
-          method: "POST",
-          pathname: blob.pathname,
-          contentType: blob.contentType,
-          urlHost: (() => {
-            try {
-              return new URL(blob.url).host;
-            } catch {
-              return "invalid";
-            }
-          })(),
-          status: "ok",
-        });
+        try {
+          log.info("upload_blob_completed", {
+            method: "POST",
+            pathname: blob.pathname,
+            contentType: blob.contentType,
+            urlHost: (() => {
+              try {
+                return new URL(blob.url).host;
+              } catch {
+                return "invalid";
+              }
+            })(),
+            status: "ok",
+          });
+        } catch {
+          // Never fail the webhook — client already has the blob URL.
+        }
       },
     });
 

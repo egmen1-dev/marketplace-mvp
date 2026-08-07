@@ -22,6 +22,14 @@ type WindowWithUploadMock = Window & {
   ) => Promise<ClientUploadResult>;
 };
 
+const MIME_BY_EXT: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+};
+
 function extensionForFile(file: File): string | null {
   const fromName = /\.[a-zA-Z0-9]+$/.exec(file.name)?.[0]?.toLowerCase();
   if (
@@ -40,9 +48,54 @@ function extensionForFile(file: File): string | null {
   return byMime[file.type.toLowerCase()] ?? null;
 }
 
+function resolveContentType(file: File, ext: string): string {
+  const allowed = PRODUCT_IMAGE_LIMITS.mimeTypes as readonly string[];
+  const declared = (file.type || "").toLowerCase();
+  if (declared === "image/jpg") return "image/jpeg";
+  if (declared && allowed.includes(declared)) return declared;
+  return MIME_BY_EXT[ext] ?? "image/jpeg";
+}
+
+function mapBlobUploadError(err: unknown): Error {
+  const message = err instanceof Error ? err.message : "";
+
+  if (/413|entity too large|too large|maximum size|max size/i.test(message)) {
+    return new Error(PRODUCT_IMAGE_TOO_LARGE_MESSAGE);
+  }
+  if (/not configured|503/i.test(message)) {
+    return new Error(UPLOAD_UNAVAILABLE_MESSAGE);
+  }
+  if (/content.?type|not allowed|mime|invalid type/i.test(message)) {
+    return new Error(
+      "Недопустимый тип файла. Используйте JPEG, PNG, WebP или GIF.",
+    );
+  }
+  if (/failed to\s+retrieve the client token|некорректный путь|требуется вход|продавца/i.test(
+    message,
+  )) {
+    return new Error(
+      "Не удалось начать загрузку. Обновите страницу и попробуйте снова.",
+    );
+  }
+  if (
+    message &&
+    !/BLOB_|stack|at\s+\S+\s+\(|process\.env|ECONNREFUSED|ENOTFOUND/i.test(
+      message,
+    )
+  ) {
+    // Strip noisy SDK prefix when present
+    const cleaned = message.replace(/^Vercel Blob:\s*/i, "").trim();
+    if (cleaned) return new Error(cleaned);
+  }
+  return new Error("Не удалось загрузить изображение");
+}
+
 /**
- * Direct-to-Blob upload (bypasses Vercel serverless 4.5MB body limit / 413).
+ * Direct-to-Blob upload (bypasses Vercel serverless ~4.5MB body limit / 413).
  * Server only issues a short-lived client token via POST /api/uploads (JSON).
+ *
+ * Note: do NOT force multipart for typical product photos (≤20MB). Client PUT
+ * goes straight to Blob CDN; multipart has caused mid-size (5–10MB) failures.
  */
 export async function uploadImageFromClient(
   file: File,
@@ -65,29 +118,19 @@ export async function uploadImageFromClient(
     throw new Error(`«${file.name}»: только JPEG, PNG, WebP, GIF`);
   }
 
+  const contentType = resolveContentType(file, ext);
   const pathname = `${options.pathPrefix}${crypto.randomUUID()}${ext}`;
+  const handleUploadUrl = `${window.location.origin}/api/uploads`;
 
   try {
     const blob = await upload(pathname, file, {
       access: "public",
-      handleUploadUrl: "/api/uploads",
-      // Multipart avoids edge body limits for mid-size photos.
-      multipart: true,
-      contentType: file.type || undefined,
+      handleUploadUrl,
+      contentType,
       clientPayload: JSON.stringify({ purpose: options.purpose }),
     });
     return { url: blob.url, pathname: blob.pathname };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "";
-    if (/413|too large|entity too large/i.test(message)) {
-      throw new Error(PRODUCT_IMAGE_TOO_LARGE_MESSAGE);
-    }
-    if (/not configured|unauthorized|503|token/i.test(message)) {
-      throw new Error(UPLOAD_UNAVAILABLE_MESSAGE);
-    }
-    if (message && !/BLOB_|stack|process\.env/i.test(message)) {
-      throw new Error(message);
-    }
-    throw new Error("Не удалось загрузить изображение");
+    throw mapBlobUploadError(err);
   }
 }
