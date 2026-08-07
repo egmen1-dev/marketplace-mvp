@@ -89,6 +89,7 @@ export default async function RootLayout({
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
+          storageKey="theme"
           disableTransitionOnChange={false}
         >
           <CartProvider isAuthenticated={Boolean(user)}>

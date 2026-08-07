@@ -21,6 +21,7 @@ import { GripVertical, ImagePlus, Loader2, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import {
   useCallback,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -33,8 +34,21 @@ import { Label } from "@/components/ui/label";
 import {
   PRODUCT_IMAGE_LIMITS,
   PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
+  UPLOAD_UNAVAILABLE_MESSAGE,
 } from "@/lib/storage/types";
 import { cn } from "@/lib/utils";
+
+function sanitizeUploadError(message: string | undefined, status?: number): string {
+  const raw = (message ?? "").trim();
+  if (
+    !raw ||
+    /BLOB_|stack|at\s+\S+\s+\(|process\.env|ECONNREFUSED|ENOTFOUND/i.test(raw)
+  ) {
+    if (status === 503) return UPLOAD_UNAVAILABLE_MESSAGE;
+    return "Не удалось загрузить изображение";
+  }
+  return raw;
+}
 
 export type UploaderImage = {
   id: string;
@@ -164,6 +178,7 @@ export function ProductImageUploader({
     null,
   );
   const [localError, setLocalError] = useState<string | null>(null);
+  const [uploadAvailable, setUploadAvailable] = useState<boolean | null>(null);
   const [isOver, setIsOver] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -172,6 +187,34 @@ export function ProductImageUploader({
   );
 
   const remaining = PRODUCT_IMAGE_LIMITS.maxCount - items.length;
+  const uploadsDisabled =
+    disabled || uploading || remaining <= 0 || uploadAvailable === false;
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/api/uploads");
+        const data = (await res.json().catch(() => ({}))) as {
+          configured?: boolean;
+        };
+        if (!cancelled) {
+          setUploadAvailable(data.configured !== false);
+          if (data.configured === false) {
+            setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          // Unknown — allow attempt; API will return a friendly error.
+          setUploadAvailable(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const removeItem = useCallback(async (id: string) => {
     setItems((prev) => {
@@ -191,6 +234,11 @@ export function ProductImageUploader({
     async (files: FileList | File[]) => {
       const list = Array.from(files);
       if (!list.length) return;
+
+      if (uploadAvailable === false) {
+        setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
+        return;
+      }
 
       setLocalError(null);
 
@@ -233,12 +281,11 @@ export function ProductImageUploader({
             if (data.code === "TOO_LARGE") {
               throw new Error(PRODUCT_IMAGE_TOO_LARGE_MESSAGE);
             }
-            throw new Error(
-              data.error ??
-                (res.status === 503
-                  ? "Загрузка изображений временно недоступна"
-                  : "Ошибка загрузки"),
-            );
+            if (data.code === "NOT_CONFIGURED" || res.status === 503) {
+              setUploadAvailable(false);
+              throw new Error(UPLOAD_UNAVAILABLE_MESSAGE);
+            }
+            throw new Error(sanitizeUploadError(data.error, res.status));
           }
           uploaded.push({
             id: `new-${crypto.randomUUID()}`,
@@ -256,7 +303,9 @@ export function ProductImageUploader({
           }).catch(() => undefined);
         }
         setLocalError(
-          err instanceof Error ? err.message : "Не удалось загрузить файлы",
+          err instanceof Error
+            ? sanitizeUploadError(err.message)
+            : "Не удалось загрузить файлы",
         );
       } finally {
         setUploading(false);
@@ -264,7 +313,7 @@ export function ProductImageUploader({
         if (fileRef.current) fileRef.current.value = "";
       }
     },
-    [remaining],
+    [remaining, uploadAvailable],
   );
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -276,7 +325,7 @@ export function ProductImageUploader({
   const onDrop = (e: ReactDragEvent) => {
     e.preventDefault();
     setIsOver(false);
-    if (disabled || uploading) return;
+    if (uploadsDisabled) return;
     if (e.dataTransfer.files?.length) {
       void uploadFiles(e.dataTransfer.files);
     }
@@ -328,7 +377,7 @@ export function ProductImageUploader({
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (!disabled && !uploading && remaining > 0) {
+            if (!uploadsDisabled) {
               fileRef.current?.click();
             }
           }
@@ -344,7 +393,7 @@ export function ProductImageUploader({
         onDragLeave={() => setIsOver(false)}
         onDrop={onDrop}
         onClick={() => {
-          if (!disabled && !uploading && remaining > 0) {
+          if (!uploadsDisabled) {
             fileRef.current?.click();
           }
         }}
@@ -353,9 +402,9 @@ export function ProductImageUploader({
           isOver
             ? "border-primary bg-primary/10 shadow-glow"
             : "border-border bg-surface hover:border-primary/50 hover:bg-surface-elevated",
-          (disabled || uploading || remaining <= 0) &&
-            "pointer-events-none opacity-60",
+          uploadsDisabled && "pointer-events-none opacity-60",
         )}
+        data-testid="product-image-dropzone"
       >
         <div className="flex size-12 items-center justify-center rounded-full bg-primary/15 text-primary ring-1 ring-primary/30">
           {uploading ? (
@@ -368,12 +417,16 @@ export function ProductImageUploader({
           <p className="text-sm font-medium text-foreground">
             {uploading
               ? `Загрузка ${progress?.done ?? 0}/${progress?.total ?? 0}…`
-              : remaining <= 0
-                ? "Достигнут лимит фото"
-                : "Перетащите фото сюда или нажмите"}
+              : uploadAvailable === false
+                ? UPLOAD_UNAVAILABLE_MESSAGE
+                : remaining <= 0
+                  ? "Достигнут лимит фото"
+                  : "Перетащите фото сюда или нажмите"}
           </p>
           <p className="text-xs text-muted-foreground">
-            Можно выбрать несколько файлов сразу
+            {uploadAvailable === false
+              ? "Можно сохранить товар без фото — будет показана заглушка"
+              : "Можно выбрать несколько файлов сразу"}
           </p>
         </div>
         <input
@@ -383,7 +436,8 @@ export function ProductImageUploader({
           accept={ACCEPT}
           multiple
           className="sr-only"
-          disabled={disabled || uploading || remaining <= 0}
+          data-testid="product-image-input"
+          disabled={uploadsDisabled}
           onChange={onFileChange}
         />
       </div>
@@ -456,7 +510,11 @@ export function ProductImageUploader({
       ) : null}
 
       {displayError ? (
-        <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+        <p
+          className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+          data-testid="product-image-error"
+          role="alert"
+        >
           {displayError}
         </p>
       ) : null}

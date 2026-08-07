@@ -48,8 +48,7 @@ function storageErrorResponse(err: unknown): NextResponse | null {
 function blobNotConfiguredResponse(): NextResponse {
   return NextResponse.json(
     {
-      error:
-        "Загрузка изображений временно недоступна. Можно сохранить товар без фото — вместо него будет показана заглушка.",
+      error: "Загрузка изображений временно недоступна",
       code: "NOT_CONFIGURED",
     },
     { status: 503 },

@@ -16,6 +16,10 @@ export const PRODUCT_IMAGE_LIMITS = {
 export const PRODUCT_IMAGE_TOO_LARGE_MESSAGE =
   "Максимальный размер изображения — 20 МБ";
 
+/** User-facing message when Blob storage is not configured */
+export const UPLOAD_UNAVAILABLE_MESSAGE =
+  "Загрузка изображений временно недоступна";
+
 export type AllowedImageMime =
   (typeof PRODUCT_IMAGE_LIMITS.mimeTypes)[number];
 

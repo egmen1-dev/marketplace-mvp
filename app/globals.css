@@ -60,57 +60,11 @@
 }
 
 /*
-  Dark-first tokens on :root avoid a light flash before next-themes
-  sets class="dark". Light overrides live on .light.
+  Light-first tokens on :root so first paint matches defaultTheme="light"
+  before next-themes hydrates. Dark overrides live on .dark only.
+  Manual dark choice is persisted in localStorage by next-themes.
 */
 :root,
-.dark {
-  --brand: #ff6a00;
-  --brand-foreground: #111111;
-  --background: #111111;
-  --foreground: #ffffff;
-  --surface: #181818;
-  --surface-elevated: #1f1f1f;
-  --card: #181818;
-  --card-foreground: #ffffff;
-  --popover: #1a1a1a;
-  --popover-foreground: #ffffff;
-  --primary: #ff6a00;
-  --primary-foreground: #111111;
-  --secondary: #242424;
-  --secondary-foreground: #ffffff;
-  --muted: #1f1f1f;
-  --muted-foreground: #a1a1aa;
-  --accent: #242424;
-  --accent-foreground: #ffffff;
-  --destructive: #ef4444;
-  --border: rgb(255 255 255 / 10%);
-  --input: rgb(255 255 255 / 12%);
-  --ring: #ff6a00;
-  --chart-1: #ff6a00;
-  --chart-2: #ff8f3d;
-  --chart-3: #a1a1aa;
-  --chart-4: #525252;
-  --chart-5: #2a2a2a;
-  --radius: 0.75rem;
-  --sidebar: #161616;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ff6a00;
-  --sidebar-primary-foreground: #111111;
-  --sidebar-accent: #242424;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgb(255 255 255 / 10%);
-  --sidebar-ring: #ff6a00;
-
-  --shadow-glow: 0 0 0 1px rgb(255 106 0 / 25%), 0 8px 32px rgb(255 106 0 / 12%);
-  --shadow-card: 0 1px 0 rgb(255 255 255 / 5%), 0 10px 28px rgb(0 0 0 / 45%);
-  --shadow-card-hover: 0 0 0 1px rgb(255 106 0 / 40%), 0 18px 44px rgb(0 0 0 / 55%);
-  --ease-out-premium: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-fast: 150ms;
-  --duration-base: 280ms;
-  --duration-slow: 500ms;
-}
-
 .light {
   --brand: #ff6a00;
   --brand-foreground: #ffffff;
@@ -139,6 +93,7 @@
   --chart-3: #a1a1aa;
   --chart-4: #d4d4d8;
   --chart-5: #f4f4f5;
+  --radius: 0.75rem;
   --sidebar: #f8f8f8;
   --sidebar-foreground: #111111;
   --sidebar-primary: #ff6a00;
@@ -151,6 +106,52 @@
   --shadow-glow: 0 0 0 1px rgb(255 106 0 / 20%), 0 8px 28px rgb(255 106 0 / 14%);
   --shadow-card: 0 1px 0 rgb(0 0 0 / 4%), 0 8px 24px rgb(0 0 0 / 6%);
   --shadow-card-hover: 0 0 0 1px rgb(255 106 0 / 30%), 0 14px 36px rgb(0 0 0 / 10%);
+  --ease-out-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 280ms;
+  --duration-slow: 500ms;
+}
+
+.dark {
+  --brand: #ff6a00;
+  --brand-foreground: #111111;
+  --background: #111111;
+  --foreground: #ffffff;
+  --surface: #181818;
+  --surface-elevated: #1f1f1f;
+  --card: #181818;
+  --card-foreground: #ffffff;
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+  --primary: #ff6a00;
+  --primary-foreground: #111111;
+  --secondary: #242424;
+  --secondary-foreground: #ffffff;
+  --muted: #1f1f1f;
+  --muted-foreground: #a1a1aa;
+  --accent: #242424;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 12%);
+  --ring: #ff6a00;
+  --chart-1: #ff6a00;
+  --chart-2: #ff8f3d;
+  --chart-3: #a1a1aa;
+  --chart-4: #525252;
+  --chart-5: #2a2a2a;
+  --sidebar: #161616;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ff6a00;
+  --sidebar-primary-foreground: #111111;
+  --sidebar-accent: #242424;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 10%);
+  --sidebar-ring: #ff6a00;
+
+  --shadow-glow: 0 0 0 1px rgb(255 106 0 / 25%), 0 8px 32px rgb(255 106 0 / 12%);
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 5%), 0 10px 28px rgb(0 0 0 / 45%);
+  --shadow-card-hover: 0 0 0 1px rgb(255 106 0 / 40%), 0 18px 44px rgb(0 0 0 / 55%);
 }
 
 @layer base {
@@ -159,13 +160,13 @@
   }
   html {
     @apply font-sans;
-    color-scheme: dark;
+    color-scheme: light;
     transition:
       background-color 200ms ease,
       color 200ms ease;
   }
-  html.light {
-    color-scheme: light;
+  html.dark {
+    color-scheme: dark;
   }
   body {
     @apply bg-background text-foreground;

@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { updateProfileAction } from "@/features/account/actions";
 import type { UserProfile } from "@/features/account/types";
 import { ROUTES } from "@/lib/constants";
+import { UPLOAD_UNAVAILABLE_MESSAGE } from "@/lib/storage";
 import { TOAST, toastError } from "@/lib/toasts";
 
 type ProfileEditFormProps = {
@@ -49,8 +50,8 @@ export function ProfileEditForm({
       };
       if (!res.ok || !data.url) {
         setError(
-          data.code === "NOT_CONFIGURED"
-            ? "Загрузка аватара временно недоступна"
+          data.code === "NOT_CONFIGURED" || res.status === 503
+            ? UPLOAD_UNAVAILABLE_MESSAGE
             : (data.error ?? "Не удалось загрузить аватар"),
         );
         return;
