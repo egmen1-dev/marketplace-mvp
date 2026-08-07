@@ -1,9 +1,11 @@
 import { UserRole } from "@prisma/client";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 
 import {
   AuthRequiredError,
   getSessionUser,
+  loadUserAuthFromDb,
   requireSellerSession,
   SellerRequiredError,
 } from "@/features/auth";
@@ -21,6 +23,8 @@ import {
 } from "@/lib/storage";
 import { log } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
+
+export const runtime = "nodejs";
 
 function authErrorResponse(err: unknown): NextResponse | null {
   if (err instanceof AuthRequiredError) {
@@ -55,21 +59,179 @@ function blobNotConfiguredResponse(): NextResponse {
   );
 }
 
+function safeId(id: string): string {
+  return id.replace(/[^a-zA-Z0-9_-]/g, "");
+}
+
+function isUploadedFile(value: FormDataEntryValue | null): value is File {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "arrayBuffer" in value &&
+    "size" in value &&
+    typeof (value as File).size === "number" &&
+    "name" in value
+  );
+}
+
+function parseClientPayload(raw: string | null): { purpose: string } {
+  if (!raw) return { purpose: "product" };
+  try {
+    const parsed = JSON.parse(raw) as { purpose?: unknown };
+    const purpose =
+      typeof parsed.purpose === "string"
+        ? parsed.purpose.trim().toLowerCase()
+        : "product";
+    return { purpose };
+  } catch {
+    return { purpose: "product" };
+  }
+}
+
 /**
- * POST /api/uploads
- * multipart/form-data with field `file`
- * - purpose=avatar: any authenticated user → avatars/{userId}/
- * - default: seller session → products/{sellerId}/
- * Returns `{ url, pathname }`.
+ * Client-direct Blob uploads (JSON body from @vercel/blob/client `upload()`).
+ * Avoids Vercel serverless ~4.5MB request body limit that caused HTTP 413.
  */
-export async function POST(request: Request) {
+async function handleClientTokenUpload(request: Request): Promise<NextResponse> {
+  if (!isBlobConfigured()) {
+    return blobNotConfiguredResponse();
+  }
+
+  let body: HandleUploadBody;
+  try {
+    body = (await request.json()) as HandleUploadBody;
+  } catch {
+    return NextResponse.json({ error: "Некорректный JSON" }, { status: 400 });
+  }
+
+  const eventType = body?.type ?? "unknown";
+  log.info("upload_client_event", {
+    method: "POST",
+    eventType,
+  });
+
+  try {
+    const jsonResponse = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        const { purpose } = parseClientPayload(clientPayload);
+        const isAvatar = purpose === "avatar";
+
+        let ownerId: string;
+        let expectedPrefix: string;
+        try {
+          if (isAvatar) {
+            const user = await getSessionUser();
+            if (!user) throw new AuthRequiredError();
+            ownerId = user.id;
+            expectedPrefix = `avatars/${safeId(ownerId)}/`;
+          } else {
+            const seller = await requireSellerSession();
+            ownerId = seller.sellerProfileId;
+            expectedPrefix = `products/${safeId(ownerId)}/`;
+          }
+        } catch (err) {
+          if (err instanceof AuthRequiredError) {
+            throw new Error("Требуется вход");
+          }
+          if (err instanceof SellerRequiredError) {
+            throw new Error("Нужен профиль продавца");
+          }
+          throw err;
+        }
+
+        if (!pathname.startsWith(expectedPrefix)) {
+          log.warn("upload_path_rejected", {
+            purpose,
+            ownerId,
+            pathnamePrefix: pathname.slice(0, 48),
+          });
+          throw new Error("Некорректный путь загрузки");
+        }
+
+        const ext = /\.[a-zA-Z0-9]+$/.exec(pathname)?.[0]?.toLowerCase();
+        if (
+          !ext ||
+          !(PRODUCT_IMAGE_LIMITS.extensions as readonly string[]).includes(ext)
+        ) {
+          throw new Error("Допустимы JPEG, PNG, WebP и GIF");
+        }
+
+        log.info("upload_token_issued", {
+          method: "POST",
+          purpose,
+          ownerId,
+          pathname,
+          contentType: "token",
+          maxBytes: PRODUCT_IMAGE_LIMITS.maxBytes,
+        });
+
+        return {
+          allowedContentTypes: [
+            ...PRODUCT_IMAGE_LIMITS.mimeTypes,
+            "image/jpg",
+          ],
+          maximumSizeInBytes: PRODUCT_IMAGE_LIMITS.maxBytes,
+          addRandomSuffix: false,
+          allowOverwrite: false,
+          tokenPayload: JSON.stringify({ purpose, ownerId }),
+        };
+      },
+      onUploadCompleted: async ({ blob }) => {
+        log.info("upload_blob_completed", {
+          method: "POST",
+          pathname: blob.pathname,
+          contentType: blob.contentType,
+          urlHost: (() => {
+            try {
+              return new URL(blob.url).host;
+            } catch {
+              return "invalid";
+            }
+          })(),
+          status: "ok",
+        });
+      },
+    });
+
+    return NextResponse.json(jsonResponse);
+  } catch (err) {
+    const authRes = authErrorResponse(err);
+    if (authRes) return authRes;
+
+    const message = err instanceof Error ? err.message : "unknown";
+    log.error("upload_client_failed", {
+      method: "POST",
+      message: message.slice(0, 200),
+    });
+
+    const friendly =
+      /вход|продавца|путь|JPEG|PNG|WebP|GIF|недоступна/i.test(message)
+        ? message
+        : "Не удалось подготовить загрузку";
+
+    return NextResponse.json({ error: friendly }, { status: 400 });
+  }
+}
+
+/**
+ * Legacy multipart upload through the serverless function (local / small files).
+ * On Vercel production, prefer client-direct upload — body limit ~4.5MB → 413.
+ */
+async function handleMultipartUpload(request: Request): Promise<NextResponse> {
   try {
     let formData: FormData;
     try {
       formData = await request.formData();
     } catch {
+      log.warn("upload_multipart_parse_failed", { method: "POST" });
       return NextResponse.json(
-        { error: "Ожидается multipart/form-data" },
+        {
+          error:
+            "Не удалось принять файл. Обновите страницу и попробуйте снова.",
+          code: "PAYLOAD_ERROR",
+        },
         { status: 400 },
       );
     }
@@ -100,12 +262,20 @@ export async function POST(request: Request) {
     }
 
     const file = formData.get("file");
-    if (!(file instanceof File)) {
+    if (!isUploadedFile(file)) {
       return NextResponse.json(
         { error: "Поле file обязательно" },
         { status: 400 },
       );
     }
+
+    log.info("upload_multipart_received", {
+      method: "POST",
+      purpose: isAvatar ? "avatar" : "product",
+      filename: file.name?.slice(0, 120) || "unknown",
+      size: file.size,
+      contentType: file.type || "unknown",
+    });
 
     const header = new Uint8Array(await file.slice(0, 16).arrayBuffer());
 
@@ -135,6 +305,14 @@ export async function POST(request: Request) {
       filename: file.name,
     });
 
+    log.info("upload_multipart_blob_ok", {
+      method: "POST",
+      pathname: result.pathname,
+      contentType,
+      size: file.size,
+      status: "ok",
+    });
+
     return NextResponse.json(
       { url: result.url, pathname: result.pathname },
       { status: 201 },
@@ -143,7 +321,8 @@ export async function POST(request: Request) {
     const storageRes = storageErrorResponse(err);
     if (storageRes) return storageRes;
     log.error("upload_failed", {
-      message: err instanceof Error ? err.message : "unknown",
+      method: "POST",
+      message: err instanceof Error ? err.message.slice(0, 200) : "unknown",
     });
     return NextResponse.json(
       { error: "Не удалось загрузить изображение" },
@@ -153,11 +332,20 @@ export async function POST(request: Request) {
 }
 
 /**
+ * POST /api/uploads
+ * - application/json → client token flow (@vercel/blob/client upload)
+ * - multipart/form-data → legacy server put (may 413 on Vercel if body > ~4.5MB)
+ */
+export async function POST(request: Request) {
+  const contentType = request.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    return handleClientTokenUpload(request);
+  }
+  return handleMultipartUpload(request);
+}
+
+/**
  * DELETE /api/uploads?url=...
- * Ownership required:
- * - Avatar: pathname under avatars/{userId}/
- * - Product: pathname under products/{sellerId}/ OR image row owned by seller's product
- * - ADMIN: may delete any owned-storage URL
  */
 export async function DELETE(request: Request) {
   try {
@@ -248,12 +436,18 @@ export async function DELETE(request: Request) {
     }
 
     await storage.deleteByUrl(url);
+    log.info("upload_delete_ok", {
+      method: "DELETE",
+      pathname: pathname ?? "unknown",
+      status: "ok",
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     const storageRes = storageErrorResponse(err);
     if (storageRes) return storageRes;
     log.error("upload_delete_failed", {
-      message: err instanceof Error ? err.message : "unknown",
+      method: "DELETE",
+      message: err instanceof Error ? err.message.slice(0, 200) : "unknown",
     });
     return NextResponse.json(
       { error: "Не удалось удалить изображение" },
@@ -262,12 +456,33 @@ export async function DELETE(request: Request) {
   }
 }
 
-/** Expose limits for clients that want a single source of truth. */
+/** Expose limits + path prefixes for authenticated client-direct uploads. */
 export async function GET() {
-  return NextResponse.json({
+  const configured = isBlobConfigured();
+  const base = {
     maxCount: PRODUCT_IMAGE_LIMITS.maxCount,
     maxBytes: PRODUCT_IMAGE_LIMITS.maxBytes,
     mimeTypes: PRODUCT_IMAGE_LIMITS.mimeTypes,
-    configured: isBlobConfigured(),
+    configured,
+  };
+
+  if (!configured) {
+    return NextResponse.json(base);
+  }
+
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json(base);
+  }
+
+  // Prefer DB seller id — JWT sellerProfileId can be stale after onboarding.
+  const dbUser = await loadUserAuthFromDb(user.id);
+
+  return NextResponse.json({
+    ...base,
+    productPathPrefix: dbUser?.sellerProfileId
+      ? `products/${safeId(dbUser.sellerProfileId)}/`
+      : null,
+    avatarPathPrefix: `avatars/${safeId(user.id)}/`,
   });
 }

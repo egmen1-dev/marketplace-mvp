@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateProfileAction } from "@/features/account/actions";
 import type { UserProfile } from "@/features/account/types";
+import { uploadImageFromClient } from "@/features/seller/lib/client-upload";
 import { ROUTES } from "@/lib/constants";
 import { UPLOAD_UNAVAILABLE_MESSAGE } from "@/lib/storage";
 import { TOAST, toastError } from "@/lib/toasts";
@@ -39,26 +40,24 @@ export function ProfileEditForm({
     setUploading(true);
     setError(null);
     try {
-      const body = new FormData();
-      body.set("file", file);
-      body.set("purpose", "avatar");
-      const res = await fetch("/api/uploads", { method: "POST", body });
-      const data = (await res.json()) as {
-        url?: string;
-        error?: string;
-        code?: string;
+      const metaRes = await fetch("/api/uploads");
+      const meta = (await metaRes.json().catch(() => ({}))) as {
+        configured?: boolean;
+        avatarPathPrefix?: string | null;
       };
-      if (!res.ok || !data.url) {
-        setError(
-          data.code === "NOT_CONFIGURED" || res.status === 503
-            ? UPLOAD_UNAVAILABLE_MESSAGE
-            : (data.error ?? "Не удалось загрузить аватар"),
-        );
+      if (meta.configured === false || !meta.avatarPathPrefix) {
+        setError(UPLOAD_UNAVAILABLE_MESSAGE);
         return;
       }
-      setAvatarUrl(data.url);
-    } catch {
-      setError("Не удалось загрузить аватар");
+      const result = await uploadImageFromClient(file, {
+        pathPrefix: meta.avatarPathPrefix,
+        purpose: "avatar",
+      });
+      setAvatarUrl(result.url);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Не удалось загрузить аватар",
+      );
     } finally {
       setUploading(false);
     }

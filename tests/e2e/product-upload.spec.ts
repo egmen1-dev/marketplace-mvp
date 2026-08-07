@@ -23,28 +23,46 @@ function writeTempTxt(): string {
   return file;
 }
 
+async function mockUploadsConfigured(page: import("@playwright/test").Page) {
+  await page.route("**/api/uploads", async (route) => {
+    const method = route.request().method();
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          maxCount: 10,
+          maxBytes: 20 * 1024 * 1024,
+          mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+          configured: true,
+          productPathPrefix: "products/e2e-seller/",
+          avatarPathPrefix: "avatars/e2e-user/",
+        }),
+      });
+      return;
+    }
+    if (method === "DELETE") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      });
+      return;
+    }
+    // Client-token JSON or legacy multipart — tests use window mock for bytes.
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ clientToken: "test" }),
+    });
+  });
+}
+
 test.describe("product image upload", () => {
   test("invalid image shows user-friendly error", async ({ page }) => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.sellerEmail);
-
-    // Pretend storage is configured so the file input stays enabled.
-    await page.route("**/api/uploads", async (route) => {
-      if (route.request().method() === "GET") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            maxCount: 10,
-            maxBytes: 20 * 1024 * 1024,
-            mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-            configured: true,
-          }),
-        });
-        return;
-      }
-      await route.continue();
-    });
+    await mockUploadsConfigured(page);
 
     await page.goto("/seller/products/new");
     await expect(page.getByTestId("product-image-input")).toBeAttached({
@@ -53,7 +71,6 @@ test.describe("product image upload", () => {
 
     const bad = writeTempTxt();
     try {
-      // Force-set even if accept filters UI — clientValidate must reject.
       await page.getByTestId("product-image-input").setInputFiles(bad);
       await expect(page.getByTestId("product-image-error")).toBeVisible({
         timeout: 10_000,
@@ -71,47 +88,32 @@ test.describe("product image upload", () => {
     errors.assertClean();
   });
 
-  test("valid image upload succeeds when storage is available", async ({
+  test("valid image upload succeeds via client-direct flow", async ({
     page,
   }) => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.sellerEmail);
+    await mockUploadsConfigured(page);
 
-    await page.route("**/api/uploads", async (route) => {
-      const method = route.request().method();
-      if (method === "GET") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            maxCount: 10,
-            maxBytes: 20 * 1024 * 1024,
-            mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-            configured: true,
-          }),
-        });
-        return;
-      }
-      if (method === "POST") {
-        await route.fulfill({
-          status: 201,
-          contentType: "application/json",
-          body: JSON.stringify({
-            url: "https://example.com/products/e2e-test.jpg",
-            pathname: "products/e2e/e2e-test.jpg",
-          }),
-        });
-        return;
-      }
-      if (method === "DELETE") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ ok: true }),
-        });
-        return;
-      }
-      await route.continue();
+    // Bypass real Blob PUT — assert UI wiring of POST token path + result URL.
+    await page.addInitScript(() => {
+      (
+        window as Window & {
+          __lotUploadImage?: (
+            file: File,
+            options: { pathPrefix: string; purpose: string },
+          ) => Promise<{ url: string; pathname: string }>;
+        }
+      ).__lotUploadImage = async (file, options) => {
+        if (!options.pathPrefix.startsWith("products/")) {
+          throw new Error("bad prefix");
+        }
+        if (!file.size) throw new Error("empty");
+        return {
+          url: "https://example.com/products/e2e-test.jpg",
+          pathname: `${options.pathPrefix}e2e-test.jpg`,
+        };
+      };
     });
 
     await page.goto("/seller/products/new");
@@ -122,9 +124,9 @@ test.describe("product image upload", () => {
     const jpeg = writeTempJpeg();
     try {
       await page.getByTestId("product-image-input").setInputFiles(jpeg);
-      await expect(
-        page.getByRole("img", { name: /Фото 1/i }),
-      ).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByRole("img", { name: /Фото 1/i })).toBeVisible({
+        timeout: 15_000,
+      });
       await expect(page.getByTestId("product-image-error")).toHaveCount(0);
     } finally {
       fs.unlinkSync(jpeg);

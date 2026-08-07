@@ -73,6 +73,7 @@ test.describe("catalog search & theme & responsive", () => {
       const errors = attachErrorCollector(page);
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("/");
+      await page.waitForLoadState("networkidle");
 
       const header = page.getByTestId("site-header");
       await expect(header).toBeVisible();
@@ -86,6 +87,7 @@ test.describe("catalog search & theme & responsive", () => {
 
       await expect(page).toHaveURL(/\/catalog/);
       await expect(page.getByRole("main")).toBeVisible();
+      await page.waitForLoadState("networkidle");
       errors.assertClean();
     });
   }

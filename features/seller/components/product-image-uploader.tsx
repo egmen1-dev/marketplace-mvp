@@ -31,6 +31,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { uploadImageFromClient } from "@/features/seller/lib/client-upload";
 import {
   PRODUCT_IMAGE_LIMITS,
   PRODUCT_IMAGE_TOO_LARGE_MESSAGE,
@@ -40,6 +41,9 @@ import { cn } from "@/lib/utils";
 
 function sanitizeUploadError(message: string | undefined, status?: number): string {
   const raw = (message ?? "").trim();
+  if (status === 413 || /413|entity too large|too large/i.test(raw)) {
+    return PRODUCT_IMAGE_TOO_LARGE_MESSAGE;
+  }
   if (
     !raw ||
     /BLOB_|stack|at\s+\S+\s+\(|process\.env|ECONNREFUSED|ENOTFOUND/i.test(raw)
@@ -179,6 +183,9 @@ export function ProductImageUploader({
   );
   const [localError, setLocalError] = useState<string | null>(null);
   const [uploadAvailable, setUploadAvailable] = useState<boolean | null>(null);
+  const [productPathPrefix, setProductPathPrefix] = useState<string | null>(
+    null,
+  );
   const [isOver, setIsOver] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -197,16 +204,24 @@ export function ProductImageUploader({
         const res = await fetch("/api/uploads");
         const data = (await res.json().catch(() => ({}))) as {
           configured?: boolean;
+          productPathPrefix?: string | null;
         };
         if (!cancelled) {
-          setUploadAvailable(data.configured !== false);
-          if (data.configured === false) {
+          const configured = data.configured !== false;
+          const prefix =
+            typeof data.productPathPrefix === "string" &&
+            data.productPathPrefix.length > 0
+              ? data.productPathPrefix
+              : null;
+          setProductPathPrefix(prefix);
+          setUploadAvailable(configured && Boolean(prefix));
+          if (!configured || !prefix) {
             setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
           }
         }
       } catch {
         if (!cancelled) {
-          // Unknown — allow attempt; API will return a friendly error.
+          // Unknown — allow attempt; upload helper will surface a friendly error.
           setUploadAvailable(true);
         }
       }
@@ -235,7 +250,7 @@ export function ProductImageUploader({
       const list = Array.from(files);
       if (!list.length) return;
 
-      if (uploadAvailable === false) {
+      if (uploadAvailable === false || !productPathPrefix) {
         setLocalError(UPLOAD_UNAVAILABLE_MESSAGE);
         return;
       }
@@ -266,37 +281,30 @@ export function ProductImageUploader({
       try {
         for (let i = 0; i < valid.length; i++) {
           const file = valid[i]!;
-          const body = new FormData();
-          body.append("file", file);
-          const res = await fetch("/api/uploads", {
-            method: "POST",
-            body,
-          });
-          const data = (await res.json().catch(() => ({}))) as {
-            url?: string;
-            error?: string;
-            code?: string;
-          };
-          if (!res.ok || !data.url) {
-            if (data.code === "TOO_LARGE") {
-              throw new Error(PRODUCT_IMAGE_TOO_LARGE_MESSAGE);
-            }
-            if (data.code === "NOT_CONFIGURED" || res.status === 503) {
+          try {
+            const result = await uploadImageFromClient(file, {
+              pathPrefix: productPathPrefix,
+              purpose: "product",
+            });
+            uploaded.push({
+              id: `new-${crypto.randomUUID()}`,
+              url: result.url,
+              isNew: true,
+            });
+            setProgress({ done: i + 1, total: valid.length });
+          } catch (err) {
+            const message =
+              err instanceof Error
+                ? sanitizeUploadError(err.message)
+                : "Не удалось загрузить изображение";
+            if (message === UPLOAD_UNAVAILABLE_MESSAGE) {
               setUploadAvailable(false);
-              throw new Error(UPLOAD_UNAVAILABLE_MESSAGE);
             }
-            throw new Error(sanitizeUploadError(data.error, res.status));
+            throw new Error(message);
           }
-          uploaded.push({
-            id: `new-${crypto.randomUUID()}`,
-            url: data.url,
-            isNew: true,
-          });
-          setProgress({ done: i + 1, total: valid.length });
         }
         setItems((prev) => [...prev, ...uploaded]);
       } catch (err) {
-        // Roll back blobs uploaded in this batch
         for (const img of uploaded) {
           void fetch(`/api/uploads?url=${encodeURIComponent(img.url)}`, {
             method: "DELETE",
@@ -313,7 +321,7 @@ export function ProductImageUploader({
         if (fileRef.current) fileRef.current.value = "";
       }
     },
-    [remaining, uploadAvailable],
+    [remaining, uploadAvailable, productPathPrefix],
   );
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
