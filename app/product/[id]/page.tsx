@@ -28,7 +28,6 @@ import {
 import { ProductSellerCard } from "@/features/seller/components/product-seller-card";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
-import { ComingSoonButton } from "@/components/layout/coming-soon-button";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type ProductPageProps = {
@@ -147,15 +146,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   {product.category.name}
                 </Badge>
               ) : null}
-              <span
-                className="inline-flex items-center gap-1 text-sm text-muted-foreground"
-                title="Демо-рейтинг для витрины"
-              >
-                <Star className="size-3.5 fill-primary text-primary" />
-                <span className="font-medium text-foreground tabular-nums">
-                  4.8
-                </span>
-              </span>
             </div>
 
             <h1 className="font-heading text-2xl leading-tight font-semibold tracking-tight sm:text-3xl lg:text-4xl">
@@ -265,11 +255,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <p className="mt-1 text-sm text-muted-foreground">
             Покупатели смогут делиться впечатлениями после заказа.
           </p>
-          <ComingSoonButton
-            label="Написать отзыв"
-            size="sm"
-            className="mt-4"
-          />
         </div>
       </section>
 

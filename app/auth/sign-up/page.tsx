@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import {
   Card,
   CardContent,
@@ -9,6 +11,7 @@ import { SignUpForm } from "@/features/auth";
 
 export const metadata = {
   title: "Регистрация",
+  description: "Создайте аккаунт покупателя или продавца на маркетплейсе Лот.",
 };
 
 export default function SignUpPage() {
@@ -19,18 +22,25 @@ export default function SignUpPage() {
           Регистрация
         </h1>
         <p className="text-sm text-muted-foreground">
-          Создайте аккаунт — сразу можно покупать и выставлять товары.
+          Создайте аккаунт покупателя или сразу откройте магазин продавца.
         </p>
       </div>
       <Card>
         <CardHeader>
           <CardTitle>Новый аккаунт</CardTitle>
           <CardDescription>
-            Профиль продавца создаётся автоматически для всех пользователей.
+            Выберите тип аккаунта. Профиль продавца создаётся только при
+            регистрации как продавец.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SignUpForm />
+          <Suspense
+            fallback={
+              <p className="text-sm text-muted-foreground">Загрузка…</p>
+            }
+          >
+            <SignUpForm />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

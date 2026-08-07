@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,11 +17,19 @@ import { cn } from "@/lib/utils";
 const initialState: AuthActionState = { ok: false };
 
 export function SignUpForm() {
+  const searchParams = useSearchParams();
   const [role, setRole] = useState<"BUYER" | "SELLER">("BUYER");
   const [state, formAction, pending] = useActionState(
     signUpAction,
     initialState,
   );
+
+  useEffect(() => {
+    const raw = searchParams.get("role")?.toUpperCase();
+    if (raw === "SELLER" || raw === "BUYER") {
+      setRole(raw);
+    }
+  }, [searchParams]);
 
   return (
     <form action={formAction} className="flex flex-col gap-4">

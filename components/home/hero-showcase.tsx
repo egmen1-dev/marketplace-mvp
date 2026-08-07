@@ -3,7 +3,6 @@ import {
   BadgeCheck,
   Package,
   ShieldCheck,
-  Star,
   Truck,
 } from "lucide-react";
 
@@ -84,15 +83,11 @@ export function HeroShowcase({ featured }: HeroShowcaseProps) {
                 {seller}
               </p>
             </div>
-            <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-              <Star
-                className="size-3.5 fill-primary text-primary"
-                aria-hidden
-              />
-              <span className="font-medium text-foreground tabular-nums">
-                4.8
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="rounded-md bg-primary/15 px-2 py-0.5 font-medium text-primary">
+                В наличии
               </span>
-              <span className="text-muted-foreground">· в корзину</span>
+              <span>· в корзину с карточки</span>
             </div>
           </div>
         </Link>

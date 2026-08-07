@@ -19,8 +19,8 @@ const footerLinks = [
   {
     title: "Продавцам",
     items: [
-      { href: ROUTES.SELLER, label: "Кабинет" },
       { href: ROUTES.SELL, label: "Как продавать" },
+      { href: ROUTES.SELLER_DASHBOARD, label: "Кабинет" },
       { href: ROUTES.SELLER_NEW_PRODUCT, label: "Добавить товар" },
     ],
   },
