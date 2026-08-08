@@ -10,7 +10,7 @@ import { prisma } from "@/lib/prisma";
 /** Refresh role / sellerProfileId from DB at most every 5 minutes. */
 const ROLE_REFRESH_MS = 5 * 60 * 1000;
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -50,7 +50,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     ...authConfig.callbacks,
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id!;
         token.role = user.role;
@@ -63,7 +63,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!userId) return token;
 
       const lastCheck = (token.roleCheckedAt as number | undefined) ?? 0;
-      if (Date.now() - lastCheck < ROLE_REFRESH_MS) {
+      const forceRefresh = trigger === "update";
+      if (!forceRefresh && Date.now() - lastCheck < ROLE_REFRESH_MS) {
         return token;
       }
 

@@ -20,6 +20,7 @@ export {
   AccountMobileNav,
   AccountShell,
   AccountDashboard,
+  BecomeSellerButton,
   ProfileView,
   ProfileEditForm,
   HistoryGrid,

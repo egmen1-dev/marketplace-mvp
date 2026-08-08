@@ -3,12 +3,16 @@ import { test, expect } from "@playwright/test";
 import { DEMO, attachErrorCollector, signIn } from "./helpers";
 
 test.describe("seller cabinet", () => {
-  test("buyer cannot open seller cabinet", async ({ page }) => {
+  test("buyer legacy seller URL opens unified account (activation)", async ({
+    page,
+  }) => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.buyerEmail);
     await page.goto("/seller/dashboard");
-    await expect(page).not.toHaveURL(/\/seller\/dashboard/);
-    await expect(page).toHaveURL(/error=seller_required/);
+    await expect(page).toHaveURL(/\/account/);
+    await expect(page.getByTestId("become-seller").first()).toBeVisible({
+      timeout: 15_000,
+    });
     errors.assertClean();
   });
 
@@ -18,7 +22,7 @@ test.describe("seller cabinet", () => {
 
     const title = `E2E Пушка ${Date.now()}`;
 
-    await page.goto("/seller/products/new");
+    await page.goto("/account/products/new");
     await expect(page.getByLabel("Название", { exact: true })).toBeVisible({
       timeout: 20_000,
     });
@@ -35,10 +39,9 @@ test.describe("seller cabinet", () => {
     await page.getByLabel("Цена, ₽").fill("1990");
     await page.getByLabel("Количество на складе").fill("5");
     await page.getByLabel("Город", { exact: true }).fill("Москва");
-    // Skip Blob upload — optional when BLOB_READ_WRITE_TOKEN unset (P2 infra)
 
     await page.getByRole("button", { name: "Опубликовать товар" }).click();
-    await expect(page).toHaveURL(/\/seller\/products/, { timeout: 45_000 });
+    await expect(page).toHaveURL(/\/account\/products/, { timeout: 45_000 });
     await expect(page.getByText(title).first()).toBeVisible({ timeout: 20_000 });
 
     const row = page.locator("tr").filter({ hasText: title }).first();
@@ -51,7 +54,7 @@ test.describe("seller cabinet", () => {
     await page.getByLabel("Название", { exact: true }).fill(edited);
     await page.getByLabel("Статус").selectOption("ARCHIVED");
     await page.getByRole("button", { name: "Сохранить изменения" }).click();
-    await expect(page).toHaveURL(/\/seller\/products\/?$/, { timeout: 30_000 });
+    await expect(page).toHaveURL(/\/account\/products\/?$/, { timeout: 30_000 });
 
     await expect(page.getByText(edited).first()).toBeVisible({ timeout: 20_000 });
     await expect(

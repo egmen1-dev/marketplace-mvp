@@ -28,7 +28,9 @@ export const authConfig = {
         pathname === "/history" ||
         pathname.startsWith("/history/") ||
         pathname === "/settings" ||
-        pathname.startsWith("/settings/");
+        pathname.startsWith("/settings/") ||
+        pathname === "/orders" ||
+        pathname.startsWith("/orders/");
 
       if (buyerProtected) {
         return Boolean(auth?.user?.id);

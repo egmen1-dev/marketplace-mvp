@@ -8,34 +8,35 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getSessionUser, loadUserAuthFromDb } from "@/features/auth";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 export const metadata = {
   title: "Как продавать",
   description:
-    "Откройте магазин на Лот: регистрация продавца, товары, заказы и доставка СДЭК.",
+    "Продавайте на Лот с тем же аккаунтом: товары, заказы и доставка СДЭК.",
 };
 
 const steps = [
   {
-    title: "Создайте аккаунт продавца",
-    text: "Зарегистрируйтесь как продавец — откроется кабинет для товаров и заказов.",
+    title: "Войдите в свой аккаунт",
+    text: "Отдельная регистрация продавца не нужна — используйте обычный профиль.",
   },
   {
-    title: "Добавьте первый товар",
-    text: "Укажите название, цену, фото и остаток — объявление появится в каталоге.",
+    title: "Нажмите «Продать товар»",
+    text: "Мы создадим профиль продавца и откроем форму нового объявления.",
   },
   {
     title: "Получайте заказы",
-    text: "Следите за статусами в кабинете и отправляйте покупки через СДЭК.",
+    text: "Следите за продажами в кабинете и отправляйте покупки через СДЭК.",
   },
 ] as const;
 
 const benefits = [
   {
     icon: Store,
-    title: "Свой магазин",
-    text: "Публичная витрина и управление товарами в одном кабинете.",
+    title: "Один кабинет",
+    text: "Покупки и продажи в одном аккаунте — как на Авито.",
   },
   {
     icon: Truck,
@@ -49,7 +50,23 @@ const benefits = [
   },
 ] as const;
 
-export default function SellPage() {
+export default async function SellPage() {
+  const session = await getSessionUser();
+  let isSeller = false;
+  if (session?.id) {
+    const dbUser = await loadUserAuthFromDb(session.id);
+    isSeller = Boolean(
+      dbUser?.sellerProfileId &&
+        (dbUser.role === "SELLER" || dbUser.role === "ADMIN"),
+    );
+  }
+
+  const primaryHref = session
+    ? isSeller
+      ? ROUTES.ACCOUNT_PRODUCTS_NEW
+      : `${ROUTES.ACCOUNT}?sell=1`
+    : `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(`${ROUTES.ACCOUNT}?sell=1`)}`;
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-10 px-4 py-12 sm:px-6 sm:py-16">
       <div className="space-y-3">
@@ -58,8 +75,8 @@ export default function SellPage() {
           Как продавать на {APP_NAME}
         </h1>
         <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
-          Кабинет продавца уже готов: товары, склад, заказы и витрина магазина.
-          Начните с регистрации — дальше добавите первый товар.
+          Один аккаунт для покупок и продаж. Нажмите «Продать товар» — откроется
+          кабинет и создание объявления.
         </p>
       </div>
 
@@ -103,32 +120,38 @@ export default function SellPage() {
         <Button
           size="lg"
           nativeButton={false}
-          render={<Link href={`${ROUTES.AUTH_SIGN_UP}?role=SELLER`} />}
+          render={<Link href={primaryHref} />}
         >
           <Store data-icon="inline-start" />
-          Стать продавцом
+          {isSeller ? "Добавить товар" : "Продать товар"}
         </Button>
         <Button
           size="lg"
           variant="outline"
           nativeButton={false}
-          render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
+          render={
+            <Link
+              href={
+                isSeller ? ROUTES.ACCOUNT_PRODUCTS : ROUTES.ACCOUNT_PRODUCTS_NEW
+              }
+            />
+          }
         >
           <PackagePlus data-icon="inline-start" />
-          Добавить товар
+          Мои товары
         </Button>
         <Button
           variant="ghost"
           size="lg"
           nativeButton={false}
-          render={<Link href={ROUTES.SELLER_DASHBOARD} />}
+          render={<Link href={ROUTES.ACCOUNT} />}
         >
-          Кабинет продавца
+          Личный кабинет
           <ArrowRight data-icon="inline-end" />
         </Button>
       </div>
       <p className="text-sm text-muted-foreground">
-        Уже есть аккаунт продавца — сразу переходите к добавлению товара.
+        Уже продаёте — товары и заказы доступны в разделе «Продажи».
       </p>
     </div>
   );

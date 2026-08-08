@@ -54,6 +54,7 @@ test.describe("favorites", () => {
     }).catch(() => undefined);
 
     await page.goto("/favorites");
+    await expect(page).toHaveURL(/\/account\/favorites/);
     await expect(page.getByRole("heading", { name: /Избранн/i })).toBeVisible();
     await expect(page.getByText("В избранном пока пусто")).toHaveCount(0);
     await expect(page.locator('a[href^="/product/"]').first()).toBeVisible({

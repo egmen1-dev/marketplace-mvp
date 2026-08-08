@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   Clock,
   Heart,
+  LayoutGrid,
   LogOut,
   Package,
   Settings,
@@ -89,6 +90,10 @@ export function AuthNav({ user }: AuthNavProps) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link href={ROUTES.ACCOUNT} />}>
+            <LayoutGrid className="size-4" />
+            Кабинет
+          </DropdownMenuItem>
           <DropdownMenuItem render={<Link href={ROUTES.PROFILE} />}>
             <User className="size-4" />
             Профиль
@@ -103,7 +108,7 @@ export function AuthNav({ user }: AuthNavProps) {
           </DropdownMenuItem>
           <DropdownMenuItem render={<Link href={ROUTES.ORDERS} />}>
             <Package className="size-4" />
-            Заказы
+            Покупки
           </DropdownMenuItem>
           <DropdownMenuItem render={<Link href={ROUTES.SETTINGS} />}>
             <Settings className="size-4" />
@@ -111,11 +116,18 @@ export function AuthNav({ user }: AuthNavProps) {
           </DropdownMenuItem>
           {(user.role === "SELLER" || user.role === "ADMIN") &&
           user.sellerProfileId ? (
-            <DropdownMenuItem render={<Link href={ROUTES.SELLER} />}>
+            <DropdownMenuItem render={<Link href={ROUTES.ACCOUNT_SALES} />}>
               <Store className="size-4" />
-              Кабинет продавца
+              Мои продажи
             </DropdownMenuItem>
-          ) : null}
+          ) : (
+            <DropdownMenuItem
+              render={<Link href={`${ROUTES.ACCOUNT}?sell=1`} />}
+            >
+              <Store className="size-4" />
+              Начать продавать
+            </DropdownMenuItem>
+          )}
           {user.role === "ADMIN" ? (
             <DropdownMenuItem render={<Link href={ROUTES.ADMIN} />}>
               <Shield className="size-4" />

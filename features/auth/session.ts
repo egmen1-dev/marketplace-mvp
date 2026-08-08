@@ -193,7 +193,7 @@ export async function requireSellerCabinetAccess(callbackPath: string) {
       );
     }
     if (err instanceof SellerRequiredError) {
-      redirect(`${ROUTES.HOME}?error=seller_required`);
+      redirect(`${ROUTES.ACCOUNT}?sell=1`);
     }
     throw err;
   }

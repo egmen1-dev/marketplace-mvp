@@ -10,18 +10,30 @@ test.describe("account cabinet layout", () => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.buyerEmail);
 
-    await page.goto("/favorites");
+    await page.goto("/account/favorites");
     await expect(page.getByRole("heading", { name: "Избранное" })).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Личный кабинет" })).toBeVisible({
       timeout: 10_000,
     });
 
-    await page.getByRole("link", { name: "Мои заказы" }).click();
-    await expect(page).toHaveURL(/\/orders/);
+    await page
+      .getByRole("navigation", { name: "Личный кабинет" })
+      .getByRole("link", { name: "Покупки", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/account\/orders/);
     await expect(page.getByRole("heading", { name: "Мои заказы" })).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Личный кабинет" })).toBeVisible();
 
     errors.assertClean();
+  });
+
+  test("legacy /favorites and /orders redirect into cabinet", async ({ page }) => {
+    await signIn(page, DEMO.buyerEmail);
+
+    await page.goto("/favorites");
+    await expect(page).toHaveURL(/\/account\/favorites/);
+    await page.goto("/orders");
+    await expect(page).toHaveURL(/\/account\/orders/);
   });
 
   test("mobile nav select keeps cabinet context", async ({ page }) => {
@@ -31,10 +43,45 @@ test.describe("account cabinet layout", () => {
 
     await page.goto("/profile");
     await expect(page.getByLabel("Раздел кабинета")).toBeVisible();
-    await page.getByLabel("Раздел кабинета").selectOption("/settings");
-    await expect(page).toHaveURL(/\/settings/);
+    await page.getByLabel("Раздел кабинета").selectOption("/account/settings");
+    await expect(page).toHaveURL(/\/account\/settings/);
     await expect(page.getByRole("heading", { name: "Настройки" })).toBeVisible();
     await expect(page.getByLabel("Раздел кабинета")).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Быстрый переход" })).toBeVisible();
+
+    errors.assertClean();
+  });
+
+  test("buyer sees start-selling CTA, seller sees sales links", async ({
+    page,
+  }) => {
+    const errors = attachErrorCollector(page);
+
+    await signIn(page, DEMO.buyerEmail);
+    await page.goto("/account");
+    await expect(page.getByTestId("become-seller").first()).toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
+        name: "Мои товары",
+        exact: true,
+      }),
+    ).toHaveCount(0);
+
+    await page.context().clearCookies();
+    await signIn(page, DEMO.sellerEmail);
+    await page.goto("/account");
+    await expect(
+      page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
+        name: "Мои товары",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
+        name: "Мои продажи",
+        exact: true,
+      }),
+    ).toBeVisible();
 
     errors.assertClean();
   });

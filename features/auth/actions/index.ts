@@ -3,8 +3,8 @@
 import { UserRole } from "@prisma/client";
 import { AuthError } from "next-auth";
 
-import { signIn, signOut } from "@/auth";
-import { getSessionUser } from "@/features/auth/session";
+import { signIn, signOut, unstable_update } from "@/auth";
+import { getSessionUser, loadUserAuthFromDb } from "@/features/auth/session";
 import { hashPassword } from "@/features/auth/lib/password";
 import { signInSchema, signUpSchema } from "@/features/auth/schemas";
 import { slugify } from "@/features/products/mappers";
@@ -184,16 +184,18 @@ export async function becomeSellerAction(
     return { ok: false, error: "Требуется вход" };
   }
 
-  if (user.role === UserRole.ADMIN) {
+  const dbUser = await loadUserAuthFromDb(user.id);
+  if (!dbUser) {
+    return { ok: false, error: "Пользователь не найден" };
+  }
+
+  if (dbUser.role === UserRole.ADMIN) {
+    await unstable_update({});
     return { ok: true };
   }
 
-  const existing = await prisma.sellerProfile.findUnique({
-    where: { userId: user.id },
-    select: { id: true },
-  });
-
-  if (user.role === UserRole.SELLER && existing) {
+  if (dbUser.role === UserRole.SELLER && dbUser.sellerProfileId) {
+    await unstable_update({});
     return { ok: true };
   }
 
@@ -209,7 +211,7 @@ export async function becomeSellerAction(
       where: { id: user.id },
       data: { role: UserRole.SELLER },
     });
-    if (!existing) {
+    if (!dbUser.sellerProfileId) {
       await tx.sellerProfile.create({
         data: {
           userId: user.id,
@@ -220,6 +222,9 @@ export async function becomeSellerAction(
       });
     }
   });
+
+  // Refresh JWT claims so AuthNav / middleware see SELLER immediately.
+  await unstable_update({});
 
   return { ok: true };
 }

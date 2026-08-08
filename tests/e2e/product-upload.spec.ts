@@ -64,7 +64,7 @@ test.describe("product image upload", () => {
     await signIn(page, DEMO.sellerEmail);
     await mockUploadsConfigured(page);
 
-    await page.goto("/seller/products/new");
+    await page.goto("/account/products/new");
     await expect(page.getByTestId("product-image-input")).toBeAttached({
       timeout: 20_000,
     });
@@ -116,7 +116,7 @@ test.describe("product image upload", () => {
       };
     });
 
-    await page.goto("/seller/products/new");
+    await page.goto("/account/products/new");
     await expect(page.getByTestId("product-image-input")).toBeEnabled({
       timeout: 20_000,
     });
@@ -163,7 +163,7 @@ test.describe("product image upload", () => {
       });
     });
 
-    await page.goto("/seller/products/new");
+    await page.goto("/account/products/new");
     await expect(page.getByTestId("product-image-error")).toContainText(
       "Загрузка изображений временно недоступна",
       { timeout: 20_000 },

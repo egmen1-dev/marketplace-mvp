@@ -17,31 +17,43 @@ export const ROUTES = {
   PRODUCT: "/product",
   CART: "/cart",
   CHECKOUT: "/checkout",
-  ORDERS: "/orders",
+  /** Unified cabinet home */
   ACCOUNT: "/account",
   PROFILE: "/profile",
   /** Preferred cabinet route; `/profile/history` redirects here. */
   HISTORY: "/history",
   /** @deprecated Use HISTORY — kept for revalidatePath / legacy links. */
   PROFILE_HISTORY: "/history",
-  FAVORITES: "/favorites",
-  /** Preferred cabinet route; `/account/settings` redirects here. */
-  SETTINGS: "/settings",
+  /** Buyer favorites (unified cabinet) */
+  FAVORITES: "/account/favorites",
+  /** Buyer orders (unified cabinet) */
+  ORDERS: "/account/orders",
+  /** Account settings (unified cabinet) */
+  SETTINGS: "/account/settings",
+  /** Seller products in unified cabinet */
+  ACCOUNT_PRODUCTS: "/account/products",
+  ACCOUNT_PRODUCTS_NEW: "/account/products/new",
+  /** Seller sales / incoming orders */
+  ACCOUNT_SALES: "/account/sales",
   ABOUT: "/about",
   SUPPORT: "/support",
   CONTACTS: "/contacts",
   SELL: "/sell",
   PRIVACY: "/privacy",
   TERMS: "/terms",
+  /** Public storefront root — append `/${idOrSlug}` */
   SELLER: "/seller",
-  SELLER_DASHBOARD: "/seller/dashboard",
-  SELLER_PRODUCTS: "/seller/products",
-  SELLER_NEW_PRODUCT: "/seller/products/new",
-  SELLER_ORDERS: "/seller/orders",
-  SELLER_ANALYTICS: "/seller/analytics",
-  SELLER_SETTINGS: "/seller/settings",
-  /** Public storefront — append `/${idOrSlug}` */
   SELLER_PUBLIC: "/seller",
+  /**
+   * Legacy seller cabinet aliases → unified account paths.
+   * Kept so existing actions/links keep working.
+   */
+  SELLER_DASHBOARD: "/account",
+  SELLER_PRODUCTS: "/account/products",
+  SELLER_NEW_PRODUCT: "/account/products/new",
+  SELLER_ORDERS: "/account/sales",
+  SELLER_ANALYTICS: "/account",
+  SELLER_SETTINGS: "/account/settings",
   ADMIN: "/admin",
   ADMIN_USERS: "/admin/users",
   ADMIN_SELLERS: "/admin/sellers",
@@ -57,7 +69,7 @@ export function adminOrderPath(id: string) {
 }
 
 export function sellerProductEditPath(id: string) {
-  return `${ROUTES.SELLER_PRODUCTS}/${id}/edit`;
+  return `${ROUTES.ACCOUNT_PRODUCTS}/${id}/edit`;
 }
 
 export function sellerPublicPath(idOrSlug: string) {
@@ -68,7 +80,7 @@ export function orderPath(id: string) {
   return `${ROUTES.ORDERS}/${id}`;
 }
 
-/** Cabinet routes under /seller that require SELLER/ADMIN (not public storefront). */
+/** Legacy /seller/* cabinet prefixes (still matched for redirects + middleware). */
 export const SELLER_CABINET_PREFIXES = [
   "/seller/dashboard",
   "/seller/products",
@@ -77,10 +89,22 @@ export const SELLER_CABINET_PREFIXES = [
   "/seller/settings",
 ] as const;
 
+/** Unified-cabinet seller sections that require SellerProfile. */
+export const ACCOUNT_SELLER_PREFIXES = [
+  "/account/products",
+  "/account/sales",
+] as const;
+
 export function isSellerCabinetPath(pathname: string): boolean {
   if (pathname === "/seller" || pathname === "/seller/") return true;
-  return SELLER_CABINET_PREFIXES.some(
+  if (
+    SELLER_CABINET_PREFIXES.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    )
+  ) {
+    return true;
+  }
+  return ACCOUNT_SELLER_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 }
-
