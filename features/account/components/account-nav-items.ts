@@ -1,9 +1,11 @@
 import {
   Heart,
+  MapPin,
   Package,
   Settings,
   ShoppingBag,
   Store,
+  Ticket,
   UserRound,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -44,6 +46,14 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
       path.startsWith("/orders/"),
   },
   {
+    href: ROUTES.ACCOUNT_RESERVATIONS,
+    label: "Брони",
+    icon: Ticket,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_RESERVATIONS ||
+      path.startsWith(`${ROUTES.ACCOUNT_RESERVATIONS}/`),
+  },
+  {
     href: ROUTES.FAVORITES,
     label: "Избранное",
     icon: Heart,
@@ -66,6 +76,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_SALES ||
       path.startsWith(`${ROUTES.ACCOUNT_SALES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_PICKUP_POINTS,
+    label: "Точки самовывоза",
+    icon: MapPin,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PICKUP_POINTS ||
+      path.startsWith(`${ROUTES.ACCOUNT_PICKUP_POINTS}/`),
   },
   {
     href: ROUTES.SETTINGS,

@@ -127,6 +127,21 @@ type DetailRow = ListRow & {
   heightCm: Prisma.Decimal | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  pickupEnabled: boolean;
+  reservationEnabled: boolean;
+  prepaymentPercent: number;
+  pickupPoints?: {
+    pickupPoint: {
+      id: string;
+      name: string;
+      city: string;
+      address: string;
+      description: string | null;
+      phone: string | null;
+      workingHours: string | null;
+      isActive: boolean;
+    };
+  }[];
   seller: {
     id: string;
     storeName: string;
@@ -190,6 +205,22 @@ export function mapProductDetail(row: DetailRow): ProductDetail {
     heightCm: row.heightCm != null ? toPriceNumber(row.heightCm) : null,
     seoTitle: row.seoTitle,
     seoDescription: row.seoDescription,
+    pickupEnabled: row.pickupEnabled ?? false,
+    reservationEnabled: row.reservationEnabled ?? false,
+    prepaymentPercent: row.prepaymentPercent ?? 0,
+    pickupPoints: (row.pickupPoints ?? [])
+      .map((l) => l.pickupPoint)
+      .filter((p) => p.isActive)
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        city: p.city,
+        address: p.address,
+        description: p.description,
+        phone: p.phone,
+        workingHours: p.workingHours,
+        isActive: p.isActive,
+      })),
     seller: {
       id: row.seller.id,
       storeName: row.seller.storeName,

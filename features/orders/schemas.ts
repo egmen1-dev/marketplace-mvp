@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const deliveryMethodSchema = z.enum(["PICKUP", "COURIER"]);
+const fulfillmentTypeSchema = z.enum(["DELIVERY", "SELLER_PICKUP"]);
 
 export const checkoutFormSchema = z
   .object({
@@ -32,7 +33,11 @@ export const checkoutFormSchema = z
       .max(500, "Слишком длинный комментарий")
       .optional()
       .or(z.literal("")),
-    deliveryMethod: deliveryMethodSchema,
+    /** Top-level: CDEK delivery vs seller warehouse pickup */
+    fulfillmentType: fulfillmentTypeSchema.default("DELIVERY"),
+    /** CDEK method when fulfillmentType = DELIVERY */
+    deliveryMethod: deliveryMethodSchema.optional().default("PICKUP"),
+    /** CDEK PVZ code */
     pickupPointId: z
       .string()
       .trim()
@@ -45,9 +50,29 @@ export const checkoutFormSchema = z
       .max(300)
       .optional()
       .or(z.literal("")),
+    /** Seller PickupPoint.id when fulfillmentType = SELLER_PICKUP */
+    sellerPickupPointId: z
+      .string()
+      .trim()
+      .max(64)
+      .optional()
+      .or(z.literal("")),
   })
   .superRefine((data, ctx) => {
-    if (data.deliveryMethod === "COURIER") {
+    if (data.fulfillmentType === "SELLER_PICKUP") {
+      const pointId = data.sellerPickupPointId?.trim() ?? "";
+      if (!pointId) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["sellerPickupPointId"],
+          message: "Выберите точку самовывоза продавца",
+        });
+      }
+      return;
+    }
+
+    const method = data.deliveryMethod ?? "PICKUP";
+    if (method === "COURIER") {
       const street = data.street?.trim() ?? "";
       if (street.length < 3) {
         ctx.addIssue({
@@ -57,7 +82,7 @@ export const checkoutFormSchema = z
         });
       }
     }
-    if (data.deliveryMethod === "PICKUP") {
+    if (method === "PICKUP") {
       const pointId = data.pickupPointId?.trim() ?? "";
       if (!pointId) {
         ctx.addIssue({
@@ -71,3 +96,4 @@ export const checkoutFormSchema = z
 
 export type CheckoutFormInput = z.infer<typeof checkoutFormSchema>;
 export type DeliveryMethodInput = z.infer<typeof deliveryMethodSchema>;
+export type FulfillmentTypeInput = z.infer<typeof fulfillmentTypeSchema>;

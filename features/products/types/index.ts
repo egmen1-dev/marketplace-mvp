@@ -79,6 +79,19 @@ export type ProductDetail = ProductListItem & {
   heightCm: number | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  pickupEnabled: boolean;
+  reservationEnabled: boolean;
+  prepaymentPercent: number;
+  pickupPoints: {
+    id: string;
+    name: string;
+    city: string;
+    address: string;
+    description: string | null;
+    phone: string | null;
+    workingHours: string | null;
+    isActive: boolean;
+  }[];
   seller: ProductSellerDto;
 };
 

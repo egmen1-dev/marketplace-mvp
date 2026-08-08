@@ -85,6 +85,20 @@ enum SellerKind {
   INDIVIDUAL
 }
 
+/// How the buyer receives goods: CDEK delivery vs seller warehouse pickup.
+enum OrderFulfillmentType {
+  DELIVERY
+  SELLER_PICKUP
+}
+
+enum PickupReservationStatus {
+  PENDING
+  CONFIRMED
+  READY
+  COMPLETED
+  CANCELLED
+}
+
 // ─── User & Seller ───────────────────────────────────────────────────────────
 
 model User {
@@ -114,6 +128,7 @@ model User {
   inventoryHistory     InventoryHistory[]
   orderStatusChanges   OrderStatusHistory[]
   adminActionLogs      AdminActionLog[]
+  pickupReservations   PickupReservation[]
 
   @@index([role])
   @@index([isBlocked])
@@ -144,8 +159,10 @@ model SellerProfile {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  products Product[]
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product[]
+  pickupPoints   PickupPoint[]
+  reservations   PickupReservation[]
 
   @@index([slug])
   @@index([kind])
@@ -209,11 +226,17 @@ model Product {
   views          Int              @default(0)
   /// Soft counter for hit badge / popular sort — kept in sync with Favorite rows
   favoritesCount Int              @default(0)
+  /// Seller warehouse pickup available for this product
+  pickupEnabled       Boolean @default(false)
+  /// Buyer can reserve / prepay before pickup
+  reservationEnabled  Boolean @default(false)
+  /// Prepayment percent of line total (0–100); allowed: 0,10,20,30,50,100
+  prepaymentPercent   Int     @default(0)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
-  seller           SellerProfile      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  category         Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  seller           SellerProfile         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  category         Category?             @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   images           ProductImage[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
@@ -221,6 +244,8 @@ model Product {
   viewsLog         ProductView[]
   inventory        ProductInventory?
   inventoryHistory InventoryHistory[]
+  pickupPoints     ProductPickupPoint[]
+  reservations     PickupReservation[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -233,6 +258,7 @@ model Product {
   @@index([views])
   @@index([favoritesCount])
   @@index([createdAt])
+  @@index([pickupEnabled])
   @@map("products")
 }
 
@@ -357,10 +383,12 @@ model Order {
   status          OrderStatus @default(NEW)
   subtotal        Decimal     @db.Decimal(12, 2)
   shippingCost    Decimal     @default(0) @db.Decimal(12, 2)
+  /// Amount charged now (full for delivery; prepayment sum for seller pickup)
   total           Decimal     @db.Decimal(12, 2)
   currency        String      @default("RUB")
   shippingAddressId String?
   notes           String?
+  fulfillmentType OrderFulfillmentType @default(DELIVERY)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -370,11 +398,13 @@ model Order {
   payment         Payment?
   delivery        Delivery?
   statusHistory   OrderStatusHistory[]
+  reservations    PickupReservation[]
 
   @@index([userId])
   @@index([status])
   @@index([orderNumber])
   @@index([createdAt])
+  @@index([fulfillmentType])
   @@map("orders")
 }
 
@@ -499,6 +529,74 @@ model Delivery {
   @@index([method])
   @@index([trackingNumber])
   @@map("deliveries")
+}
+
+// ─── Seller pickup & reservations ────────────────────────────────────────────
+
+model PickupPoint {
+  id            String   @id @default(cuid())
+  sellerId      String
+  name          String
+  city          String
+  address       String
+  description   String?
+  phone         String?
+  workingHours  String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  seller       SellerProfile         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  products     ProductPickupPoint[]
+  reservations PickupReservation[]
+
+  @@index([sellerId])
+  @@index([sellerId, isActive])
+  @@index([city])
+  @@map("pickup_points")
+}
+
+model ProductPickupPoint {
+  productId     String
+  pickupPointId String
+
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  pickupPoint PickupPoint @relation(fields: [pickupPointId], references: [id], onDelete: Cascade)
+
+  @@id([productId, pickupPointId])
+  @@index([pickupPointId])
+  @@map("product_pickup_points")
+}
+
+model PickupReservation {
+  id                 String                  @id @default(cuid())
+  orderId            String
+  productId          String
+  buyerId            String
+  sellerId           String
+  pickupPointId      String
+  status             PickupReservationStatus @default(PENDING)
+  quantity           Int                     @default(1)
+  prepaymentPercent  Int                     @default(0)
+  prepaymentAmount   Decimal                 @db.Decimal(12, 2)
+  remainingAmount    Decimal                 @db.Decimal(12, 2)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Restrict)
+  buyer       User        @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  seller      SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  pickupPoint PickupPoint @relation(fields: [pickupPointId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([pickupPointId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("pickup_reservations")
 }
 
 // ─── Admin audit ─────────────────────────────────────────────────────────────

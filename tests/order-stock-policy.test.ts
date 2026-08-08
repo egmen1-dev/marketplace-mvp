@@ -110,9 +110,11 @@ describe("createOrderFromCart stock policy", () => {
       phone: "+79990001122",
       city: "Москва",
       street: "Тверская 1",
+      fulfillmentType: "DELIVERY",
       deliveryMethod: "COURIER",
       pickupPointId: "",
       pickupAddress: "",
+      sellerPickupPointId: "",
       notes: "",
     });
 

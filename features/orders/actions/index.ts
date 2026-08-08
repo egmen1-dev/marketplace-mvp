@@ -8,6 +8,7 @@ import { checkoutFormSchema } from "@/features/orders/schemas";
 import type { CreateOrderResult } from "@/features/orders/types";
 import { createCheckoutSessionForOrder } from "@/features/payments";
 import { orderPath, ROUTES } from "@/lib/constants";
+import { prisma } from "@/lib/prisma";
 
 export type CreateOrderActionState =
   | CreateOrderResult
@@ -32,9 +33,11 @@ export async function createOrderFromCartAction(
     city: formData.get("city"),
     street: formData.get("street") ?? "",
     notes: formData.get("notes") ?? "",
+    fulfillmentType: formData.get("fulfillmentType") ?? "DELIVERY",
     deliveryMethod: formData.get("deliveryMethod") ?? "PICKUP",
     pickupPointId: formData.get("pickupPointId") ?? "",
     pickupAddress: formData.get("pickupAddress") ?? "",
+    sellerPickupPointId: formData.get("sellerPickupPointId") ?? "",
   });
 
   if (!parsed.success) {
@@ -46,7 +49,7 @@ export async function createOrderFromCartAction(
     }
     return {
       ok: false,
-      error: "Проверьте данные доставки",
+      error: "Проверьте данные получения",
       fieldErrors,
     };
   }
@@ -60,7 +63,23 @@ export async function createOrderFromCartAction(
   revalidatePath(ROUTES.CART);
   revalidatePath(ROUTES.CHECKOUT);
   revalidatePath(ROUTES.ORDERS);
+  revalidatePath(ROUTES.ACCOUNT_RESERVATIONS);
   revalidatePath(orderPath(result.orderId));
+
+  const order = await prisma.order.findUnique({
+    where: { id: result.orderId },
+    select: { total: true },
+  });
+  const charge = order ? Number(order.total) : 0;
+
+  // Free reservation (0% prepayment) — no Stripe charge
+  if (charge <= 0) {
+    return {
+      ok: true,
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+    };
+  }
 
   const checkout = await createCheckoutSessionForOrder(
     user.id,

@@ -185,6 +185,58 @@ export default async function ProductPage({ params }: ProductPageProps) {
             currency={product.currency}
           />
 
+          <section
+            className="rounded-2xl border border-border bg-card/50 p-4 sm:p-5"
+            data-testid="pdp-fulfillment"
+          >
+            <h2 className="font-heading text-base font-semibold">
+              Получение товара
+            </h2>
+            <ul className="mt-3 space-y-3 text-sm">
+              <li className="flex gap-2 text-muted-foreground">
+                <Truck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+                <span>
+                  <span className="font-medium text-foreground">Доставка</span>
+                  <span className="mt-0.5 block">
+                    {sellerShipping
+                      ? sellerShipping
+                      : "Доставка доступна при оформлении заказа (СДЭК)"}
+                  </span>
+                </span>
+              </li>
+              {product.pickupEnabled && product.pickupPoints.length > 0 ? (
+                <li className="flex gap-2 text-muted-foreground">
+                  <Package className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+                  <span className="min-w-0">
+                    <span className="font-medium text-foreground">
+                      Самовывоз доступен
+                    </span>
+                    <ul className="mt-2 space-y-2">
+                      {product.pickupPoints.map((p) => (
+                        <li key={p.id} className="rounded-xl bg-surface/60 px-3 py-2">
+                          <span className="block font-medium text-foreground">
+                            {p.name}
+                          </span>
+                          <span className="block">
+                            {p.city}, {p.address}
+                          </span>
+                          {p.workingHours ? (
+                            <span className="block text-xs">{p.workingHours}</span>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                    {product.reservationEnabled ? (
+                      <span className="mt-2 block text-foreground">
+                        Бронь: {product.prepaymentPercent}% предоплата
+                      </span>
+                    ) : null}
+                  </span>
+                </li>
+              ) : null}
+            </ul>
+          </section>
+
           {/* 6: seller trust */}
           {sellerTrust ? (
             <ProductSellerCard seller={sellerTrust} />

@@ -20,6 +20,7 @@ import type {
 } from "@/features/products/types";
 import { resolveCategoryIdsIncludingDescendants } from "@/features/catalog/queries";
 import { categoryPagePath } from "@/features/catalog/paths";
+import { syncProductPickupPoints } from "@/features/pickup/queries";
 import { setInventoryQuantity } from "@/features/orders/lib/inventory-sync";
 import {
   searchTokenVariants,
@@ -119,6 +120,11 @@ const detailInclude = {
       slug: true,
       isVerified: true,
       user: { select: { id: true, name: true, image: true } },
+    },
+  },
+  pickupPoints: {
+    include: {
+      pickupPoint: true,
     },
   },
 } satisfies Prisma.ProductInclude;
@@ -540,6 +546,20 @@ export async function createProduct(
 
   await assertCategoryExists(input.categoryId);
 
+  const pickupEnabled = Boolean(input.pickupEnabled);
+  const reservationEnabled = pickupEnabled && Boolean(input.reservationEnabled);
+  const prepaymentPercent = reservationEnabled
+    ? (input.prepaymentPercent ?? 0)
+    : 0;
+  const pickupPointIds = pickupEnabled ? (input.pickupPointIds ?? []) : [];
+  if (pickupEnabled && pickupPointIds.length === 0) {
+    throw new ProductServiceError(
+      "PICKUP_POINTS_REQUIRED",
+      "Выберите хотя бы одну точку самовывоза",
+      400,
+    );
+  }
+
   const slug = await uniqueSlug(sellerId, input.title);
   const city =
     input.city != null && input.city.trim() !== "" ? input.city.trim() : null;
@@ -565,6 +585,9 @@ export async function createProduct(
         heightCm: optionalDecimal(input.heightCm) ?? null,
         seoTitle: input.seoTitle ?? null,
         seoDescription: input.seoDescription ?? null,
+        pickupEnabled,
+        reservationEnabled,
+        prepaymentPercent,
         images: {
           create: input.images.map((img, index) => ({
             url: img.url,
@@ -577,6 +600,8 @@ export async function createProduct(
       },
       include: detailInclude,
     });
+
+    await syncProductPickupPoints(tx, product.id, sellerId, pickupPointIds);
 
     await setInventoryQuantity(tx, {
       productId: product.id,
@@ -662,11 +687,30 @@ export async function updateProduct(
   if (input.seoDescription !== undefined) {
     data.seoDescription = input.seoDescription;
   }
+  if (input.pickupEnabled !== undefined) {
+    data.pickupEnabled = input.pickupEnabled;
+  }
+  if (input.reservationEnabled !== undefined) {
+    data.reservationEnabled = input.reservationEnabled;
+  }
+  if (input.prepaymentPercent !== undefined) {
+    data.prepaymentPercent = input.prepaymentPercent;
+  }
   if (input.categoryId !== undefined) {
     data.category =
       input.categoryId == null
         ? { disconnect: true }
         : { connect: { id: input.categoryId } };
+  }
+
+  const pickupPointIds =
+    input.pickupPointIds !== undefined ? input.pickupPointIds : undefined;
+  if (input.pickupEnabled === true && pickupPointIds && pickupPointIds.length === 0) {
+    throw new ProductServiceError(
+      "PICKUP_POINTS_REQUIRED",
+      "Выберите хотя бы одну точку самовывоза",
+      400,
+    );
   }
 
   await prisma.$transaction(async (tx) => {
@@ -692,6 +736,10 @@ export async function updateProduct(
         where: { id: productId },
         data,
       });
+    }
+
+    if (pickupPointIds !== undefined) {
+      await syncProductPickupPoints(tx, productId, sellerId, pickupPointIds);
     }
 
     if (input.stock !== undefined) {
@@ -760,6 +808,10 @@ export async function duplicateProduct(
       heightCm: existing.heightCm?.toNumber() ?? null,
       seoTitle: existing.seoTitle,
       seoDescription: existing.seoDescription,
+      pickupEnabled: existing.pickupEnabled,
+      reservationEnabled: existing.reservationEnabled,
+      prepaymentPercent: existing.prepaymentPercent,
+      pickupPointIds: [],
       images: existing.images.map((img) => ({
         url: img.url,
         alt: img.alt,

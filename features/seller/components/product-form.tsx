@@ -18,7 +18,11 @@ import {
 import { CategoryPicker } from "@/features/seller/components/category-picker";
 import { ProductImageUploader } from "@/features/seller/components/product-image-uploader";
 import { isLowStock } from "@/features/orders/lib/inventory-sync";
+import { PREPAYMENT_PERCENTS } from "@/features/pickup/lib/prepayment";
+import type { PickupPointDto } from "@/features/pickup/queries";
 import { toastError } from "@/lib/toasts";
+import { ROUTES } from "@/lib/constants";
+import Link from "next/link";
 
 const initialState: ProductActionState = { ok: false };
 
@@ -37,6 +41,8 @@ type ProductFormProps = {
   product?: ProductDetail;
   /** `products/{sellerProfileId}/` for client-direct Blob uploads */
   uploadPathPrefix: string;
+  /** Seller warehouse points for pickup linking */
+  sellerPickupPoints?: PickupPointDto[];
 };
 
 export function ProductForm({
@@ -44,9 +50,16 @@ export function ProductForm({
   mode,
   product,
   uploadPathPrefix,
+  sellerPickupPoints = [],
 }: ProductFormProps) {
   const [categoryId, setCategoryId] = useState(
     product?.category?.id ?? "",
+  );
+  const [pickupEnabled, setPickupEnabled] = useState(
+    product?.pickupEnabled ?? false,
+  );
+  const [reservationEnabled, setReservationEnabled] = useState(
+    product?.reservationEnabled ?? false,
   );
 
   const boundUpdate = useMemo(
@@ -217,6 +230,98 @@ export function ProductForm({
                 </option>
               ))}
             </select>
+          </div>
+        ) : null}
+      </section>
+
+      <section className="flex flex-col gap-4 border-t border-border pt-6">
+        <h2 className="font-heading text-lg font-semibold">Получение товара</h2>
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            name="pickupEnabled"
+            value="on"
+            checked={pickupEnabled}
+            onChange={(e) => {
+              setPickupEnabled(e.target.checked);
+              if (!e.target.checked) setReservationEnabled(false);
+            }}
+            className="size-4 rounded border-border"
+          />
+          Доступен самовывоз
+        </label>
+
+        {pickupEnabled ? (
+          <div className="space-y-3 rounded-xl border border-border bg-surface/40 p-4">
+            {sellerPickupPoints.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Сначала добавьте точку самовывоза.{" "}
+                <Link
+                  href={ROUTES.ACCOUNT_PICKUP_POINTS_NEW}
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  Добавить точку
+                </Link>
+              </p>
+            ) : (
+              <fieldset className="space-y-2">
+                <legend className="text-sm font-medium">Точки самовывоза</legend>
+                {sellerPickupPoints.map((p) => {
+                  const checked =
+                    product?.pickupPoints?.some((x) => x.id === p.id) ?? false;
+                  return (
+                    <label
+                      key={p.id}
+                      className="flex items-start gap-2 text-sm"
+                    >
+                      <input
+                        type="checkbox"
+                        name="pickupPointIds"
+                        value={p.id}
+                        defaultChecked={checked}
+                        className="mt-0.5 size-4 rounded border-border"
+                      />
+                      <span>
+                        <span className="font-medium">{p.name}</span>
+                        <span className="block text-xs text-muted-foreground">
+                          {p.city}, {p.address}
+                        </span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </fieldset>
+            )}
+
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="reservationEnabled"
+                value="on"
+                checked={reservationEnabled}
+                onChange={(e) => setReservationEnabled(e.target.checked)}
+                className="size-4 rounded border-border"
+              />
+              Возможна бронь товара
+            </label>
+
+            {reservationEnabled ? (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="prepaymentPercent">Размер предоплаты (%)</Label>
+                <select
+                  id="prepaymentPercent"
+                  name="prepaymentPercent"
+                  className="h-10 w-full rounded-xl border border-input bg-surface px-3.5 text-sm"
+                  defaultValue={String(product?.prepaymentPercent ?? 20)}
+                >
+                  {PREPAYMENT_PERCENTS.map((p) => (
+                    <option key={p} value={p}>
+                      {p}%
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </section>

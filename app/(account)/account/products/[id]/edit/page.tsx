@@ -13,6 +13,7 @@ import {
   requireSellerCabinetAccess,
 } from "@/features/auth";
 import { listCategories } from "@/features/catalog";
+import { listSellerPickupPoints } from "@/features/pickup/queries";
 import {
   getOwnedProduct,
   ProductServiceError,
@@ -53,8 +54,12 @@ export default async function EditProductPage({
   }
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
+  let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
   try {
-    categories = await listCategories();
+    [categories, pickupPoints] = await Promise.all([
+      listCategories(),
+      listSellerPickupPoints(sellerProfileId, { activeOnly: true }),
+    ]);
   } catch (err) {
     console.error("[seller/products/edit]", err);
   }
@@ -90,6 +95,7 @@ export default async function EditProductPage({
             mode="edit"
             product={product}
             uploadPathPrefix={`products/${sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`}
+            sellerPickupPoints={pickupPoints}
           />
         </CardContent>
       </Card>

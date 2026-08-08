@@ -73,6 +73,18 @@ function fieldErrorsFromZod(error: {
 }
 
 function productFormPayload(formData: FormData, sellerProfileId?: string) {
+  const pickupEnabled =
+    formData.get("pickupEnabled") === "on" ||
+    formData.get("pickupEnabled") === "true";
+  const reservationEnabled =
+    pickupEnabled &&
+    (formData.get("reservationEnabled") === "on" ||
+      formData.get("reservationEnabled") === "true");
+  const pickupPointIds = formData
+    .getAll("pickupPointIds")
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+
   return {
     title: formData.get("title"),
     description: formData.get("description") || null,
@@ -91,6 +103,12 @@ function productFormPayload(formData: FormData, sellerProfileId?: string) {
     seoTitle: emptyToNull(formData.get("seoTitle")),
     seoDescription: emptyToNull(formData.get("seoDescription")),
     images: parseImages(formData),
+    pickupEnabled,
+    reservationEnabled,
+    prepaymentPercent: reservationEnabled
+      ? formData.get("prepaymentPercent") || 0
+      : 0,
+    pickupPointIds: pickupEnabled ? pickupPointIds : [],
   };
 }
 

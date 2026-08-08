@@ -3,6 +3,7 @@ import {
   DeliveryMethod,
   DeliveryProvider,
   DeliveryStatus,
+  OrderFulfillmentType,
   Prisma,
   ProductStatus,
   OrderStatus,
@@ -18,6 +19,7 @@ import type {
   OrderListItem,
   OrderShippingView,
 } from "@/features/orders/types";
+import { calcPrepaymentAmount } from "@/features/pickup/lib/prepayment";
 import { toPriceNumber } from "@/features/products/mappers";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
 import { DeliveryError, getDeliveryProvider } from "@/lib/delivery";
@@ -224,6 +226,248 @@ export async function getOrderForUser(
 }
 
 /**
+ * Seller-warehouse pickup: no CDEK, create PickupReservation rows,
+ * charge prepayment (or full amount if reservation disabled / 100%).
+ */
+async function createSellerPickupOrder(opts: {
+  userId: string;
+  cart: {
+    id: string;
+    items: {
+      productId: string;
+      quantity: number;
+      product: {
+        id: string;
+        name: string;
+        sku: string | null;
+        price: Prisma.Decimal;
+        sellerId: string;
+        pickupEnabled: boolean;
+        reservationEnabled: boolean;
+        prepaymentPercent: number;
+        pickupPoints: { pickupPointId: string }[];
+      };
+    }[];
+  };
+  shipping: CheckoutFormInput;
+  phone: string | null;
+  notes: string | null;
+  subtotal: Prisma.Decimal;
+  lineSnapshots: {
+    productId: string;
+    productName: string;
+    productSku: string | null;
+    unitPrice: Prisma.Decimal;
+    quantity: number;
+    totalPrice: Prisma.Decimal;
+  }[];
+  currency: string;
+}): Promise<CreateOrderResult> {
+  const {
+    userId,
+    cart,
+    shipping,
+    phone,
+    notes,
+    subtotal,
+    lineSnapshots,
+    currency,
+  } = opts;
+
+  const sellerPickupPointId = shipping.sellerPickupPointId?.trim() ?? "";
+  if (!sellerPickupPointId) {
+    return { ok: false, error: "Выберите точку самовывоза" };
+  }
+
+  const sellerIds = new Set(cart.items.map((i) => i.product.sellerId));
+  if (sellerIds.size !== 1) {
+    return {
+      ok: false,
+      error:
+        "Самовывоз доступен только если все товары в корзине от одного продавца",
+    };
+  }
+  const sellerId = cart.items[0]!.product.sellerId;
+
+  for (const item of cart.items) {
+    if (!item.product.pickupEnabled) {
+      return {
+        ok: false,
+        error: `«${item.product.name}» недоступен для самовывоза`,
+      };
+    }
+    const linked = item.product.pickupPoints.some(
+      (p) => p.pickupPointId === sellerPickupPointId,
+    );
+    if (!linked) {
+      return {
+        ok: false,
+        error: `Точка самовывоза недоступна для «${item.product.name}»`,
+      };
+    }
+  }
+
+  const point = await prisma.pickupPoint.findFirst({
+    where: { id: sellerPickupPointId, sellerId, isActive: true },
+  });
+  if (!point) {
+    return { ok: false, error: "Точка самовывоза не найдена или отключена" };
+  }
+
+  let chargeTotal = new Prisma.Decimal(0);
+  const reservationRows = cart.items.map((item) => {
+    const lineTotal = toPriceNumber(item.product.price) * item.quantity;
+    const percent = item.product.reservationEnabled
+      ? item.product.prepaymentPercent
+      : 100;
+    const { prepayment, remaining } = calcPrepaymentAmount(lineTotal, percent);
+    chargeTotal = chargeTotal.add(new Prisma.Decimal(prepayment.toFixed(2)));
+    return {
+      productId: item.productId,
+      sellerId: item.product.sellerId,
+      quantity: item.quantity,
+      prepaymentPercent: percent,
+      prepaymentAmount: new Prisma.Decimal(prepayment.toFixed(2)),
+      remainingAmount: new Prisma.Decimal(remaining.toFixed(2)),
+    };
+  });
+
+  try {
+    const order = await prisma.$transaction(async (tx) => {
+      for (const item of cart.items) {
+        const product = await tx.product.findUnique({
+          where: { id: item.productId },
+          select: { id: true, name: true, stock: true, status: true },
+        });
+        if (!product || product.status !== ProductStatus.ACTIVE) {
+          throw new OrderServiceError(
+            "UNAVAILABLE",
+            `«${item.product.name}» недоступен для покупки`,
+          );
+        }
+        if (product.stock < item.quantity) {
+          throw new OrderServiceError(
+            "OUT_OF_STOCK",
+            product.stock <= 0
+              ? `«${product.name}» нет в наличии`
+              : `Недостаточно «${product.name}»: доступно ${product.stock} шт.`,
+          );
+        }
+      }
+
+      const address = await tx.address.create({
+        data: {
+          userId,
+          type: AddressType.SHIPPING,
+          fullName: shipping.fullName.trim(),
+          phone,
+          city: point.city,
+          street: point.address,
+        },
+      });
+
+      let created = null as Awaited<ReturnType<typeof tx.order.create>> | null;
+      let attempts = 0;
+      while (!created && attempts < 5) {
+        attempts += 1;
+        const orderNumber = generateOrderNumber();
+        try {
+          created = await tx.order.create({
+            data: {
+              userId,
+              orderNumber,
+              status: OrderStatus.NEW,
+              subtotal,
+              shippingCost: new Prisma.Decimal(0),
+              total: chargeTotal,
+              currency,
+              fulfillmentType: OrderFulfillmentType.SELLER_PICKUP,
+              shippingAddressId: address.id,
+              notes,
+              items: {
+                create: lineSnapshots.map((line) => ({
+                  productId: line.productId,
+                  productName: line.productName,
+                  productSku: line.productSku,
+                  unitPrice: line.unitPrice,
+                  quantity: line.quantity,
+                  totalPrice: line.totalPrice,
+                })),
+              },
+            },
+          });
+        } catch (err) {
+          if (
+            err instanceof Prisma.PrismaClientKnownRequestError &&
+            err.code === "P2002"
+          ) {
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      if (!created) {
+        throw new OrderServiceError(
+          "ORDER_NUMBER",
+          "Не удалось создать номер заказа",
+          500,
+        );
+      }
+
+      await tx.delivery.create({
+        data: {
+          orderId: created.id,
+          provider: DeliveryProvider.PICKUP,
+          method: DeliveryMethod.PICKUP,
+          status: DeliveryStatus.PENDING,
+          cost: new Prisma.Decimal(0),
+          currency,
+          pickupPointId: point.id,
+          pickupAddress: `${point.name}, ${point.city}, ${point.address}`,
+          estimatedMinDays: 0,
+          estimatedMaxDays: 0,
+        },
+      });
+
+      await tx.pickupReservation.createMany({
+        data: reservationRows.map((r) => ({
+          orderId: created!.id,
+          productId: r.productId,
+          buyerId: userId,
+          sellerId: r.sellerId,
+          pickupPointId: point.id,
+          quantity: r.quantity,
+          prepaymentPercent: r.prepaymentPercent,
+          prepaymentAmount: r.prepaymentAmount,
+          remainingAmount: r.remainingAmount,
+        })),
+      });
+
+      await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
+      await tx.cart.update({
+        where: { id: cart.id },
+        data: { updatedAt: new Date() },
+      });
+
+      return created;
+    });
+
+    return {
+      ok: true,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+    };
+  } catch (err) {
+    if (err instanceof OrderServiceError) {
+      return { ok: false, error: err.message };
+    }
+    console.error("[createSellerPickupOrder]", err);
+    return { ok: false, error: "Не удалось оформить самовывоз" };
+  }
+}
+
+/**
  * Create order from the user's DB cart in a single transaction:
  * validate stock availability → quote CDEK delivery → snapshot prices →
  * Delivery row → clear cart.
@@ -252,6 +496,13 @@ export async function createOrderFromCart(
               currency: true,
               stock: true,
               status: true,
+              sellerId: true,
+              pickupEnabled: true,
+              reservationEnabled: true,
+              prepaymentPercent: true,
+              pickupPoints: {
+                select: { pickupPointId: true },
+              },
             },
           },
         },
@@ -306,6 +557,24 @@ export async function createOrderFromCart(
     shipping.notes && shipping.notes.trim().length > 0
       ? shipping.notes.trim()
       : null;
+
+  const fulfillmentType =
+    shipping.fulfillmentType === "SELLER_PICKUP"
+      ? OrderFulfillmentType.SELLER_PICKUP
+      : OrderFulfillmentType.DELIVERY;
+
+  if (fulfillmentType === OrderFulfillmentType.SELLER_PICKUP) {
+    return createSellerPickupOrder({
+      userId,
+      cart,
+      shipping,
+      phone,
+      notes,
+      subtotal,
+      lineSnapshots,
+      currency,
+    });
+  }
 
   const deliveryMethod =
     shipping.deliveryMethod === "PICKUP"
@@ -392,6 +661,7 @@ export async function createOrderFromCart(
               shippingCost,
               total,
               currency,
+              fulfillmentType: OrderFulfillmentType.DELIVERY,
               shippingAddressId: address.id,
               notes,
               items: {

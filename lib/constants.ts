@@ -35,6 +35,11 @@ export const ROUTES = {
   ACCOUNT_PRODUCTS_NEW: "/account/products/new",
   /** Seller sales / incoming orders */
   ACCOUNT_SALES: "/account/sales",
+  /** Seller pickup warehouse addresses */
+  ACCOUNT_PICKUP_POINTS: "/account/pickup-points",
+  ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
+  /** Buyer + seller reservation lists (same path; UI branches by role) */
+  ACCOUNT_RESERVATIONS: "/account/reservations",
   ABOUT: "/about",
   SUPPORT: "/support",
   CONTACTS: "/contacts",
@@ -93,6 +98,7 @@ export const SELLER_CABINET_PREFIXES = [
 export const ACCOUNT_SELLER_PREFIXES = [
   "/account/products",
   "/account/sales",
+  "/account/pickup-points",
 ] as const;
 
 export function isSellerCabinetPath(pathname: string): boolean {

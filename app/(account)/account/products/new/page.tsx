@@ -12,6 +12,7 @@ import {
   requireSellerCabinetAccess,
 } from "@/features/auth";
 import { listCategories } from "@/features/catalog";
+import { listSellerPickupPoints } from "@/features/pickup/queries";
 import { ProductForm } from "@/features/seller";
 import { ROUTES } from "@/lib/constants";
 
@@ -26,10 +27,14 @@ export default async function NewProductPage() {
   const uploadPathPrefix = `products/${seller.sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`;
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
+  let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
   let dbError: string | null = null;
 
   try {
-    categories = await listCategories();
+    [categories, pickupPoints] = await Promise.all([
+      listCategories(),
+      listSellerPickupPoints(seller.sellerProfileId, { activeOnly: true }),
+    ]);
   } catch (err) {
     console.error("[seller/products/new]", err);
     dbError = "Не удалось загрузить категории. Попробуйте обновить страницу позже.";
@@ -70,6 +75,7 @@ export default async function NewProductPage() {
               categories={categories}
               mode="create"
               uploadPathPrefix={uploadPathPrefix}
+              sellerPickupPoints={pickupPoints}
             />
           )}
         </CardContent>

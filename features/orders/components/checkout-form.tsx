@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -17,18 +17,30 @@ import {
   type CreateOrderActionState,
 } from "@/features/orders/actions";
 import { DeliverySection } from "@/features/orders/components/delivery-section";
+import { calcPrepaymentAmount } from "@/features/pickup/lib/prepayment";
+import type { PickupPointDto } from "@/features/pickup/queries";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import type { DeliveryQuote } from "@/lib/delivery/types";
 import { ROUTES } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 const initialState: CreateOrderActionState = { ok: false };
+
+export type CheckoutPickupOption = {
+  point: PickupPointDto;
+  /** Estimated charge now (prepayment sum) */
+  prepaymentTotal: number;
+  remainingTotal: number;
+};
 
 type CheckoutFormProps = {
   initialCart: CartView;
   defaultName: string;
   defaultPhone: string;
   canceled?: boolean;
+  sellerPickupOptions?: CheckoutPickupOption[];
+  sellerPickupAvailable?: boolean;
 };
 
 export function CheckoutForm({
@@ -36,6 +48,8 @@ export function CheckoutForm({
   defaultName,
   defaultPhone,
   canceled = false,
+  sellerPickupOptions = [],
+  sellerPickupAvailable = false,
 }: CheckoutFormProps) {
   const router = useRouter();
   const { refresh } = useCart();
@@ -49,6 +63,12 @@ export function CheckoutForm({
   );
   const [deliveryMethod, setDeliveryMethod] = useState<"PICKUP" | "COURIER">(
     "PICKUP",
+  );
+  const [fulfillmentType, setFulfillmentType] = useState<
+    "DELIVERY" | "SELLER_PICKUP"
+  >("DELIVERY");
+  const [sellerPointId, setSellerPointId] = useState(
+    sellerPickupOptions[0]?.point.id ?? "",
   );
 
   useEffect(() => {
@@ -67,12 +87,25 @@ export function CheckoutForm({
     })();
   }, [state, refresh, router]);
 
+  const selectedPickup = useMemo(
+    () => sellerPickupOptions.find((o) => o.point.id === sellerPointId) ?? null,
+    [sellerPickupOptions, sellerPointId],
+  );
+
   const isEmpty = cart.items.length === 0;
   const failedOrderId =
     !state.ok && "orderId" in state ? state.orderId : undefined;
-  const shippingCost = deliveryQuote?.cost ?? 0;
-  const orderTotal = cart.subtotal + shippingCost;
-  const canPay = Boolean(deliveryQuote) && !pending && !isEmpty;
+  const shippingCost =
+    fulfillmentType === "SELLER_PICKUP" ? 0 : (deliveryQuote?.cost ?? 0);
+  const goodsCharge =
+    fulfillmentType === "SELLER_PICKUP" && selectedPickup
+      ? selectedPickup.prepaymentTotal
+      : cart.subtotal;
+  const orderTotal = goodsCharge + shippingCost;
+  const canPay =
+    fulfillmentType === "SELLER_PICKUP"
+      ? Boolean(sellerPointId) && !pending && !isEmpty
+      : Boolean(deliveryQuote) && !pending && !isEmpty;
 
   if (isEmpty) {
     return (
@@ -84,23 +117,13 @@ export function CheckoutForm({
             Добавьте товары, чтобы оформить заказ.
           </p>
         </div>
-        <div className="flex flex-wrap justify-center gap-3">
-          <Button
-            size="lg"
-            nativeButton={false}
-            render={<Link href={ROUTES.CATALOG} />}
-          >
-            В каталог
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            nativeButton={false}
-            render={<Link href={ROUTES.CART} />}
-          >
-            Корзина
-          </Button>
-        </div>
+        <Button
+          size="lg"
+          nativeButton={false}
+          render={<Link href={ROUTES.CATALOG} />}
+        >
+          В каталог
+        </Button>
       </div>
     );
   }
@@ -113,6 +136,9 @@ export function CheckoutForm({
       action={formAction}
       className="grid gap-8 lg:grid-cols-[1fr_340px]"
     >
+      <input type="hidden" name="fulfillmentType" value={fulfillmentType} />
+      <input type="hidden" name="sellerPickupPointId" value={sellerPointId} />
+
       <div className="flex flex-col gap-6">
         {canceled ? (
           <p className="rounded-xl border border-border bg-surface/60 px-4 py-3 text-sm text-muted-foreground">
@@ -122,10 +148,6 @@ export function CheckoutForm({
 
         <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
           <h2 className="font-heading text-lg font-medium">Получатель</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Контакты для связи по заказу.
-          </p>
-
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2 sm:col-span-2">
               <Label htmlFor="fullName">Имя получателя</Label>
@@ -135,16 +157,9 @@ export function CheckoutForm({
                 required
                 defaultValue={defaultName}
                 placeholder="Иван Иванов"
-                aria-invalid={Boolean(fieldErrors?.fullName)}
                 disabled={pending}
               />
-              {fieldErrors?.fullName?.[0] ? (
-                <p className="text-xs text-destructive">
-                  {fieldErrors.fullName[0]}
-                </p>
-              ) : null}
             </div>
-
             <div className="flex flex-col gap-2 sm:col-span-2">
               <Label htmlFor="phone">Телефон</Label>
               <Input
@@ -153,65 +168,139 @@ export function CheckoutForm({
                 type="tel"
                 defaultValue={defaultPhone}
                 placeholder="+7 900 000-00-00"
-                aria-invalid={Boolean(fieldErrors?.phone)}
                 disabled={pending}
               />
-              {fieldErrors?.phone?.[0] ? (
-                <p className="text-xs text-destructive">
-                  {fieldErrors.phone[0]}
-                </p>
-              ) : null}
             </div>
           </div>
         </section>
 
-        <DeliverySection
-          disabled={pending}
-          currency={cart.currency}
-          fieldErrors={fieldErrors}
-          onMethodChange={setDeliveryMethod}
-          onQuoteChange={setDeliveryQuote}
-        />
-
-        {deliveryMethod === "COURIER" ? (
-          <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
-            <h2 className="font-heading text-lg font-medium">Адрес курьера</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Улица, дом и квартира для доставки.
-            </p>
-            <div className="mt-5 flex flex-col gap-2">
-              <Label htmlFor="street">Адрес</Label>
-              <Input
-                id="street"
-                name="street"
-                required
-                placeholder="ул. Примерная, д. 1, кв. 2"
-                aria-invalid={Boolean(fieldErrors?.street)}
-                disabled={pending}
-              />
-              {fieldErrors?.street?.[0] ? (
-                <p className="text-xs text-destructive">
-                  {fieldErrors.street[0]}
-                </p>
+        <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
+          <h2 className="font-heading text-lg font-medium">Способ получения</h2>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              className={cn(
+                "flex-1 rounded-xl border px-4 py-3 text-left text-sm font-medium",
+                fulfillmentType === "DELIVERY"
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : "border-border text-muted-foreground",
+              )}
+              onClick={() => setFulfillmentType("DELIVERY")}
+            >
+              Доставка
+            </button>
+            <button
+              type="button"
+              disabled={!sellerPickupAvailable}
+              className={cn(
+                "flex-1 rounded-xl border px-4 py-3 text-left text-sm font-medium",
+                fulfillmentType === "SELLER_PICKUP"
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : "border-border text-muted-foreground",
+                !sellerPickupAvailable && "cursor-not-allowed opacity-50",
+              )}
+              onClick={() => {
+                if (sellerPickupAvailable) setFulfillmentType("SELLER_PICKUP");
+              }}
+            >
+              Самовывоз
+              {!sellerPickupAvailable ? (
+                <span className="mt-1 block text-xs font-normal">
+                  Недоступен для этой корзины
+                </span>
               ) : null}
-            </div>
-          </section>
+            </button>
+          </div>
+        </section>
+
+        {fulfillmentType === "DELIVERY" ? (
+          <>
+            <DeliverySection
+              disabled={pending}
+              currency={cart.currency}
+              fieldErrors={fieldErrors}
+              onMethodChange={setDeliveryMethod}
+              onQuoteChange={setDeliveryQuote}
+            />
+            {deliveryMethod === "COURIER" ? (
+              <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
+                <Label htmlFor="street">Адрес</Label>
+                <Input
+                  id="street"
+                  name="street"
+                  required
+                  className="mt-2"
+                  placeholder="ул. Примерная, д. 1, кв. 2"
+                  disabled={pending}
+                />
+              </section>
+            ) : (
+              <input type="hidden" name="street" value="" />
+            )}
+          </>
         ) : (
-          <input type="hidden" name="street" value="" />
+          <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
+            <h2 className="font-heading text-lg font-medium">
+              Точка самовывоза
+            </h2>
+            <ul className="mt-4 flex flex-col gap-2">
+              {sellerPickupOptions.map((opt) => {
+                const active = opt.point.id === sellerPointId;
+                return (
+                  <li key={opt.point.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSellerPointId(opt.point.id)}
+                      className={cn(
+                        "w-full rounded-xl border px-4 py-3 text-left text-sm",
+                        active
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/40",
+                      )}
+                    >
+                      <span className="font-medium">{opt.point.name}</span>
+                      <span className="mt-1 block text-muted-foreground">
+                        {opt.point.city}, {opt.point.address}
+                      </span>
+                      {opt.point.workingHours ? (
+                        <span className="mt-1 block text-xs text-muted-foreground">
+                          {opt.point.workingHours}
+                        </span>
+                      ) : null}
+                      <span className="mt-2 block text-xs">
+                        Предоплата{" "}
+                        {formatPrice(opt.prepaymentTotal, cart.currency)} ·
+                        остаток{" "}
+                        {formatPrice(opt.remainingTotal, cart.currency)}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            {selectedPickup && selectedPickup.remainingTotal > 0 ? (
+              <p className="mt-3 text-xs text-muted-foreground">
+                Вы оплачиваете бронь. Остаток оплачивается продавцу при
+                получении.
+              </p>
+            ) : null}
+            <input type="hidden" name="city" value={selectedPickup?.point.city ?? ""} />
+            <input type="hidden" name="street" value="" />
+            <input type="hidden" name="deliveryMethod" value="PICKUP" />
+          </section>
         )}
 
+        {fulfillmentType === "DELIVERY" ? null : null}
+
         <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="notes">Комментарий к заказу</Label>
-            <Textarea
-              id="notes"
-              name="notes"
-              rows={3}
-              placeholder="Код домофона, удобное время…"
-              className="rounded-xl bg-surface"
-              disabled={pending}
-            />
-          </div>
+          <Label htmlFor="notes">Комментарий к заказу</Label>
+          <Textarea
+            id="notes"
+            name="notes"
+            rows={3}
+            className="mt-2 rounded-xl bg-surface"
+            disabled={pending}
+          />
         </section>
 
         <section className="rounded-2xl border border-border bg-surface/40 px-4 sm:px-6">
@@ -253,41 +342,49 @@ export function CheckoutForm({
         <h2 className="font-heading text-lg font-medium">Итого</h2>
         <div className="mt-4 flex flex-col gap-2 text-sm">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span>Товары</span>
-            <span>{formatPrice(cart.subtotal, cart.currency)}</span>
-          </div>
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span>Доставка</span>
             <span>
-              {deliveryQuote
-                ? formatPrice(shippingCost, cart.currency)
-                : "—"}
+              {fulfillmentType === "SELLER_PICKUP" ? "Предоплата" : "Товары"}
             </span>
+            <span>{formatPrice(goodsCharge, cart.currency)}</span>
           </div>
+          {fulfillmentType === "DELIVERY" ? (
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Доставка</span>
+              <span>
+                {deliveryQuote
+                  ? formatPrice(shippingCost, cart.currency)
+                  : "—"}
+              </span>
+            </div>
+          ) : selectedPickup && selectedPickup.remainingTotal > 0 ? (
+            <div className="flex items-center justify-between text-muted-foreground">
+              <span>Остаток при получении</span>
+              <span>
+                {formatPrice(selectedPickup.remainingTotal, cart.currency)}
+              </span>
+            </div>
+          ) : null}
           <Separator className="my-2" />
           <div className="flex items-center justify-between font-heading text-base font-medium text-foreground">
-            <span>К оплате</span>
+            <span>К оплате сейчас</span>
             <span>{formatPrice(orderTotal, cart.currency)}</span>
           </div>
         </div>
 
         {!state.ok && state.error ? (
-          <div className="mt-4 space-y-2">
-            <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {state.error}
-            </p>
-            {failedOrderId ? (
-              <p className="text-xs text-muted-foreground">
-                Заказ создан.{" "}
-                <Link
-                  href={`${ROUTES.ORDERS}/${failedOrderId}`}
-                  className="underline underline-offset-2 hover:text-foreground"
-                >
-                  Открыть заказ и оплатить
-                </Link>
-              </p>
-            ) : null}
-          </div>
+          <p className="mt-4 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {state.error}
+          </p>
+        ) : null}
+        {failedOrderId ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            <Link
+              href={`${ROUTES.ORDERS}/${failedOrderId}`}
+              className="underline underline-offset-2"
+            >
+              Открыть заказ
+            </Link>
+          </p>
         ) : null}
 
         <Button
@@ -296,21 +393,16 @@ export function CheckoutForm({
           className="mt-6 w-full"
           disabled={!canPay}
         >
-          {pending ? "Переходим к оплате…" : "Оплатить"}
-        </Button>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          Безопасная оплата через Stripe. Доставка СДЭК включена в сумму.
-        </p>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mt-2 w-full text-muted-foreground"
-          nativeButton={false}
-          render={<Link href={ROUTES.CART} />}
-        >
-          Вернуться в корзину
+          {pending
+            ? "Оформляем…"
+            : fulfillmentType === "SELLER_PICKUP"
+              ? "Забронировать"
+              : "Оплатить"}
         </Button>
       </aside>
     </form>
   );
 }
+
+/** Helper for server checkout page — compute pickup options from cart product ids. */
+export { calcPrepaymentAmount };

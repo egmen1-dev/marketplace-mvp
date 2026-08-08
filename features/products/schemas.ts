@@ -88,6 +88,32 @@ export const createProductSchema = z.object({
   ),
   seoTitle: z.string().trim().max(120).optional().nullable(),
   seoDescription: z.string().trim().max(320).optional().nullable(),
+  pickupEnabled: z.preprocess(
+    (v) => v === true || v === "true" || v === "on" || v === "1",
+    z.boolean().optional().default(false),
+  ),
+  reservationEnabled: z.preprocess(
+    (v) => v === true || v === "true" || v === "on" || v === "1",
+    z.boolean().optional().default(false),
+  ),
+  prepaymentPercent: z.preprocess(
+    emptyToUndefined,
+    z.coerce
+      .number()
+      .int()
+      .refine(
+        (n) => [0, 10, 20, 30, 50, 100].includes(n),
+        "Допустимы: 0, 10, 20, 30, 50, 100",
+      )
+      .optional()
+      .default(0),
+  ),
+  /** Pickup point ids linked to the product */
+  pickupPointIds: z
+    .array(z.string().cuid())
+    .max(20)
+    .optional()
+    .default([]),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
