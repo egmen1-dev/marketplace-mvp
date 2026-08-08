@@ -82,4 +82,37 @@ test.describe("catalog search filters sort mobile", () => {
 
     errors.assertClean();
   });
+
+  test("infinite scroll appends more products without next/prev", async ({
+    page,
+  }) => {
+    const errors = attachErrorCollector(page);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/catalog");
+
+    await expect(page.getByTestId("catalog-result-count")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Далее" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Назад" })).toHaveCount(0);
+
+    const cards = page.locator('main a[href^="/product/"]');
+    await expect(cards.first()).toBeVisible({ timeout: 20_000 });
+    const initial = await cards.count();
+
+    const countText = await page.getByTestId("catalog-result-count").innerText();
+    const totalMatch = countText.match(/(\d+)/);
+    const total = totalMatch ? Number(totalMatch[1]) : 0;
+
+    if (total <= initial) {
+      await expect(page.getByText("Все объявления загружены")).toBeVisible();
+      errors.assertClean();
+      return;
+    }
+
+    await page.getByTestId("catalog-infinite-sentinel").scrollIntoViewIfNeeded();
+    await expect
+      .poll(async () => cards.count(), { timeout: 20_000 })
+      .toBeGreaterThan(initial);
+
+    errors.assertClean();
+  });
 });

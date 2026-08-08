@@ -16,6 +16,7 @@ import {
   CatalogFiltersSidebar,
   CatalogSortSelect,
 } from "@/features/catalog/components/catalog-filters";
+import { InfiniteProductGrid } from "@/features/catalog/components/infinite-product-grid";
 import {
   categoryPagePath,
   getCategoryBySlug,
@@ -24,7 +25,6 @@ import {
 } from "@/features/catalog";
 import type { CatalogSearchParams } from "@/features/catalog/types";
 import {
-  buildCatalogHref,
   CATALOG_PAGE_SIZE,
   hasActiveCatalogFilters,
   parseCatalogParams,
@@ -33,7 +33,6 @@ import {
   listProductCities,
   listProductSellers,
   listProducts,
-  ProductCard,
 } from "@/features/products";
 import { pluralizeProductWord } from "@/lib/i18n";
 import { APP_NAME, ROUTES } from "@/lib/constants";
@@ -82,7 +81,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           priceMax: filters.priceMax,
           inStock: filters.inStock,
           sort: filters.sort,
-          page: filters.page,
+          page: 1,
           pageSize: CATALOG_PAGE_SIZE,
           status: "ACTIVE",
         }),
@@ -105,25 +104,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   }
 
   const items = result?.items ?? [];
-  const totalPages = result?.totalPages ?? 1;
-  const page = filters.page ?? 1;
   const activeFilters = hasActiveCatalogFilters(filters);
-
-  const pageHref = (nextPage: number) =>
-    buildCatalogHref({
-      q: filters.q,
-      category: filters.rootCategory ?? filters.category,
-      subcategory: filters.subcategory,
-      priceMin: filters.priceMin,
-      priceMax: filters.priceMax,
-      city: filters.city,
-      seller: filters.seller,
-      sellerKind: filters.sellerKind,
-      condition: filters.condition,
-      inStock: filters.inStock,
-      sort: filters.sort,
-      page: nextPage,
-    });
 
   const title = activeCategory?.name ?? "Каталог";
   const breadcrumbItems = [
@@ -143,6 +124,20 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         ? `Найдено ${result.total} ${pluralizeProductWord(result.total)}`
         : `${result.total} ${pluralizeProductWord(result.total)}`
       : "Витрина маркетплейса";
+
+  const infiniteQuery = {
+    q: filters.q,
+    category: filters.category,
+    city: filters.city,
+    seller: filters.seller,
+    sellerKind: filters.sellerKind,
+    condition: filters.condition,
+    priceMin: filters.priceMin,
+    priceMax: filters.priceMax,
+    inStock: filters.inStock,
+    sort: filters.sort,
+  };
+  const listKey = JSON.stringify(infiniteQuery);
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
@@ -239,44 +234,15 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 slug: c.slug,
               }))}
             />
-          ) : (
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-              {items.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  style={{ animationDelay: `${80 + index * 40}ms` }}
-                />
-              ))}
-            </div>
-          )}
-
-          {result && totalPages > 1 ? (
-            <div className="flex items-center justify-center gap-2 pt-2">
-              {page > 1 ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  render={<Link href={pageHref(page - 1)} />}
-                >
-                  Назад
-                </Button>
-              ) : null}
-              <span className="text-sm text-muted-foreground">
-                {page} / {totalPages}
-              </span>
-              {page < totalPages ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  nativeButton={false}
-                  render={<Link href={pageHref(page + 1)} />}
-                >
-                  Далее
-                </Button>
-              ) : null}
-            </div>
+          ) : result ? (
+            <InfiniteProductGrid
+              key={listKey}
+              initialItems={items}
+              initialPage={1}
+              total={result.total}
+              pageSize={CATALOG_PAGE_SIZE}
+              query={infiniteQuery}
+            />
           ) : null}
         </div>
       </div>

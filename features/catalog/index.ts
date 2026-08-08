@@ -29,7 +29,9 @@ export {
   CatalogSortSelect,
   CatalogBreadcrumbs,
   CatalogEmptyState,
+  InfiniteProductGrid,
 } from "./components";
+export type { InfiniteCatalogQuery } from "./components";
 export {
   buildCatalogHref,
   buildListingHref,
