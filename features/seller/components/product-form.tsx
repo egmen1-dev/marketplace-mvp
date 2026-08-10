@@ -17,6 +17,12 @@ import {
 } from "@/features/seller/actions";
 import { CategoryPicker } from "@/features/seller/components/category-picker";
 import { ProductImageUploader } from "@/features/seller/components/product-image-uploader";
+import { DynamicCharacteristicsFields } from "@/features/taxonomy/components/dynamic-characteristics-fields";
+import {
+  TaxonomySelector,
+  type SelectedProductType,
+} from "@/features/taxonomy/components/taxonomy-selector";
+import type { CharacteristicDefinitionDto } from "@/features/taxonomy/queries";
 import { isLowStock } from "@/features/orders/lib/inventory-sync";
 import { PREPAYMENT_PERCENTS } from "@/features/pickup/lib/prepayment";
 import type { PickupPointDto } from "@/features/pickup/queries";
@@ -52,15 +58,30 @@ export function ProductForm({
   uploadPathPrefix,
   sellerPickupPoints = [],
 }: ProductFormProps) {
+  const [title, setTitle] = useState(product?.title ?? "");
   const [categoryId, setCategoryId] = useState(
     product?.category?.id ?? "",
   );
+  const [productType, setProductType] = useState<SelectedProductType | null>(
+    product?.productType
+      ? {
+          id: product.productType.id,
+          name: product.productType.name,
+          categoryId: product.productType.categoryId,
+          breadcrumb: product.productType.breadcrumb ?? [
+            product.productType.name,
+          ],
+        }
+      : null,
+  );
+  const [charDefs, setCharDefs] = useState<CharacteristicDefinitionDto[]>([]);
   const [pickupEnabled, setPickupEnabled] = useState(
     product?.pickupEnabled ?? false,
   );
   const [reservationEnabled, setReservationEnabled] = useState(
     product?.reservationEnabled ?? false,
   );
+  const [showLegacyCategory, setShowLegacyCategory] = useState(false);
 
   const boundUpdate = useMemo(
     () =>
@@ -84,6 +105,34 @@ export function ProductForm({
     if (!state.error) toastedError.current = null;
   }, [state.error]);
 
+  useEffect(() => {
+    if (!productType?.id) {
+      setCharDefs([]);
+      return;
+    }
+    let cancelled = false;
+    void fetch(
+      `/api/taxonomy/browse?productTypeId=${encodeURIComponent(productType.id)}`,
+    )
+      .then((r) => r.json())
+      .then(
+        (d: {
+          characteristics?: CharacteristicDefinitionDto[];
+          categoryId?: string;
+        }) => {
+          if (cancelled) return;
+          setCharDefs(d.characteristics ?? []);
+          if (d.categoryId) setCategoryId(d.categoryId);
+        },
+      )
+      .catch(() => {
+        if (!cancelled) setCharDefs([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [productType?.id]);
+
   const initialImageUrls = useMemo(
     () => product?.images?.map((img) => img.url) ?? [],
     [product],
@@ -91,12 +140,21 @@ export function ProductForm({
 
   const stockDefault = product?.stock ?? 10;
 
+  const charDefaults = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const v of product?.characteristics ?? []) {
+      map[v.definitionId] = v.displayValue;
+    }
+    return map;
+  }, [product?.characteristics]);
+
   return (
     <form action={formAction} className="flex flex-col gap-6">
       {mode === "create" ? (
         <input type="hidden" name="status" value="ACTIVE" />
       ) : null}
       <input type="hidden" name="categoryId" value={categoryId} />
+      <input type="hidden" name="productTypeId" value={productType?.id ?? ""} />
 
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-lg font-semibold">Основное</h2>
@@ -113,14 +171,32 @@ export function ProductForm({
             id="title"
             name="title"
             required
-            placeholder="Беспроводные наушники Pulse"
-            defaultValue={product?.title}
+            placeholder="Тепловая пушка Ballu 5 кВт"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             aria-invalid={Boolean(state.fieldErrors?.title)}
           />
           {state.fieldErrors?.title?.[0] ? (
             <p className="text-xs text-destructive">{state.fieldErrors.title[0]}</p>
           ) : null}
         </div>
+
+        <TaxonomySelector
+          productTitle={title}
+          value={productType}
+          onChange={(next) => {
+            setProductType(next);
+            if (next?.categoryId) setCategoryId(next.categoryId);
+          }}
+          disabled={pending}
+          error={state.fieldErrors?.productTypeId?.[0]}
+        />
+
+        <DynamicCharacteristicsFields
+          definitions={charDefs}
+          defaults={charDefaults}
+          disabled={pending}
+        />
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Описание</Label>
@@ -134,13 +210,28 @@ export function ProductForm({
           />
         </div>
 
-        <CategoryPicker
-          categories={categories}
-          value={categoryId}
-          onChange={setCategoryId}
-          disabled={pending}
-          error={state.fieldErrors?.categoryId?.[0]}
-        />
+        <div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 px-0 text-xs text-muted-foreground"
+            onClick={() => setShowLegacyCategory((v) => !v)}
+          >
+            {showLegacyCategory
+              ? "Скрыть ручной выбор категории"
+              : "Дополнительно: категория каталога"}
+          </Button>
+          {showLegacyCategory ? (
+            <CategoryPicker
+              categories={categories}
+              value={categoryId}
+              onChange={setCategoryId}
+              disabled={pending}
+              error={state.fieldErrors?.categoryId?.[0]}
+            />
+          ) : null}
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">

@@ -149,6 +149,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </Badge>
             ) : null}
 
+            {product.productType ? (
+              <p
+                className="text-xs text-muted-foreground"
+                data-testid="pdp-product-type"
+              >
+                {product.productType.name}
+              </p>
+            ) : null}
+
             <h1
               className="font-heading text-2xl leading-tight font-semibold tracking-tight sm:text-3xl lg:text-4xl"
               data-testid="pdp-title"
@@ -278,6 +287,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {product.category ? (
               <SpecRow label="Категория" value={product.category.name} />
             ) : null}
+            {product.productType ? (
+              <SpecRow label="Тип товара" value={product.productType.name} />
+            ) : null}
+            {product.characteristics.map((c) => (
+              <SpecRow key={c.definitionId} label={c.name} value={c.displayValue} />
+            ))}
             {product.weight != null ? (
               <SpecRow label="Вес" value={`${product.weight} кг`} />
             ) : null}

@@ -113,6 +113,17 @@ enum MessageType {
   RESERVATION
 }
 
+/// Characteristic value types for ProductType schemas.
+enum CharacteristicValueType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  SELECT
+  MULTISELECT
+  COLOR
+  SIZE
+}
+
 // ─── User & Seller ───────────────────────────────────────────────────────────
 
 model User {
@@ -191,34 +202,169 @@ model SellerProfile {
 
 model Category {
   id          String   @id @default(cuid())
+  /// Display name in LOT (may differ from external source name)
   name        String
   slug        String   @unique
   description String?
   imageUrl    String?
   parentId    String?
-  /// 1 = root, 2 = subcategory, 3 = product type (leaf preferred)
+  /// Depth from root: 1 = root; unlimited nesting supported
   level       Int      @default(1)
+  /// Materialized path of ancestor slugs, e.g. "construction/climate/heaters"
+  path        String?
   sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
+  /// External taxonomy source, e.g. "wildberries", "manual", "snapshot"
+  externalSource String?
+  /// External category / parent ID from source (NOT used as LOT primary key)
+  externalId     String?
+  /// Original name from external source (preserved across local renames)
+  externalName   String?
+  /// True when an admin locally overrode name/slug — sync must not overwrite
+  locallyEdited  Boolean  @default(false)
+  sourceUpdatedAt DateTime?
+  lastSyncedAt    DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children Category[] @relation("CategoryTree")
-  products Product[]
+  parent       Category?     @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Category[]    @relation("CategoryTree")
+  products     Product[]
+  productTypes ProductType[]
+  aliases      CategoryAlias[]
 
+  @@unique([externalSource, externalId])
   @@index([parentId])
   @@index([slug])
   @@index([isActive])
   @@index([level])
+  @@index([path])
+  @@index([name])
+  @@index([externalSource, externalId])
   @@index([parentId, level])
   @@map("categories")
+}
+
+/// Concrete product subject / type (e.g. "Тепловые пушки"), leaf of taxonomy.
+model ProductType {
+  id             String   @id @default(cuid())
+  categoryId     String
+  name           String
+  /// LOT display name (defaults to name; admin may override)
+  lotName        String?
+  slug           String   @unique
+  description    String?
+  sortOrder      Int      @default(0)
+  isActive       Boolean  @default(true)
+  externalSource String?
+  externalId     String?
+  externalName   String?
+  locallyEdited  Boolean  @default(false)
+  sourceUpdatedAt DateTime?
+  lastSyncedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  category         Category                        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  products         Product[]
+  characteristics  ProductCharacteristicDefinition[]
+  aliases          ProductTypeAlias[]
+
+  @@unique([externalSource, externalId])
+  @@index([categoryId])
+  @@index([slug])
+  @@index([isActive])
+  @@index([name])
+  @@index([externalSource, externalId])
+  @@map("product_types")
+}
+
+model CategoryAlias {
+  id         String   @id @default(cuid())
+  categoryId String
+  alias      String
+  /// Normalized lowercase form for matching
+  normalized String
+  createdAt  DateTime @default(now())
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, normalized])
+  @@index([normalized])
+  @@map("category_aliases")
+}
+
+model ProductTypeAlias {
+  id            String   @id @default(cuid())
+  productTypeId String
+  alias         String
+  normalized    String
+  createdAt     DateTime @default(now())
+
+  productType ProductType @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([productTypeId, normalized])
+  @@index([normalized])
+  @@map("product_type_aliases")
+}
+
+model ProductCharacteristicDefinition {
+  id            String                  @id @default(cuid())
+  productTypeId String
+  name          String
+  slug          String
+  type          CharacteristicValueType @default(TEXT)
+  required      Boolean                 @default(false)
+  unit          String?
+  /// JSON array of allowed options for SELECT / MULTISELECT
+  options       Json?
+  sortOrder     Int                     @default(0)
+  /// Use as catalog filter when true
+  filterable    Boolean                 @default(false)
+  externalId    String?
+  externalSource String?
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  productType ProductType                   @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+  values      ProductCharacteristicValue[]
+
+  @@unique([productTypeId, slug])
+  @@unique([externalSource, externalId])
+  @@index([productTypeId])
+  @@index([slug])
+  @@index([filterable])
+  @@map("product_characteristic_definitions")
+}
+
+model ProductCharacteristicValue {
+  id             String   @id @default(cuid())
+  productId      String
+  definitionId   String
+  /// Stored as string; NUMBER/BOOLEAN parsed at validation layer
+  valueText      String?
+  valueNumber    Decimal? @db.Decimal(18, 4)
+  valueBoolean   Boolean?
+  /// JSON for MULTISELECT arrays
+  valueJson      Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product    Product                          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  definition ProductCharacteristicDefinition  @relation(fields: [definitionId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, definitionId])
+  @@index([productId])
+  @@index([definitionId])
+  @@map("product_characteristic_values")
 }
 
 model Product {
   id             String           @id @default(cuid())
   sellerId       String
   categoryId     String?
+  /// Concrete subject/type; null until mapped (existing products stay valid)
+  productTypeId  String?
   name           String
   slug           String
   description    String?
@@ -254,6 +400,7 @@ model Product {
 
   seller           SellerProfile         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   category         Category?             @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  productType      ProductType?          @relation(fields: [productTypeId], references: [id], onDelete: SetNull)
   images           ProductImage[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
@@ -264,10 +411,12 @@ model Product {
   pickupPoints     ProductPickupPoint[]
   reservations     PickupReservation[]
   conversations    Conversation[]
+  characteristicValues ProductCharacteristicValue[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
   @@index([categoryId])
+  @@index([productTypeId])
   @@index([status])
   @@index([condition])
   @@index([city])

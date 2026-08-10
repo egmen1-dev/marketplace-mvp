@@ -82,6 +82,20 @@ export type ProductDetail = ProductListItem & {
   pickupEnabled: boolean;
   reservationEnabled: boolean;
   prepaymentPercent: number;
+  productType: {
+    id: string;
+    name: string;
+    slug: string;
+    categoryId: string;
+    breadcrumb?: string[];
+  } | null;
+  characteristics: Array<{
+    definitionId: string;
+    name: string;
+    slug: string;
+    unit: string | null;
+    displayValue: string;
+  }>;
   pickupPoints: {
     id: string;
     name: string;

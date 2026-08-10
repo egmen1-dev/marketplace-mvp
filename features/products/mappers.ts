@@ -130,6 +130,28 @@ type DetailRow = ListRow & {
   pickupEnabled: boolean;
   reservationEnabled: boolean;
   prepaymentPercent: number;
+  productType?: {
+    id: string;
+    name: string;
+    lotName: string | null;
+    slug: string;
+    categoryId: string;
+  } | null;
+  characteristicValues?: Array<{
+    definitionId: string;
+    valueText: string | null;
+    valueNumber: Prisma.Decimal | null;
+    valueBoolean: boolean | null;
+    valueJson: unknown;
+    definition: {
+      id: string;
+      name: string;
+      slug: string;
+      type: string;
+      unit: string | null;
+      sortOrder: number;
+    };
+  }>;
   pickupPoints?: {
     pickupPoint: {
       id: string;
@@ -150,6 +172,16 @@ type DetailRow = ListRow & {
     user: { id: string; name: string | null; image: string | null };
   };
 };
+
+function formatCharDisplay(v: NonNullable<DetailRow["characteristicValues"]>[number]): string {
+  if (v.valueBoolean != null) return v.valueBoolean ? "Да" : "Нет";
+  if (v.valueNumber != null) {
+    const n = toPriceNumber(v.valueNumber);
+    return v.definition.unit ? `${n} ${v.definition.unit}` : String(n);
+  }
+  if (Array.isArray(v.valueJson)) return v.valueJson.map(String).join(", ");
+  return v.valueText?.trim() || "";
+}
 
 function mapImage(img: ImageRow): ProductImageDto {
   return {
@@ -195,6 +227,9 @@ export function mapProductListItem(row: ListRow): ProductListItem {
 
 export function mapProductDetail(row: DetailRow): ProductDetail {
   const base = mapProductListItem(row);
+  const chars = [...(row.characteristicValues ?? [])].sort(
+    (a, b) => a.definition.sortOrder - b.definition.sortOrder,
+  );
   return {
     ...base,
     images: row.images.map(mapImage),
@@ -208,6 +243,21 @@ export function mapProductDetail(row: DetailRow): ProductDetail {
     pickupEnabled: row.pickupEnabled ?? false,
     reservationEnabled: row.reservationEnabled ?? false,
     prepaymentPercent: row.prepaymentPercent ?? 0,
+    productType: row.productType
+      ? {
+          id: row.productType.id,
+          name: row.productType.lotName ?? row.productType.name,
+          slug: row.productType.slug,
+          categoryId: row.productType.categoryId,
+        }
+      : null,
+    characteristics: chars.map((v) => ({
+      definitionId: v.definitionId,
+      name: v.definition.name,
+      slug: v.definition.slug,
+      unit: v.definition.unit,
+      displayValue: formatCharDisplay(v),
+    })),
     pickupPoints: (row.pickupPoints ?? [])
       .map((l) => l.pickupPoint)
       .filter((p) => p.isActive)

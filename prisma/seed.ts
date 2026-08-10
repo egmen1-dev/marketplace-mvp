@@ -957,6 +957,23 @@ async function main() {
   const categoryBySlug = new Map<string, string>();
   await upsertCategoryTree(categoryTree, null, 1, categoryBySlug);
 
+  // WB-compatible ProductTypes + characteristics (snapshot; idempotent)
+  try {
+    const { LocalSnapshotProvider } = await import(
+      "../lib/catalog-taxonomy/providers/snapshot"
+    );
+    const { syncTaxonomyToDb } = await import("../lib/catalog-taxonomy/sync");
+    const taxonomy = await new LocalSnapshotProvider().fetchTaxonomy();
+    const taxStats = await syncTaxonomyToDb(prisma, taxonomy, {
+      deactivateMissing: false,
+    });
+    console.log(
+      `Taxonomy sync: categories=${taxStats.categoriesUpserted} types=${taxStats.productTypesUpserted} chars=${taxStats.characteristicsUpserted}`,
+    );
+  } catch (err) {
+    console.warn("[seed] taxonomy snapshot sync skipped:", err);
+  }
+
   const activeSlugs = collectSlugs(categoryTree);
 
   // Align legacy «Дом и сад» → «Дом» (home)

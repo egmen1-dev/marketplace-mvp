@@ -27,14 +27,28 @@ test.describe("seller cabinet", () => {
       timeout: 20_000,
     });
 
-    await page.getByLabel("Поиск категории").first().fill("тепловая");
+    await page.getByLabel("Название", { exact: true }).fill(title);
+    await expect(page.getByText("Мы рекомендуем")).toBeVisible({
+      timeout: 15_000,
+    });
     await page
       .getByRole("button", { name: /Тепловые пушки/i })
       .first()
       .click();
-    await expect(page.getByTestId("category-path")).toContainText(/Тепловые/i);
+    await expect(page.getByText("Характеристики")).toBeVisible({
+      timeout: 10_000,
+    });
 
-    await page.getByLabel("Название", { exact: true }).fill(title);
+    // Required characteristics for heat guns
+    const power = page.getByLabel(/Мощность/i).first();
+    if (await power.isVisible().catch(() => false)) {
+      await power.fill("5");
+    }
+    const heatType = page.locator("select").filter({ has: page.locator("option", { hasText: "электрический" }) }).first();
+    if (await heatType.isVisible().catch(() => false)) {
+      await heatType.selectOption({ label: "электрический" });
+    }
+
     await page.locator("#description").fill("E2E test product description");
     await page.getByLabel("Цена, ₽").fill("1990");
     await page.getByLabel("Количество на складе").fill("5");

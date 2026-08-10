@@ -48,6 +48,24 @@ export const createProductSchema = z.object({
     .positive("Цена должна быть больше нуля")
     .max(99_999_999.99, "Цена слишком большая"),
   categoryId: z.string().cuid("Некорректный categoryId").optional().nullable(),
+  productTypeId: z
+    .string()
+    .cuid("Некорректный productTypeId")
+    .optional()
+    .nullable(),
+  /** Characteristic values keyed by definition id */
+  characteristics: z
+    .array(
+      z.object({
+        definitionId: z.string().cuid(),
+        valueText: z.string().optional().nullable(),
+        valueNumber: z.number().optional().nullable(),
+        valueBoolean: z.boolean().optional().nullable(),
+        valueJson: z.unknown().optional().nullable(),
+      }),
+    )
+    .optional()
+    .default([]),
   images: z
     .array(imageSchema)
     .max(10, "Максимум 10 изображений")

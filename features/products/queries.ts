@@ -42,6 +42,18 @@ function tokenMatchOr(
       { description: { contains: v, mode: "insensitive" } },
       { category: { name: { contains: v, mode: "insensitive" } } },
       { category: { slug: { contains: v, mode: "insensitive" } } },
+      { productType: { name: { contains: v, mode: "insensitive" } } },
+      { productType: { lotName: { contains: v, mode: "insensitive" } } },
+      {
+        productType: {
+          aliases: { some: { normalized: { contains: v.toLowerCase() } } },
+        },
+      },
+      {
+        category: {
+          aliases: { some: { normalized: { contains: v.toLowerCase() } } },
+        },
+      },
       { seller: { storeName: { contains: v, mode: "insensitive" } } },
     );
   }
@@ -110,6 +122,29 @@ const listInclude = {
 
 const detailInclude = {
   category: { select: { id: true, name: true, slug: true } },
+  productType: {
+    select: {
+      id: true,
+      name: true,
+      lotName: true,
+      slug: true,
+      categoryId: true,
+    },
+  },
+  characteristicValues: {
+    include: {
+      definition: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          type: true,
+          unit: true,
+          sortOrder: true,
+        },
+      },
+    },
+  },
   images: {
     orderBy: [{ isPrimary: "desc" as const }, { sortOrder: "asc" as const }],
   },
@@ -546,6 +581,42 @@ export async function createProduct(
 
   await assertCategoryExists(input.categoryId);
 
+  let resolvedCategoryId = input.categoryId ?? null;
+  const resolvedProductTypeId = input.productTypeId ?? null;
+
+  if (resolvedProductTypeId) {
+    const pt = await prisma.productType.findFirst({
+      where: { id: resolvedProductTypeId, isActive: true },
+      include: {
+        characteristics: { orderBy: { sortOrder: "asc" } },
+      },
+    });
+    if (!pt) {
+      throw new ProductServiceError(
+        "PRODUCT_TYPE_NOT_FOUND",
+        "Тип товара не найден",
+        400,
+      );
+    }
+    resolvedCategoryId = resolvedCategoryId ?? pt.categoryId;
+
+    if (input.status === ProductStatus.ACTIVE) {
+      const { canPublishActive } = await import("@/lib/catalog-taxonomy");
+      const check = canPublishActive(
+        pt.characteristics,
+        input.characteristics ?? [],
+      );
+      if (!check.ok) {
+        throw new ProductServiceError(
+          "CHARACTERISTICS_REQUIRED",
+          check.issues.map((i) => i.message).join("; ") ||
+            "Заполните обязательные характеристики",
+          400,
+        );
+      }
+    }
+  }
+
   const pickupEnabled = Boolean(input.pickupEnabled);
   const reservationEnabled = pickupEnabled && Boolean(input.reservationEnabled);
   const prepaymentPercent = reservationEnabled
@@ -569,7 +640,8 @@ export async function createProduct(
     const product = await tx.product.create({
       data: {
         sellerId,
-        categoryId: input.categoryId ?? null,
+        categoryId: resolvedCategoryId,
+        productTypeId: resolvedProductTypeId,
         name: input.title,
         slug,
         description: input.description ?? null,
@@ -596,6 +668,23 @@ export async function createProduct(
             sortOrder: index,
             isPrimary: index === 0,
           })),
+        },
+        characteristicValues: {
+          create: (input.characteristics ?? [])
+            .filter((c) => c.definitionId)
+            .map((c) => ({
+              definitionId: c.definitionId,
+              valueText: c.valueText ?? null,
+              valueNumber:
+                c.valueNumber != null
+                  ? new Prisma.Decimal(c.valueNumber)
+                  : null,
+              valueBoolean: c.valueBoolean ?? null,
+              valueJson:
+                c.valueJson != null
+                  ? (c.valueJson as Prisma.InputJsonValue)
+                  : undefined,
+            })),
         },
       },
       include: detailInclude,
@@ -702,6 +791,55 @@ export async function updateProduct(
         ? { disconnect: true }
         : { connect: { id: input.categoryId } };
   }
+  if (input.productTypeId !== undefined) {
+    data.productType =
+      input.productTypeId == null
+        ? { disconnect: true }
+        : { connect: { id: input.productTypeId } };
+  }
+
+  const targetStatus = input.status;
+  const targetTypeId =
+    input.productTypeId !== undefined
+      ? input.productTypeId
+      : (
+          await prisma.product.findUnique({
+            where: { id: productId },
+            select: { productTypeId: true },
+          })
+        )?.productTypeId;
+
+  if (targetStatus === ProductStatus.ACTIVE && targetTypeId) {
+    const pt = await prisma.productType.findFirst({
+      where: { id: targetTypeId },
+      include: { characteristics: true },
+    });
+    if (pt) {
+      const { canPublishActive } = await import("@/lib/catalog-taxonomy");
+      let values = input.characteristics ?? [];
+      if (!values.length) {
+        const existingVals = await prisma.productCharacteristicValue.findMany({
+          where: { productId },
+        });
+        values = existingVals.map((v) => ({
+          definitionId: v.definitionId,
+          valueText: v.valueText,
+          valueNumber: v.valueNumber != null ? Number(v.valueNumber) : null,
+          valueBoolean: v.valueBoolean,
+          valueJson: v.valueJson,
+        }));
+      }
+      const check = canPublishActive(pt.characteristics, values);
+      if (!check.ok) {
+        throw new ProductServiceError(
+          "CHARACTERISTICS_REQUIRED",
+          check.issues.map((i) => i.message).join("; ") ||
+            "Заполните обязательные характеристики",
+          400,
+        );
+      }
+    }
+  }
 
   const pickupPointIds =
     input.pickupPointIds !== undefined ? input.pickupPointIds : undefined;
@@ -740,6 +878,45 @@ export async function updateProduct(
 
     if (pickupPointIds !== undefined) {
       await syncProductPickupPoints(tx, productId, sellerId, pickupPointIds);
+    }
+
+    if (input.characteristics !== undefined) {
+      for (const c of input.characteristics) {
+        await tx.productCharacteristicValue.upsert({
+          where: {
+            productId_definitionId: {
+              productId,
+              definitionId: c.definitionId,
+            },
+          },
+          create: {
+            productId,
+            definitionId: c.definitionId,
+            valueText: c.valueText ?? null,
+            valueNumber:
+              c.valueNumber != null
+                ? new Prisma.Decimal(c.valueNumber)
+                : null,
+            valueBoolean: c.valueBoolean ?? null,
+            valueJson:
+              c.valueJson != null
+                ? (c.valueJson as Prisma.InputJsonValue)
+                : undefined,
+          },
+          update: {
+            valueText: c.valueText ?? null,
+            valueNumber:
+              c.valueNumber != null
+                ? new Prisma.Decimal(c.valueNumber)
+                : null,
+            valueBoolean: c.valueBoolean ?? null,
+            valueJson:
+              c.valueJson != null
+                ? (c.valueJson as Prisma.InputJsonValue)
+                : Prisma.JsonNull,
+          },
+        });
+      }
     }
 
     if (input.stock !== undefined) {
@@ -796,6 +973,8 @@ export async function duplicateProduct(
       description: existing.description,
       price: existing.price.toNumber(),
       categoryId: existing.categoryId,
+      productTypeId: existing.productTypeId,
+      characteristics: [],
       sellerId,
       stock: existing.stock,
       city: existing.city,

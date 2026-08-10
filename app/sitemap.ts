@@ -33,7 +33,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const [categories, products] = await Promise.all([
       prisma.category.findMany({
-        where: { isActive: true },
+        where: {
+          isActive: true,
+          OR: [
+            { products: { some: { status: ProductStatus.ACTIVE } } },
+            {
+              productTypes: {
+                some: {
+                  products: { some: { status: ProductStatus.ACTIVE } },
+                },
+              },
+            },
+          ],
+        },
         select: { slug: true, updatedAt: true },
       }),
       prisma.product.findMany({

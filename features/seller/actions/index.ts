@@ -90,6 +90,8 @@ function productFormPayload(formData: FormData, sellerProfileId?: string) {
     description: formData.get("description") || null,
     price: formData.get("price"),
     categoryId: formData.get("categoryId") || null,
+    productTypeId: formData.get("productTypeId") || null,
+    characteristics: parseCharacteristics(formData),
     ...(sellerProfileId ? { sellerId: sellerProfileId } : {}),
     stock: formData.get("stock") || 0,
     city: formData.get("city") || null,
@@ -110,6 +112,50 @@ function productFormPayload(formData: FormData, sellerProfileId?: string) {
       : 0,
     pickupPointIds: pickupEnabled ? pickupPointIds : [],
   };
+}
+
+function parseCharacteristics(formData: FormData) {
+  const out: Array<{
+    definitionId: string;
+    valueText?: string | null;
+    valueNumber?: number | null;
+    valueBoolean?: boolean | null;
+    valueJson?: unknown;
+  }> = [];
+
+  for (const [key, raw] of formData.entries()) {
+    if (!key.startsWith("charc_")) continue;
+    if (key.endsWith("[]")) {
+      const definitionId = key.slice("charc_".length, -2);
+      const values = formData.getAll(key).map(String).filter(Boolean);
+      out.push({
+        definitionId,
+        valueJson: values,
+        valueText: values.join(", "),
+      });
+      continue;
+    }
+    const definitionId = key.slice("charc_".length);
+    if (out.some((x) => x.definitionId === definitionId && x.valueJson)) {
+      continue;
+    }
+    const value = String(raw ?? "").trim();
+    if (value === "true" || value === "on") {
+      out.push({ definitionId, valueBoolean: true, valueText: "true" });
+      continue;
+    }
+    if (value === "") {
+      out.push({ definitionId, valueText: null });
+      continue;
+    }
+    const asNum = Number(value);
+    if (value !== "" && !Number.isNaN(asNum) && /^-?\d+(\.\d+)?$/.test(value)) {
+      out.push({ definitionId, valueNumber: asNum, valueText: value });
+    } else {
+      out.push({ definitionId, valueText: value });
+    }
+  }
+  return out;
 }
 
 export async function createProductAction(
