@@ -89,6 +89,10 @@ export function matchProductTypes(
 
   scored.sort((a, b) => {
     if (b.confidence !== a.confidence) return b.confidence - a.confidence;
+    // Prefer tighter name matches (fewer extra words) when scores tie
+    const aExtra = a.name.split(/\s+/).length - a.matchedTerms.length;
+    const bExtra = b.name.split(/\s+/).length - b.matchedTerms.length;
+    if (aExtra !== bExtra) return aExtra - bExtra;
     return a.name.localeCompare(b.name, "ru");
   });
 
