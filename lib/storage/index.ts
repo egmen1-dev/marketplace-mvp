@@ -23,6 +23,11 @@ export {
 } from "./validate";
 
 export { createVercelBlobStorage } from "./vercel-blob";
+export {
+  getBlobAccess,
+  isPrivateVercelBlobUrl,
+  isVercelBlobUrl,
+} from "./vercel-blob";
 
 /** Supported providers. Add `s3` / `r2` / `supabase` when implementations land. */
 export type StorageProviderId = "vercel-blob";

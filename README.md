@@ -96,7 +96,7 @@ npm run dev
 | `BLOB_READ_WRITE_TOKEN` | yes (uploads) | Vercel Blob read/write token |
 | `STORAGE_PROVIDER` | no | Default `vercel-blob` (`lib/storage`) |
 
-Backup / non-Vercel deploy: **[docs/BACKUP_DEPLOYMENT.md](docs/BACKUP_DEPLOYMENT.md)** (`render.yaml`, `railway.toml`, `netlify.toml`).
+Backup / non-Vercel deploy: **[docs/BACKUP_DEPLOYMENT.md](docs/BACKUP_DEPLOYMENT.md)** · staging vs production: **[docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md)**.
 
 ---
 

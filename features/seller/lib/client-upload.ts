@@ -120,9 +120,13 @@ export async function uploadImageFromClient(
       ? file
       : new File([file], `upload${ext}`, { type: contentType });
 
+  // Must match store access (Vercel Blob store is private).
+  const access =
+    process.env.NEXT_PUBLIC_BLOB_ACCESS === "public" ? "public" : "private";
+
   try {
     const blob = await upload(pathname, typedFile, {
-      access: "public",
+      access,
       handleUploadUrl,
       contentType,
       clientPayload: JSON.stringify({ purpose: options.purpose }),

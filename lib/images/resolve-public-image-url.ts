@@ -41,8 +41,18 @@ export function resolvePublicImageUrl(
   const trimmed = url.trim();
   if (!trimmed) return null;
 
-  if (trimmed.startsWith("/images/")) {
+  if (trimmed.startsWith("/images/") || trimmed.startsWith("/api/media")) {
     return trimmed;
+  }
+
+  // Private Vercel Blob URLs are not browser-readable — proxy via app.
+  try {
+    const host = new URL(trimmed).hostname;
+    if (host.endsWith(".private.blob.vercel-storage.com")) {
+      return `/api/media?url=${encodeURIComponent(trimmed)}`;
+    }
+  } catch {
+    // keep trimmed
   }
 
   const match = trimmed.match(UNSPLASH_PHOTO_RE);

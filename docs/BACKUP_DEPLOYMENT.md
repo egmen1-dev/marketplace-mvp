@@ -17,7 +17,12 @@ Stack target: **Next.js 15 App Router** — `npm run build` + `npm run start` (N
 | Migrations | `prisma migrate deploy` on container start |
 | Seed | Demo users/products seeded once via public TCP proxy |
 
-Set `BLOB_READ_WRITE_TOKEN` in the Railway `web` service to enable image uploads (same Vercel Blob token as production). Until set, `/api/uploads` returns **503** with a friendly message.
+Set on Railway `web` service:
+
+- `BLOB_READ_WRITE_TOKEN` — static RW token from the connected Vercel Blob store  
+- `BLOB_ACCESS=private` / `NEXT_PUBLIC_BLOB_ACCESS=private` — store is private; images render via `/api/media`
+
+Without the RW token, `/api/uploads` returns **503**.
 
 ---
 

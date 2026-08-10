@@ -22,13 +22,13 @@ describe("resolvePublicImageUrl", () => {
     ).toBe("https://abc.public.blob.vercel-storage.com/products/a.jpg");
   });
 
-  it("keeps unknown Unsplash URLs when no local asset exists", () => {
+  it("proxies private Vercel Blob URLs through /api/media", () => {
     expect(
       resolvePublicImageUrl(
-        "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800",
+        "https://abc.private.blob.vercel-storage.com/products/a.jpg",
       ),
     ).toBe(
-      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800",
+      "/api/media?url=https%3A%2F%2Fabc.private.blob.vercel-storage.com%2Fproducts%2Fa.jpg",
     );
   });
 });

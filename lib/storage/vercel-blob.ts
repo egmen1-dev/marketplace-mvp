@@ -7,7 +7,14 @@ import {
   type UploadResult,
 } from "./types";
 
-const BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+const PUBLIC_BLOB_HOST_SUFFIX = ".public.blob.vercel-storage.com";
+const PRIVATE_BLOB_HOST_SUFFIX = ".private.blob.vercel-storage.com";
+
+/** Store is private on Vercel; override with BLOB_ACCESS=public if store allows it. */
+export function getBlobAccess(): "public" | "private" {
+  const raw = (process.env.BLOB_ACCESS ?? "private").trim().toLowerCase();
+  return raw === "public" ? "public" : "private";
+}
 
 function requireToken(): string {
   const token = process.env.BLOB_READ_WRITE_TOKEN;
@@ -21,13 +28,36 @@ function requireToken(): string {
   return token;
 }
 
+export function isVercelBlobUrl(url: string): boolean {
+  try {
+    const { hostname, protocol } = new URL(url);
+    return (
+      protocol === "https:" &&
+      (hostname.endsWith(PUBLIC_BLOB_HOST_SUFFIX) ||
+        hostname.endsWith(PRIVATE_BLOB_HOST_SUFFIX) ||
+        hostname === "blob.vercel-storage.com")
+    );
+  } catch {
+    return false;
+  }
+}
+
+export function isPrivateVercelBlobUrl(url: string): boolean {
+  try {
+    const { hostname, protocol } = new URL(url);
+    return protocol === "https:" && hostname.endsWith(PRIVATE_BLOB_HOST_SUFFIX);
+  } catch {
+    return false;
+  }
+}
+
 export function createVercelBlobStorage(): StorageProvider {
   const provider: StorageProvider = {
     async upload(input: UploadInput): Promise<UploadResult> {
       const token = requireToken();
       try {
         const blob = await put(input.pathname, input.data, {
-          access: "public",
+          access: getBlobAccess(),
           contentType: input.contentType,
           token,
           addRandomSuffix: false,
@@ -66,7 +96,6 @@ export function createVercelBlobStorage(): StorageProvider {
     },
 
     getUrl(pathname: string): string | null {
-      // Blob public host is store-specific; absolute URLs come from upload().
       if (/^https?:\/\//i.test(pathname)) {
         return pathname;
       }
@@ -74,16 +103,7 @@ export function createVercelBlobStorage(): StorageProvider {
     },
 
     isOwnedUrl(url: string): boolean {
-      try {
-        const { hostname, protocol } = new URL(url);
-        return (
-          protocol === "https:" &&
-          (hostname.endsWith(BLOB_HOST_SUFFIX) ||
-            hostname === "blob.vercel-storage.com")
-        );
-      } catch {
-        return false;
-      }
+      return isVercelBlobUrl(url);
     },
   };
   return provider;
