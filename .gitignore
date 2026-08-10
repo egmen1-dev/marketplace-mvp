@@ -15,7 +15,9 @@
 
 # next.js
 /.next/
+/.next-034/
 /out/
+.playwright-browsers/
 
 # production
 /build

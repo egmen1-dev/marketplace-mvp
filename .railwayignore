@@ -1,0 +1,17 @@
+# Keep Railway uploads lean (local artifacts / deps / caches)
+node_modules
+.next
+.next-034
+.playwright-browsers
+test-results
+playwright-report
+coverage
+.turbo
+.vercel
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+tmp
+/tmp

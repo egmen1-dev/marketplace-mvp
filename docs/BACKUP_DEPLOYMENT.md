@@ -6,6 +6,21 @@ Stack target: **Next.js 15 App Router** — `npm run build` + `npm run start` (N
 
 ---
 
+## Live backup (TASK 053)
+
+| Field | Value |
+|-------|--------|
+| Platform | **Railway** |
+| Project | `marketplace-mvp-backup` |
+| Public URL | https://web-production-e56fb.up.railway.app |
+| Database | Railway Postgres (private `DATABASE_URL` for web; TCP proxy used only for local seed) |
+| Migrations | `prisma migrate deploy` on container start |
+| Seed | Demo users/products seeded once via public TCP proxy |
+
+Set `BLOB_READ_WRITE_TOKEN` in the Railway `web` service to enable image uploads (same Vercel Blob token as production). Until set, `/api/uploads` returns **503** with a friendly message.
+
+---
+
 ## Local run
 
 ```bash

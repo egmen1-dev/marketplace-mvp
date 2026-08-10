@@ -1,0 +1,7 @@
+# Nixpacks config for Railway backup host (Node 20 required by Next 15 toolchain)
+
+[variables]
+NIXPACKS_NODE_VERSION = "20"
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "npm-9_x", "openssl"]
