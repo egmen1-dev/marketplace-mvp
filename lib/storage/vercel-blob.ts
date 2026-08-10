@@ -22,7 +22,7 @@ function requireToken(): string {
 }
 
 export function createVercelBlobStorage(): StorageProvider {
-  return {
+  const provider: StorageProvider = {
     async upload(input: UploadInput): Promise<UploadResult> {
       const token = requireToken();
       try {
@@ -44,9 +44,9 @@ export function createVercelBlobStorage(): StorageProvider {
       }
     },
 
-    async deleteByUrl(url: string): Promise<void> {
+    async delete(url: string): Promise<void> {
       const token = requireToken();
-      if (!this.isOwnedUrl(url)) {
+      if (!provider.isOwnedUrl(url)) {
         return;
       }
       try {
@@ -59,6 +59,18 @@ export function createVercelBlobStorage(): StorageProvider {
           502,
         );
       }
+    },
+
+    async deleteByUrl(url: string): Promise<void> {
+      return provider.delete(url);
+    },
+
+    getUrl(pathname: string): string | null {
+      // Blob public host is store-specific; absolute URLs come from upload().
+      if (/^https?:\/\//i.test(pathname)) {
+        return pathname;
+      }
+      return null;
     },
 
     isOwnedUrl(url: string): boolean {
@@ -74,4 +86,5 @@ export function createVercelBlobStorage(): StorageProvider {
       }
     },
   };
+  return provider;
 }

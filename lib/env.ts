@@ -6,7 +6,7 @@ import { z } from "zod";
  * Call `getEnv()` only from server code that needs these values.
  *
  * AUTH_SECRET is always required when `getEnv()` runs. In production
- * (NODE_ENV=production or VERCEL=1) a missing value fails loudly at parse.
+ * (NODE_ENV=production or common PaaS markers) a missing value fails loudly.
  * Never log AUTH_SECRET or other secrets.
  */
 const envSchema = z.object({
@@ -30,17 +30,22 @@ const envSchema = z.object({
   /** Optional CDEK city code for warehouse / from-location (e.g. 44 = Moscow). */
   CDEK_FROM_CITY_CODE: z.string().optional(),
 
-  // Vercel Blob (product images)
+  // Object storage (Vercel Blob today; see STORAGE_PROVIDER)
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  STORAGE_PROVIDER: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
 
 let cached: Env | null = null;
 
+/** True on any production host (Vercel, Render, Railway, bare Node, …). */
 function isProductionRuntime(): boolean {
   return (
-    process.env.NODE_ENV === "production" || process.env.VERCEL === "1"
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL === "1" ||
+    process.env.RENDER === "true" ||
+    Boolean(process.env.RAILWAY_ENVIRONMENT)
   );
 }
 
@@ -69,6 +74,7 @@ export function getEnv(): Env {
     CDEK_API_URL: process.env.CDEK_API_URL,
     CDEK_FROM_CITY_CODE: process.env.CDEK_FROM_CITY_CODE,
     BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
+    STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
   });
 
   if (!parsed.success) {
@@ -90,17 +96,22 @@ export function __resetEnvCacheForTests(): void {
 
 /**
  * Canonical public app origin (no trailing slash).
- * Prefer NEXT_PUBLIC_APP_URL, then AUTH_URL / NEXTAUTH_URL, then Vercel URL.
- * Normalizes localhost vs 127.0.0.1 conflicts by preferring the configured URL as-is.
+ * Prefer explicit app/auth URLs, then common PaaS-provided host vars
+ * (Render / Railway / Vercel). Host-agnostic — no hard dependency on Vercel.
  */
 export function getCanonicalAppUrl(): string {
   const candidates = [
     process.env.NEXT_PUBLIC_APP_URL,
     process.env.AUTH_URL,
     process.env.NEXTAUTH_URL,
+    process.env.RENDER_EXTERNAL_URL,
+    process.env.RAILWAY_PUBLIC_DOMAIN
+      ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+      : undefined,
     process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : undefined,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
   ];
 
   for (const raw of candidates) {

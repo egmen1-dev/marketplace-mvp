@@ -1,0 +1,17 @@
+# Netlify — experimental backup host (prefer Render / Railway).
+# Requires: npm i -D @netlify/plugin-nextjs
+# Docs: docs/BACKUP_DEPLOYMENT.md
+
+[build]
+  command = "npx prisma generate && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Set in Netlify UI (not committed):
+# DATABASE_URL, AUTH_SECRET, NEXT_PUBLIC_APP_URL, AUTH_URL,
+# BLOB_READ_WRITE_TOKEN, Stripe / CDEK as needed.

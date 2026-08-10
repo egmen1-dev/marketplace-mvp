@@ -18,7 +18,7 @@ B2C marketplace: покупатели ищут товары в каталоге,
 | Frontend | Next.js 15 (App Router), TypeScript, Tailwind CSS v4, shadcn/ui |
 | Backend | Next.js Server Actions + API routes (stubs) |
 | DB | PostgreSQL + Prisma ORM |
-| Deploy | Vercel |
+| Deploy | Vercel (primary); backup hosts — see [docs/BACKUP_DEPLOYMENT.md](docs/BACKUP_DEPLOYMENT.md) |
 
 ---
 
@@ -94,6 +94,9 @@ npm run dev
 | `CDEK_FROM_CITY_CODE` | no | Warehouse city code for tariff calc |
 | `AUTH_SECRET` | yes (auth) | Auth.js secret |
 | `BLOB_READ_WRITE_TOKEN` | yes (uploads) | Vercel Blob read/write token |
+| `STORAGE_PROVIDER` | no | Default `vercel-blob` (`lib/storage`) |
+
+Backup / non-Vercel deploy: **[docs/BACKUP_DEPLOYMENT.md](docs/BACKUP_DEPLOYMENT.md)** (`render.yaml`, `railway.toml`, `netlify.toml`).
 
 ---
 

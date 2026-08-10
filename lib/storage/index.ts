@@ -22,19 +22,54 @@ export {
   isAvatarPathOwnedByUser,
 } from "./validate";
 
+export { createVercelBlobStorage } from "./vercel-blob";
+
+/** Supported providers. Add `s3` / `r2` / `supabase` when implementations land. */
+export type StorageProviderId = "vercel-blob";
+
 let cached: StorageProvider | null = null;
 
+function resolveProviderId(): StorageProviderId {
+  const raw = (process.env.STORAGE_PROVIDER ?? "vercel-blob")
+    .trim()
+    .toLowerCase();
+  if (raw === "vercel-blob" || raw === "blob" || raw === "") {
+    return "vercel-blob";
+  }
+  // Fail closed: unknown provider → keep current Blob implementation so
+  // misconfigured backup hosts do not silently break uploads mid-migration.
+  console.warn(
+    `[storage] Unknown STORAGE_PROVIDER="${raw}", using vercel-blob`,
+  );
+  return "vercel-blob";
+}
+
 /**
- * Default storage provider (Vercel Blob).
- * Swap implementation here if migrating to R2 later.
+ * Default storage provider.
+ * Today: Vercel Blob. Future: switch on STORAGE_PROVIDER (s3 / r2 / …).
  */
 export function getStorage(): StorageProvider {
   if (!cached) {
-    cached = createVercelBlobStorage();
+    switch (resolveProviderId()) {
+      case "vercel-blob":
+      default:
+        cached = createVercelBlobStorage();
+        break;
+    }
   }
   return cached;
 }
 
+/** True when the active provider has credentials for uploads. */
 export function isBlobConfigured(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+  switch (resolveProviderId()) {
+    case "vercel-blob":
+    default:
+      return Boolean(process.env.BLOB_READ_WRITE_TOKEN?.trim());
+  }
+}
+
+/** Reset cached provider (tests only). */
+export function __resetStorageCacheForTests(): void {
+  cached = null;
 }
