@@ -7,6 +7,10 @@ import { Check, Loader2, Minus, Plus, ShoppingBag, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/components/cart-provider";
+import {
+  WriteSellerButton,
+  WriteSellerSignInLink,
+} from "@/features/chat";
 import { FavoriteToggleButton } from "@/features/favorites/components/favorite-toggle-button";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
@@ -20,6 +24,10 @@ type ProductPurchasePanelProps = {
   price: number;
   currency?: string;
   className?: string;
+  /** Hide «Написать продавцу» for own listings */
+  isOwnProduct?: boolean;
+  /** Whether viewer is signed in (guest → sign-in link) */
+  isAuthenticated?: boolean;
 };
 
 export function ProductPurchasePanel({
@@ -28,6 +36,8 @@ export function ProductPurchasePanel({
   price,
   currency = "RUB",
   className,
+  isOwnProduct = false,
+  isAuthenticated = false,
 }: ProductPurchasePanelProps) {
   const router = useRouter();
   const { addItem, isPending } = useCart();
@@ -201,6 +211,14 @@ export function ProductPurchasePanel({
             )}
           </Button>
         </div>
+
+        {!isOwnProduct ? (
+          isAuthenticated ? (
+            <WriteSellerButton productId={productId} />
+          ) : (
+            <WriteSellerSignInLink productId={productId} />
+          )
+        ) : null}
 
         <Button
           variant="link"

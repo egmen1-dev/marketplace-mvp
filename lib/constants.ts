@@ -40,6 +40,8 @@ export const ROUTES = {
   ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
   /** Buyer + seller reservation lists (same path; UI branches by role) */
   ACCOUNT_RESERVATIONS: "/account/reservations",
+  /** Buyer ↔ seller chat */
+  ACCOUNT_MESSAGES: "/account/messages",
   ABOUT: "/about",
   SUPPORT: "/support",
   CONTACTS: "/contacts",
@@ -83,6 +85,10 @@ export function sellerPublicPath(idOrSlug: string) {
 
 export function orderPath(id: string) {
   return `${ROUTES.ORDERS}/${id}`;
+}
+
+export function conversationPath(id: string) {
+  return `${ROUTES.ACCOUNT_MESSAGES}/${id}`;
 }
 
 /** Legacy /seller/* cabinet prefixes (still matched for redirects + middleware). */

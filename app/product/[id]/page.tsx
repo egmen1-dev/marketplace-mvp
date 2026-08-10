@@ -183,6 +183,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             stock={product.stock}
             price={product.price}
             currency={product.currency}
+            isOwnProduct={
+              session?.sellerProfileId != null &&
+              session.sellerProfileId === product.seller.id
+            }
+            isAuthenticated={Boolean(session)}
           />
 
           <section

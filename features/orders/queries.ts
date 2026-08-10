@@ -19,6 +19,10 @@ import type {
   OrderListItem,
   OrderShippingView,
 } from "@/features/orders/types";
+import {
+  notifyOrderCreated,
+  notifyReservationCreated,
+} from "@/features/chat/queries";
 import { calcPrepaymentAmount } from "@/features/pickup/lib/prepayment";
 import { toPriceNumber } from "@/features/products/mappers";
 import { DEFAULT_CURRENCY } from "@/lib/constants";
@@ -453,6 +457,23 @@ async function createSellerPickupOrder(opts: {
       return created;
     });
 
+    try {
+      await notifyOrderCreated({
+        buyerId: userId,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+      });
+      for (const r of reservationRows) {
+        await notifyReservationCreated({
+          buyerId: userId,
+          productId: r.productId,
+          sellerId: r.sellerId,
+        });
+      }
+    } catch (notifyErr) {
+      console.error("[createSellerPickupOrder] chat notify", notifyErr);
+    }
+
     return {
       ok: true,
       orderId: order.id,
@@ -727,6 +748,16 @@ export async function createOrderFromCart(
 
       return created;
     });
+
+    try {
+      await notifyOrderCreated({
+        buyerId: userId,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+      });
+    } catch (notifyErr) {
+      console.error("[createOrderFromCart] chat notify", notifyErr);
+    }
 
     return {
       ok: true,

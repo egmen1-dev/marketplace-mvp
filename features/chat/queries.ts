@@ -1,0 +1,609 @@
+import {
+  ConversationStatus,
+  MessageType,
+  Prisma,
+  type UserRole,
+} from "@prisma/client";
+
+import { prisma } from "@/lib/prisma";
+import { toPriceNumber } from "@/features/products/mappers";
+
+export type ChatParticipant = {
+  id: string;
+  name: string | null;
+  email: string;
+  image: string | null;
+};
+
+export type ChatProductSummary = {
+  id: string;
+  title: string;
+  price: number;
+  currency: string;
+  imageUrl: string | null;
+};
+
+export type ChatMessageDto = {
+  id: string;
+  conversationId: string;
+  text: string;
+  type: MessageType;
+  isRead: boolean;
+  createdAt: string;
+  senderId: string | null;
+  sender: ChatParticipant | null;
+  attachmentUrl: string | null;
+  attachmentName: string | null;
+  attachmentMime: string | null;
+};
+
+export type ConversationListItem = {
+  id: string;
+  status: ConversationStatus;
+  updatedAt: string;
+  createdAt: string;
+  unreadCount: number;
+  product: ChatProductSummary;
+  counterpart: {
+    name: string;
+    kind: "buyer" | "seller";
+  };
+  lastMessage: {
+    text: string;
+    type: MessageType;
+    createdAt: string;
+    senderId: string | null;
+  } | null;
+};
+
+export type ConversationDetail = {
+  id: string;
+  status: ConversationStatus;
+  product: ChatProductSummary;
+  buyer: ChatParticipant;
+  seller: {
+    id: string;
+    storeName: string;
+    slug: string;
+    user: ChatParticipant;
+  };
+  messages: ChatMessageDto[];
+};
+
+const productSelect = {
+  id: true,
+  name: true,
+  price: true,
+  currency: true,
+  images: {
+    where: { isPrimary: true },
+    take: 1,
+    select: { url: true },
+    orderBy: { sortOrder: "asc" as const },
+  },
+} satisfies Prisma.ProductSelect;
+
+function mapProduct(row: {
+  id: string;
+  name: string;
+  price: Prisma.Decimal | number;
+  currency: string;
+  images: { url: string }[];
+}): ChatProductSummary {
+  return {
+    id: row.id,
+    title: row.name,
+    price: toPriceNumber(row.price),
+    currency: row.currency,
+    imageUrl: row.images[0]?.url ?? null,
+  };
+}
+
+function mapParticipant(row: {
+  id: string;
+  name: string | null;
+  email: string;
+  image: string | null;
+}): ChatParticipant {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    image: row.image,
+  };
+}
+
+function mapMessage(row: {
+  id: string;
+  conversationId: string;
+  text: string;
+  type: MessageType;
+  isRead: boolean;
+  createdAt: Date;
+  senderId: string | null;
+  attachmentUrl: string | null;
+  attachmentName: string | null;
+  attachmentMime: string | null;
+  sender: {
+    id: string;
+    name: string | null;
+    email: string;
+    image: string | null;
+  } | null;
+}): ChatMessageDto {
+  return {
+    id: row.id,
+    conversationId: row.conversationId,
+    text: row.text,
+    type: row.type,
+    isRead: row.isRead,
+    createdAt: row.createdAt.toISOString(),
+    senderId: row.senderId,
+    sender: row.sender ? mapParticipant(row.sender) : null,
+    attachmentUrl: row.attachmentUrl,
+    attachmentName: row.attachmentName,
+    attachmentMime: row.attachmentMime,
+  };
+}
+
+export class ChatError extends Error {
+  constructor(
+    message: string,
+    public readonly code:
+      | "NOT_FOUND"
+      | "FORBIDDEN"
+      | "OWN_PRODUCT"
+      | "INVALID"
+      | "CLOSED" = "INVALID",
+  ) {
+    super(message);
+    this.name = "ChatError";
+  }
+}
+
+/** Resolve whether viewer can access conversation (buyer, seller user, or admin). */
+export async function assertConversationAccess(
+  conversationId: string,
+  viewer: { id: string; role: UserRole; sellerProfileId: string | null },
+) {
+  const row = await prisma.conversation.findUnique({
+    where: { id: conversationId },
+    select: {
+      id: true,
+      buyerId: true,
+      sellerId: true,
+      status: true,
+      seller: { select: { userId: true } },
+    },
+  });
+  if (!row) throw new ChatError("Диалог не найден", "NOT_FOUND");
+
+  const isBuyer = row.buyerId === viewer.id;
+  const isSeller = row.seller.userId === viewer.id;
+  const isAdmin = viewer.role === "ADMIN";
+  if (!isBuyer && !isSeller && !isAdmin) {
+    throw new ChatError("Нет доступа к диалогу", "FORBIDDEN");
+  }
+  return { ...row, isBuyer, isSeller, isAdmin };
+}
+
+export async function getOrCreateConversationForProduct(opts: {
+  productId: string;
+  buyerId: string;
+}): Promise<{ conversationId: string; created: boolean }> {
+  const product = await prisma.product.findUnique({
+    where: { id: opts.productId },
+    select: {
+      id: true,
+      status: true,
+      sellerId: true,
+      seller: { select: { userId: true, isBlocked: true } },
+    },
+  });
+  if (!product || product.status !== "ACTIVE" || product.seller.isBlocked) {
+    throw new ChatError("Товар недоступен", "NOT_FOUND");
+  }
+  if (product.seller.userId === opts.buyerId) {
+    throw new ChatError("Нельзя писать себе", "OWN_PRODUCT");
+  }
+
+  const existing = await prisma.conversation.findUnique({
+    where: {
+      productId_buyerId: {
+        productId: opts.productId,
+        buyerId: opts.buyerId,
+      },
+    },
+    select: { id: true },
+  });
+  if (existing) {
+    return { conversationId: existing.id, created: false };
+  }
+
+  const created = await prisma.$transaction(async (tx) => {
+    const conversation = await tx.conversation.create({
+      data: {
+        productId: opts.productId,
+        buyerId: opts.buyerId,
+        sellerId: product.sellerId,
+        status: ConversationStatus.ACTIVE,
+      },
+    });
+    await tx.message.create({
+      data: {
+        conversationId: conversation.id,
+        senderId: null,
+        text: "Диалог создан.",
+        type: MessageType.SYSTEM,
+        isRead: true,
+      },
+    });
+    return conversation;
+  });
+
+  return { conversationId: created.id, created: true };
+}
+
+export async function listConversationsForUser(opts: {
+  userId: string;
+  sellerProfileId: string | null;
+}): Promise<ConversationListItem[]> {
+  const where: Prisma.ConversationWhereInput = {
+    OR: [
+      { buyerId: opts.userId },
+      ...(opts.sellerProfileId
+        ? [{ sellerId: opts.sellerProfileId }]
+        : []),
+    ],
+  };
+
+  const rows = await prisma.conversation.findMany({
+    where,
+    orderBy: { updatedAt: "desc" },
+    include: {
+      product: { select: productSelect },
+      buyer: { select: { id: true, name: true, email: true } },
+      seller: { select: { id: true, storeName: true, userId: true } },
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: {
+          text: true,
+          type: true,
+          createdAt: true,
+          senderId: true,
+        },
+      },
+    },
+  });
+
+  const unreadCounts = await Promise.all(
+    rows.map(async (row) =>
+      prisma.message.count({
+        where: {
+          conversationId: row.id,
+          isRead: false,
+          NOT: { senderId: opts.userId },
+        },
+      }),
+    ),
+  );
+
+  return rows.map((row, i) => {
+    const isBuyerView = row.buyerId === opts.userId;
+    const last = row.messages[0] ?? null;
+    return {
+      id: row.id,
+      status: row.status,
+      updatedAt: row.updatedAt.toISOString(),
+      createdAt: row.createdAt.toISOString(),
+      unreadCount: unreadCounts[i] ?? 0,
+      product: mapProduct(row.product),
+      counterpart: isBuyerView
+        ? { name: row.seller.storeName, kind: "seller" as const }
+        : {
+            name: row.buyer.name ?? row.buyer.email,
+            kind: "buyer" as const,
+          },
+      lastMessage: last
+        ? {
+            text: last.text,
+            type: last.type,
+            createdAt: last.createdAt.toISOString(),
+            senderId: last.senderId,
+          }
+        : null,
+    };
+  });
+}
+
+export async function countUnreadMessagesForUser(opts: {
+  userId: string;
+  sellerProfileId: string | null;
+}): Promise<number> {
+  const conversationIds = await prisma.conversation.findMany({
+    where: {
+      OR: [
+        { buyerId: opts.userId },
+        ...(opts.sellerProfileId
+          ? [{ sellerId: opts.sellerProfileId }]
+          : []),
+      ],
+    },
+    select: { id: true },
+  });
+  if (conversationIds.length === 0) return 0;
+
+  return prisma.message.count({
+    where: {
+      conversationId: { in: conversationIds.map((c) => c.id) },
+      isRead: false,
+      NOT: { senderId: opts.userId },
+      // SYSTEM messages are created as isRead=true
+    },
+  });
+}
+
+export async function getConversationDetail(opts: {
+  conversationId: string;
+  viewer: { id: string; role: UserRole; sellerProfileId: string | null };
+}): Promise<ConversationDetail> {
+  await assertConversationAccess(opts.conversationId, opts.viewer);
+
+  const row = await prisma.conversation.findUniqueOrThrow({
+    where: { id: opts.conversationId },
+    include: {
+      product: { select: productSelect },
+      buyer: {
+        select: { id: true, name: true, email: true, image: true },
+      },
+      seller: {
+        select: {
+          id: true,
+          storeName: true,
+          slug: true,
+          user: {
+            select: { id: true, name: true, email: true, image: true },
+          },
+        },
+      },
+      messages: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          sender: {
+            select: { id: true, name: true, email: true, image: true },
+          },
+        },
+      },
+    },
+  });
+
+  // Mark counterpart messages as read
+  await prisma.message.updateMany({
+    where: {
+      conversationId: row.id,
+      isRead: false,
+      NOT: { senderId: opts.viewer.id },
+    },
+    data: { isRead: true },
+  });
+
+  return {
+    id: row.id,
+    status: row.status,
+    product: mapProduct(row.product),
+    buyer: mapParticipant(row.buyer),
+    seller: {
+      id: row.seller.id,
+      storeName: row.seller.storeName,
+      slug: row.seller.slug,
+      user: mapParticipant(row.seller.user),
+    },
+    messages: row.messages.map(mapMessage),
+  };
+}
+
+export async function sendTextMessage(opts: {
+  conversationId: string;
+  senderId: string;
+  text: string;
+  viewer: { id: string; role: UserRole; sellerProfileId: string | null };
+}): Promise<ChatMessageDto> {
+  const access = await assertConversationAccess(
+    opts.conversationId,
+    opts.viewer,
+  );
+  if (access.status === ConversationStatus.CLOSED) {
+    throw new ChatError("Диалог закрыт", "CLOSED");
+  }
+  if (access.status === ConversationStatus.ARCHIVED) {
+    throw new ChatError("Диалог в архиве", "CLOSED");
+  }
+
+  const text = opts.text.trim();
+  if (!text) throw new ChatError("Введите сообщение", "INVALID");
+
+  const message = await prisma.$transaction(async (tx) => {
+    const created = await tx.message.create({
+      data: {
+        conversationId: opts.conversationId,
+        senderId: opts.senderId,
+        text,
+        type: MessageType.TEXT,
+        isRead: false,
+      },
+      include: {
+        sender: {
+          select: { id: true, name: true, email: true, image: true },
+        },
+      },
+    });
+    await tx.conversation.update({
+      where: { id: opts.conversationId },
+      data: { updatedAt: new Date() },
+    });
+    return created;
+  });
+
+  return mapMessage(message);
+}
+
+/** Append a system / typed message to an existing conversation (or skip if none). */
+export async function postSystemMessageToConversation(opts: {
+  conversationId: string;
+  text: string;
+  type?: MessageType;
+}): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    await tx.message.create({
+      data: {
+        conversationId: opts.conversationId,
+        senderId: null,
+        text: opts.text,
+        type: opts.type ?? MessageType.SYSTEM,
+        isRead: true,
+      },
+    });
+    await tx.conversation.update({
+      where: { id: opts.conversationId },
+      data: { updatedAt: new Date() },
+    });
+  });
+}
+
+/**
+ * Post order system message into buyer↔seller chats for products in the order.
+ * Creates conversation if missing (without "Диалог создан." — uses ORDER text).
+ */
+export async function notifyOrderCreated(opts: {
+  buyerId: string;
+  orderId: string;
+  orderNumber: string;
+}): Promise<void> {
+  const items = await prisma.orderItem.findMany({
+    where: { orderId: opts.orderId },
+    select: {
+      productId: true,
+      product: { select: { sellerId: true, seller: { select: { userId: true } } } },
+    },
+  });
+
+  const byProduct = new Map<
+    string,
+    { productId: string; sellerId: string; sellerUserId: string }
+  >();
+  for (const item of items) {
+    if (!item.productId || !item.product) continue;
+    if (item.product.seller.userId === opts.buyerId) continue;
+    byProduct.set(item.productId, {
+      productId: item.productId,
+      sellerId: item.product.sellerId,
+      sellerUserId: item.product.seller.userId,
+    });
+  }
+
+  for (const entry of byProduct.values()) {
+    await upsertConversationSystemMessage({
+      productId: entry.productId,
+      buyerId: opts.buyerId,
+      sellerId: entry.sellerId,
+      text: `Создан заказ №${opts.orderNumber}`,
+      type: MessageType.ORDER,
+    });
+  }
+}
+
+export async function notifyReservationCreated(opts: {
+  buyerId: string;
+  productId: string;
+  sellerId: string;
+}): Promise<void> {
+  await upsertConversationSystemMessage({
+    productId: opts.productId,
+    buyerId: opts.buyerId,
+    sellerId: opts.sellerId,
+    text: "Создана бронь.",
+    type: MessageType.RESERVATION,
+  });
+}
+
+export async function notifyReservationConfirmed(opts: {
+  reservationId: string;
+}): Promise<void> {
+  const row = await prisma.pickupReservation.findUnique({
+    where: { id: opts.reservationId },
+    select: {
+      buyerId: true,
+      productId: true,
+      sellerId: true,
+    },
+  });
+  if (!row) return;
+  await upsertConversationSystemMessage({
+    productId: row.productId,
+    buyerId: row.buyerId,
+    sellerId: row.sellerId,
+    text: "Продавец подтвердил бронь.",
+    type: MessageType.RESERVATION,
+  });
+}
+
+async function upsertConversationSystemMessage(opts: {
+  productId: string;
+  buyerId: string;
+  sellerId: string;
+  text: string;
+  type: MessageType;
+}): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    let conversation = await tx.conversation.findUnique({
+      where: {
+        productId_buyerId: {
+          productId: opts.productId,
+          buyerId: opts.buyerId,
+        },
+      },
+      select: { id: true },
+    });
+    if (!conversation) {
+      conversation = await tx.conversation.create({
+        data: {
+          productId: opts.productId,
+          buyerId: opts.buyerId,
+          sellerId: opts.sellerId,
+          status: ConversationStatus.ACTIVE,
+        },
+        select: { id: true },
+      });
+      await tx.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderId: null,
+          text: "Диалог создан.",
+          type: MessageType.SYSTEM,
+          isRead: true,
+        },
+      });
+    }
+    await tx.message.create({
+      data: {
+        conversationId: conversation.id,
+        senderId: null,
+        text: opts.text,
+        type: opts.type,
+        isRead: true,
+      },
+    });
+    await tx.conversation.update({
+      where: { id: conversation.id },
+      data: { updatedAt: new Date() },
+    });
+  });
+}
+
+/** Admin: soft-close / hard delete conversation. */
+export async function adminDeleteConversation(
+  conversationId: string,
+): Promise<void> {
+  await prisma.conversation.delete({ where: { id: conversationId } });
+}

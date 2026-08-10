@@ -5,6 +5,7 @@ import {
 
 import { pickupPointSchema, type PickupPointInput } from "@/features/pickup/schemas";
 import { prisma } from "@/lib/prisma";
+import { notifyReservationConfirmed } from "@/features/chat/queries";
 import { toPriceNumber } from "@/features/products/mappers";
 
 export type PickupPointDto = {
@@ -281,6 +282,13 @@ export async function updateReservationStatus(opts: {
     data: { status: opts.status },
     include: reservationInclude,
   });
+  if (opts.status === "CONFIRMED") {
+    try {
+      await notifyReservationConfirmed({ reservationId: updated.id });
+    } catch (err) {
+      console.error("[updateReservationStatus] chat notify", err);
+    }
+  }
   return mapReservation(updated);
 }
 

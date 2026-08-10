@@ -1,6 +1,7 @@
 import {
   Heart,
   MapPin,
+  MessageCircle,
   Package,
   Settings,
   ShoppingBag,
@@ -44,6 +45,14 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
       path.startsWith(`${ROUTES.ORDERS}/`) ||
       path === "/orders" ||
       path.startsWith("/orders/"),
+  },
+  {
+    href: ROUTES.ACCOUNT_MESSAGES,
+    label: "Мои сообщения",
+    icon: MessageCircle,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_MESSAGES ||
+      path.startsWith(`${ROUTES.ACCOUNT_MESSAGES}/`),
   },
   {
     href: ROUTES.ACCOUNT_RESERVATIONS,

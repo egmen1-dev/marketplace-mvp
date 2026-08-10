@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AuthNav, getSessionUser, type SessionUser } from "@/features/auth";
 import { HeaderCartButton } from "@/features/cart/components";
+import { HeaderMessagesButton } from "@/features/chat";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -81,6 +82,8 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
             <Heart />
           </Button>
 
+          <HeaderMessagesButton />
+
           <HeaderCartButton />
 
           <ThemeToggle className="hidden md:inline-flex" />
@@ -121,6 +124,14 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
                 <Heart className="size-4" />
                 Избранное
               </DropdownMenuItem>
+              {user ? (
+                <DropdownMenuItem
+                  render={<Link href={ROUTES.ACCOUNT_MESSAGES} />}
+                  data-testid="mobile-nav-messages"
+                >
+                  Сообщения
+                </DropdownMenuItem>
+              ) : null}
               {menuLinks.map((item) => (
                 <DropdownMenuItem
                   key={item.href}

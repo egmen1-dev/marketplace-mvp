@@ -99,6 +99,20 @@ enum PickupReservationStatus {
   CANCELLED
 }
 
+enum ConversationStatus {
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum MessageType {
+  TEXT
+  SYSTEM
+  IMAGE
+  ORDER
+  RESERVATION
+}
+
 // ─── User & Seller ───────────────────────────────────────────────────────────
 
 model User {
@@ -129,6 +143,8 @@ model User {
   orderStatusChanges   OrderStatusHistory[]
   adminActionLogs      AdminActionLog[]
   pickupReservations   PickupReservation[]
+  buyerConversations   Conversation[]      @relation("ConversationBuyer")
+  sentMessages         Message[]
 
   @@index([role])
   @@index([isBlocked])
@@ -163,6 +179,7 @@ model SellerProfile {
   products       Product[]
   pickupPoints   PickupPoint[]
   reservations   PickupReservation[]
+  conversations  Conversation[]
 
   @@index([slug])
   @@index([kind])
@@ -246,6 +263,7 @@ model Product {
   inventoryHistory InventoryHistory[]
   pickupPoints     ProductPickupPoint[]
   reservations     PickupReservation[]
+  conversations    Conversation[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -597,6 +615,55 @@ model PickupReservation {
   @@index([status])
   @@index([createdAt])
   @@map("pickup_reservations")
+}
+
+// ─── Chat (buyer ↔ seller) ───────────────────────────────────────────────────
+
+/// One conversation per buyer+product. sellerId is SellerProfile.id.
+model Conversation {
+  id        String             @id @default(cuid())
+  productId String
+  buyerId   String
+  sellerId  String
+  status    ConversationStatus @default(ACTIVE)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  product  Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buyer    User          @relation("ConversationBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller   SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@unique([productId, buyerId])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([productId])
+  @@index([status])
+  @@index([updatedAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String      @id @default(cuid())
+  conversationId String
+  /// Null for SYSTEM messages without a human sender.
+  senderId       String?
+  text           String
+  type           MessageType @default(TEXT)
+  isRead         Boolean     @default(false)
+  /// Future attachments (images / documents / receipts).
+  attachmentUrl  String?
+  attachmentName String?
+  attachmentMime String?
+  createdAt      DateTime    @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@index([conversationId, isRead])
+  @@map("messages")
 }
 
 // ─── Admin audit ─────────────────────────────────────────────────────────────
