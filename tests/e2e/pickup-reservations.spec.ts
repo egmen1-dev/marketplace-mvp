@@ -21,14 +21,30 @@ test.describe("pickup points & reservations", () => {
     });
     await expect(page.getByText(pointName)).toBeVisible();
 
-    const title = `E2E Pickup ${Date.now()}`;
+    const title = `E2E тепловая пушка Pickup ${Date.now()}`;
     await page.goto("/account/products/new");
-    await page.getByLabel("Поиск категории").first().fill("тепловая");
+    await page.getByLabel("Название", { exact: true }).fill(title);
+    await expect(page.getByText("Мы рекомендуем")).toBeVisible({
+      timeout: 15_000,
+    });
     await page
       .getByRole("button", { name: /Тепловые пушки/i })
       .first()
       .click();
-    await page.getByLabel("Название", { exact: true }).fill(title);
+    await expect(page.getByText("Характеристики")).toBeVisible({
+      timeout: 10_000,
+    });
+    const power = page.getByLabel(/Мощность/i).first();
+    if (await power.isVisible().catch(() => false)) {
+      await power.fill("5");
+    }
+    const heatType = page
+      .locator("select")
+      .filter({ has: page.locator("option", { hasText: "электрический" }) })
+      .first();
+    if (await heatType.isVisible().catch(() => false)) {
+      await heatType.selectOption({ label: "электрический" });
+    }
     await page.locator("#description").fill("Pickup e2e product");
     await page.getByLabel("Цена, ₽").fill("10000");
     await page.getByLabel("Количество на складе").fill("2");
@@ -40,7 +56,10 @@ test.describe("pickup points & reservations", () => {
     await page.getByLabel("Размер предоплаты (%)").selectOption("20");
 
     await page.getByRole("button", { name: "Опубликовать товар" }).click();
-    await expect(page).toHaveURL(/\/account\/products/, { timeout: 45_000 });
+    await expect(page).toHaveURL(/\/account\/products\/?(?:\?.*)?$/, {
+      timeout: 45_000,
+    });
+    await expect(page).not.toHaveURL(/\/new/);
     await expect(page.getByText(title).first()).toBeVisible({ timeout: 20_000 });
 
     const href = await page

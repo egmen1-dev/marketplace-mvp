@@ -28,18 +28,19 @@ export function toPriceNumber(
   return value.toNumber();
 }
 
-/** Format price for Russian UI: "4 990 ₽". */
+/** Format price for Russian UI: "4 990 ₽" (deterministic; avoids SSR/client Intl mismatch). */
 export function formatPrice(
   value: Prisma.Decimal | number | string,
   currency = "RUB",
 ): string {
   const amount = toPriceNumber(value);
-  const formatted = new Intl.NumberFormat("ru-RU", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
-  }).format(amount);
-  return formatted;
+  const isWhole = Math.abs(amount % 1) < 1e-9;
+  const core = isWhole ? String(Math.round(amount)) : amount.toFixed(2);
+  const [intPart, frac] = core.split(".");
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
+  const number = frac != null ? `${grouped},${frac}` : grouped;
+  if (currency === "RUB") return `${number}\u00a0₽`;
+  return `${number}\u00a0${currency}`;
 }
 
 /** URL-safe slug from a title (Cyrillic transliteration + kebab). */
@@ -183,6 +184,16 @@ function formatCharDisplay(v: NonNullable<DetailRow["characteristicValues"]>[num
   return v.valueText?.trim() || "";
 }
 
+/** Raw value for product edit form inputs (no units / localized boolean). */
+function formatCharFormValue(
+  v: NonNullable<DetailRow["characteristicValues"]>[number],
+): string {
+  if (v.valueBoolean != null) return v.valueBoolean ? "true" : "false";
+  if (v.valueNumber != null) return String(toPriceNumber(v.valueNumber));
+  if (Array.isArray(v.valueJson)) return v.valueJson.map(String).join(",");
+  return v.valueText?.trim() || "";
+}
+
 function mapImage(img: ImageRow): ProductImageDto {
   return {
     id: img.id,
@@ -257,6 +268,7 @@ export function mapProductDetail(row: DetailRow): ProductDetail {
       slug: v.definition.slug,
       unit: v.definition.unit,
       displayValue: formatCharDisplay(v),
+      formValue: formatCharFormValue(v),
     })),
     pickupPoints: (row.pickupPoints ?? [])
       .map((l) => l.pickupPoint)

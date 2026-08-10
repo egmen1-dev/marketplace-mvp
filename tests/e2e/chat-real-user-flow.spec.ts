@@ -129,11 +129,8 @@ test.describe("chat real user flow (discoverability)", () => {
       buyer.getByTestId("chat-message").filter({ hasText: sellerMsg }),
     ).toBeVisible({ timeout: 15_000 });
 
-    // Staging may emit React #418 hydration noise unrelated to chat persistence
-    const filterHydration = (errs: string[]) =>
-      errs.filter((e) => !/Minified React error #418/i.test(e));
-    expect(filterHydration(buyerErrors.pageErrors)).toEqual([]);
-    expect(filterHydration(sellerErrors.pageErrors)).toEqual([]);
+    buyerErrors.assertClean();
+    sellerErrors.assertClean();
     await buyerCtx.close();
     await sellerCtx.close();
   });

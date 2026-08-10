@@ -53,36 +53,43 @@ test.describe("account cabinet layout", () => {
   });
 
   test("buyer sees start-selling CTA, seller sees sales links", async ({
-    page,
+    browser,
   }) => {
-    const errors = attachErrorCollector(page);
+    const buyerCtx = await browser.newContext();
+    const sellerCtx = await browser.newContext();
+    const buyer = await buyerCtx.newPage();
+    const seller = await sellerCtx.newPage();
+    const buyerErrors = attachErrorCollector(buyer);
+    const sellerErrors = attachErrorCollector(seller);
 
-    await signIn(page, DEMO.buyerEmail);
-    await page.goto("/account");
-    await expect(page.getByTestId("become-seller").first()).toBeVisible();
+    await signIn(buyer, DEMO.buyerEmail);
+    await buyer.goto("/account");
+    await expect(buyer.getByTestId("become-seller").first()).toBeVisible();
     await expect(
-      page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
+      buyer.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
         name: "Мои товары",
         exact: true,
       }),
     ).toHaveCount(0);
+    buyerErrors.assertClean();
 
-    await page.context().clearCookies();
-    await signIn(page, DEMO.sellerEmail);
-    await page.goto("/account");
+    await signIn(seller, DEMO.sellerEmail);
+    await seller.goto("/account");
     await expect(
-      page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
+      seller.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
         name: "Мои товары",
         exact: true,
       }),
     ).toBeVisible();
     await expect(
-      page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
-        name: "Мои продажи",
+      seller.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
+        name: "Продажи",
         exact: true,
       }),
     ).toBeVisible();
+    sellerErrors.assertClean();
 
-    errors.assertClean();
+    await buyerCtx.close();
+    await sellerCtx.close();
   });
 });

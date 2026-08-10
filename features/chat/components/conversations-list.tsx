@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ChatRelativeTime } from "@/features/chat/components/chat-relative-time";
 import type { ConversationListItem } from "@/features/chat/queries";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
@@ -13,22 +14,6 @@ import { cn } from "@/lib/utils";
 type Props = {
   conversations: ConversationListItem[];
 };
-
-function formatChatDate(iso: string): string {
-  const d = new Date(iso);
-  const now = new Date();
-  const sameDay =
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate();
-  if (sameDay) {
-    return d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-  }
-  return d.toLocaleDateString("ru-RU", {
-    day: "numeric",
-    month: "short",
-  });
-}
 
 export function ConversationsList({ conversations }: Props) {
   if (conversations.length === 0) {
@@ -84,9 +69,11 @@ export function ConversationsList({ conversations }: Props) {
                 <p className="truncate font-heading text-sm font-semibold">
                   {c.product.title}
                 </p>
-                <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                  {formatChatDate(c.lastMessage?.createdAt ?? c.updatedAt)}
-                </span>
+                <ChatRelativeTime
+                  iso={c.lastMessage?.createdAt ?? c.updatedAt}
+                  mode="list"
+                  className="shrink-0 text-xs text-muted-foreground tabular-nums"
+                />
               </div>
               <p className="truncate text-xs text-muted-foreground">
                 {c.counterpart.kind === "seller" ? "Продавец: " : "Покупатель: "}

@@ -71,7 +71,7 @@ export default async function ConversationPage({ params }: Props) {
               }}
             >
               <Button type="submit" variant="destructive" size="sm">
-                Удалить диалог
+                Закрыть диалог
               </Button>
             </form>
           ) : null}

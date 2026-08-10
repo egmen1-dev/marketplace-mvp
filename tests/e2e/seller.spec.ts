@@ -64,6 +64,10 @@ test.describe("seller cabinet", () => {
     await expect(page.getByLabel("Название", { exact: true })).toBeVisible({
       timeout: 20_000,
     });
+    // Wait for taxonomy/characteristics hydrate before save (required fields).
+    await expect(page.getByText("Характеристики")).toBeVisible({
+      timeout: 15_000,
+    });
     const edited = `${title} edited`;
     await page.getByLabel("Название", { exact: true }).fill(edited);
     await page.getByLabel("Статус").selectOption("ARCHIVED");

@@ -11,6 +11,7 @@ import {
   sendMessageAction,
   type ChatActionState,
 } from "@/features/chat/actions";
+import { ChatRelativeTime } from "@/features/chat/components/chat-relative-time";
 import type { ConversationDetail } from "@/features/chat/queries";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
@@ -23,15 +24,6 @@ type Props = {
 };
 
 const initial: ChatActionState = { ok: false };
-
-function formatMsgTime(iso: string): string {
-  return new Date(iso).toLocaleString("ru-RU", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export function ConversationThread({ conversation, viewerId }: Props) {
   const router = useRouter();
@@ -144,9 +136,11 @@ export function ConversationThread({ conversation, viewerId }: Props) {
               >
                 {m.text}
               </div>
-              <span className="px-1 text-[10px] text-muted-foreground tabular-nums">
-                {formatMsgTime(m.createdAt)}
-              </span>
+              <ChatRelativeTime
+                iso={m.createdAt}
+                mode="thread"
+                className="px-1 text-[10px] text-muted-foreground tabular-nums"
+              />
             </div>
           );
         })}

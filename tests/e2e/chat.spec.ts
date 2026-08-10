@@ -26,7 +26,7 @@ test.describe("marketplace chat", () => {
     });
     await expect(page.getByTestId("conversation-thread")).toBeVisible();
     await expect(page.getByTestId("chat-system-message").first()).toContainText(
-      "Диалог создан",
+      /Диалог создан|Вы можете написать продавцу/,
     );
 
     const conversationUrl = page.url();

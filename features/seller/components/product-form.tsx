@@ -143,7 +143,7 @@ export function ProductForm({
   const charDefaults = useMemo(() => {
     const map: Record<string, string> = {};
     for (const v of product?.characteristics ?? []) {
-      map[v.definitionId] = v.displayValue;
+      map[v.definitionId] = v.formValue ?? v.displayValue;
     }
     return map;
   }, [product?.characteristics]);

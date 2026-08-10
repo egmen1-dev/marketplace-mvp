@@ -117,6 +117,6 @@ export async function adminDeleteConversationAction(
     return { ok: true };
   } catch (err) {
     console.error("[adminDeleteConversationAction]", err);
-    return { ok: false, error: "Не удалось удалить диалог" };
+    return { ok: false, error: "Не удалось закрыть диалог" };
   }
 }

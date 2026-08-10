@@ -95,6 +95,8 @@ export type ProductDetail = ProductListItem & {
     slug: string;
     unit: string | null;
     displayValue: string;
+    /** Raw value for edit form controls (no unit suffix). */
+    formValue: string;
   }>;
   pickupPoints: {
     id: string;

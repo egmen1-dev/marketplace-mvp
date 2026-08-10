@@ -53,13 +53,9 @@ test.describe("taxonomy smart product create", () => {
 
     const row = page.locator("tr").filter({ hasText: title }).first();
     await expect(row).toBeVisible({ timeout: 20_000 });
-    await row.getByRole("link").first().click();
 
-    // May go to edit or public PDP depending on link — open via catalog search fallback
-    if (!/\/product\//.test(page.url())) {
-      await page.goto(`/catalog?q=${encodeURIComponent(title)}`);
-      await page.getByRole("link", { name: title }).first().click();
-    }
+    await page.goto(`/catalog?q=${encodeURIComponent(title)}`);
+    await page.getByRole("link", { name: title }).first().click();
 
     await expect(page.getByTestId("pdp-title")).toContainText(title, {
       timeout: 20_000,

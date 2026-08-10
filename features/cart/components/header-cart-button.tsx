@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Loader2, ShoppingBag } from "lucide-react";
 
 import { headerActionClassName } from "@/components/layout/header-action";
@@ -16,7 +17,15 @@ type HeaderCartButtonProps = {
 
 export function HeaderCartButton({ className }: HeaderCartButtonProps) {
   const { itemCount, isLoading } = useCart();
-  const showBadge = !isLoading && itemCount > 0;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Stable SSR + first client paint (bag, no spinner/badge) — avoids #418.
+  const showSpinner = mounted && isLoading;
+  const showBadge = mounted && !isLoading && itemCount > 0;
 
   return (
     <Button
@@ -29,8 +38,8 @@ export function HeaderCartButton({ className }: HeaderCartButtonProps) {
         <Link
           href={ROUTES.CART}
           aria-label={
-            isLoading
-              ? "Корзина, загрузка"
+            !mounted || isLoading
+              ? "Корзина"
               : showBadge
                 ? `Корзина, ${pluralizeProductCount(itemCount)}`
                 : "Корзина"
@@ -38,7 +47,7 @@ export function HeaderCartButton({ className }: HeaderCartButtonProps) {
         />
       }
     >
-      {isLoading ? (
+      {showSpinner ? (
         <Loader2 className="size-[1.375rem] animate-spin" aria-hidden />
       ) : (
         <ShoppingBag aria-hidden />

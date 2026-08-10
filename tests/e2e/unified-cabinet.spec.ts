@@ -10,7 +10,7 @@ test.describe("unified cabinet buyer → seller journey", () => {
   test("register, buy, become seller, list own product", async ({ page }) => {
     const email = uniqueEmail("cabinet");
     const password = "demo1234x";
-    const title = `E2E Cabinet ${Date.now()}`;
+    const title = `E2E тепловая пушка Cabinet ${Date.now()}`;
 
     // 1) Registration (buyer)
     await page.goto("/auth/sign-up");
@@ -54,15 +54,30 @@ test.describe("unified cabinet buyer → seller journey", () => {
       timeout: 20_000,
     });
 
-    // 4) Create product
-    await page.getByLabel("Поиск категории").first().fill("тепловая");
+    // 4) Create product via smart taxonomy suggest
+    await page.getByLabel("Название", { exact: true }).fill(title);
+    await expect(page.getByText("Мы рекомендуем")).toBeVisible({
+      timeout: 15_000,
+    });
     await page
       .getByRole("button", { name: /Тепловые пушки/i })
       .first()
       .click();
-    await expect(page.getByTestId("category-path")).toContainText(/Тепловые/i);
+    await expect(page.getByText("Характеристики")).toBeVisible({
+      timeout: 10_000,
+    });
+    const power = page.getByLabel(/Мощность/i).first();
+    if (await power.isVisible().catch(() => false)) {
+      await power.fill("5");
+    }
+    const heatType = page
+      .locator("select")
+      .filter({ has: page.locator("option", { hasText: "электрический" }) })
+      .first();
+    if (await heatType.isVisible().catch(() => false)) {
+      await heatType.selectOption({ label: "электрический" });
+    }
 
-    await page.getByLabel("Название", { exact: true }).fill(title);
     await page.locator("#description").fill("Unified cabinet e2e product");
     await page.getByLabel("Цена, ₽").fill("2500");
     await page.getByLabel("Количество на складе").fill("3");
@@ -70,7 +85,10 @@ test.describe("unified cabinet buyer → seller journey", () => {
     await page.getByRole("button", { name: "Опубликовать товар" }).click();
 
     // 5) Product visible in own listings
-    await expect(page).toHaveURL(/\/account\/products/, { timeout: 45_000 });
+    await expect(page).toHaveURL(/\/account\/products\/?(?:\?.*)?$/, {
+      timeout: 45_000,
+    });
+    await expect(page).not.toHaveURL(/\/new/);
     await expect(page.getByText(title).first()).toBeVisible({ timeout: 20_000 });
     await expect(
       page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
@@ -80,7 +98,7 @@ test.describe("unified cabinet buyer → seller journey", () => {
     ).toBeVisible();
     await expect(
       page.getByRole("navigation", { name: "Личный кабинет" }).getByRole("link", {
-        name: "Мои продажи",
+        name: "Продажи",
         exact: true,
       }),
     ).toBeVisible();

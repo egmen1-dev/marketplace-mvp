@@ -220,40 +220,64 @@ export async function getOrCreateConversationForProduct(opts: {
     return { conversationId: existing.id, created: false };
   }
 
-  const created = await prisma.$transaction(async (tx) => {
-    const conversation = await tx.conversation.create({
-      data: {
-        productId: opts.productId,
-        buyerId: opts.buyerId,
-        sellerId: product.sellerId,
-        status: ConversationStatus.ACTIVE,
-      },
+  try {
+    const created = await prisma.$transaction(async (tx) => {
+      const conversation = await tx.conversation.create({
+        data: {
+          productId: opts.productId,
+          buyerId: opts.buyerId,
+          sellerId: product.sellerId,
+          status: ConversationStatus.ACTIVE,
+        },
+      });
+      await tx.message.create({
+        data: {
+          conversationId: conversation.id,
+          senderId: null,
+          text: "Вы можете написать продавцу.",
+          type: MessageType.SYSTEM,
+          isRead: true,
+        },
+      });
+      return conversation;
     });
-    await tx.message.create({
-      data: {
-        conversationId: conversation.id,
-        senderId: null,
-        text: "Диалог создан.",
-        type: MessageType.SYSTEM,
-        isRead: true,
-      },
-    });
-    return conversation;
-  });
-
-  return { conversationId: created.id, created: true };
+    return { conversationId: created.id, created: true };
+  } catch (err) {
+    // Concurrent "Написать продавцу" — unique(productId, buyerId)
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      const again = await prisma.conversation.findUnique({
+        where: {
+          productId_buyerId: {
+            productId: opts.productId,
+            buyerId: opts.buyerId,
+          },
+        },
+        select: { id: true },
+      });
+      if (again) return { conversationId: again.id, created: false };
+    }
+    throw err;
+  }
 }
 
 export async function listConversationsForUser(opts: {
   userId: string;
-  sellerProfileId: string | null;
+  /** Ignored for auth — seller id is always resolved from DB for userId. */
+  sellerProfileId?: string | null;
 }): Promise<ConversationListItem[]> {
+  const sellerProfile = await prisma.sellerProfile.findUnique({
+    where: { userId: opts.userId },
+    select: { id: true },
+  });
+  const sellerProfileId = sellerProfile?.id ?? null;
+
   const where: Prisma.ConversationWhereInput = {
     OR: [
       { buyerId: opts.userId },
-      ...(opts.sellerProfileId
-        ? [{ sellerId: opts.sellerProfileId }]
-        : []),
+      ...(sellerProfileId ? [{ sellerId: sellerProfileId }] : []),
     ],
   };
 
@@ -319,15 +343,20 @@ export async function listConversationsForUser(opts: {
 
 export async function countUnreadMessagesForUser(opts: {
   userId: string;
-  sellerProfileId: string | null;
+  /** Ignored for auth — seller id is always resolved from DB for userId. */
+  sellerProfileId?: string | null;
 }): Promise<number> {
+  const sellerProfile = await prisma.sellerProfile.findUnique({
+    where: { userId: opts.userId },
+    select: { id: true },
+  });
+  const sellerProfileId = sellerProfile?.id ?? null;
+
   const conversationIds = await prisma.conversation.findMany({
     where: {
       OR: [
         { buyerId: opts.userId },
-        ...(opts.sellerProfileId
-          ? [{ sellerId: opts.sellerProfileId }]
-          : []),
+        ...(sellerProfileId ? [{ sellerId: sellerProfileId }] : []),
       ],
     },
     select: { id: true },
@@ -348,7 +377,10 @@ export async function getConversationDetail(opts: {
   conversationId: string;
   viewer: { id: string; role: UserRole; sellerProfileId: string | null };
 }): Promise<ConversationDetail> {
-  await assertConversationAccess(opts.conversationId, opts.viewer);
+  const access = await assertConversationAccess(
+    opts.conversationId,
+    opts.viewer,
+  );
 
   const row = await prisma.conversation.findUniqueOrThrow({
     where: { id: opts.conversationId },
@@ -378,15 +410,17 @@ export async function getConversationDetail(opts: {
     },
   });
 
-  // Mark counterpart messages as read
-  await prisma.message.updateMany({
-    where: {
-      conversationId: row.id,
-      isRead: false,
-      NOT: { senderId: opts.viewer.id },
-    },
-    data: { isRead: true },
-  });
+  // Only participants mark counterpart messages read — never admin-only viewers
+  if (access.isBuyer || access.isSeller) {
+    await prisma.message.updateMany({
+      where: {
+        conversationId: row.id,
+        isRead: false,
+        NOT: { senderId: opts.viewer.id },
+      },
+      data: { isRead: true },
+    });
+  }
 
   return {
     id: row.id,
@@ -413,6 +447,12 @@ export async function sendTextMessage(opts: {
     opts.conversationId,
     opts.viewer,
   );
+  if (opts.senderId !== opts.viewer.id) {
+    throw new ChatError("Нельзя отправить от чужого имени", "FORBIDDEN");
+  }
+  if (!access.isBuyer && !access.isSeller) {
+    throw new ChatError("Только участники диалога могут писать", "FORBIDDEN");
+  }
   if (access.status === ConversationStatus.CLOSED) {
     throw new ChatError("Диалог закрыт", "CLOSED");
   }
@@ -601,9 +641,12 @@ async function upsertConversationSystemMessage(opts: {
   });
 }
 
-/** Admin: soft-close / hard delete conversation. */
+/** Admin: close conversation (soft). Hard delete is not used in product UI. */
 export async function adminDeleteConversation(
   conversationId: string,
 ): Promise<void> {
-  await prisma.conversation.delete({ where: { id: conversationId } });
+  await prisma.conversation.update({
+    where: { id: conversationId },
+    data: { status: ConversationStatus.CLOSED },
+  });
 }
