@@ -22,6 +22,7 @@ export type AccountNavItem = {
   match: (pathname: string) => boolean;
 };
 
+/** Unified account nav — discoverable naming for chat. */
 export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
   {
     href: ROUTES.ACCOUNT,
@@ -47,26 +48,18 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
       path.startsWith("/orders/"),
   },
   {
-    href: ROUTES.ACCOUNT_MESSAGES,
-    label: "Мои сообщения",
-    icon: MessageCircle,
-    match: (path) =>
-      path === ROUTES.ACCOUNT_MESSAGES ||
-      path.startsWith(`${ROUTES.ACCOUNT_MESSAGES}/`),
-  },
-  {
-    href: ROUTES.ACCOUNT_RESERVATIONS,
-    label: "Брони",
-    icon: Ticket,
-    match: (path) =>
-      path === ROUTES.ACCOUNT_RESERVATIONS ||
-      path.startsWith(`${ROUTES.ACCOUNT_RESERVATIONS}/`),
-  },
-  {
     href: ROUTES.FAVORITES,
     label: "Избранное",
     icon: Heart,
     match: (path) => path === ROUTES.FAVORITES || path === "/favorites",
+  },
+  {
+    href: ROUTES.ACCOUNT_MESSAGES,
+    label: "Сообщения",
+    icon: MessageCircle,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_MESSAGES ||
+      path.startsWith(`${ROUTES.ACCOUNT_MESSAGES}/`),
   },
   {
     href: ROUTES.ACCOUNT_PRODUCTS,
@@ -79,12 +72,20 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
   },
   {
     href: ROUTES.ACCOUNT_SALES,
-    label: "Мои продажи",
+    label: "Продажи",
     icon: Store,
     sellerOnly: true,
     match: (path) =>
       path === ROUTES.ACCOUNT_SALES ||
       path.startsWith(`${ROUTES.ACCOUNT_SALES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_RESERVATIONS,
+    label: "Бронирования",
+    icon: Ticket,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_RESERVATIONS ||
+      path.startsWith(`${ROUTES.ACCOUNT_RESERVATIONS}/`),
   },
   {
     href: ROUTES.ACCOUNT_PICKUP_POINTS,

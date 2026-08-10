@@ -4,6 +4,7 @@ import {
   Heart,
   LayoutGrid,
   LogOut,
+  MessageCircle,
   Package,
   Settings,
   Shield,
@@ -93,6 +94,13 @@ export function AuthNav({ user }: AuthNavProps) {
           <DropdownMenuItem render={<Link href={ROUTES.ACCOUNT} />}>
             <LayoutGrid className="size-4" />
             Кабинет
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={<Link href={ROUTES.ACCOUNT_MESSAGES} />}
+            data-testid="profile-menu-messages"
+          >
+            <MessageCircle className="size-4" />
+            Сообщения
           </DropdownMenuItem>
           <DropdownMenuItem render={<Link href={ROUTES.PROFILE} />}>
             <User className="size-4" />

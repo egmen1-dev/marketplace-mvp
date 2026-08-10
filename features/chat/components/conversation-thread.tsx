@@ -42,6 +42,11 @@ export function ConversationThread({ conversation, viewerId }: Props) {
     initial,
   );
 
+  const counterpartName =
+    conversation.buyer.id === viewerId
+      ? conversation.seller.storeName
+      : conversation.buyer.name || conversation.buyer.email || "Покупатель";
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [conversation.messages.length]);
@@ -79,6 +84,9 @@ export function ConversationThread({ conversation, viewerId }: Props) {
               conversation.product.price,
               conversation.product.currency,
             )}
+          </p>
+          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+            {counterpartName}
           </p>
           <Button
             variant="link"
@@ -164,20 +172,27 @@ export function ConversationThread({ conversation, viewerId }: Props) {
             name="text"
             required
             rows={1}
-            placeholder="Сообщение…"
+            placeholder="Напишите сообщение..."
             className="min-h-11 max-h-32 flex-1 resize-y rounded-xl"
             data-testid="chat-input"
             disabled={pending || conversation.status !== "ACTIVE"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                e.currentTarget.form?.requestSubmit();
+              }
+            }}
           />
           <Button
             type="submit"
-            size="icon"
-            className="size-11 shrink-0 rounded-xl"
+            size="cta"
+            className="h-11 shrink-0 rounded-xl px-4"
             disabled={pending || conversation.status !== "ACTIVE"}
             data-testid="chat-send"
             aria-label="Отправить"
           >
-            <Send className="size-4" />
+            <Send className="size-4" data-icon="inline-start" />
+            <span className="hidden sm:inline">Отправить</span>
           </Button>
         </div>
       </form>

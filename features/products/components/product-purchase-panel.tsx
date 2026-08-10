@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { Check, Loader2, Minus, Plus, ShoppingBag, Zap } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  Check,
+  Loader2,
+  MessageCircle,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Zap,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/components/cart-provider";
@@ -11,6 +19,7 @@ import {
   WriteSellerButton,
   WriteSellerSignInLink,
 } from "@/features/chat";
+import { startConversationAction } from "@/features/chat/actions";
 import { FavoriteToggleButton } from "@/features/favorites/components/favorite-toggle-button";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
@@ -49,6 +58,8 @@ export function ProductPurchasePanel({
   const outOfStock = stock <= 0;
   const maxQty = Math.max(1, stock);
   const busy = isPending || action !== "idle";
+  const [writePending, startWrite] = useTransition();
+  const autoWriteStarted = useRef(false);
 
   useEffect(() => {
     const el = panelRef.current;
@@ -62,6 +73,19 @@ export function ProductPurchasePanel({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Guest → sign-in → return with ?writeSeller=1 continues the action
+  useEffect(() => {
+    if (!isAuthenticated || isOwnProduct || autoWriteStarted.current) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("writeSeller") !== "1") return;
+    autoWriteStarted.current = true;
+    startWrite(async () => {
+      const res = await startConversationAction(productId);
+      if (res && !res.ok) toastError(res.error);
+    });
+  }, [isAuthenticated, isOwnProduct, productId]);
 
   function clamp(n: number) {
     return Math.min(maxQty, Math.max(1, n));
@@ -161,6 +185,21 @@ export function ProductPurchasePanel({
           </div>
         </div>
 
+        {!isOwnProduct ? (
+          isAuthenticated ? (
+            <WriteSellerButton productId={productId} className="w-full" />
+          ) : (
+            <WriteSellerSignInLink productId={productId} className="w-full" />
+          )
+        ) : (
+          <p
+            className="rounded-xl border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground"
+            data-testid="pdp-own-product"
+          >
+            Это ваш товар — чат с собой недоступен.
+          </p>
+        )}
+
         <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
           <Button
             type="button"
@@ -212,14 +251,6 @@ export function ProductPurchasePanel({
           </Button>
         </div>
 
-        {!isOwnProduct ? (
-          isAuthenticated ? (
-            <WriteSellerButton productId={productId} />
-          ) : (
-            <WriteSellerSignInLink productId={productId} />
-          )
-        ) : null}
-
         <Button
           variant="link"
           size="sm"
@@ -242,15 +273,55 @@ export function ProductPurchasePanel({
         data-testid="pdp-sticky-purchase"
         aria-hidden={!stickyVisible || outOfStock}
       >
-        <div className="mx-auto flex max-w-7xl items-center gap-3">
+        <div className="mx-auto flex max-w-7xl items-center gap-2">
           <p className="min-w-0 flex-1 truncate font-heading text-lg font-semibold text-primary">
             {formatPrice(price, currency)}
           </p>
+          {!isOwnProduct ? (
+            isAuthenticated ? (
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                className="size-11 shrink-0"
+                aria-label="Написать продавцу"
+                title="Написать продавцу"
+                data-testid="pdp-sticky-write-seller"
+                disabled={writePending}
+                onClick={() =>
+                  startWrite(async () => {
+                    const res = await startConversationAction(productId);
+                    if (res && !res.ok) toastError(res.error);
+                  })
+                }
+              >
+                <MessageCircle className="size-5" />
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                className="size-11 shrink-0"
+                aria-label="Написать продавцу"
+                title="Написать продавцу"
+                nativeButton={false}
+                render={
+                  <Link
+                    href={`${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(`${ROUTES.PRODUCT}/${productId}?writeSeller=1`)}`}
+                    data-testid="pdp-sticky-write-seller"
+                  />
+                }
+              >
+                <MessageCircle className="size-5" />
+              </Button>
+            )
+          ) : null}
           <Button
             type="button"
             size="cta"
             variant="secondary"
-            className="min-w-[7.5rem] shrink-0"
+            className="min-w-[6.5rem] shrink-0"
             disabled={busy}
             onClick={() => void handleAdd()}
           >
@@ -259,7 +330,7 @@ export function ProductPurchasePanel({
           <Button
             type="button"
             size="cta"
-            className="min-w-[6.5rem] shrink-0"
+            className="min-w-[5.5rem] shrink-0"
             disabled={busy}
             data-testid="pdp-sticky-buy"
             onClick={() => void handleBuy()}

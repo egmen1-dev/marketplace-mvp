@@ -23,7 +23,7 @@ export function WriteSellerButton({
   productId,
   hidden,
   className,
-  variant = "outline",
+  variant = "secondary",
   size = "cta",
 }: Props) {
   const [pending, start] = useTransition();
@@ -60,10 +60,10 @@ export function WriteSellerSignInLink({
   productId: string;
   className?: string;
 }) {
-  const callback = `${ROUTES.PRODUCT}/${productId}`;
+  const callback = `${ROUTES.PRODUCT}/${productId}?writeSeller=1`;
   return (
     <Button
-      variant="outline"
+      variant="secondary"
       size="cta"
       className={cn("w-full sm:w-auto", className)}
       nativeButton={false}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart, LayoutGrid, Menu, Search } from "lucide-react";
+import { Heart, LayoutGrid, Menu, MessageCircle, Search } from "lucide-react";
 
 import { Logo } from "@/components/brand";
 import { headerActionClassName } from "@/components/layout/header-action";
@@ -129,6 +129,7 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
                   render={<Link href={ROUTES.ACCOUNT_MESSAGES} />}
                   data-testid="mobile-nav-messages"
                 >
+                  <MessageCircle className="size-4" />
                   Сообщения
                 </DropdownMenuItem>
               ) : null}

@@ -25,7 +25,7 @@ export async function HeaderMessagesButton() {
     <Button
       variant="ghost"
       size="icon-header"
-      className={headerActionClassName("relative hidden md:inline-flex")}
+      className={headerActionClassName("relative")}
       title="Сообщения"
       nativeButton={false}
       render={
@@ -44,7 +44,7 @@ export async function HeaderMessagesButton() {
       {showBadge ? (
         <span
           className={cn(
-            "absolute top-1 right-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-bold text-primary-foreground shadow-sm ring-2 ring-background",
+            "absolute top-0.5 right-0.5 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] leading-none font-bold text-white shadow-sm ring-2 ring-background",
           )}
           aria-hidden
           data-testid="header-messages-badge"

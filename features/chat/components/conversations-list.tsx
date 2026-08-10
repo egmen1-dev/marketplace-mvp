@@ -40,7 +40,7 @@ export function ConversationsList({ conversations }: Props) {
         <MessageCircle className="size-10 text-muted-foreground" aria-hidden />
         <div>
           <p className="font-heading text-lg font-medium">
-            У вас пока нет сообщений.
+            У вас пока нет сообщений
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             Откройте товар и нажмите «Написать продавцу».

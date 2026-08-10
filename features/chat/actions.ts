@@ -55,7 +55,7 @@ export async function startConversationAction(
   } catch (err) {
     if (err instanceof AuthRequiredError) {
       redirect(
-        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(`${ROUTES.PRODUCT}/${productId}`)}`,
+        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(`${ROUTES.PRODUCT}/${productId}?writeSeller=1`)}`,
       );
     }
     if (err && typeof err === "object" && "digest" in err) throw err;
