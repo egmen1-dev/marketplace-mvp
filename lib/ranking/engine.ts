@@ -69,6 +69,11 @@ export type RankingProductInput = {
   seller: RankingSellerInput;
   /** Real product reviews; omitted → neutral prior (cold start). */
   productRating?: RankingProductRatingInput | null;
+  /**
+   * Controlled, capped fraud-risk penalty (0..1) from the Trust & Risk platform
+   * (AGENT-019). Subtracted from the final score; never dominates ranking.
+   */
+  riskPenalty?: number | null;
   logistics: RankingLogisticsInput;
   /** Controlled paid promotion, 0..1 (default 0). Kept separate from organic. */
   promotionBoost?: number;
@@ -242,8 +247,11 @@ export function scoreProduct(
   const promotionBoost = clamp01(input.promotionBoost ?? 0);
   // Out-of-stock is strongly demoted (section 33) but not hidden here.
   const stockPenalty = input.logistics.stock > 0 ? 1 : 0.25;
+  // Capped fraud-risk penalty (AGENT-019 §36/37): never dominates ranking.
+  const riskPenalty = Math.max(0, Math.min(0.25, input.riskPenalty ?? 0));
   const finalScore = clamp01(
-    (organicScore + promotionBoost * (1 - organicScore)) * stockPenalty,
+    (organicScore + promotionBoost * (1 - organicScore)) * stockPenalty -
+      riskPenalty,
   );
 
   return {

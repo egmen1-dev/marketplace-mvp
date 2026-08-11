@@ -25,6 +25,18 @@ function median(values: number[]): number | null {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
+/**
+ * Capped ranking penalty by product risk score (mirrors
+ * features/trust-risk/config RANKING_RISK_PENALTY; kept inline to avoid a
+ * lib→features dependency). LOW=0, MEDIUM=0.03, HIGH=0.10, CRITICAL=0.20.
+ */
+function rankingRiskPenalty(riskScore: number): number {
+  if (riskScore >= 75) return 0.2;
+  if (riskScore >= 50) return 0.1;
+  if (riskScore >= 25) return 0.03;
+  return 0;
+}
+
 type SalesAgg = {
   orders: Set<string>;
   completedOrders: Set<string>;
@@ -126,6 +138,13 @@ export async function recomputeRankingStats(
   const medianByType = new Map<string, number | null>();
   for (const [key, list] of priceByType) medianByType.set(key, median(list));
 
+  // Capped fraud-risk penalty from ProductRiskStats (AGENT-019 §36/37).
+  const riskRows = await db.productRiskStats.findMany({
+    where: { productId: { in: products.map((p) => p.id) } },
+    select: { productId: true, riskScore: true },
+  });
+  const riskByProduct = new Map(riskRows.map((r) => [r.productId, r.riskScore]));
+
   let scored = 0;
   for (const p of products) {
     const sales = salesByProduct.get(p.id);
@@ -187,6 +206,7 @@ export async function recomputeRankingStats(
       productRating: p.reviewStats
         ? { avg: Number(p.reviewStats.avgRating), count: p.reviewStats.ratingCount }
         : null,
+      riskPenalty: rankingRiskPenalty(riskByProduct.get(p.id) ?? 0),
       logistics: {
         stock: p.stock,
         pickupAvailable: p.pickupEnabled,
