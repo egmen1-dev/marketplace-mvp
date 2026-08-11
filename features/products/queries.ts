@@ -273,15 +273,35 @@ async function buildWhere(
     where.price = priceFilter;
   }
 
+  const and: Prisma.ProductWhereInput[] = [];
+
   if (filters.query) {
     const tokens = tokenizeSearchQuery(filters.query);
     if (tokens.length === 1) {
       where.OR = tokenMatchOr(tokens[0]);
     } else if (tokens.length > 1) {
       // Every token must match somewhere (title, description, category, seller).
-      where.AND = tokens.map((token) => ({ OR: tokenMatchOr(token) }));
+      for (const token of tokens) and.push({ OR: tokenMatchOr(token) });
     }
   }
+
+  // Dynamic category-specific characteristic filters (section 40).
+  if (filters.characteristics?.length) {
+    for (const c of filters.characteristics) {
+      const values = c.values.filter(Boolean);
+      if (!values.length) continue;
+      and.push({
+        characteristicValues: {
+          some: {
+            definition: { slug: c.slug },
+            valueText: { in: values },
+          },
+        },
+      });
+    }
+  }
+
+  if (and.length) where.AND = and;
 
   return where;
 }

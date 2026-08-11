@@ -17,12 +17,15 @@ import {
   CatalogSortSelect,
 } from "@/features/catalog/components/catalog-filters";
 import { InfiniteProductGrid } from "@/features/catalog/components/infinite-product-grid";
+import { DynamicCatalogFilters } from "@/features/catalog/components/dynamic-catalog-filters";
 import {
   categoryPagePath,
   getCategoryBySlug,
   listCategoryTree,
   listRootCategories,
+  resolveCategoryIdsIncludingDescendants,
 } from "@/features/catalog";
+import { getCategoryDynamicFilters } from "@/features/taxonomy/queries";
 import type { CatalogSearchParams } from "@/features/catalog/types";
 import {
   CATALOG_PAGE_SIZE,
@@ -80,6 +83,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           priceMin: filters.priceMin,
           priceMax: filters.priceMax,
           inStock: filters.inStock,
+          characteristics: filters.characteristics,
           sort: filters.sort,
           page: 1,
           pageSize: CATALOG_PAGE_SIZE,
@@ -135,9 +139,23 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     priceMin: filters.priceMin,
     priceMax: filters.priceMax,
     inStock: filters.inStock,
+    characteristics: filters.characteristics,
     sort: filters.sort,
   };
   const listKey = JSON.stringify(infiniteQuery);
+
+  // Dynamic category-specific characteristic filters (section 40).
+  let dynamicFilters: Awaited<ReturnType<typeof getCategoryDynamicFilters>> = [];
+  if (activeCategory) {
+    try {
+      const ids = await resolveCategoryIdsIncludingDescendants(
+        activeCategory.slug,
+      );
+      dynamicFilters = await getCategoryDynamicFilters(ids ?? [activeCategory.id]);
+    } catch (err) {
+      console.error("[catalog:dynamic-filters]", err);
+    }
+  }
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
@@ -210,6 +228,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               <CatalogSortSelect className="ml-auto" />
             </Suspense>
           </div>
+
+          <Suspense fallback={null}>
+            <DynamicCatalogFilters filters={dynamicFilters} />
+          </Suspense>
 
           {dbError ? (
             <Card>

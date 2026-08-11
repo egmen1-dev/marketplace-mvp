@@ -82,11 +82,31 @@ export function parseInStock(value?: string | null): boolean | undefined {
   return undefined;
 }
 
+/** Parse `ch_<slug>=v1,v2` params into discrete characteristic filters. */
+export function parseCharacteristicFilters(
+  params: CatalogSearchParams,
+): Array<{ slug: string; values: string[] }> {
+  const out: Array<{ slug: string; values: string[] }> = [];
+  for (const [key, raw] of Object.entries(params)) {
+    if (!key.startsWith("ch_") || raw == null) continue;
+    const slug = key.slice(3).trim();
+    if (!slug) continue;
+    const joined = Array.isArray(raw) ? raw.join(",") : raw;
+    const values = joined
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+    if (values.length) out.push({ slug, values });
+  }
+  return out;
+}
+
 export function parseCatalogParams(
   params: CatalogSearchParams,
 ): CatalogFilters {
   const rootCategory = params.category?.trim() || undefined;
   const subcategory = params.subcategory?.trim() || undefined;
+  const characteristics = parseCharacteristicFilters(params);
   return {
     q: params.q?.trim() || undefined,
     rootCategory,
@@ -99,6 +119,7 @@ export function parseCatalogParams(
     sellerKind: parseSellerKind(params.sellerKind),
     condition: parseCatalogCondition(params.condition),
     inStock: parseInStock(params.inStock),
+    characteristics: characteristics.length ? characteristics : undefined,
     sort: parseCatalogSort(params.sort),
     page: Math.max(1, Number(params.page) || 1),
   };

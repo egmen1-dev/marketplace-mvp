@@ -18,12 +18,15 @@ import {
   CatalogSortSelect,
 } from "@/features/catalog/components/catalog-filters";
 import { InfiniteProductGrid } from "@/features/catalog/components/infinite-product-grid";
+import { DynamicCatalogFilters } from "@/features/catalog/components/dynamic-catalog-filters";
 import {
   categoryPagePath,
   getCategoryBySlug,
   listCategoryTree,
   listRootCategories,
+  resolveCategoryIdsIncludingDescendants,
 } from "@/features/catalog";
+import { getCategoryDynamicFilters } from "@/features/taxonomy/queries";
 import type { CatalogSearchParams } from "@/features/catalog/types";
 import {
   CATALOG_PAGE_SIZE,
@@ -110,6 +113,7 @@ export default async function CategoryPage({
           priceMin: filters.priceMin,
           priceMax: filters.priceMax,
           inStock: filters.inStock,
+          characteristics: filters.characteristics,
           sort: filters.sort,
           page: 1,
           pageSize: CATALOG_PAGE_SIZE,
@@ -154,9 +158,20 @@ export default async function CategoryPage({
     priceMin: filters.priceMin,
     priceMax: filters.priceMax,
     inStock: filters.inStock,
+    characteristics: filters.characteristics,
     sort: filters.sort,
   };
   const listKey = JSON.stringify(infiniteQuery);
+
+  let dynamicFilters: Awaited<ReturnType<typeof getCategoryDynamicFilters>> = [];
+  if (category) {
+    try {
+      const ids = await resolveCategoryIdsIncludingDescendants(slug);
+      dynamicFilters = await getCategoryDynamicFilters(ids ?? [category.id]);
+    } catch (err) {
+      console.error("[category:dynamic-filters]", err);
+    }
+  }
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
@@ -242,6 +257,10 @@ export default async function CategoryPage({
               <CatalogSortSelect className="ml-auto" />
             </Suspense>
           </div>
+
+          <Suspense fallback={null}>
+            <DynamicCatalogFilters filters={dynamicFilters} />
+          </Suspense>
 
           {dbError ? (
             <Card>

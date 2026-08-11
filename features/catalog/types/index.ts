@@ -20,7 +20,11 @@ export type CatalogSearchParams = {
   inStock?: string;
   sort?: string;
   page?: string;
+  /** Dynamic characteristic filters arrive as `ch_<slug>=v1,v2`. */
+  [key: `ch_${string}`]: string | string[] | undefined;
 };
+
+export type CatalogCharacteristicFilter = { slug: string; values: string[] };
 
 export type CatalogFilters = {
   q?: string;
@@ -36,6 +40,8 @@ export type CatalogFilters = {
   sellerKind?: SellerKindFilter;
   condition?: ProductCondition;
   inStock?: boolean;
+  /** Dynamic category-specific characteristic filters (section 40). */
+  characteristics?: CatalogCharacteristicFilter[];
   sort?: CatalogSort;
   page?: number;
 };

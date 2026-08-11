@@ -16,6 +16,7 @@ import {
   createProductSchema,
   listProductsQuerySchema,
 } from "@/features/products/schemas";
+import { parseCharacteristicFilters } from "@/features/catalog/url";
 
 /**
  * GET /api/products
@@ -43,6 +44,10 @@ export async function GET(request: Request) {
     }
 
     const q = parsed.data;
+    // Dynamic characteristic filters arrive as ch_<slug>=v1,v2 (section 40).
+    const characteristics = parseCharacteristicFilters(
+      raw as Record<string, string | undefined>,
+    );
     const session = await getSessionUser();
     const status = resolveListStatusFilter(
       q.status,
@@ -69,6 +74,7 @@ export async function GET(request: Request) {
       priceMin: q.priceMin,
       priceMax: q.priceMax,
       inStock: q.inStock,
+      characteristics: characteristics.length ? characteristics : undefined,
       sort: q.sort,
       page: q.page,
       pageSize: q.pageSize,
