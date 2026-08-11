@@ -7,6 +7,7 @@ import {
   FolderTree,
   LayoutDashboard,
   Package,
+  Search,
   ShieldAlert,
   ShoppingBag,
   Star,
@@ -79,6 +80,12 @@ const NAV_ITEMS = [
     label: "Риски",
     icon: ShieldAlert,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_RISK),
+  },
+  {
+    href: ROUTES.ADMIN_SEARCH,
+    label: "Поиск",
+    icon: Search,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_SEARCH),
   },
 ] as const;
 

@@ -1155,6 +1155,26 @@ model SellerTrustStats {
   @@map("seller_trust_stats")
 }
 
+// ─── Search analytics (AGENT-020) ────────────────────────────────────────────
+
+/// One search event (section 21): frequency, empty queries, success. No PII.
+model SearchQueryLog {
+  id          String   @id @default(cuid())
+  original    String
+  normalized  String
+  resultCount Int      @default(0)
+  hasResults  Boolean  @default(true)
+  intent      String?
+  /// Optional: product id clicked from this search (CTR, section 21).
+  clickedProductId String?
+  createdAt   DateTime @default(now())
+
+  @@index([normalized])
+  @@index([hasResults])
+  @@index([createdAt])
+  @@map("search_query_logs")
+}
+
 /// Precomputed product risk (price outlier + duplicate + seller contribution).
 model ProductRiskStats {
   productId              String   @id
