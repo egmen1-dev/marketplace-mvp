@@ -129,7 +129,7 @@ test.describe("pickup points & reservations", () => {
       timeout: 20_000,
     });
 
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 
   test("buyer reserves via PDP, seller confirms status machine", async ({
@@ -184,7 +184,7 @@ test.describe("pickup points & reservations", () => {
       timeout: 15_000,
     });
 
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 
   test("buyer sees reservations section in cabinet", async ({ page }) => {
@@ -239,7 +239,7 @@ test.describe("pickup points & reservations", () => {
       timeout: 15_000,
     });
 
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 
   test("buyer can cancel pending reservation", async ({ page }) => {
@@ -271,7 +271,7 @@ test.describe("pickup points & reservations", () => {
       timeout: 15_000,
     });
 
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 
   test("checkout shows pickup toggle, point, and prepayment amounts", async ({
@@ -314,7 +314,7 @@ test.describe("pickup points & reservations", () => {
       /К оплате сейчас/i,
     );
 
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 
   test("reservation create and confirm emit chat messages", async ({
@@ -370,6 +370,6 @@ test.describe("pickup points & reservations", () => {
       page.getByText(/Продавец подтвердил бронь/i).first(),
     ).toBeVisible({ timeout: 20_000 });
 
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 });
