@@ -61,7 +61,13 @@ export async function recomputeRankingStats(
       productTypeId: true,
       pickupEnabled: true,
       _count: { select: { images: true, characteristicValues: true } },
-      seller: { select: { isVerified: true, rating: true } },
+      seller: {
+        select: {
+          isVerified: true,
+          reviewStats: { select: { avgProductRating: true, reviewCount: true } },
+        },
+      },
+      reviewStats: { select: { avgRating: true, ratingCount: true } },
       productType: {
         select: { characteristics: { select: { id: true, required: true } } },
       },
@@ -173,9 +179,14 @@ export async function recomputeRankingStats(
       },
       seller: {
         isVerified: p.seller.isVerified,
-        rating: Number(p.seller.rating) || null,
-        ratingCount: 0,
+        rating: p.seller.reviewStats
+          ? Number(p.seller.reviewStats.avgProductRating)
+          : null,
+        ratingCount: p.seller.reviewStats?.reviewCount ?? 0,
       },
+      productRating: p.reviewStats
+        ? { avg: Number(p.reviewStats.avgRating), count: p.reviewStats.ratingCount }
+        : null,
       logistics: {
         stock: p.stock,
         pickupAvailable: p.pickupEnabled,
@@ -280,7 +291,13 @@ export async function getRankingDebug(
       categoryId: true,
       productTypeId: true,
       _count: { select: { images: true, characteristicValues: true } },
-      seller: { select: { isVerified: true, rating: true } },
+      seller: {
+        select: {
+          isVerified: true,
+          reviewStats: { select: { avgProductRating: true, reviewCount: true } },
+        },
+      },
+      reviewStats: { select: { avgRating: true, ratingCount: true } },
       productType: { select: { characteristics: { select: { id: true, required: true } } } },
       rankingStats: true,
     },
@@ -329,9 +346,14 @@ export async function getRankingDebug(
       },
       seller: {
         isVerified: p.seller.isVerified,
-        rating: Number(p.seller.rating) || null,
-        ratingCount: p.rankingStats?.ratingCount ?? 0,
+        rating: p.seller.reviewStats
+          ? Number(p.seller.reviewStats.avgProductRating)
+          : null,
+        ratingCount: p.seller.reviewStats?.reviewCount ?? 0,
       },
+      productRating: p.reviewStats
+        ? { avg: Number(p.reviewStats.avgRating), count: p.reviewStats.ratingCount }
+        : null,
       logistics: {
         stock: p.stock,
         pickupAvailable: p.pickupEnabled,

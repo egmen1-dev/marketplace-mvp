@@ -20,6 +20,17 @@ export type RankingWeights = {
   freshness: number;
 };
 
+/**
+ * Trust is 15% of the overall formula; these are its internal sub-weights
+ * (TASK 059, section 21). Sum to 1. Documented in docs/RANKING.md.
+ */
+export const TRUST_SUBWEIGHTS = {
+  productRating: 0.4,
+  sellerReputation: 0.35,
+  verified: 0.15,
+  fulfillment: 0.1,
+} as const;
+
 /** Section 37 initial weights (organic signals; promotion is applied separately). */
 export const LOT_RANKING_V1_WEIGHTS: RankingWeights = {
   text: 0.3,

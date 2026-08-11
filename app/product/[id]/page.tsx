@@ -22,7 +22,15 @@ import { ProductSellerCard } from "@/features/seller/components/product-seller-c
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { buildSearchDocument } from "@/lib/search/search-document";
+import {
+  getProductReviewSummary,
+  getSellerReviewSummary,
+  listProductReviews,
+} from "@/features/reviews/queries";
+import { ProductReviews } from "@/features/reviews/components";
 import { APP_NAME, ROUTES } from "@/lib/constants";
+
+const REVIEWS_PAGE_SIZE = 5;
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -87,19 +95,41 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let session: Awaited<ReturnType<typeof getSessionUser>> = null;
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
+  let reviewSummary: Awaited<ReturnType<typeof getProductReviewSummary>> = {
+    avgRating: 0,
+    ratingCount: 0,
+    distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  };
+  let reviewsFirstPage: Awaited<ReturnType<typeof listProductReviews>> = {
+    items: [],
+    total: 0,
+    page: 1,
+    pageSize: REVIEWS_PAGE_SIZE,
+  };
+  let sellerRating: Awaited<ReturnType<typeof getSellerReviewSummary>> = {
+    avgRating: 0,
+    reviewCount: 0,
+  };
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
-      [similar, sellerTrust] = await Promise.all([
-        listSimilarProducts(product.id, {
-          categoryId: product.category?.id,
-          price: product.price,
-          limit: 8,
-        }),
-        getSellerTrustProfile(product.seller.slug),
-      ]);
+      [similar, sellerTrust, reviewSummary, reviewsFirstPage, sellerRating] =
+        await Promise.all([
+          listSimilarProducts(product.id, {
+            categoryId: product.category?.id,
+            price: product.price,
+            limit: 8,
+          }),
+          getSellerTrustProfile(product.seller.slug),
+          getProductReviewSummary(product.id),
+          listProductReviews(product.id, {
+            sort: "newest",
+            pageSize: REVIEWS_PAGE_SIZE,
+          }),
+          getSellerReviewSummary(product.seller.id),
+        ]);
     }
   } catch (err) {
     console.error("[product]", err);
@@ -271,7 +301,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* 6: seller trust */}
           {sellerTrust ? (
-            <ProductSellerCard seller={sellerTrust} />
+            <ProductSellerCard seller={sellerTrust} rating={sellerRating} />
           ) : null}
         </div>
       </div>
@@ -363,6 +393,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </section>
       </div>
+
+      <ProductReviews
+        productId={product.id}
+        summary={reviewSummary}
+        initialItems={reviewsFirstPage.items}
+        total={reviewsFirstPage.total}
+        pageSize={REVIEWS_PAGE_SIZE}
+      />
 
       <SimilarProducts products={similar} />
     </div>

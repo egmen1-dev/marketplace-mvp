@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Package,
   ShoppingBag,
+  Star,
   Store,
   Ticket,
   Users,
@@ -59,6 +60,12 @@ const NAV_ITEMS = [
     label: "Категории",
     icon: FolderTree,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CATEGORIES),
+  },
+  {
+    href: ROUTES.ADMIN_REVIEWS,
+    label: "Отзывы",
+    icon: Star,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_REVIEWS),
   },
   {
     href: ROUTES.ADMIN_RANKING,

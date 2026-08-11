@@ -10,17 +10,22 @@ import {
   getVisibleSellerMetrics,
   type SellerTrustProfile,
 } from "@/features/seller/lib/reputation";
+import { ReviewStars } from "@/features/reviews/components";
+import { pluralizeRatingWord } from "@/lib/i18n";
 import { sellerPublicPath } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 type ProductSellerCardProps = {
   seller: SellerTrustProfile;
+  /** Real seller review aggregate; rating shown only when count > 0. */
+  rating?: { avgRating: number; reviewCount: number };
   className?: string;
 };
 
-export function ProductSellerCard({ seller, className }: ProductSellerCardProps) {
+export function ProductSellerCard({ seller, rating, className }: ProductSellerCardProps) {
   const metrics = getVisibleSellerMetrics(seller.metrics);
   const joinedLabel = formatSellerJoinedDate(seller.joinedAt);
+  const hasRating = Boolean(rating && rating.reviewCount > 0);
 
   return (
     <div
@@ -63,6 +68,21 @@ export function ProductSellerCard({ seller, className }: ProductSellerCardProps)
           <p className="mt-1 text-sm text-muted-foreground">
             {formatSellerKindLabel(seller.kind)}
           </p>
+
+          {hasRating && rating ? (
+            <div
+              className="mt-1.5 flex items-center gap-1.5"
+              data-testid="pdp-seller-rating"
+            >
+              <ReviewStars value={rating.avgRating} size={14} />
+              <span className="text-sm font-medium text-foreground">
+                {rating.avgRating.toFixed(1)}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {rating.reviewCount} {pluralizeRatingWord(rating.reviewCount)}
+              </span>
+            </div>
+          ) : null}
 
           <SellerBadges
             isVerified={seller.isVerified}

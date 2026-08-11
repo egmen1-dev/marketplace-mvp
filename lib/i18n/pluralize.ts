@@ -35,6 +35,16 @@ export function pluralizeSellerCount(count: number): string {
   return `${count} ${pluralizeSellerWord(count)}`;
 }
 
+/** Word only: отзыв / отзыва / отзывов */
+export function pluralizeReviewWord(count: number): string {
+  return russianPluralForm(count, "отзыв", "отзыва", "отзывов");
+}
+
+/** Word only: оценка / оценки / оценок */
+export function pluralizeRatingWord(count: number): string {
+  return russianPluralForm(count, "оценка", "оценки", "оценок");
+}
+
 /** Word only: категория / категории / категорий */
 export function pluralizeCategoryWord(count: number): string {
   return russianPluralForm(count, "категория", "категории", "категорий");
