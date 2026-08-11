@@ -133,6 +133,17 @@ export async function sellerReplyAction(
   }
 }
 
+/** Form-friendly admin moderation (used directly in a server-component form). */
+export async function adminModerateReview(formData: FormData): Promise<void> {
+  const session = await getSessionUser();
+  if (!session || session.role !== "ADMIN") return;
+  const reviewId = String(formData.get("reviewId") ?? "");
+  const action = String(formData.get("action") ?? "") as ModerationAction;
+  if (!reviewId || !["hide", "restore", "remove"].includes(action)) return;
+  await moderateReview(session.id, reviewId, action);
+  revalidatePath(ROUTES.ADMIN_REVIEWS);
+}
+
 export async function moderateReviewAction(
   _prev: ReviewActionState,
   formData: FormData,
