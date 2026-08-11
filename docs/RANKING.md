@@ -20,7 +20,7 @@ Centralized and versioned in `lib/ranking/weights.ts`.
 | --- | --- | --- |
 | Text relevance | 30% | matcher / title+type+alias (1.0 neutral for browse) |
 | Commercial (sales + buyout) | 20% | paid/delivered order items, time-decayed |
-| Trust | 15% | seller verified + rating (smoothed) + cancellation |
+| Trust | 15% | composite: product rating + seller reputation + verified + fulfillment |
 | Conversion | 10% | completedOrders / views (Beta-smoothed) |
 | Price attractiveness | 8% | vs same-ProductType median |
 | Logistics | 8% | stock + pickup + shipping |
@@ -31,6 +31,24 @@ Centralized and versioned in `lib/ranking/weights.ts`.
 Promotion is a **separate** controlled boost over organic (0 until paid promotion
 ships). `finalScore = (organic + promo·(1−organic)) · stockPenalty`, where
 out-of-stock is strongly demoted (×0.25).
+
+### Trust sub-weights (TASK 059)
+
+Trust stays 15% of the overall formula; internally it is composite
+(`lib/ranking/weights.ts` → `TRUST_SUBWEIGHTS`):
+
+| Trust component | Sub-weight | Source |
+| --- | --- | --- |
+| Product rating | 40% | `ProductReviewStats` (Bayesian-smoothed) |
+| Seller reputation | 35% | `SellerReviewStats` (Bayesian-smoothed) |
+| Verified | 15% | `SellerProfile.isVerified` |
+| Fulfillment | 10% | `1 − cancellationRate` (neutral prior when unknown) |
+
+Ratings use `lib/reviews/rating.ts` Bayesian smoothing (prior mean 4.2, weight 8):
+`weighted = (8·4.2 + n·avg)/(8 + n)`. So 5.0 from 1 review loses to 4.9 from 100
+(section 39), and 0 reviews yields a neutral prior — never a hard zero
+(sections 22, 40). Product rating falls back to the seller's reputation when a
+product has no reviews yet.
 
 ## Cold start (section 36)
 
