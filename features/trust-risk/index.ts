@@ -11,3 +11,4 @@ export {
 } from "./detectors/duplicate-listing";
 export { detectSelfDeal } from "./detectors/self-deal";
 export { detectRapidCreation, detectRepeatedMessages } from "./detectors/rate";
+export { scanProductRisks, scanSelfDeals, type ScanResult } from "./scan";

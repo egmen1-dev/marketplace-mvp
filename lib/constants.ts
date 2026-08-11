@@ -70,6 +70,7 @@ export const ROUTES = {
   ADMIN_CATEGORIES: "/admin/categories",
   ADMIN_RANKING: "/admin/ranking",
   ADMIN_REVIEWS: "/admin/reviews",
+  ADMIN_RISK: "/admin/risk",
   ADMIN_RESERVATIONS: "/admin/reservations",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
