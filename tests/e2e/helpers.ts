@@ -38,7 +38,7 @@ export type PageErrorCollector = {
   failedRequests: string[];
   serverErrors: string[];
   reset: () => void;
-  assertClean: (opts?: { allowHydration?: boolean }) => void;
+  assertClean: () => void;
 };
 
 export function attachErrorCollector(page: Page): PageErrorCollector {
@@ -88,17 +88,11 @@ export function attachErrorCollector(page: Page): PageErrorCollector {
       failedRequests.length = 0;
       serverErrors.length = 0;
     },
-    assertClean(opts?: { allowHydration?: boolean }) {
-      const pages = opts?.allowHydration
-        ? pageErrors.filter((e) => !/Minified React error #418/i.test(e))
-        : pageErrors;
-      const consoles = opts?.allowHydration
-        ? consoleErrors.filter((e) => !/Minified React error #418/i.test(e))
-        : consoleErrors;
-      expect(pages, `pageerror: ${pages.join("\n")}`).toEqual([]);
+    assertClean() {
+      expect(pageErrors, `pageerror: ${pageErrors.join("\n")}`).toEqual([]);
       expect(
-        consoles,
-        `console.error: ${consoles.join("\n")}`,
+        consoleErrors,
+        `console.error: ${consoleErrors.join("\n")}`,
       ).toEqual([]);
       expect(serverErrors, `HTTP 5xx: ${serverErrors.join("\n")}`).toEqual([]);
       expect(
