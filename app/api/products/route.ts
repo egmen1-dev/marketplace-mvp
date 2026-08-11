@@ -17,6 +17,7 @@ import {
   listProductsQuerySchema,
 } from "@/features/products/schemas";
 import { parseCharacteristicFilters } from "@/features/catalog/url";
+import { recordSearch } from "@/features/search/analytics";
 
 /**
  * GET /api/products
@@ -81,6 +82,11 @@ export async function GET(request: Request) {
       limit: q.limit,
       offset: q.offset,
     });
+
+    // Search analytics: record once per search (first page only), no PII.
+    if (q.q && (q.page ?? 1) === 1 && (q.offset ?? 0) === 0) {
+      recordSearch({ original: q.q, resultCount: result.total });
+    }
 
     return NextResponse.json(result);
   } catch (err) {
