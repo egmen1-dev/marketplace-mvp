@@ -5,6 +5,7 @@ import {
   Package,
   Settings,
   ShoppingBag,
+  Star,
   Store,
   Ticket,
   UserRound,
@@ -60,6 +61,14 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_MESSAGES ||
       path.startsWith(`${ROUTES.ACCOUNT_MESSAGES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_REVIEWS,
+    label: "Отзывы",
+    icon: Star,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_REVIEWS ||
+      path.startsWith(`${ROUTES.ACCOUNT_REVIEWS}/`),
   },
   {
     href: ROUTES.ACCOUNT_PRODUCTS,
