@@ -26,6 +26,7 @@ import {
   searchTokenVariants,
   tokenizeSearchQuery,
 } from "@/features/products/search-query";
+import { diversifyBySeller, expandSearch } from "@/features/search/engine";
 import { PAGINATION, ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { pathnameFromBlobUrl } from "@/lib/storage";
@@ -276,12 +277,38 @@ async function buildWhere(
   const and: Prisma.ProductWhereInput[] = [];
 
   if (filters.query) {
-    const tokens = tokenizeSearchQuery(filters.query);
-    if (tokens.length === 1) {
-      where.OR = tokenMatchOr(tokens[0]);
-    } else if (tokens.length > 1) {
-      // Every token must match somewhere (title, description, category, seller).
-      for (const token of tokens) and.push({ OR: tokenMatchOr(token) });
+    // Search Intelligence (AGENT-020): normalize → spell → synonyms → taxonomy →
+    // brand/model/attribute. Match products against the expanded term set (broad
+    // recall); LOT Ranking v1 orders relevance.
+    const expansion = await expandSearch(filters.query);
+    const orTerms: Prisma.ProductWhereInput[] = [];
+    for (const term of expansion.terms) {
+      orTerms.push(...((tokenMatchOr(term) as Prisma.ProductWhereInput[]) ?? []));
+    }
+    for (const attr of expansion.parsed.attributes) {
+      orTerms.push({
+        characteristicValues: {
+          some: {
+            OR: [
+              { valueText: { contains: String(attr.value), mode: "insensitive" } },
+              ...(Number.isFinite(attr.value)
+                ? [{ valueNumber: new Prisma.Decimal(attr.value) }]
+                : []),
+            ],
+          },
+        },
+      });
+      orTerms.push({ name: { contains: String(attr.value), mode: "insensitive" } });
+    }
+    if (orTerms.length) {
+      where.OR = orTerms;
+    } else {
+      const tokens = tokenizeSearchQuery(filters.query);
+      if (tokens.length) {
+        where.OR = tokens.flatMap(
+          (t) => (tokenMatchOr(t) as Prisma.ProductWhereInput[]) ?? [],
+        );
+      }
     }
   }
 
@@ -324,8 +351,18 @@ export async function listProducts(
     prisma.product.count({ where }),
   ]);
 
+  // Diversify search/browse pages so one seller can't fill the page (section 20).
+  // Never reorder explicit price sorts or single-seller storefront views.
+  const canDiversify =
+    !filters.sellerId &&
+    !filters.seller &&
+    (filters.sort === undefined ||
+      filters.sort === "recommended" ||
+      filters.sort === "popular");
+  const ordered = canDiversify ? diversifyBySeller(rows, 2) : rows;
+
   return {
-    items: rows.map(mapProductListItem),
+    items: ordered.map(mapProductListItem),
     total,
     page,
     pageSize,
