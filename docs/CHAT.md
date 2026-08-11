@@ -87,8 +87,9 @@ Enforcement:
 
 ## Order & Reservation integration
 
-- `notifyOrderCreated` / `notifyReservationCreated` / `notifyReservationConfirmed` append typed system messages to the relevant conversation when those flows run.
+- `notifyOrderCreated` / `notifyReservationCreated` / `notifyReservationConfirmed` / `notifyReservationReady` / `notifyReservationCompleted` / `notifyReservationCancelled` append typed system messages to the relevant conversation when those flows run.
 - Chat remains product-scoped; order/reservation deep-links can be added later via attachments or structured payloads.
+- Full pickup/reservation lifecycle: [PICKUP.md](./PICKUP.md).
 
 ## Future attachments
 

@@ -562,7 +562,7 @@ export async function notifyReservationCreated(opts: {
     productId: opts.productId,
     buyerId: opts.buyerId,
     sellerId: opts.sellerId,
-    text: "Создана бронь.",
+    text: "Создана бронь товара",
     type: MessageType.RESERVATION,
   });
 }
@@ -570,8 +570,45 @@ export async function notifyReservationCreated(opts: {
 export async function notifyReservationConfirmed(opts: {
   reservationId: string;
 }): Promise<void> {
+  await notifyReservationStatusMessage(
+    opts.reservationId,
+    "Продавец подтвердил бронь",
+  );
+}
+
+export async function notifyReservationReady(opts: {
+  reservationId: string;
+}): Promise<void> {
+  await notifyReservationStatusMessage(
+    opts.reservationId,
+    "Товар подготовлен к выдаче",
+  );
+}
+
+export async function notifyReservationCompleted(opts: {
+  reservationId: string;
+}): Promise<void> {
+  await notifyReservationStatusMessage(
+    opts.reservationId,
+    "Товар получен",
+  );
+}
+
+export async function notifyReservationCancelled(opts: {
+  reservationId: string;
+}): Promise<void> {
+  await notifyReservationStatusMessage(
+    opts.reservationId,
+    "Бронь отменена",
+  );
+}
+
+async function notifyReservationStatusMessage(
+  reservationId: string,
+  text: string,
+): Promise<void> {
   const row = await prisma.pickupReservation.findUnique({
-    where: { id: opts.reservationId },
+    where: { id: reservationId },
     select: {
       buyerId: true,
       productId: true,
@@ -583,7 +620,7 @@ export async function notifyReservationConfirmed(opts: {
     productId: row.productId,
     buyerId: row.buyerId,
     sellerId: row.sellerId,
-    text: "Продавец подтвердил бронь.",
+    text,
     type: MessageType.RESERVATION,
   });
 }

@@ -197,6 +197,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
               session.sellerProfileId === product.seller.id
             }
             isAuthenticated={Boolean(session)}
+            reservationAvailable={
+              product.pickupEnabled &&
+              product.reservationEnabled &&
+              product.pickupPoints.length > 0
+            }
+            prepaymentPercent={product.prepaymentPercent}
           />
 
           <section

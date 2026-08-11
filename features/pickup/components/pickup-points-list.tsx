@@ -30,7 +30,7 @@ export function PickupPointsList({ points }: Props) {
           У вас нет точек самовывоза
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Добавьте адрес, чтобы покупатели могли забирать товары лично.
+          Добавьте адрес самовывоза, чтобы покупатели могли забирать товары.
         </p>
         <Button
           className="mt-4"

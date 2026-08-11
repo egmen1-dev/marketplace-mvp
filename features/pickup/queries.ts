@@ -5,7 +5,12 @@ import {
 
 import { pickupPointSchema, type PickupPointInput } from "@/features/pickup/schemas";
 import { prisma } from "@/lib/prisma";
-import { notifyReservationConfirmed } from "@/features/chat/queries";
+import {
+  notifyReservationCancelled,
+  notifyReservationCompleted,
+  notifyReservationConfirmed,
+  notifyReservationReady,
+} from "@/features/chat/queries";
 import { toPriceNumber } from "@/features/products/mappers";
 
 export type PickupPointDto = {
@@ -282,14 +287,59 @@ export async function updateReservationStatus(opts: {
     data: { status: opts.status },
     include: reservationInclude,
   });
-  if (opts.status === "CONFIRMED") {
-    try {
+  try {
+    if (opts.status === "CONFIRMED") {
       await notifyReservationConfirmed({ reservationId: updated.id });
-    } catch (err) {
-      console.error("[updateReservationStatus] chat notify", err);
+    } else if (opts.status === "READY") {
+      await notifyReservationReady({ reservationId: updated.id });
+    } else if (opts.status === "COMPLETED") {
+      await notifyReservationCompleted({ reservationId: updated.id });
+    } else if (opts.status === "CANCELLED") {
+      await notifyReservationCancelled({ reservationId: updated.id });
     }
+  } catch (err) {
+    console.error("[updateReservationStatus] chat notify", err);
   }
   return mapReservation(updated);
+}
+
+/** Buyer may cancel only while PENDING. */
+export async function cancelReservationByBuyer(opts: {
+  reservationId: string;
+  buyerId: string;
+}): Promise<PickupReservationListItem> {
+  const row = await prisma.pickupReservation.findFirst({
+    where: { id: opts.reservationId, buyerId: opts.buyerId },
+    include: reservationInclude,
+  });
+  if (!row) {
+    throw new Error("Бронь не найдена");
+  }
+  if (row.status !== "PENDING") {
+    throw new Error("Отменить можно только до подтверждения продавцом");
+  }
+  const updated = await prisma.pickupReservation.update({
+    where: { id: row.id },
+    data: { status: "CANCELLED" },
+    include: reservationInclude,
+  });
+  try {
+    await notifyReservationCancelled({ reservationId: updated.id });
+  } catch (err) {
+    console.error("[cancelReservationByBuyer] chat notify", err);
+  }
+  return mapReservation(updated);
+}
+
+export async function listAllReservationsForAdmin(limit = 50): Promise<
+  PickupReservationListItem[]
+> {
+  const rows = await prisma.pickupReservation.findMany({
+    take: Math.min(100, Math.max(1, limit)),
+    orderBy: { createdAt: "desc" },
+    include: reservationInclude,
+  });
+  return rows.map(mapReservation);
 }
 
 /** Sync product↔pickup-point links; verifies points belong to seller. */

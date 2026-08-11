@@ -1,4 +1,5 @@
 import {
+  OrderFulfillmentType,
   OrderStatus,
   PaymentStatus,
 } from "@prisma/client";
@@ -49,6 +50,12 @@ export async function createCheckoutSessionForOrder(
       },
       payment: true,
       user: { select: { email: true } },
+      reservations: {
+        select: {
+          prepaymentAmount: true,
+          product: { select: { name: true } },
+        },
+      },
     },
   });
 
@@ -79,8 +86,29 @@ export async function createCheckoutSessionForOrder(
   try {
     const stripe = getStripe();
 
-    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
-      order.items.map((item) => ({
+    let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+
+    if (order.fulfillmentType === OrderFulfillmentType.SELLER_PICKUP) {
+      // Charge prepayment total only (order.total), not full unit prices.
+      const names =
+        order.reservations.length > 0
+          ? order.reservations.map((r) => r.product.name).join(", ")
+          : order.items.map((i) => i.productName).join(", ");
+      lineItems = [
+        {
+          quantity: 1,
+          price_data: {
+            currency,
+            unit_amount: toStripeAmount(total),
+            product_data: {
+              name: `Предоплата · заказ ${order.orderNumber}`,
+              description: names.slice(0, 200) || undefined,
+            },
+          },
+        },
+      ];
+    } else {
+      lineItems = order.items.map((item) => ({
         quantity: item.quantity,
         price_data: {
           currency,
@@ -94,16 +122,17 @@ export async function createCheckoutSessionForOrder(
         },
       }));
 
-    const shipping = toPriceNumber(order.shippingCost);
-    if (shipping > 0) {
-      lineItems.push({
-        quantity: 1,
-        price_data: {
-          currency,
-          unit_amount: toStripeAmount(shipping),
-          product_data: { name: "Доставка" },
-        },
-      });
+      const shipping = toPriceNumber(order.shippingCost);
+      if (shipping > 0) {
+        lineItems.push({
+          quantity: 1,
+          price_data: {
+            currency,
+            unit_amount: toStripeAmount(shipping),
+            product_data: { name: "Доставка" },
+          },
+        });
+      }
     }
 
     const session = await stripe.checkout.sessions.create({

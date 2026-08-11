@@ -37,7 +37,8 @@ export type PageErrorCollector = {
   pageErrors: string[];
   failedRequests: string[];
   serverErrors: string[];
-  assertClean: () => void;
+  reset: () => void;
+  assertClean: (opts?: { allowHydration?: boolean }) => void;
 };
 
 export function attachErrorCollector(page: Page): PageErrorCollector {
@@ -81,11 +82,23 @@ export function attachErrorCollector(page: Page): PageErrorCollector {
     pageErrors,
     failedRequests,
     serverErrors,
-    assertClean() {
-      expect(pageErrors, `pageerror: ${pageErrors.join("\n")}`).toEqual([]);
+    reset() {
+      consoleErrors.length = 0;
+      pageErrors.length = 0;
+      failedRequests.length = 0;
+      serverErrors.length = 0;
+    },
+    assertClean(opts?: { allowHydration?: boolean }) {
+      const pages = opts?.allowHydration
+        ? pageErrors.filter((e) => !/Minified React error #418/i.test(e))
+        : pageErrors;
+      const consoles = opts?.allowHydration
+        ? consoleErrors.filter((e) => !/Minified React error #418/i.test(e))
+        : consoleErrors;
+      expect(pages, `pageerror: ${pages.join("\n")}`).toEqual([]);
       expect(
-        consoleErrors,
-        `console.error: ${consoleErrors.join("\n")}`,
+        consoles,
+        `console.error: ${consoles.join("\n")}`,
       ).toEqual([]);
       expect(serverErrors, `HTTP 5xx: ${serverErrors.join("\n")}`).toEqual([]);
       expect(
@@ -146,4 +159,18 @@ export function primaryAddToCart(page: Page) {
 
 export function uniqueEmail(prefix: string) {
   return `${prefix}.${Date.now()}@e2e.lot`;
+}
+
+/** Empty authenticated cart via API (avoids mixed-seller pickup blocks in e2e). */
+export async function clearCart(page: Page) {
+  const res = await page.request.get("/api/cart");
+  if (!res.ok()) return;
+  const data = (await res.json()) as {
+    items?: { productId: string }[];
+  };
+  for (const item of data.items ?? []) {
+    await page.request.delete(
+      `/api/cart?productId=${encodeURIComponent(item.productId)}`,
+    );
+  }
 }

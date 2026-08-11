@@ -6,17 +6,20 @@ import { PickupReservationStatus } from "@prisma/client";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { updateReservationStatusAction } from "@/features/pickup/actions";
+import {
+  cancelReservationByBuyerAction,
+  updateReservationStatusAction,
+} from "@/features/pickup/actions";
 import { PICKUP_RESERVATION_STATUS_LABELS } from "@/features/pickup/lib/prepayment";
 import type { PickupReservationListItem } from "@/features/pickup/queries";
 import { formatPrice } from "@/features/products/mappers";
 import { toast } from "sonner";
-import { orderPath } from "@/lib/constants";
+import { orderPath, ROUTES } from "@/lib/constants";
 import { toastError } from "@/lib/toasts";
 
 type Props = {
   reservations: PickupReservationListItem[];
-  mode: "buyer" | "seller";
+  mode: "buyer" | "seller" | "admin";
 };
 
 function nextSellerActions(
@@ -49,20 +52,39 @@ export function ReservationsList({ reservations, mode }: Props) {
 
   if (reservations.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">
-        {mode === "seller"
-          ? "Пока нет заявок на бронирование."
-          : "У вас пока нет броней."}
-      </p>
+      <div
+        className="rounded-2xl border border-dashed border-border bg-card/40 px-5 py-10 text-center"
+        data-testid="reservations-empty"
+      >
+        <p className="font-heading text-base font-semibold">
+          У вас пока нет бронирований.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {mode === "seller"
+            ? "Когда покупатель забронирует товар с самовывозом, заявка появится здесь."
+            : "Выберите товар с самовывозом и нажмите «Забронировать»."}
+        </p>
+        {mode === "buyer" ? (
+          <Button
+            className="mt-4"
+            nativeButton={false}
+            render={<Link href={ROUTES.CATALOG} />}
+          >
+            Перейти в каталог
+          </Button>
+        ) : null}
+      </div>
     );
   }
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="flex flex-col gap-3" data-testid="reservations-list">
       {reservations.map((r) => (
         <li
           key={r.id}
           className="rounded-2xl border border-border bg-card/60 p-4"
+          data-testid="reservation-card"
+          data-status={r.status}
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0 space-y-1 text-sm">
@@ -70,7 +92,9 @@ export function ReservationsList({ reservations, mode }: Props) {
               <p className="text-muted-foreground">
                 {mode === "seller"
                   ? `Покупатель: ${r.buyer.name ?? r.buyer.email}`
-                  : `Продавец: ${r.seller.storeName}`}
+                  : mode === "admin"
+                    ? `${r.buyer.name ?? r.buyer.email} · ${r.seller.storeName}`
+                    : `Продавец: ${r.seller.storeName}`}
               </p>
               <p className="text-muted-foreground">
                 {r.pickupPoint.name} · {r.pickupPoint.city},{" "}
@@ -104,6 +128,7 @@ export function ReservationsList({ reservations, mode }: Props) {
                     size="sm"
                     variant={a.status === "CANCELLED" ? "outline" : "default"}
                     disabled={pending}
+                    data-testid={`reservation-action-${a.status.toLowerCase()}`}
                     onClick={() =>
                       start(async () => {
                         const res = await updateReservationStatusAction(
@@ -122,6 +147,26 @@ export function ReservationsList({ reservations, mode }: Props) {
                   </Button>
                 ))}
               </div>
+            ) : null}
+            {mode === "buyer" && r.status === "PENDING" ? (
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={pending}
+                data-testid="reservation-cancel"
+                onClick={() =>
+                  start(async () => {
+                    const res = await cancelReservationByBuyerAction(r.id);
+                    if (!res.ok) toastError(res.error);
+                    else {
+                      toast.success("Бронь отменена");
+                      router.refresh();
+                    }
+                  })
+                }
+              >
+                Отменить
+              </Button>
             ) : null}
           </div>
         </li>

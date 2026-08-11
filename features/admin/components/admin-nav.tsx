@@ -8,6 +8,7 @@ import {
   Package,
   ShoppingBag,
   Store,
+  Ticket,
   Users,
 } from "lucide-react";
 
@@ -44,6 +45,13 @@ const NAV_ITEMS = [
     label: "Заказы",
     icon: ShoppingBag,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_ORDERS),
+  },
+  {
+    href: ROUTES.ADMIN_RESERVATIONS,
+    label: "Брони",
+    icon: Ticket,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_RESERVATIONS),
   },
   {
     href: ROUTES.ADMIN_CATEGORIES,

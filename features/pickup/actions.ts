@@ -17,6 +17,7 @@ import {
   setPickupPointActive,
   updatePickupPoint,
   updateReservationStatus,
+  cancelReservationByBuyer,
 } from "@/features/pickup/queries";
 import { ROUTES } from "@/lib/constants";
 
@@ -169,6 +170,28 @@ export async function updateReservationStatusAction(
     return {
       ok: false,
       error: err instanceof Error ? err.message : "Не удалось обновить статус",
+    };
+  }
+}
+
+export async function cancelReservationByBuyerAction(
+  reservationId: string,
+): Promise<PickupActionState> {
+  try {
+    const user = await requireBuyerSession();
+    await cancelReservationByBuyer({
+      reservationId,
+      buyerId: user.id,
+    });
+    revalidatePath(ROUTES.ACCOUNT_RESERVATIONS);
+    return { ok: true };
+  } catch (err) {
+    const auth = authFail(err);
+    if (auth) return auth;
+    console.error("[cancelReservationByBuyerAction]", err);
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Не удалось отменить бронь",
     };
   }
 }

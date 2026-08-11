@@ -41,6 +41,8 @@ type CheckoutFormProps = {
   canceled?: boolean;
   sellerPickupOptions?: CheckoutPickupOption[];
   sellerPickupAvailable?: boolean;
+  /** Prefer seller pickup when opened from PDP «Забронировать». */
+  preferSellerPickup?: boolean;
 };
 
 export function CheckoutForm({
@@ -50,6 +52,7 @@ export function CheckoutForm({
   canceled = false,
   sellerPickupOptions = [],
   sellerPickupAvailable = false,
+  preferSellerPickup = false,
 }: CheckoutFormProps) {
   const router = useRouter();
   const { refresh } = useCart();
@@ -74,6 +77,20 @@ export function CheckoutForm({
   useEffect(() => {
     setCart(initialCart);
   }, [initialCart]);
+
+  // Apply ?fulfillment=SELLER_PICKUP after mount so SSR HTML matches the first
+  // client paint (avoids React #418 when preferSellerPickup flips the tree).
+  useEffect(() => {
+    if (preferSellerPickup && sellerPickupAvailable) {
+      setFulfillmentType("SELLER_PICKUP");
+    }
+  }, [preferSellerPickup, sellerPickupAvailable]);
+
+  useEffect(() => {
+    if (!sellerPointId && sellerPickupOptions[0]?.point.id) {
+      setSellerPointId(sellerPickupOptions[0].point.id);
+    }
+  }, [sellerPickupOptions, sellerPointId]);
 
   useEffect(() => {
     if (!state.ok) return;
@@ -179,6 +196,7 @@ export function CheckoutForm({
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <button
               type="button"
+              data-testid="checkout-fulfillment-delivery"
               className={cn(
                 "flex-1 rounded-xl border px-4 py-3 text-left text-sm font-medium",
                 fulfillmentType === "DELIVERY"
@@ -192,6 +210,7 @@ export function CheckoutForm({
             <button
               type="button"
               disabled={!sellerPickupAvailable}
+              data-testid="checkout-fulfillment-pickup"
               className={cn(
                 "flex-1 rounded-xl border px-4 py-3 text-left text-sm font-medium",
                 fulfillmentType === "SELLER_PICKUP"
@@ -239,7 +258,10 @@ export function CheckoutForm({
             )}
           </>
         ) : (
-          <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
+          <section
+            className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6"
+            data-testid="checkout-pickup-points"
+          >
             <h2 className="font-heading text-lg font-medium">
               Точка самовывоза
             </h2>
@@ -250,6 +272,7 @@ export function CheckoutForm({
                   <li key={opt.point.id}>
                     <button
                       type="button"
+                      data-testid="checkout-pickup-point"
                       onClick={() => setSellerPointId(opt.point.id)}
                       className={cn(
                         "w-full rounded-xl border px-4 py-3 text-left text-sm",
@@ -267,7 +290,10 @@ export function CheckoutForm({
                           {opt.point.workingHours}
                         </span>
                       ) : null}
-                      <span className="mt-2 block text-xs">
+                      <span
+                        className="mt-2 block text-xs"
+                        data-testid="checkout-pickup-amounts"
+                      >
                         Предоплата{" "}
                         {formatPrice(opt.prepaymentTotal, cart.currency)} ·
                         остаток{" "}
@@ -365,7 +391,10 @@ export function CheckoutForm({
             </div>
           ) : null}
           <Separator className="my-2" />
-          <div className="flex items-center justify-between font-heading text-base font-medium text-foreground">
+          <div
+            className="flex items-center justify-between font-heading text-base font-medium text-foreground"
+            data-testid="checkout-pay-now"
+          >
             <span>К оплате сейчас</span>
             <span>{formatPrice(orderTotal, cart.currency)}</span>
           </div>

@@ -8,6 +8,7 @@ import {
   Loader2,
   MessageCircle,
   Minus,
+  Package,
   Plus,
   ShoppingBag,
   Zap,
@@ -37,6 +38,9 @@ type ProductPurchasePanelProps = {
   isOwnProduct?: boolean;
   /** Whether viewer is signed in (guest → sign-in link) */
   isAuthenticated?: boolean;
+  /** Show «Забронировать» → cart + checkout seller pickup */
+  reservationAvailable?: boolean;
+  prepaymentPercent?: number;
 };
 
 export function ProductPurchasePanel({
@@ -47,6 +51,8 @@ export function ProductPurchasePanel({
   className,
   isOwnProduct = false,
   isAuthenticated = false,
+  reservationAvailable = false,
+  prepaymentPercent = 0,
 }: ProductPurchasePanelProps) {
   const router = useRouter();
   const { addItem, isPending } = useCart();
@@ -87,6 +93,18 @@ export function ProductPurchasePanel({
     });
   }, [isAuthenticated, isOwnProduct, productId]);
 
+  const autoReserveStarted = useRef(false);
+  useEffect(() => {
+    if (!isAuthenticated || isOwnProduct || !reservationAvailable) return;
+    if (autoReserveStarted.current) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("reserve") !== "1") return;
+    autoReserveStarted.current = true;
+    void handleReserve();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-shot continue after login
+  }, [isAuthenticated, isOwnProduct, reservationAvailable, productId]);
+
   function clamp(n: number) {
     return Math.min(maxQty, Math.max(1, n));
   }
@@ -118,6 +136,30 @@ export function ProductPurchasePanel({
       if (result.ok) {
         toast.success(TOAST.CHECKOUT_REDIRECT);
         router.push(ROUTES.CHECKOUT);
+      } else {
+        toastError(result.error);
+      }
+    } catch {
+      toastError();
+    } finally {
+      setAction("idle");
+    }
+  }
+
+  async function handleReserve() {
+    if (outOfStock || busy || isOwnProduct) return;
+    if (!isAuthenticated) {
+      router.push(
+        `${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(`${ROUTES.PRODUCT}/${productId}?reserve=1`)}`,
+      );
+      return;
+    }
+    setAction("buy");
+    try {
+      const result = await addItem(productId, qty);
+      if (result.ok) {
+        toast.success("Переходим к бронированию");
+        router.push(`${ROUTES.CHECKOUT}?fulfillment=SELLER_PICKUP`);
       } else {
         toastError(result.error);
       }
@@ -201,27 +243,52 @@ export function ProductPurchasePanel({
         )}
 
         <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
-          <Button
-            type="button"
-            size="cta"
-            className="flex-1"
-            disabled={outOfStock || busy}
-            aria-busy={action === "buy"}
-            data-testid="pdp-buy"
-            onClick={() => void handleBuy()}
-          >
-            {action === "buy" ? (
-              <>
-                <Loader2 data-icon="inline-start" className="animate-spin" />
-                Добавляем…
-              </>
-            ) : (
-              <>
-                <Zap data-icon="inline-start" />
-                Купить
-              </>
-            )}
-          </Button>
+          {reservationAvailable && !isOwnProduct ? (
+            <Button
+              type="button"
+              size="cta"
+              className="flex-1"
+              disabled={outOfStock || busy}
+              aria-busy={action === "buy"}
+              data-testid="pdp-reserve"
+              onClick={() => void handleReserve()}
+            >
+              {action === "buy" ? (
+                <>
+                  <Loader2 data-icon="inline-start" className="animate-spin" />
+                  Бронируем…
+                </>
+              ) : (
+                <>
+                  <Package data-icon="inline-start" />
+                  Забронировать
+                  {prepaymentPercent > 0 ? ` · ${prepaymentPercent}%` : ""}
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              size="cta"
+              className="flex-1"
+              disabled={outOfStock || busy}
+              aria-busy={action === "buy"}
+              data-testid="pdp-buy"
+              onClick={() => void handleBuy()}
+            >
+              {action === "buy" ? (
+                <>
+                  <Loader2 data-icon="inline-start" className="animate-spin" />
+                  Добавляем…
+                </>
+              ) : (
+                <>
+                  <Zap data-icon="inline-start" />
+                  Купить
+                </>
+              )}
+            </Button>
+          )}
           <Button
             type="button"
             size="cta"
@@ -250,6 +317,19 @@ export function ProductPurchasePanel({
             )}
           </Button>
         </div>
+        {reservationAvailable && !isOwnProduct ? (
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="h-auto w-fit px-0"
+            disabled={outOfStock || busy}
+            data-testid="pdp-buy"
+            onClick={() => void handleBuy()}
+          >
+            Купить с доставкой
+          </Button>
+        ) : null}
 
         <Button
           variant="link"

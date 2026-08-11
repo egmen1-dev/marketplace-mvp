@@ -18,13 +18,13 @@ export const metadata = {
 };
 
 type CheckoutPageProps = {
-  searchParams: Promise<{ canceled?: string }>;
+  searchParams: Promise<{ canceled?: string; fulfillment?: string }>;
 };
 
 export default async function CheckoutPage({
   searchParams,
 }: CheckoutPageProps) {
-  const { canceled } = await searchParams;
+  const { canceled, fulfillment } = await searchParams;
   const user = await getSessionUser();
   if (!user) {
     redirect(
@@ -154,6 +154,9 @@ export default async function CheckoutPage({
         canceled={canceled === "1"}
         sellerPickupAvailable={sellerPickupAvailable}
         sellerPickupOptions={sellerPickupOptions}
+        preferSellerPickup={
+          fulfillment === "SELLER_PICKUP" || fulfillment === "pickup"
+        }
       />
     </div>
   );
