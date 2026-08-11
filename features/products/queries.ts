@@ -655,8 +655,6 @@ export async function createProduct(
         lengthCm: optionalDecimal(input.lengthCm) ?? null,
         widthCm: optionalDecimal(input.widthCm) ?? null,
         heightCm: optionalDecimal(input.heightCm) ?? null,
-        seoTitle: input.seoTitle ?? null,
-        seoDescription: input.seoDescription ?? null,
         pickupEnabled,
         reservationEnabled,
         prepaymentPercent,
@@ -769,12 +767,6 @@ export async function updateProduct(
   }
   if (input.heightCm !== undefined) {
     data.heightCm = optionalDecimal(input.heightCm) ?? null;
-  }
-  if (input.seoTitle !== undefined) {
-    data.seoTitle = input.seoTitle;
-  }
-  if (input.seoDescription !== undefined) {
-    data.seoDescription = input.seoDescription;
   }
   if (input.pickupEnabled !== undefined) {
     data.pickupEnabled = input.pickupEnabled;
@@ -985,8 +977,6 @@ export async function duplicateProduct(
       lengthCm: existing.lengthCm?.toNumber() ?? null,
       widthCm: existing.widthCm?.toNumber() ?? null,
       heightCm: existing.heightCm?.toNumber() ?? null,
-      seoTitle: existing.seoTitle,
-      seoDescription: existing.seoDescription,
       pickupEnabled: existing.pickupEnabled,
       reservationEnabled: existing.reservationEnabled,
       prepaymentPercent: existing.prepaymentPercent,

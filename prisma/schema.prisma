@@ -380,7 +380,10 @@ model Product {
   lengthCm       Decimal?         @db.Decimal(10, 2)
   widthCm        Decimal?         @db.Decimal(10, 2)
   heightCm       Decimal?         @db.Decimal(10, 2)
+  /// @deprecated (TASK 058) — SEO metadata is derived from title/description +
+  /// taxonomy via ProductSearchDocumentBuilder. Column kept for back-compat.
   seoTitle       String?
+  /// @deprecated (TASK 058) — derived; not seller-authored anymore.
   seoDescription String?
   city           String?
   condition      ProductCondition @default(NEW)
@@ -412,6 +415,7 @@ model Product {
   reservations     PickupReservation[]
   conversations    Conversation[]
   characteristicValues ProductCharacteristicValue[]
+  rankingStats     ProductRankingStats?
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -834,4 +838,68 @@ model AdminActionLog {
   @@index([entityType, entityId])
   @@index([createdAt])
   @@map("admin_action_logs")
+}
+
+// ─── Ranking & taxonomy sync (TASK 058) ──────────────────────────────────────
+
+/// Precomputed marketplace ranking signals per product (section 39).
+/// Real data only — no fake ratings/orders/buyouts. Refreshed by an aggregator.
+model ProductRankingStats {
+  productId       String   @id
+  /// Distinct PDP views / impressions.
+  views           Int      @default(0)
+  /// Paid orders count (excludes cancelled/unpaid).
+  orders          Int      @default(0)
+  /// Completed (received) orders count.
+  completedOrders Int      @default(0)
+  /// Units ordered in paid orders.
+  unitsOrdered    Int      @default(0)
+  /// Units actually bought out / received.
+  unitsBoughtOut  Int      @default(0)
+  revenue         Decimal  @default(0) @db.Decimal(14, 2)
+  /// Derived rate (nullable → cold start uses priors at score time).
+  conversionRate  Decimal? @db.Decimal(6, 5)
+  buyoutRate      Decimal? @db.Decimal(6, 5)
+  /// Real reviews only.
+  avgRating       Decimal? @db.Decimal(3, 2)
+  ratingCount     Int      @default(0)
+  /// Last computed organic score + engine version.
+  organicScore    Decimal? @db.Decimal(6, 5)
+  rankingVersion  String?
+  updatedAt       DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([organicScore])
+  @@map("product_ranking_stats")
+}
+
+enum TaxonomySyncStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+/// One taxonomy sync run's metadata for reporting/observability (sections 10/39).
+model TaxonomySyncRun {
+  id                      String             @id @default(cuid())
+  source                  String
+  /// "live" (WB API) or "snapshot".
+  mode                    String
+  status                  TaxonomySyncStatus @default(RUNNING)
+  categoriesImported      Int                @default(0)
+  productTypesImported    Int                @default(0)
+  characteristicsImported Int                @default(0)
+  aliasesImported         Int                @default(0)
+  created                 Int                @default(0)
+  updated                 Int                @default(0)
+  deactivated             Int                @default(0)
+  errorText               String?
+  durationMs              Int                @default(0)
+  startedAt               DateTime           @default(now())
+  finishedAt              DateTime?
+
+  @@index([source])
+  @@index([startedAt])
+  @@map("taxonomy_sync_runs")
 }

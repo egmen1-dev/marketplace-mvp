@@ -104,8 +104,9 @@ export const createProductSchema = z.object({
     emptyToUndefined,
     z.coerce.number().finite().min(0).max(10_000).optional().nullable(),
   ),
-  seoTitle: z.string().trim().max(120).optional().nullable(),
-  seoDescription: z.string().trim().max(320).optional().nullable(),
+  // NOTE (TASK 058): seller-facing SEO title/description removed. SEO metadata
+  // and the search document are derived automatically from title/description +
+  // taxonomy (see lib/search/search-document.ts).
   pickupEnabled: z.preprocess(
     (v) => v === true || v === "true" || v === "on" || v === "1",
     z.boolean().optional().default(false),
