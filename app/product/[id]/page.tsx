@@ -21,6 +21,7 @@ import {
 import { ProductSellerCard } from "@/features/seller/components/product-seller-card";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
+import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type ProductPageProps = {
@@ -187,23 +188,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
             ) : null}
           </div>
 
-          <ProductPurchasePanel
-            productId={product.id}
-            stock={product.stock}
-            price={product.price}
-            currency={product.currency}
-            isOwnProduct={
+          {(() => {
+            const isOwnProduct =
               session?.sellerProfileId != null &&
-              session.sellerProfileId === product.seller.id
-            }
-            isAuthenticated={Boolean(session)}
-            reservationAvailable={
-              product.pickupEnabled &&
-              product.reservationEnabled &&
-              product.pickupPoints.length > 0
-            }
-            prepaymentPercent={product.prepaymentPercent}
-          />
+              session.sellerProfileId === product.seller.id;
+            const reservation = getReservationAvailability({
+              status: product.status,
+              stock: product.stock,
+              pickupEnabled: product.pickupEnabled,
+              reservationEnabled: product.reservationEnabled,
+              pickupPointsCount: product.pickupPoints.length,
+              prepaymentPercent: product.prepaymentPercent,
+              isOwnProduct,
+            });
+            return (
+              <ProductPurchasePanel
+                productId={product.id}
+                stock={product.stock}
+                price={product.price}
+                currency={product.currency}
+                isOwnProduct={isOwnProduct}
+                isAuthenticated={Boolean(session)}
+                reservationAvailable={reservation.available}
+                prepaymentPercent={reservation.prepaymentPercent}
+                reservationReason={reservation.reason}
+              />
+            );
+          })()}
 
           <section
             className="rounded-2xl border border-border bg-card/50 p-4 sm:p-5"

@@ -41,6 +41,8 @@ type ProductPurchasePanelProps = {
   /** Show «Забронировать» → cart + checkout seller pickup */
   reservationAvailable?: boolean;
   prepaymentPercent?: number;
+  /** Debug / E2E: why CTA is hidden (from getReservationAvailability) */
+  reservationReason?: string;
 };
 
 export function ProductPurchasePanel({
@@ -53,6 +55,7 @@ export function ProductPurchasePanel({
   isAuthenticated = false,
   reservationAvailable = false,
   prepaymentPercent = 0,
+  reservationReason,
 }: ProductPurchasePanelProps) {
   const router = useRouter();
   const { addItem, isPending } = useCart();
@@ -176,6 +179,9 @@ export function ProductPurchasePanel({
         ref={panelRef}
         className={cn("flex flex-col gap-4", className)}
         data-testid="pdp-purchase"
+        data-reservation-available={reservationAvailable ? "1" : "0"}
+        data-reservation-reason={reservationReason ?? ""}
+        data-own-product={isOwnProduct ? "1" : "0"}
       >
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex flex-col gap-1.5">

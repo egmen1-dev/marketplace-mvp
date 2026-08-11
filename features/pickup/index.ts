@@ -4,6 +4,11 @@ export {
   isAllowedPrepaymentPercent,
   PICKUP_RESERVATION_STATUS_LABELS,
 } from "./lib/prepayment";
+export {
+  getReservationAvailability,
+  type ReservationAvailability,
+  type ReservationAvailabilityInput,
+} from "./lib/reservation-availability";
 export { pickupPointSchema, prepaymentPercentSchema } from "./schemas";
 export {
   listSellerPickupPoints,

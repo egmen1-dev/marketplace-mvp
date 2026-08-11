@@ -65,8 +65,7 @@ test.describe("taxonomy smart product create", () => {
     );
     await expect(page.getByTestId("pdp-specs")).toContainText(/Мощность/i);
 
-    // React #418 on long seller create → catalog → PDP can flake in CI.
-    errors.assertClean({ allowHydration: true });
+    errors.assertClean();
   });
 
   test("mobile 390px: manual category browser opens", async ({ page }) => {

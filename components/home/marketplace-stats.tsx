@@ -10,6 +10,11 @@ type MarketplaceStatsProps = {
   categories: number;
 };
 
+/** Deterministic grouping — Node vs browser `toLocaleString("ru-RU")` differ (#418). */
+function formatCount(n: number): string {
+  return String(Math.trunc(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
+}
+
 /**
  * Compact live marketplace counters. Render only when parent has real DB totals.
  */
@@ -35,7 +40,7 @@ export function MarketplaceStats({
         {items.map((item) => (
           <div key={item.label} className="text-center">
             <p className="font-heading text-xl font-semibold tracking-tight tabular-nums text-foreground sm:text-2xl">
-              {item.value.toLocaleString("ru-RU")}
+              {formatCount(item.value)}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
               {item.label.charAt(0).toUpperCase() + item.label.slice(1)}

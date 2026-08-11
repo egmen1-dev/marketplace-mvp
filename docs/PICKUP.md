@@ -88,6 +88,23 @@ See also [CHAT.md](./CHAT.md).
 
 There is no separate email/push product. Reservation lifecycle notifications are the chat messages above.
 
+## PDP reserve CTA
+
+`getReservationAvailability()` (`features/pickup/lib/reservation-availability.ts`) is the single source of truth.
+
+CTA `pdp-reserve` is shown when **all** of:
+
+- viewer is **not** the product owner (`isOwnProduct === false`);
+- `status === ACTIVE`;
+- `stock > 0`;
+- `pickupEnabled`;
+- `reservationEnabled`;
+- at least one linked active pickup point.
+
+Guests may see the CTA (click → sign-in with `?reserve=1`). Sellers never see it on their own listings (`data-reservation-reason="own_product"`).
+
+E2E fixtures: `POST /api/e2e/pickup-fixture` (header `x-e2e-secret`) creates marker-scoped product+point under `seller@demo.lot`. Cleanup via `DELETE` with the same marker. Markers must start with `E2E-PICKUP-`.
+
 ## Key routes
 
 - `/account/pickup-points` — seller points
