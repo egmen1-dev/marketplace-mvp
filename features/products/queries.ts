@@ -281,33 +281,46 @@ async function buildWhere(
     // brand/model/attribute. Match products against the expanded term set (broad
     // recall); LOT Ranking v1 orders relevance.
     const expansion = await expandSearch(filters.query);
-    const orTerms: Prisma.ProductWhereInput[] = [];
-    for (const term of expansion.terms) {
-      orTerms.push(...((tokenMatchOr(term) as Prisma.ProductWhereInput[]) ?? []));
-    }
-    for (const attr of expansion.parsed.attributes) {
-      orTerms.push({
-        characteristicValues: {
-          some: {
-            OR: [
-              { valueText: { contains: String(attr.value), mode: "insensitive" } },
-              ...(Number.isFinite(attr.value)
-                ? [{ valueNumber: new Prisma.Decimal(attr.value) }]
-                : []),
-            ],
-          },
-        },
-      });
-      orTerms.push({ name: { contains: String(attr.value), mode: "insensitive" } });
-    }
-    if (orTerms.length) {
-      where.OR = orTerms;
-    } else {
-      const tokens = tokenizeSearchQuery(filters.query);
-      if (tokens.length) {
-        where.OR = tokens.flatMap(
-          (t) => (tokenMatchOr(t) as Prisma.ProductWhereInput[]) ?? [],
+    if (expansion.tokenGroups.length > 0) {
+      // Multi/precise: AND across content-token groups (each an OR of variants +
+      // synonyms). Preserves precision for exact/multi-word queries while allowing
+      // spell/synonym variants within a group.
+      for (const group of expansion.tokenGroups) {
+        const groupOr = group.flatMap(
+          (v) => (tokenMatchOr(v) as Prisma.ProductWhereInput[]) ?? [],
         );
+        if (groupOr.length) and.push({ OR: groupOr });
+      }
+    } else {
+      // Pure brand/model/attribute (no content tokens): broad OR recall.
+      const orTerms: Prisma.ProductWhereInput[] = [];
+      for (const term of expansion.optional) {
+        orTerms.push(...((tokenMatchOr(term) as Prisma.ProductWhereInput[]) ?? []));
+      }
+      for (const attr of expansion.parsed.attributes) {
+        orTerms.push({
+          characteristicValues: {
+            some: {
+              OR: [
+                { valueText: { contains: String(attr.value), mode: "insensitive" } },
+                ...(Number.isFinite(attr.value)
+                  ? [{ valueNumber: new Prisma.Decimal(attr.value) }]
+                  : []),
+              ],
+            },
+          },
+        });
+        orTerms.push({ name: { contains: String(attr.value), mode: "insensitive" } });
+      }
+      if (orTerms.length) {
+        where.OR = orTerms;
+      } else {
+        const tokens = tokenizeSearchQuery(filters.query);
+        if (tokens.length) {
+          where.OR = tokens.flatMap(
+            (t) => (tokenMatchOr(t) as Prisma.ProductWhereInput[]) ?? [],
+          );
+        }
       }
     }
   }
