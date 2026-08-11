@@ -136,6 +136,17 @@ describe("review rating integration (TASK 059)", () => {
   });
 });
 
+describe("risk penalty integration (AGENT-019 §36/37)", () => {
+  it("LOW risk = 0 penalty; higher risk lowers final score, capped", () => {
+    const clean = scoreProduct(base({ riskPenalty: 0 }), { now: NOW });
+    const risky = scoreProduct(base({ riskPenalty: 0.1 }), { now: NOW });
+    const extreme = scoreProduct(base({ riskPenalty: 0.9 }), { now: NOW });
+    expect(risky.finalScore).toBeLessThan(clean.finalScore);
+    // Capped at 0.25 — cannot dominate ranking.
+    expect(clean.finalScore - extreme.finalScore).toBeLessThanOrEqual(0.25 + 1e-9);
+  });
+});
+
 describe("signal behaviors", () => {
   it("out-of-stock is strongly demoted (section 33)", () => {
     const inStock = scoreProduct(base({ logistics: { stock: 5, pickupAvailable: false, shippingConfigured: true } }), { now: NOW });

@@ -20,6 +20,7 @@
     "taxonomy:migrate": "tsx scripts/sync-wb-taxonomy.ts --snapshot --migrate",
     "taxonomy:migrate-products": "tsx scripts/migrate-products-taxonomy.ts",
     "ranking:recompute": "tsx scripts/recompute-ranking.ts",
+    "risk:scan": "tsx scripts/scan-risk.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {
