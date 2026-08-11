@@ -156,6 +156,9 @@ model User {
   pickupReservations   PickupReservation[]
   buyerConversations   Conversation[]      @relation("ConversationBuyer")
   sentMessages         Message[]
+  reviews              Review[]            @relation("ReviewBuyer")
+  moderatedReviews     Review[]            @relation("ReviewModerator")
+  reviewVotes          ReviewVote[]
 
   @@index([role])
   @@index([isBlocked])
@@ -191,6 +194,8 @@ model SellerProfile {
   pickupPoints   PickupPoint[]
   reservations   PickupReservation[]
   conversations  Conversation[]
+  reviews        Review[]
+  reviewStats    SellerReviewStats?
 
   @@index([slug])
   @@index([kind])
@@ -419,6 +424,8 @@ model Product {
   conversations    Conversation[]
   characteristicValues ProductCharacteristicValue[]
   rankingStats     ProductRankingStats?
+  reviews          Review[]
+  reviewStats      ProductReviewStats?
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -574,6 +581,7 @@ model Order {
   delivery        Delivery?
   statusHistory   OrderStatusHistory[]
   reservations    PickupReservation[]
+  reviews         Review[]
 
   @@index([userId])
   @@index([status])
@@ -613,6 +621,7 @@ model OrderItem {
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  review  Review?
 
   @@index([orderId])
   @@index([productId])
@@ -882,6 +891,120 @@ enum TaxonomySyncStatus {
   RUNNING
   SUCCESS
   FAILED
+}
+
+// ─── Reviews & ratings (TASK 059) ────────────────────────────────────────────
+
+enum ReviewStatus {
+  PUBLISHED
+  HIDDEN
+  REMOVED
+  PENDING_REVIEW
+}
+
+/// Verified buyer review, always tied to a real completed OrderItem.
+/// One review per OrderItem (unique). Self-review is blocked in the service.
+model Review {
+  id              String       @id @default(cuid())
+  productId       String
+  buyerId         String
+  sellerId        String
+  orderId         String
+  /// Exactly one review per purchased line — enforces "no duplicate review".
+  orderItemId     String       @unique
+  /// Integer 1..5, validated server-side.
+  rating          Int
+  title           String?
+  text            String?
+  status          ReviewStatus @default(PUBLISHED)
+  /// Optional buyer recommendation flag.
+  recommended     Boolean?
+  /// Seller may reply once; buyer cannot edit the reply.
+  sellerReply     String?
+  sellerRepliedAt DateTime?
+  moderatedAt     DateTime?
+  moderatedById   String?
+  editedAt        DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  product     Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buyer       User               @relation("ReviewBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  seller      SellerProfile      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  order       Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItem   OrderItem          @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  moderatedBy User?              @relation("ReviewModerator", fields: [moderatedById], references: [id], onDelete: SetNull)
+  attachments ReviewAttachment[]
+  votes       ReviewVote[]
+
+  @@index([productId, status])
+  @@index([sellerId, status])
+  @@index([buyerId])
+  @@index([orderId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([rating])
+  @@map("reviews")
+}
+
+/// Prepared for future review photos (no upload flow yet — section 25).
+model ReviewAttachment {
+  id        String   @id @default(cuid())
+  reviewId  String
+  url       String
+  pathname  String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_attachments")
+}
+
+/// Prepared for future "helpful" votes (not implemented in UI — section 26).
+model ReviewVote {
+  id        String   @id @default(cuid())
+  reviewId  String
+  userId    String
+  helpful   Boolean
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId])
+  @@index([reviewId])
+  @@map("review_votes")
+}
+
+/// Precomputed product rating aggregate (avoid heavy aggregation per PDP).
+model ProductReviewStats {
+  productId    String   @id
+  avgRating    Decimal  @default(0) @db.Decimal(3, 2)
+  ratingCount  Int      @default(0)
+  rating1Count Int      @default(0)
+  rating2Count Int      @default(0)
+  rating3Count Int      @default(0)
+  rating4Count Int      @default(0)
+  rating5Count Int      @default(0)
+  updatedAt    DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_review_stats")
+}
+
+/// Precomputed seller review aggregate (avg of that seller's product reviews).
+model SellerReviewStats {
+  sellerId         String   @id
+  avgProductRating Decimal  @default(0) @db.Decimal(3, 2)
+  reviewCount      Int      @default(0)
+  updatedAt        DateTime @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_review_stats")
 }
 
 /// One taxonomy sync run's metadata for reporting/observability (sections 10/39).

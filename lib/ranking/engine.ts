@@ -14,8 +14,10 @@ import {
   LOT_RANKING_V1_WEIGHTS,
   RANKING_PRIORS,
   RANKING_VERSION,
+  TRUST_SUBWEIGHTS,
   type RankingWeights,
 } from "./weights";
+import { ratingScore } from "../reviews/rating";
 
 export type RankingStatsInput = {
   /** Distinct PDP views / impressions (real). */
@@ -34,11 +36,18 @@ export type RankingStatsInput = {
 };
 
 export type RankingSellerInput = {
+  /** Seller aggregate review rating (SellerReviewStats). */
   rating?: number | null;
   ratingCount?: number | null;
   isVerified: boolean;
   /** 0..1 real cancellation rate, if known. */
   cancellationRate?: number | null;
+};
+
+/** Real product review aggregate (ProductReviewStats). */
+export type RankingProductRatingInput = {
+  avg: number;
+  count: number;
 };
 
 export type RankingLogisticsInput = {
@@ -58,6 +67,8 @@ export type RankingProductInput = {
   createdAt: Date;
   stats: RankingStatsInput;
   seller: RankingSellerInput;
+  /** Real product reviews; omitted → neutral prior (cold start). */
+  productRating?: RankingProductRatingInput | null;
   logistics: RankingLogisticsInput;
   /** Controlled paid promotion, 0..1 (default 0). Kept separate from organic. */
   promotionBoost?: number;
@@ -128,19 +139,36 @@ function commercialScore(stats: RankingStatsInput, ageDays: number): number {
   return clamp01(0.6 * sales + 0.4 * buyout);
 }
 
-function trustScore(seller: RankingSellerInput): number {
-  const ratingMean =
-    (Number(seller.rating ?? 0) * Number(seller.ratingCount ?? 0) +
-      RANKING_PRIORS.ratingGlobalMean * RANKING_PRIORS.ratingPriorCount) /
-    (Number(seller.ratingCount ?? 0) + RANKING_PRIORS.ratingPriorCount);
-  const ratingComponent = clamp01(ratingMean / 5);
+/**
+ * Composite trust (section 20/21): product rating + seller reputation +
+ * verified/fulfillment. Trust stays 15% of the overall formula; these are its
+ * internal sub-weights. All rating inputs are Bayesian-smoothed so a single
+ * 5★ review cannot dominate (section 19), and cold start is neutral (section 22).
+ */
+function trustScore(
+  seller: RankingSellerInput,
+  productRating?: RankingProductRatingInput | null,
+): number {
+  const sellerRatingComponent = ratingScore(
+    Number(seller.rating ?? 0),
+    Number(seller.ratingCount ?? 0),
+  );
+  // Product rating falls back to the seller's reputation when the product has
+  // no reviews yet (never a hard zero).
+  const productRatingComponent = productRating
+    ? ratingScore(productRating.avg, productRating.count)
+    : sellerRatingComponent;
   const verifiedComponent = seller.isVerified ? 1 : 0.5;
   const cancellation =
     seller.cancellationRate != null
       ? clamp01(1 - seller.cancellationRate)
       : 0.75; // neutral-ish prior when unknown
+
   return clamp01(
-    0.5 * ratingComponent + 0.3 * verifiedComponent + 0.2 * cancellation,
+    TRUST_SUBWEIGHTS.productRating * productRatingComponent +
+      TRUST_SUBWEIGHTS.sellerReputation * sellerRatingComponent +
+      TRUST_SUBWEIGHTS.verified * verifiedComponent +
+      TRUST_SUBWEIGHTS.fulfillment * cancellation,
   );
 }
 
@@ -190,7 +218,7 @@ export function scoreProduct(
   const breakdown: RankingBreakdown = {
     text: clamp01(input.textRelevance),
     commercial: commercialScore(input.stats, ageDays),
-    trust: trustScore(input.seller),
+    trust: trustScore(input.seller, input.productRating),
     conversion: conversionScore(input.stats),
     price: priceScore(input.price, input.categoryMedianPrice),
     logistics: logisticsScore(input.logistics),

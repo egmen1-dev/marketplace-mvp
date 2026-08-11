@@ -105,6 +105,37 @@ describe("deterministic ranking scenario (section 48)", () => {
   });
 });
 
+describe("review rating integration (TASK 059)", () => {
+  it("A (4.9, 100 reviews) is not beaten by B (5.0, 1 review) — section 39", () => {
+    const A = scoreProduct(
+      base({ productId: "A", productRating: { avg: 4.9, count: 100 } }),
+      { now: NOW },
+    );
+    const B = scoreProduct(
+      base({ productId: "B", productRating: { avg: 5.0, count: 1 } }),
+      { now: NOW },
+    );
+    expect(A.breakdown.trust).toBeGreaterThan(B.breakdown.trust);
+    expect(A.finalScore).toBeGreaterThan(B.finalScore);
+  });
+
+  it("C (0 reviews) keeps a neutral rating, not zero — section 40", () => {
+    const C = scoreProduct(
+      base({ productId: "C", productRating: { avg: 0, count: 0 }, seller: { isVerified: true } }),
+      { now: NOW },
+    );
+    // Trust is driven by the neutral prior, not a hard zero.
+    expect(C.breakdown.trust).toBeGreaterThan(0.5);
+    expect(C.finalScore).toBeGreaterThan(0.4);
+  });
+
+  it("a genuinely bad product rating lowers trust vs an unrated one", () => {
+    const bad = scoreProduct(base({ productRating: { avg: 1.5, count: 50 } }), { now: NOW });
+    const unrated = scoreProduct(base({ productRating: null }), { now: NOW });
+    expect(bad.breakdown.trust).toBeLessThan(unrated.breakdown.trust);
+  });
+});
+
 describe("signal behaviors", () => {
   it("out-of-stock is strongly demoted (section 33)", () => {
     const inStock = scoreProduct(base({ logistics: { stock: 5, pickupAvailable: false, shippingConfigured: true } }), { now: NOW });
