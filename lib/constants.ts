@@ -40,6 +40,7 @@ export const ROUTES = {
   ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
   /** Buyer + seller reservation lists (same path; UI branches by role) */
   ACCOUNT_RESERVATIONS: "/account/reservations",
+  ACCOUNT_REVIEWS: "/account/reviews",
   /** Buyer ↔ seller chat */
   ACCOUNT_MESSAGES: "/account/messages",
   ABOUT: "/about",
@@ -68,6 +69,7 @@ export const ROUTES = {
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_CATEGORIES: "/admin/categories",
   ADMIN_RANKING: "/admin/ranking",
+  ADMIN_REVIEWS: "/admin/reviews",
   ADMIN_RESERVATIONS: "/admin/reservations",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
