@@ -5,6 +5,7 @@ export {
   sendTextMessage,
   countUnreadMessagesForUser,
   notifyOrderCreated,
+  notifyOrderLifecycleMessage,
   notifyReservationCreated,
   notifyReservationConfirmed,
   notifyReservationReady,

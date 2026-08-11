@@ -13,9 +13,6 @@ import {
   getSellerTrustProfile,
   type SellerTrustProfile,
 } from "@/features/seller/lib/reputation";
-import {
-  canTransitionOrderStatus,
-} from "@/features/seller/lib/order-transitions";
 import { isLowStock, LOW_STOCK_THRESHOLD } from "@/features/orders/lib/inventory-sync";
 import { prisma } from "@/lib/prisma";
 
@@ -34,6 +31,8 @@ export type SellerOrderListItem = {
   id: string;
   orderNumber: string;
   status: OrderStatus;
+  fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
+  isOverdue: boolean;
   total: number;
   currency: string;
   createdAt: string;
@@ -46,6 +45,8 @@ export type SellerOrderListItem = {
 
 export type SellerOrderFilters = {
   status?: OrderStatus | "ALL";
+  /** Named filter buckets from OMS dashboard */
+  bucket?: string;
   from?: Date;
   to?: Date;
   page?: number;
@@ -119,9 +120,17 @@ export async function getSellerDashboardStats(
             status: {
               in: [
                 OrderStatus.PAID,
+                OrderStatus.AWAITING_SELLER_CONFIRMATION,
+                OrderStatus.CONFIRMED,
                 OrderStatus.PROCESSING,
+                OrderStatus.READY_FOR_SHIPMENT,
                 OrderStatus.SHIPPED,
+                OrderStatus.IN_TRANSIT,
+                OrderStatus.ARRIVED,
+                OrderStatus.READY_FOR_PICKUP,
+                OrderStatus.PICKED_UP,
                 OrderStatus.DELIVERED,
+                OrderStatus.COMPLETED,
               ],
             },
           },
@@ -166,11 +175,20 @@ export async function listSellerOrders(
   const pageSize = Math.min(filters.pageSize ?? 20, 100);
   const status = filters.status ?? "ALL";
 
+  const { SELLER_ORDER_FILTER_BUCKETS } = await import(
+    "@/features/orders/lib/status"
+  );
+
   const orderWhere: Prisma.OrderWhereInput = {
     items: { some: { product: { sellerId: sellerProfileId } } },
   };
 
-  if (status !== "ALL") {
+  if (filters.bucket && filters.bucket in SELLER_ORDER_FILTER_BUCKETS) {
+    const key = filters.bucket as keyof typeof SELLER_ORDER_FILTER_BUCKETS;
+    orderWhere.status = {
+      in: [...SELLER_ORDER_FILTER_BUCKETS[key]],
+    };
+  } else if (status !== "ALL") {
     orderWhere.status = status;
   }
 
@@ -209,6 +227,8 @@ export async function listSellerOrders(
       id: o.id,
       orderNumber: o.orderNumber,
       status: o.status,
+      fulfillmentType: o.fulfillmentType,
+      isOverdue: o.isOverdue,
       total: toPriceNumber(o.total),
       currency: o.currency,
       createdAt: o.createdAt.toISOString(),
@@ -222,6 +242,55 @@ export async function listSellerOrders(
       sellerItemNames: o.items.map((i) => i.productName),
     })),
   };
+}
+
+export async function getSellerOrderCounters(sellerProfileId: string): Promise<{
+  newCount: number;
+  inProgress: number;
+  awaitingShipment: number;
+  readyForPickup: number;
+  overdue: number;
+}> {
+  const base: Prisma.OrderWhereInput = {
+    items: { some: { product: { sellerId: sellerProfileId } } },
+  };
+  const [newCount, inProgress, awaitingShipment, readyForPickup, overdue] =
+    await Promise.all([
+      prisma.order.count({
+        where: {
+          ...base,
+          status: {
+            in: [
+              OrderStatus.NEW,
+              OrderStatus.AWAITING_SELLER_CONFIRMATION,
+              OrderStatus.PAID,
+            ],
+          },
+        },
+      }),
+      prisma.order.count({
+        where: {
+          ...base,
+          status: { in: [OrderStatus.CONFIRMED, OrderStatus.PROCESSING] },
+        },
+      }),
+      prisma.order.count({
+        where: {
+          ...base,
+          status: OrderStatus.READY_FOR_SHIPMENT,
+        },
+      }),
+      prisma.order.count({
+        where: {
+          ...base,
+          status: OrderStatus.READY_FOR_PICKUP,
+        },
+      }),
+      prisma.order.count({
+        where: { ...base, isOverdue: true },
+      }),
+    ]);
+  return { newCount, inProgress, awaitingShipment, readyForPickup, overdue };
 }
 
 export async function updateSellerOrderStatus(params: {
@@ -261,35 +330,37 @@ export async function updateSellerOrderStatus(params: {
     );
   }
 
-  if (
-    !canTransitionOrderStatus(order.status, params.toStatus, params.actorRole)
-  ) {
-    throw new SellerServiceError(
-      "INVALID_TRANSITION",
-      `Нельзя сменить статус ${order.status} → ${params.toStatus}`,
-      400,
-    );
-  }
+  const { transitionOrderWithEffects, OrderLifecycleError, userRoleToActorRole } =
+    await import("@/features/order-lifecycle");
 
-  const fromStatus = order.status;
-
-  await prisma.$transaction(async (tx) => {
-    await tx.order.update({
-      where: { id: params.orderId },
-      data: { status: params.toStatus },
+  try {
+    const result = await transitionOrderWithEffects({
+      orderId: params.orderId,
+      toStatus: params.toStatus,
+      actorUserId: params.actorUserId,
+      actorRole: userRoleToActorRole(params.actorRole),
+      reason: params.note ?? null,
     });
-    await tx.orderStatusHistory.create({
-      data: {
+
+    // Keep pickup reservations in sync for seller-pickup orders.
+    if (order.fulfillmentType === "SELLER_PICKUP") {
+      const { syncReservationsWithOrderStatus } = await import(
+        "@/features/order-lifecycle/lib/pickup-sync"
+      );
+      await syncReservationsWithOrderStatus({
         orderId: params.orderId,
-        fromStatus,
-        toStatus: params.toStatus,
-        changedByUserId: params.actorUserId,
-        note: params.note ?? null,
-      },
-    });
-  });
+        orderStatus: result.status,
+        sellerId: params.sellerProfileId,
+      });
+    }
 
-  return { status: params.toStatus };
+    return { status: result.status };
+  } catch (err) {
+    if (err instanceof OrderLifecycleError) {
+      throw new SellerServiceError(err.code, err.message, err.status);
+    }
+    throw err;
+  }
 }
 
 export async function getSellerSettings(

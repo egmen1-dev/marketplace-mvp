@@ -120,7 +120,7 @@ describe("finalizePaidOrder / webhook paid path", () => {
     expect(commitInventory).not.toHaveBeenCalled();
   });
 
-  it("commits inventory and marks PAID when amount + currency match", async () => {
+  it("commits inventory and marks awaiting confirmation when amount + currency match", async () => {
     vi.resetModules();
     const commitInventoryLocal = vi.fn(async () => undefined);
     vi.doMock("@/features/orders/lib/inventory", () => ({
@@ -139,6 +139,8 @@ describe("finalizePaidOrder / webhook paid path", () => {
 
     const orderUpdate = vi.fn();
     const paymentUpsert = vi.fn();
+    const historyCreate = vi.fn(async () => ({ id: "hist_1" }));
+    const eventCreate = vi.fn(async () => ({ id: "evt_1" }));
     vi.doMock("@/lib/prisma", () => ({
       prisma: {
         $transaction: async (fn: (tx: unknown) => Promise<unknown>) => {
@@ -150,7 +152,12 @@ describe("finalizePaidOrder / webhook paid path", () => {
                 status: OrderStatus.NEW,
                 total: new Prisma.Decimal("100.00"),
                 currency: "RUB",
+                fulfillmentType: "DELIVERY",
+                handlingDays: 2,
+                pickupExpiresAt: null,
                 payment: null,
+                delivery: { estimatedMaxDays: 3 },
+                items: [],
               }),
               update: orderUpdate,
             },
@@ -158,6 +165,8 @@ describe("finalizePaidOrder / webhook paid path", () => {
               update: vi.fn(),
               upsert: paymentUpsert,
             },
+            orderStatusHistory: { create: historyCreate },
+            orderEvent: { create: eventCreate },
           };
           return fn(tx);
         },
@@ -185,11 +194,16 @@ describe("finalizePaidOrder / webhook paid path", () => {
       "ord_2",
       expect.anything(),
     );
-    expect(orderUpdate).toHaveBeenCalledWith({
-      where: { id: "ord_2" },
-      data: { status: OrderStatus.PAID },
-    });
+    expect(orderUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "ord_2" },
+        data: expect.objectContaining({
+          status: OrderStatus.AWAITING_SELLER_CONFIRMATION,
+        }),
+      }),
+    );
     expect(paymentUpsert).toHaveBeenCalled();
+    expect(historyCreate).toHaveBeenCalled();
   });
 
   it("rejects when Stripe amount mismatches order total (no PAID, no stock)", async () => {

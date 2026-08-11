@@ -190,6 +190,12 @@ export async function getOrderForUser(
           estimatedMaxDays: true,
         },
       },
+      statusHistory: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          changedBy: { select: { name: true, email: true } },
+        },
+      },
       items: {
         orderBy: { productName: "asc" },
         include: {
@@ -212,10 +218,15 @@ export async function getOrderForUser(
 
   if (!order) return null;
 
+  const { getExpectedNextAction } = await import(
+    "@/features/order-lifecycle/lib/state-machine"
+  );
+
   return {
     id: order.id,
     orderNumber: order.orderNumber,
     status: order.status,
+    fulfillmentType: order.fulfillmentType,
     subtotal: toPriceNumber(order.subtotal),
     shippingCost: toPriceNumber(order.shippingCost),
     total: toPriceNumber(order.total),
@@ -223,6 +234,25 @@ export async function getOrderForUser(
     notes: order.notes,
     createdAt: order.createdAt.toISOString(),
     updatedAt: order.updatedAt.toISOString(),
+    estimatedDeliveryAt: order.estimatedDeliveryAt?.toISOString() ?? null,
+    confirmationDeadline: order.confirmationDeadline?.toISOString() ?? null,
+    shipmentDeadline: order.shipmentDeadline?.toISOString() ?? null,
+    pickupExpiresAt: order.pickupExpiresAt?.toISOString() ?? null,
+    isOverdue: order.isOverdue,
+    expectedNextAction: getExpectedNextAction({
+      status: order.status,
+      fulfillmentType: order.fulfillmentType,
+      viewer: "BUYER",
+    }),
+    history: order.statusHistory.map((h) => ({
+      id: h.id,
+      fromStatus: h.fromStatus,
+      toStatus: h.toStatus,
+      performedByRole: h.performedByRole,
+      reason: h.reason ?? h.note,
+      createdAt: h.createdAt.toISOString(),
+      actorName: h.changedBy?.name ?? h.changedBy?.email ?? null,
+    })),
     items: order.items.map(mapOrderItem),
     shipping: mapShipping(order.shippingAddress),
     delivery: mapDelivery(order.delivery),
@@ -452,6 +482,15 @@ async function createSellerPickupOrder(opts: {
       await tx.cart.update({
         where: { id: cart.id },
         data: { updatedAt: new Date() },
+      });
+
+      const { recordOrderCreated } = await import(
+        "@/features/order-lifecycle/lib/transition"
+      );
+      await recordOrderCreated({
+        orderId: created.id,
+        actorUserId: userId,
+        tx,
       });
 
       return created;
@@ -744,6 +783,15 @@ export async function createOrderFromCart(
       await tx.cart.update({
         where: { id: cart.id },
         data: { updatedAt: new Date() },
+      });
+
+      const { recordOrderCreated } = await import(
+        "@/features/order-lifecycle/lib/transition"
+      );
+      await recordOrderCreated({
+        orderId: created.id,
+        actorUserId: userId,
+        tx,
       });
 
       return created;

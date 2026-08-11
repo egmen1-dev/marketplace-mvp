@@ -134,10 +134,17 @@ describe("SELLER sees only own products (ownership)", () => {
 });
 
 describe("order status transitions + history", () => {
-  it("allows PAID → PROCESSING → SHIPPED → DELIVERED", () => {
+  it("allows awaiting → confirmed → processing on delivery", () => {
     expect(
       canTransitionOrderStatus(
-        OrderStatus.PAID,
+        OrderStatus.AWAITING_SELLER_CONFIRMATION,
+        OrderStatus.CONFIRMED,
+        UserRole.SELLER,
+      ),
+    ).toBe(true);
+    expect(
+      canTransitionOrderStatus(
+        OrderStatus.CONFIRMED,
         OrderStatus.PROCESSING,
         UserRole.SELLER,
       ),
@@ -145,7 +152,7 @@ describe("order status transitions + history", () => {
     expect(
       canTransitionOrderStatus(
         OrderStatus.PROCESSING,
-        OrderStatus.SHIPPED,
+        OrderStatus.READY_FOR_SHIPMENT,
         UserRole.SELLER,
       ),
     ).toBe(true);
@@ -158,39 +165,43 @@ describe("order status transitions + history", () => {
     ).toBe(true);
   });
 
-  it("does not allow seller to set PAID", () => {
+  it("does not allow seller to set payment status", () => {
     expect(
       getAllowedOrderTransitions(OrderStatus.NEW, UserRole.SELLER),
-    ).not.toContain(OrderStatus.PAID);
+    ).not.toContain(OrderStatus.AWAITING_SELLER_CONFIRMATION);
     expect(SELLER_ORDER_TRANSITIONS[OrderStatus.NEW]).toEqual([
       OrderStatus.CANCELLED,
     ]);
   });
 
-  it("updateSellerOrderStatus writes history", async () => {
+  it("updateSellerOrderStatus delegates to lifecycle engine", async () => {
     vi.resetModules();
     vi.clearAllMocks();
 
-    const orderUpdate = vi.fn(async () => undefined);
-    const historyCreate = vi.fn(async () => undefined);
+    const transitionOrderWithEffects = vi.fn(async () => ({
+      status: OrderStatus.CONFIRMED,
+    }));
 
     vi.doMock("@/lib/prisma", () => ({
       prisma: {
         order: {
           findUnique: vi.fn(async () => ({
             id: "ord_1",
-            status: OrderStatus.PAID,
+            status: OrderStatus.AWAITING_SELLER_CONFIRMATION,
+            fulfillmentType: "DELIVERY",
             items: [{ product: { sellerId: "seller_1" } }],
           })),
         },
-        $transaction: async (fn: (tx: unknown) => Promise<unknown>) => {
-          const tx = {
-            order: { update: orderUpdate },
-            orderStatusHistory: { create: historyCreate },
-          };
-          return fn(tx);
-        },
       },
+    }));
+
+    vi.doMock("@/features/order-lifecycle", () => ({
+      transitionOrderWithEffects,
+      OrderLifecycleError: class extends Error {
+        code = "INVALID_TRANSITION";
+        status = 400;
+      },
+      userRoleToActorRole: () => "SELLER",
     }));
 
     const { updateSellerOrderStatus } = await import(
@@ -199,29 +210,24 @@ describe("order status transitions + history", () => {
 
     const result = await updateSellerOrderStatus({
       orderId: "ord_1",
-      toStatus: OrderStatus.PROCESSING,
+      toStatus: OrderStatus.CONFIRMED,
       actorUserId: "user_1",
       actorRole: UserRole.SELLER,
       sellerProfileId: "seller_1",
-      note: "В работу",
+      note: "Ок",
     });
 
-    expect(result.status).toBe(OrderStatus.PROCESSING);
-    expect(orderUpdate).toHaveBeenCalledWith({
-      where: { id: "ord_1" },
-      data: { status: OrderStatus.PROCESSING },
-    });
-    expect(historyCreate).toHaveBeenCalledWith({
-      data: {
+    expect(result.status).toBe(OrderStatus.CONFIRMED);
+    expect(transitionOrderWithEffects).toHaveBeenCalledWith(
+      expect.objectContaining({
         orderId: "ord_1",
-        fromStatus: OrderStatus.PAID,
-        toStatus: OrderStatus.PROCESSING,
-        changedByUserId: "user_1",
-        note: "В работу",
-      },
-    });
+        toStatus: OrderStatus.CONFIRMED,
+      }),
+    );
   });
+});
 
+describe("order status authorization", () => {
   it("rejects status change for foreign seller", async () => {
     vi.resetModules();
     vi.clearAllMocks();
@@ -231,7 +237,8 @@ describe("order status transitions + history", () => {
         order: {
           findUnique: vi.fn(async () => ({
             id: "ord_1",
-            status: OrderStatus.PAID,
+            status: OrderStatus.AWAITING_SELLER_CONFIRMATION,
+            fulfillmentType: "DELIVERY",
             items: [{ product: { sellerId: "other" } }],
           })),
         },
@@ -246,7 +253,7 @@ describe("order status transitions + history", () => {
     await expect(
       updateSellerOrderStatus({
         orderId: "ord_1",
-        toStatus: OrderStatus.PROCESSING,
+        toStatus: OrderStatus.CONFIRMED,
         actorUserId: "user_1",
         actorRole: UserRole.SELLER,
         sellerProfileId: "seller_1",

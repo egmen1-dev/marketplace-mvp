@@ -95,6 +95,8 @@ describe("createOrderFromCart stock policy", () => {
             delivery: { create: async () => ({}) },
             cartItem: { deleteMany: async () => ({ count: 1 }) },
             cart: { update: async () => ({}) },
+            orderStatusHistory: { create: async () => ({ id: "h1" }) },
+            orderEvent: { create: async () => ({ id: "e1" }) },
           };
           return fn(tx);
         },

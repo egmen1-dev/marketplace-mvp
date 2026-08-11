@@ -33,13 +33,61 @@ enum ProductCondition {
   REFURBISHED
 }
 
+/// Full marketplace OMS lifecycle. Legacy `PAID` kept for migration compatibility
+/// (treated as AWAITING_SELLER_CONFIRMATION by the transition engine).
 enum OrderStatus {
   NEW
   PAID
+  AWAITING_SELLER_CONFIRMATION
+  CONFIRMED
   PROCESSING
+  READY_FOR_SHIPMENT
   SHIPPED
+  IN_TRANSIT
+  ARRIVED
+  READY_FOR_PICKUP
+  PICKED_UP
   DELIVERED
+  COMPLETED
   CANCELLED
+  REJECTED
+  RETURN_REQUESTED
+  RETURN_APPROVED
+  RETURNED
+  REFUNDED
+}
+
+/// Immutable audit role for who performed an order transition.
+enum OrderActorRole {
+  BUYER
+  SELLER
+  ADMIN
+  SYSTEM
+  PAYMENT
+}
+
+/// Typed domain events emitted by the Order Lifecycle Engine.
+enum OrderEventType {
+  CREATED
+  PAYMENT_RECORDED
+  CONFIRMED
+  REJECTED
+  PROCESSING_STARTED
+  READY_FOR_SHIPMENT
+  SHIPPED
+  IN_TRANSIT
+  ARRIVED
+  READY_FOR_PICKUP
+  PICKED_UP
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  RETURN_REQUESTED
+  RETURN_APPROVED
+  RETURNED
+  REFUNDED
+  OVERDUE_MARKED
+  SLA_UPDATED
 }
 
 enum PaymentStatus {
@@ -556,6 +604,18 @@ model Order {
   shippingAddressId String?
   notes           String?
   fulfillmentType OrderFulfillmentType @default(DELIVERY)
+  /// Seller handling time (business days) used for ETA when carrier data is absent.
+  handlingDays            Int       @default(2)
+  confirmationDeadline    DateTime?
+  shipmentDeadline        DateTime?
+  pickupExpiresAt         DateTime?
+  estimatedDeliveryAt     DateTime?
+  /// Soft SLA breach flag — does not replace the primary status.
+  isOverdue               Boolean   @default(false)
+  overdueAt               DateTime?
+  /// Architecture: order becomes review-eligible after COMPLETED.
+  reviewEligibleAt        DateTime?
+  completedAt             DateTime?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -565,6 +625,7 @@ model Order {
   payment         Payment?
   delivery        Delivery?
   statusHistory   OrderStatusHistory[]
+  events          OrderEvent[]
   reservations    PickupReservation[]
 
   @@index([userId])
@@ -572,17 +633,23 @@ model Order {
   @@index([orderNumber])
   @@index([createdAt])
   @@index([fulfillmentType])
+  @@index([isOverdue])
+  @@index([completedAt])
   @@map("orders")
 }
 
+/// Immutable order status audit trail (append-only).
 model OrderStatusHistory {
-  id              String       @id @default(cuid())
-  orderId         String
-  fromStatus      OrderStatus?
-  toStatus        OrderStatus
-  changedByUserId String?
-  note            String?
-  createdAt       DateTime     @default(now())
+  id               String         @id @default(cuid())
+  orderId          String
+  fromStatus       OrderStatus?
+  toStatus         OrderStatus
+  changedByUserId  String?
+  performedByRole  OrderActorRole @default(SYSTEM)
+  reason           String?
+  /// @deprecated Prefer `reason`. Kept for older rows.
+  note             String?
+  createdAt        DateTime       @default(now())
 
   order     Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
   changedBy User? @relation(fields: [changedByUserId], references: [id], onDelete: SetNull)
@@ -591,6 +658,22 @@ model OrderStatusHistory {
   @@index([createdAt])
   @@index([changedByUserId])
   @@map("order_status_history")
+}
+
+/// Domain events published by the Order Lifecycle Engine (event bus source).
+model OrderEvent {
+  id        String         @id @default(cuid())
+  orderId   String
+  type      OrderEventType
+  payload   Json?
+  createdAt DateTime       @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("order_events")
 }
 
 model OrderItem {

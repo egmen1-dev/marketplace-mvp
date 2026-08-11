@@ -63,12 +63,11 @@ export async function createCheckoutSessionForOrder(
     return { ok: false, error: "Заказ не найден" };
   }
 
-  if (order.status === OrderStatus.PAID || order.payment?.status === PaymentStatus.SUCCEEDED) {
-    return { ok: false, error: "Заказ уже оплачен" };
-  }
-
-  if (order.status === OrderStatus.CANCELLED) {
-    return { ok: false, error: "Заказ отменён" };
+  if (
+    order.status !== OrderStatus.NEW ||
+    order.payment?.status === PaymentStatus.SUCCEEDED
+  ) {
+    return { ok: false, error: "Заказ уже оплачен или недоступен для оплаты" };
   }
 
   if (order.items.length === 0) {

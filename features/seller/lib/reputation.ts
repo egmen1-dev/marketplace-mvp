@@ -131,7 +131,15 @@ export async function getSellerReputationMetrics(
       prisma.orderItem.findMany({
         where: {
           product: { sellerId: sellerProfileId },
-          order: { status: OrderStatus.DELIVERED },
+          order: {
+            status: {
+              in: [
+                OrderStatus.COMPLETED,
+                OrderStatus.DELIVERED,
+                OrderStatus.PICKED_UP,
+              ],
+            },
+          },
         },
         select: { quantity: true, orderId: true },
       }),

@@ -139,9 +139,17 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
         status: {
           in: [
             OrderStatus.PAID,
+            OrderStatus.AWAITING_SELLER_CONFIRMATION,
+            OrderStatus.CONFIRMED,
             OrderStatus.PROCESSING,
+            OrderStatus.READY_FOR_SHIPMENT,
             OrderStatus.SHIPPED,
+            OrderStatus.IN_TRANSIT,
+            OrderStatus.ARRIVED,
+            OrderStatus.READY_FOR_PICKUP,
+            OrderStatus.PICKED_UP,
             OrderStatus.DELIVERED,
+            OrderStatus.COMPLETED,
           ],
         },
       },
@@ -325,10 +333,35 @@ export async function listAdminProducts(params?: {
 
 export async function listAdminOrders(params?: {
   status?: OrderStatus | "ALL";
+  q?: string;
 }): Promise<AdminOrderRow[]> {
   const where: Prisma.OrderWhereInput = {};
   if (params?.status && params.status !== "ALL") {
     where.status = params.status;
+  }
+  const q = params?.q?.trim();
+  if (q) {
+    where.OR = [
+      { orderNumber: { contains: q, mode: "insensitive" } },
+      { user: { email: { contains: q, mode: "insensitive" } } },
+      { user: { name: { contains: q, mode: "insensitive" } } },
+      {
+        items: {
+          some: {
+            OR: [
+              { productName: { contains: q, mode: "insensitive" } },
+              {
+                product: {
+                  seller: {
+                    storeName: { contains: q, mode: "insensitive" },
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    ];
   }
 
   const rows = await prisma.order.findMany({

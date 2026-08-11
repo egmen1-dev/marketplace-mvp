@@ -95,9 +95,16 @@ export async function finalizePaidOrderInTx(
   }
 
   if (
-    order.status === OrderStatus.PAID ||
+    order.status !== OrderStatus.NEW ||
     order.payment?.status === PaymentStatus.SUCCEEDED
   ) {
+    if (order.status === OrderStatus.CANCELLED) {
+      throw new PaymentServiceError(
+        "ORDER_CANCELLED",
+        `Order ${orderId} is cancelled`,
+        400,
+      );
+    }
     if (order.payment && (stripePaymentIntentId || stripeSessionId)) {
       await tx.payment.update({
         where: { id: order.payment.id },
@@ -123,9 +130,17 @@ export async function finalizePaidOrderInTx(
 
   await commitInventory(orderId, tx);
 
-  await tx.order.update({
-    where: { id: orderId },
-    data: { status: OrderStatus.PAID },
+  const { transitionOrderInTx } = await import(
+    "@/features/order-lifecycle/lib/transition"
+  );
+  const { OrderActorRole } = await import("@prisma/client");
+
+  await transitionOrderInTx(tx, {
+    orderId,
+    toStatus: OrderStatus.AWAITING_SELLER_CONFIRMATION,
+    actorRole: OrderActorRole.PAYMENT,
+    reason: "Оплата подтверждена",
+    silent: true,
   });
 
   const amount = new Prisma.Decimal(amountTotal!).div(100);

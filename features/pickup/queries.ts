@@ -300,6 +300,27 @@ export async function updateReservationStatus(opts: {
   } catch (err) {
     console.error("[updateReservationStatus] chat notify", err);
   }
+
+  // Drive OMS from reservation actions (pickup branch).
+  try {
+    const {
+      mapReservationStatusToOrderStatus,
+      advancePickupOrderToward,
+    } = await import("@/features/order-lifecycle/lib/pickup-sync");
+    const { OrderActorRole } = await import("@prisma/client");
+    const nextOrder = mapReservationStatusToOrderStatus(opts.status);
+    if (nextOrder) {
+      await advancePickupOrderToward({
+        orderId: updated.orderId,
+        target: nextOrder,
+        actorRole: OrderActorRole.SELLER,
+        reason: `Бронь → ${opts.status}`,
+      });
+    }
+  } catch (err) {
+    console.error("[updateReservationStatus] oms sync", err);
+  }
+
   return mapReservation(updated);
 }
 

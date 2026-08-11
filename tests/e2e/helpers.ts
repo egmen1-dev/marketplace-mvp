@@ -11,6 +11,8 @@ const ALLOWED_CONSOLE_ERROR_PATTERNS: RegExp[] = [
   /Extra attributes from the server/i,
   /ResizeObserver loop/i,
   /^Failed to load resource: the server responded with a status of 404/i,
+  // Auth.js / session polls during sign-out can 401 briefly (not an app bug)
+  /^Failed to load resource: the server responded with a status of 401/i,
   // Optional Blob uploads may 503 when BLOB_READ_WRITE_TOKEN is unset (P2 infra)
   /^Failed to load resource: the server responded with a status of 503/i,
   /Failed to fetch RSC payload/i,

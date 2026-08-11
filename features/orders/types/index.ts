@@ -52,6 +52,7 @@ export type OrderDetail = {
   id: string;
   orderNumber: string;
   status: OrderStatus;
+  fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
   subtotal: number;
   shippingCost: number;
   total: number;
@@ -59,6 +60,21 @@ export type OrderDetail = {
   notes: string | null;
   createdAt: string;
   updatedAt: string;
+  estimatedDeliveryAt: string | null;
+  confirmationDeadline: string | null;
+  shipmentDeadline: string | null;
+  pickupExpiresAt: string | null;
+  isOverdue: boolean;
+  expectedNextAction: string;
+  history: Array<{
+    id: string;
+    fromStatus: OrderStatus | null;
+    toStatus: OrderStatus;
+    performedByRole: import("@prisma/client").OrderActorRole;
+    reason: string | null;
+    createdAt: string;
+    actorName: string | null;
+  }>;
   items: OrderItemView[];
   shipping: OrderShippingView;
   delivery: OrderDeliveryView;

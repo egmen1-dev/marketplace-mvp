@@ -520,34 +520,52 @@ export async function notifyOrderCreated(opts: {
   orderId: string;
   orderNumber: string;
 }): Promise<void> {
-  const items = await prisma.orderItem.findMany({
-    where: { orderId: opts.orderId },
+  await notifyOrderLifecycleMessage({
+    orderId: opts.orderId,
+    body: `Создан заказ №${opts.orderNumber}`,
+  });
+}
+
+/** System ORDER message for any lifecycle transition (one thread per product line). */
+export async function notifyOrderLifecycleMessage(opts: {
+  orderId: string;
+  body: string;
+}): Promise<void> {
+  const order = await prisma.order.findUnique({
+    where: { id: opts.orderId },
     select: {
-      productId: true,
-      product: { select: { sellerId: true, seller: { select: { userId: true } } } },
+      userId: true,
+      items: {
+        select: {
+          productId: true,
+          product: {
+            select: { sellerId: true, seller: { select: { userId: true } } },
+          },
+        },
+      },
     },
   });
+  if (!order) return;
 
   const byProduct = new Map<
     string,
-    { productId: string; sellerId: string; sellerUserId: string }
+    { productId: string; sellerId: string }
   >();
-  for (const item of items) {
+  for (const item of order.items) {
     if (!item.productId || !item.product) continue;
-    if (item.product.seller.userId === opts.buyerId) continue;
+    if (item.product.seller.userId === order.userId) continue;
     byProduct.set(item.productId, {
       productId: item.productId,
       sellerId: item.product.sellerId,
-      sellerUserId: item.product.seller.userId,
     });
   }
 
   for (const entry of byProduct.values()) {
     await upsertConversationSystemMessage({
       productId: entry.productId,
-      buyerId: opts.buyerId,
+      buyerId: order.userId,
       sellerId: entry.sellerId,
-      text: `Создан заказ №${opts.orderNumber}`,
+      text: opts.body,
       type: MessageType.ORDER,
     });
   }

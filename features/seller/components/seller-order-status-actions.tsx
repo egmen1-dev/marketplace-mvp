@@ -25,17 +25,19 @@ type SellerOrderStatusActionsProps = {
   orderId: string;
   status: OrderStatus;
   role: UserRole;
+  fulfillmentType?: "DELIVERY" | "SELLER_PICKUP";
 };
 
 export function SellerOrderStatusActions({
   orderId,
   status,
   role,
+  fulfillmentType = "DELIVERY",
 }: SellerOrderStatusActionsProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [confirmTo, setConfirmTo] = useState<OrderStatus | null>(null);
-  const next = getAllowedOrderTransitions(status, role);
+  const next = getAllowedOrderTransitions(status, role, fulfillmentType);
 
   if (next.length === 0) return null;
 

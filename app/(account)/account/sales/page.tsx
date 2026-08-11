@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { OrderStatus } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,44 +11,51 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireSellerCabinetAccess } from "@/features/auth";
-import { formatOrderDate, formatOrderStatus, OrderStatusBadge } from "@/features/orders";
+import {
+  formatOrderDate,
+  formatOrderStatus,
+  OrderStatusBadge,
+} from "@/features/orders";
 import { formatPrice } from "@/features/products/mappers";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
-import { listSellerOrders } from "@/features/seller/queries";
+import {
+  getSellerOrderCounters,
+  listSellerOrders,
+} from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Продажи",
+  title: "Заказы",
 };
 
-const STATUS_TABS: { value: OrderStatus | "ALL"; label: string }[] = [
+const BUCKET_TABS: { value: string; label: string }[] = [
   { value: "ALL", label: "Все" },
-  { value: OrderStatus.NEW, label: "Новые" },
-  { value: OrderStatus.PAID, label: "Оплачены" },
-  { value: OrderStatus.PROCESSING, label: "В обработке" },
-  { value: OrderStatus.SHIPPED, label: "Отправлены" },
-  { value: OrderStatus.DELIVERED, label: "Доставлены" },
-  { value: OrderStatus.CANCELLED, label: "Отменены" },
+  { value: "NEW", label: "Новые" },
+  { value: "AWAITING_CONFIRMATION", label: "Требуют подтверждения" },
+  { value: "PROCESSING", label: "Комплектуются" },
+  { value: "READY", label: "Готовы" },
+  { value: "SHIPPED", label: "Отправлены" },
+  { value: "PROBLEM", label: "Проблемные" },
+  { value: "CANCELLED", label: "Отменённые" },
+  { value: "COMPLETED", label: "Завершённые" },
 ];
 
 type PageProps = {
-  searchParams: Promise<{ status?: string; from?: string; to?: string }>;
+  searchParams: Promise<{ bucket?: string; from?: string; to?: string }>;
 };
 
 export default async function SellerOrdersPage({ searchParams }: PageProps) {
   const seller = await requireSellerCabinetAccess(ROUTES.SELLER_ORDERS);
   const params = await searchParams;
 
-  const statusRaw = params.status?.toUpperCase();
-  const status: OrderStatus | "ALL" =
-    statusRaw &&
-    (STATUS_TABS.some((t) => t.value === statusRaw) || statusRaw === "ALL")
-      ? (statusRaw as OrderStatus | "ALL")
-      : "ALL";
+  const bucketRaw = params.bucket?.toUpperCase() ?? "ALL";
+  const bucket = BUCKET_TABS.some((t) => t.value === bucketRaw)
+    ? bucketRaw
+    : "ALL";
 
   const from = params.from ? new Date(params.from) : undefined;
   const to = params.to ? new Date(params.to) : undefined;
@@ -59,22 +66,32 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
     page: 1,
     pageSize: 20,
   };
+  let counters = {
+    newCount: 0,
+    inProgress: 0,
+    awaitingShipment: 0,
+    readyForPickup: 0,
+    overdue: 0,
+  };
   let dbError: string | null = null;
 
   try {
-    orders = await listSellerOrders(seller.sellerProfileId, {
-      status,
-      from: from && !Number.isNaN(from.getTime()) ? from : undefined,
-      to: to && !Number.isNaN(to.getTime()) ? to : undefined,
-    });
+    [orders, counters] = await Promise.all([
+      listSellerOrders(seller.sellerProfileId, {
+        bucket: bucket === "ALL" ? undefined : bucket,
+        from: from && !Number.isNaN(from.getTime()) ? from : undefined,
+        to: to && !Number.isNaN(to.getTime()) ? to : undefined,
+      }),
+      getSellerOrderCounters(seller.sellerProfileId),
+    ]);
   } catch (err) {
     console.error("[seller/orders]", err);
     dbError = "Не удалось загрузить заказы";
   }
 
-  function tabHref(value: OrderStatus | "ALL") {
+  function tabHref(value: string) {
     const q = new URLSearchParams();
-    if (value !== "ALL") q.set("status", value);
+    if (value !== "ALL") q.set("bucket", value);
     if (params.from) q.set("from", params.from);
     if (params.to) q.set("to", params.to);
     const qs = q.toString();
@@ -89,25 +106,42 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
 
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
-          Продажи
+          Заказы
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Новые заказы, обработка и завершённые продажи.
+          Жизненный цикл продаж: подтверждение, сборка, отправка и выдача.
         </p>
       </div>
 
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+        {[
+          { label: "Новых", value: counters.newCount },
+          { label: "В работе", value: counters.inProgress },
+          { label: "К отправке", value: counters.awaitingShipment },
+          { label: "К выдаче", value: counters.readyForPickup },
+          { label: "Просрочено", value: counters.overdue },
+        ].map((c) => (
+          <Card key={c.label} className="border-border/80">
+            <CardHeader className="p-3 pb-1">
+              <CardDescription className="text-xs">{c.label}</CardDescription>
+              <CardTitle className="text-xl tabular-nums">{c.value}</CardTitle>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
+
       <div className="flex flex-wrap gap-1">
-        {STATUS_TABS.map((tab) => {
-          const active = status === tab.value;
+        {BUCKET_TABS.map((tab) => {
+          const active = bucket === tab.value;
           return (
             <Link
               key={tab.value}
               href={tabHref(tab.value)}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                "rounded-lg px-3 py-1.5 text-sm transition-colors",
                 active
-                  ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-surface text-muted-foreground hover:text-foreground",
               )}
             >
               {tab.label}
@@ -116,89 +150,57 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
         })}
       </div>
 
-      <form className="flex flex-wrap items-end gap-3" method="get">
-        {status !== "ALL" ? (
-          <input type="hidden" name="status" value={status} />
-        ) : null}
-        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-          С
-          <input
-            type="date"
-            name="from"
-            defaultValue={params.from ?? ""}
-            className="h-10 rounded-xl border border-input bg-surface px-3 text-sm text-foreground"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-          По
-          <input
-            type="date"
-            name="to"
-            defaultValue={params.to ?? ""}
-            className="h-10 rounded-xl border border-input bg-surface px-3 text-sm text-foreground"
-          />
-        </label>
-        <button
-          type="submit"
-          className="h-10 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground"
-        >
-          Фильтр
-        </button>
-      </form>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Список</CardTitle>
-          <CardDescription>
-            {orders.total > 0
-              ? `${orders.total} ${orders.total === 1 ? "заказ" : "заказов"}`
-              : "Пока нет заказов с вашими товарами"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {dbError ? (
-            <p className="text-sm text-destructive">{dbError}</p>
-          ) : orders.items.length === 0 ? (
-            <p className="py-6 text-sm text-muted-foreground">
-              Нет заказов по выбранным фильтрам.
-            </p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {orders.items.map((order) => (
-                <li
-                  key={order.id}
-                  className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0"
-                >
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-medium">{order.orderNumber}</p>
-                        <OrderStatusBadge status={order.status} />
-                        <Badge variant="outline" className="tabular-nums">
-                          {formatPrice(order.sellerSubtotal, order.currency)}
-                        </Badge>
-                      </div>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {formatOrderDate(order.createdAt)} ·{" "}
-                        {order.buyerName ?? order.buyerEmail} ·{" "}
-                        {order.itemCount} шт. · {formatOrderStatus(order.status)}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                        {order.sellerItemNames.join(", ")}
-                      </p>
-                    </div>
-                    <SellerOrderStatusActions
-                      orderId={order.id}
-                      status={order.status}
-                      role={seller.role}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
+      {dbError ? (
+        <p className="text-sm text-destructive">{dbError}</p>
+      ) : orders.items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {orders.items.map((order) => (
+            <Card key={order.id} className="border-border/80">
+              <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <CardTitle className="text-base">
+                    {order.orderNumber}
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    {formatOrderDate(order.createdAt)} ·{" "}
+                    {order.buyerName ?? order.buyerEmail}
+                    {" · "}
+                    {order.fulfillmentType === "SELLER_PICKUP"
+                      ? "Самовывоз"
+                      : "Доставка"}
+                  </CardDescription>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {order.sellerItemNames.join(", ")}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <OrderStatusBadge status={order.status} />
+                  {order.isOverdue ? (
+                    <Badge variant="destructive">Просрочен</Badge>
+                  ) : null}
+                  <span className="text-sm font-medium">
+                    {formatPrice(order.sellerSubtotal, order.currency)}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted-foreground">
+                  Статус: {formatOrderStatus(order.status)} · позиций:{" "}
+                  {order.itemCount}
+                </p>
+                <SellerOrderStatusActions
+                  orderId={order.id}
+                  status={order.status}
+                  role={UserRole.SELLER}
+                  fulfillmentType={order.fulfillmentType}
+                />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
