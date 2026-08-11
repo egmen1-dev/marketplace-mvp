@@ -109,7 +109,7 @@ function stateFromSearchParams(
     sellerKind: parsed.sellerKind ?? "",
     condition: parsed.condition ?? "",
     inStock: Boolean(parsed.inStock),
-    sort: parsed.sort ?? "popular",
+    sort: parsed.sort ?? "recommended",
   };
 }
 
@@ -396,7 +396,7 @@ function useCatalogFilterForm(
       sellerKind: form.sellerKind || undefined,
       condition: form.condition || undefined,
       inStock: form.inStock || undefined,
-      sort: form.sort || "popular",
+      sort: form.sort || "recommended",
       page: 1,
     });
     startTransition(() => {
@@ -416,7 +416,7 @@ function useCatalogFilterForm(
       sellerKind: "",
       condition: "",
       inStock: false,
-      sort: "popular",
+      sort: "recommended",
     });
     startTransition(() => {
       router.push(
@@ -626,7 +626,7 @@ export function CatalogSortSelect({ className }: { className?: string }) {
       onChange={(e) => {
         const next = new URLSearchParams(searchParams.toString());
         const value = e.target.value;
-        if (!value || value === "popular") next.delete("sort");
+        if (!value || value === "recommended") next.delete("sort");
         else next.set("sort", value);
         next.delete("page");
         const qs = next.toString();

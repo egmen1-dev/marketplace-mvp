@@ -478,30 +478,6 @@ export function ProductForm({
         </div>
       </section>
 
-      <section className="flex flex-col gap-4 border-t border-border pt-6">
-        <h2 className="font-heading text-lg font-semibold">SEO</h2>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="seoTitle">SEO-заголовок</Label>
-          <Input
-            id="seoTitle"
-            name="seoTitle"
-            maxLength={120}
-            defaultValue={product?.seoTitle ?? ""}
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="seoDescription">SEO-описание</Label>
-          <Textarea
-            id="seoDescription"
-            name="seoDescription"
-            rows={3}
-            maxLength={320}
-            className="rounded-xl bg-surface"
-            defaultValue={product?.seoDescription ?? ""}
-          />
-        </div>
-      </section>
-
       {state.error ? (
         <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {state.error}

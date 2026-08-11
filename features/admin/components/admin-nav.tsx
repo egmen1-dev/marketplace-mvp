@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BarChart3,
   FolderTree,
   LayoutDashboard,
   Package,
@@ -58,6 +59,12 @@ const NAV_ITEMS = [
     label: "Категории",
     icon: FolderTree,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CATEGORIES),
+  },
+  {
+    href: ROUTES.ADMIN_RANKING,
+    label: "Ранжирование",
+    icon: BarChart3,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_RANKING),
   },
 ] as const;
 

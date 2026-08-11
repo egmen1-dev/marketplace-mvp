@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "fetchedAt": "2026-08-10T00:00:00.000Z",
+  "fetchedAt": "2026-08-11T00:00:00.000Z",
   "categories": [
     {
       "key": "cat:construction",
@@ -15,7 +15,7 @@
       "externalName": "Строительство и ремонт"
     },
     {
-      "key": "cat:climate",
+      "key": "cat:climate-tech",
       "name": "Климатическая техника",
       "slug": "climate-tech",
       "parentKey": "cat:construction",
@@ -23,44 +23,44 @@
       "path": "construction/climate-tech",
       "sortOrder": 0,
       "externalSource": "snapshot",
-      "externalId": "lot-climate",
+      "externalId": "lot-climate-tech",
       "externalName": "Климатическая техника"
-    },
-    {
-      "key": "cat:heaters",
-      "name": "Обогреватели",
-      "slug": "heaters",
-      "parentKey": "cat:climate",
-      "level": 3,
-      "path": "construction/climate-tech/heaters",
-      "sortOrder": 0,
-      "externalSource": "snapshot",
-      "externalId": "lot-heaters",
-      "externalName": "Обогреватели"
-    },
-    {
-      "key": "cat:tools",
-      "name": "Инструменты",
-      "slug": "tools",
-      "parentKey": null,
-      "level": 1,
-      "path": "tools",
-      "sortOrder": 1,
-      "externalSource": "snapshot",
-      "externalId": "lot-tools",
-      "externalName": "Инструменты"
     },
     {
       "key": "cat:power-tools",
       "name": "Электроинструмент",
       "slug": "power-tools",
-      "parentKey": "cat:tools",
+      "parentKey": "cat:construction",
       "level": 2,
-      "path": "tools/power-tools",
-      "sortOrder": 0,
+      "path": "construction/power-tools",
+      "sortOrder": 1,
       "externalSource": "snapshot",
       "externalId": "lot-power-tools",
       "externalName": "Электроинструмент"
+    },
+    {
+      "key": "cat:hand-tools",
+      "name": "Ручной инструмент",
+      "slug": "hand-tools",
+      "parentKey": "cat:construction",
+      "level": 2,
+      "path": "construction/hand-tools",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-hand-tools",
+      "externalName": "Ручной инструмент"
+    },
+    {
+      "key": "cat:building-materials",
+      "name": "Строительные материалы",
+      "slug": "building-materials",
+      "parentKey": "cat:construction",
+      "level": 2,
+      "path": "construction/building-materials",
+      "sortOrder": 3,
+      "externalSource": "snapshot",
+      "externalId": "lot-building-materials",
+      "externalName": "Строительные материалы"
     },
     {
       "key": "cat:electronics",
@@ -69,7 +69,7 @@
       "parentKey": null,
       "level": 1,
       "path": "electronics",
-      "sortOrder": 2,
+      "sortOrder": 1,
       "externalSource": "snapshot",
       "externalId": "lot-electronics",
       "externalName": "Электроника"
@@ -87,56 +87,224 @@
       "externalName": "Компьютеры"
     },
     {
-      "key": "cat:clothing",
-      "name": "Одежда и обувь",
-      "slug": "clothing",
-      "parentKey": null,
-      "level": 1,
-      "path": "clothing",
-      "sortOrder": 3,
+      "key": "cat:phones",
+      "name": "Смартфоны и телефоны",
+      "slug": "phones",
+      "parentKey": "cat:electronics",
+      "level": 2,
+      "path": "electronics/phones",
+      "sortOrder": 1,
       "externalSource": "snapshot",
-      "externalId": "lot-clothing",
-      "externalName": "Одежда и обувь"
+      "externalId": "lot-phones",
+      "externalName": "Смартфоны и телефоны"
     },
     {
-      "key": "cat:footwear",
-      "name": "Обувь",
-      "slug": "footwear",
-      "parentKey": "cat:clothing",
+      "key": "cat:tv-audio",
+      "name": "ТВ и аудио",
+      "slug": "tv-audio",
+      "parentKey": "cat:electronics",
       "level": 2,
-      "path": "clothing/footwear",
-      "sortOrder": 0,
+      "path": "electronics/tv-audio",
+      "sortOrder": 2,
       "externalSource": "snapshot",
-      "externalId": "lot-footwear",
-      "externalName": "Обувь"
+      "externalId": "lot-tv-audio",
+      "externalName": "ТВ и аудио"
+    },
+    {
+      "key": "cat:wearables-cat",
+      "name": "Носимая электроника",
+      "slug": "wearables-cat",
+      "parentKey": "cat:electronics",
+      "level": 2,
+      "path": "electronics/wearables-cat",
+      "sortOrder": 3,
+      "externalSource": "snapshot",
+      "externalId": "lot-wearables-cat",
+      "externalName": "Носимая электроника"
     },
     {
       "key": "cat:home",
-      "name": "Дом и сад",
+      "name": "Дом",
       "slug": "home",
       "parentKey": null,
       "level": 1,
       "path": "home",
-      "sortOrder": 4,
+      "sortOrder": 2,
       "externalSource": "snapshot",
       "externalId": "lot-home",
-      "externalName": "Дом и сад"
+      "externalName": "Дом"
+    },
+    {
+      "key": "cat:furniture-cat",
+      "name": "Мебель",
+      "slug": "furniture-cat",
+      "parentKey": "cat:home",
+      "level": 2,
+      "path": "home/furniture-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-furniture-cat",
+      "externalName": "Мебель"
+    },
+    {
+      "key": "cat:home-appliances",
+      "name": "Бытовая техника для дома",
+      "slug": "home-appliances",
+      "parentKey": "cat:home",
+      "level": 2,
+      "path": "home/home-appliances",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-home-appliances",
+      "externalName": "Бытовая техника для дома"
+    },
+    {
+      "key": "cat:lighting-cat",
+      "name": "Освещение",
+      "slug": "lighting-cat",
+      "parentKey": "cat:home",
+      "level": 2,
+      "path": "home/lighting-cat",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-lighting-cat",
+      "externalName": "Освещение"
+    },
+    {
+      "key": "cat:kitchenware-cat",
+      "name": "Посуда",
+      "slug": "kitchenware-cat",
+      "parentKey": "cat:home",
+      "level": 2,
+      "path": "home/kitchenware-cat",
+      "sortOrder": 3,
+      "externalSource": "snapshot",
+      "externalId": "lot-kitchenware-cat",
+      "externalName": "Посуда"
+    },
+    {
+      "key": "cat:home-textile-cat",
+      "name": "Домашний текстиль",
+      "slug": "home-textile-cat",
+      "parentKey": "cat:home",
+      "level": 2,
+      "path": "home/home-textile-cat",
+      "sortOrder": 4,
+      "externalSource": "snapshot",
+      "externalId": "lot-home-textile-cat",
+      "externalName": "Домашний текстиль"
     },
     {
       "key": "cat:auto",
-      "name": "Автотовары",
+      "name": "Авто",
       "slug": "auto",
       "parentKey": null,
       "level": 1,
       "path": "auto",
-      "sortOrder": 5,
+      "sortOrder": 3,
       "externalSource": "snapshot",
       "externalId": "lot-auto",
-      "externalName": "Автотовары"
+      "externalName": "Авто"
+    },
+    {
+      "key": "cat:auto-accessories-cat",
+      "name": "Автоаксессуары",
+      "slug": "auto-accessories-cat",
+      "parentKey": "cat:auto",
+      "level": 2,
+      "path": "auto/auto-accessories-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-auto-accessories-cat",
+      "externalName": "Автоаксессуары"
+    },
+    {
+      "key": "cat:auto-care-cat",
+      "name": "Автохимия и уход",
+      "slug": "auto-care-cat",
+      "parentKey": "cat:auto",
+      "level": 2,
+      "path": "auto/auto-care-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-auto-care-cat",
+      "externalName": "Автохимия и уход"
+    },
+    {
+      "key": "cat:tires-wheels-cat",
+      "name": "Шины и диски",
+      "slug": "tires-wheels-cat",
+      "parentKey": "cat:auto",
+      "level": 2,
+      "path": "auto/tires-wheels-cat",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-tires-wheels-cat",
+      "externalName": "Шины и диски"
+    },
+    {
+      "key": "cat:clothing",
+      "name": "Одежда",
+      "slug": "clothing",
+      "parentKey": null,
+      "level": 1,
+      "path": "clothing",
+      "sortOrder": 4,
+      "externalSource": "snapshot",
+      "externalId": "lot-clothing",
+      "externalName": "Одежда"
+    },
+    {
+      "key": "cat:women-clothing",
+      "name": "Женская одежда",
+      "slug": "women-clothing",
+      "parentKey": "cat:clothing",
+      "level": 2,
+      "path": "clothing/women-clothing",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-women-clothing",
+      "externalName": "Женская одежда"
+    },
+    {
+      "key": "cat:men-clothing",
+      "name": "Мужская одежда",
+      "slug": "men-clothing",
+      "parentKey": "cat:clothing",
+      "level": 2,
+      "path": "clothing/men-clothing",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-men-clothing",
+      "externalName": "Мужская одежда"
+    },
+    {
+      "key": "cat:shoes",
+      "name": "Обувь",
+      "slug": "shoes",
+      "parentKey": null,
+      "level": 1,
+      "path": "shoes",
+      "sortOrder": 5,
+      "externalSource": "snapshot",
+      "externalId": "lot-shoes",
+      "externalName": "Обувь"
+    },
+    {
+      "key": "cat:shoes-all",
+      "name": "Обувь",
+      "slug": "shoes-all",
+      "parentKey": "cat:shoes",
+      "level": 2,
+      "path": "shoes/shoes-all",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-shoes-all",
+      "externalName": "Обувь"
     },
     {
       "key": "cat:beauty",
-      "name": "Красота и здоровье",
+      "name": "Красота",
       "slug": "beauty",
       "parentKey": null,
       "level": 1,
@@ -144,11 +312,35 @@
       "sortOrder": 6,
       "externalSource": "snapshot",
       "externalId": "lot-beauty",
-      "externalName": "Красота и здоровье"
+      "externalName": "Красота"
+    },
+    {
+      "key": "cat:skincare-cat",
+      "name": "Уход за кожей",
+      "slug": "skincare-cat",
+      "parentKey": "cat:beauty",
+      "level": 2,
+      "path": "beauty/skincare-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-skincare-cat",
+      "externalName": "Уход за кожей"
+    },
+    {
+      "key": "cat:perfume-cat",
+      "name": "Парфюмерия",
+      "slug": "perfume-cat",
+      "parentKey": "cat:beauty",
+      "level": 2,
+      "path": "beauty/perfume-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-perfume-cat",
+      "externalName": "Парфюмерия"
     },
     {
       "key": "cat:sport",
-      "name": "Спорт и отдых",
+      "name": "Спорт",
       "slug": "sport",
       "parentKey": null,
       "level": 1,
@@ -156,23 +348,54 @@
       "sortOrder": 7,
       "externalSource": "snapshot",
       "externalId": "lot-sport",
-      "externalName": "Спорт и отдых"
+      "externalName": "Спорт"
+    },
+    {
+      "key": "cat:fitness-cat",
+      "name": "Фитнес",
+      "slug": "fitness-cat",
+      "parentKey": "cat:sport",
+      "level": 2,
+      "path": "sport/fitness-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-fitness-cat",
+      "externalName": "Фитнес"
+    },
+    {
+      "key": "cat:cycling-cat",
+      "name": "Велоспорт",
+      "slug": "cycling-cat",
+      "parentKey": "cat:sport",
+      "level": 2,
+      "path": "sport/cycling-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-cycling-cat",
+      "externalName": "Велоспорт"
     }
   ],
   "productTypes": [
     {
-      "key": "pt:heat-guns",
+      "key": "subject:heat-guns-type",
       "name": "Тепловые пушки",
-      "slug": "heat-guns",
-      "categoryKey": "cat:heaters",
+      "slug": "heat-guns-type",
+      "categoryKey": "cat:climate-tech",
       "sortOrder": 0,
       "externalSource": "snapshot",
-      "externalId": "lot-heat-guns",
+      "externalId": "lot-pt-heat-guns-type",
       "externalName": "Тепловые пушки",
-      "aliases": ["тепловая пушка", "пушка", "теплопушка", "heat gun"],
+      "aliases": [
+        "тепловая пушка",
+        "теплопушка",
+        "пушка тепловая",
+        "тепловентилятор промышленный",
+        "тепловая пушка электрическая",
+        "газовая пушка"
+      ],
       "characteristics": [
         {
-          "key": "ch:hg-power",
+          "key": "charc:heat-guns-type:power-kw",
           "name": "Мощность",
           "slug": "power-kw",
           "type": "NUMBER",
@@ -181,180 +404,74 @@
           "options": null,
           "sortOrder": 0,
           "filterable": true,
-          "externalId": "lot-hg-power",
+          "externalId": "lot-ch-heat-guns-type-power-kw",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:hg-heat-type",
+          "key": "charc:heat-guns-type:heat-type",
           "name": "Тип нагрева",
           "slug": "heat-type",
           "type": "SELECT",
           "required": true,
           "unit": null,
-          "options": ["электрический", "газовый", "дизельный"],
+          "options": [
+            "электрический",
+            "газовый",
+            "дизельный",
+            "инфракрасный"
+          ],
           "sortOrder": 1,
           "filterable": true,
-          "externalId": "lot-hg-heat-type",
+          "externalId": "lot-ch-heat-guns-type-heat-type",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:hg-voltage",
-          "name": "Напряжение",
-          "slug": "voltage",
-          "type": "SELECT",
-          "required": false,
-          "unit": "В",
-          "options": ["220", "380"],
-          "sortOrder": 2,
-          "filterable": true,
-          "externalId": "lot-hg-voltage",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:hg-airflow",
+          "key": "charc:heat-guns-type:airflow",
           "name": "Производительность",
           "slug": "airflow",
           "type": "NUMBER",
           "required": false,
           "unit": "м³/ч",
           "options": null,
-          "sortOrder": 3,
-          "filterable": false,
-          "externalId": "lot-hg-airflow",
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-heat-guns-type-airflow",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:hg-area",
+          "key": "charc:heat-guns-type:heat-area",
           "name": "Площадь обогрева",
           "slug": "heat-area",
           "type": "NUMBER",
           "required": false,
           "unit": "м²",
           "options": null,
-          "sortOrder": 4,
+          "sortOrder": 3,
           "filterable": true,
-          "externalId": "lot-hg-area",
+          "externalId": "lot-ch-heat-guns-type-heat-area",
           "externalSource": "snapshot"
         }
       ]
     },
     {
-      "key": "pt:gas-heat-guns",
-      "name": "Газовые тепловые пушки",
-      "slug": "gas-heat-guns",
-      "categoryKey": "cat:heaters",
+      "key": "subject:heaters-type",
+      "name": "Обогреватели",
+      "slug": "heaters-type",
+      "categoryKey": "cat:climate-tech",
       "sortOrder": 1,
       "externalSource": "snapshot",
-      "externalId": "lot-gas-heat-guns",
-      "externalName": "Газовые тепловые пушки",
-      "aliases": ["газовая пушка", "газовая тепловая пушка"],
+      "externalId": "lot-pt-heaters-type",
+      "externalName": "Обогреватели",
+      "aliases": [
+        "обогреватель",
+        "конвектор",
+        "масляный обогреватель",
+        "инфракрасный обогреватель",
+        "керамический обогреватель"
+      ],
       "characteristics": [
         {
-          "key": "ch:ghg-power",
-          "name": "Мощность",
-          "slug": "power-kw",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "кВт",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-ghg-power",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:ghg-fuel",
-          "name": "Тип топлива",
-          "slug": "fuel-type",
-          "type": "SELECT",
-          "required": true,
-          "unit": null,
-          "options": ["пропан", "пропан-бутан"],
-          "sortOrder": 1,
-          "filterable": true,
-          "externalId": "lot-ghg-fuel",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:electric-heat-guns",
-      "name": "Электрические тепловые пушки",
-      "slug": "electric-heat-guns",
-      "categoryKey": "cat:heaters",
-      "sortOrder": 2,
-      "externalSource": "snapshot",
-      "externalId": "lot-electric-heat-guns",
-      "externalName": "Электрические тепловые пушки",
-      "aliases": ["электрическая пушка", "электропушка"],
-      "characteristics": [
-        {
-          "key": "ch:ehg-power",
-          "name": "Мощность",
-          "slug": "power-kw",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "кВт",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-ehg-power",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:ehg-voltage",
-          "name": "Напряжение",
-          "slug": "voltage",
-          "type": "SELECT",
-          "required": true,
-          "unit": "В",
-          "options": ["220", "380"],
-          "sortOrder": 1,
-          "filterable": true,
-          "externalId": "lot-ehg-voltage",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:diesel-heat-guns",
-      "name": "Дизельные тепловые пушки",
-      "slug": "diesel-heat-guns",
-      "categoryKey": "cat:heaters",
-      "sortOrder": 3,
-      "externalSource": "snapshot",
-      "externalId": "lot-diesel-heat-guns",
-      "externalName": "Дизельные тепловые пушки",
-      "aliases": ["дизельная пушка", "дизельная тепловая пушка"],
-      "characteristics": [
-        {
-          "key": "ch:dhg-power",
-          "name": "Мощность",
-          "slug": "power-kw",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "кВт",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-dhg-power",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:drills",
-      "name": "Дрели",
-      "slug": "drills",
-      "categoryKey": "cat:power-tools",
-      "sortOrder": 0,
-      "externalSource": "snapshot",
-      "externalId": "lot-drills",
-      "externalName": "Дрели",
-      "aliases": ["дрель", "ударная дрель"],
-      "characteristics": [
-        {
-          "key": "ch:drill-power",
+          "key": "charc:heaters-type:power-w",
           "name": "Мощность",
           "slug": "power-w",
           "type": "NUMBER",
@@ -363,258 +480,907 @@
           "options": null,
           "sortOrder": 0,
           "filterable": true,
-          "externalId": "lot-drill-power",
+          "externalId": "lot-ch-heaters-type-power-w",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:drill-chuck",
-          "name": "Патрон",
-          "slug": "chuck",
+          "key": "charc:heaters-type:heater-type",
+          "name": "Тип обогревателя",
+          "slug": "heater-type",
           "type": "SELECT",
           "required": false,
           "unit": null,
-          "options": ["быстрозажимной", "ключевой"],
+          "options": [
+            "конвектор",
+            "масляный",
+            "керамический",
+            "инфракрасный",
+            "тепловентилятор"
+          ],
           "sortOrder": 1,
           "filterable": true,
-          "externalId": "lot-drill-chuck",
+          "externalId": "lot-ch-heaters-type-heater-type",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:drill-battery",
-          "name": "Аккумуляторная",
-          "slug": "cordless",
+          "key": "charc:heaters-type:heat-area",
+          "name": "Площадь обогрева",
+          "slug": "heat-area",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "м²",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-heaters-type-heat-area",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:fan-heaters-type",
+      "name": "Тепловентиляторы",
+      "slug": "fan-heaters-type",
+      "categoryKey": "cat:climate-tech",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-fan-heaters-type",
+      "externalName": "Тепловентиляторы",
+      "aliases": [
+        "тепловентилятор",
+        "дуйка",
+        "тепловой вентилятор"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:fan-heaters-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-fan-heaters-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fan-heaters-type:heater-type",
+          "name": "Тип обогревателя",
+          "slug": "heater-type",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "конвектор",
+            "масляный",
+            "керамический",
+            "инфракрасный",
+            "тепловентилятор"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-fan-heaters-type-heater-type",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fan-heaters-type:heat-area",
+          "name": "Площадь обогрева",
+          "slug": "heat-area",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "м²",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-fan-heaters-type-heat-area",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:drills-type",
+      "name": "Дрели",
+      "slug": "drills-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-drills-type",
+      "externalName": "Дрели",
+      "aliases": [
+        "дрель",
+        "дрель ударная",
+        "электродрель",
+        "ударная дрель"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:drills-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-drills-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:drills-type:power-source",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "type": "SELECT",
+          "required": true,
+          "unit": null,
+          "options": [
+            "сеть",
+            "аккумулятор"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-drills-type-power-source",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:drills-type:torque",
+          "name": "Макс. крутящий момент",
+          "slug": "torque",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Н·м",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-drills-type-torque",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:drills-type:impact",
+          "name": "Ударный режим",
+          "slug": "impact",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-drills-type-impact",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:drills-type:brand",
+          "name": "Бренд",
+          "slug": "brand",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-drills-type-brand",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:screwdrivers-type",
+      "name": "Шуруповёрты",
+      "slug": "screwdrivers-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-screwdrivers-type",
+      "externalName": "Шуруповёрты",
+      "aliases": [
+        "шуруповерт",
+        "шуруповёрт",
+        "дрель-шуруповерт",
+        "аккумуляторный шуруповерт",
+        "шуруповерт аккумуляторный"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:screwdrivers-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-type:power-source",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "type": "SELECT",
+          "required": true,
+          "unit": null,
+          "options": [
+            "сеть",
+            "аккумулятор"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-type-power-source",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-type:torque",
+          "name": "Макс. крутящий момент",
+          "slug": "torque",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Н·м",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-type-torque",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-type:impact",
+          "name": "Ударный режим",
+          "slug": "impact",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-type-impact",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-type:brand",
+          "name": "Бренд",
+          "slug": "brand",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-type-brand",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:rotary-hammers-type",
+      "name": "Перфораторы",
+      "slug": "rotary-hammers-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-rotary-hammers-type",
+      "externalName": "Перфораторы",
+      "aliases": [
+        "перфоратор",
+        "бур перфоратор",
+        "перфоратор sds"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:rotary-hammers-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-rotary-hammers-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:rotary-hammers-type:power-source",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "type": "SELECT",
+          "required": true,
+          "unit": null,
+          "options": [
+            "сеть",
+            "аккумулятор"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-rotary-hammers-type-power-source",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:rotary-hammers-type:torque",
+          "name": "Макс. крутящий момент",
+          "slug": "torque",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Н·м",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-rotary-hammers-type-torque",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:rotary-hammers-type:impact",
+          "name": "Ударный режим",
+          "slug": "impact",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-rotary-hammers-type-impact",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:rotary-hammers-type:brand",
+          "name": "Бренд",
+          "slug": "brand",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-rotary-hammers-type-brand",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:angle-grinders-type",
+      "name": "Угловые шлифовальные машины (УШМ)",
+      "slug": "angle-grinders-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 3,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-angle-grinders-type",
+      "externalName": "Угловые шлифовальные машины (УШМ)",
+      "aliases": [
+        "болгарка",
+        "ушм",
+        "угловая шлифовальная машина",
+        "шлифмашина угловая",
+        "болгарка ушм"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:angle-grinders-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-angle-grinders-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:angle-grinders-type:disc-diameter",
+          "name": "Диаметр диска",
+          "slug": "disc-diameter",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "мм",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-angle-grinders-type-disc-diameter",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:angle-grinders-type:speed-control",
+          "name": "Регулировка оборотов",
+          "slug": "speed-control",
           "type": "BOOLEAN",
           "required": false,
           "unit": null,
           "options": null,
           "sortOrder": 2,
           "filterable": true,
-          "externalId": "lot-drill-cordless",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:rotary-hammers",
-      "name": "Перфораторы",
-      "slug": "rotary-hammers",
-      "categoryKey": "cat:power-tools",
-      "sortOrder": 1,
-      "externalSource": "snapshot",
-      "externalId": "lot-rotary-hammers",
-      "externalName": "Перфораторы",
-      "aliases": ["перфоратор", "ударный перфоратор"],
-      "characteristics": [
-        {
-          "key": "ch:rh-power",
-          "name": "Мощность",
-          "slug": "power-w",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "Вт",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-rh-power",
+          "externalId": "lot-ch-angle-grinders-type-speed-control",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:rh-energy",
-          "name": "Энергия удара",
-          "slug": "impact-energy",
-          "type": "NUMBER",
-          "required": false,
-          "unit": "Дж",
-          "options": null,
-          "sortOrder": 1,
-          "filterable": true,
-          "externalId": "lot-rh-energy",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:screwdrivers",
-      "name": "Шуруповерты",
-      "slug": "screwdrivers",
-      "categoryKey": "cat:power-tools",
-      "sortOrder": 2,
-      "externalSource": "snapshot",
-      "externalId": "lot-screwdrivers",
-      "externalName": "Шуруповерты",
-      "aliases": ["шуруповерт", "дрель-шуруповерт", "шурик"],
-      "characteristics": [
-        {
-          "key": "ch:sd-voltage",
-          "name": "Напряжение АКБ",
-          "slug": "battery-v",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "В",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-sd-battery",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:sd-torque",
-          "name": "Крутящий момент",
-          "slug": "torque",
-          "type": "NUMBER",
-          "required": false,
-          "unit": "Н·м",
-          "options": null,
-          "sortOrder": 1,
-          "filterable": true,
-          "externalId": "lot-sd-torque",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:angle-grinders",
-      "name": "Угловые шлифовальные машины",
-      "slug": "angle-grinders",
-      "categoryKey": "cat:power-tools",
-      "sortOrder": 3,
-      "externalSource": "snapshot",
-      "externalId": "lot-angle-grinders",
-      "externalName": "Угловые шлифовальные машины",
-      "aliases": ["болгарка", "ушм", "углошлифовальная машина", "шлифмашина"],
-      "characteristics": [
-        {
-          "key": "ch:ag-power",
-          "name": "Мощность",
-          "slug": "power-w",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "Вт",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-ag-power",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:ag-disc",
-          "name": "Диаметр диска",
-          "slug": "disc-mm",
-          "type": "SELECT",
-          "required": true,
-          "unit": "мм",
-          "options": ["115", "125", "150", "180", "230"],
-          "sortOrder": 1,
-          "filterable": true,
-          "externalId": "lot-ag-disc",
-          "externalSource": "snapshot"
-        }
-      ]
-    },
-    {
-      "key": "pt:laptops",
-      "name": "Ноутбуки",
-      "slug": "laptops",
-      "categoryKey": "cat:computers",
-      "sortOrder": 0,
-      "externalSource": "snapshot",
-      "externalId": "lot-laptops",
-      "externalName": "Ноутбуки",
-      "aliases": ["ноутбук", "ноут", "laptop", "лэптоп"],
-      "characteristics": [
-        {
-          "key": "ch:nb-diag",
-          "name": "Диагональ",
-          "slug": "screen-inch",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "\"",
-          "options": null,
-          "sortOrder": 0,
-          "filterable": true,
-          "externalId": "lot-nb-diag",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:nb-cpu",
-          "name": "Процессор",
-          "slug": "cpu",
+          "key": "charc:angle-grinders-type:brand",
+          "name": "Бренд",
+          "slug": "brand",
           "type": "TEXT",
-          "required": true,
-          "unit": null,
-          "options": null,
-          "sortOrder": 1,
-          "filterable": true,
-          "externalId": "lot-nb-cpu",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:nb-ram",
-          "name": "ОЗУ",
-          "slug": "ram-gb",
-          "type": "NUMBER",
-          "required": true,
-          "unit": "ГБ",
-          "options": null,
-          "sortOrder": 2,
-          "filterable": true,
-          "externalId": "lot-nb-ram",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:nb-storage",
-          "name": "Накопитель",
-          "slug": "storage",
-          "type": "TEXT",
-          "required": true,
+          "required": false,
           "unit": null,
           "options": null,
           "sortOrder": 3,
           "filterable": true,
-          "externalId": "lot-nb-storage",
-          "externalSource": "snapshot"
-        },
-        {
-          "key": "ch:nb-gpu",
-          "name": "Видеокарта",
-          "slug": "gpu",
-          "type": "TEXT",
-          "required": false,
-          "unit": null,
-          "options": null,
-          "sortOrder": 4,
-          "filterable": true,
-          "externalId": "lot-nb-gpu",
+          "externalId": "lot-ch-angle-grinders-type-brand",
           "externalSource": "snapshot"
         }
       ]
     },
     {
-      "key": "pt:shoes",
-      "name": "Обувь",
-      "slug": "shoes",
-      "categoryKey": "cat:footwear",
-      "sortOrder": 0,
+      "key": "subject:construction-vacuums-type",
+      "name": "Строительные пылесосы",
+      "slug": "construction-vacuums-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 4,
       "externalSource": "snapshot",
-      "externalId": "lot-shoes",
-      "externalName": "Обувь",
-      "aliases": ["кроссовки", "ботинки", "туфли"],
+      "externalId": "lot-pt-construction-vacuums-type",
+      "externalName": "Строительные пылесосы",
+      "aliases": [
+        "строительный пылесос",
+        "пылесос строительный",
+        "промышленный пылесос",
+        "пылесос для стройки"
+      ],
       "characteristics": [
         {
-          "key": "ch:shoe-size",
-          "name": "Размер",
-          "slug": "size",
-          "type": "SIZE",
+          "key": "charc:construction-vacuums-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
           "required": true,
-          "unit": null,
-          "options": ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"],
+          "unit": "Вт",
+          "options": null,
           "sortOrder": 0,
           "filterable": true,
-          "externalId": "lot-shoe-size",
+          "externalId": "lot-ch-construction-vacuums-type-power-w",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:shoe-material",
+          "key": "charc:construction-vacuums-type:tank-volume",
+          "name": "Объём бака",
+          "slug": "tank-volume",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "л",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-construction-vacuums-type-tank-volume",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:construction-vacuums-type:wet-dry",
+          "name": "Сухая/влажная уборка",
+          "slug": "wet-dry",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-construction-vacuums-type-wet-dry",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:jigsaws-type",
+      "name": "Лобзики",
+      "slug": "jigsaws-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 5,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-jigsaws-type",
+      "externalName": "Лобзики",
+      "aliases": [
+        "лобзик",
+        "электролобзик",
+        "лобзик электрический"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:jigsaws-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-jigsaws-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:jigsaws-type:power-source",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "type": "SELECT",
+          "required": true,
+          "unit": null,
+          "options": [
+            "сеть",
+            "аккумулятор"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-jigsaws-type-power-source",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:jigsaws-type:battery-voltage",
+          "name": "Напряжение аккумулятора",
+          "slug": "battery-voltage",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "В",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-jigsaws-type-battery-voltage",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:jigsaws-type:brand",
+          "name": "Бренд",
+          "slug": "brand",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-jigsaws-type-brand",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:welders-type",
+      "name": "Сварочные аппараты",
+      "slug": "welders-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 6,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-welders-type",
+      "externalName": "Сварочные аппараты",
+      "aliases": [
+        "сварочный аппарат",
+        "сварочник",
+        "сварка инвертор",
+        "инвертор сварочный"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:welders-type:max-current",
+          "name": "Макс. ток",
+          "slug": "max-current",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "А",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-welders-type-max-current",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:welders-type:weld-type",
+          "name": "Тип сварки",
+          "slug": "weld-type",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "MMA",
+            "MIG/MAG",
+            "TIG"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-welders-type-weld-type",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:sanders-type",
+      "name": "Шлифовальные машины",
+      "slug": "sanders-type",
+      "categoryKey": "cat:power-tools",
+      "sortOrder": 7,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-sanders-type",
+      "externalName": "Шлифовальные машины",
+      "aliases": [
+        "шлифмашина",
+        "шлифовальная машина",
+        "эксцентриковая шлифмашина"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:sanders-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-sanders-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sanders-type:power-source",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "type": "SELECT",
+          "required": true,
+          "unit": null,
+          "options": [
+            "сеть",
+            "аккумулятор"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-sanders-type-power-source",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sanders-type:battery-voltage",
+          "name": "Напряжение аккумулятора",
+          "slug": "battery-voltage",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "В",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-sanders-type-battery-voltage",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sanders-type:brand",
+          "name": "Бренд",
+          "slug": "brand",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-sanders-type-brand",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:tool-sets-type",
+      "name": "Наборы инструментов",
+      "slug": "tool-sets-type",
+      "categoryKey": "cat:hand-tools",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-tool-sets-type",
+      "externalName": "Наборы инструментов",
+      "aliases": [
+        "набор инструментов",
+        "набор бит",
+        "набор ключей",
+        "кейс с инструментом"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:tool-sets-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-tool-sets-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tool-sets-type:pieces",
+          "name": "Количество предметов",
+          "slug": "pieces",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "шт",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-tool-sets-type-pieces",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:wrenches-type",
+      "name": "Гаечные ключи",
+      "slug": "wrenches-type",
+      "categoryKey": "cat:hand-tools",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-wrenches-type",
+      "externalName": "Гаечные ключи",
+      "aliases": [
+        "гаечный ключ",
+        "ключи гаечные",
+        "набор ключей",
+        "рожковый ключ"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:wrenches-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-wrenches-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:wrenches-type:pieces",
+          "name": "Количество предметов",
+          "slug": "pieces",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "шт",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-wrenches-type-pieces",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:screwdrivers-hand-type",
+      "name": "Отвёртки",
+      "slug": "screwdrivers-hand-type",
+      "categoryKey": "cat:hand-tools",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-screwdrivers-hand-type",
+      "externalName": "Отвёртки",
+      "aliases": [
+        "отвертка",
+        "отвёртка",
+        "набор отверток"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:screwdrivers-hand-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-hand-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-hand-type:pieces",
+          "name": "Количество предметов",
+          "slug": "pieces",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "шт",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-hand-type-pieces",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:paints-type",
+      "name": "Краски",
+      "slug": "paints-type",
+      "categoryKey": "cat:building-materials",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-paints-type",
+      "externalName": "Краски",
+      "aliases": [
+        "краска",
+        "краска интерьерная",
+        "эмаль",
+        "краска для стен"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:paints-type:volume-l",
+          "name": "Объём",
+          "slug": "volume-l",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "л",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-paints-type-volume-l",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:paints-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-paints-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:paints-type:base",
+          "name": "Основа",
+          "slug": "base",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "водная",
+            "акриловая",
+            "масляная"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-paints-type-base",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:fasteners-type",
+      "name": "Крепёж",
+      "slug": "fasteners-type",
+      "categoryKey": "cat:building-materials",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-fasteners-type",
+      "externalName": "Крепёж",
+      "aliases": [
+        "крепеж",
+        "саморезы",
+        "дюбели",
+        "набор крепежа",
+        "болты"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:fasteners-type:count",
+          "name": "Количество",
+          "slug": "count",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "шт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-fasteners-type-count",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fasteners-type:material",
           "name": "Материал",
           "slug": "material",
           "type": "TEXT",
@@ -623,33 +1389,2282 @@
           "options": null,
           "sortOrder": 1,
           "filterable": true,
-          "externalId": "lot-shoe-material",
+          "externalId": "lot-ch-fasteners-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:laptops-type",
+      "name": "Ноутбуки",
+      "slug": "laptops-type",
+      "categoryKey": "cat:computers",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-laptops-type",
+      "externalName": "Ноутбуки",
+      "aliases": [
+        "ноутбук",
+        "ноут",
+        "laptop",
+        "ультрабук",
+        "игровой ноутбук"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:laptops-type:cpu",
+          "name": "Процессор",
+          "slug": "cpu",
+          "type": "TEXT",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-laptops-type-cpu",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:shoe-season",
+          "key": "charc:laptops-type:ram",
+          "name": "Оперативная память",
+          "slug": "ram",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "ГБ",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-laptops-type-ram",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:laptops-type:ssd",
+          "name": "Накопитель SSD",
+          "slug": "ssd",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "ГБ",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-laptops-type-ssd",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:laptops-type:screen",
+          "name": "Диагональ экрана",
+          "slug": "screen",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-laptops-type-screen",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:laptops-type:gpu",
+          "name": "Видеокарта",
+          "slug": "gpu",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-laptops-type-gpu",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:monitors-type",
+      "name": "Мониторы",
+      "slug": "monitors-type",
+      "categoryKey": "cat:computers",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-monitors-type",
+      "externalName": "Мониторы",
+      "aliases": [
+        "монитор",
+        "экран для компьютера",
+        "игровой монитор"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:monitors-type:screen",
+          "name": "Диагональ экрана",
+          "slug": "screen",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-monitors-type-screen",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:monitors-type:resolution",
+          "name": "Разрешение",
+          "slug": "resolution",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Full HD",
+            "2K",
+            "4K",
+            "5K"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-monitors-type-resolution",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:monitors-type:refresh",
+          "name": "Частота обновления",
+          "slug": "refresh",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Гц",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-monitors-type-refresh",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:desktops-type",
+      "name": "Системные блоки",
+      "slug": "desktops-type",
+      "categoryKey": "cat:computers",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-desktops-type",
+      "externalName": "Системные блоки",
+      "aliases": [
+        "системный блок",
+        "пк",
+        "компьютер настольный",
+        "игровой пк"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:desktops-type:cpu",
+          "name": "Процессор",
+          "slug": "cpu",
+          "type": "TEXT",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-desktops-type-cpu",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desktops-type:ram",
+          "name": "Оперативная память",
+          "slug": "ram",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "ГБ",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-desktops-type-ram",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desktops-type:ssd",
+          "name": "Накопитель SSD",
+          "slug": "ssd",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "ГБ",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-desktops-type-ssd",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desktops-type:screen",
+          "name": "Диагональ экрана",
+          "slug": "screen",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-desktops-type-screen",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desktops-type:gpu",
+          "name": "Видеокарта",
+          "slug": "gpu",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-desktops-type-gpu",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:smartphones-type",
+      "name": "Смартфоны",
+      "slug": "smartphones-type",
+      "categoryKey": "cat:phones",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-smartphones-type",
+      "externalName": "Смартфоны",
+      "aliases": [
+        "смартфон",
+        "телефон",
+        "айфон",
+        "iphone",
+        "смартфон samsung",
+        "смартфон xiaomi",
+        "мобильный телефон"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:smartphones-type:storage",
+          "name": "Встроенная память",
+          "slug": "storage",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "ГБ",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-smartphones-type-storage",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:smartphones-type:ram",
+          "name": "Оперативная память",
+          "slug": "ram",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "ГБ",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-smartphones-type-ram",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:smartphones-type:screen",
+          "name": "Диагональ экрана",
+          "slug": "screen",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-smartphones-type-screen",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:smartphones-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-smartphones-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:tvs-type",
+      "name": "Телевизоры",
+      "slug": "tvs-type",
+      "categoryKey": "cat:tv-audio",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-tvs-type",
+      "externalName": "Телевизоры",
+      "aliases": [
+        "телевизор",
+        "тв",
+        "smart tv",
+        "телек",
+        "телевизор 4к"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:tvs-type:screen",
+          "name": "Диагональ экрана",
+          "slug": "screen",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-tvs-type-screen",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tvs-type:resolution",
+          "name": "Разрешение",
+          "slug": "resolution",
+          "type": "SELECT",
+          "required": true,
+          "unit": null,
+          "options": [
+            "HD",
+            "Full HD",
+            "4K",
+            "8K"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-tvs-type-resolution",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tvs-type:smart",
+          "name": "Smart TV",
+          "slug": "smart",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-tvs-type-smart",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:headphones-type",
+      "name": "Наушники",
+      "slug": "headphones-type",
+      "categoryKey": "cat:tv-audio",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-headphones-type",
+      "externalName": "Наушники",
+      "aliases": [
+        "наушники",
+        "гарнитура",
+        "беспроводные наушники",
+        "tws наушники"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:headphones-type:form",
+          "name": "Тип",
+          "slug": "form",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "вкладыши",
+            "внутриканальные",
+            "накладные",
+            "полноразмерные"
+          ],
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-headphones-type-form",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:headphones-type:wireless",
+          "name": "Беспроводные",
+          "slug": "wireless",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-headphones-type-wireless",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:headphones-type:anc",
+          "name": "Шумоподавление",
+          "slug": "anc",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-headphones-type-anc",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:speakers-type",
+      "name": "Колонки",
+      "slug": "speakers-type",
+      "categoryKey": "cat:tv-audio",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-speakers-type",
+      "externalName": "Колонки",
+      "aliases": [
+        "колонка",
+        "портативная колонка",
+        "bluetooth колонка",
+        "акустика"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:speakers-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-speakers-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:speakers-type:wireless",
+          "name": "Беспроводная",
+          "slug": "wireless",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-speakers-type-wireless",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:smartwatches-type",
+      "name": "Смарт-часы",
+      "slug": "smartwatches-type",
+      "categoryKey": "cat:wearables-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-smartwatches-type",
+      "externalName": "Смарт-часы",
+      "aliases": [
+        "смарт часы",
+        "умные часы",
+        "смарт-часы",
+        "фитнес браслет",
+        "часы фитнес"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:smartwatches-type:screen",
+          "name": "Диагональ экрана",
+          "slug": "screen",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-smartwatches-type-screen",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:smartwatches-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-smartwatches-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:sofas-type",
+      "name": "Диваны",
+      "slug": "sofas-type",
+      "categoryKey": "cat:furniture-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-sofas-type",
+      "externalName": "Диваны",
+      "aliases": [
+        "диван",
+        "диван-кровать",
+        "угловой диван",
+        "софа"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:sofas-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-sofas-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sofas-type:width",
+          "name": "Ширина",
+          "slug": "width",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "см",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-sofas-type-width",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sofas-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-sofas-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:beds-type",
+      "name": "Кровати",
+      "slug": "beds-type",
+      "categoryKey": "cat:furniture-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-beds-type",
+      "externalName": "Кровати",
+      "aliases": [
+        "кровать",
+        "двуспальная кровать",
+        "кровать с матрасом"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:beds-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-beds-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:beds-type:width",
+          "name": "Ширина",
+          "slug": "width",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "см",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-beds-type-width",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:beds-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-beds-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:tables-type",
+      "name": "Столы",
+      "slug": "tables-type",
+      "categoryKey": "cat:furniture-cat",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-tables-type",
+      "externalName": "Столы",
+      "aliases": [
+        "стол",
+        "письменный стол",
+        "компьютерный стол",
+        "обеденный стол"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:tables-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-tables-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tables-type:width",
+          "name": "Ширина",
+          "slug": "width",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "см",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-tables-type-width",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tables-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-tables-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:wardrobes-type",
+      "name": "Шкафы",
+      "slug": "wardrobes-type",
+      "categoryKey": "cat:furniture-cat",
+      "sortOrder": 3,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-wardrobes-type",
+      "externalName": "Шкафы",
+      "aliases": [
+        "шкаф",
+        "шкаф-купе",
+        "гардероб"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:wardrobes-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-wardrobes-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:wardrobes-type:width",
+          "name": "Ширина",
+          "slug": "width",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "см",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-wardrobes-type-width",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:wardrobes-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-wardrobes-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:vacuums-type",
+      "name": "Пылесосы",
+      "slug": "vacuums-type",
+      "categoryKey": "cat:home-appliances",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-vacuums-type",
+      "externalName": "Пылесосы",
+      "aliases": [
+        "пылесос",
+        "пылесос для дома",
+        "робот пылесос",
+        "моющий пылесос",
+        "вертикальный пылесос"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:vacuums-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-vacuums-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:vacuums-type:vacuum-type",
+          "name": "Тип",
+          "slug": "vacuum-type",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "с мешком",
+            "циклонный",
+            "вертикальный",
+            "робот",
+            "моющий"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-vacuums-type-vacuum-type",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:vacuums-type:container",
+          "name": "Объём контейнера",
+          "slug": "container",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "л",
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-vacuums-type-container",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:hair-dryers-type",
+      "name": "Фены",
+      "slug": "hair-dryers-type",
+      "categoryKey": "cat:home-appliances",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-hair-dryers-type",
+      "externalName": "Фены",
+      "aliases": [
+        "фен",
+        "фен для волос",
+        "фен профессиональный"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:hair-dryers-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-hair-dryers-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:hair-dryers-type:modes",
+          "name": "Количество режимов",
+          "slug": "modes",
+          "type": "NUMBER",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-hair-dryers-type-modes",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:hair-dryers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-hair-dryers-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:fridges-type",
+      "name": "Холодильники",
+      "slug": "fridges-type",
+      "categoryKey": "cat:home-appliances",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-fridges-type",
+      "externalName": "Холодильники",
+      "aliases": [
+        "холодильник",
+        "двухкамерный холодильник",
+        "холодильник no frost"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:fridges-type:volume-l",
+          "name": "Общий объём",
+          "slug": "volume-l",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "л",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-fridges-type-volume-l",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fridges-type:energy",
+          "name": "Класс энергопотребления",
+          "slug": "energy",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "A",
+            "A+",
+            "A++",
+            "A+++"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-fridges-type-energy",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fridges-type:no-frost",
+          "name": "No Frost",
+          "slug": "no-frost",
+          "type": "BOOLEAN",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-fridges-type-no-frost",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:washers-type",
+      "name": "Стиральные машины",
+      "slug": "washers-type",
+      "categoryKey": "cat:home-appliances",
+      "sortOrder": 3,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-washers-type",
+      "externalName": "Стиральные машины",
+      "aliases": [
+        "стиральная машина",
+        "стиралка",
+        "машинка стиральная"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:washers-type:load-kg",
+          "name": "Загрузка",
+          "slug": "load-kg",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "кг",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-washers-type-load-kg",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:washers-type:spin",
+          "name": "Класс отжима",
+          "slug": "spin",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "A",
+            "B",
+            "C"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-washers-type-spin",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:microwaves-type",
+      "name": "Микроволновые печи",
+      "slug": "microwaves-type",
+      "categoryKey": "cat:home-appliances",
+      "sortOrder": 4,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-microwaves-type",
+      "externalName": "Микроволновые печи",
+      "aliases": [
+        "микроволновка",
+        "микроволновая печь",
+        "свч"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:microwaves-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-microwaves-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:microwaves-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-microwaves-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:irons-type",
+      "name": "Утюги",
+      "slug": "irons-type",
+      "categoryKey": "cat:home-appliances",
+      "sortOrder": 5,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-irons-type",
+      "externalName": "Утюги",
+      "aliases": [
+        "утюг",
+        "утюг с парогенератором",
+        "паровой утюг"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:irons-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-irons-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:irons-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-irons-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:desk-lamps-type",
+      "name": "Настольные лампы",
+      "slug": "desk-lamps-type",
+      "categoryKey": "cat:lighting-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-desk-lamps-type",
+      "externalName": "Настольные лампы",
+      "aliases": [
+        "настольная лампа",
+        "лампа",
+        "светильник настольный"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:desk-lamps-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-desk-lamps-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desk-lamps-type:color-temp",
+          "name": "Цветовая температура",
+          "slug": "color-temp",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "K",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-desk-lamps-type-color-temp",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:led-strips-type",
+      "name": "Светодиодные ленты",
+      "slug": "led-strips-type",
+      "categoryKey": "cat:lighting-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-led-strips-type",
+      "externalName": "Светодиодные ленты",
+      "aliases": [
+        "светодиодная лента",
+        "led лента",
+        "подсветка"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:led-strips-type:power-w",
+          "name": "Мощность",
+          "slug": "power-w",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "Вт",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-led-strips-type-power-w",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:led-strips-type:color-temp",
+          "name": "Цветовая температура",
+          "slug": "color-temp",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "K",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-led-strips-type-color-temp",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:dinnerware-type",
+      "name": "Наборы посуды",
+      "slug": "dinnerware-type",
+      "categoryKey": "cat:kitchenware-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-dinnerware-type",
+      "externalName": "Наборы посуды",
+      "aliases": [
+        "набор посуды",
+        "посуда",
+        "тарелки",
+        "сервиз"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:dinnerware-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-dinnerware-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dinnerware-type:pieces",
+          "name": "Количество предметов",
+          "slug": "pieces",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "шт",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-dinnerware-type-pieces",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:bedding-type",
+      "name": "Постельное бельё",
+      "slug": "bedding-type",
+      "categoryKey": "cat:home-textile-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-bedding-type",
+      "externalName": "Постельное бельё",
+      "aliases": [
+        "постельное белье",
+        "комплект белья",
+        "простыни",
+        "пододеяльник"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:bedding-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-bedding-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:bedding-type:size-text",
+          "name": "Размер",
+          "slug": "size-text",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-bedding-type-size-text",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:car-compressors-type",
+      "name": "Автомобильные компрессоры",
+      "slug": "car-compressors-type",
+      "categoryKey": "cat:auto-accessories-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-car-compressors-type",
+      "externalName": "Автомобильные компрессоры",
+      "aliases": [
+        "автомобильный компрессор",
+        "компрессор автомобильный",
+        "насос автомобильный",
+        "компрессор для шин"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:car-compressors-type:airflow-lmin",
+          "name": "Производительность",
+          "slug": "airflow-lmin",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "л/мин",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-car-compressors-type-airflow-lmin",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-compressors-type:pressure",
+          "name": "Максимальное давление",
+          "slug": "pressure",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "бар",
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-car-compressors-type-pressure",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-compressors-type:power-source",
+          "name": "Питание",
+          "slug": "power-source",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "12В",
+            "220В"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-car-compressors-type-power-source",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:dashcams-type",
+      "name": "Видеорегистраторы",
+      "slug": "dashcams-type",
+      "categoryKey": "cat:auto-accessories-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-dashcams-type",
+      "externalName": "Видеорегистраторы",
+      "aliases": [
+        "видеорегистратор",
+        "регистратор автомобильный",
+        "dvr"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:dashcams-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-dashcams-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dashcams-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-dashcams-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:phone-mounts-type",
+      "name": "Держатели для телефона",
+      "slug": "phone-mounts-type",
+      "categoryKey": "cat:auto-accessories-cat",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-phone-mounts-type",
+      "externalName": "Держатели для телефона",
+      "aliases": [
+        "держатель телефона",
+        "автодержатель",
+        "держатель для телефона в машину"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:phone-mounts-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-phone-mounts-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:phone-mounts-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-phone-mounts-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:car-chemicals-type",
+      "name": "Автохимия",
+      "slug": "car-chemicals-type",
+      "categoryKey": "cat:auto-care-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-car-chemicals-type",
+      "externalName": "Автохимия",
+      "aliases": [
+        "автохимия",
+        "полироль",
+        "антифриз",
+        "омыватель"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:car-chemicals-type:volume-ml",
+          "name": "Объём",
+          "slug": "volume-ml",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "мл",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-car-chemicals-type-volume-ml",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-chemicals-type:care-type",
+          "name": "Тип",
+          "slug": "care-type",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-car-chemicals-type-care-type",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:car-wash-type",
+      "name": "Щётки и аксессуары для мойки",
+      "slug": "car-wash-type",
+      "categoryKey": "cat:auto-care-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-car-wash-type",
+      "externalName": "Щётки и аксессуары для мойки",
+      "aliases": [
+        "щетка для авто",
+        "щетка для дисков",
+        "мойка авто"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:car-wash-type:volume-ml",
+          "name": "Объём",
+          "slug": "volume-ml",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "мл",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-car-wash-type-volume-ml",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-wash-type:care-type",
+          "name": "Тип",
+          "slug": "care-type",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-car-wash-type-care-type",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:tires-type",
+      "name": "Шины",
+      "slug": "tires-type",
+      "categoryKey": "cat:tires-wheels-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-tires-type",
+      "externalName": "Шины",
+      "aliases": [
+        "шины",
+        "покрышки",
+        "резина автомобильная",
+        "зимние шины",
+        "летние шины"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:tires-type:diameter",
+          "name": "Диаметр",
+          "slug": "diameter",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-tires-type-diameter",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tires-type:season",
           "name": "Сезон",
           "slug": "season",
           "type": "SELECT",
           "required": false,
           "unit": null,
-          "options": ["лето", "демисезон", "зима"],
-          "sortOrder": 2,
+          "options": [
+            "летние",
+            "зимние",
+            "всесезонные"
+          ],
+          "sortOrder": 1,
           "filterable": true,
-          "externalId": "lot-shoe-season",
+          "externalId": "lot-ch-tires-type-season",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:women-jackets-type",
+      "name": "Куртки женские",
+      "slug": "women-jackets-type",
+      "categoryKey": "cat:women-clothing",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-women-jackets-type",
+      "externalName": "Куртки женские",
+      "aliases": [
+        "женская куртка",
+        "зимняя женская куртка",
+        "куртка женская",
+        "пуховик женский"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:women-jackets-type:size",
+          "name": "Размер",
+          "slug": "size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-women-jackets-type-size",
           "externalSource": "snapshot"
         },
         {
-          "key": "ch:shoe-gender",
-          "name": "Пол",
-          "slug": "gender",
+          "key": "charc:women-jackets-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-women-jackets-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:women-jackets-type:season",
+          "name": "Сезон",
+          "slug": "season",
           "type": "SELECT",
           "required": false,
           "unit": null,
-          "options": ["мужской", "женский", "унисекс"],
+          "options": [
+            "зима",
+            "демисезон",
+            "лето"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-women-jackets-type-season",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:women-jackets-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
           "sortOrder": 3,
           "filterable": true,
-          "externalId": "lot-shoe-gender",
+          "externalId": "lot-ch-women-jackets-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:dresses-type",
+      "name": "Платья",
+      "slug": "dresses-type",
+      "categoryKey": "cat:women-clothing",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-dresses-type",
+      "externalName": "Платья",
+      "aliases": [
+        "платье",
+        "платье женское",
+        "вечернее платье"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:dresses-type:size",
+          "name": "Размер",
+          "slug": "size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-dresses-type-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dresses-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-dresses-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dresses-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-dresses-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:men-jackets-type",
+      "name": "Куртки мужские",
+      "slug": "men-jackets-type",
+      "categoryKey": "cat:men-clothing",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-men-jackets-type",
+      "externalName": "Куртки мужские",
+      "aliases": [
+        "мужская куртка",
+        "зимняя мужская куртка",
+        "куртка мужская",
+        "пуховик мужской"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:men-jackets-type:size",
+          "name": "Размер",
+          "slug": "size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-men-jackets-type-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:men-jackets-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-men-jackets-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:men-jackets-type:season",
+          "name": "Сезон",
+          "slug": "season",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "зима",
+            "демисезон",
+            "лето"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-men-jackets-type-season",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:men-jackets-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-men-jackets-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:tshirts-type",
+      "name": "Футболки",
+      "slug": "tshirts-type",
+      "categoryKey": "cat:men-clothing",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-tshirts-type",
+      "externalName": "Футболки",
+      "aliases": [
+        "футболка",
+        "футболка мужская",
+        "футболка хлопок"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:tshirts-type:size",
+          "name": "Размер",
+          "slug": "size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-tshirts-type-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tshirts-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-tshirts-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tshirts-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-tshirts-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:sneakers-type",
+      "name": "Кроссовки",
+      "slug": "sneakers-type",
+      "categoryKey": "cat:shoes-all",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-sneakers-type",
+      "externalName": "Кроссовки",
+      "aliases": [
+        "кроссовки",
+        "мужские кроссовки",
+        "женские кроссовки",
+        "кеды",
+        "беговые кроссовки"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:sneakers-type:shoe-size",
+          "name": "Размер",
+          "slug": "shoe-size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-sneakers-type-shoe-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sneakers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-sneakers-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sneakers-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-sneakers-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:boots-type",
+      "name": "Ботинки",
+      "slug": "boots-type",
+      "categoryKey": "cat:shoes-all",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-boots-type",
+      "externalName": "Ботинки",
+      "aliases": [
+        "ботинки",
+        "зимние ботинки",
+        "ботинки мужские"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:boots-type:shoe-size",
+          "name": "Размер",
+          "slug": "shoe-size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-boots-type-shoe-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:boots-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-boots-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:boots-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-boots-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:high-boots-type",
+      "name": "Сапоги",
+      "slug": "high-boots-type",
+      "categoryKey": "cat:shoes-all",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-high-boots-type",
+      "externalName": "Сапоги",
+      "aliases": [
+        "сапоги",
+        "сапоги женские",
+        "резиновые сапоги"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:high-boots-type:shoe-size",
+          "name": "Размер",
+          "slug": "shoe-size",
+          "type": "SIZE",
+          "required": true,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-high-boots-type-shoe-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:high-boots-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-high-boots-type-color",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:high-boots-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-high-boots-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:face-creams-type",
+      "name": "Кремы для лица",
+      "slug": "face-creams-type",
+      "categoryKey": "cat:skincare-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-face-creams-type",
+      "externalName": "Кремы для лица",
+      "aliases": [
+        "крем для лица",
+        "крем",
+        "увлажняющий крем",
+        "крем ночной"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:face-creams-type:volume-ml",
+          "name": "Объём",
+          "slug": "volume-ml",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "мл",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-face-creams-type-volume-ml",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:face-creams-type:skin-type",
+          "name": "Тип кожи",
+          "slug": "skin-type",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "сухая",
+            "жирная",
+            "нормальная",
+            "комбинированная"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-face-creams-type-skin-type",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:serums-type",
+      "name": "Сыворотки",
+      "slug": "serums-type",
+      "categoryKey": "cat:skincare-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-serums-type",
+      "externalName": "Сыворотки",
+      "aliases": [
+        "сыворотка",
+        "сыворотка для лица",
+        "серум"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:serums-type:volume-ml",
+          "name": "Объём",
+          "slug": "volume-ml",
+          "type": "NUMBER",
+          "required": false,
+          "unit": "мл",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-serums-type-volume-ml",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:serums-type:skin-type",
+          "name": "Тип кожи",
+          "slug": "skin-type",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "сухая",
+            "жирная",
+            "нормальная",
+            "комбинированная"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-serums-type-skin-type",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:perfume-type",
+      "name": "Духи и парфюмерная вода",
+      "slug": "perfume-type",
+      "categoryKey": "cat:perfume-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-perfume-type",
+      "externalName": "Духи и парфюмерная вода",
+      "aliases": [
+        "духи",
+        "парфюм",
+        "туалетная вода",
+        "парфюмерная вода",
+        "аромат"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:perfume-type:volume-ml",
+          "name": "Объём",
+          "slug": "volume-ml",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "мл",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-perfume-type-volume-ml",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:perfume-type:scent",
+          "name": "Тип аромата",
+          "slug": "scent",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-perfume-type-scent",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:dumbbells-type",
+      "name": "Гантели",
+      "slug": "dumbbells-type",
+      "categoryKey": "cat:fitness-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-dumbbells-type",
+      "externalName": "Гантели",
+      "aliases": [
+        "гантели",
+        "гантель",
+        "гантели наборные",
+        "гантели неопреновые"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:dumbbells-type:weight-kg",
+          "name": "Вес",
+          "slug": "weight-kg",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "кг",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-dumbbells-type-weight-kg",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dumbbells-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-dumbbells-type-material",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:yoga-mats-type",
+      "name": "Коврики для йоги",
+      "slug": "yoga-mats-type",
+      "categoryKey": "cat:fitness-cat",
+      "sortOrder": 1,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-yoga-mats-type",
+      "externalName": "Коврики для йоги",
+      "aliases": [
+        "коврик для йоги",
+        "коврик йога",
+        "фитнес коврик"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:yoga-mats-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-yoga-mats-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:yoga-mats-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-yoga-mats-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:trainers-type",
+      "name": "Тренажёры",
+      "slug": "trainers-type",
+      "categoryKey": "cat:fitness-cat",
+      "sortOrder": 2,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-trainers-type",
+      "externalName": "Тренажёры",
+      "aliases": [
+        "тренажер",
+        "домашний тренажер",
+        "эспандер"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:trainers-type:material",
+          "name": "Материал",
+          "slug": "material",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-trainers-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:trainers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-trainers-type-color",
+          "externalSource": "snapshot"
+        }
+      ]
+    },
+    {
+      "key": "subject:bicycles-type",
+      "name": "Велосипеды",
+      "slug": "bicycles-type",
+      "categoryKey": "cat:cycling-cat",
+      "sortOrder": 0,
+      "externalSource": "snapshot",
+      "externalId": "lot-pt-bicycles-type",
+      "externalName": "Велосипеды",
+      "aliases": [
+        "велосипед",
+        "горный велосипед",
+        "городской велосипед",
+        "велик"
+      ],
+      "characteristics": [
+        {
+          "key": "charc:bicycles-type:wheel-size",
+          "name": "Диаметр колёс",
+          "slug": "wheel-size",
+          "type": "NUMBER",
+          "required": true,
+          "unit": "\"",
+          "options": null,
+          "sortOrder": 0,
+          "filterable": true,
+          "externalId": "lot-ch-bicycles-type-wheel-size",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:bicycles-type:bike-type",
+          "name": "Тип",
+          "slug": "bike-type",
+          "type": "SELECT",
+          "required": false,
+          "unit": null,
+          "options": [
+            "горный",
+            "городской",
+            "шоссейный",
+            "детский"
+          ],
+          "sortOrder": 1,
+          "filterable": true,
+          "externalId": "lot-ch-bicycles-type-bike-type",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:bicycles-type:frame",
+          "name": "Материал рамы",
+          "slug": "frame",
+          "type": "TEXT",
+          "required": false,
+          "unit": null,
+          "options": null,
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-bicycles-type-frame",
           "externalSource": "snapshot"
         }
       ]

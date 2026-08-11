@@ -1,5 +1,34 @@
 # LOT Taxonomy (WB-compatible)
 
+## TASK 058 update — broad curated taxonomy
+
+The taxonomy is now broad (not a few demo types). The maintainable **source of
+truth** is `lib/catalog-taxonomy/data/lot-taxonomy.ts` (TypeScript), serialized to
+the snapshot JSON via `npm run taxonomy:build-snapshot`.
+
+- Coverage: **31 categories, 58 product types, 166 characteristics, 223 aliases**
+  across all 9 segments (construction, tools, electronics, home, auto, clothing,
+  shoes, beauty, sport).
+- Matcher quality (`tests/taxonomy-matcher-dataset.test.ts`, 58 queries):
+  **Top-1 94.8%, Top-3 100%** (thresholds 65% / 85%).
+- LIVE WB import vs LOCAL snapshot: live import (`WbTaxonomyProvider`) is ready but
+  **blocked** without `WB_API_TOKEN`; development/tests use the local snapshot.
+  `taxonomy:sync` records a `TaxonomySyncRun` and writes
+  `docs/TAXONOMY_SYNC_REPORT.md`.
+
+Commands:
+
+```bash
+npm run taxonomy:build-snapshot                 # regenerate snapshot JSON from TS
+npm run taxonomy:sync -- --deactivate-missing   # snapshot → DB (idempotent)
+npm run taxonomy:sync:wb                         # live WB API (needs token)
+npm run taxonomy:migrate-products -- --apply     # map existing products by title
+npm run ranking:recompute                        # LOT Ranking v1 stats
+```
+
+See also: `docs/SEARCH.md`, `docs/RANKING.md`, `docs/SEO_PRODUCT_CONTENT.md`,
+`docs/TASK_058_BEFORE_AUDIT.md`.
+
 ## Architecture
 
 ```

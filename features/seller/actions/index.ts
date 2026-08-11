@@ -102,8 +102,6 @@ function productFormPayload(formData: FormData, sellerProfileId?: string) {
     lengthCm: emptyToNull(formData.get("lengthCm")),
     widthCm: emptyToNull(formData.get("widthCm")),
     heightCm: emptyToNull(formData.get("heightCm")),
-    seoTitle: emptyToNull(formData.get("seoTitle")),
-    seoDescription: emptyToNull(formData.get("seoDescription")),
     images: parseImages(formData),
     pickupEnabled,
     reservationEnabled,

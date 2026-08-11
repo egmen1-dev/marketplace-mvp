@@ -5,3 +5,4 @@ export * from "./characteristics";
 export * from "./sync";
 export * from "./migration";
 export * from "./providers";
+export * from "./data/lot-taxonomy";

@@ -14,9 +14,12 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
+    "taxonomy:build-snapshot": "tsx scripts/build-taxonomy-snapshot.ts",
     "taxonomy:sync": "tsx scripts/sync-wb-taxonomy.ts --snapshot",
     "taxonomy:sync:wb": "tsx scripts/sync-wb-taxonomy.ts",
     "taxonomy:migrate": "tsx scripts/sync-wb-taxonomy.ts --snapshot --migrate",
+    "taxonomy:migrate-products": "tsx scripts/migrate-products-taxonomy.ts",
+    "ranking:recompute": "tsx scripts/recompute-ranking.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

@@ -21,6 +21,7 @@ import {
 import { ProductSellerCard } from "@/features/seller/components/product-seller-card";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
+import { buildSearchDocument } from "@/lib/search/search-document";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type ProductPageProps = {
@@ -49,16 +50,27 @@ export async function generateMetadata({
   try {
     const { product } = await loadProductForPage(id);
     if (!product) return { title: "Товар не найден" };
-    const description =
-      product.description?.slice(0, 160) ||
-      `${product.title} — ${formatPrice(product.price, product.currency)} на ${APP_NAME}`;
+    // SEO metadata is derived automatically (TASK 058) — no seller-authored SEO.
+    const doc = buildSearchDocument({
+      title: product.title,
+      description: product.description,
+      productTypeName: product.productType?.name,
+      categoryBreadcrumb:
+        product.productType?.breadcrumb ??
+        (product.category ? [product.category.name] : []),
+      characteristics: product.characteristics.map((c) => ({
+        name: c.name,
+        value: c.formValue || c.displayValue,
+        unit: c.unit,
+      })),
+    });
     const image = product.primaryImage?.url ?? product.images[0]?.url;
     return {
-      title: product.title,
-      description,
+      title: doc.metaTitle,
+      description: doc.metaDescription,
       openGraph: {
         title: `${product.title} · ${APP_NAME}`,
-        description,
+        description: doc.metaDescription,
         type: "website",
         ...(image ? { images: [{ url: image }] } : {}),
       },

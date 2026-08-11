@@ -190,8 +190,16 @@ function resolveOrderBy(
     case "newest":
       return { createdAt: "desc" };
     case "popular":
-    default:
       return [{ views: "desc" }, { favoritesCount: "desc" }, { createdAt: "desc" }];
+    case "recommended":
+    default:
+      // LOT Ranking v1 organic order (precomputed). Nulls last so unscored
+      // products fall back below ranked ones, then popularity/newest.
+      return [
+        { rankingScore: { sort: "desc", nulls: "last" } },
+        { views: "desc" },
+        { createdAt: "desc" },
+      ];
   }
 }
 
@@ -265,15 +273,35 @@ async function buildWhere(
     where.price = priceFilter;
   }
 
+  const and: Prisma.ProductWhereInput[] = [];
+
   if (filters.query) {
     const tokens = tokenizeSearchQuery(filters.query);
     if (tokens.length === 1) {
       where.OR = tokenMatchOr(tokens[0]);
     } else if (tokens.length > 1) {
       // Every token must match somewhere (title, description, category, seller).
-      where.AND = tokens.map((token) => ({ OR: tokenMatchOr(token) }));
+      for (const token of tokens) and.push({ OR: tokenMatchOr(token) });
     }
   }
+
+  // Dynamic category-specific characteristic filters (section 40).
+  if (filters.characteristics?.length) {
+    for (const c of filters.characteristics) {
+      const values = c.values.filter(Boolean);
+      if (!values.length) continue;
+      and.push({
+        characteristicValues: {
+          some: {
+            definition: { slug: c.slug },
+            valueText: { in: values },
+          },
+        },
+      });
+    }
+  }
+
+  if (and.length) where.AND = and;
 
   return where;
 }
@@ -655,8 +683,6 @@ export async function createProduct(
         lengthCm: optionalDecimal(input.lengthCm) ?? null,
         widthCm: optionalDecimal(input.widthCm) ?? null,
         heightCm: optionalDecimal(input.heightCm) ?? null,
-        seoTitle: input.seoTitle ?? null,
-        seoDescription: input.seoDescription ?? null,
         pickupEnabled,
         reservationEnabled,
         prepaymentPercent,
@@ -769,12 +795,6 @@ export async function updateProduct(
   }
   if (input.heightCm !== undefined) {
     data.heightCm = optionalDecimal(input.heightCm) ?? null;
-  }
-  if (input.seoTitle !== undefined) {
-    data.seoTitle = input.seoTitle;
-  }
-  if (input.seoDescription !== undefined) {
-    data.seoDescription = input.seoDescription;
   }
   if (input.pickupEnabled !== undefined) {
     data.pickupEnabled = input.pickupEnabled;
@@ -985,8 +1005,6 @@ export async function duplicateProduct(
       lengthCm: existing.lengthCm?.toNumber() ?? null,
       widthCm: existing.widthCm?.toNumber() ?? null,
       heightCm: existing.heightCm?.toNumber() ?? null,
-      seoTitle: existing.seoTitle,
-      seoDescription: existing.seoDescription,
       pickupEnabled: existing.pickupEnabled,
       reservationEnabled: existing.reservationEnabled,
       prepaymentPercent: existing.prepaymentPercent,

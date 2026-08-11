@@ -42,6 +42,7 @@ export type ProductSellerDto = {
 
 /** Public sort keys for catalog / GET /api/products. */
 export type ProductSort =
+  | "recommended"
   | "popular"
   | "newest"
   | "price_asc"
@@ -130,6 +131,12 @@ export type ProductListFilters = {
   priceMax?: number;
   /** When true, only products with stock > 0. */
   inStock?: boolean;
+  /**
+   * Dynamic category-specific characteristic filters (TASK 058, section 40).
+   * Each entry ANDs; its discrete values OR. Matched against
+   * ProductCharacteristicValue.valueText by characteristic definition slug.
+   */
+  characteristics?: Array<{ slug: string; values: string[] }>;
   sort?: ProductSort;
   page?: number;
   /** Alias for pageSize; also accepts `limit` from query string. */

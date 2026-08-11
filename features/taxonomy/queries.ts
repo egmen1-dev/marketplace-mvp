@@ -174,6 +174,88 @@ export async function listFilterableCharacteristics(productTypeId: string) {
   });
 }
 
+export type DynamicCatalogFilter = {
+  slug: string;
+  name: string;
+  unit: string | null;
+  values: string[];
+};
+
+/**
+ * Discover category-specific characteristic filters (TASK 058, section 40).
+ * Aggregates filterable characteristics across the product types found in the
+ * given categories, exposing only discrete values actually present on products
+ * (via defined options or observed text values). Returns useful filters only.
+ */
+export async function getCategoryDynamicFilters(
+  categoryIds: string[],
+  options?: { limitFilters?: number },
+): Promise<DynamicCatalogFilter[]> {
+  if (!categoryIds.length) return [];
+  const limitFilters = options?.limitFilters ?? 6;
+
+  const defs = await prisma.productCharacteristicDefinition.findMany({
+    where: {
+      filterable: true,
+      productType: { isActive: true, categoryId: { in: categoryIds } },
+    },
+    select: {
+      slug: true,
+      name: true,
+      unit: true,
+      options: true,
+      sortOrder: true,
+    },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  // Merge definitions sharing a slug (same concept across product types).
+  const bySlug = new Map<
+    string,
+    { name: string; unit: string | null; options: Set<string>; sortOrder: number }
+  >();
+  for (const d of defs) {
+    const entry =
+      bySlug.get(d.slug) ??
+      { name: d.name, unit: d.unit, options: new Set<string>(), sortOrder: d.sortOrder };
+    if (Array.isArray(d.options)) {
+      for (const o of d.options) entry.options.add(String(o));
+    }
+    bySlug.set(d.slug, entry);
+  }
+
+  // For filters without predefined options, gather observed values on products.
+  const slugs = [...bySlug.keys()];
+  const observed = await prisma.productCharacteristicValue.findMany({
+    where: {
+      valueText: { not: null },
+      definition: { slug: { in: slugs } },
+      product: { status: "ACTIVE", categoryId: { in: categoryIds } },
+    },
+    select: { valueText: true, definition: { select: { slug: true } } },
+    take: 2000,
+  });
+  for (const v of observed) {
+    const entry = bySlug.get(v.definition.slug);
+    if (entry && v.valueText) entry.options.add(v.valueText);
+  }
+
+  const filters: DynamicCatalogFilter[] = [];
+  for (const [slug, entry] of bySlug) {
+    const values = [...entry.options].filter(Boolean).sort((a, b) =>
+      a.localeCompare(b, "ru", { numeric: true }),
+    );
+    // Only useful filters: at least two distinct discrete values.
+    if (values.length >= 2) {
+      filters.push({ slug, name: entry.name, unit: entry.unit, values: values.slice(0, 20) });
+    }
+  }
+
+  return filters
+    .sort((a, b) => a.name.localeCompare(b.name, "ru"))
+    .slice(0, limitFilters);
+}
+
 export async function listAdminTaxonomyTree() {
   const [categories, productTypes] = await Promise.all([
     prisma.category.findMany({
