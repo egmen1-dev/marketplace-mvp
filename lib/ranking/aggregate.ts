@@ -227,3 +227,127 @@ export async function recomputeRankingStats(
     durationMs: Date.now() - started,
   };
 }
+
+export type RankingDebugRow = {
+  productId: string;
+  name: string;
+  price: number;
+  finalScore: number;
+  organicScore: number;
+  promotionBoost: number;
+  breakdown: {
+    text: number;
+    commercial: number;
+    trust: number;
+    conversion: number;
+    price: number;
+    logistics: number;
+    content: number;
+    stock: number;
+    freshness: number;
+  };
+  rankingVersion: string;
+};
+
+/**
+ * Explainability view for /admin/ranking (section 44). Live-scores matching
+ * ACTIVE products from stored stats so an admin can see per-signal breakdowns.
+ */
+export async function getRankingDebug(
+  db: PrismaClient,
+  opts?: { query?: string; limit?: number },
+): Promise<RankingDebugRow[]> {
+  const limit = Math.min(Math.max(opts?.limit ?? 20, 1), 100);
+  const query = opts?.query?.trim();
+
+  const products = await db.product.findMany({
+    where: {
+      status: ProductStatus.ACTIVE,
+      ...(query
+        ? { OR: [{ name: { contains: query, mode: "insensitive" } }] }
+        : {}),
+    },
+    take: limit,
+    orderBy: [{ rankingScore: { sort: "desc", nulls: "last" } }],
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      stock: true,
+      views: true,
+      createdAt: true,
+      pickupEnabled: true,
+      categoryId: true,
+      productTypeId: true,
+      _count: { select: { images: true, characteristicValues: true } },
+      seller: { select: { isVerified: true, rating: true } },
+      productType: { select: { characteristics: { select: { id: true, required: true } } } },
+      rankingStats: true,
+    },
+  });
+
+  const priceByType = new Map<string, number[]>();
+  for (const p of products) {
+    const key = p.productTypeId ?? p.categoryId ?? "__none__";
+    const list = priceByType.get(key) ?? [];
+    list.push(Number(p.price));
+    priceByType.set(key, list);
+  }
+  const medianByType = new Map<string, number | null>();
+  for (const [k, list] of priceByType) medianByType.set(k, median(list));
+
+  return products.map((p) => {
+    const reqCount =
+      p.productType?.characteristics.filter((c) => c.required).length ?? 0;
+    const content = scoreContentQuality({
+      title: p.name,
+      description: null,
+      hasCategory: Boolean(p.categoryId),
+      hasProductType: Boolean(p.productTypeId),
+      requiredCharacteristics: reqCount,
+      filledRequiredCharacteristics: Math.min(reqCount, p._count.characteristicValues),
+      optionalCharacteristics: (p.productType?.characteristics.length ?? 0) - reqCount,
+      filledOptionalCharacteristics: 0,
+      imageCount: p._count.images,
+      hasMainImage: p._count.images > 0,
+      price: Number(p.price),
+      stock: p.stock,
+    });
+
+    const result = scoreProduct({
+      productId: p.id,
+      textRelevance: 1,
+      price: Number(p.price),
+      categoryMedianPrice: medianByType.get(p.productTypeId ?? p.categoryId ?? "__none__") ?? null,
+      contentQuality: content.score,
+      createdAt: p.createdAt,
+      stats: {
+        views: p.rankingStats?.views ?? p.views,
+        completedOrders: p.rankingStats?.completedOrders ?? 0,
+        unitsOrdered: p.rankingStats?.unitsOrdered ?? 0,
+        unitsBoughtOut: p.rankingStats?.unitsBoughtOut ?? 0,
+      },
+      seller: {
+        isVerified: p.seller.isVerified,
+        rating: Number(p.seller.rating) || null,
+        ratingCount: p.rankingStats?.ratingCount ?? 0,
+      },
+      logistics: {
+        stock: p.stock,
+        pickupAvailable: p.pickupEnabled,
+        shippingConfigured: true,
+      },
+    });
+
+    return {
+      productId: p.id,
+      name: p.name,
+      price: Number(p.price),
+      finalScore: result.finalScore,
+      organicScore: result.organicScore,
+      promotionBoost: result.promotionBoost,
+      breakdown: result.breakdown,
+      rankingVersion: result.rankingVersion,
+    };
+  });
+}
