@@ -11,7 +11,8 @@ function ensureShotDir() {
 }
 
 async function openRaizzProductAsBuyer(page: import("@playwright/test").Page) {
-  await page.goto("/catalog");
+  // Deterministic: search by exact title (catalog order depends on ranking sort).
+  await page.goto(`/catalog?q=${encodeURIComponent("Дрель ударная Drill Pro 750")}`);
   await expect(page.getByRole("heading", { name: /Каталог/i })).toBeVisible({
     timeout: 20_000,
   });
