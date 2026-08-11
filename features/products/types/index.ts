@@ -42,6 +42,7 @@ export type ProductSellerDto = {
 
 /** Public sort keys for catalog / GET /api/products. */
 export type ProductSort =
+  | "recommended"
   | "popular"
   | "newest"
   | "price_asc"

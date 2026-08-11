@@ -18,6 +18,7 @@ export const CATALOG_SORT_OPTIONS: {
   value: ProductSort;
   label: string;
 }[] = [
+  { value: "recommended", label: "Рекомендуем" },
   { value: "popular", label: "Популярные" },
   { value: "newest", label: "Новые" },
   { value: "price_asc", label: "Цена: по возрастанию" },
@@ -33,6 +34,7 @@ export const SELLER_KIND_OPTIONS: {
 ];
 
 const SORT_SET = new Set<ProductSort>([
+  "recommended",
   "popular",
   "newest",
   "price_asc",
@@ -43,7 +45,7 @@ export function parseCatalogSort(value?: string | null): ProductSort {
   if (value && SORT_SET.has(value as ProductSort)) {
     return value as ProductSort;
   }
-  return "popular";
+  return "recommended";
 }
 
 export function parseCatalogCondition(
@@ -137,7 +139,7 @@ export function buildCatalogHref(opts: CatalogHrefOpts = {}): string {
   if (opts.inStock === true || opts.inStock === "1" || opts.inStock === "true") {
     sp.set("inStock", "1");
   }
-  if (opts.sort && opts.sort !== "popular") sp.set("sort", opts.sort);
+  if (opts.sort && opts.sort !== "recommended") sp.set("sort", opts.sort);
   if (opts.page && opts.page > 1) sp.set("page", String(opts.page));
 
   const qs = sp.toString();

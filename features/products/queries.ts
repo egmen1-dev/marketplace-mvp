@@ -190,8 +190,16 @@ function resolveOrderBy(
     case "newest":
       return { createdAt: "desc" };
     case "popular":
-    default:
       return [{ views: "desc" }, { favoritesCount: "desc" }, { createdAt: "desc" }];
+    case "recommended":
+    default:
+      // LOT Ranking v1 organic order (precomputed). Nulls last so unscored
+      // products fall back below ranked ones, then popularity/newest.
+      return [
+        { rankingScore: { sort: "desc", nulls: "last" } },
+        { views: "desc" },
+        { createdAt: "desc" },
+      ];
   }
 }
 

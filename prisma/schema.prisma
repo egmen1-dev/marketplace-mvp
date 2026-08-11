@@ -388,6 +388,9 @@ model Product {
   city           String?
   condition      ProductCondition @default(NEW)
   status         ProductStatus    @default(DRAFT)
+  /// Denormalized LOT Ranking v1 organic score (0..1) for fast catalog ordering.
+  /// Precomputed by the ranking aggregator (section 49). See ProductRankingStats.
+  rankingScore   Float?           @default(0)
   /// PDP / listing popularity signal
   views          Int              @default(0)
   /// Soft counter for hit badge / popular sort — kept in sync with Favorite rows
@@ -430,6 +433,7 @@ model Product {
   @@index([favoritesCount])
   @@index([createdAt])
   @@index([pickupEnabled])
+  @@index([rankingScore])
   @@map("products")
 }
 

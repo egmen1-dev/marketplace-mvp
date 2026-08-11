@@ -13,6 +13,7 @@ const imageSchema = z.object({
 });
 
 export const productSortSchema = z.enum([
+  "recommended",
   "popular",
   "newest",
   "price_asc",
@@ -183,7 +184,7 @@ export const listProductsQuerySchema = z.object({
   inStock: z.preprocess(truthyInStock, z.boolean().optional()),
   sort: z.preprocess(
     emptyToUndefined,
-    productSortSchema.optional().default("popular"),
+    productSortSchema.optional().default("recommended"),
   ),
   page: z.preprocess(
     emptyToUndefined,
