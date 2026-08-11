@@ -139,8 +139,13 @@ export async function signOut(page: Page) {
 
 /** Open first catalog product PDP (not a card-only surface). */
 export async function openFirstCatalogProduct(page: Page) {
-  await page.goto("/catalog");
-  const productLink = page.locator('main a[href^="/product/"]').first();
+  // Deterministic: open a known RAIZZ (seller@demo.lot) product via search so the
+  // product's seller is stable regardless of ranking order / DB state. Chat tests
+  // rely on messaging seller@demo.lot.
+  await page.goto(`/catalog?q=${encodeURIComponent("Дрель ударная Drill Pro 750")}`);
+  const productLink = page
+    .getByRole("link", { name: /Дрель ударная Drill Pro 750/i })
+    .first();
   await expect(productLink).toBeVisible({ timeout: 30_000 });
   await productLink.click();
   await expect(page).toHaveURL(/\/product\//, { timeout: 20_000 });
