@@ -1192,6 +1192,20 @@ async function main() {
   console.log(`Tools PRO:   toolspro@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Tech Store:  techstore@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Demo admin:  admin@demo.lot / ${DEMO_PASSWORD}`);
+
+  const operatorAdminEmails = [
+    "nikitapetrovskih968@gmail.com",
+    "egmen1@gmail.com",
+  ] as const;
+  for (const email of operatorAdminEmails) {
+    const promoted = await prisma.user.updateMany({
+      where: { email: { equals: email, mode: "insensitive" } },
+      data: { role: UserRole.ADMIN, email },
+    });
+    if (promoted.count > 0) {
+      console.log(`Operator admin: ${email}`);
+    }
+  }
 }
 
 main()

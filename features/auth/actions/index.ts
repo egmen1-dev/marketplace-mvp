@@ -6,6 +6,7 @@ import { AuthError } from "next-auth";
 import { signIn, signOut, unstable_update } from "@/auth";
 import { getSessionUser, loadUserAuthFromDb } from "@/features/auth/session";
 import { hashPassword } from "@/features/auth/lib/password";
+import { findUserByEmail } from "@/features/auth/lib/find-user-by-email";
 import { signInSchema, signUpSchema } from "@/features/auth/schemas";
 import { slugify } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
@@ -97,10 +98,7 @@ export async function signUpAction(
     };
   }
 
-  const existing = await prisma.user.findUnique({
-    where: { email: parsed.data.email },
-    select: { id: true },
-  });
+  const existing = await findUserByEmail(parsed.data.email);
   if (existing) {
     return {
       ok: false,

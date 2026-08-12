@@ -1,6 +1,32 @@
 import type { NextAuthConfig } from "next-auth";
 
 import { isSellerCabinetPath, ROUTES } from "@/lib/constants";
+import { getCanonicalAppUrl } from "@/lib/env";
+
+/**
+ * Secure session cookies on HTTPS deployments (Railway, Vercel, Render).
+ * Override with AUTH_COOKIE_SECURE=true|false if needed.
+ */
+function shouldUseSecureCookies(): boolean {
+  const override = process.env.AUTH_COOKIE_SECURE?.trim().toLowerCase();
+  if (override === "true") return true;
+  if (override === "false") return false;
+
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.VERCEL ||
+    process.env.RENDER
+  ) {
+    return true;
+  }
+
+  try {
+    return getCanonicalAppUrl().startsWith("https://");
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Edge-safe Auth.js config (no Prisma / Node-only deps).
@@ -12,16 +38,7 @@ export const authConfig = {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 14,
   },
-  cookies: {
-    sessionToken: {
-      options: {
-        httpOnly: true,
-        sameSite: "lax" as const,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
+  useSecureCookies: shouldUseSecureCookies(),
   pages: {
     signIn: ROUTES.AUTH_SIGN_IN,
   },

@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import type { UserRole } from "@prisma/client";
 
 import { authConfig } from "@/auth.config";
+import { findUserByEmailForAuth } from "@/features/auth/lib/find-user-by-email";
 import { verifyPassword } from "@/features/auth/lib/password";
 import { signInSchema } from "@/features/auth/schemas";
 import { prisma } from "@/lib/prisma";
@@ -23,10 +24,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         const parsed = signInSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: parsed.data.email },
-          include: { sellerProfile: { select: { id: true } } },
-        });
+        const user = await findUserByEmailForAuth(parsed.data.email);
 
         if (!user?.passwordHash) return null;
         if (user.isBlocked) return null;
