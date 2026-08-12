@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { getBuildVersionInfo } from "@/lib/build-info";
 import { isBlobConfigured } from "@/lib/storage";
 import { prisma } from "@/lib/prisma";
 
@@ -66,6 +67,7 @@ export async function GET() {
       ok,
       service: "marketplace-mvp",
       timestamp: new Date().toISOString(),
+      version: getBuildVersionInfo(),
       checks,
     },
     { status: ok ? 200 : 503 },

@@ -15,6 +15,7 @@ This document describes how to quickly revert a bad deployment **without** data 
 3. Click **⋯ → Promote to Production**.
 4. Verify:
    - `GET /api/health` → `{ "ok": true }`
+   - `GET /api/version` → `{ "commit": "<expected-sha>", "environment": "production" }`
    - Homepage, catalog, sign-in load
    - No spike in error logs
 
@@ -30,6 +31,15 @@ railway up --service web
 ```
 
 Or: Railway Dashboard → Deployments → rollback to previous image.
+
+4. Verify rollback SHA:
+
+```bash
+curl -sS https://web-production-e56fb.up.railway.app/api/version | jq '.commit, .environment'
+node scripts/deploy-verify.mjs <known-good-sha>
+```
+
+See [DEPLOYMENT_FLOW.md](./DEPLOYMENT_FLOW.md) for full staging deploy verification.
 
 **Time:** ~5–10 minutes (includes build).
 
@@ -145,7 +155,8 @@ After rollback:
 | 5 | **Disable cron** — unset/rotate `CRON_SECRET` if overdue processor suspected | Eng |
 | 6 | **Communicate** — status + ETA to stakeholders | Product |
 
-**Health during incident:** `GET /api/health` returns 503 if database or AUTH_SECRET broken.
+**Health during incident:** `GET /api/health` returns 503 if database or AUTH_SECRET broken.  
+**Version probe:** `GET /api/version` — compare `commit` to expected SHA before declaring recovery (see [DEPLOYMENT_FLOW.md](./DEPLOYMENT_FLOW.md)).
 
 ---
 

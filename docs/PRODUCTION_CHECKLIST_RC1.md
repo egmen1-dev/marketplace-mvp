@@ -17,7 +17,7 @@ Mark each area **READY**, **WARNING**, or **BLOCKED** before Vercel GO.
 | **Trust** | WARNING | Admin moderation; no auto-risk |
 | **Ranking** | WARNING | Views/favorites/recency |
 | **Cron** | WARNING | Secret missing on Vercel prod — add on GO |
-| **Railway** | READY | Staging @ `edf9751` |
+| **Railway** | WARNING | Staging — verify `/api/version` commit after each deploy ([DEPLOYMENT_FLOW.md](./DEPLOYMENT_FLOW.md)) |
 | **Vercel** | WARNING | Deploy stale (Aug 8); env incomplete |
 | **Blob** | READY | Shared Vercel Blob store |
 | **Monitoring** | WARNING | Health ✅; Sentry prepared not active |
@@ -35,7 +35,9 @@ Mark each area **READY**, **WARNING**, or **BLOCKED** before Vercel GO.
 - [ ] [PRODUCTION_ENV_AUDIT.md](./PRODUCTION_ENV_AUDIT.md) vars added to Vercel
 - [ ] `npx prisma migrate deploy` on production DB (dry-run reviewed)
 - [ ] `npx prisma validate` + `npm run build` on `main`
-- [ ] `npm run test` → 117/117
+- [ ] Record `main` commit SHA: ________________ ; verify staging `GET /api/version` matches before feature acceptance
+- [ ] `node scripts/deploy-verify.mjs <sha>` on Railway staging (when deploying)
+- [ ] `npm run test` → unit suite green
 - [ ] [GO_NO_GO_MATRIX.md](./GO_NO_GO_MATRIX.md) — no BLOCKED (except Reviews = excluded)
 - [ ] Owner GO sign-off
 
