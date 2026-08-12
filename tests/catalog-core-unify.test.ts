@@ -20,6 +20,16 @@ describe("Catalog Core — category path", () => {
   });
 });
 
+describe("Catalog Core — slug dedup base", () => {
+  it("only strips -lot- sync suffixes", async () => {
+    const { baseSlugForDedup } = await import("@/lib/catalog-taxonomy/unify");
+    expect(baseSlugForDedup("drills-lot-drills")).toBe("drills");
+    expect(baseSlugForDedup("home-textile")).toBe("home-textile");
+    expect(baseSlugForDedup("clothing-accessories")).toBe("clothing-accessories");
+    expect(baseSlugForDedup("home")).toBe("home");
+  });
+});
+
 describe("Catalog Core — source origin", () => {
   it("maps externalSource to admin labels", () => {
     expect(resolveCatalogSourceOrigin("wildberries")).toBe("WB");

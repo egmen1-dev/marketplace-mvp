@@ -17,6 +17,7 @@ export type UnifyStats = {
   legacyCategoriesDeactivated: number;
   productsRemapped: number;
   duplicatesMerged: number;
+  repaired: number;
 };
 
 /** Pure helper — materialized path from slug chain. */
@@ -118,7 +119,12 @@ export async function mergeProductTypeSlugCollisions(
   return { deactivated, productsRemapped };
 }
 
-/** Detect slug-suffix duplicates from sync (e.g. drills-lot-drills). */
+/** Detect sync slug-suffix duplicates only (e.g. drills-lot-drills). */
+export function baseSlugForDedup(slug: string): string {
+  // Only strip sync collision suffixes — never parent/child slugs like home-textile
+  return slug.replace(/-lot-[^-]+$/i, "");
+}
+
 export async function mergeSlugSuffixDuplicates(
   db: PrismaClient,
 ): Promise<number> {
@@ -134,21 +140,31 @@ export async function mergeSlugSuffixDuplicates(
 
   const byBaseSlug = new Map<string, typeof categories>();
   for (const cat of categories) {
-    const base = cat.slug.replace(/-lot-[^-]+$/, "").replace(/-[a-z0-9]{6,}$/i, "");
+    if (!cat.slug.includes("-lot-")) continue;
+    const base = baseSlugForDedup(cat.slug);
     const list = byBaseSlug.get(base) ?? [];
     list.push(cat);
     byBaseSlug.set(base, list);
   }
 
+  // Attach canonical (exact base slug) into each group when present
+  for (const cat of categories) {
+    if (!byBaseSlug.has(cat.slug)) continue;
+    const list = byBaseSlug.get(cat.slug)!;
+    if (!list.some((c) => c.id === cat.id)) list.push(cat);
+  }
+
   let merged = 0;
-  for (const [, group] of byBaseSlug) {
-    if (group.length < 2) continue;
+  for (const [base, group] of byBaseSlug) {
+    if (group.length < 1) continue;
     const canonical =
+      categories.find((c) => c.slug === base) ??
       group.find((c) => !c.slug.includes("-lot-")) ??
-      group.reduce((a, b) =>
-        a._count.products >= b._count.products ? a : b,
-      );
-    const dupes = group.filter((c) => c.id !== canonical.id);
+      group[0];
+    if (!canonical) continue;
+    const dupes = group.filter(
+      (c) => c.id !== canonical.id && c.slug.includes("-lot-"),
+    );
     for (const dupe of dupes) {
       if (dupe._count.productTypes > 0) continue;
       if (dupe._count.products > 0) {
@@ -167,12 +183,62 @@ export async function mergeSlugSuffixDuplicates(
   return merged;
 }
 
+/**
+ * Repair false deactivations from aggressive slug stripping (pre-fix).
+ * Does not revive ProductType leaf collisions marked «объединено».
+ */
+export async function repairFalseCategoryDeactivations(
+  db: PrismaClient,
+): Promise<number> {
+  const typeSlugs = new Set(
+    (
+      await db.productType.findMany({
+        where: { isActive: true },
+        select: { slug: true },
+      })
+    ).map((t) => t.slug),
+  );
+
+  const inactive = await db.category.findMany({
+    where: {
+      isActive: false,
+      NOT: { name: { contains: "объединено" } },
+    },
+    select: {
+      id: true,
+      slug: true,
+      _count: { select: { children: true, products: true, productTypes: true } },
+    },
+  });
+
+  let repaired = 0;
+  for (const cat of inactive) {
+    if (typeSlugs.has(cat.slug)) continue;
+    if (cat.slug.includes("-lot-")) continue;
+    // Revive browse categories that still have children/products or are seed branches
+    if (
+      cat._count.children === 0 &&
+      cat._count.products === 0 &&
+      cat._count.productTypes === 0
+    ) {
+      continue;
+    }
+    await db.category.update({
+      where: { id: cat.id },
+      data: { isActive: true },
+    });
+    repaired += 1;
+  }
+  return repaired;
+}
+
 /** Full catalog core unification — safe to run after seed or taxonomy sync. */
 export async function unifyCatalogCore(
   db: PrismaClient,
-): Promise<UnifyStats> {
+): Promise<UnifyStats & { repaired: number }> {
   const collision = await mergeProductTypeSlugCollisions(db);
   const duplicatesMerged = await mergeSlugSuffixDuplicates(db);
+  const repaired = await repairFalseCategoryDeactivations(db);
   const pathsRebuilt = await reconcileCategoryPaths(db);
   invalidateTaxonomyCache();
 
@@ -181,5 +247,6 @@ export async function unifyCatalogCore(
     legacyCategoriesDeactivated: collision.deactivated,
     productsRemapped: collision.productsRemapped,
     duplicatesMerged,
+    repaired,
   };
 }
