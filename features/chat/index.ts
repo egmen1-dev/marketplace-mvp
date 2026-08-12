@@ -26,6 +26,7 @@ export {
   type ChatActionState,
 } from "./actions";
 
+export { AdminConversationsList } from "./components/admin-conversations-list";
 export { ConversationsList } from "./components/conversations-list";
 export { ConversationThread } from "./components/conversation-thread";
 export {

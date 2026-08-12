@@ -1,4 +1,4 @@
-import { ConversationsList } from "@/features/chat";
+import { AdminConversationsList } from "@/features/chat/components/admin-conversations-list";
 import { listAllConversationsForAdmin } from "@/features/chat/queries";
 export const dynamic = "force-dynamic";
 
@@ -18,9 +18,8 @@ export default async function AdminMessagesPage() {
           имени участников.
         </p>
       </div>
-      <ConversationsList
+      <AdminConversationsList
         conversations={conversations}
-        hrefMode="admin"
         emptyHint="Диалогов пока нет."
       />
     </div>
