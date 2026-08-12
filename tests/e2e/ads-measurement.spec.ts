@@ -5,8 +5,8 @@ import { DEMO, attachErrorCollector, signIn } from "./helpers";
 const VK_UA =
   "Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/112.0.5615.136 Mobile Safari/537.36 VKAndroidApp/8.15-12345";
 
-const UTM =
-  "?utm_source=vk&utm_medium=cpc&utm_campaign=ux005_test&utm_content=e2e";
+const UTM_QUERY =
+  "utm_source=vk&utm_medium=cpc&utm_campaign=ux005_test&utm_content=e2e";
 
 type AnalyticsPayload = {
   event: string;
@@ -71,7 +71,7 @@ test.describe("HOTFIX-UX-005 ads measurement baseline", () => {
     const errors = attachErrorCollector(page);
     const events = await collectAnalytics(page);
 
-    await page.goto(`/${UTM}`, { waitUntil: "domcontentloaded" });
+    await page.goto(`/?${UTM_QUERY}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({
       timeout: 5000,
     });
@@ -131,7 +131,7 @@ test.describe("HOTFIX-UX-005 ads measurement baseline", () => {
     const events = await collectAnalytics(page);
 
     await signIn(page, DEMO.buyerEmail);
-    await page.goto(`/catalog${UTM}`, { waitUntil: "domcontentloaded" });
+    await page.goto(`/catalog?${UTM_QUERY}`, { waitUntil: "domcontentloaded" });
     const productLink = page.locator('main a[href^="/product/"]').first();
     await expect(productLink).toBeVisible({ timeout: 15_000 });
     await productLink.click();
