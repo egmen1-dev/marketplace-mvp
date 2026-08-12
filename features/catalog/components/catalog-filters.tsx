@@ -27,8 +27,10 @@ import {
 } from "@/features/catalog/url";
 import { PRODUCT_CONDITION_LABELS } from "@/features/products/mappers";
 import type { ProductSellerOption } from "@/features/products/queries";
+import { FacetFilters } from "@/features/catalog/components/facet-filters";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { parseFacetQueryParams } from "@/lib/catalog-taxonomy/facets";
 
 const CONDITION_OPTIONS = Object.values(ProductCondition);
 
@@ -52,6 +54,8 @@ type FilterFormState = {
   sellerKind: string;
   condition: string;
   inStock: boolean;
+  productType: string;
+  facets: Array<{ slug: string; value: string }>;
   sort: string;
 };
 
@@ -70,6 +74,7 @@ function stateFromSearchParams(
     sellerKind: sp.get("sellerKind") ?? undefined,
     condition: sp.get("condition") ?? undefined,
     inStock: sp.get("inStock") ?? undefined,
+    productType: sp.get("productType") ?? undefined,
     sort: sp.get("sort") ?? undefined,
     page: sp.get("page") ?? undefined,
   });
@@ -109,6 +114,8 @@ function stateFromSearchParams(
     sellerKind: parsed.sellerKind ?? "",
     condition: parsed.condition ?? "",
     inStock: Boolean(parsed.inStock),
+    productType: parsed.productType ?? sp.get("productType") ?? "",
+    facets: parseFacetQueryParams(sp),
     sort: parsed.sort ?? "popular",
   };
 }
@@ -328,6 +335,14 @@ function FilterFields({
         </label>
       </div>
 
+      <FacetFilters
+        idPrefix={idPrefix}
+        categorySlug={form.subcategory || form.category || undefined}
+        productType={form.productType || undefined}
+        selected={form.facets}
+        onChange={(facets) => setForm((prev) => ({ ...prev, facets }))}
+      />
+
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${idPrefix}-sort`}>Сортировка</Label>
         <select
@@ -396,6 +411,8 @@ function useCatalogFilterForm(
       sellerKind: form.sellerKind || undefined,
       condition: form.condition || undefined,
       inStock: form.inStock || undefined,
+      productType: form.productType.trim() || undefined,
+      facets: form.facets,
       sort: form.sort || "popular",
       page: 1,
     });
@@ -416,6 +433,8 @@ function useCatalogFilterForm(
       sellerKind: "",
       condition: "",
       inStock: false,
+      productType: "",
+      facets: [],
       sort: "popular",
     });
     startTransition(() => {
@@ -427,6 +446,9 @@ function useCatalogFilterForm(
     });
   }, [router, lockedCategorySlug]);
 
+  const facetFromUrl = parseFacetQueryParams(
+    new URLSearchParams(searchParams.toString()),
+  );
   const parsed = parseCatalogParams({
     q: searchParams.get("q") ?? undefined,
     category: searchParams.get("category") ?? lockedCategorySlug ?? undefined,
@@ -438,9 +460,11 @@ function useCatalogFilterForm(
     sellerKind: searchParams.get("sellerKind") ?? undefined,
     condition: searchParams.get("condition") ?? undefined,
     inStock: searchParams.get("inStock") ?? undefined,
+    productType: searchParams.get("productType") ?? undefined,
     sort: searchParams.get("sort") ?? undefined,
     page: searchParams.get("page") ?? undefined,
   });
+  parsed.facets = facetFromUrl;
 
   const active = hasActiveCatalogFilters(
     lockedCategorySlug

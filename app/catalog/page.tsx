@@ -80,6 +80,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           priceMin: filters.priceMin,
           priceMax: filters.priceMax,
           inStock: filters.inStock,
+          productType: filters.productType,
+          facets: filters.facets,
           sort: filters.sort,
           page: 1,
           pageSize: CATALOG_PAGE_SIZE,
@@ -135,6 +137,8 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     priceMin: filters.priceMin,
     priceMax: filters.priceMax,
     inStock: filters.inStock,
+    productType: filters.productType,
+    facets: filters.facets,
     sort: filters.sort,
   };
   const listKey = JSON.stringify(infiniteQuery);

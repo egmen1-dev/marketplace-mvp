@@ -254,6 +254,14 @@ async function buildWhere(
     where.stock = { gt: 0 };
   }
 
+  if (filters.productTypeId) {
+    where.productTypeId = filters.productTypeId;
+  } else if (filters.productType) {
+    where.productType = {
+      is: { slug: filters.productType, isActive: true },
+    };
+  }
+
   const priceFilter: Prisma.DecimalFilter = {};
   if (filters.priceMin != null) {
     priceFilter.gte = new Prisma.Decimal(filters.priceMin);
@@ -272,6 +280,59 @@ async function buildWhere(
     } else if (tokens.length > 1) {
       // Every token must match somewhere (title, description, category, seller).
       where.AND = tokens.map((token) => ({ OR: tokenMatchOr(token) }));
+    }
+  }
+
+  if (filters.facets?.length) {
+    const { facetSelectionsToWhere, getFacetDefinitionsForCategory, getFacetDefinitionsForProductType } =
+      await import("@/lib/catalog-taxonomy/facets");
+    let defs: Awaited<ReturnType<typeof getFacetDefinitionsForProductType>> = [];
+    if (filters.productTypeId) {
+      defs = await getFacetDefinitionsForProductType(prisma, filters.productTypeId);
+    } else if (filters.productType) {
+      const pt = await prisma.productType.findFirst({
+        where: { slug: filters.productType, isActive: true },
+        select: { id: true },
+      });
+      if (pt) defs = await getFacetDefinitionsForProductType(prisma, pt.id);
+    } else if (filters.categoryId) {
+      defs = await getFacetDefinitionsForCategory(prisma, filters.categoryId);
+    } else if (filters.category) {
+      const cat = await prisma.category.findFirst({
+        where: {
+          OR: [{ slug: filters.category }, { id: filters.category }],
+          isActive: true,
+        },
+        select: { id: true },
+      });
+      if (cat) defs = await getFacetDefinitionsForCategory(prisma, cat.id);
+    } else {
+      // Load defs by selected facet slugs only
+      const slugs = [...new Set(filters.facets.map((f) => f.slug))];
+      const rows = await prisma.productCharacteristicDefinition.findMany({
+        where: { filterable: true, slug: { in: slugs } },
+        include: { productType: { select: { name: true, lotName: true } } },
+      });
+      defs = rows.map((r) => ({
+        id: r.id,
+        slug: r.slug,
+        name: r.name,
+        type: r.type,
+        unit: r.unit,
+        options: Array.isArray(r.options) ? r.options.map(String) : null,
+        productTypeId: r.productTypeId,
+        productTypeName: r.productType.lotName ?? r.productType.name,
+      }));
+    }
+
+    const facetClauses = facetSelectionsToWhere(filters.facets, defs);
+    if (facetClauses.length) {
+      const existingAnd = Array.isArray(where.AND)
+        ? where.AND
+        : where.AND
+          ? [where.AND]
+          : [];
+      where.AND = [...existingAnd, ...facetClauses];
     }
   }
 

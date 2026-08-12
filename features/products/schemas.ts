@@ -217,6 +217,19 @@ export const listProductsQuerySchema = z.object({
     z.coerce.number().finite().min(0).optional(),
   ),
   inStock: z.preprocess(truthyInStock, z.boolean().optional()),
+  productType: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().min(1).max(120).optional(),
+  ),
+  productTypeId: z.preprocess(
+    emptyToUndefined,
+    z.string().cuid().optional(),
+  ),
+  /** Encoded as repeated f_<slug>=value in query; parsed in route */
+  facets: z
+    .array(z.object({ slug: z.string().min(1), value: z.string().min(1) }))
+    .optional()
+    .default([]),
   sort: z.preprocess(
     emptyToUndefined,
     productSortSchema.optional().default("popular"),

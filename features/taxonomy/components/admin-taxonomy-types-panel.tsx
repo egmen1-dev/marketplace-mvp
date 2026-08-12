@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { catalogSourceLabel } from "@/lib/catalog-taxonomy/source";
+import { normalizeAlias } from "@/lib/catalog-taxonomy/normalize";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,9 +30,27 @@ type AdminProductType = {
     type: string;
     required: boolean;
     unit: string | null;
+    filterable?: boolean;
   }[];
   _count: { products: number };
 };
+
+function findDuplicateIds(types: AdminProductType[]): Set<string> {
+  const byName = new Map<string, string[]>();
+  for (const t of types) {
+    if (!t.isActive) continue;
+    const key = normalizeAlias(t.lotName ?? t.name);
+    if (!key) continue;
+    const list = byName.get(key) ?? [];
+    list.push(t.id);
+    byName.set(key, list);
+  }
+  const dupes = new Set<string>();
+  for (const ids of byName.values()) {
+    if (ids.length > 1) ids.forEach((id) => dupes.add(id));
+  }
+  return dupes;
+}
 
 export function AdminTaxonomyTypesPanel({
   productTypes,
@@ -39,13 +58,21 @@ export function AdminTaxonomyTypesPanel({
   productTypes: AdminProductType[];
 }) {
   const [q, setQ] = useState("");
+  const duplicateIds = findDuplicateIds(productTypes);
   const filtered = productTypes.filter((t) => {
     const hay = `${t.name} ${t.lotName ?? ""} ${t.slug}`.toLowerCase();
     return !q.trim() || hay.includes(q.trim().toLowerCase());
   });
+  const dupeCount = duplicateIds.size;
 
   return (
     <div className="space-y-4">
+      {dupeCount > 0 ? (
+        <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+          Найдено дублей ProductType: <strong>{dupeCount}</strong>. Dry-run:{" "}
+          <code className="text-xs">npm run taxonomy:dedupe</code>
+        </p>
+      ) : null}
       <Input
         placeholder="Поиск ProductType…"
         value={q}
@@ -54,7 +81,11 @@ export function AdminTaxonomyTypesPanel({
       />
       <div className="divide-y divide-border rounded-xl border border-border">
         {filtered.map((t) => (
-          <ProductTypeRow key={t.id} type={t} />
+          <ProductTypeRow
+            key={t.id}
+            type={t}
+            isDuplicate={duplicateIds.has(t.id)}
+          />
         ))}
         {filtered.length === 0 ? (
           <p className="p-4 text-sm text-muted-foreground">
@@ -66,10 +97,19 @@ export function AdminTaxonomyTypesPanel({
   );
 }
 
-function ProductTypeRow({ type }: { type: AdminProductType }) {
+function ProductTypeRow({
+  type,
+  isDuplicate,
+}: {
+  type: AdminProductType;
+  isDuplicate: boolean;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [open, setOpen] = useState(false);
+  const filterableCount = type.characteristics.filter(
+    (c) => c.filterable,
+  ).length;
 
   return (
     <div className="p-3">
@@ -84,13 +124,17 @@ function ProductTypeRow({ type }: { type: AdminProductType }) {
         {!type.isActive ? (
           <Badge variant="secondary">скрыт</Badge>
         ) : null}
+        {isDuplicate ? (
+          <Badge variant="destructive">duplicate</Badge>
+        ) : null}
         {type.externalSource ? (
           <Badge variant="outline">{catalogSourceLabel(type.externalSource)}</Badge>
         ) : (
           <Badge variant="outline">{catalogSourceLabel(null)}</Badge>
         )}
         <span className="text-xs text-muted-foreground">
-          {type._count.products} тов. · {type.characteristics.length} хар.
+          {type._count.products} тов. · {type.characteristics.length} хар. ·{" "}
+          {filterableCount} facets · {type.aliases.length} alias
         </span>
         <div className="ml-auto flex gap-1">
           <Button

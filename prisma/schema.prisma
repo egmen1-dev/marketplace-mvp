@@ -404,6 +404,9 @@ model ProductCharacteristicValue {
   @@unique([productId, definitionId])
   @@index([productId])
   @@index([definitionId])
+  @@index([definitionId, valueText])
+  @@index([definitionId, valueNumber])
+  @@index([definitionId, valueBoolean])
   @@map("product_characteristic_values")
 }
 

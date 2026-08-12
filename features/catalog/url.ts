@@ -10,6 +10,7 @@ import type {
   SellerKindFilter,
 } from "@/features/catalog/types";
 import type { ProductSort } from "@/features/products/types";
+import { parseFacetQueryParams } from "@/lib/catalog-taxonomy/facets";
 import { ROUTES } from "@/lib/constants";
 
 export const CATALOG_PAGE_SIZE = 12;
@@ -85,6 +86,14 @@ export function parseCatalogParams(
 ): CatalogFilters {
   const rootCategory = params.category?.trim() || undefined;
   const subcategory = params.subcategory?.trim() || undefined;
+
+  const facetParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (key.startsWith("f_") && typeof value === "string" && value.trim()) {
+      facetParams.set(key, value);
+    }
+  }
+
   return {
     q: params.q?.trim() || undefined,
     rootCategory,
@@ -97,6 +106,8 @@ export function parseCatalogParams(
     sellerKind: parseSellerKind(params.sellerKind),
     condition: parseCatalogCondition(params.condition),
     inStock: parseInStock(params.inStock),
+    productType: params.productType?.trim() || undefined,
+    facets: parseFacetQueryParams(facetParams),
     sort: parseCatalogSort(params.sort),
     page: Math.max(1, Number(params.page) || 1),
   };
@@ -113,6 +124,8 @@ export type CatalogHrefOpts = {
   sellerKind?: string;
   condition?: string;
   inStock?: boolean | string;
+  productType?: string;
+  facets?: Array<{ slug: string; value: string }>;
   sort?: string;
   page?: number;
 };
@@ -136,6 +149,10 @@ export function buildCatalogHref(opts: CatalogHrefOpts = {}): string {
   if (opts.condition) sp.set("condition", opts.condition);
   if (opts.inStock === true || opts.inStock === "1" || opts.inStock === "true") {
     sp.set("inStock", "1");
+  }
+  if (opts.productType) sp.set("productType", opts.productType);
+  for (const f of opts.facets ?? []) {
+    if (f.slug && f.value) sp.set(`f_${f.slug}`, f.value);
   }
   if (opts.sort && opts.sort !== "popular") sp.set("sort", opts.sort);
   if (opts.page && opts.page > 1) sp.set("page", String(opts.page));
@@ -189,6 +206,8 @@ export function catalogFiltersToHref(filters: CatalogFilters): string {
     sellerKind: filters.sellerKind,
     condition: filters.condition,
     inStock: filters.inStock,
+    productType: filters.productType,
+    facets: filters.facets,
     sort: filters.sort,
     page: filters.page,
   });
@@ -204,6 +223,8 @@ export function hasActiveCatalogFilters(filters: CatalogFilters): boolean {
       filters.seller ||
       filters.sellerKind ||
       filters.condition ||
-      filters.inStock,
+      filters.inStock ||
+      filters.productType ||
+      (filters.facets && filters.facets.length > 0),
   );
 }

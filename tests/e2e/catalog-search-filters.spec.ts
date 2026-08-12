@@ -115,4 +115,14 @@ test.describe("catalog search filters sort mobile", () => {
 
     errors.assertClean();
   });
+
+  test("category page shows facet filters block", async ({ page }) => {
+    const errors = attachErrorCollector(page);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/category/power-tools");
+    await expect(page.getByTestId("catalog-facet-filters").first()).toBeVisible({
+      timeout: 15_000,
+    });
+    errors.assertClean();
+  });
 });

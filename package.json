@@ -17,6 +17,7 @@
     "taxonomy:sync": "tsx scripts/sync-wb-taxonomy.ts --snapshot",
     "taxonomy:sync:wb": "tsx scripts/sync-wb-taxonomy.ts",
     "taxonomy:migrate": "tsx scripts/sync-wb-taxonomy.ts --snapshot --migrate",
+    "taxonomy:dedupe": "tsx scripts/dedupe-product-types.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

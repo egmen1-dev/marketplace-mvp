@@ -19,6 +19,8 @@ export type InfiniteCatalogQuery = {
   priceMin?: number;
   priceMax?: number;
   inStock?: boolean;
+  productType?: string;
+  facets?: Array<{ slug: string; value: string }>;
   sort?: string;
 };
 
@@ -50,6 +52,10 @@ function buildApiUrl(
   if (query.priceMin != null) sp.set("priceMin", String(query.priceMin));
   if (query.priceMax != null) sp.set("priceMax", String(query.priceMax));
   if (query.inStock) sp.set("inStock", "1");
+  if (query.productType) sp.set("productType", query.productType);
+  for (const f of query.facets ?? []) {
+    if (f.slug && f.value) sp.set(`f_${f.slug}`, f.value);
+  }
   if (query.sort && query.sort !== "popular") sp.set("sort", query.sort);
   return `/api/products?${sp.toString()}`;
 }

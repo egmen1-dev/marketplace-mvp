@@ -130,6 +130,11 @@ export type ProductListFilters = {
   priceMax?: number;
   /** When true, only products with stock > 0. */
   inStock?: boolean;
+  /** ProductType slug filter */
+  productType?: string;
+  productTypeId?: string;
+  /** Facet selections: characteristic slug → value */
+  facets?: Array<{ slug: string; value: string }>;
   sort?: ProductSort;
   page?: number;
   /** Alias for pageSize; also accepts `limit` from query string. */

@@ -16,6 +16,7 @@ import {
   createProductSchema,
   listProductsQuerySchema,
 } from "@/features/products/schemas";
+import { parseFacetQueryParams } from "@/lib/catalog-taxonomy/facets";
 
 /**
  * GET /api/products
@@ -43,6 +44,7 @@ export async function GET(request: Request) {
     }
 
     const q = parsed.data;
+    const facets = parseFacetQueryParams(searchParams);
     const session = await getSessionUser();
     const status = resolveListStatusFilter(
       q.status,
@@ -69,6 +71,9 @@ export async function GET(request: Request) {
       priceMin: q.priceMin,
       priceMax: q.priceMax,
       inStock: q.inStock,
+      productType: q.productType,
+      productTypeId: q.productTypeId,
+      facets,
       sort: q.sort,
       page: q.page,
       pageSize: q.pageSize,

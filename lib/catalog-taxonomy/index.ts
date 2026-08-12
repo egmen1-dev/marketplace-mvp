@@ -10,3 +10,4 @@ export * from "./unify";
 export * from "./cache";
 export * from "./facets";
 export * from "./publish";
+export * from "./dedupe";

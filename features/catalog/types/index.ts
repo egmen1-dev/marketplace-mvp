@@ -18,8 +18,11 @@ export type CatalogSearchParams = {
   sellerKind?: string;
   condition?: string;
   inStock?: string;
+  productType?: string;
   sort?: string;
   page?: string;
+  /** Facet params: f_<slug> */
+  [key: `f_${string}`]: string | undefined;
 };
 
 export type CatalogFilters = {
@@ -36,6 +39,8 @@ export type CatalogFilters = {
   sellerKind?: SellerKindFilter;
   condition?: ProductCondition;
   inStock?: boolean;
+  productType?: string;
+  facets?: Array<{ slug: string; value: string }>;
   sort?: CatalogSort;
   page?: number;
 };
