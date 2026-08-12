@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
+import { catalogSourceLabel } from "@/lib/catalog-taxonomy/source";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -84,8 +85,10 @@ function ProductTypeRow({ type }: { type: AdminProductType }) {
           <Badge variant="secondary">скрыт</Badge>
         ) : null}
         {type.externalSource ? (
-          <Badge variant="outline">{type.externalSource}</Badge>
-        ) : null}
+          <Badge variant="outline">{catalogSourceLabel(type.externalSource)}</Badge>
+        ) : (
+          <Badge variant="outline">{catalogSourceLabel(null)}</Badge>
+        )}
         <span className="text-xs text-muted-foreground">
           {type._count.products} тов. · {type.characteristics.length} хар.
         </span>

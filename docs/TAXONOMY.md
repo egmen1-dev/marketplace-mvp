@@ -31,6 +31,9 @@ Code: `lib/catalog-taxonomy/`.
 
 ## Sync
 
+After sync, **Catalog Core unification** runs automatically (`unifyCatalogCore`):
+collision merge, path rebuild, cache invalidation. See [CATALOG_CORE_ARCHITECTURE.md](./CATALOG_CORE_ARCHITECTURE.md).
+
 ```bash
 # Prefer curated snapshot (default script)
 npm run taxonomy:sync

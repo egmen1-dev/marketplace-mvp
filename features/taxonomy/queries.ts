@@ -2,7 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import {
-  buildMatchCandidates,
+  getMatchCandidates,
   matchProductTypes,
   type MatchResult,
 } from "@/lib/catalog-taxonomy";
@@ -50,7 +50,7 @@ export async function suggestProductTypes(
 ): Promise<MatchResult[]> {
   const q = query.trim();
   if (q.length < 2) return [];
-  const candidates = await buildMatchCandidates(prisma);
+  const candidates = await getMatchCandidates(prisma);
   return matchProductTypes(q, candidates, { limit });
 }
 

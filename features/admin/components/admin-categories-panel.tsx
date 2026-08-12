@@ -15,6 +15,7 @@ import {
   updateCategoryAction,
 } from "@/features/admin/actions";
 import type { AdminCategoryRow } from "@/features/admin/queries";
+import { catalogSourceLabel } from "@/lib/catalog-taxonomy/source";
 
 export function AdminCategoriesPanel({
   categories,
@@ -156,6 +157,10 @@ function CategoryRow({
           ) : (
             <Badge variant="secondary">L{cat.level}</Badge>
           )}
+          <Badge variant="outline">{catalogSourceLabel(cat.externalSource)}</Badge>
+          {cat.path ? (
+            <span className="text-xs text-muted-foreground">{cat.path}</span>
+          ) : null}
           <span className="text-xs text-muted-foreground">
             {cat.productCount} тов. · {cat.childrenCount} доч.
           </span>

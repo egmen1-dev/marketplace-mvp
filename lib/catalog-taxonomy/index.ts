@@ -5,3 +5,8 @@ export * from "./characteristics";
 export * from "./sync";
 export * from "./migration";
 export * from "./providers";
+export * from "./source";
+export * from "./unify";
+export * from "./cache";
+export * from "./facets";
+export * from "./publish";

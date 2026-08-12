@@ -638,13 +638,21 @@ async function upsertCategoryTree(
   nodes: SeedCategory[],
   parentId: string | null,
   level: number,
+  parentPath: string | null,
   categoryBySlug: Map<string, string>,
 ) {
   for (const cat of nodes) {
+    const path = parentPath ? `${parentPath}/${cat.slug}` : cat.slug;
     const existing = await prisma.category.findUnique({
       where: { slug: cat.slug },
-      select: { id: true },
+      select: { id: true, externalSource: true, locallyEdited: true },
     });
+
+    const manualMeta = {
+      externalSource: "manual" as const,
+      externalId: `seed-${cat.slug}`,
+      externalName: cat.name,
+    };
 
     const data = {
       name: cat.name,
@@ -654,12 +662,30 @@ async function upsertCategoryTree(
       isActive: true,
       parentId,
       level,
+      path,
+      ...manualMeta,
     };
 
     const row = existing
       ? await prisma.category.update({
           where: { id: existing.id },
-          data,
+          data:
+            existing.externalSource === "snapshot" ||
+            existing.externalSource === "wildberries"
+              ? {
+                  description: cat.description ?? undefined,
+                  imageUrl: cat.imageUrl ?? undefined,
+                }
+              : existing.locallyEdited
+                ? {
+                    sortOrder: cat.sortOrder ?? 0,
+                    path,
+                    level,
+                    parentId,
+                    description: cat.description ?? undefined,
+                    imageUrl: cat.imageUrl ?? undefined,
+                  }
+                : data,
         })
       : await prisma.category.create({
           data: {
@@ -675,6 +701,7 @@ async function upsertCategoryTree(
         cat.children,
         row.id,
         level + 1,
+        path,
         categoryBySlug,
       );
     }
@@ -955,14 +982,14 @@ async function main() {
   ]);
 
   const categoryBySlug = new Map<string, string>();
-  await upsertCategoryTree(categoryTree, null, 1, categoryBySlug);
 
-  // WB-compatible ProductTypes + characteristics (snapshot; idempotent)
+  // 1. Taxonomy snapshot first — canonical ProductType branches (Catalog Core)
   try {
     const { LocalSnapshotProvider } = await import(
       "../lib/catalog-taxonomy/providers/snapshot"
     );
     const { syncTaxonomyToDb } = await import("../lib/catalog-taxonomy/sync");
+    const { unifyCatalogCore } = await import("../lib/catalog-taxonomy/unify");
     const taxonomy = await new LocalSnapshotProvider().fetchTaxonomy();
     const taxStats = await syncTaxonomyToDb(prisma, taxonomy, {
       deactivateMissing: false,
@@ -970,8 +997,15 @@ async function main() {
     console.log(
       `Taxonomy sync: categories=${taxStats.categoriesUpserted} types=${taxStats.productTypesUpserted} chars=${taxStats.characteristicsUpserted}`,
     );
+    // 2. Manual seed enriches tree (descriptions, images, seed-only branches)
+    await upsertCategoryTree(categoryTree, null, 1, null, categoryBySlug);
+    const unifyStats = await unifyCatalogCore(prisma);
+    console.log(
+      `Catalog unify: paths=${unifyStats.pathsRebuilt} legacy=${unifyStats.legacyCategoriesDeactivated} remapped=${unifyStats.productsRemapped}`,
+    );
   } catch (err) {
-    console.warn("[seed] taxonomy snapshot sync skipped:", err);
+    console.warn("[seed] taxonomy / unify skipped:", err);
+    await upsertCategoryTree(categoryTree, null, 1, null, categoryBySlug);
   }
 
   const activeSlugs = collectSlugs(categoryTree);

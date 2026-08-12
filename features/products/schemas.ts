@@ -29,7 +29,7 @@ const truthyInStock = (v: unknown) => {
   return undefined;
 };
 
-export const createProductSchema = z.object({
+const productBodySchema = z.object({
   title: z
     .string()
     .trim()
@@ -134,14 +134,30 @@ export const createProductSchema = z.object({
     .default([]),
 });
 
+const activeProductTypeRefine = (
+  data: { status: ProductStatus; productTypeId?: string | null },
+  ctx: z.RefinementCtx,
+) => {
+  if (data.status === ProductStatus.ACTIVE && !data.productTypeId?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Выберите тип товара для публикации",
+      path: ["productTypeId"],
+    });
+  }
+};
+
+export const createProductSchema =
+  productBodySchema.superRefine(activeProductTypeRefine);
+
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 
-export const updateProductSchema = createProductSchema
+export const updateProductSchema = productBodySchema
   .omit({ sellerId: true })
   .partial()
   .extend({
-    title: createProductSchema.shape.title.optional(),
-    price: createProductSchema.shape.price.optional(),
+    title: productBodySchema.shape.title.optional(),
+    price: productBodySchema.shape.price.optional(),
     images: z.array(imageSchema).max(10, "Максимум 10 изображений").optional(),
   });
 

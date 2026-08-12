@@ -119,6 +119,8 @@ export type AdminCategoryRow = {
   level: number;
   sortOrder: number;
   isActive: boolean;
+  path: string | null;
+  externalSource: string | null;
   productCount: number;
   childrenCount: number;
 };
@@ -500,6 +502,8 @@ export async function listAdminCategories(): Promise<AdminCategoryRow[]> {
       level: true,
       sortOrder: true,
       isActive: true,
+      path: true,
+      externalSource: true,
       _count: { select: { products: true, children: true } },
     },
   });
@@ -513,6 +517,8 @@ export async function listAdminCategories(): Promise<AdminCategoryRow[]> {
     level: row.level,
     sortOrder: row.sortOrder,
     isActive: row.isActive,
+    path: row.path,
+    externalSource: row.externalSource,
     productCount: row._count.products,
     childrenCount: row._count.children,
   }));

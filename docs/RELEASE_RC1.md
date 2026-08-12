@@ -1,12 +1,12 @@
 # RELEASE RC1 — Marketplace «ЛОТ»
 
-**Codename:** RELEASE-001  
-**Status:** Release Candidate 1  
-**Commit:** `10de465` (branch `main`)  
+**Codename:** RELEASE-001 → hardened through RELEASE-004  
+**Status:** Release Candidate 1 — **GO preparation complete**  
+**Commit:** `edf9751` (branch `main`)  
 **Staging:** https://web-production-e56fb.up.railway.app  
 **Production (unchanged):** https://marketplace-mvp-one.vercel.app  
 
-Vercel production was **not modified** during RC1 preparation.
+Vercel production was **not modified** during RC1/GO preparation. Last Vercel prod deploy: **2026-08-08** (pre-OMS) — **fresh deploy required on GO**.
 
 ---
 
@@ -121,7 +121,27 @@ Required Railway vars: `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_APP_URL`, `BL
 4. Smoke: `/api/health`, buyer checkout, seller confirm order, admin orders
 5. Monitor first 24h: hydration errors, cron logs, Blob 503 rate
 
-See [ROLLBACK.md](./ROLLBACK.md), [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md), and [ENVIRONMENTS.md](./ENVIRONMENTS.md).
+See [ROLLBACK.md](./ROLLBACK.md), [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md), [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md), and [ENVIRONMENTS.md](./ENVIRONMENTS.md).
+
+### Deployment sequence (GO day)
+
+1. **Backup** — [PRODUCTION_BACKUP_CHECKLIST.md](./PRODUCTION_BACKUP_CHECKLIST.md)
+2. **Environment** — [PRODUCTION_ENV_AUDIT.md](./PRODUCTION_ENV_AUDIT.md) (add `CRON_SECRET`, `AUTH_URL`, Blob flags)
+3. **Migrate** — `npx prisma migrate deploy` on production DB
+4. **Deploy** — `npx vercel deploy --prod` from `main` @ `edf9751+`
+5. **Cron** — schedule `POST /api/cron/orders-overdue` with secret
+6. **Smoke** — [POST_DEPLOY_SMOKE.md](./POST_DEPLOY_SMOKE.md)
+7. **Monitor** — health, logs, Sentry within 24h ([SENTRY_GO.md](./SENTRY_GO.md))
+8. **Sign-off** — [GO_NO_GO_MATRIX.md](./GO_NO_GO_MATRIX.md)
+
+### Support & recovery
+
+| Issue | Doc |
+|-------|-----|
+| Rollback app | [ROLLBACK.md](./ROLLBACK.md) |
+| Restore DB | [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md) |
+| Env misconfig | [PRODUCTION_ENV_AUDIT.md](./PRODUCTION_ENV_AUDIT.md) |
+| Observability | [OBSERVABILITY_AUDIT.md](./OBSERVABILITY_AUDIT.md) |
 
 ---
 
@@ -177,4 +197,9 @@ Password: `demo1234`
 - [TAXONOMY.md](./TAXONOMY.md) — category engine
 - [ENVIRONMENTS.md](./ENVIRONMENTS.md) — staging vs production
 - [BACKUP_DEPLOYMENT.md](./BACKUP_DEPLOYMENT.md) — Railway/Render
-- [ROLLBACK.md](./ROLLBACK.md) — rollback procedure
+- [ROLLBACK.md](./ROLLBACK.md)
+- [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) — GO steps
+- [GO_NO_GO_MATRIX.md](./GO_NO_GO_MATRIX.md) — decision matrix
+- [POST_DEPLOY_SMOKE.md](./POST_DEPLOY_SMOKE.md)
+- [PRODUCTION_ENV_AUDIT.md](./PRODUCTION_ENV_AUDIT.md)
+- [SENTRY_GO.md](./SENTRY_GO.md) — Sentry activation on GO

@@ -213,6 +213,13 @@ export function ProductForm({
           />
         </div>
 
+        <p className="text-xs text-muted-foreground">
+          Категория определяется автоматически по типу товара.
+          {productType?.breadcrumb?.length ? (
+            <> Путь: {productType.breadcrumb.join(" → ")}</>
+          ) : null}
+        </p>
+
         <div>
           <Button
             type="button"
@@ -223,9 +230,9 @@ export function ProductForm({
           >
             {showLegacyCategory
               ? "Скрыть ручной выбор категории"
-              : "Дополнительно: категория каталога"}
+              : "Дополнительно: переопределить категорию"}
           </Button>
-          {showLegacyCategory ? (
+          {showLegacyCategory && !productType ? (
             <CategoryPicker
               categories={categories}
               value={categoryId}

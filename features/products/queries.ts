@@ -581,6 +581,18 @@ export async function createProduct(
 
   await assertCategoryExists(input.categoryId);
 
+  const publishCheck = (await import("@/lib/catalog-taxonomy")).assertActivePublishRequirements({
+    status: input.status,
+    productTypeId: input.productTypeId,
+  });
+  if (!publishCheck.ok) {
+    throw new ProductServiceError(
+      publishCheck.code,
+      publishCheck.message,
+      400,
+    );
+  }
+
   let resolvedCategoryId = input.categoryId ?? null;
   const resolvedProductTypeId = input.productTypeId ?? null;
 
@@ -798,16 +810,27 @@ export async function updateProduct(
         : { connect: { id: input.productTypeId } };
   }
 
-  const targetStatus = input.status;
+  const existingFull = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { productTypeId: true, status: true },
+  });
+  const targetStatus = input.status ?? existingFull?.status ?? ProductStatus.DRAFT;
   const targetTypeId =
     input.productTypeId !== undefined
       ? input.productTypeId
-      : (
-          await prisma.product.findUnique({
-            where: { id: productId },
-            select: { productTypeId: true },
-          })
-        )?.productTypeId;
+      : existingFull?.productTypeId;
+
+  const publishCheck = (await import("@/lib/catalog-taxonomy")).assertActivePublishRequirements({
+    status: targetStatus,
+    productTypeId: targetTypeId,
+  });
+  if (!publishCheck.ok) {
+    throw new ProductServiceError(
+      publishCheck.code,
+      publishCheck.message,
+      400,
+    );
+  }
 
   if (targetStatus === ProductStatus.ACTIVE && targetTypeId) {
     const pt = await prisma.productType.findFirst({

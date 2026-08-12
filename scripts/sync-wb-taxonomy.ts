@@ -15,6 +15,7 @@ config();
 import { prisma } from "../lib/prisma";
 import { resolveTaxonomyProvider } from "../lib/catalog-taxonomy/providers";
 import { syncTaxonomyToDb } from "../lib/catalog-taxonomy/sync";
+import { unifyCatalogCore } from "../lib/catalog-taxonomy/unify";
 import { migrateExistingProducts } from "../lib/catalog-taxonomy/migration";
 
 async function main() {
@@ -36,6 +37,9 @@ async function main() {
     deactivateMissing: false, // safer default for snapshot merge with existing LOT cats
   });
   console.log("[taxonomy:sync] upsert stats:", stats);
+
+  const unify = await unifyCatalogCore(prisma);
+  console.log("[taxonomy:sync] unify stats:", unify);
 
   if (runMigrate) {
     const report = await migrateExistingProducts(prisma, {

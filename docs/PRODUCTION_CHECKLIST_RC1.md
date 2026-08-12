@@ -1,57 +1,49 @@
-# Production Checklist — RC1
+# Production Checklist — RC1 (GO)
 
-Mark each area **READY**, **PARTIAL**, or **BLOCKED** before Vercel GO.
+Mark each area **READY**, **WARNING**, or **BLOCKED** before Vercel GO.
+
+**Decision matrix:** [GO_NO_GO_MATRIX.md](./GO_NO_GO_MATRIX.md)  
+**Deploy steps:** [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
 
 | Area | Status | Notes |
 |------|--------|-------|
-| **Database** | READY | 19 migrations; `prisma validate` PASS; additive OMS schema |
-| **Uploads** | READY | Blob client-direct; 503 without token; `/api/media` proxy |
-| **Search** | READY | Stemming, filters, suggest; DB-backed only |
-| **OMS** | READY | Delivery/pickup/overdue/cron; Railway verified |
-| **Reviews** | BLOCKED | Not implemented; eligibility scaffold only |
-| **Trust** | PARTIAL | Seller badges + admin block/verify; no auto risk |
-| **Ranking** | PARTIAL | Views/favorites/recency; no review/conversion signals |
-| **Cron** | READY | `CRON_SECRET` on Railway; endpoint 200 |
-| **Railway** | READY | Deploy `10de465`; health 200; migrations on start |
-| **Vercel** | PARTIAL | Unchanged in RC1; awaiting explicit GO + env audit |
-| **Blob** | READY | Token on Railway; private access + media proxy |
-| **Monitoring** | WARNING | Structured logs + process hooks; Sentry not wired — connect on GO |
-| **Logging** | WARNING | JSON `lib/logger` on critical paths; many routes still `console.error` |
-| **Security** | READY | IDOR tests, role gates, cron secret, chat hardening |
-| **Backups** | WARNING | Strategy documented; automated PITR depends on provider plan |
-| **Rollback** | READY | [ROLLBACK.md](./ROLLBACK.md) + emergency steps |
+| **Database** | READY | 19 migrations; migrate deploy on GO |
+| **Environment** | WARNING | Vercel prod needs CRON_SECRET + AUTH_URL + Blob flags |
+| **Uploads** | READY | Blob token present on Vercel |
+| **Search** | READY | Stemming, filters, suggest |
+| **OMS** | READY | Staging verified; cron on GO |
+| **Pickup** | READY | Coordinator + admin |
+| **Reviews** | BLOCKED | RC2 — out of scope |
+| **Trust** | WARNING | Admin moderation; no auto-risk |
+| **Ranking** | WARNING | Views/favorites/recency |
+| **Cron** | WARNING | Secret missing on Vercel prod — add on GO |
+| **Railway** | READY | Staging @ `edf9751` |
+| **Vercel** | WARNING | Deploy stale (Aug 8); env incomplete |
+| **Blob** | READY | Shared Vercel Blob store |
+| **Monitoring** | WARNING | Health ✅; Sentry prepared not active |
+| **Logging** | WARNING | JSON on critical paths |
+| **Security** | READY | IDOR, roles, cron auth |
+| **Backups** | WARNING | Checklist ready; manual snapshot on GO |
+| **Rollback** | READY | ROLLBACK.md + emergency steps |
+| **Hydration** | WARNING | No allowlist; monitor post-GO |
 
 ---
 
 ## Pre-GO gates (all must PASS)
 
-- [ ] `npx prisma validate`
-- [ ] `npx tsc --noEmit`
-- [ ] `eslint .`
-- [ ] `npm run build`
+- [ ] [PRODUCTION_BACKUP_CHECKLIST.md](./PRODUCTION_BACKUP_CHECKLIST.md) complete
+- [ ] [PRODUCTION_ENV_AUDIT.md](./PRODUCTION_ENV_AUDIT.md) vars added to Vercel
+- [ ] `npx prisma migrate deploy` on production DB (dry-run reviewed)
+- [ ] `npx prisma validate` + `npm run build` on `main`
 - [ ] `npm run test` → 117/117
-- [ ] Playwright local `--retries=0` × 3 green
-- [ ] Railway full acceptance green
-- [ ] Production DB backup taken — see [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md)
-- [ ] `SENTRY_DSN` planned (optional at GO, recommended within 24h)
-- [ ] `CRON_SECRET` set on Vercel (if using overdue cron)
-- [ ] `NEXT_PUBLIC_APP_URL` matches canonical production origin
-- [ ] Stripe webhook URL updated (if payments enabled)
-- [ ] Smoke checklist in `RELEASE_RC1.md` executed on staging
+- [ ] [GO_NO_GO_MATRIX.md](./GO_NO_GO_MATRIX.md) — no BLOCKED (except Reviews = excluded)
+- [ ] Owner GO sign-off
 
 ---
 
-## Post-GO smoke (first 30 min)
+## Post-GO smoke
 
-- [ ] `/` — homepage, light theme default
-- [ ] `/catalog` — products, search, no console #418
-- [ ] Buyer: cart → checkout → order created
-- [ ] Seller: confirm order → OMS transition
-- [ ] Admin: `/admin/orders` loads, overdue filter
-- [ ] `/api/health` → 200 with `checks.database.ok: true`
-- [ ] Connect log drain / Sentry before or immediately after GO
-- [ ] Upload test image on seller product form
-- [ ] Chat: buyer message → seller reply
+→ [POST_DEPLOY_SMOKE.md](./POST_DEPLOY_SMOKE.md)
 
 ---
 
@@ -63,4 +55,4 @@ Mark each area **READY**, **PARTIAL**, or **BLOCKED** before Vercel GO.
 | Product | | | |
 | Ops | | | |
 
-**RC1 recommendation:** **CONDITIONAL GO** — ship platform except Reviews; monitor hydration; schedule Reviews as RC2.
+**Recommendation:** **CONDITIONAL GO** — execute [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) on owner approval.

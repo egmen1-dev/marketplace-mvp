@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { resolveTaxonomyProvider } from "@/lib/catalog-taxonomy/providers";
 import { syncTaxonomyToDb } from "@/lib/catalog-taxonomy/sync";
+import { unifyCatalogCore } from "@/lib/catalog-taxonomy/unify";
 import { migrateExistingProducts } from "@/lib/catalog-taxonomy/migration";
 import { prisma } from "@/lib/prisma";
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
     const stats = await syncTaxonomyToDb(prisma, taxonomy, {
       deactivateMissing: false,
     });
+    const unify = await unifyCatalogCore(prisma);
 
     const migrate =
       new URL(request.url).searchParams.get("migrate") === "1";
@@ -40,6 +42,7 @@ export async function POST(request: Request) {
       ok: true,
       provider: provider.name,
       stats,
+      unify,
       migrationDryRun: report
         ? {
             mapped: report.mapped,

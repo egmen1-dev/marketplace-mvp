@@ -20,6 +20,14 @@ B2C marketplace: покупатели ищут товары в каталоге,
 | DB | PostgreSQL + Prisma ORM |
 | Deploy | Vercel (primary); backup hosts — see [docs/BACKUP_DEPLOYMENT.md](docs/BACKUP_DEPLOYMENT.md) |
 
+### Production GO (RC1)
+
+Documentation only — **do not deploy without owner GO:**
+
+- [docs/DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md)
+- [docs/GO_NO_GO_MATRIX.md](docs/GO_NO_GO_MATRIX.md)
+- [docs/RELEASE_RC1.md](docs/RELEASE_RC1.md)
+
 ---
 
 ## Architecture

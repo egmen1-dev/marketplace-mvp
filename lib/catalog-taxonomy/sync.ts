@@ -9,6 +9,7 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 
 import { normalizeAlias } from "./normalize";
 import type { NormalizedTaxonomy } from "./types";
+import { invalidateTaxonomyCache } from "./cache";
 
 export type SyncStats = {
   categoriesUpserted: number;
@@ -249,7 +250,6 @@ export async function syncTaxonomyToDb(
   let productTypesDeactivated = 0;
 
   if (deactivateMissing && source) {
-    // Soft-deactivate product types from this source that disappeared
     const staleTypes = await db.productType.findMany({
       where: {
         externalSource: source === "snapshot" ? { in: ["snapshot", "wildberries"] } : source,
@@ -273,6 +273,8 @@ export async function syncTaxonomyToDb(
       productTypesDeactivated += 1;
     }
   }
+
+  invalidateTaxonomyCache();
 
   return {
     categoriesUpserted,
