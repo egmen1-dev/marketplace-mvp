@@ -60,6 +60,7 @@ export function SellerPublicHeader({
           isVerified={profile.isVerified}
           kind={profile.kind}
           joinedAt={profile.joinedAt}
+          completedOrders={profile.metrics.completedOrdersCount}
           className="mt-3"
         />
 
