@@ -1,7 +1,5 @@
 import { ConversationsList } from "@/features/chat";
 import { listAllConversationsForAdmin } from "@/features/chat/queries";
-import { adminConversationPath } from "@/lib/constants";
-
 export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Чаты — модерация" };
@@ -22,7 +20,7 @@ export default async function AdminMessagesPage() {
       </div>
       <ConversationsList
         conversations={conversations}
-        getHref={adminConversationPath}
+        hrefMode="admin"
         emptyHint="Диалогов пока нет."
       />
     </div>
