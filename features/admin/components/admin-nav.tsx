@@ -11,6 +11,7 @@ import {
   Sparkles,
   Store,
   Ticket,
+  Upload,
   Users,
 } from "lucide-react";
 
@@ -66,6 +67,13 @@ const NAV_ITEMS = [
     label: "Категории",
     icon: FolderTree,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CATEGORIES),
+  },
+  {
+    href: ROUTES.ADMIN_TAXONOMY_IMPORT,
+    label: "Taxonomy Import",
+    icon: Upload,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_TAXONOMY_IMPORT),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

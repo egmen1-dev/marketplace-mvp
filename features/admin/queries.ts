@@ -950,3 +950,48 @@ export async function listAdminUnderstandingCorrections(
     createdAt: r.createdAt.toISOString(),
   }));
 }
+
+export type AdminImportBatchRow = {
+  id: string;
+  source: string;
+  version: string;
+  hash: string;
+  status: string;
+  statistics: Record<string, number> | null;
+  itemCount: number;
+  createdAt: string;
+  appliedAt: string | null;
+};
+
+export async function listAdminImportBatches(
+  limit = 30,
+): Promise<AdminImportBatchRow[]> {
+  const rows = await prisma.taxonomyImportBatch.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    include: { _count: { select: { items: true } } },
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    source: r.source,
+    version: r.version,
+    hash: r.hash,
+    status: r.status,
+    statistics: (r.statistics as Record<string, number> | null) ?? null,
+    itemCount: r._count.items,
+    createdAt: r.createdAt.toISOString(),
+    appliedAt: r.appliedAt?.toISOString() ?? null,
+  }));
+}
+
+export async function getAdminImportBatch(batchId: string) {
+  return prisma.taxonomyImportBatch.findUnique({
+    where: { id: batchId },
+    include: {
+      items: {
+        orderBy: [{ status: "asc" }, { action: "asc" }],
+        take: 200,
+      },
+    },
+  });
+}

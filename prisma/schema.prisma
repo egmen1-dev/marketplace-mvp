@@ -971,3 +971,61 @@ model AdminActionLog {
   @@index([createdAt])
   @@map("admin_action_logs")
 }
+
+// ─── Taxonomy Import Engine (EPIC-A-005) ──────────────────────────────────────
+
+/// Versioned taxonomy import batch — review before Catalog Core apply.
+model TaxonomyImportBatch {
+  id         String   @id @default(cuid())
+  /// Provider / source label: snapshot | wildberries | manual | file
+  source     String
+  /// Human / semver / timestamp version string
+  version    String
+  /// SHA-256 of normalized payload for idempotency
+  hash       String
+  /// PENDING | APPROVED | REJECTED | APPLIED
+  status     String   @default("PENDING")
+  statistics Json?
+  report     Json?
+  meta       Json?
+  createdBy  String?
+  appliedAt  DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  items TaxonomyImportItem[]
+
+  @@index([status])
+  @@index([source])
+  @@index([hash])
+  @@index([createdAt])
+  @@map("taxonomy_import_batches")
+}
+
+model TaxonomyImportItem {
+  id         String   @id @default(cuid())
+  batchId    String
+  externalId String?
+  /// CATEGORY | PRODUCT_TYPE | CHARACTERISTIC | ALIAS
+  entityType String
+  /// CREATE | UPDATE | MERGE | SKIP | REVIEW | SOFT_DEACTIVATE
+  action     String
+  oldValue   Json?
+  newValue   Json?
+  confidence Float    @default(0)
+  /// PENDING | APPROVED | REJECTED | APPLIED
+  status     String   @default("PENDING")
+  reason     String?
+  /// Existing LOT entity id when matched
+  targetId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  batch TaxonomyImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([status])
+  @@index([entityType, action])
+  @@index([externalId])
+  @@map("taxonomy_import_items")
+}

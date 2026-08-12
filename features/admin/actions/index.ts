@@ -572,3 +572,116 @@ export async function showCategoryAction(
 ): Promise<AdminActionState> {
   return setCategoryActiveAction(categoryId, true);
 }
+
+export async function setTaxonomyImportItemStatusAction(
+  itemId: string,
+  status: "APPROVED" | "REJECTED" | "PENDING",
+): Promise<AdminActionState> {
+  let admin;
+  try {
+    admin = await requireAdminSession();
+  } catch (err) {
+    return authError(err) ?? { ok: false, error: "Ошибка доступа" };
+  }
+
+  const item = await prisma.taxonomyImportItem.findUnique({
+    where: { id: itemId },
+    select: { id: true, batchId: true, action: true },
+  });
+  if (!item) return { ok: false, error: "Элемент не найден" };
+
+  await prisma.taxonomyImportItem.update({
+    where: { id: itemId },
+    data: { status },
+  });
+
+  await logAdminAction({
+    adminId: admin.id,
+    action: `TAXONOMY_IMPORT_ITEM_${status}`,
+    entityType: "TaxonomyImportItem",
+    entityId: itemId,
+    meta: { batchId: item.batchId, itemAction: item.action },
+  });
+
+  revalidatePath(ROUTES.ADMIN_TAXONOMY_IMPORT);
+  return { ok: true, message: status };
+}
+
+export async function applyTaxonomyImportBatchAction(
+  batchId: string,
+): Promise<AdminActionState> {
+  let admin;
+  try {
+    admin = await requireAdminSession();
+  } catch (err) {
+    return authError(err) ?? { ok: false, error: "Ошибка доступа" };
+  }
+
+  try {
+    const { applyImportBatch } = await import("@/lib/catalog-taxonomy/import");
+    const report = await applyImportBatch(prisma, batchId, {
+      autoApproveSafe: false,
+    });
+    await logAdminAction({
+      adminId: admin.id,
+      action: "TAXONOMY_IMPORT_APPLY",
+      entityType: "TaxonomyImportBatch",
+      entityId: batchId,
+      meta: report as unknown as Record<string, unknown>,
+    });
+    revalidatePath(ROUTES.ADMIN_TAXONOMY_IMPORT);
+    revalidatePath(ROUTES.ADMIN_CATEGORIES);
+    return {
+      ok: true,
+      message: `Applied ${report.appliedItems} items (merges=${report.merges})`,
+    };
+  } catch (err) {
+    console.error("[applyTaxonomyImportBatchAction]", err);
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Apply failed",
+    };
+  }
+}
+
+export async function runTaxonomyImportDryRunAction(): Promise<AdminActionState> {
+  let admin;
+  try {
+    admin = await requireAdminSession();
+  } catch (err) {
+    return authError(err) ?? { ok: false, error: "Ошибка доступа" };
+  }
+
+  try {
+    const { resolveTaxonomyProvider } = await import(
+      "@/lib/catalog-taxonomy/providers"
+    );
+    const { buildImportPlan, saveImportBatch } = await import(
+      "@/lib/catalog-taxonomy/import"
+    );
+    const provider = resolveTaxonomyProvider({ preferSnapshot: true });
+    const taxonomy = await provider.fetchTaxonomy();
+    const plan = await buildImportPlan(prisma, taxonomy);
+    const { batchId } = await saveImportBatch(prisma, plan, {
+      createdBy: admin.id,
+    });
+    await logAdminAction({
+      adminId: admin.id,
+      action: "TAXONOMY_IMPORT_DRY_RUN",
+      entityType: "TaxonomyImportBatch",
+      entityId: batchId,
+      meta: plan.statistics as unknown as Record<string, unknown>,
+    });
+    revalidatePath(ROUTES.ADMIN_TAXONOMY_IMPORT);
+    return {
+      ok: true,
+      message: `Dry-run batch ${batchId} (created=${plan.statistics.created}, review=${plan.statistics.needReview})`,
+    };
+  } catch (err) {
+    console.error("[runTaxonomyImportDryRunAction]", err);
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Dry-run failed",
+    };
+  }
+}

@@ -11,3 +11,5 @@ export * from "./cache";
 export * from "./facets";
 export * from "./publish";
 export * from "./dedupe";
+export * as taxonomyImport from "./import";
+
