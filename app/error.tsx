@@ -27,8 +27,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           Что-то пошло не так
         </h1>
         <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Не удалось загрузить страницу. Попробуйте ещё раз или вернитесь на
-          главную.
+          Произошла ошибка. Обновите страницу или вернитесь на главную.
         </p>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-3">

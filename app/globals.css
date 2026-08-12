@@ -200,15 +200,96 @@
   }
 
   .animate-fade-up {
-    animation: fade-up var(--duration-slow) var(--ease-out-premium) both;
+    opacity: 1;
+    animation: fade-up var(--duration-slow) var(--ease-out-premium) forwards;
   }
 
   .animate-fade-in {
-    animation: fade-in var(--duration-slow) var(--ease-out-premium) both;
+    opacity: 1;
+    animation: fade-in var(--duration-slow) var(--ease-out-premium) forwards;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not(.webview-compat) .animate-fade-up {
+      opacity: 0;
+      animation-fill-mode: both;
+    }
+
+    :root:not(.webview-compat) .animate-fade-in {
+      opacity: 0;
+      animation-fill-mode: both;
+    }
   }
 
   .animate-hero-glow {
     animation: hero-glow 8s ease-in-out infinite alternate;
+  }
+
+  /* Instant loading shell — visible before JS/CSS animations (VK WebView). */
+  .boot-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: #111111;
+  }
+
+  .boot-splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .boot-splash-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    border: 3px solid rgb(255 106 0 / 25%);
+    border-top-color: #ff6a00;
+    animation: boot-spin 0.7s linear infinite;
+  }
+
+  .boot-splash-text {
+    margin: 0;
+  }
+
+  @keyframes boot-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Embedded browsers: skip paint-skipping + entrance animations. */
+  .webview-compat .animate-fade-up,
+  .webview-compat .animate-fade-in,
+  .webview-compat .animate-hero-glow {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .webview-compat .content-visibility-auto {
+    content-visibility: visible !important;
+    contain-intrinsic-size: auto !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .animate-fade-in,
+    .animate-hero-glow,
+    .boot-splash-spinner {
+      animation: none !important;
+    }
+
+    .animate-fade-up,
+    .animate-fade-in {
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 
   /* Skip layout/paint for offscreen homepage sections (keeps LCP free). */

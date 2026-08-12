@@ -26,6 +26,7 @@ const ALLOWED_FAILED_REQUEST_PATTERNS: RegExp[] = [
   /\/favicon\.ico$/i,
   /_rsc=/i,
   /\/api\/uploads/i,
+  /\/api\/telemetry\/page-load$/i,
 ];
 
 const ALLOWED_5XX_URL_PATTERNS: RegExp[] = [
