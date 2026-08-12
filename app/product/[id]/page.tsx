@@ -23,8 +23,12 @@ import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
+import { JsonLd } from "@/features/seo/components/json-ld";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { getCanonicalAppUrl } from "@/lib/env";
+import { productJsonLd } from "@/lib/seo/json-ld";
+import { brandPagePath } from "@/lib/seo/paths";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -52,15 +56,22 @@ export async function generateMetadata({
   try {
     const { product } = await loadProductForPage(id);
     if (!product) return { title: "Товар не найден" };
+    const { getCanonicalAppUrl } = await import("@/lib/env");
+    const { productPagePath } = await import("@/lib/seo");
+    const title = product.seoTitle?.trim() || product.title;
     const description =
+      product.seoDescription?.trim() ||
       product.description?.slice(0, 160) ||
       `${product.title} — ${formatPrice(product.price, product.currency)} на ${APP_NAME}`;
     const image = product.primaryImage?.url ?? product.images[0]?.url;
+    const origin = getCanonicalAppUrl();
+    const canonical = `${origin}${productPagePath(product.id)}`;
     return {
-      title: product.title,
+      title,
       description,
+      alternates: { canonical },
       openGraph: {
-        title: `${product.title} · ${APP_NAME}`,
+        title: `${title} · ${APP_NAME}`,
         description,
         type: "website",
         ...(image ? { images: [{ url: image }] } : {}),
@@ -121,8 +132,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const sellerShipping = sellerTrust?.shippingDefaults?.trim() || null;
 
+  const origin = getCanonicalAppUrl();
+  const productUrl = `${origin}${ROUTES.PRODUCT}/${product.id}`;
+  const ld = productJsonLd({
+    name: product.title,
+    description:
+      product.seoDescription?.trim() ||
+      product.description?.trim() ||
+      product.title,
+    url: productUrl,
+    image: product.primaryImage?.url ?? product.images[0]?.url,
+    price: product.price,
+    currency: product.currency,
+    brand: product.brand?.name ?? null,
+    sku: product.sku,
+    availability: product.stock > 0 ? "InStock" : "OutOfStock",
+  });
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 pb-28 sm:px-6 sm:py-10 md:pb-10">
+      <JsonLd data={ld} />
       <Button
         variant="ghost"
         size="sm"
@@ -149,6 +178,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 }
               >
                 {product.category.name}
+              </Badge>
+            ) : null}
+
+            {product.brand ? (
+              <Badge
+                variant="outline"
+                className="w-fit"
+                render={<Link href={brandPagePath(product.brand.slug)} />}
+              >
+                {product.brand.name}
               </Badge>
             ) : null}
 

@@ -228,6 +228,11 @@ export const listProductsQuerySchema = z.object({
     emptyToUndefined,
     z.string().cuid().optional(),
   ),
+  brand: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().min(1).max(120).optional(),
+  ),
+  brandId: z.preprocess(emptyToUndefined, z.string().cuid().optional()),
   /** Encoded as repeated f_<slug>=value in query; parsed in route */
   facets: z
     .array(z.object({ slug: z.string().min(1), value: z.string().min(1) }))

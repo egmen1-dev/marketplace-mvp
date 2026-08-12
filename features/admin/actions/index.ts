@@ -685,3 +685,129 @@ export async function runTaxonomyImportDryRunAction(): Promise<AdminActionState>
     };
   }
 }
+
+export async function approveSeoPageAction(
+  pageId: string,
+): Promise<AdminActionState> {
+  let admin;
+  try {
+    admin = await requireAdminSession();
+  } catch (err) {
+    return authError(err) ?? { ok: false, error: "Ошибка доступа" };
+  }
+
+  const page = await prisma.seoPage.findUnique({ where: { id: pageId } });
+  if (!page) return { ok: false, error: "SEO page not found" };
+
+  const draft = page.aiDraft as
+    | { title?: string; description?: string; content?: string }
+    | null;
+
+  await prisma.seoPage.update({
+    where: { id: pageId },
+    data: {
+      status: "APPROVED",
+      indexable: page.score >= 45,
+      title: page.title ?? draft?.title ?? page.title,
+      description: page.description ?? draft?.description ?? page.description,
+      content: page.content ?? draft?.content ?? page.content,
+    },
+  });
+
+  await logAdminAction({
+    adminId: admin.id,
+    action: "SEO_PAGE_APPROVE",
+    entityType: "SeoPage",
+    entityId: pageId,
+  });
+  revalidatePath(ROUTES.ADMIN_SEO);
+  return { ok: true, message: "Approved" };
+}
+
+export async function disableSeoPageIndexingAction(
+  pageId: string,
+): Promise<AdminActionState> {
+  let admin;
+  try {
+    admin = await requireAdminSession();
+  } catch (err) {
+    return authError(err) ?? { ok: false, error: "Ошибка доступа" };
+  }
+
+  await prisma.seoPage.update({
+    where: { id: pageId },
+    data: { indexable: false, status: "DISABLED" },
+  });
+  await logAdminAction({
+    adminId: admin.id,
+    action: "SEO_PAGE_DISABLE",
+    entityType: "SeoPage",
+    entityId: pageId,
+  });
+  revalidatePath(ROUTES.ADMIN_SEO);
+  return { ok: true, message: "Indexing disabled" };
+}
+
+export async function generateSeoDraftAction(): Promise<AdminActionState> {
+  let admin;
+  try {
+    admin = await requireAdminSession();
+  } catch (err) {
+    return authError(err) ?? { ok: false, error: "Ошибка доступа" };
+  }
+
+  const { draftBrandAiSeo, brandPagePath, computeSeoScore } = await import(
+    "@/lib/seo"
+  );
+  const { APP_NAME } = await import("@/lib/constants");
+  const brands = await prisma.brand.findMany({
+    where: { isActive: true, products: { some: { status: "ACTIVE" } } },
+    take: 20,
+    include: {
+      _count: { select: { products: { where: { status: "ACTIVE" } } } },
+    },
+  });
+
+  let created = 0;
+  for (const b of brands) {
+    const path = brandPagePath(b.slug);
+    const existing = await prisma.seoPage.findUnique({ where: { path } });
+    if (existing) continue;
+    const draft = draftBrandAiSeo({ name: b.name, appName: APP_NAME });
+    const score = computeSeoScore({
+      hasTitle: true,
+      hasDescription: true,
+      contentLength: draft.content.length,
+      productCount: b._count.products,
+      internalLinkCount: 2,
+      hasUniqueText: true,
+      hasFacets: false,
+    });
+    await prisma.seoPage.create({
+      data: {
+        entityType: "BRAND",
+        entityId: b.id,
+        path,
+        slug: b.slug,
+        title: draft.title,
+        description: draft.description,
+        content: null,
+        aiDraft: draft,
+        status: "PENDING_REVIEW",
+        indexable: false,
+        score,
+      },
+    });
+    created += 1;
+  }
+
+  await logAdminAction({
+    adminId: admin.id,
+    action: "SEO_GENERATE_DRAFTS",
+    entityType: "SeoPage",
+    entityId: "batch",
+    meta: { created },
+  });
+  revalidatePath(ROUTES.ADMIN_SEO);
+  return { ok: true, message: `Created ${created} brand SEO drafts` };
+}

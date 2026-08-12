@@ -1050,4 +1050,54 @@ model AnalyticsEvent {
   @@index([visitorId, createdAt])
   @@index([utmSource, createdAt])
   @@index([entityId, event])
+  @@map("analytics_events")
+}
+
+// ─── SEO Growth Engine (EPIC-A-006) ───────────────────────────────────────────
+
+/// Controlled SEO landing (especially facet pages) — not mass-generated.
+model SeoPage {
+  id          String   @id @default(cuid())
+  /// CATEGORY | PRODUCT_TYPE | BRAND | FACET | CUSTOM
+  entityType  String
+  entityId    String?
+  /// Unique public path, e.g. /catalog/tools/power-tools/rotary-hammers-type
+  path        String   @unique
+  slug        String
+  title       String?
+  description String?
+  /// Approved body copy (template or human/AI after approval)
+  content     String?
+  /// AI draft awaiting approval — never auto-published
+  aiDraft     Json?
+  /// DRAFT | PENDING_REVIEW | APPROVED | DISABLED
+  status      String   @default("DRAFT")
+  indexable   Boolean  @default(false)
+  /// 0–100 quality score snapshot
+  score       Int      @default(0)
+  meta        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([entityType, entityId])
+  @@index([status, indexable])
+  @@index([score])
+  @@map("seo_pages")
+}
+
+/// Rules for which facet landings may be proposed (not auto-indexed).
+model SeoFacetRule {
+  id               String   @id @default(cuid())
+  /// Characteristic slug allowed for SEO landings (e.g. brand, power-w)
+  characteristicSlug String
+  /// Optional ProductType slug scope; null = any
+  productTypeSlug  String?
+  minProductCount  Int      @default(3)
+  enabled          Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([characteristicSlug, productTypeSlug])
+  @@index([enabled])
+  @@map("seo_facet_rules")
 }

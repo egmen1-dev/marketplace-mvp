@@ -135,6 +135,9 @@ export type ProductListFilters = {
   /** ProductType slug filter */
   productType?: string;
   productTypeId?: string;
+  /** Brand slug or id */
+  brand?: string;
+  brandId?: string;
   /** Facet selections: characteristic slug → value */
   facets?: Array<{ slug: string; value: string }>;
   sort?: ProductSort;

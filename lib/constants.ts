@@ -68,12 +68,14 @@ export const ROUTES = {
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_CATEGORIES: "/admin/categories",
   ADMIN_TAXONOMY_IMPORT: "/admin/taxonomy/import",
+  ADMIN_SEO: "/admin/seo",
   ADMIN_AI_UNDERSTANDING: "/admin/ai-understanding",
   ADMIN_RESERVATIONS: "/admin/reservations",
   ADMIN_MESSAGES: "/admin/messages",
   ADMIN_ANALYTICS: "/admin/analytics",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
+  BRANDS: "/brands",
 } as const;
 
 export function adminOrderPath(id: string) {

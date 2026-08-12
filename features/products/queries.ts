@@ -276,6 +276,20 @@ async function buildWhere(
     };
   }
 
+  if (filters.brandId) {
+    where.brandId = filters.brandId;
+  } else if (filters.brand) {
+    where.brand = {
+      is: {
+        OR: [
+          { slug: filters.brand },
+          { id: filters.brand },
+        ],
+        isActive: true,
+      },
+    };
+  }
+
   const priceFilter: Prisma.DecimalFilter = {};
   if (filters.priceMin != null) {
     priceFilter.gte = new Prisma.Decimal(filters.priceMin);

@@ -73,6 +73,8 @@ export async function GET(request: Request) {
       inStock: q.inStock,
       productType: q.productType,
       productTypeId: q.productTypeId,
+      brand: q.brand,
+      brandId: q.brandId,
       facets,
       sort: q.sort,
       page: q.page,

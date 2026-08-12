@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   MessageCircle,
   Package,
+  Search,
   ShoppingBag,
   Sparkles,
   Store,
@@ -82,6 +83,12 @@ const NAV_ITEMS = [
     icon: Upload,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_TAXONOMY_IMPORT),
+  },
+  {
+    href: ROUTES.ADMIN_SEO,
+    label: "SEO",
+    icon: Search,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_SEO),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

@@ -56,16 +56,35 @@ export async function generateMetadata({
     if (!category) {
       return { title: "Категория не найдена" };
     }
-    const title = `Купить ${category.name} онлайн`;
-    const description =
-      category.description?.trim() ||
-      `Купить ${category.name} онлайн на ${APP_NAME}. Выбирайте товары с доставкой.`;
+    const { buildCategorySeo, computeSeoScore, shouldIndexPage, categoryPagePath } =
+      await import("@/lib/seo");
+    const { getCanonicalAppUrl } = await import("@/lib/env");
+    const seo = buildCategorySeo({
+      name: category.name,
+      description: category.description,
+      appName: APP_NAME,
+    });
+    const score = computeSeoScore({
+      hasTitle: true,
+      hasDescription: Boolean(seo.description),
+      contentLength: (category.description ?? "").length || 60,
+      productCount: category.productCount,
+      internalLinkCount: category.children.length,
+      hasUniqueText: Boolean(category.description?.trim()),
+      hasFacets: true,
+    });
+    const index = shouldIndexPage(score, category.productCount);
+    const origin = getCanonicalAppUrl();
     return {
-      title,
-      description,
+      title: seo.title,
+      description: seo.description,
+      alternates: { canonical: `${origin}${categoryPagePath(category.slug)}` },
+      robots: index
+        ? { index: true, follow: true }
+        : { index: false, follow: true },
       openGraph: {
-        title: `${title} · ${APP_NAME}`,
-        description,
+        title: `${seo.title} · ${APP_NAME}`,
+        description: seo.description,
       },
     };
   } catch {

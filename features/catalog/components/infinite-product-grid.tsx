@@ -20,6 +20,7 @@ export type InfiniteCatalogQuery = {
   priceMax?: number;
   inStock?: boolean;
   productType?: string;
+  brand?: string;
   facets?: Array<{ slug: string; value: string }>;
   sort?: string;
 };
@@ -53,6 +54,7 @@ function buildApiUrl(
   if (query.priceMax != null) sp.set("priceMax", String(query.priceMax));
   if (query.inStock) sp.set("inStock", "1");
   if (query.productType) sp.set("productType", query.productType);
+  if (query.brand) sp.set("brand", query.brand);
   for (const f of query.facets ?? []) {
     if (f.slug && f.value) sp.set(`f_${f.slug}`, f.value);
   }
