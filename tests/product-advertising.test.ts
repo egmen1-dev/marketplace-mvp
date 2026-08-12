@@ -61,6 +61,33 @@ describe("product advertising eligibility", () => {
     expect(hints.length).toBe(2);
     expect(hints[0]).toContain("фото");
   });
+
+  it("Product A — ACTIVE with stock, photo, type, seller → READY", () => {
+    const productA = evaluateProductAdvertisingEligibility({
+      status: ProductStatus.ACTIVE,
+      stock: 12,
+      price: 4990,
+      productTypeId: "pt_drill",
+      imageCount: 3,
+      sellerId: "seller_tools_pro",
+      sellerBlocked: false,
+    });
+    expect(productA).toEqual({ eligible: true, reasons: [] });
+  });
+
+  it("Product B — no photo → BLOCKED with NO_IMAGE", () => {
+    const productB = evaluateProductAdvertisingEligibility({
+      status: ProductStatus.ACTIVE,
+      stock: 5,
+      price: 1990,
+      productTypeId: "pt_lamp",
+      imageCount: 0,
+      sellerId: "seller_home",
+      sellerBlocked: false,
+    });
+    expect(productB.eligible).toBe(false);
+    expect(productB.reasons).toEqual([AD_ELIGIBILITY_REASONS.NO_IMAGE]);
+  });
 });
 
 describe("card quality score", () => {
