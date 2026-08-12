@@ -23,6 +23,8 @@ import {
 import { startConversationAction } from "@/features/chat/actions";
 import { FavoriteToggleButton } from "@/features/favorites/components/favorite-toggle-button";
 import { formatPrice } from "@/features/products/mappers";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
 import { TOAST, toastError } from "@/lib/toasts";
 import { cn } from "@/lib/utils";
@@ -119,6 +121,11 @@ export function ProductPurchasePanel({
       const result = await addItem(productId, qty);
       if (result.ok) {
         setStatus("added");
+        trackEvent({
+          event: ANALYTICS_EVENTS.ADD_TO_CART,
+          route: `${ROUTES.PRODUCT}/${productId}`,
+          entityId: productId,
+        });
         toast.success(TOAST.CART_ADDED);
         window.setTimeout(() => setStatus("idle"), 1800);
       } else {
@@ -137,6 +144,11 @@ export function ProductPurchasePanel({
     try {
       const result = await addItem(productId, qty);
       if (result.ok) {
+        trackEvent({
+          event: ANALYTICS_EVENTS.ADD_TO_CART,
+          route: `${ROUTES.PRODUCT}/${productId}`,
+          entityId: productId,
+        });
         toast.success(TOAST.CHECKOUT_REDIRECT);
         window.location.assign(ROUTES.CHECKOUT);
       } else {
@@ -161,6 +173,11 @@ export function ProductPurchasePanel({
     try {
       const result = await addItem(productId, qty);
       if (result.ok) {
+        trackEvent({
+          event: ANALYTICS_EVENTS.ADD_TO_CART,
+          route: `${ROUTES.PRODUCT}/${productId}`,
+          entityId: productId,
+        });
         toast.success("Переходим к бронированию");
         // Full navigation avoids soft-nav races where checkout RSC and
         // client cart/theme trees can diverge during hydrate (#418).

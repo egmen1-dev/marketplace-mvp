@@ -6,6 +6,8 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/features/cart/components/cart-provider";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { trackEvent } from "@/lib/analytics/client";
 import { TOAST, toastError } from "@/lib/toasts";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +46,11 @@ export function AddToCartButton({
       const result = await addItem(productId, quantity);
       if (result.ok) {
         setStatus("added");
+        trackEvent({
+          event: ANALYTICS_EVENTS.ADD_TO_CART,
+          route: `/product/${productId}`,
+          entityId: productId,
+        });
         toast.success(TOAST.CART_ADDED);
         window.setTimeout(() => setStatus("idle"), 1800);
       } else {

@@ -15,6 +15,8 @@ import {
   toStripeCurrency,
 } from "@/features/payments/lib/amounts";
 import { toPriceNumber } from "@/features/products/mappers";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { trackServerEvent } from "@/lib/analytics/track-server";
 import { log } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 
@@ -50,9 +52,17 @@ export async function finalizePaidOrder(
   const { orderId, source } = input;
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       return finalizePaidOrderInTx(tx, input);
     });
+    if (!result.alreadyPaid) {
+      void trackServerEvent({
+        event: ANALYTICS_EVENTS.PURCHASE_COMPLETE,
+        route: `/orders/${result.orderId}`,
+        entityId: result.orderId,
+      });
+    }
+    return result;
   } catch (err) {
     if (err instanceof InventoryError) {
       log.error("stock_finalize_failed", {

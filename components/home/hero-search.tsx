@@ -15,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ProductSuggestItem } from "@/features/products/types";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -85,6 +87,13 @@ export function HeroSearch({ className }: HeroSearchProps) {
   const navigate = useCallback(
     (query: string) => {
       const trimmed = query.trim();
+      if (trimmed.length >= 2) {
+        trackEvent({
+          event: ANALYTICS_EVENTS.SEARCH_USED,
+          route: ROUTES.HOME,
+          entityId: trimmed.slice(0, 100),
+        });
+      }
       const href = trimmed
         ? `${ROUTES.CATALOG}?q=${encodeURIComponent(trimmed)}`
         : ROUTES.CATALOG;

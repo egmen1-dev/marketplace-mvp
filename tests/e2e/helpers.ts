@@ -27,6 +27,7 @@ const ALLOWED_FAILED_REQUEST_PATTERNS: RegExp[] = [
   /_rsc=/i,
   /\/api\/uploads/i,
   /\/api\/telemetry\/page-load$/i,
+  /\/api\/analytics\/events$/i,
 ];
 
 const ALLOWED_5XX_URL_PATTERNS: RegExp[] = [

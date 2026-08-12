@@ -2,12 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { FunnelTracker } from "@/components/analytics";
 import { getSessionUser } from "@/features/auth";
 import { getCartForUser } from "@/features/cart";
 import { CheckoutForm } from "@/features/orders";
 import type { CheckoutPickupOption } from "@/features/orders/components/checkout-form";
 import { calcPrepaymentAmount } from "@/features/pickup/lib/prepayment";
 import { ROUTES } from "@/lib/constants";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { prisma } from "@/lib/prisma";
 import { toPriceNumber } from "@/features/products/mappers";
 
@@ -147,6 +149,10 @@ export default async function CheckoutPage({
         ) : null}
       </div>
 
+      <FunnelTracker
+        event={ANALYTICS_EVENTS.CHECKOUT_START}
+        route={ROUTES.CHECKOUT}
+      />
       <CheckoutForm
         initialCart={cart}
         defaultName={profile?.name ?? user.name ?? ""}

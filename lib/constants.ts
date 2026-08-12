@@ -71,6 +71,7 @@ export const ROUTES = {
   ADMIN_AI_UNDERSTANDING: "/admin/ai-understanding",
   ADMIN_RESERVATIONS: "/admin/reservations",
   ADMIN_MESSAGES: "/admin/messages",
+  ADMIN_ANALYTICS: "/admin/analytics",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
 } as const;

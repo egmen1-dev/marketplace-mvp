@@ -1029,3 +1029,16 @@ model TaxonomyImportItem {
   @@index([externalId])
   @@map("taxonomy_import_items")
 }
+
+/// Conversion funnel events — no PII (page_view, add_to_cart, etc.).
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  event     String
+  route     String?
+  entityId  String?
+  webview   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([event, createdAt])
+  @@index([createdAt])
+}

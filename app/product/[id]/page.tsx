@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Package, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { FunnelTracker } from "@/components/analytics";
 import { getSessionUser } from "@/features/auth";
 import { recordProductView } from "@/features/account";
 import {
@@ -23,6 +24,7 @@ import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
 import { APP_NAME, ROUTES } from "@/lib/constants";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -364,6 +366,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       <SimilarProducts products={similar} />
+      <FunnelTracker
+        event={ANALYTICS_EVENTS.PRODUCT_VIEW}
+        route={`/product/${id}`}
+        entityId={product.id}
+      />
     </div>
   );
 }

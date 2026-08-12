@@ -172,6 +172,41 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
   };
 }
 
+export type AnalyticsFunnelCounts = {
+  windowDays: number;
+  since: Date;
+  counts: Record<string, number>;
+  webviewCounts: Record<string, number>;
+  totalEvents: number;
+};
+
+export async function getAnalyticsFunnelCounts(
+  windowDays = 7,
+): Promise<AnalyticsFunnelCounts> {
+  const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
+
+  const grouped = await prisma.analyticsEvent.groupBy({
+    by: ["event", "webview"],
+    where: { createdAt: { gte: since } },
+    _count: { _all: true },
+  });
+
+  const counts: Record<string, number> = {};
+  const webviewCounts: Record<string, number> = {};
+  let totalEvents = 0;
+
+  for (const row of grouped) {
+    const n = row._count._all;
+    totalEvents += n;
+    counts[row.event] = (counts[row.event] ?? 0) + n;
+    if (row.webview) {
+      webviewCounts[row.event] = (webviewCounts[row.event] ?? 0) + n;
+    }
+  }
+
+  return { windowDays, since, counts, webviewCounts, totalEvents };
+}
+
 export async function listRecentUsers(limit = 8): Promise<AdminRecentUser[]> {
   const rows = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },

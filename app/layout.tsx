@@ -5,6 +5,7 @@ import { Suspense, type ReactNode } from "react";
 import { AuthGateToast } from "@/components/layout/auth-gate-toast";
 import { BootSplash } from "@/components/layout/boot-splash";
 import { PageLoadRoot } from "@/components/layout/page-load-root";
+import { AnalyticsRoot } from "@/components/analytics";
 import { SiteFooter, SiteHeader } from "@/components/layout";
 import { ThemeProvider } from "@/components/theme";
 import { Toaster } from "@/components/ui/sonner";
@@ -124,6 +125,7 @@ export default async function RootLayout({
                 <AuthGateToast />
               </Suspense>
               <PageLoadRoot />
+              <AnalyticsRoot />
               <Toaster />
             </FavoritesProvider>
           </CartProvider>

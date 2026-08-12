@@ -7,6 +7,8 @@ import { createOrderFromCart } from "@/features/orders/queries";
 import { checkoutFormSchema } from "@/features/orders/schemas";
 import type { CreateOrderResult } from "@/features/orders/types";
 import { createCheckoutSessionForOrder } from "@/features/payments";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { trackServerEvent } from "@/lib/analytics/track-server";
 import { orderPath, ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
@@ -74,6 +76,11 @@ export async function createOrderFromCartAction(
 
   // Free reservation (0% prepayment) — no Stripe charge
   if (charge <= 0) {
+    void trackServerEvent({
+      event: ANALYTICS_EVENTS.PURCHASE_COMPLETE,
+      route: orderPath(result.orderId),
+      entityId: result.orderId,
+    });
     return {
       ok: true,
       orderId: result.orderId,

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { FunnelTracker } from "@/components/analytics";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,6 +36,7 @@ import {
   listProducts,
 } from "@/features/products";
 import { pluralizeProductWord } from "@/lib/i18n";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type CatalogPageProps = {
@@ -250,6 +252,11 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           ) : null}
         </div>
       </div>
+      <FunnelTracker
+        event={ANALYTICS_EVENTS.CATEGORY_VIEW}
+        route="/catalog"
+        entityId={activeCategory?.slug ?? filters.category ?? undefined}
+      />
     </div>
   );
 }
