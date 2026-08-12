@@ -6,6 +6,7 @@ import {
   BarChart3,
   FolderTree,
   LayoutDashboard,
+  Megaphone,
   MessageCircle,
   Package,
   Search,
@@ -50,6 +51,12 @@ const NAV_ITEMS = [
     label: "Заказы",
     icon: ShoppingBag,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_ORDERS),
+  },
+  {
+    href: ROUTES.ADMIN_ADS,
+    label: "Ads readiness",
+    icon: Megaphone,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_ADS),
   },
   {
     href: ROUTES.ADMIN_ANALYTICS,

@@ -18,6 +18,7 @@ import {
 import { CategoryPicker } from "@/features/seller/components/category-picker";
 import { AiUnderstandingCard } from "@/features/seller/components/ai-understanding-card";
 import { ProductImageUploader } from "@/features/seller/components/product-image-uploader";
+import { ProductAdEligibilityBanner } from "@/features/seller/components/product-ad-eligibility-banner";
 import { DynamicCharacteristicsFields } from "@/features/taxonomy/components/dynamic-characteristics-fields";
 import {
   TaxonomySelector,
@@ -231,6 +232,23 @@ export function ProductForm({
 
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-lg font-semibold">Основное</h2>
+        {mode === "edit" && product ? (
+          <ProductAdEligibilityBanner
+            source={{
+              status: product.status,
+              stock: product.stock,
+              price: product.price,
+              title: product.title,
+              description: product.description,
+              productTypeId: product.productType?.id ?? null,
+              categoryId: product.category?.id ?? null,
+              imageCount: product.images.length,
+              sellerId: product.seller.id,
+              sellerVerified: product.seller.isVerified,
+              characteristicCount: product.characteristics.length,
+            }}
+          />
+        ) : null}
         <ProductImageUploader
           initialUrls={initialImageUrls}
           error={state.fieldErrors?.images?.[0]}

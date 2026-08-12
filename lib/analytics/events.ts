@@ -10,6 +10,8 @@ export const ANALYTICS_EVENTS = {
   PURCHASE_COMPLETE: "purchase_complete",
   TRUST_BLOCK_VIEW: "trust_block_view",
   CTA_CLICK: "cta_click",
+  /** Paid/ad traffic landing — fired when homepage loads with UTM attribution. */
+  AD_LANDING_VIEW: "ad_landing_view",
 } as const;
 
 export type AnalyticsEventName =
