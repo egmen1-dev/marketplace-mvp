@@ -8,12 +8,55 @@ import { countUnreadMessagesForUser } from "@/features/chat/queries";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+/**
+ * Always occupies the same header slot (guest → sign-in link).
+ * Returning `null` for guests shifted sibling client islands’ useId paths
+ * and caused intermittent React #418 under Playwright load.
+ */
 export async function HeaderMessagesButton() {
   const session = await getSessionUser();
-  if (!session) return null;
+  if (!session) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon-header"
+        className={headerActionClassName("relative")}
+        title="Сообщения"
+        nativeButton={false}
+        render={
+          <Link
+            href={`${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(ROUTES.ACCOUNT_MESSAGES)}`}
+            aria-label="Сообщения"
+            data-testid="header-messages"
+          />
+        }
+      >
+        <MessageCircle aria-hidden />
+      </Button>
+    );
+  }
 
   const dbUser = await loadUserAuthFromDb(session.id);
-  if (!dbUser) return null;
+  if (!dbUser) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon-header"
+        className={headerActionClassName("relative")}
+        title="Сообщения"
+        nativeButton={false}
+        render={
+          <Link
+            href={`${ROUTES.AUTH_SIGN_IN}?callbackUrl=${encodeURIComponent(ROUTES.ACCOUNT_MESSAGES)}`}
+            aria-label="Сообщения"
+            data-testid="header-messages"
+          />
+        }
+      >
+        <MessageCircle aria-hidden />
+      </Button>
+    );
+  }
 
   const unread = await countUnreadMessagesForUser({
     userId: dbUser.id,

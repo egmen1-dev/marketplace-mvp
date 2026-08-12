@@ -160,6 +160,7 @@ export async function updateReservationStatusAction(
       reservationId,
       sellerId: seller.sellerProfileId,
       status,
+      actorUserId: seller.userId,
     });
     revalidatePath(ROUTES.ACCOUNT_RESERVATIONS);
     return { ok: true };

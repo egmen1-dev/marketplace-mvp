@@ -18,20 +18,18 @@ NEW → AWAITING_SELLER_CONFIRMATION → CONFIRMED → PROCESSING
   → READY_FOR_PICKUP → PICKED_UP → COMPLETED
 ```
 
-(Unpaid NEW pickup may jump `NEW → CONFIRMED` when the seller confirms a reservation.)
+Unpaid NEW pickup may jump `NEW → CONFIRMED` via the pickup coordinator.
 
 ### Side branches
 
 - `CANCELLED` / `REJECTED` from early stages
 - `RETURN_REQUESTED → RETURN_APPROVED → RETURNED → REFUNDED`
-- Soft flag `isOverdue` when SLA breached (does not replace status)
-- Legacy `PAID` is normalized to `AWAITING_SELLER_CONFIRMATION`
+- Soft flag `isOverdue` (+ `overdueReason`) — **not** a lifecycle status
+- Legacy `PAID` normalizes to `AWAITING_SELLER_CONFIRMATION`
 
-## Transition engine
+## Transition engine & idempotency
 
 ```ts
-import { transitionOrderWithEffects } from "@/features/order-lifecycle";
-
 await transitionOrderWithEffects({
   orderId,
   toStatus: OrderStatus.CONFIRMED,
@@ -41,60 +39,65 @@ await transitionOrderWithEffects({
 });
 ```
 
-Checks:
+- Illegal edges → `OrderLifecycleError`
+- Same status retry → `alreadyApplied: true` (no duplicate history / events / chat)
+- Chat system messages skip duplicates of the same text within 10 minutes
 
-1. Allowed edge for fulfillment type
-2. Actor role permissions (buyer cannot set seller statuses)
-3. Append-only `OrderStatusHistory`
-4. `OrderEvent` row + in-process event bus
-5. Optional chat `ORDER` system message + notification adapters
+## Deadlines & overdue
 
-## Permissions
+| Field | Meaning |
+|-------|---------|
+| `confirmationDeadline` | Seller must confirm |
+| `processingDeadline` | Assembly window |
+| `shipmentDeadline` | Ready-to-ship / ship window |
+| `pickupExpiresAt` | Pickup hold expiry |
 
-| Role | Can |
-|------|-----|
-| BUYER | Cancel early; confirm receipt (`COMPLETED`); request return |
-| SELLER | Confirm / reject / process / ship / ready for pickup |
-| ADMIN | Any allowed graph edge |
-| PAYMENT | `NEW → AWAITING_SELLER_CONFIRMATION` |
-| SYSTEM | Internal / SLA |
+**Processor:** `processOverdueOrders()` marks `isOverdue` once, writes one `OVERDUE_MARKED` event, notifies seller in-app.
 
-## History
+**Cron:** `POST /api/cron/orders-overdue` with `Authorization: Bearer $CRON_SECRET` or `x-cron-secret` (Railway cron / external scheduler). Idempotent on repeat ticks.
 
-`OrderStatusHistory` is immutable (no update/delete APIs). Fields: `fromStatus`, `toStatus`, `performedByRole`, `reason`, `changedByUserId`, `createdAt`.
+## Pickup ↔ Order coordinator
 
-## Events & integrations
+`transitionPickupReservationWithOrder` / `cancelPickupReservationByBuyer` in `pickup-coordinator.ts`:
 
-`OrderEvent` + `subscribeOrderLifecycle()`:
+| Reservation | Order target |
+|-------------|--------------|
+| CONFIRMED | CONFIRMED (+ walk PROCESSING…) |
+| READY | READY_FOR_PICKUP |
+| COMPLETED | … → PICKED_UP → COMPLETED |
+| CANCELLED (from PENDING) | REJECTED |
+| CANCELLED (later) | CANCELLED |
 
-- **Ranking** — `COMPLETED` / `DELIVERED` / `PICKED_UP` via `COMPLETED_ORDER_STATUSES`
-- **Reviews** — `reviewEligibleAt` set on `COMPLETED`; `isOrderReviewEligible()`
-- **Analytics** — `getOrderLifecycleAnalytics()` (confirmation / processing / delivery averages)
+Reservation + order status updates run in **one Prisma transaction**. Chat/notifications run **after commit**.
 
-## SLA / ETA
+## Side-effect strategy
 
-Set after payment recording:
+1. DB transaction (status + history + OrderEvent)
+2. Commit
+3. Event bus + chat + notifications
 
-- `confirmationDeadline` (+1 day)
-- `shipmentDeadline` (+ handlingDays)
-- `pickupExpiresAt` (+3 days after ready window for pickup)
-- `estimatedDeliveryAt` — carrier max days when known; otherwise handling deadline only (no fake dates)
+If step 3 fails, core state stays consistent. Critical events are persisted as `OrderEvent` rows (lightweight outbox source for later workers). No Kafka.
 
-## Notifications
+## Carrier tracking boundary
 
-`features/notifications/order-notifications.ts` — channel adapters (`in_app` live; email/push/telegram/sms stubs).
+`CarrierTrackingProvider` + `mapCarrierStatusToOrderStatus()` — providers **never** write `Order.status`. Seller-driven transitions remain the fallback; CDEK live tracking is stubbed until credentials exist.
+
+## Ranking / reviews
+
+- Ranking / sales: `COMPLETED` \| `DELIVERED` \| `PICKED_UP` only
+- Reviews: `reviewEligibleAt` set on `COMPLETED`
 
 ## UI
 
-- Buyer: `/account/orders/[id]` — timeline, next action, cancel / confirm / return
-- Seller: `/account/sales` — buckets + counters
-- Admin: `/admin/orders` — list / detail / search
+- Buyer: `/account/orders/[id]` timeline + actions
+- Seller: `/account/sales` buckets + overdue filter/badge
+- Admin: `/admin/orders` search + overdue filter
 
 ## Key files
 
 - `features/order-lifecycle/lib/state-machine.ts`
 - `features/order-lifecycle/lib/transition.ts`
-- `features/order-lifecycle/lib/event-bus.ts`
-- `features/order-lifecycle/lib/sla.ts`
-- `features/order-lifecycle/lib/pickup-sync.ts`
-- `features/order-lifecycle/lib/integrations.ts`
+- `features/order-lifecycle/lib/pickup-coordinator.ts`
+- `features/order-lifecycle/lib/overdue-processor.ts`
+- `features/order-lifecycle/lib/carrier-tracking.ts`
+- `app/api/cron/orders-overdue/route.ts`

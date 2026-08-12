@@ -67,24 +67,30 @@ export function CheckoutForm({
   const [deliveryMethod, setDeliveryMethod] = useState<"PICKUP" | "COURIER">(
     "PICKUP",
   );
+  // SSR + first client paint must share the same fulfillment tree.
+  // Preferring pickup only after mount caused intermittent #418 when the
+  // DeliverySection ↔ pickup-points swap raced hydration (esp. ?fulfillment=).
   const [fulfillmentType, setFulfillmentType] = useState<
     "DELIVERY" | "SELLER_PICKUP"
-  >("DELIVERY");
+  >(() =>
+    preferSellerPickup && sellerPickupAvailable
+      ? "SELLER_PICKUP"
+      : "DELIVERY",
+  );
   const [sellerPointId, setSellerPointId] = useState(
     sellerPickupOptions[0]?.point.id ?? "",
   );
+  const [fullName, setFullName] = useState(defaultName);
+  const [phone, setPhone] = useState(defaultPhone);
 
   useEffect(() => {
     setCart(initialCart);
   }, [initialCart]);
 
-  // Apply ?fulfillment=SELLER_PICKUP after mount so SSR HTML matches the first
-  // client paint (avoids React #418 when preferSellerPickup flips the tree).
   useEffect(() => {
-    if (preferSellerPickup && sellerPickupAvailable) {
-      setFulfillmentType("SELLER_PICKUP");
-    }
-  }, [preferSellerPickup, sellerPickupAvailable]);
+    setFullName(defaultName);
+    setPhone(defaultPhone);
+  }, [defaultName, defaultPhone]);
 
   useEffect(() => {
     if (!sellerPointId && sellerPickupOptions[0]?.point.id) {
@@ -172,9 +178,13 @@ export function CheckoutForm({
                 id="fullName"
                 name="fullName"
                 required
-                defaultValue={defaultName}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                autoComplete="name"
                 placeholder="Иван Иванов"
                 disabled={pending}
+                // Browser autofill can rewrite values before hydrate → #418
+                suppressHydrationWarning
               />
             </div>
             <div className="flex flex-col gap-2 sm:col-span-2">
@@ -183,9 +193,12 @@ export function CheckoutForm({
                 id="phone"
                 name="phone"
                 type="tel"
-                defaultValue={defaultPhone}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                autoComplete="tel"
                 placeholder="+7 900 000-00-00"
                 disabled={pending}
+                suppressHydrationWarning
               />
             </div>
           </div>

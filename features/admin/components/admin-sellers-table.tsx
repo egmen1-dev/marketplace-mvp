@@ -24,13 +24,10 @@ import {
 } from "@/features/admin/actions";
 import type { AdminSellerRow } from "@/features/admin/queries";
 import { sellerPublicPath } from "@/lib/constants";
+import { formatDateMoscowShort } from "@/lib/format/datetime";
 
 function formatDate(d: Date | string) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(d));
+  return formatDateMoscowShort(d);
 }
 
 export function AdminSellersTable({ sellers }: { sellers: AdminSellerRow[] }) {

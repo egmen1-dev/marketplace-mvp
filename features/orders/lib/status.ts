@@ -1,6 +1,7 @@
 import type { OrderStatus } from "@prisma/client";
 
 import { normalizeOrderStatus } from "@/features/order-lifecycle/lib/state-machine";
+import { formatDateTimeMoscow } from "@/lib/format/datetime";
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   NEW: "Новый",
@@ -61,30 +62,7 @@ export function formatOrderStatus(status: OrderStatus): string {
 
 /** Deterministic Moscow datetime — no Intl (avoids SSR/client #418). */
 export function formatOrderDate(iso: string): string {
-  const d = new Date(iso);
-  // Europe/Moscow is UTC+3 without DST since 2014.
-  const ms = d.getTime() + 3 * 60 * 60 * 1000;
-  const m = new Date(ms);
-  const day = m.getUTCDate();
-  const monthIdx = m.getUTCMonth();
-  const year = m.getUTCFullYear();
-  const hour = String(m.getUTCHours()).padStart(2, "0");
-  const minute = String(m.getUTCMinutes()).padStart(2, "0");
-  const months = [
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря",
-  ];
-  return `${day} ${months[monthIdx] ?? ""} ${year}, ${hour}:${minute}`;
+  return formatDateTimeMoscow(iso);
 }
 
 /** Seller dashboard filter buckets (status groups). */

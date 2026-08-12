@@ -607,12 +607,16 @@ model Order {
   /// Seller handling time (business days) used for ETA when carrier data is absent.
   handlingDays            Int       @default(2)
   confirmationDeadline    DateTime?
+  /// Deadline to finish PROCESSING (assembly).
+  processingDeadline      DateTime?
   shipmentDeadline        DateTime?
   pickupExpiresAt         DateTime?
   estimatedDeliveryAt     DateTime?
   /// Soft SLA breach flag — does not replace the primary status.
   isOverdue               Boolean   @default(false)
   overdueAt               DateTime?
+  /// Which deadline fired (confirmation | processing | shipment | pickup).
+  overdueReason           String?
   /// Architecture: order becomes review-eligible after COMPLETED.
   reviewEligibleAt        DateTime?
   completedAt             DateTime?

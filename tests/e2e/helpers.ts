@@ -58,7 +58,8 @@ export function attachErrorCollector(page: Page): PageErrorCollector {
   page.on("pageerror", (err) => {
     const message = err.message;
     if (ALLOWED_CONSOLE_ERROR_PATTERNS.some((re) => re.test(message))) return;
-    pageErrors.push(message);
+    // URL helps pin intermittent hydration #418 to a route.
+    pageErrors.push(`${message} @ ${page.url()}`);
   });
 
   page.on("requestfailed", (req: Request) => {

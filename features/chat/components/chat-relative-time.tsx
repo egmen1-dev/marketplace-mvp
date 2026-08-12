@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 
+import { formatChatStampMoscow } from "@/lib/format/datetime";
+
 type Mode = "list" | "thread";
 
 /**
- * Locale dates render only after mount so SSR HTML matches the first client
- * paint (avoids React #418 from Node vs browser `toLocale*` differences).
+ * SSR and first client paint share deterministic absolute labels.
+ * Relative “today” labels apply only after mount.
  */
 export function ChatRelativeTime({
   iso,
@@ -17,45 +19,31 @@ export function ChatRelativeTime({
   mode?: Mode;
   className?: string;
 }) {
-  const [label, setLabel] = useState("");
+  const absolute = formatChatStampMoscow(iso, mode);
+  const [label, setLabel] = useState(absolute);
 
   useEffect(() => {
-    const d = new Date(iso);
     if (mode === "thread") {
-      setLabel(
-        d.toLocaleString("ru-RU", {
-          timeZone: "Europe/Moscow",
-          day: "numeric",
-          month: "short",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
+      setLabel(formatChatStampMoscow(iso, mode));
       return;
     }
+    const d = new Date(iso);
     const now = new Date();
-    const sameDay =
-      d.getFullYear() === now.getFullYear() &&
-      d.getMonth() === now.getMonth() &&
-      d.getDate() === now.getDate();
-    setLabel(
-      sameDay
-        ? d.toLocaleTimeString("ru-RU", {
-            timeZone: "Europe/Moscow",
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : d.toLocaleDateString("ru-RU", {
-            timeZone: "Europe/Moscow",
-            day: "numeric",
-            month: "short",
-          }),
-    );
+    // Compare calendar day in Moscow
+    const mskNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    const mskMsg = new Date(d.getTime() + 3 * 60 * 60 * 1000);
+    const sameMskDay =
+      mskNow.getUTCFullYear() === mskMsg.getUTCFullYear() &&
+      mskNow.getUTCMonth() === mskMsg.getUTCMonth() &&
+      mskNow.getUTCDate() === mskMsg.getUTCDate();
+    if (sameMskDay) {
+      const hour = String(mskMsg.getUTCHours()).padStart(2, "0");
+      const minute = String(mskMsg.getUTCMinutes()).padStart(2, "0");
+      setLabel(`${hour}:${minute}`);
+    } else {
+      setLabel(formatChatStampMoscow(iso, mode));
+    }
   }, [iso, mode]);
 
-  return (
-    <span className={className} suppressHydrationWarning>
-      {label || "\u00a0"}
-    </span>
-  );
+  return <span className={className}>{label}</span>;
 }

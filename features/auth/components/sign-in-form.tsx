@@ -25,7 +25,11 @@ export function SignInForm({ callbackUrl }: SignInFormProps) {
   );
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form
+      action={formAction}
+      className="flex flex-col gap-4"
+      autoComplete="off"
+    >
       {callbackUrl ? (
         <input type="hidden" name="callbackUrl" value={callbackUrl} />
       ) : null}

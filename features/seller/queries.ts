@@ -33,6 +33,7 @@ export type SellerOrderListItem = {
   status: OrderStatus;
   fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
   isOverdue: boolean;
+  overdueReason: string | null;
   total: number;
   currency: string;
   createdAt: string;
@@ -183,7 +184,9 @@ export async function listSellerOrders(
     items: { some: { product: { sellerId: sellerProfileId } } },
   };
 
-  if (filters.bucket && filters.bucket in SELLER_ORDER_FILTER_BUCKETS) {
+  if (filters.bucket === "OVERDUE") {
+    orderWhere.isOverdue = true;
+  } else if (filters.bucket && filters.bucket in SELLER_ORDER_FILTER_BUCKETS) {
     const key = filters.bucket as keyof typeof SELLER_ORDER_FILTER_BUCKETS;
     orderWhere.status = {
       in: [...SELLER_ORDER_FILTER_BUCKETS[key]],
@@ -229,6 +232,7 @@ export async function listSellerOrders(
       status: o.status,
       fulfillmentType: o.fulfillmentType,
       isOverdue: o.isOverdue,
+      overdueReason: o.overdueReason,
       total: toPriceNumber(o.total),
       currency: o.currency,
       createdAt: o.createdAt.toISOString(),

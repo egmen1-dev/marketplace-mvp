@@ -156,11 +156,14 @@ describe("SLA / ranking / reviews", () => {
     expect(sla.confirmationDeadline.toISOString()).toBe(
       "2026-08-12T12:00:00.000Z",
     );
-    expect(sla.shipmentDeadline.toISOString()).toBe(
+    expect(sla.processingDeadline.toISOString()).toBe(
       "2026-08-13T12:00:00.000Z",
     );
+    expect(sla.shipmentDeadline.toISOString()).toBe(
+      "2026-08-14T12:00:00.000Z",
+    );
     expect(sla.estimatedDeliveryAt?.toISOString()).toBe(
-      "2026-08-18T12:00:00.000Z",
+      "2026-08-19T12:00:00.000Z",
     );
   });
 

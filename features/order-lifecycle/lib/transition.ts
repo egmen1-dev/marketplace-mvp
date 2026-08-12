@@ -55,6 +55,8 @@ export type TransitionOrderResult = {
   status: OrderStatus;
   historyId: string;
   eventId: string | null;
+  /** True when status was already `toStatus` (safe retry). */
+  alreadyApplied?: boolean;
 };
 
 /**
@@ -95,6 +97,18 @@ export async function transitionOrderInTx(
   const fromStatus = order.status;
   const toStatus = input.toStatus;
 
+  // Idempotent retry / double-click: already at target → no duplicate history.
+  if (normalizeOrderStatus(fromStatus) === normalizeOrderStatus(toStatus)) {
+    return {
+      orderId: order.id,
+      previousStatus: fromStatus,
+      status: fromStatus,
+      historyId: "",
+      eventId: null,
+      alreadyApplied: true,
+    };
+  }
+
   if (
     !canTransition({
       from: fromStatus,
@@ -126,6 +140,7 @@ export async function transitionOrderInTx(
     });
     slaPatch = {
       confirmationDeadline: sla.confirmationDeadline,
+      processingDeadline: sla.processingDeadline,
       shipmentDeadline: sla.shipmentDeadline,
       pickupExpiresAt: sla.pickupExpiresAt,
       estimatedDeliveryAt: sla.estimatedDeliveryAt,
@@ -291,6 +306,10 @@ export async function transitionOrderWithEffects(
   }
 
   const result = await transitionOrder(input);
+
+  if (result.alreadyApplied) {
+    return result;
+  }
 
   const refreshed = await prisma.order.findUnique({
     where: { id: input.orderId },

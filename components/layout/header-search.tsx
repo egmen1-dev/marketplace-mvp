@@ -192,6 +192,7 @@ export function HeaderSearch({
         <form onSubmit={onSubmit} role="search" className="relative flex w-full">
           <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            id="header-search-q"
             name="q"
             type="search"
             value={q}
@@ -252,6 +253,7 @@ export function HeaderSearch({
         <div className="relative">
           <form onSubmit={onSubmit} className="flex gap-2" role="search">
             <Input
+              id="header-search-mobile-q"
               name="q"
               type="search"
               value={q}

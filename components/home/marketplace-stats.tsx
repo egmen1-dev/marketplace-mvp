@@ -3,17 +3,13 @@ import {
   pluralizeProductWord,
   pluralizeSellerWord,
 } from "@/lib/i18n";
+import { formatCount } from "@/lib/format/number";
 
 type MarketplaceStatsProps = {
   products: number;
   sellers: number;
   categories: number;
 };
-
-/** Deterministic grouping — Node vs browser `toLocaleString("ru-RU")` differ (#418). */
-function formatCount(n: number): string {
-  return String(Math.trunc(n)).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
-}
 
 /**
  * Compact live marketplace counters. Render only when parent has real DB totals.

@@ -175,6 +175,9 @@ export function ProductForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             aria-invalid={Boolean(state.fieldErrors?.title)}
+            autoComplete="off"
+            // Browser autofill can rewrite before hydrate → intermittent #418
+            suppressHydrationWarning
           />
           {state.fieldErrors?.title?.[0] ? (
             <p className="text-xs text-destructive">{state.fieldErrors.title[0]}</p>
@@ -247,6 +250,8 @@ export function ProductForm({
               placeholder="4990"
               defaultValue={product?.price}
               aria-invalid={Boolean(state.fieldErrors?.price)}
+              autoComplete="off"
+              suppressHydrationWarning
             />
             {state.fieldErrors?.price?.[0] ? (
               <p className="text-xs text-destructive">
@@ -265,6 +270,8 @@ export function ProductForm({
               step="1"
               defaultValue={stockDefault}
               aria-invalid={Boolean(state.fieldErrors?.stock)}
+              autoComplete="off"
+              suppressHydrationWarning
             />
             {isLowStock(stockDefault) ? (
               <p className="text-xs text-amber-700 dark:text-amber-300">
@@ -287,6 +294,8 @@ export function ProductForm({
               name="city"
               placeholder="Москва"
               defaultValue={product?.city ?? ""}
+              autoComplete="off"
+              suppressHydrationWarning
             />
           </div>
           <div className="flex flex-col gap-2">

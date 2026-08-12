@@ -5,12 +5,6 @@ import {
 
 import { pickupPointSchema, type PickupPointInput } from "@/features/pickup/schemas";
 import { prisma } from "@/lib/prisma";
-import {
-  notifyReservationCancelled,
-  notifyReservationCompleted,
-  notifyReservationConfirmed,
-  notifyReservationReady,
-} from "@/features/chat/queries";
 import { toPriceNumber } from "@/features/products/mappers";
 
 export type PickupPointDto = {
@@ -255,72 +249,35 @@ export async function listSellerReservations(
   return rows.map(mapReservation);
 }
 
-const SELLER_TRANSITIONS: Record<
-  PickupReservationStatus,
-  PickupReservationStatus[]
-> = {
-  PENDING: ["CONFIRMED", "CANCELLED"],
-  CONFIRMED: ["READY", "CANCELLED"],
-  READY: ["COMPLETED", "CANCELLED"],
-  COMPLETED: [],
-  CANCELLED: [],
-};
-
 export async function updateReservationStatus(opts: {
   reservationId: string;
   sellerId: string;
   status: PickupReservationStatus;
+  actorUserId?: string | null;
 }): Promise<PickupReservationListItem> {
-  const row = await prisma.pickupReservation.findFirst({
+  const { transitionPickupReservationWithOrder, PickupCoordinatorError } =
+    await import("@/features/order-lifecycle/lib/pickup-coordinator");
+
+  try {
+    await transitionPickupReservationWithOrder({
+      reservationId: opts.reservationId,
+      sellerId: opts.sellerId,
+      toReservationStatus: opts.status,
+      actorUserId: opts.actorUserId,
+      reject: opts.status === "CANCELLED",
+    });
+  } catch (err) {
+    if (err instanceof PickupCoordinatorError) {
+      throw new Error(err.message);
+    }
+    throw err;
+  }
+
+  const updated = await prisma.pickupReservation.findFirst({
     where: { id: opts.reservationId, sellerId: opts.sellerId },
     include: reservationInclude,
   });
-  if (!row) {
-    throw new Error("Бронь не найдена");
-  }
-  const allowed = SELLER_TRANSITIONS[row.status] ?? [];
-  if (!allowed.includes(opts.status)) {
-    throw new Error("Нельзя перевести бронь в этот статус");
-  }
-  const updated = await prisma.pickupReservation.update({
-    where: { id: row.id },
-    data: { status: opts.status },
-    include: reservationInclude,
-  });
-  try {
-    if (opts.status === "CONFIRMED") {
-      await notifyReservationConfirmed({ reservationId: updated.id });
-    } else if (opts.status === "READY") {
-      await notifyReservationReady({ reservationId: updated.id });
-    } else if (opts.status === "COMPLETED") {
-      await notifyReservationCompleted({ reservationId: updated.id });
-    } else if (opts.status === "CANCELLED") {
-      await notifyReservationCancelled({ reservationId: updated.id });
-    }
-  } catch (err) {
-    console.error("[updateReservationStatus] chat notify", err);
-  }
-
-  // Drive OMS from reservation actions (pickup branch).
-  try {
-    const {
-      mapReservationStatusToOrderStatus,
-      advancePickupOrderToward,
-    } = await import("@/features/order-lifecycle/lib/pickup-sync");
-    const { OrderActorRole } = await import("@prisma/client");
-    const nextOrder = mapReservationStatusToOrderStatus(opts.status);
-    if (nextOrder) {
-      await advancePickupOrderToward({
-        orderId: updated.orderId,
-        target: nextOrder,
-        actorRole: OrderActorRole.SELLER,
-        reason: `Бронь → ${opts.status}`,
-      });
-    }
-  } catch (err) {
-    console.error("[updateReservationStatus] oms sync", err);
-  }
-
+  if (!updated) throw new Error("Бронь не найдена");
   return mapReservation(updated);
 }
 
@@ -329,26 +286,23 @@ export async function cancelReservationByBuyer(opts: {
   reservationId: string;
   buyerId: string;
 }): Promise<PickupReservationListItem> {
-  const row = await prisma.pickupReservation.findFirst({
+  const { cancelPickupReservationByBuyer, PickupCoordinatorError } =
+    await import("@/features/order-lifecycle/lib/pickup-coordinator");
+
+  try {
+    await cancelPickupReservationByBuyer(opts);
+  } catch (err) {
+    if (err instanceof PickupCoordinatorError) {
+      throw new Error(err.message);
+    }
+    throw err;
+  }
+
+  const updated = await prisma.pickupReservation.findFirst({
     where: { id: opts.reservationId, buyerId: opts.buyerId },
     include: reservationInclude,
   });
-  if (!row) {
-    throw new Error("Бронь не найдена");
-  }
-  if (row.status !== "PENDING") {
-    throw new Error("Отменить можно только до подтверждения продавцом");
-  }
-  const updated = await prisma.pickupReservation.update({
-    where: { id: row.id },
-    data: { status: "CANCELLED" },
-    include: reservationInclude,
-  });
-  try {
-    await notifyReservationCancelled({ reservationId: updated.id });
-  } catch (err) {
-    console.error("[cancelReservationByBuyer] chat notify", err);
-  }
+  if (!updated) throw new Error("Бронь не найдена");
   return mapReservation(updated);
 }
 

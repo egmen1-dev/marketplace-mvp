@@ -21,6 +21,7 @@ import {
   setUserBlockedAction,
 } from "@/features/admin/actions";
 import type { AdminUserRow } from "@/features/admin/queries";
+import { formatDateMoscowShort } from "@/lib/format/datetime";
 
 const ROLE_LABELS: Record<UserRole, string> = {
   BUYER: "Покупатель",
@@ -29,11 +30,7 @@ const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 function formatDate(d: Date | string) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(d));
+  return formatDateMoscowShort(d);
 }
 
 export function AdminUsersTable({ users }: { users: AdminUserRow[] }) {

@@ -16,17 +16,14 @@ import {
 } from "@/features/admin";
 import { formatPrice } from "@/features/products/mappers";
 import { adminOrderPath, ROUTES } from "@/lib/constants";
+import { formatDateMoscowShort } from "@/lib/format/datetime";
 
 export const metadata = {
   title: "Admin Dashboard",
 };
 
 function formatDate(d: Date) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(d);
+  return formatDateMoscowShort(d);
 }
 
 export default async function AdminDashboardPage() {

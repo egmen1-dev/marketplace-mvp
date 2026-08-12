@@ -89,6 +89,9 @@ export type AdminOrderRow = {
   buyerEmail: string;
   buyerName: string | null;
   sellerNames: string[];
+  isOverdue?: boolean;
+  overdueAt?: Date | null;
+  overdueReason?: string | null;
 };
 
 export type AdminOrderDetail = AdminOrderRow & {
@@ -334,10 +337,14 @@ export async function listAdminProducts(params?: {
 export async function listAdminOrders(params?: {
   status?: OrderStatus | "ALL";
   q?: string;
+  overdue?: boolean;
 }): Promise<AdminOrderRow[]> {
   const where: Prisma.OrderWhereInput = {};
   if (params?.status && params.status !== "ALL") {
     where.status = params.status;
+  }
+  if (params?.overdue) {
+    where.isOverdue = true;
   }
   const q = params?.q?.trim();
   if (q) {
@@ -375,6 +382,12 @@ export async function listAdminOrders(params?: {
       total: true,
       currency: true,
       createdAt: true,
+      isOverdue: true,
+      overdueAt: true,
+      overdueReason: true,
+      confirmationDeadline: true,
+      shipmentDeadline: true,
+      pickupExpiresAt: true,
       user: { select: { email: true, name: true } },
       items: {
         select: {
@@ -404,6 +417,9 @@ export async function listAdminOrders(params?: {
       buyerEmail: row.user.email,
       buyerName: row.user.name,
       sellerNames,
+      isOverdue: row.isOverdue,
+      overdueAt: row.overdueAt,
+      overdueReason: row.overdueReason,
     };
   });
 }

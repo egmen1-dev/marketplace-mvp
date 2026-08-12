@@ -4,7 +4,6 @@ import { OrderStatus } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -21,6 +20,7 @@ export const metadata = {
 
 const FILTERS = [
   { value: "ALL", label: "Все" },
+  { value: "OVERDUE", label: "Просрочено" },
   { value: "NEW", label: "Новые" },
   { value: "AWAITING_SELLER_CONFIRMATION", label: "Ожидают" },
   { value: "CONFIRMED", label: "Подтверждённые" },
@@ -31,14 +31,14 @@ const FILTERS = [
 ] as const;
 
 function formatDate(d: Date) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Moscow",
-  }).format(d);
+  const ms = d.getTime() + 3 * 60 * 60 * 1000;
+  const m = new Date(ms);
+  const day = m.getUTCDate();
+  const month = m.getUTCMonth() + 1;
+  const year = m.getUTCFullYear();
+  const hour = String(m.getUTCHours()).padStart(2, "0");
+  const minute = String(m.getUTCMinutes()).padStart(2, "0");
+  return `${day}.${month}.${year}, ${hour}:${minute}`;
 }
 
 type SearchParams = Promise<{ status?: string; q?: string }>;
@@ -50,16 +50,23 @@ export default async function AdminOrdersPage({
 }) {
   const sp = await searchParams;
   const statusRaw = sp.status?.toUpperCase();
-  const status = Object.values(OrderStatus).includes(statusRaw as OrderStatus)
-    ? (statusRaw as OrderStatus)
-    : "ALL";
+  const overdueOnly = statusRaw === "OVERDUE";
+  const status =
+    !overdueOnly &&
+    Object.values(OrderStatus).includes(statusRaw as OrderStatus)
+      ? (statusRaw as OrderStatus)
+      : "ALL";
   const q = sp.q?.trim() || undefined;
 
   let orders: Awaited<ReturnType<typeof listAdminOrders>> = [];
   let dbError: string | null = null;
 
   try {
-    orders = await listAdminOrders({ status, q });
+    orders = await listAdminOrders({
+      status,
+      q,
+      overdue: overdueOnly || undefined,
+    });
   } catch (err) {
     console.error("[admin/orders]", err);
     dbError = "Не удалось загрузить заказы";
@@ -67,7 +74,7 @@ export default async function AdminOrdersPage({
 
   function hrefFor(next: { status?: string; q?: string }) {
     const params = new URLSearchParams();
-    const st = next.status ?? (status === "ALL" ? "" : status);
+    const st = next.status ?? (overdueOnly ? "OVERDUE" : status === "ALL" ? "" : status);
     if (st) params.set("status", st);
     const query = next.q ?? q;
     if (query) params.set("q", query);
@@ -82,12 +89,14 @@ export default async function AdminOrdersPage({
           Заказы
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          OMS: поиск по номеру, товару, покупателю и продавцу.
+          OMS: поиск и фильтр просроченных заказов.
         </p>
       </div>
 
       <form className="flex flex-wrap gap-2" action={ROUTES.ADMIN_ORDERS}>
-        {status !== "ALL" ? (
+        {overdueOnly ? (
+          <input type="hidden" name="status" value="OVERDUE" />
+        ) : status !== "ALL" ? (
           <input type="hidden" name="status" value={status} />
         ) : null}
         <input
@@ -106,11 +115,16 @@ export default async function AdminOrdersPage({
 
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((f) => {
-          const active = status === f.value || (f.value === "ALL" && status === "ALL");
+          const active =
+            (f.value === "OVERDUE" && overdueOnly) ||
+            (f.value === "ALL" && !overdueOnly && status === "ALL") ||
+            (!overdueOnly && status === f.value);
           return (
             <Link
               key={f.value}
-              href={hrefFor({ status: f.value === "ALL" ? "" : f.value })}
+              href={hrefFor({
+                status: f.value === "ALL" ? "" : f.value,
+              })}
               className={cn(
                 "rounded-lg px-3 py-1.5 text-sm",
                 active
@@ -147,18 +161,23 @@ export default async function AdminOrdersPage({
                     {order.sellerNames.length
                       ? ` · ${order.sellerNames.join(", ")}`
                       : ""}
+                    {order.isOverdue && order.overdueReason
+                      ? ` · дедлайн: ${order.overdueReason}`
+                      : ""}
                   </CardDescription>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="outline">
                     {ORDER_STATUS_LABELS[order.status] ?? order.status}
                   </Badge>
+                  {order.isOverdue ? (
+                    <Badge variant="destructive">Просрочен</Badge>
+                  ) : null}
                   <span className="text-sm font-medium">
                     {formatPrice(order.total, order.currency)}
                   </span>
                 </div>
               </CardHeader>
-              <CardContent />
             </Card>
           ))}
         </div>

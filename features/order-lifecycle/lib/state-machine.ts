@@ -21,6 +21,7 @@ export const DELIVERY_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.NEW]: [
     OrderStatus.AWAITING_SELLER_CONFIRMATION,
     OrderStatus.CANCELLED,
+    OrderStatus.REJECTED,
   ],
   [OrderStatus.PAID]: [
     OrderStatus.CONFIRMED,
@@ -74,6 +75,7 @@ export const PICKUP_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
     OrderStatus.AWAITING_SELLER_CONFIRMATION,
     OrderStatus.CONFIRMED,
     OrderStatus.CANCELLED,
+    OrderStatus.REJECTED,
   ],
   [OrderStatus.PAID]: [
     OrderStatus.CONFIRMED,

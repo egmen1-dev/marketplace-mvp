@@ -42,6 +42,7 @@ const BUCKET_TABS: { value: string; label: string }[] = [
   { value: "PROBLEM", label: "Проблемные" },
   { value: "CANCELLED", label: "Отменённые" },
   { value: "COMPLETED", label: "Завершённые" },
+  { value: "OVERDUE", label: "Просрочено" },
 ];
 
 type PageProps = {
@@ -178,7 +179,12 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
                 <div className="flex flex-wrap items-center gap-2">
                   <OrderStatusBadge status={order.status} />
                   {order.isOverdue ? (
-                    <Badge variant="destructive">Просрочен</Badge>
+                    <Badge variant="destructive">
+                      Просрочен
+                      {order.overdueReason
+                        ? ` · ${order.overdueReason}`
+                        : ""}
+                    </Badge>
                   ) : null}
                   <span className="text-sm font-medium">
                     {formatPrice(order.sellerSubtotal, order.currency)}

@@ -4,6 +4,7 @@ import { CalendarDays, Mail, MapPin, Pencil, Phone, UserRound } from "lucide-rea
 
 import { Button } from "@/components/ui/button";
 import type { UserProfile } from "@/features/account/types";
+import { formatDateMoscow } from "@/lib/format/datetime";
 import { ROUTES } from "@/lib/constants";
 
 type ProfileViewProps = {
@@ -12,11 +13,7 @@ type ProfileViewProps = {
 };
 
 function formatRegDate(iso: string): string {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(iso));
+  return formatDateMoscow(iso);
 }
 
 export function ProfileView({

@@ -28,6 +28,7 @@ import {
 import { StockEditor } from "@/features/seller/components/stock-editor";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
+import { formatDateMoscowShort } from "@/lib/format/datetime";
 import { pluralizeProductCount } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -45,11 +46,7 @@ const STATUS_TABS: { value: ProductStatus | "ALL"; label: string }[] = [
 ];
 
 function formatCreatedAt(iso: string) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(iso));
+  return formatDateMoscowShort(iso);
 }
 
 type PageProps = {

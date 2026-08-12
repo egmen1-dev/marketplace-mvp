@@ -24,8 +24,9 @@ import {
 } from "@/lib/home/cached-data";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
-/** ISR-friendly homepage data (layout session streams separately). */
-export const revalidate = 60;
+/** Always render with live DB — avoids ISR shell from a different DATABASE_URL at build. */
+export const dynamic = "force-dynamic";
+
 
 const sellerBenefits = [
   "Разместить товар за несколько минут",

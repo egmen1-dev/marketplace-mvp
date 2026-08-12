@@ -13,6 +13,7 @@ import {
 import { getAdminOrderDetail } from "@/features/admin";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
+import { formatDateTimeMoscow } from "@/lib/format/datetime";
 
 export const metadata = {
   title: "Админ · Заказ",
@@ -28,13 +29,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 function formatDate(d: Date) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(d);
+  return formatDateTimeMoscow(d);
 }
 
 export default async function AdminOrderDetailPage({

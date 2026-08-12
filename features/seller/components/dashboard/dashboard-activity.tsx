@@ -8,17 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { SellerActivityItem } from "@/features/seller/queries";
+import { formatDateTimeMoscow } from "@/lib/format/datetime";
 
 import { DashboardEmptyState } from "./dashboard-empty-state";
 
 function formatActivityDate(iso: string) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Moscow",
-  }).format(new Date(iso));
+  return formatDateTimeMoscow(iso);
 }
 
 function ActivityIcon({ type }: { type: SellerActivityItem["type"] }) {

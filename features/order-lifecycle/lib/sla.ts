@@ -10,6 +10,7 @@ export function addDays(from: Date, days: number): Date {
 export type OrderSlaDefaults = {
   handlingDays: number;
   confirmationDeadline: Date;
+  processingDeadline: Date;
   shipmentDeadline: Date;
   pickupExpiresAt: Date | null;
   estimatedDeliveryAt: Date | null;
@@ -28,7 +29,8 @@ export function buildSlaAfterPayment(opts: {
   const now = opts.now ?? new Date();
   const handling = Math.max(1, opts.handlingDays);
   const confirmationDeadline = addDays(now, 1);
-  const shipmentDeadline = addDays(now, handling);
+  const processingDeadline = addDays(now, handling);
+  const shipmentDeadline = addDays(processingDeadline, 1);
 
   const pickup =
     opts.fulfillmentType === "SELLER_PICKUP"
@@ -45,7 +47,6 @@ export function buildSlaAfterPayment(opts: {
     if (carrierDays != null) {
       estimatedDeliveryAt = addDays(shipmentDeadline, carrierDays);
     } else {
-      // Honest fallback: only handling window, not a fake carrier date.
       estimatedDeliveryAt = shipmentDeadline;
     }
   }
@@ -53,6 +54,7 @@ export function buildSlaAfterPayment(opts: {
   return {
     handlingDays: handling,
     confirmationDeadline,
+    processingDeadline,
     shipmentDeadline,
     pickupExpiresAt: pickup,
     estimatedDeliveryAt,

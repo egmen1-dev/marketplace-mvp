@@ -1,5 +1,6 @@
 import { OrderStatus, ProductStatus, SellerKind } from "@prisma/client";
 
+import { formatDateMoscow } from "@/lib/format/datetime";
 import { prisma } from "@/lib/prisma";
 
 /** Sellers registered within this window may receive NEW_SELLER badge. */
@@ -109,11 +110,7 @@ export function getVisibleSellerMetrics(
 }
 
 export function formatSellerJoinedDate(joinedAt: Date | string): string {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(joinedAt));
+  return formatDateMoscow(joinedAt);
 }
 
 export async function getSellerReputationMetrics(

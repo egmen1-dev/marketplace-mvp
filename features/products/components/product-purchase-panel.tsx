@@ -138,7 +138,7 @@ export function ProductPurchasePanel({
       const result = await addItem(productId, qty);
       if (result.ok) {
         toast.success(TOAST.CHECKOUT_REDIRECT);
-        router.push(ROUTES.CHECKOUT);
+        window.location.assign(ROUTES.CHECKOUT);
       } else {
         toastError(result.error);
       }
@@ -162,7 +162,9 @@ export function ProductPurchasePanel({
       const result = await addItem(productId, qty);
       if (result.ok) {
         toast.success("Переходим к бронированию");
-        router.push(`${ROUTES.CHECKOUT}?fulfillment=SELLER_PICKUP`);
+        // Full navigation avoids soft-nav races where checkout RSC and
+        // client cart/theme trees can diverge during hydrate (#418).
+        window.location.assign(`${ROUTES.CHECKOUT}?fulfillment=SELLER_PICKUP`);
       } else {
         toastError(result.error);
       }

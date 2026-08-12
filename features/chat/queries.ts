@@ -680,6 +680,21 @@ async function upsertConversationSystemMessage(opts: {
         },
       });
     }
+
+    // Idempotent: skip duplicate system/ORDER/RESERVATION text (double-click / retry).
+    const last = await tx.message.findFirst({
+      where: {
+        conversationId: conversation.id,
+        type: opts.type,
+        text: opts.text,
+      },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, createdAt: true },
+    });
+    if (last && Date.now() - last.createdAt.getTime() < 10 * 60 * 1000) {
+      return;
+    }
+
     await tx.message.create({
       data: {
         conversationId: conversation.id,
