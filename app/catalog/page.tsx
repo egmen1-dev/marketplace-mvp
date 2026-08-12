@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { FunnelTracker } from "@/components/analytics";
+import { TrustStrip } from "@/components/trust";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -147,6 +148,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
+      <TrustStrip blockId="catalog" route="/catalog" className="-mx-4 rounded-none border-x-0 sm:-mx-6" />
       <CatalogBreadcrumbs
         items={
           breadcrumbItems.length > 0

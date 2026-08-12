@@ -8,6 +8,8 @@ export const ANALYTICS_EVENTS = {
   ADD_TO_CART: "add_to_cart",
   CHECKOUT_START: "checkout_start",
   PURCHASE_COMPLETE: "purchase_complete",
+  TRUST_BLOCK_VIEW: "trust_block_view",
+  CTA_CLICK: "cta_click",
 } as const;
 
 export type AnalyticsEventName =

@@ -17,6 +17,7 @@ export {
   getAnalyticsAdapter,
   resetAnalyticsAdapter,
   setAnalyticsAdapter,
+  trackCtaClick,
   trackEvent,
 } from "./client";
 

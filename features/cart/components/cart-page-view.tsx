@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CartItemRow } from "@/features/cart/components/cart-item-row";
 import { useCart } from "@/features/cart/components/cart-provider";
+import { CartTrustNote } from "@/components/trust";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
 import { pluralizeProductWord } from "@/lib/i18n";
@@ -84,6 +85,8 @@ export function CartPageView() {
                 <span>{formatPrice(cart.subtotal, cart.currency)}</span>
               </div>
             </div>
+
+            <CartTrustNote className="mt-4" />
 
             <Button
               size="cta"

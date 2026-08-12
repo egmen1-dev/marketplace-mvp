@@ -19,7 +19,7 @@ import {
   ProductPurchasePanel,
   SimilarProducts,
 } from "@/features/products";
-import { ProductSellerCard } from "@/features/seller/components/product-seller-card";
+import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
@@ -218,6 +218,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
             );
           })()}
 
+          {sellerTrust ? (
+            <PdpTrustBlock
+              seller={sellerTrust}
+              productId={product.id}
+              city={product.city}
+              weightKg={product.weight}
+              lengthCm={product.lengthCm}
+              widthCm={product.widthCm}
+              heightCm={product.heightCm}
+              sellerShipping={sellerShipping}
+              pickupEnabled={
+                product.pickupEnabled && product.pickupPoints.length > 0
+              }
+            />
+          ) : null}
+
           <section
             className="rounded-2xl border border-border bg-card/50 p-4 sm:p-5"
             data-testid="pdp-fulfillment"
@@ -269,11 +285,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ) : null}
             </ul>
           </section>
-
-          {/* 6: seller trust */}
-          {sellerTrust ? (
-            <ProductSellerCard seller={sellerTrust} />
-          ) : null}
         </div>
       </div>
 

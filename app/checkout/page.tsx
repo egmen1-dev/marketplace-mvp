@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { CheckoutTrustNote } from "@/components/trust";
 import { FunnelTracker } from "@/components/analytics";
 import { getSessionUser } from "@/features/auth";
 import { getCartForUser } from "@/features/cart";
@@ -153,6 +154,7 @@ export default async function CheckoutPage({
         event={ANALYTICS_EVENTS.CHECKOUT_START}
         route={ROUTES.CHECKOUT}
       />
+      <CheckoutTrustNote />
       <CheckoutForm
         initialCart={cart}
         defaultName={profile?.name ?? user.name ?? ""}

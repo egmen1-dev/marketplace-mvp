@@ -4,6 +4,7 @@ import {
   type AnalyticsAdapter,
 } from "@/lib/analytics/adapter";
 import type { AnalyticsEventPayload } from "@/lib/analytics/events";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { isEmbeddedWebViewClient } from "@/lib/webview/detect";
 
 let adapter: AnalyticsAdapter = createHttpAnalyticsAdapter();
@@ -27,6 +28,18 @@ export function trackEvent(payload: Omit<AnalyticsEventPayload, "webview">): voi
   void adapter.track({
     ...payload,
     webview: isEmbeddedWebViewClient(),
+  });
+}
+
+/** PDP/home CTA taps — entityId = action name (buy, add_to_cart, …). */
+export function trackCtaClick(
+  action: string,
+  options?: { route?: string; entityId?: string },
+): void {
+  trackEvent({
+    event: ANALYTICS_EVENTS.CTA_CLICK,
+    route: options?.route,
+    entityId: action,
   });
 }
 

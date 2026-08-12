@@ -24,7 +24,7 @@ import { startConversationAction } from "@/features/chat/actions";
 import { FavoriteToggleButton } from "@/features/favorites/components/favorite-toggle-button";
 import { formatPrice } from "@/features/products/mappers";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
-import { trackEvent } from "@/lib/analytics/client";
+import { trackCtaClick, trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
 import { TOAST, toastError } from "@/lib/toasts";
 import { cn } from "@/lib/utils";
@@ -126,6 +126,9 @@ export function ProductPurchasePanel({
           route: `${ROUTES.PRODUCT}/${productId}`,
           entityId: productId,
         });
+        trackCtaClick("add_to_cart", {
+          route: `${ROUTES.PRODUCT}/${productId}`,
+        });
         toast.success(TOAST.CART_ADDED);
         window.setTimeout(() => setStatus("idle"), 1800);
       } else {
@@ -149,6 +152,7 @@ export function ProductPurchasePanel({
           route: `${ROUTES.PRODUCT}/${productId}`,
           entityId: productId,
         });
+        trackCtaClick("buy", { route: `${ROUTES.PRODUCT}/${productId}` });
         toast.success(TOAST.CHECKOUT_REDIRECT);
         window.location.assign(ROUTES.CHECKOUT);
       } else {
@@ -178,6 +182,7 @@ export function ProductPurchasePanel({
           route: `${ROUTES.PRODUCT}/${productId}`,
           entityId: productId,
         });
+        trackCtaClick("reserve", { route: `${ROUTES.PRODUCT}/${productId}` });
         toast.success("Переходим к бронированию");
         // Full navigation avoids soft-nav races where checkout RSC and
         // client cart/theme trees can diverge during hydrate (#418).
@@ -428,7 +433,12 @@ export function ProductPurchasePanel({
             variant="secondary"
             className="min-w-[6.5rem] shrink-0"
             disabled={busy}
-            onClick={() => void handleAdd()}
+            onClick={() => {
+              trackCtaClick("sticky_add_to_cart", {
+                route: `${ROUTES.PRODUCT}/${productId}`,
+              });
+              void handleAdd();
+            }}
           >
             {status === "added" ? "Добавлено" : "В корзину"}
           </Button>
@@ -438,7 +448,12 @@ export function ProductPurchasePanel({
             className="min-w-[5.5rem] shrink-0"
             disabled={busy}
             data-testid="pdp-sticky-buy"
-            onClick={() => void handleBuy()}
+            onClick={() => {
+              trackCtaClick("sticky_buy", {
+                route: `${ROUTES.PRODUCT}/${productId}`,
+              });
+              void handleBuy();
+            }}
           >
             Купить
           </Button>

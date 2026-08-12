@@ -11,7 +11,7 @@ describe("analytics events", () => {
     expect(ANALYTICS_EVENT_NAMES).toContain("page_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("landing_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("purchase_complete");
-    expect(ANALYTICS_EVENT_NAMES.length).toBe(8);
+    expect(ANALYTICS_EVENT_NAMES.length).toBe(10);
   });
 
   it("validates event names", () => {

@@ -8,6 +8,7 @@ import {
   PopularCategories,
   TrustSection,
 } from "@/components/home";
+import { TrustStrip } from "@/components/trust";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -122,6 +123,7 @@ export default async function HomePage() {
 
           <HeroShowcase featured={featured} />
         </div>
+        <TrustStrip />
       </section>
 
       <div className="content-visibility-auto">
