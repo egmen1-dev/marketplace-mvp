@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { ANALYTICS_EVENT_NAMES, type AnalyticsEventName } from "@/lib/analytics/events";
+import { isAnalyticsEventName, type AnalyticsEventName } from "@/lib/analytics/events";
 import { trackServerEvent } from "@/lib/analytics/track-server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const payloadSchema = z.object({
-  event: z.enum(ANALYTICS_EVENT_NAMES as [AnalyticsEventName, ...AnalyticsEventName[]]),
+  event: z
+    .string()
+    .refine(isAnalyticsEventName, { message: "unknown_event" }),
   route: z.string().max(200).optional(),
   entityId: z.string().max(100).optional(),
   webview: z.boolean().optional(),
@@ -38,7 +40,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  await trackServerEvent(parsed.data);
+  await trackServerEvent({
+    event: parsed.data.event as AnalyticsEventName,
+    route: parsed.data.route,
+    entityId: parsed.data.entityId,
+    webview: parsed.data.webview,
+    visitorId: parsed.data.visitorId,
+    utmSource: parsed.data.utmSource,
+    utmMedium: parsed.data.utmMedium,
+    utmCampaign: parsed.data.utmCampaign,
+    utmContent: parsed.data.utmContent,
+  });
 
   return NextResponse.json({ ok: true });
 }

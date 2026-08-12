@@ -75,9 +75,12 @@ describe("analytics API schema", () => {
           visitorId: "test-visitor",
           utmSource: "vk",
           utmMedium: "cpc",
+          utmCampaign: "acceptance",
         }),
       }),
     );
     expect(res.status).toBe(200);
+    const json = (await res.json()) as { ok: boolean };
+    expect(json.ok).toBe(true);
   });
 });

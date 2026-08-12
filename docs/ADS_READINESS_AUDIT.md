@@ -136,3 +136,73 @@ npx playwright test tests/e2e/ads-measurement.spec.ts -c playwright.railway.conf
 | Deploy truth | `/api/version` |
 
 **Do not launch paid ads until deploy verify + eligibility panel green on Railway staging.**
+
+---
+
+## 8. Final acceptance (ADS-READY-001.1)
+
+Run after merge to `main` and Railway redeploy.
+
+### Deploy verification
+
+```bash
+git rev-parse --short HEAD   # ADS-READY SHA
+curl -sS https://web-production-e56fb.up.railway.app/api/version | jq '.commit, .environment'
+node scripts/deploy-verify.mjs <sha>
+```
+
+Expected deploy-verify includes:
+
+```
+PASS — POST ad_landing_view + UTM → 200
+Deploy verification passed.
+```
+
+### ad_landing_view API
+
+```bash
+curl -sS -X POST https://web-production-e56fb.up.railway.app/api/analytics/events \
+  -H 'Content-Type: application/json' \
+  -d '{"event":"ad_landing_view","route":"/","visitorId":"acceptance","utmSource":"vk","utmMedium":"cpc","utmCampaign":"acceptance"}'
+# → {"ok":true}
+```
+
+### Admin ads panel
+
+Open `/admin/ads` — verify totals, READY/BLOCKED filters, category matrix.
+
+### Product eligibility (unit)
+
+| Product | Input | Result |
+|---------|-------|--------|
+| A | ACTIVE, stock>0, photo, type, seller | `eligible: true` |
+| B | ACTIVE, no photo | `eligible: false`, `reasons: ["NO_IMAGE"]` |
+
+### Ads funnel E2E
+
+```bash
+npx playwright test tests/e2e/ads-funnel.spec.ts -c playwright.railway.config.ts
+```
+
+Events captured: `page_view` → `ad_landing_view` (with UTM) → `product_view` → `add_to_cart`.
+
+### Screenshots
+
+| File | Content |
+|------|---------|
+| `admin-ads-dashboard.png` | `/admin/ads` summary + table |
+| `ready-product.png` | READY filter |
+| `blocked-product.png` | BLOCKED filter |
+| `vk-ad-funnel.png` | VK UTM landing → PDP |
+
+Generate: `node scripts/ads-acceptance-screenshots.mjs`
+
+### Sign-off
+
+| Check | Pass criteria |
+|-------|---------------|
+| Deploy SHA | `/api/version` matches `main` |
+| ad_landing_view | POST 200 with UTM fields |
+| Admin ads | Panel loads, filters work |
+| Funnel E2E | 4 events with UTM on `ad_landing_view` |
+| **READY FOR ADS LAUNCH** | All above green on Railway staging |

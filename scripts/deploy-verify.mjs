@@ -124,6 +124,24 @@ async function main() {
     `status=${analyticsResult.res.status}`,
   );
 
+  const adLandingResult = await fetchJson("/api/analytics/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event: "ad_landing_view",
+      route: "/",
+      visitorId: "deploy-verify",
+      utmSource: "vk",
+      utmMedium: "cpc",
+      utmCampaign: "deploy-verify",
+    }),
+  });
+  record(
+    "POST ad_landing_view + UTM → 200",
+    adLandingResult.res.status === 200 && adLandingResult.body?.ok === true,
+    `status=${adLandingResult.res.status}`,
+  );
+
   const failed = results.filter((r) => !r.ok);
   console.log("\n--- SUMMARY ---");
   console.log(`Passed: ${results.length - failed.length}/${results.length}`);

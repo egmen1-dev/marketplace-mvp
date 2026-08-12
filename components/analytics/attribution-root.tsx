@@ -29,6 +29,11 @@ export function AttributionRoot() {
       trackEvent({
         event: ANALYTICS_EVENTS.AD_LANDING_VIEW,
         route: pathname,
+        visitorId: attr.visitorId,
+        utmSource: attr.utmSource,
+        utmMedium: attr.utmMedium,
+        utmCampaign: attr.utmCampaign,
+        utmContent: attr.utmContent,
       });
     }
   }, [searchParams, pathname]);
