@@ -28,10 +28,7 @@ import {
 import { StockEditor } from "@/features/seller/components/stock-editor";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { ProductQualityCard } from "@/features/seller/components/product-quality-card";
-import {
-  getProductCompletenessMap,
-  type CompletenessResult,
-} from "@/lib/conversion";
+import { getProductCompletenessMap } from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 import { formatDateMoscowShort } from "@/lib/format/datetime";
 import { pluralizeProductCount } from "@/lib/i18n";
@@ -80,10 +77,7 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
   };
   let qualityById = new Map<
     string,
-    Awaited<ReturnType<typeof getProductCompletenessMap>> extends Map<
-      string,
-      infer V
-    >
+    Awaited<ReturnType<typeof getProductCompletenessMap>> extends Map<string, infer V>
       ? V
       : never
   >();
@@ -105,14 +99,6 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
     dbError = "Не удалось загрузить товары";
   }
 
-  let completenessMap = new Map<string, CompletenessResult>();
-  try {
-    completenessMap = await getProductCompletenessMap(
-      products.items.map((p) => p.id),
-    );
-  } catch (err) {
-    console.error("[seller/products/completeness]", err);
-  }
 
   function tabHref(value: ProductStatus | "ALL") {
     const q = new URLSearchParams();
@@ -279,17 +265,6 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                       </td>
                       <td className="py-3 pr-3">
                         <ProductStatusBadge status={product.status} />
-                      </td>
-                      <td className="py-3 pr-3">
-                        {completenessMap.get(product.id) ? (
-                          <ProductQualityCard
-                            result={completenessMap.get(product.id)!}
-                            compact
-                            className="min-w-[140px] border-0 bg-transparent p-0"
-                          />
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
                       </td>
                       <td className="py-3 pr-3 text-muted-foreground">
                         {formatCreatedAt(product.createdAt)}
