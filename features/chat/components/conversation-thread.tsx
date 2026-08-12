@@ -21,11 +21,17 @@ import { cn } from "@/lib/utils";
 type Props = {
   conversation: ConversationDetail;
   viewerId: string;
+  /** Admin read-only mode — hides composer */
+  readOnly?: boolean;
 };
 
 const initial: ChatActionState = { ok: false };
 
-export function ConversationThread({ conversation, viewerId }: Props) {
+export function ConversationThread({
+  conversation,
+  viewerId,
+  readOnly = false,
+}: Props) {
   const router = useRouter();
   const bottomRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -148,10 +154,19 @@ export function ConversationThread({ conversation, viewerId }: Props) {
       </div>
 
       {/* Composer */}
+      {readOnly ? (
+        <div
+          className="sticky bottom-0 border-t border-border bg-muted/50 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-center text-xs text-muted-foreground sm:p-4"
+          data-testid="chat-readonly-notice"
+        >
+          Режим просмотра: администратор не может отправлять сообщения от имени
+          участников.
+        </div>
+      ) : (
       <form
         ref={formRef}
         action={formAction}
-        className="sticky bottom-0 border-t border-border bg-background/95 p-3 backdrop-blur-md sm:p-4"
+        className="sticky bottom-0 border-t border-border bg-background/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:p-4"
       >
         <input
           type="hidden"
@@ -190,6 +205,7 @@ export function ConversationThread({ conversation, viewerId }: Props) {
           </Button>
         </div>
       </form>
+      )}
     </div>
   );
 }

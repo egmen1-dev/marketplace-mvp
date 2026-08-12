@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ColorSwatchField } from "@/features/taxonomy/components/color-swatch-field";
 import type { CharacteristicDefinitionDto } from "@/features/taxonomy/queries";
 
 type Props = {
@@ -49,11 +50,23 @@ export function DynamicCharacteristicsFields({
             );
           }
 
-          if (
-            d.type === "SELECT" ||
-            d.type === "SIZE" ||
-            d.type === "COLOR"
-          ) {
+          if (d.type === "COLOR") {
+            return (
+              <div key={d.id} className="sm:col-span-2">
+                <ColorSwatchField
+                  id={name}
+                  name={name}
+                  label={label}
+                  options={d.options ?? []}
+                  defaultValue={defVal}
+                  required={d.required}
+                  disabled={disabled}
+                />
+              </div>
+            );
+          }
+
+          if (d.type === "SELECT" || d.type === "SIZE") {
             return (
               <div key={d.id} className="space-y-1.5">
                 <Label htmlFor={name}>{label}</Label>

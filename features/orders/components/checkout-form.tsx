@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/features/cart/components/cart-provider";
+import { computeCartPackageSummary } from "@/features/cart/lib/package-summary";
 import type { CartView } from "@/features/cart/types";
 import {
   createOrderFromCartAction,
@@ -113,6 +114,10 @@ export function CheckoutForm({
   const selectedPickup = useMemo(
     () => sellerPickupOptions.find((o) => o.point.id === sellerPointId) ?? null,
     [sellerPickupOptions, sellerPointId],
+  );
+  const packageSummary = useMemo(
+    () => computeCartPackageSummary(cart),
+    [cart],
   );
 
   const isEmpty = cart.items.length === 0;
@@ -253,6 +258,7 @@ export function CheckoutForm({
               fieldErrors={fieldErrors}
               onMethodChange={setDeliveryMethod}
               onQuoteChange={setDeliveryQuote}
+              packageSummary={packageSummary}
             />
             {deliveryMethod === "COURIER" ? (
               <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">

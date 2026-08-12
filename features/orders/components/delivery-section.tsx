@@ -18,6 +18,13 @@ type DeliverySectionProps = {
   fieldErrors?: Record<string, string[]>;
   onQuoteChange: (quote: DeliveryQuote | null) => void;
   onMethodChange?: (method: DeliveryMethodType) => void;
+  /** Cart-derived package estimate for CDEK tariff calculator */
+  packageSummary?: {
+    weightGrams: number;
+    lengthCm: number;
+    widthCm: number;
+    heightCm: number;
+  };
 };
 
 type QuoteResponse = {
@@ -31,6 +38,7 @@ export function DeliverySection({
   fieldErrors,
   onQuoteChange,
   onMethodChange,
+  packageSummary,
 }: DeliverySectionProps) {
   const [method, setMethod] = useState<DeliveryMethodType>("PICKUP");
   const [city, setCity] = useState("");
@@ -126,6 +134,14 @@ export function DeliverySection({
             method,
             city: city.trim(),
             ...(method === "PICKUP" ? { pickupPointCode: selectedCode } : {}),
+            ...(packageSummary
+              ? {
+                  weightGrams: packageSummary.weightGrams,
+                  lengthCm: packageSummary.lengthCm,
+                  widthCm: packageSummary.widthCm,
+                  heightCm: packageSummary.heightCm,
+                }
+              : {}),
           }),
         });
         const data = (await res.json()) as QuoteResponse & { error?: string };
@@ -149,7 +165,7 @@ export function DeliverySection({
     });
 
     return () => controller.abort();
-  }, [method, city, selectedCode]);
+  }, [method, city, selectedCode, packageSummary]);
 
   return (
     <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">

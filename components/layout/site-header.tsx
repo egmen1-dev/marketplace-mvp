@@ -44,18 +44,19 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
         className,
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-1.5 px-2 sm:gap-3 sm:px-6">
         <Logo variant="responsive" size={36} className="shrink-0" />
 
         <Button
           size="sm"
-          className="shrink-0 rounded-xl"
+          className="shrink-0 rounded-xl px-2 sm:px-3"
           nativeButton={false}
           render={<Link href={ROUTES.CATALOG} />}
           data-testid="header-catalog"
+          aria-label="Каталог"
         >
           <LayoutGrid data-icon="inline-start" />
-          Каталог
+          <span className="hidden min-[420px]:inline">Каталог</span>
         </Button>
 
         {/* Bounded search width — avoids a huge empty gap before actions */}

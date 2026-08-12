@@ -4,11 +4,61 @@ import { prisma } from "@/lib/prisma";
 import {
   ChatError,
   assertConversationAccess,
+  getConversationDetail,
   getOrCreateConversationForProduct,
+  listAllConversationsForAdmin,
   sendTextMessage,
 } from "@/features/chat/queries";
 
 describe("chat access control", () => {
+  it("allows admin read access to any conversation", async () => {
+    const admin = await prisma.user.findUniqueOrThrow({
+      where: { email: "admin@demo.lot" },
+    });
+    const buyer = await prisma.user.findUniqueOrThrow({
+      where: { email: "buyer@demo.lot" },
+    });
+    const product = await prisma.product.findFirstOrThrow({
+      where: {
+        status: "ACTIVE",
+        seller: { user: { email: "seller@demo.lot" } },
+      },
+      select: { id: true },
+    });
+
+    const { conversationId } = await getOrCreateConversationForProduct({
+      productId: product.id,
+      buyerId: buyer.id,
+    });
+
+    await expect(
+      assertConversationAccess(conversationId, {
+        id: admin.id,
+        role: "ADMIN",
+        sellerProfileId: null,
+      }),
+    ).resolves.toMatchObject({ isAdmin: true });
+
+    const detail = await getConversationDetail({
+      conversationId,
+      viewer: {
+        id: admin.id,
+        role: "ADMIN",
+        sellerProfileId: null,
+      },
+    });
+    expect(detail.messages.length).toBeGreaterThan(0);
+  });
+
+  it("admin inbox lists conversations globally", async () => {
+    const rows = await listAllConversationsForAdmin({ limit: 5 });
+    expect(Array.isArray(rows)).toBe(true);
+    if (rows[0]) {
+      expect(rows[0].buyerLabel).toBeTruthy();
+      expect(rows[0].sellerLabel).toBeTruthy();
+    }
+  });
+
   it("rejects non-participant and blocks spoofed senderId", async () => {
     const buyer = await prisma.user.findUniqueOrThrow({
       where: { email: "buyer@demo.lot" },

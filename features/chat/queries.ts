@@ -6,6 +6,7 @@ import {
 } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { log } from "@/lib/logger";
 import { toPriceNumber } from "@/features/products/mappers";
 
 export type ChatParticipant = {
@@ -54,6 +55,12 @@ export type ConversationListItem = {
     createdAt: string;
     senderId: string | null;
   } | null;
+};
+
+/** Admin moderation inbox row — shows both parties. */
+export type AdminConversationListItem = ConversationListItem & {
+  buyerLabel: string;
+  sellerLabel: string;
 };
 
 export type ConversationDetail = {
@@ -263,6 +270,58 @@ export async function getOrCreateConversationForProduct(opts: {
   }
 }
 
+export async function listAllConversationsForAdmin(opts?: {
+  limit?: number;
+}): Promise<AdminConversationListItem[]> {
+  const limit = Math.min(opts?.limit ?? 100, 200);
+  const rows = await prisma.conversation.findMany({
+    orderBy: { updatedAt: "desc" },
+    take: limit,
+    include: {
+      product: { select: productSelect },
+      buyer: { select: { id: true, name: true, email: true } },
+      seller: { select: { id: true, storeName: true, userId: true } },
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: {
+          text: true,
+          type: true,
+          createdAt: true,
+          senderId: true,
+        },
+      },
+    },
+  });
+
+  return rows.map((row) => {
+    const last = row.messages[0] ?? null;
+    const buyerLabel = row.buyer.name ?? row.buyer.email;
+    return {
+      id: row.id,
+      status: row.status,
+      updatedAt: row.updatedAt.toISOString(),
+      createdAt: row.createdAt.toISOString(),
+      unreadCount: 0,
+      product: mapProduct(row.product),
+      counterpart: {
+        name: `${buyerLabel} ↔ ${row.seller.storeName}`,
+        kind: "buyer" as const,
+      },
+      buyerLabel,
+      sellerLabel: row.seller.storeName,
+      lastMessage: last
+        ? {
+            text: last.text,
+            type: last.type,
+            createdAt: last.createdAt.toISOString(),
+            senderId: last.senderId,
+          }
+        : null,
+    };
+  });
+}
+
 export async function listConversationsForUser(opts: {
   userId: string;
   /** Ignored for auth — seller id is always resolved from DB for userId. */
@@ -381,6 +440,13 @@ export async function getConversationDetail(opts: {
     opts.conversationId,
     opts.viewer,
   );
+
+  if (access.isAdmin && !access.isBuyer && !access.isSeller) {
+    log.info("admin_chat_view", {
+      adminId: opts.viewer.id,
+      conversationId: opts.conversationId,
+    });
+  }
 
   const row = await prisma.conversation.findUniqueOrThrow({
     where: { id: opts.conversationId },
@@ -714,9 +780,13 @@ async function upsertConversationSystemMessage(opts: {
 /** Admin: close conversation (soft). Hard delete is not used in product UI. */
 export async function adminDeleteConversation(
   conversationId: string,
+  adminId?: string,
 ): Promise<void> {
   await prisma.conversation.update({
     where: { id: conversationId },
     data: { status: ConversationStatus.CLOSED },
   });
+  if (adminId) {
+    log.info("admin_chat_close", { adminId, conversationId });
+  }
 }

@@ -434,7 +434,11 @@ export function ProductForm({
       </section>
 
       <section className="flex flex-col gap-4 border-t border-border pt-6">
-        <h2 className="font-heading text-lg font-semibold">Дополнительно</h2>
+        <h2 className="font-heading text-lg font-semibold">Габариты и вес</h2>
+        <p className="text-xs text-muted-foreground">
+          Нужны для расчёта доставки СДЭК. Если указываете размеры — заполните
+          длину, ширину и высоту.
+        </p>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="sku">Артикул (SKU)</Label>

@@ -86,7 +86,11 @@ export default async function ConversationPage({ params }: Props) {
         </div>
       }
     >
-      <ConversationThread conversation={conversation} viewerId={user.id} />
+      <ConversationThread
+        conversation={conversation}
+        viewerId={user.id}
+        readOnly={dbUser.role === "ADMIN"}
+      />
     </AccountShell>
   );
 }

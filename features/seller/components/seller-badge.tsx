@@ -45,6 +45,7 @@ type SellerBadgesProps = {
   isVerified: boolean;
   kind: SellerKind;
   joinedAt: Date | string;
+  completedOrdersCount?: number;
   className?: string;
 };
 
@@ -52,9 +53,15 @@ export function SellerBadges({
   isVerified,
   kind,
   joinedAt,
+  completedOrdersCount,
   className,
 }: SellerBadgesProps) {
-  const badges = resolveSellerBadges({ isVerified, kind, joinedAt });
+  const badges = resolveSellerBadges({
+    isVerified,
+    kind,
+    joinedAt,
+    completedOrdersCount,
+  });
   if (badges.length === 0) return null;
 
   return (

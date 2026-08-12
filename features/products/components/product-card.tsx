@@ -41,6 +41,8 @@ export function ProductCard({
   const showNew = isNewProduct(product.createdAt);
   const showSale = showOldPrice;
   const showHit = isHitProduct(product.views, product.favoritesCount);
+  const outOfStock = product.stock <= 0;
+  const lowStock = !outOfStock && product.stock <= 5;
 
   return (
     <article
@@ -67,6 +69,22 @@ export function ProductCard({
         </Link>
 
         <div className="pointer-events-none absolute top-2.5 left-2.5 flex max-w-[70%] flex-wrap gap-1">
+          {outOfStock ? (
+            <Badge
+              variant="secondary"
+              className="bg-background/90 text-[10px] text-destructive backdrop-blur-sm"
+            >
+              Нет в наличии
+            </Badge>
+          ) : null}
+          {lowStock ? (
+            <Badge
+              variant="secondary"
+              className="bg-background/85 text-[10px] backdrop-blur-sm"
+            >
+              Осталось {product.stock}
+            </Badge>
+          ) : null}
           {showNew ? (
             <Badge className="bg-primary text-[10px] text-primary-foreground shadow-sm">
               Новинка

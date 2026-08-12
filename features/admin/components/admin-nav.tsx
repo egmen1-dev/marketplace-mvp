@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   FolderTree,
   LayoutDashboard,
+  MessageCircle,
   Package,
   ShoppingBag,
   Store,
@@ -52,6 +53,12 @@ const NAV_ITEMS = [
     icon: Ticket,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_RESERVATIONS),
+  },
+  {
+    href: ROUTES.ADMIN_MESSAGES,
+    label: "Чаты",
+    icon: MessageCircle,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_MESSAGES),
   },
   {
     href: ROUTES.ADMIN_CATEGORIES,

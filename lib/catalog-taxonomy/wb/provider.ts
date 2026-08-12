@@ -9,7 +9,7 @@
  * Falls back should be handled by the caller via LocalSnapshotProvider.
  */
 
-import { mapWbCharcType, slugifyRu } from "../normalize";
+import { inferCharacteristicTypeFromName, mapWbCharcType, slugifyRu } from "../normalize";
 import type {
   NormalizedCategory,
   NormalizedCharacteristic,
@@ -205,7 +205,10 @@ export class WbTaxonomyProvider implements TaxonomyProvider {
           for (const [ci, ch] of charcs.entries()) {
             const cid = ch.charcID ?? ch.charcId;
             if (cid == null || !ch.name) continue;
-            const type = mapWbCharcType(ch.charcType);
+            const type = inferCharacteristicTypeFromName(
+              ch.name,
+              mapWbCharcType(ch.charcType),
+            );
             const finalType =
               ch.maxCount && ch.maxCount > 1 && type === "SELECT"
                 ? "MULTISELECT"
