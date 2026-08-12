@@ -58,13 +58,13 @@ git rev-parse --short HEAD
 curl -sS https://web-production-e56fb.up.railway.app/api/version | jq
 ```
 
-Expected:
+Expected (example after DEVOPS-001.1 @ `a2407cc`):
 
 ```json
 {
   "environment": "staging",
-  "commit": "58e681f",
-  "buildTime": "2026-08-12T19:00:00.000Z",
+  "commit": "a2407cc",
+  "buildTime": "2026-08-12T20:15:00.000Z",
   "version": "0.1.0"
 }
 ```
@@ -80,9 +80,9 @@ Legacy fields (`ok`, `service`, `timestamp`, `checks`) are unchanged.
 ### 3. Automated verify
 
 ```bash
-EXPECTED_COMMIT=58e681f node scripts/deploy-verify.mjs
+EXPECTED_COMMIT=a2407cc node scripts/deploy-verify.mjs
 # or
-node scripts/deploy-verify.mjs 58e681f
+node scripts/deploy-verify.mjs a2407cc
 ```
 
 Exit `0` = staging matches commit and critical routes respond.  
@@ -128,6 +128,106 @@ railway up --service web
 3. Playwright: `npx playwright test -c playwright.railway.config.ts`
 
 Only proceed to ad measurement / release sign-off when version commit matches `main`.
+
+---
+
+## Successful verification example (DEVOPS-001.1)
+
+After Railway redeploys `main` @ `a2407cc`, run the full acceptance cycle:
+
+```bash
+git rev-parse --short HEAD   # → a2407cc
+```
+
+### 1. Version marker
+
+```bash
+curl -sS https://web-production-e56fb.up.railway.app/api/version | jq
+```
+
+```json
+{
+  "environment": "staging",
+  "commit": "a2407cc",
+  "buildTime": "2026-08-12T20:15:00.000Z",
+  "version": "0.1.0"
+}
+```
+
+### 2. Health (includes version)
+
+```bash
+curl -sS https://web-production-e56fb.up.railway.app/api/health | jq '.ok, .version'
+```
+
+```json
+true
+{
+  "commit": "a2407cc",
+  "buildTime": "2026-08-12T20:15:00.000Z"
+}
+```
+
+### 3. Deploy verify (7/7)
+
+```bash
+node scripts/deploy-verify.mjs a2407cc
+```
+
+```
+Base URL: https://web-production-e56fb.up.railway.app
+Expected commit: a2407cc
+PASS — GET /api/version → 200: status=200
+PASS — Version environment present: staging
+PASS — Version commit matches expected: got=a2407cc
+PASS — Version buildTime present: 2026-08-12T20:15:00.000Z
+PASS — GET /api/health → 200: status=200
+PASS — Health version.commit matches expected: got=a2407cc
+PASS — Health database check OK
+PASS — GET / → 200: status=200
+PASS — GET /catalog → 200: status=200
+PASS — GET /api/version → 200: status=200
+PASS — GET /product/<id> → 200: status=200
+PASS — POST /api/analytics/events → 200: status=200
+
+--- SUMMARY ---
+Passed: 7/7
+Deploy verification passed.
+```
+
+### 4. Analytics baseline (UX-005)
+
+Quick API + cookie checks:
+
+```bash
+# POST analytics event
+curl -sS -X POST https://web-production-e56fb.up.railway.app/api/analytics/events \
+  -H 'Content-Type: application/json' \
+  -d '{"event":"page_view","route":"/","visitorId":"acceptance-check"}' | jq
+# → { "ok": true }
+
+# Admin funnel dashboard (after sign-in as admin@demo.lot)
+open https://web-production-e56fb.up.railway.app/admin/analytics
+# Expect: Visitors, UTM sources, Funnel dashboard, Ads measurement baseline
+```
+
+Landing with UTM sets cookies `lot_vid` and `lot_utm` (check DevTools → Application → Cookies).
+
+### 5. Playwright (2/2)
+
+```bash
+npx playwright test tests/e2e/ads-measurement.spec.ts -c playwright.railway.config.ts
+```
+
+```
+Running 2 tests using 1 worker
+  ✓ VK mobile funnel — UTM cookies + conversion events
+  ✓ VK mobile checkout — checkout_start after sign-in
+
+  2 passed
+```
+
+**Gate:** only mark **READY FOR ADS MEASUREMENT: YES** when steps 1–5 all pass on live Railway staging.
 
 ---
 
