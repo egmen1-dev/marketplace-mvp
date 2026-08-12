@@ -2,8 +2,19 @@ import { OrderStatus, ProductStatus, SellerKind } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-/** Sellers registered within this window may receive NEW_SELLER badge. */
-export const NEW_SELLER_DAYS = 90;
+/**
+ * "New seller" business rule (see docs/SELLER_BADGES.md).
+ *
+ * A seller is considered NEW while BOTH hold:
+ *   • account age ≤ NEW_SELLER_DAYS, AND
+ *   • completed (DELIVERED) orders < NEW_SELLER_MAX_ORDERS.
+ *
+ * The badge is removed as soon as EITHER milestone is crossed — whichever
+ * happens first — so a seller graduates by proving themselves through time
+ * OR through real sales, and the badge can never linger indefinitely.
+ */
+export const NEW_SELLER_DAYS = 30;
+export const NEW_SELLER_MAX_ORDERS = 5;
 
 export type SellerTrustMetrics = {
   totalProducts: number;
@@ -54,6 +65,11 @@ export function resolveSellerBadges(input: {
   isVerified: boolean;
   kind: SellerKind;
   joinedAt: Date | string;
+  /**
+   * Completed (DELIVERED) orders. When omitted, defaults to 0 so callers that
+   * lack the count fall back to the time-only portion of the rule.
+   */
+  completedOrders?: number;
 }): SellerBadgeVariant[] {
   const badges: SellerBadgeVariant[] = [];
 
@@ -65,14 +81,31 @@ export function resolveSellerBadges(input: {
     badges.push("VERIFIED_SELLER");
   }
 
-  const joinedMs = new Date(input.joinedAt).getTime();
-  const daysSinceJoined =
-    (Date.now() - joinedMs) / (1000 * 60 * 60 * 24);
-  if (daysSinceJoined <= NEW_SELLER_DAYS) {
+  if (isNewSeller(input.joinedAt, input.completedOrders ?? 0)) {
     badges.push("NEW_SELLER");
   }
 
   return badges;
+}
+
+/** Whole days elapsed since the seller registered. */
+export function daysSinceJoined(joinedAt: Date | string): number {
+  const joinedMs = new Date(joinedAt).getTime();
+  return (Date.now() - joinedMs) / (1000 * 60 * 60 * 24);
+}
+
+/**
+ * NEW seller = within the first {@link NEW_SELLER_DAYS} days AND fewer than
+ * {@link NEW_SELLER_MAX_ORDERS} completed orders. Graduates on either milestone.
+ */
+export function isNewSeller(
+  joinedAt: Date | string,
+  completedOrders: number,
+): boolean {
+  return (
+    daysSinceJoined(joinedAt) <= NEW_SELLER_DAYS &&
+    completedOrders < NEW_SELLER_MAX_ORDERS
+  );
 }
 
 /** Only surface metrics backed by real DB counts (> 0). */

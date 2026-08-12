@@ -45,6 +45,8 @@ type SellerBadgesProps = {
   isVerified: boolean;
   kind: SellerKind;
   joinedAt: Date | string;
+  /** Completed (DELIVERED) orders — drives NEW_SELLER graduation by sales. */
+  completedOrders?: number;
   className?: string;
 };
 
@@ -52,9 +54,15 @@ export function SellerBadges({
   isVerified,
   kind,
   joinedAt,
+  completedOrders,
   className,
 }: SellerBadgesProps) {
-  const badges = resolveSellerBadges({ isVerified, kind, joinedAt });
+  const badges = resolveSellerBadges({
+    isVerified,
+    kind,
+    joinedAt,
+    completedOrders,
+  });
   if (badges.length === 0) return null;
 
   return (

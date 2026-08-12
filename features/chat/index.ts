@@ -2,6 +2,7 @@ export {
   getOrCreateConversationForProduct,
   listConversationsForUser,
   getConversationDetail,
+  adminListConversations,
   sendTextMessage,
   countUnreadMessagesForUser,
   notifyOrderCreated,
@@ -12,6 +13,7 @@ export {
   notifyReservationCancelled,
   ChatError,
   type ConversationListItem,
+  type AdminConversationListItem,
   type ConversationDetail,
   type ChatMessageDto,
 } from "./queries";

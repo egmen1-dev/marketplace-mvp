@@ -6,6 +6,7 @@ import {
   BarChart3,
   FolderTree,
   LayoutDashboard,
+  MessagesSquare,
   Package,
   Search,
   ShieldAlert,
@@ -56,6 +57,12 @@ const NAV_ITEMS = [
     icon: Ticket,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_RESERVATIONS),
+  },
+  {
+    href: ROUTES.ADMIN_CHAT,
+    label: "Чаты",
+    icon: MessagesSquare,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CHAT),
   },
   {
     href: ROUTES.ADMIN_CATEGORIES,
