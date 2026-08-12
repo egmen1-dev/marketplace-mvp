@@ -20,6 +20,7 @@ export {
 export {
   getAdminDashboardStats,
   getAnalyticsFunnelCounts,
+  getAnalyticsMeasurementDashboard,
   listRecentUsers,
   listRecentOrders,
   listRecentUsers as getAdminRecentUsers,
@@ -44,6 +45,8 @@ export {
   AdminServiceError,
   type AdminDashboardStats,
   type AnalyticsFunnelCounts,
+  type AnalyticsMeasurementDashboard,
+  type ProductAnalyticsRow,
   type AdminUserRow,
   type AdminSellerRow,
   type AdminProductRow,

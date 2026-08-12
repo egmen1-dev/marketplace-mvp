@@ -12,6 +12,11 @@ const payloadSchema = z.object({
   route: z.string().max(200).optional(),
   entityId: z.string().max(100).optional(),
   webview: z.boolean().optional(),
+  visitorId: z.string().max(64).optional(),
+  utmSource: z.string().max(100).optional(),
+  utmMedium: z.string().max(100).optional(),
+  utmCampaign: z.string().max(100).optional(),
+  utmContent: z.string().max(100).optional(),
 });
 
 /** Accept client conversion events — no PII, no auth required. */

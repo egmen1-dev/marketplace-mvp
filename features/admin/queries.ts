@@ -207,6 +207,217 @@ export async function getAnalyticsFunnelCounts(
   return { windowDays, since, counts, webviewCounts, totalEvents };
 }
 
+export type ProductAnalyticsRow = {
+  productId: string;
+  title: string;
+  views: number;
+  addToCart: number;
+  viewToCartRate: number | null;
+  checkoutStarts: number;
+  checkoutRate: number | null;
+};
+
+export type UtmSourceRow = {
+  source: string;
+  events: number;
+  visitors: number;
+};
+
+export type AnalyticsMeasurementDashboard = {
+  windowDays: number;
+  since: Date;
+  overview: {
+    visitors: number;
+    productsViewed: number;
+    cartAdditions: number;
+    checkoutStarts: number;
+    purchases: number;
+  };
+  counts: Record<string, number>;
+  uniqueByEvent: Record<string, number>;
+  funnelSteps: ReturnType<
+    typeof import("@/lib/analytics/funnel-metrics").buildFunnelStepMetrics
+  >;
+  productRows: ProductAnalyticsRow[];
+  popularByViews: ProductAnalyticsRow[];
+  utmSources: UtmSourceRow[];
+  engagement: {
+    ctaClicks: number;
+    trustBlockViews: number;
+  };
+};
+
+function aggregateUniques(
+  rows: Array<{ event: string; visitorId: string | null }>,
+): Record<string, number> {
+  const sets: Record<string, Set<string>> = {};
+  for (const row of rows) {
+    if (!row.visitorId) continue;
+    if (!sets[row.event]) sets[row.event] = new Set();
+    sets[row.event]!.add(row.visitorId);
+  }
+  const out: Record<string, number> = {};
+  for (const [event, set] of Object.entries(sets)) {
+    out[event] = set.size;
+  }
+  return out;
+}
+
+export async function getAnalyticsMeasurementDashboard(
+  windowDays = 7,
+): Promise<AnalyticsMeasurementDashboard> {
+  const { buildFunnelStepMetrics } = await import("@/lib/analytics/funnel-metrics");
+  const { MEASUREMENT_FUNNEL } = await import("@/lib/analytics/events");
+
+  const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
+
+  const [grouped, visitorRows, productViewGroups, productCartGroups, utmGrouped] =
+    await Promise.all([
+      prisma.analyticsEvent.groupBy({
+        by: ["event", "webview"],
+        where: { createdAt: { gte: since } },
+        _count: { _all: true },
+      }),
+      prisma.analyticsEvent.findMany({
+        where: { createdAt: { gte: since }, visitorId: { not: null } },
+        select: { event: true, visitorId: true },
+      }),
+      prisma.analyticsEvent.groupBy({
+        by: ["entityId"],
+        where: {
+          event: "product_view",
+          createdAt: { gte: since },
+          entityId: { not: null },
+        },
+        _count: { _all: true },
+        orderBy: { _count: { entityId: "desc" } },
+        take: 15,
+      }),
+      prisma.analyticsEvent.groupBy({
+        by: ["entityId"],
+        where: {
+          event: "add_to_cart",
+          createdAt: { gte: since },
+          entityId: { not: null },
+        },
+        _count: { _all: true },
+      }),
+      prisma.analyticsEvent.groupBy({
+        by: ["utmSource"],
+        where: {
+          createdAt: { gte: since },
+          utmSource: { not: null },
+        },
+        _count: { _all: true },
+      }),
+    ]);
+
+  const counts: Record<string, number> = {};
+  for (const row of grouped) {
+    const n = row._count._all;
+    counts[row.event] = (counts[row.event] ?? 0) + n;
+  }
+
+  const uniqueByEvent = aggregateUniques(visitorRows);
+  const allVisitors = new Set(
+    visitorRows.map((r) => r.visitorId).filter(Boolean) as string[],
+  );
+
+  const cartByProduct = new Map(
+    productCartGroups
+      .filter((g) => g.entityId)
+      .map((g) => [g.entityId!, g._count._all]),
+  );
+
+  const productIds = [
+    ...new Set(
+      productViewGroups
+        .map((g) => g.entityId)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+
+  const products =
+    productIds.length > 0
+      ? await prisma.product.findMany({
+          where: { id: { in: productIds } },
+          select: { id: true, name: true },
+        })
+      : [];
+  const titleById = new Map(products.map((p) => [p.id, p.name]));
+
+  const productRows: ProductAnalyticsRow[] = productViewGroups
+    .filter((g) => g.entityId)
+    .map((g) => {
+      const productId = g.entityId!;
+      const views = g._count._all;
+      const addToCart = cartByProduct.get(productId) ?? 0;
+      const viewToCartRate =
+        views > 0 ? Math.round((addToCart / views) * 1000) / 10 : null;
+      return {
+        productId,
+        title: titleById.get(productId) ?? productId.slice(0, 8),
+        views,
+        addToCart,
+        viewToCartRate,
+        checkoutStarts: 0,
+        checkoutRate: null,
+      };
+    });
+
+  const utmVisitorSets = new Map<string, Set<string>>();
+  const utmRows = await prisma.analyticsEvent.findMany({
+    where: { createdAt: { gte: since }, utmSource: { not: null }, visitorId: { not: null } },
+    select: { utmSource: true, visitorId: true },
+  });
+  for (const row of utmRows) {
+    if (!row.utmSource || !row.visitorId) continue;
+    if (!utmVisitorSets.has(row.utmSource)) {
+      utmVisitorSets.set(row.utmSource, new Set());
+    }
+    utmVisitorSets.get(row.utmSource)!.add(row.visitorId);
+  }
+
+  const utmSources: UtmSourceRow[] = utmGrouped
+    .filter((g) => g.utmSource)
+    .map((g) => ({
+      source: g.utmSource!,
+      events: g._count._all,
+      visitors: utmVisitorSets.get(g.utmSource!)?.size ?? 0,
+    }))
+    .sort((a, b) => b.events - a.events);
+
+  const funnelSteps = buildFunnelStepMetrics(
+    MEASUREMENT_FUNNEL,
+    counts,
+    uniqueByEvent,
+  );
+
+  const productsViewedUnique = uniqueByEvent.product_view ?? 0;
+
+  return {
+    windowDays,
+    since,
+    overview: {
+      visitors: allVisitors.size,
+      productsViewed: productsViewedUnique,
+      cartAdditions: counts.add_to_cart ?? 0,
+      checkoutStarts: counts.checkout_start ?? 0,
+      purchases: counts.purchase_complete ?? 0,
+    },
+    counts,
+    uniqueByEvent,
+    funnelSteps,
+    productRows,
+    popularByViews: productRows.slice(0, 10),
+    utmSources,
+    engagement: {
+      ctaClicks: counts.cta_click ?? 0,
+      trustBlockViews: counts.trust_block_view ?? 0,
+    },
+  };
+}
+
 export async function listRecentUsers(limit = 8): Promise<AdminRecentUser[]> {
   const rows = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },

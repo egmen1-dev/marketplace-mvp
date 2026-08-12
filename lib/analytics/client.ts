@@ -5,6 +5,7 @@ import {
 } from "@/lib/analytics/adapter";
 import type { AnalyticsEventPayload } from "@/lib/analytics/events";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { getClientAttribution } from "@/lib/analytics/attribution-client";
 import { isEmbeddedWebViewClient } from "@/lib/webview/detect";
 
 let adapter: AnalyticsAdapter = createHttpAnalyticsAdapter();
@@ -25,8 +26,10 @@ export function getAnalyticsAdapter(): AnalyticsAdapter {
 /** Fire-and-forget client event (no PII). */
 export function trackEvent(payload: Omit<AnalyticsEventPayload, "webview">): void {
   if (typeof window === "undefined") return;
+  const attribution = getClientAttribution();
   void adapter.track({
     ...payload,
+    ...attribution,
     webview: isEmbeddedWebViewClient(),
   });
 }

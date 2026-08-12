@@ -1032,13 +1032,22 @@ model TaxonomyImportItem {
 
 /// Conversion funnel events — no PII (page_view, add_to_cart, etc.).
 model AnalyticsEvent {
-  id        String   @id @default(cuid())
-  event     String
-  route     String?
-  entityId  String?
-  webview   Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  event       String
+  route       String?
+  entityId    String?
+  webview     Boolean  @default(false)
+  /// Anonymous visitor id from cookie — not linked to User.
+  visitorId   String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  createdAt   DateTime @default(now())
 
   @@index([event, createdAt])
   @@index([createdAt])
+  @@index([visitorId, createdAt])
+  @@index([utmSource, createdAt])
+  @@index([entityId, event])
 }

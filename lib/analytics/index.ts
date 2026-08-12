@@ -22,3 +22,19 @@ export {
 } from "./client";
 
 export { trackServerEvent, type TrackServerEventInput } from "./track-server";
+
+export {
+  parseUtmFromSearch,
+  type AnalyticsAttribution,
+  type UtmAttribution,
+  VISITOR_COOKIE,
+  UTM_COOKIE,
+} from "./attribution";
+
+export {
+  buildFunnelStepMetrics,
+  formatPct,
+  type FunnelStepMetric,
+} from "./funnel-metrics";
+
+export { MEASUREMENT_FUNNEL } from "./events";

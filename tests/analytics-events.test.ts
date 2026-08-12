@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   ANALYTICS_EVENTS,
   ANALYTICS_EVENT_NAMES,
+  MEASUREMENT_FUNNEL,
   isAnalyticsEventName,
 } from "@/lib/analytics/events";
 
@@ -18,6 +19,12 @@ describe("analytics events", () => {
     expect(isAnalyticsEventName(ANALYTICS_EVENTS.ADD_TO_CART)).toBe(true);
     expect(isAnalyticsEventName("not_an_event")).toBe(false);
   });
+
+  it("defines measurement funnel with traffic step", () => {
+    expect(MEASUREMENT_FUNNEL[0]?.event).toBe("page_view");
+    expect(MEASUREMENT_FUNNEL.at(-1)?.event).toBe("purchase_complete");
+    expect(MEASUREMENT_FUNNEL).toHaveLength(7);
+  });
 });
 
 describe("analytics API schema", () => {
@@ -31,5 +38,27 @@ describe("analytics API schema", () => {
       }),
     );
     expect(res.status).toBe(400);
+  });
+
+  it("accepts attribution fields", async () => {
+    const { POST } = await import("@/app/api/analytics/events/route");
+    const res = await POST(
+      new Request("http://localhost/api/analytics/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "landing_view",
+          route: "/",
+          visitorId: "test-visitor-uuid",
+          utmSource: "vk",
+          utmMedium: "cpc",
+          utmCampaign: "test",
+          webview: true,
+        }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const json = (await res.json()) as { ok: boolean };
+    expect(json.ok).toBe(true);
   });
 });
