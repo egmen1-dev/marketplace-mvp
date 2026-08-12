@@ -24,6 +24,10 @@ const cartProductSelect = {
   currency: true,
   stock: true,
   status: true,
+  weight: true,
+  lengthCm: true,
+  widthCm: true,
+  heightCm: true,
   images: {
     orderBy: [{ isPrimary: "desc" as const }, { sortOrder: "asc" as const }],
     take: 1,
@@ -51,6 +55,10 @@ function mapCartProduct(row: CartProductRow): CartProductSnapshot {
     currency: row.currency || DEFAULT_CURRENCY,
     stock: row.stock,
     status: row.status,
+    weight: row.weight != null ? toPriceNumber(row.weight) : null,
+    lengthCm: row.lengthCm != null ? toPriceNumber(row.lengthCm) : null,
+    widthCm: row.widthCm != null ? toPriceNumber(row.widthCm) : null,
+    heightCm: row.heightCm != null ? toPriceNumber(row.heightCm) : null,
     primaryImage: image
       ? {
           id: image.id,

@@ -10,12 +10,20 @@ import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import { conversationPath, ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import type { AdminConversationListItem } from "@/features/chat/queries";
 
 type Props = {
-  conversations: ConversationListItem[];
+  conversations: ConversationListItem[] | AdminConversationListItem[];
+  /** Override thread URL (e.g. admin moderation inbox). */
+  getHref?: (conversationId: string) => string;
+  emptyHint?: string;
 };
 
-export function ConversationsList({ conversations }: Props) {
+export function ConversationsList({
+  conversations,
+  getHref = conversationPath,
+  emptyHint = "Откройте товар и нажмите «Написать продавцу».",
+}: Props) {
   if (conversations.length === 0) {
     return (
       <div
@@ -27,9 +35,7 @@ export function ConversationsList({ conversations }: Props) {
           <p className="font-heading text-lg font-medium">
             У вас пока нет сообщений
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Откройте товар и нажмите «Написать продавцу».
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{emptyHint}</p>
         </div>
         <Button
           size="lg"
@@ -47,7 +53,7 @@ export function ConversationsList({ conversations }: Props) {
       {conversations.map((c) => (
         <li key={c.id}>
           <Link
-            href={conversationPath(c.id)}
+            href={getHref(c.id)}
             className={cn(
               "flex gap-3 rounded-2xl border border-border bg-card/60 p-3 transition-colors hover:bg-muted/40",
               c.unreadCount > 0 && "border-primary/30 bg-primary/5",
@@ -76,8 +82,9 @@ export function ConversationsList({ conversations }: Props) {
                 />
               </div>
               <p className="truncate text-xs text-muted-foreground">
-                {c.counterpart.kind === "seller" ? "Продавец: " : "Покупатель: "}
-                {c.counterpart.name}
+                {"buyerLabel" in c
+                  ? `Покупатель: ${c.buyerLabel} · Продавец: ${c.sellerLabel}`
+                  : `${c.counterpart.kind === "seller" ? "Продавец" : "Покупатель"}: ${c.counterpart.name}`}
               </p>
               <div className="mt-1 flex items-center justify-between gap-2">
                 <p className="truncate text-sm text-muted-foreground">

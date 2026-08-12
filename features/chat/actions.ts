@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { logAdminAction } from "@/features/admin/queries";
 import {
   AuthRequiredError,
   getSessionUser,
@@ -18,7 +19,7 @@ import {
   sendMessageSchema,
   startConversationSchema,
 } from "@/features/chat/schemas";
-import { ROUTES, conversationPath } from "@/lib/constants";
+import { ROUTES, adminConversationPath, conversationPath } from "@/lib/constants";
 
 export type ChatActionState = {
   ok: boolean;
@@ -112,7 +113,15 @@ export async function adminDeleteConversationAction(
     if (viewer.role !== "ADMIN") {
       return { ok: false, error: "Недостаточно прав" };
     }
-    await adminDeleteConversation(conversationId);
+    await adminDeleteConversation(conversationId, viewer.id);
+    await logAdminAction({
+      adminId: viewer.id,
+      action: "CHAT_CLOSE",
+      entityType: "Conversation",
+      entityId: conversationId,
+    });
+    revalidatePath(ROUTES.ADMIN_MESSAGES);
+    revalidatePath(adminConversationPath(conversationId));
     revalidatePath(ROUTES.ACCOUNT_MESSAGES);
     return { ok: true };
   } catch (err) {

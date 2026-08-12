@@ -22,6 +22,11 @@ export type CartProductSnapshot = {
   currency: string;
   stock: number;
   status: ProductStatus;
+  /** kg — optional, for delivery quotes */
+  weight?: number | null;
+  lengthCm?: number | null;
+  widthCm?: number | null;
+  heightCm?: number | null;
   primaryImage: ProductImageDto | null;
 };
 

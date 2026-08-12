@@ -12,6 +12,9 @@ const quoteBodySchema = z.object({
   city: z.string().trim().min(2).max(80),
   pickupPointCode: z.string().trim().max(64).optional(),
   weightGrams: z.number().int().positive().max(100_000).optional(),
+  lengthCm: z.number().finite().min(1).max(500).optional(),
+  widthCm: z.number().finite().min(1).max(500).optional(),
+  heightCm: z.number().finite().min(1).max(500).optional(),
 });
 
 /**

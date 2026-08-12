@@ -3,8 +3,11 @@ import { OrderStatus, ProductStatus, SellerKind } from "@prisma/client";
 import { formatDateMoscow } from "@/lib/format/datetime";
 import { prisma } from "@/lib/prisma";
 
-/** Sellers registered within this window may receive NEW_SELLER badge. */
-export const NEW_SELLER_DAYS = 90;
+/** Calendar window for NEW_SELLER badge (see docs/SELLER_BADGES.md). */
+export const NEW_SELLER_DAYS = 30;
+
+/** Badge removed once seller completes this many orders (DELIVERED/PICKED_UP/COMPLETED). */
+export const NEW_SELLER_MAX_COMPLETED_ORDERS = 5;
 
 export type SellerTrustMetrics = {
   totalProducts: number;
@@ -55,6 +58,8 @@ export function resolveSellerBadges(input: {
   isVerified: boolean;
   kind: SellerKind;
   joinedAt: Date | string;
+  /** Completed order count — badge hidden after NEW_SELLER_MAX_COMPLETED_ORDERS. */
+  completedOrdersCount?: number;
 }): SellerBadgeVariant[] {
   const badges: SellerBadgeVariant[] = [];
 
@@ -69,7 +74,11 @@ export function resolveSellerBadges(input: {
   const joinedMs = new Date(input.joinedAt).getTime();
   const daysSinceJoined =
     (Date.now() - joinedMs) / (1000 * 60 * 60 * 24);
-  if (daysSinceJoined <= NEW_SELLER_DAYS) {
+  const completedOrders = input.completedOrdersCount ?? 0;
+  const withinNewSellerWindow =
+    daysSinceJoined <= NEW_SELLER_DAYS &&
+    completedOrders < NEW_SELLER_MAX_COMPLETED_ORDERS;
+  if (withinNewSellerWindow) {
     badges.push("NEW_SELLER");
   }
 

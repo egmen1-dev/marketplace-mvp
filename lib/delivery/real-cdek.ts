@@ -194,6 +194,9 @@ export function createRealCdekProvider(config: CdekConfig): DeliveryProvider {
         // 136 = warehouse→door (courier), 138 = warehouse→warehouse (PVZ)
         const tariffCode = request.method === "COURIER" ? 136 : 138;
         const weight = request.weightGrams ?? 1000;
+        const length = request.lengthCm ?? 20;
+        const width = request.widthCm ?? 15;
+        const height = request.heightCm ?? 10;
 
         const calc = await cdekFetch<{
           delivery_sum?: number;
@@ -206,7 +209,7 @@ export function createRealCdekProvider(config: CdekConfig): DeliveryProvider {
             tariff_code: tariffCode,
             from_location: { code: fromCode },
             to_location: { code: toCode },
-            packages: [{ weight, length: 20, width: 15, height: 10 }],
+            packages: [{ weight, length, width, height }],
           }),
         });
 

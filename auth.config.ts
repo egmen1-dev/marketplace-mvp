@@ -12,6 +12,16 @@ export const authConfig = {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 14,
   },
+  cookies: {
+    sessionToken: {
+      options: {
+        httpOnly: true,
+        sameSite: "lax" as const,
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   pages: {
     signIn: ROUTES.AUTH_SIGN_IN,
   },

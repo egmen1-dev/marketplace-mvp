@@ -147,8 +147,28 @@ const activeProductTypeRefine = (
   }
 };
 
-export const createProductSchema =
-  productBodySchema.superRefine(activeProductTypeRefine);
+const dimensionsRefine = (
+  data: {
+    lengthCm?: number | null;
+    widthCm?: number | null;
+    heightCm?: number | null;
+  },
+  ctx: z.RefinementCtx,
+) => {
+  const dims = [data.lengthCm, data.widthCm, data.heightCm];
+  const setCount = dims.filter((d) => d != null && d > 0).length;
+  if (setCount > 0 && setCount < 3) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Укажите все три габарита: длину, ширину и высоту",
+      path: ["lengthCm"],
+    });
+  }
+};
+
+export const createProductSchema = productBodySchema
+  .superRefine(activeProductTypeRefine)
+  .superRefine(dimensionsRefine);
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 
@@ -159,7 +179,8 @@ export const updateProductSchema = productBodySchema
     title: productBodySchema.shape.title.optional(),
     price: productBodySchema.shape.price.optional(),
     images: z.array(imageSchema).max(10, "Максимум 10 изображений").optional(),
-  });
+  })
+  .superRefine(dimensionsRefine);
 
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 

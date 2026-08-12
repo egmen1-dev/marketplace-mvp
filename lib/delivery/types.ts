@@ -26,6 +26,10 @@ export type DeliveryQuoteRequest = {
   city: string;
   /** Optional package weight in grams (defaults inside provider). */
   weightGrams?: number;
+  /** Package dimensions in cm — used by real CDEK calculator when set. */
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
   /** Required for PICKUP quotes when validating a selected PVZ. */
   pickupPointCode?: string;
 };

@@ -123,3 +123,21 @@ export function mapWbCharcType(charcType: number | undefined): import("./types")
       return "TEXT";
   }
 }
+
+/** Refine type using Russian characteristic name (WB names are authoritative). */
+export function inferCharacteristicTypeFromName(
+  name: string,
+  baseType: import("./types").CharacteristicType,
+): import("./types").CharacteristicType {
+  const n = normalizeAlias(name);
+  if (n === "цвет" || n.startsWith("цвет ") || n.endsWith(" цвет")) {
+    return "COLOR";
+  }
+  if (
+    (n.includes("размер") || n.includes("size")) &&
+    (baseType === "SELECT" || baseType === "TEXT")
+  ) {
+    return "SIZE";
+  }
+  return baseType;
+}

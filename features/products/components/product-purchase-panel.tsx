@@ -353,7 +353,7 @@ export function ProductPurchasePanel({
       {/* Mobile sticky purchase — only when main panel is off-screen */}
       <div
         className={cn(
-          "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 backdrop-blur-md transition-transform duration-200 md:hidden",
+          "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md transition-transform duration-200 md:hidden",
           stickyVisible && !outOfStock
             ? "translate-y-0"
             : "pointer-events-none translate-y-full",

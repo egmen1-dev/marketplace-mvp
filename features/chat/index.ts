@@ -1,6 +1,7 @@
 export {
   getOrCreateConversationForProduct,
   listConversationsForUser,
+  listAllConversationsForAdmin,
   getConversationDetail,
   sendTextMessage,
   countUnreadMessagesForUser,
@@ -13,6 +14,7 @@ export {
   notifyReservationCancelled,
   ChatError,
   type ConversationListItem,
+  type AdminConversationListItem,
   type ConversationDetail,
   type ChatMessageDto,
 } from "./queries";

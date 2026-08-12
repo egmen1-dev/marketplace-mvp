@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getVisibleSellerMetrics,
   NEW_SELLER_DAYS,
+  NEW_SELLER_MAX_COMPLETED_ORDERS,
   resolveSellerBadges,
 } from "@/features/seller/lib/reputation";
 
@@ -33,7 +34,7 @@ describe("seller trust badges", () => {
     expect(badges).toContain("STORE");
   });
 
-  it("shows NEW_SELLER for recent join date", () => {
+  it("shows NEW_SELLER for recent join date with few orders", () => {
     const recent = new Date();
     recent.setDate(recent.getDate() - Math.floor(NEW_SELLER_DAYS / 2));
 
@@ -41,8 +42,34 @@ describe("seller trust badges", () => {
       isVerified: false,
       kind: SellerKind.INDIVIDUAL,
       joinedAt: recent,
+      completedOrdersCount: 0,
     });
     expect(badges).toContain("NEW_SELLER");
+  });
+
+  it("hides NEW_SELLER after 30 days", () => {
+    const old = new Date();
+    old.setDate(old.getDate() - (NEW_SELLER_DAYS + 1));
+
+    const badges = resolveSellerBadges({
+      isVerified: false,
+      kind: SellerKind.INDIVIDUAL,
+      joinedAt: old,
+      completedOrdersCount: 0,
+    });
+    expect(badges).not.toContain("NEW_SELLER");
+  });
+
+  it("hides NEW_SELLER after enough completed orders", () => {
+    const recent = new Date();
+
+    const badges = resolveSellerBadges({
+      isVerified: false,
+      kind: SellerKind.INDIVIDUAL,
+      joinedAt: recent,
+      completedOrdersCount: NEW_SELLER_MAX_COMPLETED_ORDERS,
+    });
+    expect(badges).not.toContain("NEW_SELLER");
   });
 });
 

@@ -68,6 +68,7 @@ export function ProductSellerCard({ seller, className }: ProductSellerCardProps)
             isVerified={seller.isVerified}
             kind={seller.kind}
             joinedAt={seller.joinedAt}
+            completedOrdersCount={seller.metrics.completedOrdersCount}
             className="mt-2.5"
           />
 

@@ -68,6 +68,7 @@ export const ROUTES = {
   ADMIN_ORDERS: "/admin/orders",
   ADMIN_CATEGORIES: "/admin/categories",
   ADMIN_RESERVATIONS: "/admin/reservations",
+  ADMIN_MESSAGES: "/admin/messages",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
 } as const;
@@ -90,6 +91,10 @@ export function orderPath(id: string) {
 
 export function conversationPath(id: string) {
   return `${ROUTES.ACCOUNT_MESSAGES}/${id}`;
+}
+
+export function adminConversationPath(id: string) {
+  return `${ROUTES.ADMIN_MESSAGES}/${id}`;
 }
 
 /** Legacy /seller/* cabinet prefixes (still matched for redirects + middleware). */
