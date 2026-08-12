@@ -1050,7 +1050,6 @@ model AnalyticsEvent {
   @@index([visitorId, createdAt])
   @@index([utmSource, createdAt])
   @@index([entityId, event])
-  @@map("analytics_events")
 }
 
 // ─── SEO Growth Engine (EPIC-A-006) ───────────────────────────────────────────
