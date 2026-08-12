@@ -49,10 +49,12 @@ export function DynamicCharacteristicsFields({
             );
           }
 
+          const hasOptions = (d.options?.length ?? 0) > 0;
           if (
-            d.type === "SELECT" ||
-            d.type === "SIZE" ||
-            d.type === "COLOR"
+            (d.type === "SELECT" ||
+              d.type === "SIZE" ||
+              d.type === "COLOR") &&
+            hasOptions
           ) {
             return (
               <div key={d.id} className="space-y-1.5">

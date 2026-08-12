@@ -450,6 +450,37 @@
           "filterable": true,
           "externalId": "lot-ch-heat-guns-type-heat-area",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:heat-guns-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-heat-guns-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -514,6 +545,37 @@
           "filterable": true,
           "externalId": "lot-ch-heaters-type-heat-area",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:heaters-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-heaters-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -575,6 +637,37 @@
           "sortOrder": 2,
           "filterable": true,
           "externalId": "lot-ch-fan-heaters-type-heat-area",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fan-heaters-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-fan-heaters-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -661,6 +754,37 @@
           "sortOrder": 4,
           "filterable": true,
           "externalId": "lot-ch-drills-type-brand",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:drills-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 5,
+          "filterable": true,
+          "externalId": "lot-ch-drills-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -749,6 +873,37 @@
           "filterable": true,
           "externalId": "lot-ch-screwdrivers-type-brand",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 5,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -834,6 +989,37 @@
           "filterable": true,
           "externalId": "lot-ch-rotary-hammers-type-brand",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:rotary-hammers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 5,
+          "filterable": true,
+          "externalId": "lot-ch-rotary-hammers-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -905,6 +1091,37 @@
           "filterable": true,
           "externalId": "lot-ch-angle-grinders-type-brand",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:angle-grinders-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-angle-grinders-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -961,6 +1178,37 @@
           "sortOrder": 2,
           "filterable": true,
           "externalId": "lot-ch-construction-vacuums-type-wet-dry",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:construction-vacuums-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-construction-vacuums-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -1034,6 +1282,37 @@
           "filterable": true,
           "externalId": "lot-ch-jigsaws-type-brand",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:jigsaws-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-jigsaws-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1081,6 +1360,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-welders-type-weld-type",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:welders-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-welders-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -1154,6 +1464,37 @@
           "filterable": true,
           "externalId": "lot-ch-sanders-type-brand",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:sanders-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 4,
+          "filterable": true,
+          "externalId": "lot-ch-sanders-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1197,6 +1538,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-tool-sets-type-pieces",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tool-sets-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-tool-sets-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -1242,6 +1614,37 @@
           "filterable": true,
           "externalId": "lot-ch-wrenches-type-pieces",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:wrenches-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-wrenches-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1284,6 +1687,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-screwdrivers-hand-type-pieces",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:screwdrivers-hand-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-screwdrivers-hand-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -1391,6 +1825,37 @@
           "filterable": true,
           "externalId": "lot-ch-fasteners-type-material",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fasteners-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-fasteners-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1475,6 +1940,37 @@
           "filterable": true,
           "externalId": "lot-ch-laptops-type-gpu",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:laptops-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 5,
+          "filterable": true,
+          "externalId": "lot-ch-laptops-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1535,6 +2031,37 @@
           "sortOrder": 2,
           "filterable": true,
           "externalId": "lot-ch-monitors-type-refresh",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:monitors-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-monitors-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -1618,6 +2145,37 @@
           "sortOrder": 4,
           "filterable": true,
           "externalId": "lot-ch-desktops-type-gpu",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desktops-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 5,
+          "filterable": true,
+          "externalId": "lot-ch-desktops-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -1755,6 +2313,37 @@
           "filterable": true,
           "externalId": "lot-ch-tvs-type-smart",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tvs-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-tvs-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1817,6 +2406,37 @@
           "filterable": true,
           "externalId": "lot-ch-headphones-type-anc",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:headphones-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-headphones-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -1860,6 +2480,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-speakers-type-wireless",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:speakers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-speakers-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -2196,6 +2847,37 @@
           "filterable": true,
           "externalId": "lot-ch-vacuums-type-container",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:vacuums-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-vacuums-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -2313,6 +2995,37 @@
           "filterable": true,
           "externalId": "lot-ch-fridges-type-no-frost",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:fridges-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-fridges-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -2359,6 +3072,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-washers-type-spin",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:washers-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-washers-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -2489,6 +3233,37 @@
           "filterable": true,
           "externalId": "lot-ch-desk-lamps-type-color-temp",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:desk-lamps-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-desk-lamps-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -2531,6 +3306,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-led-strips-type-color-temp",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:led-strips-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-led-strips-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -2576,6 +3382,37 @@
           "filterable": true,
           "externalId": "lot-ch-dinnerware-type-pieces",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dinnerware-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-dinnerware-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -2619,6 +3456,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-bedding-type-size-text",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:bedding-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-bedding-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -2679,6 +3547,37 @@
           "sortOrder": 2,
           "filterable": true,
           "externalId": "lot-ch-car-compressors-type-power-source",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-compressors-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-car-compressors-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -2810,6 +3709,37 @@
           "filterable": true,
           "externalId": "lot-ch-car-chemicals-type-care-type",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-chemicals-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-car-chemicals-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -2852,6 +3782,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-car-wash-type-care-type",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:car-wash-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-car-wash-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -2901,6 +3862,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-tires-type-season",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:tires-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-tires-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -3381,6 +4373,37 @@
           "filterable": true,
           "externalId": "lot-ch-face-creams-type-skin-type",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:face-creams-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-face-creams-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -3429,6 +4452,37 @@
           "filterable": true,
           "externalId": "lot-ch-serums-type-skin-type",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:serums-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-serums-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -3474,6 +4528,37 @@
           "filterable": true,
           "externalId": "lot-ch-perfume-type-scent",
           "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:perfume-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-perfume-type-color",
+          "externalSource": "snapshot"
         }
       ]
     },
@@ -3517,6 +4602,37 @@
           "sortOrder": 1,
           "filterable": true,
           "externalId": "lot-ch-dumbbells-type-material",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:dumbbells-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 2,
+          "filterable": true,
+          "externalId": "lot-ch-dumbbells-type-color",
           "externalSource": "snapshot"
         }
       ]
@@ -3665,6 +4781,37 @@
           "sortOrder": 2,
           "filterable": true,
           "externalId": "lot-ch-bicycles-type-frame",
+          "externalSource": "snapshot"
+        },
+        {
+          "key": "charc:bicycles-type:color",
+          "name": "Цвет",
+          "slug": "color",
+          "type": "COLOR",
+          "required": false,
+          "unit": null,
+          "options": [
+            "Белый",
+            "Чёрный",
+            "Серый",
+            "Серебристый",
+            "Красный",
+            "Оранжевый",
+            "Жёлтый",
+            "Зелёный",
+            "Голубой",
+            "Синий",
+            "Фиолетовый",
+            "Розовый",
+            "Коричневый",
+            "Бежевый",
+            "Золотистый",
+            "Прозрачный",
+            "Разноцветный"
+          ],
+          "sortOrder": 3,
+          "filterable": true,
+          "externalId": "lot-ch-bicycles-type-color",
           "externalSource": "snapshot"
         }
       ]

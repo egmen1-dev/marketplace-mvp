@@ -547,11 +547,50 @@ const TREE: CatDef[] = [
 
 const SOURCE = "snapshot";
 
+/**
+ * Color is a cross-category attribute (HOTFIX-UX-001 #3). Every product type
+ * exposes a normalized, filterable «Цвет» characteristic so sellers can always
+ * set it and buyers can always filter by it — without a bespoke Product field.
+ */
+/** Canonical color palette shared by every product type. */
+export const UNIVERSAL_COLOR_OPTIONS = [
+  "Белый",
+  "Чёрный",
+  "Серый",
+  "Серебристый",
+  "Красный",
+  "Оранжевый",
+  "Жёлтый",
+  "Зелёный",
+  "Голубой",
+  "Синий",
+  "Фиолетовый",
+  "Розовый",
+  "Коричневый",
+  "Бежевый",
+  "Золотистый",
+  "Прозрачный",
+  "Разноцветный",
+];
+
+const UNIVERSAL_COLOR: CharTemplate = {
+  name: "Цвет",
+  slug: "color",
+  type: "COLOR",
+  filterable: true,
+  options: UNIVERSAL_COLOR_OPTIONS,
+};
+
 function buildCharacteristics(
   ptSlug: string,
   templateKey: keyof typeof TEMPLATES,
 ): NormalizedCharacteristic[] {
-  const tpl = TEMPLATES[templateKey] ?? TEMPLATES.generic;
+  const base = TEMPLATES[templateKey] ?? TEMPLATES.generic;
+  // Guarantee a color characteristic without duplicating templates that
+  // already define one (e.g. smartphone, furniture, paint).
+  const tpl = base.some((c) => c.slug === "color")
+    ? base
+    : [...base, UNIVERSAL_COLOR];
   return tpl.map((c, i) => ({
     key: `charc:${ptSlug}:${c.slug}`,
     name: c.name,
