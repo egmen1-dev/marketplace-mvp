@@ -21,11 +21,20 @@ import { cn } from "@/lib/utils";
 type Props = {
   conversation: ConversationDetail;
   viewerId: string;
+  /**
+   * Support/admin read-only mode: no composer, sender labels shown. Admins may
+   * observe conversations for support but can never write on behalf of users.
+   */
+  readOnly?: boolean;
 };
 
 const initial: ChatActionState = { ok: false };
 
-export function ConversationThread({ conversation, viewerId }: Props) {
+export function ConversationThread({
+  conversation,
+  viewerId,
+  readOnly = false,
+}: Props) {
   const router = useRouter();
   const bottomRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -116,6 +125,14 @@ export function ConversationThread({ conversation, viewerId }: Props) {
             );
           }
 
+          const senderLabel = readOnly
+            ? m.senderId === conversation.buyer.id
+              ? conversation.buyer.name || conversation.buyer.email || "Покупатель"
+              : m.senderId === conversation.seller.user.id
+                ? conversation.seller.storeName
+                : "Участник"
+            : null;
+
           return (
             <div
               key={m.id}
@@ -126,6 +143,11 @@ export function ConversationThread({ conversation, viewerId }: Props) {
               data-testid="chat-message"
               data-mine={isMine ? "true" : "false"}
             >
+              {senderLabel ? (
+                <span className="px-1 text-[10px] font-medium text-muted-foreground">
+                  {senderLabel}
+                </span>
+              ) : null}
               <div
                 className={cn(
                   "rounded-2xl px-3.5 py-2 text-sm leading-relaxed",
@@ -147,7 +169,15 @@ export function ConversationThread({ conversation, viewerId }: Props) {
         <div ref={bottomRef} />
       </div>
 
-      {/* Composer */}
+      {/* Read-only support banner (admin) — no composer, cannot send. */}
+      {readOnly ? (
+        <div
+          className="sticky bottom-0 border-t border-border bg-muted/60 p-3 text-center text-xs text-muted-foreground backdrop-blur-md sm:p-4"
+          data-testid="chat-readonly-banner"
+        >
+          Режим поддержки: просмотр диалога доступен только для чтения.
+        </div>
+      ) : (
       <form
         ref={formRef}
         action={formAction}
@@ -190,6 +220,7 @@ export function ConversationThread({ conversation, viewerId }: Props) {
           </Button>
         </div>
       </form>
+      )}
     </div>
   );
 }

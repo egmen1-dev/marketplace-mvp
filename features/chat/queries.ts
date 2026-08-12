@@ -341,6 +341,102 @@ export async function listConversationsForUser(opts: {
   });
 }
 
+export type AdminConversationListItem = {
+  id: string;
+  status: ConversationStatus;
+  updatedAt: string;
+  createdAt: string;
+  messageCount: number;
+  product: ChatProductSummary;
+  buyer: { id: string; name: string | null; email: string };
+  seller: { id: string; storeName: string };
+  lastMessage: {
+    text: string;
+    type: MessageType;
+    createdAt: string;
+    senderId: string | null;
+  } | null;
+};
+
+/**
+ * Admin support view: browse ALL conversations (read-only). Never mutates read
+ * state. Optional case-insensitive search across product title, buyer
+ * name/email and store name.
+ */
+export async function adminListConversations(opts: {
+  search?: string;
+  status?: ConversationStatus;
+  take?: number;
+  skip?: number;
+}): Promise<{ items: AdminConversationListItem[]; total: number }> {
+  const take = Math.min(Math.max(opts.take ?? 30, 1), 100);
+  const skip = Math.max(opts.skip ?? 0, 0);
+  const search = opts.search?.trim();
+
+  const where: Prisma.ConversationWhereInput = {
+    ...(opts.status ? { status: opts.status } : {}),
+    ...(search
+      ? {
+          OR: [
+            { product: { name: { contains: search, mode: "insensitive" } } },
+            { buyer: { name: { contains: search, mode: "insensitive" } } },
+            { buyer: { email: { contains: search, mode: "insensitive" } } },
+            { seller: { storeName: { contains: search, mode: "insensitive" } } },
+          ],
+        }
+      : {}),
+  };
+
+  const [rows, total] = await Promise.all([
+    prisma.conversation.findMany({
+      where,
+      orderBy: { updatedAt: "desc" },
+      take,
+      skip,
+      include: {
+        product: { select: productSelect },
+        buyer: { select: { id: true, name: true, email: true } },
+        seller: { select: { id: true, storeName: true } },
+        _count: { select: { messages: true } },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { text: true, type: true, createdAt: true, senderId: true },
+        },
+      },
+    }),
+    prisma.conversation.count({ where }),
+  ]);
+
+  const items = rows.map((row) => {
+    const last = row.messages[0] ?? null;
+    return {
+      id: row.id,
+      status: row.status,
+      updatedAt: row.updatedAt.toISOString(),
+      createdAt: row.createdAt.toISOString(),
+      messageCount: row._count.messages,
+      product: mapProduct(row.product),
+      buyer: {
+        id: row.buyer.id,
+        name: row.buyer.name,
+        email: row.buyer.email,
+      },
+      seller: { id: row.seller.id, storeName: row.seller.storeName },
+      lastMessage: last
+        ? {
+            text: last.text,
+            type: last.type,
+            createdAt: last.createdAt.toISOString(),
+            senderId: last.senderId,
+          }
+        : null,
+    };
+  });
+
+  return { items, total };
+}
+
 export async function countUnreadMessagesForUser(opts: {
   userId: string;
   /** Ignored for auth — seller id is always resolved from DB for userId. */
