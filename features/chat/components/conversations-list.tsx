@@ -8,20 +8,30 @@ import { ChatRelativeTime } from "@/features/chat/components/chat-relative-time"
 import type { ConversationListItem } from "@/features/chat/queries";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
-import { conversationPath, ROUTES } from "@/lib/constants";
+import {
+  adminConversationPath,
+  conversationPath,
+  ROUTES,
+} from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import type { AdminConversationListItem } from "@/features/chat/queries";
 
 type Props = {
   conversations: ConversationListItem[] | AdminConversationListItem[];
-  /** Override thread URL (e.g. admin moderation inbox). */
-  getHref?: (conversationId: string) => string;
+  /** Thread link target: account inbox vs admin moderation. */
+  hrefMode?: "account" | "admin";
   emptyHint?: string;
 };
 
+function threadHref(mode: "account" | "admin", conversationId: string) {
+  return mode === "admin"
+    ? adminConversationPath(conversationId)
+    : conversationPath(conversationId);
+}
+
 export function ConversationsList({
   conversations,
-  getHref = conversationPath,
+  hrefMode = "account",
   emptyHint = "Откройте товар и нажмите «Написать продавцу».",
 }: Props) {
   if (conversations.length === 0) {
@@ -53,7 +63,7 @@ export function ConversationsList({
       {conversations.map((c) => (
         <li key={c.id}>
           <Link
-            href={getHref(c.id)}
+            href={threadHref(hrefMode, c.id)}
             className={cn(
               "flex gap-3 rounded-2xl border border-border bg-card/60 p-3 transition-colors hover:bg-muted/40",
               c.unreadCount > 0 && "border-primary/30 bg-primary/5",
