@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Manrope, Unbounded } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 
@@ -71,6 +71,20 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+};
+
+/**
+ * Explicit mobile viewport (HOTFIX-UX-001 #6/#7). Ensures correct scaling on
+ * Android/iOS, allows user zoom (accessibility), and extends under notches.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default async function RootLayout({
