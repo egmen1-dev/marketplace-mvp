@@ -29,3 +29,4 @@ export {
 } from "./seller-public-header";
 export { SellerProductsSection } from "./seller-products-section";
 export { SellerPublicPageSkeleton } from "./seller-public-skeleton";
+export { ProductQualityCard } from "./product-quality-card";

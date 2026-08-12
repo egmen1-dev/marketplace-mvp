@@ -14,6 +14,8 @@ import {
   type SellerTrustProfile,
 } from "@/features/seller/lib/reputation";
 import { PdpDeliveryEstimate } from "@/features/products/components/pdp-delivery-estimate";
+import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -61,6 +63,11 @@ export function PdpTrustBlock({
       data-testid="pdp-trust-block"
     >
       <TrustBlockViewTracker blockId="pdp" route={`${ROUTES.PRODUCT}/${productId}`} />
+      <PdpSectionViewTracker
+        section="seller"
+        productId={productId}
+        event={ANALYTICS_EVENTS.SELLER_BLOCK_VIEW}
+      />
 
       <div>
         <h2 className="font-heading text-base font-semibold tracking-tight">
@@ -82,8 +89,9 @@ export function PdpTrustBlock({
             <p className="font-medium text-foreground">Новый продавец</p>
           ) : null}
           <p className="text-muted-foreground">
-            Площадка проверяет продавцов. Статистика появится после первых
-            заказов.
+            {isNewSeller
+              ? "Продавец недавно на площадке. Мы показываем только подтверждённые заказы — без накруток. После первых продаж появятся метрики доверия."
+              : "Площадка проверяет продавцов. Статистика появится после первых заказов."}
           </p>
         </div>
       ) : null}
@@ -143,12 +151,17 @@ export function PdpTrustBlock({
       >
         <p className="flex items-center gap-2 text-sm font-medium text-foreground">
           <Star className="size-4 text-muted-foreground" aria-hidden />
-          Отзывы и рейтинг
+          Отзывы
         </p>
         <p className="mt-1 flex items-start gap-2 text-sm text-muted-foreground">
           <MessageSquare className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-          Отзывы появятся после первых покупок. Рейтинг товара будет доступен
-          здесь — без ложных оценок.
+          Будьте первым покупателем — отзывы появятся после реальных покупок.
+        </p>
+        <p
+          className="mt-2 text-sm text-muted-foreground"
+          data-testid="pdp-rating-empty"
+        >
+          Рейтинг появится после первых покупок.
         </p>
       </div>
     </section>

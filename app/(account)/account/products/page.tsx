@@ -27,6 +27,11 @@ import {
 } from "@/features/seller/components/product-row-actions";
 import { StockEditor } from "@/features/seller/components/stock-editor";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
+import { ProductQualityCard } from "@/features/seller/components/product-quality-card";
+import {
+  getProductCompletenessMap,
+  type CompletenessResult,
+} from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 import { formatDateMoscowShort } from "@/lib/format/datetime";
 import { pluralizeProductCount } from "@/lib/i18n";
@@ -73,6 +78,15 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
     pageSize: 50,
     totalPages: 1,
   };
+  let qualityById = new Map<
+    string,
+    Awaited<ReturnType<typeof getProductCompletenessMap>> extends Map<
+      string,
+      infer V
+    >
+      ? V
+      : never
+  >();
   let dbError: string | null = null;
 
   try {
@@ -83,9 +97,21 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
       pageSize: 100,
       sort: "newest",
     });
+    qualityById = await getProductCompletenessMap(
+      products.items.map((p) => p.id),
+    );
   } catch (err) {
     console.error("[seller/products]", err);
     dbError = "Не удалось загрузить товары";
+  }
+
+  let completenessMap = new Map<string, CompletenessResult>();
+  try {
+    completenessMap = await getProductCompletenessMap(
+      products.items.map((p) => p.id),
+    );
+  } catch (err) {
+    console.error("[seller/products/completeness]", err);
   }
 
   function tabHref(value: ProductStatus | "ALL") {
@@ -192,13 +218,14 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
               ) : null}
             </div>
           ) : (
-            <table className="w-full min-w-[800px] text-left text-sm">
+            <table className="w-full min-w-[960px] text-left text-sm">
               <thead>
                 <tr className="border-b border-border text-xs text-muted-foreground">
                   <th className="pb-3 pr-3 font-medium">Фото</th>
                   <th className="pb-3 pr-3 font-medium">Название</th>
                   <th className="pb-3 pr-3 font-medium">Категория</th>
                   <th className="pb-3 pr-3 font-medium">Цена</th>
+                  <th className="pb-3 pr-3 font-medium">Качество</th>
                   <th className="pb-3 pr-3 font-medium">Склад</th>
                   <th className="pb-3 pr-3 font-medium">Статус</th>
                   <th className="pb-3 pr-3 font-medium">Создан</th>
@@ -208,6 +235,7 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
               <tbody className="divide-y divide-border">
                 {products.items.map((product) => {
                   const image = product.primaryImage;
+                  const quality = qualityById.get(product.id);
                   return (
                     <tr key={product.id} className="align-middle">
                       <td className="py-3 pr-3">
@@ -233,6 +261,17 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                         {formatPrice(product.price)}
                       </td>
                       <td className="py-3 pr-3">
+                        {quality ? (
+                          <ProductQualityCard
+                            result={quality}
+                            compact
+                            className="min-w-[140px] border-0 bg-transparent p-0"
+                          />
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </td>
+                      <td className="py-3 pr-3">
                         <StockEditor
                           productId={product.id}
                           stock={product.stock}
@@ -240,6 +279,17 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                       </td>
                       <td className="py-3 pr-3">
                         <ProductStatusBadge status={product.status} />
+                      </td>
+                      <td className="py-3 pr-3">
+                        {completenessMap.get(product.id) ? (
+                          <ProductQualityCard
+                            result={completenessMap.get(product.id)!}
+                            compact
+                            className="min-w-[140px] border-0 bg-transparent p-0"
+                          />
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
                       </td>
                       <td className="py-3 pr-3 text-muted-foreground">
                         {formatCreatedAt(product.createdAt)}

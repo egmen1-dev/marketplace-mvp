@@ -19,7 +19,10 @@ import {
   ProductPurchasePanel,
   SimilarProducts,
 } from "@/features/products";
+import { PdpCharacteristics } from "@/features/products/components/pdp-characteristics";
+import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
+import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
@@ -131,6 +134,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
     dimensionParts.length > 0 ? dimensionParts.join(" × ") : null;
 
   const sellerShipping = sellerTrust?.shippingDefaults?.trim() || null;
+
+  const prioritySpecs = [
+    ...product.characteristics.map((c) => ({
+      label: c.name,
+      value: c.displayValue,
+    })),
+    {
+      label: "Состояние",
+      value: formatCondition(product.condition),
+    },
+  ];
+  if (product.weight != null) {
+    prioritySpecs.push({ label: "Вес", value: `${product.weight} кг` });
+  }
+  if (dimensions) {
+    prioritySpecs.push({ label: "Габариты", value: dimensions });
+  }
+
+  const restSpecs: Array<{ label: string; value: string }> = [];
+  if (product.sku) restSpecs.push({ label: "Артикул", value: product.sku });
+  if (product.city) restSpecs.push({ label: "Город", value: product.city });
+  if (product.category) {
+    restSpecs.push({ label: "Категория", value: product.category.name });
+  }
+  if (product.productType) {
+    restSpecs.push({ label: "Тип товара", value: product.productType.name });
+  }
+  restSpecs.push({
+    label: "Наличие",
+    value: product.stock > 0 ? `${product.stock} шт.` : "Нет в наличии",
+  });
 
   const origin = getCanonicalAppUrl();
   const productUrl = `${origin}${ROUTES.PRODUCT}/${product.id}`;
@@ -257,6 +291,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
             );
           })()}
 
+          <PdpWhyBuyBlock
+            productId={product.id}
+            sellerVerified={Boolean(sellerTrust?.isVerified)}
+          />
+
           {sellerTrust ? (
             <PdpTrustBlock
               seller={sellerTrust}
@@ -341,46 +380,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </section>
         ) : null}
 
-        <section className="flex flex-col gap-3" data-testid="pdp-specs">
-          <h2 className="font-heading text-xl font-semibold tracking-tight">
-            Характеристики
-          </h2>
-          <dl className="divide-y divide-border rounded-2xl border border-border bg-card/50">
-            <SpecRow label="Состояние" value={formatCondition(product.condition)} />
-            {product.sku ? (
-              <SpecRow label="Артикул" value={product.sku} />
-            ) : null}
-            {product.city ? (
-              <SpecRow label="Город" value={product.city} />
-            ) : null}
-            {product.category ? (
-              <SpecRow label="Категория" value={product.category.name} />
-            ) : null}
-            {product.productType ? (
-              <SpecRow label="Тип товара" value={product.productType.name} />
-            ) : null}
-            {product.characteristics.map((c) => (
-              <SpecRow key={c.definitionId} label={c.name} value={c.displayValue} />
-            ))}
-            {product.weight != null ? (
-              <SpecRow label="Вес" value={`${product.weight} кг`} />
-            ) : null}
-            {dimensions ? (
-              <SpecRow label="Габариты" value={dimensions} />
-            ) : null}
-            <SpecRow
-              label="Наличие"
-              value={
-                product.stock > 0 ? `${product.stock} шт.` : "Нет в наличии"
-              }
-            />
-          </dl>
-        </section>
+        <PdpCharacteristics
+          productId={product.id}
+          priority={prioritySpecs}
+          rest={restSpecs}
+        />
 
         <section
           className={hasDescription ? "lg:col-span-2" : undefined}
           data-testid="pdp-delivery"
         >
+          <PdpSectionViewTracker
+            section="delivery"
+            productId={product.id}
+            event={ANALYTICS_EVENTS.DELIVERY_VIEW}
+          />
           <h2 className="font-heading text-xl font-semibold tracking-tight">
             Доставка
           </h2>
@@ -421,15 +435,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         route={`/product/${id}`}
         entityId={product.id}
       />
-    </div>
-  );
-}
-
-function SpecRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid grid-cols-[1fr_1.2fr] gap-3 px-4 py-3 text-sm">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium text-foreground">{value}</dd>
     </div>
   );
 }

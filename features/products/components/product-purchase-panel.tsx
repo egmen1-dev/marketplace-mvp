@@ -152,6 +152,11 @@ export function ProductPurchasePanel({
           route: `${ROUTES.PRODUCT}/${productId}`,
           entityId: productId,
         });
+        trackEvent({
+          event: ANALYTICS_EVENTS.BUY_INTENT,
+          route: `${ROUTES.PRODUCT}/${productId}`,
+          entityId: productId,
+        });
         trackCtaClick("buy", { route: `${ROUTES.PRODUCT}/${productId}` });
         toast.success(TOAST.CHECKOUT_REDIRECT);
         window.location.assign(ROUTES.CHECKOUT);
@@ -179,6 +184,11 @@ export function ProductPurchasePanel({
       if (result.ok) {
         trackEvent({
           event: ANALYTICS_EVENTS.ADD_TO_CART,
+          route: `${ROUTES.PRODUCT}/${productId}`,
+          entityId: productId,
+        });
+        trackEvent({
+          event: ANALYTICS_EVENTS.BUY_INTENT,
           route: `${ROUTES.PRODUCT}/${productId}`,
           entityId: productId,
         });

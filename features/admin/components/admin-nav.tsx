@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  LineChart,
   FolderTree,
   LayoutDashboard,
   Megaphone,
@@ -64,6 +65,13 @@ const NAV_ITEMS = [
     icon: BarChart3,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_ANALYTICS),
+  },
+  {
+    href: ROUTES.ADMIN_CONVERSION,
+    label: "Conversion",
+    icon: LineChart,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_CONVERSION),
   },
   {
     href: ROUTES.ADMIN_RESERVATIONS,
