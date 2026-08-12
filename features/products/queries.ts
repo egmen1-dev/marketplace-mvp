@@ -40,6 +40,14 @@ function tokenMatchOr(
     or.push(
       { name: { contains: v, mode: "insensitive" } },
       { description: { contains: v, mode: "insensitive" } },
+      { modelName: { contains: v, mode: "insensitive" } },
+      { brand: { name: { contains: v, mode: "insensitive" } } },
+      { brand: { slug: { contains: v, mode: "insensitive" } } },
+      {
+        brand: {
+          aliases: { has: v.toLowerCase() },
+        },
+      },
       { category: { name: { contains: v, mode: "insensitive" } } },
       { category: { slug: { contains: v, mode: "insensitive" } } },
       { productType: { name: { contains: v, mode: "insensitive" } } },
@@ -55,6 +63,11 @@ function tokenMatchOr(
         },
       },
       { seller: { storeName: { contains: v, mode: "insensitive" } } },
+      {
+        characteristicValues: {
+          some: { valueText: { contains: v, mode: "insensitive" } },
+        },
+      },
     );
   }
   return or;
@@ -131,6 +144,7 @@ const detailInclude = {
       categoryId: true,
     },
   },
+  brand: { select: { id: true, name: true, slug: true } },
   characteristicValues: {
     include: {
       definition: {
@@ -615,6 +629,21 @@ function optionalDecimal(
   return new Prisma.Decimal(value);
 }
 
+/** Resolve Brand id from brandName (lazy create) or explicit brandId. No mass fill. */
+async function resolveProductBrandId(input: {
+  brandId?: string | null;
+  brandName?: string | null;
+}): Promise<string | null> {
+  const name = input.brandName?.trim();
+  if (name) {
+    const { ensureBrand } = await import("@/lib/product-understanding");
+    const brand = await ensureBrand(prisma, name);
+    return brand.id;
+  }
+  if (input.brandId) return input.brandId;
+  return null;
+}
+
 export async function createProduct(
   input: CreateProductInput,
   options?: { actorUserId?: string | null },
@@ -708,6 +737,11 @@ export async function createProduct(
   const city =
     input.city != null && input.city.trim() !== "" ? input.city.trim() : null;
   const stock = input.stock ?? 0;
+  const resolvedBrandId = await resolveProductBrandId(input);
+  const modelName =
+    input.modelName != null && input.modelName.trim() !== ""
+      ? input.modelName.trim()
+      : null;
 
   const created = await prisma.$transaction(async (tx) => {
     const product = await tx.product.create({
@@ -715,6 +749,8 @@ export async function createProduct(
         sellerId,
         categoryId: resolvedCategoryId,
         productTypeId: resolvedProductTypeId,
+        brandId: resolvedBrandId,
+        modelName,
         name: input.title,
         slug,
         description: input.description ?? null,
@@ -869,6 +905,19 @@ export async function updateProduct(
       input.productTypeId == null
         ? { disconnect: true }
         : { connect: { id: input.productTypeId } };
+  }
+  if (input.modelName !== undefined) {
+    data.modelName =
+      input.modelName != null && input.modelName.trim() !== ""
+        ? input.modelName.trim()
+        : null;
+  }
+  if (input.brandId !== undefined || input.brandName !== undefined) {
+    const resolvedBrandId = await resolveProductBrandId(input);
+    data.brand =
+      resolvedBrandId == null
+        ? { disconnect: true }
+        : { connect: { id: resolvedBrandId } };
   }
 
   const existingFull = await prisma.product.findUnique({
@@ -1071,6 +1120,8 @@ export async function duplicateProduct(
       heightCm: existing.heightCm?.toNumber() ?? null,
       seoTitle: existing.seoTitle,
       seoDescription: existing.seoDescription,
+      brandId: existing.brandId,
+      modelName: existing.modelName,
       pickupEnabled: existing.pickupEnabled,
       reservationEnabled: existing.reservationEnabled,
       prepaymentPercent: existing.prepaymentPercent,

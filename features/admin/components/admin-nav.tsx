@@ -8,6 +8,7 @@ import {
   MessageCircle,
   Package,
   ShoppingBag,
+  Sparkles,
   Store,
   Ticket,
   Users,
@@ -65,6 +66,13 @@ const NAV_ITEMS = [
     label: "Категории",
     icon: FolderTree,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CATEGORIES),
+  },
+  {
+    href: ROUTES.ADMIN_AI_UNDERSTANDING,
+    label: "AI Understanding",
+    icon: Sparkles,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_AI_UNDERSTANDING),
   },
 ] as const;
 

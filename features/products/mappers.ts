@@ -138,6 +138,8 @@ type DetailRow = ListRow & {
     slug: string;
     categoryId: string;
   } | null;
+  brand?: { id: string; name: string; slug: string } | null;
+  modelName?: string | null;
   characteristicValues?: Array<{
     definitionId: string;
     valueText: string | null;
@@ -262,6 +264,10 @@ export function mapProductDetail(row: DetailRow): ProductDetail {
           categoryId: row.productType.categoryId,
         }
       : null,
+    brand: row.brand
+      ? { id: row.brand.id, name: row.brand.name, slug: row.brand.slug }
+      : null,
+    modelName: row.modelName ?? null,
     characteristics: chars.map((v) => ({
       definitionId: v.definitionId,
       name: v.definition.name,

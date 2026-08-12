@@ -106,6 +106,9 @@ const productBodySchema = z.object({
   ),
   seoTitle: z.string().trim().max(120).optional().nullable(),
   seoDescription: z.string().trim().max(320).optional().nullable(),
+  brandId: z.string().cuid("Некорректный brandId").optional().nullable(),
+  brandName: z.string().trim().max(120).optional().nullable(),
+  modelName: z.string().trim().max(120).optional().nullable(),
   pickupEnabled: z.preprocess(
     (v) => v === true || v === "true" || v === "on" || v === "1",
     z.boolean().optional().default(false),

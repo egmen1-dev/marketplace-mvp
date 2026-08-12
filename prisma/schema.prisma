@@ -356,6 +356,46 @@ model ProductTypeAlias {
   @@map("product_type_aliases")
 }
 
+/// Catalog brand entity — optional Product.brandId link.
+model Brand {
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  /// Lowercase folded form for matching
+  normalizedName String
+  aliases        String[] @default([])
+  externalSource String?
+  externalId     String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  products Product[]
+
+  @@unique([externalSource, externalId])
+  @@index([normalizedName])
+  @@index([isActive])
+  @@map("brands")
+}
+
+/// Seller corrections to AI suggestions — knowledge-loop foundation (not ML training).
+model ProductUnderstandingCorrection {
+  id           String   @id @default(cuid())
+  /// Field path: brand | model | productTypeId | characteristic:<slug> | seoTitle
+  field        String
+  suggested    String?
+  corrected    String?
+  title        String?
+  productTypeId String?
+  sellerId     String?
+  meta         Json?
+  createdAt    DateTime @default(now())
+
+  @@index([field])
+  @@index([createdAt])
+  @@map("product_understanding_corrections")
+}
+
 model ProductCharacteristicDefinition {
   id            String                  @id @default(cuid())
   productTypeId String
@@ -416,6 +456,9 @@ model Product {
   categoryId     String?
   /// Concrete subject/type; null until mapped (existing products stay valid)
   productTypeId  String?
+  brandId        String?
+  /// Free-text model / SKU line (e.g. HR2470) — not a Brand
+  modelName      String?
   name           String
   slug           String
   description    String?
@@ -452,6 +495,7 @@ model Product {
   seller           SellerProfile         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   category         Category?             @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   productType      ProductType?          @relation(fields: [productTypeId], references: [id], onDelete: SetNull)
+  brand            Brand?                @relation(fields: [brandId], references: [id], onDelete: SetNull)
   images           ProductImage[]
   cartItems        CartItem[]
   orderItems       OrderItem[]
@@ -468,10 +512,12 @@ model Product {
   @@index([sellerId])
   @@index([categoryId])
   @@index([productTypeId])
+  @@index([brandId])
   @@index([status])
   @@index([condition])
   @@index([city])
   @@index([name])
+  @@index([modelName])
   @@index([price])
   @@index([views])
   @@index([favoritesCount])

@@ -897,3 +897,56 @@ export async function updateAdminCategory(params: {
     },
   });
 }
+
+export type AdminBrandRow = {
+  id: string;
+  name: string;
+  slug: string;
+  aliases: string[];
+  productCount: number;
+  isActive: boolean;
+};
+
+export type AdminUnderstandingCorrectionRow = {
+  id: string;
+  field: string;
+  suggested: string | null;
+  corrected: string | null;
+  title: string | null;
+  productTypeId: string | null;
+  createdAt: string;
+};
+
+export async function listAdminBrands(limit = 100): Promise<AdminBrandRow[]> {
+  const rows = await prisma.brand.findMany({
+    orderBy: { name: "asc" },
+    take: limit,
+    include: { _count: { select: { products: true } } },
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    slug: r.slug,
+    aliases: r.aliases,
+    productCount: r._count.products,
+    isActive: r.isActive,
+  }));
+}
+
+export async function listAdminUnderstandingCorrections(
+  limit = 50,
+): Promise<AdminUnderstandingCorrectionRow[]> {
+  const rows = await prisma.productUnderstandingCorrection.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    field: r.field,
+    suggested: r.suggested,
+    corrected: r.corrected,
+    title: r.title,
+    productTypeId: r.productTypeId,
+    createdAt: r.createdAt.toISOString(),
+  }));
+}

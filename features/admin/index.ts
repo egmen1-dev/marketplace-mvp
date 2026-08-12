@@ -29,6 +29,8 @@ export {
   listAdminOrders,
   getAdminOrderDetail,
   listAdminCategories,
+  listAdminBrands,
+  listAdminUnderstandingCorrections,
   logAdminAction,
   updateUserRole,
   setUserBlocked,
@@ -46,6 +48,8 @@ export {
   type AdminOrderRow,
   type AdminOrderDetail,
   type AdminCategoryRow,
+  type AdminBrandRow,
+  type AdminUnderstandingCorrectionRow,
 } from "./queries";
 
 export { AdminNav } from "./components/admin-nav";

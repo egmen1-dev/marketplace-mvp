@@ -16,6 +16,7 @@ import {
   type ProductActionState,
 } from "@/features/seller/actions";
 import { CategoryPicker } from "@/features/seller/components/category-picker";
+import { AiUnderstandingCard } from "@/features/seller/components/ai-understanding-card";
 import { ProductImageUploader } from "@/features/seller/components/product-image-uploader";
 import { DynamicCharacteristicsFields } from "@/features/taxonomy/components/dynamic-characteristics-fields";
 import {
@@ -23,6 +24,7 @@ import {
   type SelectedProductType,
 } from "@/features/taxonomy/components/taxonomy-selector";
 import type { CharacteristicDefinitionDto } from "@/features/taxonomy/queries";
+import type { ProductUnderstandingResult } from "@/lib/product-understanding/types";
 import { isLowStock } from "@/features/orders/lib/inventory-sync";
 import { PREPAYMENT_PERCENTS } from "@/features/pickup/lib/prepayment";
 import type { PickupPointDto } from "@/features/pickup/queries";
@@ -75,6 +77,24 @@ export function ProductForm({
       : null,
   );
   const [charDefs, setCharDefs] = useState<CharacteristicDefinitionDto[]>([]);
+  const [charDefaults, setCharDefaults] = useState<Record<string, string>>(
+    () => {
+      const map: Record<string, string> = {};
+      for (const c of product?.characteristics ?? []) {
+        map[c.definitionId] = c.formValue ?? c.displayValue;
+      }
+      return map;
+    },
+  );
+  const [charsKey, setCharsKey] = useState(0);
+  const [brandName, setBrandName] = useState(product?.brand?.name ?? "");
+  const [brandId, setBrandId] = useState(product?.brand?.id ?? "");
+  const [modelName, setModelName] = useState(product?.modelName ?? "");
+  const [seoTitle, setSeoTitle] = useState(product?.seoTitle ?? "");
+  const [seoDescription, setSeoDescription] = useState(
+    product?.seoDescription ?? "",
+  );
+  const [description, setDescription] = useState(product?.description ?? "");
   const [pickupEnabled, setPickupEnabled] = useState(
     product?.pickupEnabled ?? false,
   );
@@ -140,13 +160,65 @@ export function ProductForm({
 
   const stockDefault = product?.stock ?? 10;
 
-  const charDefaults = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const v of product?.characteristics ?? []) {
-      map[v.definitionId] = v.formValue ?? v.displayValue;
+  function applyUnderstanding(result: ProductUnderstandingResult) {
+    if (result.productTypeSuggestion) {
+      setProductType({
+        id: result.productTypeSuggestion.id,
+        name: result.productTypeSuggestion.name,
+        categoryId: result.productTypeSuggestion.categoryId,
+        breadcrumb: result.productTypeSuggestion.breadcrumb,
+      });
+      if (result.categorySuggestion?.id) {
+        setCategoryId(result.categorySuggestion.id);
+      } else {
+        setCategoryId(result.productTypeSuggestion.categoryId);
+      }
     }
-    return map;
-  }, [product?.characteristics]);
+    if (result.brand) {
+      setBrandName(result.brand.name);
+      setBrandId(result.brand.brandId ?? "");
+    }
+    if (result.model) setModelName(result.model.name);
+    if (result.seo.title) setSeoTitle(result.seo.title);
+    if (result.seo.description) setSeoDescription(result.seo.description);
+    if (result.seo.shortDescription) {
+      setDescription(result.seo.shortDescription);
+    }
+
+    setCharDefaults((prev) => {
+      const next = { ...prev };
+      for (const c of result.characteristics) {
+        if (!c.definitionId) continue;
+        if (c.valueBoolean != null) {
+          next[c.definitionId] = c.valueBoolean ? "true" : "false";
+        } else if (c.valueNumber != null) {
+          next[c.definitionId] = String(c.valueNumber);
+        } else if (c.valueText) {
+          next[c.definitionId] = c.valueText;
+        }
+      }
+      return next;
+    });
+    setCharsKey((k) => k + 1);
+
+    void fetch("/api/product-understanding", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        field: "apply",
+        suggested: result.productTypeSuggestion?.name ?? null,
+        corrected: result.productTypeSuggestion?.name ?? null,
+        title,
+        productTypeId: result.productTypeSuggestion?.id ?? null,
+        meta: {
+          brand: result.brand?.name ?? null,
+          model: result.model?.name ?? null,
+          overall: result.confidence.overall.score,
+          engine: result.engine,
+        },
+      }),
+    }).catch(() => undefined);
+  }
 
   return (
     <form action={formAction} className="flex flex-col gap-6">
@@ -155,6 +227,7 @@ export function ProductForm({
       ) : null}
       <input type="hidden" name="categoryId" value={categoryId} />
       <input type="hidden" name="productTypeId" value={productType?.id ?? ""} />
+      <input type="hidden" name="brandId" value={brandId} />
 
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-lg font-semibold">Основное</h2>
@@ -184,6 +257,15 @@ export function ProductForm({
           ) : null}
         </div>
 
+        {mode === "create" ? (
+          <AiUnderstandingCard
+            title={title}
+            description={description}
+            disabled={pending}
+            onApply={applyUnderstanding}
+          />
+        ) : null}
+
         <TaxonomySelector
           productTitle={title}
           value={productType}
@@ -195,7 +277,36 @@ export function ProductForm({
           error={state.fieldErrors?.productTypeId?.[0]}
         />
 
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="brandName">Бренд</Label>
+            <Input
+              id="brandName"
+              name="brandName"
+              value={brandName}
+              onChange={(e) => {
+                setBrandName(e.target.value);
+                setBrandId("");
+              }}
+              placeholder="Makita"
+              autoComplete="off"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="modelName">Модель</Label>
+            <Input
+              id="modelName"
+              name="modelName"
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
+              placeholder="HR2470"
+              autoComplete="off"
+            />
+          </div>
+        </div>
+
         <DynamicCharacteristicsFields
+          key={`${productType?.id ?? "none"}-${charsKey}`}
           definitions={charDefs}
           defaults={charDefaults}
           disabled={pending}
@@ -209,7 +320,8 @@ export function ProductForm({
             rows={5}
             placeholder="Кратко расскажите о товаре…"
             className="rounded-xl bg-surface"
-            defaultValue={product?.description ?? ""}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
 
@@ -506,7 +618,8 @@ export function ProductForm({
             id="seoTitle"
             name="seoTitle"
             maxLength={120}
-            defaultValue={product?.seoTitle ?? ""}
+            value={seoTitle}
+            onChange={(e) => setSeoTitle(e.target.value)}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -517,7 +630,8 @@ export function ProductForm({
             rows={3}
             maxLength={320}
             className="rounded-xl bg-surface"
-            defaultValue={product?.seoDescription ?? ""}
+            value={seoDescription}
+            onChange={(e) => setSeoDescription(e.target.value)}
           />
         </div>
       </section>

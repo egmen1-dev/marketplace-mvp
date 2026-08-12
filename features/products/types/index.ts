@@ -89,6 +89,8 @@ export type ProductDetail = ProductListItem & {
     categoryId: string;
     breadcrumb?: string[];
   } | null;
+  brand: { id: string; name: string; slug: string } | null;
+  modelName: string | null;
   characteristics: Array<{
     definitionId: string;
     name: string;
