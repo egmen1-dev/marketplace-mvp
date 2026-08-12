@@ -20,32 +20,27 @@ test.describe("AI product understanding seller flow", () => {
 
     const card = page.getByTestId("ai-understanding-card");
     await expect(card).toBeVisible({ timeout: 20_000 });
-    await expect(card.getByText(/Ballu|бренд|Тип|SEO/i).first()).toBeVisible({
+    await expect(card.getByText(/Ballu|Тип|SEO/i).first()).toBeVisible({
       timeout: 15_000,
     });
 
     const apply = page.getByTestId("ai-understanding-apply");
-    if (await apply.isEnabled()) {
-      await apply.click();
-      await expect(page.getByLabel("Бренд")).toHaveValue(/Ballu/i, {
-        timeout: 10_000,
-      });
-    } else {
-      // Fallback: taxonomy recommend (matcher still available)
-      await expect(page.getByText("Мы рекомендуем")).toBeVisible({
-        timeout: 15_000,
-      });
-      await page
-        .getByRole("button", { name: /Тепловые пушки/i })
-        .first()
-        .click();
-      await page.getByLabel("Бренд").fill("Ballu");
-      await page.getByLabel("Модель").fill("BHP-M-5");
-    }
+    await expect(apply).toBeEnabled({ timeout: 15_000 });
+    await apply.click();
+    await expect(page.getByLabel("Бренд")).toHaveValue(/Ballu/i, {
+      timeout: 10_000,
+    });
+    await expect(page.getByLabel("Модель")).not.toHaveValue("");
 
     const power = page.getByLabel(/Мощность/i).first();
-    if (await power.count()) {
-      await power.fill("5");
+    await expect(power).toBeVisible({ timeout: 10_000 });
+    await power.fill("5");
+
+    const heatSelect = page.locator("select[name^='charc_']").first();
+    if (await heatSelect.count()) {
+      const opts = await heatSelect.locator("option").allTextContents();
+      const electric = opts.find((o) => /электри/i.test(o));
+      if (electric) await heatSelect.selectOption({ label: electric.trim() });
     }
 
     await page.locator("#description").fill("AI-assisted E2E listing");
@@ -54,7 +49,9 @@ test.describe("AI product understanding seller flow", () => {
     await page.getByLabel("Город", { exact: true }).fill("Москва");
 
     await page.getByRole("button", { name: "Опубликовать товар" }).click();
-    await expect(page).toHaveURL(/\/account\/products/, { timeout: 45_000 });
+    await expect(page).toHaveURL(/\/account\/products(\?|$)/, {
+      timeout: 45_000,
+    });
 
     const row = page.locator("tr").filter({ hasText: title }).first();
     await expect(row).toBeVisible({ timeout: 20_000 });
