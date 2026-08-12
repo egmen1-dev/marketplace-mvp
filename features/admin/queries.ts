@@ -11,6 +11,12 @@ import {
 } from "@prisma/client";
 
 import { toPriceNumber } from "@/features/products/mappers";
+import {
+  buildCategoryAdsReport,
+  buildProductAdSnapshot,
+  type AdEligibilityReason,
+  type CategoryAdsReportRow,
+} from "@/lib/product-advertising";
 import { prisma } from "@/lib/prisma";
 
 export type AdminDashboardStats = {
@@ -1240,4 +1246,149 @@ export async function getAdminImportBatch(batchId: string) {
       },
     },
   });
+}
+
+export type AdminAdsProductRow = {
+  id: string;
+  title: string;
+  status: ProductStatus;
+  eligible: boolean;
+  reasons: AdEligibilityReason[];
+  qualityScore: number;
+  imageUrl: string | null;
+  storeName: string;
+  categoryName: string | null;
+};
+
+export type AdminAdsDashboard = {
+  totalProducts: number;
+  readyCount: number;
+  blockedCount: number;
+  avgQualityScore: number;
+  products: AdminAdsProductRow[];
+  categories: CategoryAdsReportRow[];
+};
+
+function topLevelCategorySlug(path: string | null | undefined): string | null {
+  if (!path) return null;
+  const first = path.split("/").filter(Boolean)[0];
+  return first ?? null;
+}
+
+export async function getAdminAdsDashboard(): Promise<AdminAdsDashboard> {
+  const [products, categories] = await Promise.all([
+    prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        stock: true,
+        price: true,
+        description: true,
+        productTypeId: true,
+        categoryId: true,
+        sellerId: true,
+        seller: {
+          select: {
+            isBlocked: true,
+            isVerified: true,
+            storeName: true,
+          },
+        },
+        category: { select: { name: true, path: true, slug: true } },
+        images: {
+          take: 1,
+          orderBy: { sortOrder: "asc" },
+          select: { url: true },
+        },
+        _count: { select: { images: true, characteristicValues: true } },
+      },
+      orderBy: { updatedAt: "desc" },
+    }),
+    prisma.category.findMany({
+      where: {
+        level: 1,
+        slug: {
+          in: ["construction", "tools", "electronics", "clothing", "home"],
+        },
+      },
+      select: { slug: true, name: true },
+    }),
+  ]);
+
+  const categoryNames = Object.fromEntries(
+    categories.map((c) => [c.slug, c.name]),
+  );
+
+  const snapshots = products.map((p) => {
+    return {
+      product: p,
+      topLevelSlug: topLevelCategorySlug(p.category?.path ?? p.category?.slug),
+      snapshot: buildProductAdSnapshot({
+        status: p.status,
+        stock: p.stock,
+        price: toPriceNumber(p.price),
+        title: p.name,
+        description: p.description,
+        productTypeId: p.productTypeId,
+        categoryId: p.categoryId,
+        imageCount: p._count.images,
+        sellerId: p.sellerId,
+        sellerBlocked: p.seller.isBlocked,
+        sellerVerified: p.seller.isVerified,
+        sellerCompletedOrders: 0,
+        characteristicCount: p._count.characteristicValues,
+      }),
+    };
+  });
+
+  const rows: AdminAdsProductRow[] = snapshots.map(({ product: p, snapshot }) => ({
+    id: p.id,
+    title: p.name,
+    status: p.status,
+    eligible: snapshot.eligibility.eligible,
+    reasons: snapshot.eligibility.reasons,
+    qualityScore: snapshot.quality.score,
+    imageUrl: p.images[0]?.url ?? null,
+    storeName: p.seller.storeName,
+    categoryName: p.category?.name ?? null,
+  }));
+
+  const readyCount = rows.filter((r) => r.eligible).length;
+  const qualitySum = snapshots.reduce(
+    (sum, { snapshot }) => sum + snapshot.quality.score,
+    0,
+  );
+
+  const categoriesReport = buildCategoryAdsReport(
+    snapshots.map(({ product: p, topLevelSlug }) => ({
+      status: p.status,
+      stock: p.stock,
+      price: toPriceNumber(p.price),
+      title: p.name,
+      description: p.description,
+      productTypeId: p.productTypeId,
+      categoryId: p.categoryId,
+      imageCount: p._count.images,
+      sellerId: p.sellerId,
+      sellerBlocked: p.seller.isBlocked,
+      sellerVerified: p.seller.isVerified,
+      sellerCompletedOrders: 0,
+      characteristicCount: p._count.characteristicValues,
+      categorySlug: p.category?.slug ?? null,
+      categoryName: p.category?.name ?? null,
+      topLevelSlug,
+    })),
+    categoryNames,
+  );
+
+  return {
+    totalProducts: rows.length,
+    readyCount,
+    blockedCount: rows.length - readyCount,
+    avgQualityScore:
+      rows.length > 0 ? Math.round(qualitySum / rows.length) : 0,
+    products: rows,
+    categories: categoriesReport,
+  };
 }

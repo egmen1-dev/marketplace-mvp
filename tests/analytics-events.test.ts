@@ -12,7 +12,8 @@ describe("analytics events", () => {
     expect(ANALYTICS_EVENT_NAMES).toContain("page_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("landing_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("purchase_complete");
-    expect(ANALYTICS_EVENT_NAMES.length).toBe(10);
+    expect(ANALYTICS_EVENT_NAMES).toContain("ad_landing_view");
+    expect(ANALYTICS_EVENT_NAMES.length).toBe(11);
   });
 
   it("validates event names", () => {
@@ -60,5 +61,23 @@ describe("analytics API schema", () => {
     expect(res.status).toBe(200);
     const json = (await res.json()) as { ok: boolean };
     expect(json.ok).toBe(true);
+  });
+
+  it("accepts ad_landing_view", async () => {
+    const { POST } = await import("@/app/api/analytics/events/route");
+    const res = await POST(
+      new Request("http://localhost/api/analytics/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "ad_landing_view",
+          route: "/",
+          visitorId: "test-visitor",
+          utmSource: "vk",
+          utmMedium: "cpc",
+        }),
+      }),
+    );
+    expect(res.status).toBe(200);
   });
 });

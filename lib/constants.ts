@@ -73,6 +73,7 @@ export const ROUTES = {
   ADMIN_RESERVATIONS: "/admin/reservations",
   ADMIN_MESSAGES: "/admin/messages",
   ADMIN_ANALYTICS: "/admin/analytics",
+  ADMIN_ADS: "/admin/ads",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
   BRANDS: "/brands",

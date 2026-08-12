@@ -37,6 +37,7 @@ Mark each area **READY**, **WARNING**, or **BLOCKED** before Vercel GO.
 - [ ] `npx prisma validate` + `npm run build` on `main`
 - [ ] Record `main` commit SHA: ________________ ; verify staging `GET /api/version` matches before feature acceptance
 - [ ] `node scripts/deploy-verify.mjs <sha>` on Railway staging (when deploying)
+- [ ] **Before first ads:** product eligibility (`/admin/ads`), card quality score, analytics funnel — [ADS_READINESS_AUDIT.md](./ADS_READINESS_AUDIT.md)
 - [ ] `npm run test` → unit suite green
 - [ ] [GO_NO_GO_MATRIX.md](./GO_NO_GO_MATRIX.md) — no BLOCKED (except Reviews = excluded)
 - [ ] Owner GO sign-off
@@ -46,6 +47,15 @@ Mark each area **READY**, **WARNING**, or **BLOCKED** before Vercel GO.
 ## Post-GO smoke
 
 → [POST_DEPLOY_SMOKE.md](./POST_DEPLOY_SMOKE.md)
+
+---
+
+## Before paid ads (Railway staging)
+
+- [ ] Product eligibility — `/admin/ads` READY filter
+- [ ] Card quality — seller warnings on blocked SKUs
+- [ ] Analytics — `ad_landing_view`, funnel events in `/admin/analytics`
+- [ ] Category readiness — [ADS_CATEGORY_REPORT.md](./ADS_CATEGORY_REPORT.md)
 
 ---
 
