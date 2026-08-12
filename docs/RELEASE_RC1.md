@@ -134,12 +134,13 @@ See [ROLLBACK.md](./ROLLBACK.md) and [ENVIRONMENTS.md](./ENVIRONMENTS.md).
 | `eslint .` | PASS |
 | `npm run build` | PASS |
 | Unit tests | 117/117 |
-| Playwright local `--retries=0` × 3 | 67/67 × 3 (CORE-060.1 h13 logs) |
+| Playwright local `--retries=0` × 3 | **67/67 × 3** (`/tmp/oms-h13-run{1,2,3}.txt`, commit `10de465`) |
+| Playwright local RC1 re-verify | 67/67 once (`/tmp/release-rc1-pw-run2.txt`); intermittent #418 flakes in polluted DB runs |
 | Railway health | 200 |
 | Railway cron | 200 |
-| Railway OMS E2E | 2/2 PASS |
+| Railway Playwright × 3 | Run1 **66/67**, Run2 **65/67**, Run3 **59/67** (1 fail + early stop); logs `/tmp/release-rc1-railway-run{1,2,3}.txt` |
 
-Full Railway Playwright run: see RELEASE-001 final report.
+**Remaining test flake:** intermittent React #418 on auth/sign-in, catalog, chat/messages under long suite load — not allowlisted; root fixes in `10de465`; monitor post-deploy.
 
 ---
 
