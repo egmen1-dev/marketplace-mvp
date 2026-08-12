@@ -126,15 +126,30 @@ If overdue processor causes issues:
 
 After rollback:
 
-- [ ] Confirm `/api/health` on affected host(s)
+- [ ] Confirm `/api/health` on affected host(s) — expect `checks.database.ok: true`
 - [ ] Smoke buyer checkout + seller order confirm
-- [ ] Check error monitoring (if configured)
+- [ ] Check error monitoring (Sentry / log drain if configured)
 - [ ] Document incident: commit SHA, migration ID, restore point
 - [ ] Post-mortem before re-attempting RC1 deploy
 
 ---
 
-## 8. Contacts & references
+## 8. Emergency steps (production incident)
+
+| Step | Action | Owner |
+|------|--------|-------|
+| 1 | **Stop bleeding** — promote last good Vercel deployment | Eng on-call |
+| 2 | **Assess DB** — if migration broke schema, pause traffic; do not run more migrations | Eng |
+| 3 | **Snapshot** — take fresh DB snapshot before any restore attempt | Ops |
+| 4 | **Restore** — only if app rollback insufficient; see [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md) | Ops + Eng |
+| 5 | **Disable cron** — unset/rotate `CRON_SECRET` if overdue processor suspected | Eng |
+| 6 | **Communicate** — status + ETA to stakeholders | Product |
+
+**Health during incident:** `GET /api/health` returns 503 if database or AUTH_SECRET broken.
+
+---
+
+## 9. Contacts & references
 
 - Staging URL: https://web-production-e56fb.up.railway.app
 - Production URL: https://marketplace-mvp-one.vercel.app

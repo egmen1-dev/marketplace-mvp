@@ -15,10 +15,11 @@ Mark each area **READY**, **PARTIAL**, or **BLOCKED** before Vercel GO.
 | **Railway** | READY | Deploy `10de465`; health 200; migrations on start |
 | **Vercel** | PARTIAL | Unchanged in RC1; awaiting explicit GO + env audit |
 | **Blob** | READY | Token on Railway; private access + media proxy |
-| **Monitoring** | PARTIAL | Structured logs in app; no external APM wired |
-| **Logging** | PARTIAL | Console JSON events; no centralized log drain |
+| **Monitoring** | WARNING | Structured logs + process hooks; Sentry not wired — connect on GO |
+| **Logging** | WARNING | JSON `lib/logger` on critical paths; many routes still `console.error` |
 | **Security** | READY | IDOR tests, role gates, cron secret, chat hardening |
-| **Backups** | PARTIAL | Provider-dependent; document snapshot before prod deploy |
+| **Backups** | WARNING | Strategy documented; automated PITR depends on provider plan |
+| **Rollback** | READY | [ROLLBACK.md](./ROLLBACK.md) + emergency steps |
 
 ---
 
@@ -31,7 +32,8 @@ Mark each area **READY**, **PARTIAL**, or **BLOCKED** before Vercel GO.
 - [ ] `npm run test` → 117/117
 - [ ] Playwright local `--retries=0` × 3 green
 - [ ] Railway full acceptance green
-- [ ] Production DB backup taken
+- [ ] Production DB backup taken — see [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md)
+- [ ] `SENTRY_DSN` planned (optional at GO, recommended within 24h)
 - [ ] `CRON_SECRET` set on Vercel (if using overdue cron)
 - [ ] `NEXT_PUBLIC_APP_URL` matches canonical production origin
 - [ ] Stripe webhook URL updated (if payments enabled)
@@ -46,7 +48,8 @@ Mark each area **READY**, **PARTIAL**, or **BLOCKED** before Vercel GO.
 - [ ] Buyer: cart → checkout → order created
 - [ ] Seller: confirm order → OMS transition
 - [ ] Admin: `/admin/orders` loads, overdue filter
-- [ ] `/api/health` → 200
+- [ ] `/api/health` → 200 with `checks.database.ok: true`
+- [ ] Connect log drain / Sentry before or immediately after GO
 - [ ] Upload test image on seller product form
 - [ ] Chat: buyer message → seller reply
 

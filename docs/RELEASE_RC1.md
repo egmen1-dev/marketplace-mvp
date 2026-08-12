@@ -121,7 +121,20 @@ Required Railway vars: `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_APP_URL`, `BL
 4. Smoke: `/api/health`, buyer checkout, seller confirm order, admin orders
 5. Monitor first 24h: hydration errors, cron logs, Blob 503 rate
 
-See [ROLLBACK.md](./ROLLBACK.md) and [ENVIRONMENTS.md](./ENVIRONMENTS.md).
+See [ROLLBACK.md](./ROLLBACK.md), [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md), and [ENVIRONMENTS.md](./ENVIRONMENTS.md).
+
+---
+
+## Observability & operations (RELEASE-003)
+
+| Topic | Status | Doc |
+|-------|--------|-----|
+| Structured logging | PARTIAL | [OBSERVABILITY_AUDIT.md](./OBSERVABILITY_AUDIT.md) |
+| Error monitoring (Sentry) | Prepare on GO | `.env.example` `SENTRY_*` |
+| Health checks | READY | `/api/health` — DB + auth required |
+| Cron logs | READY | `cron_overdue_*` events |
+| Backups | Documented | [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md) |
+| Rollback | Documented | [ROLLBACK.md](./ROLLBACK.md) |
 
 ---
 
