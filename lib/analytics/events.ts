@@ -34,6 +34,12 @@ export const ANALYTICS_EVENTS = {
   SCROLL_HOMEPAGE: "scroll_homepage",
   /** DESIGN-001 homepage — sell / seller CTA tap */
   CTA_SELL_CLICK: "cta_sell_click",
+  /** Promotion MVP — seller promotion panel viewed */
+  PROMOTION_VIEW: "promotion_view",
+  /** Promotion MVP — seller started promotion */
+  PROMOTION_START: "promotion_start",
+  /** Promotion MVP — seller paused promotion */
+  PROMOTION_PAUSE: "promotion_pause",
 } as const;
 
 export type AnalyticsEventName =

@@ -1,6 +1,7 @@
 import {
   Heart,
   MapPin,
+  Megaphone,
   MessageCircle,
   Package,
   Settings,
@@ -69,6 +70,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_PRODUCTS ||
       path.startsWith(`${ROUTES.ACCOUNT_PRODUCTS}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_PROMOTIONS,
+    label: "Продвижение",
+    icon: Megaphone,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PROMOTIONS ||
+      path.startsWith(`${ROUTES.ACCOUNT_PROMOTIONS}/`),
   },
   {
     href: ROUTES.ACCOUNT_SALES,

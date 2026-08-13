@@ -23,6 +23,7 @@ import { PdpCharacteristics } from "@/features/products/components/pdp-character
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
+import { PromotedBadge } from "@/features/promotion";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
@@ -30,6 +31,7 @@ import { JsonLd } from "@/features/seo/components/json-ld";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { getCanonicalAppUrl } from "@/lib/env";
+import { isProductPromoted } from "@/lib/promotion";
 import { productJsonLd } from "@/lib/seo/json-ld";
 import { brandPagePath } from "@/lib/seo/paths";
 
@@ -92,18 +94,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let session: Awaited<ReturnType<typeof getSessionUser>> = null;
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
+  let promoted = false;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
-      [similar, sellerTrust] = await Promise.all([
+      [similar, sellerTrust, promoted] = await Promise.all([
         listSimilarProducts(product.id, {
           categoryId: product.category?.id,
           price: product.price,
           limit: 8,
         }),
         getSellerTrustProfile(product.seller.slug),
+        isProductPromoted(product.id),
       ]);
     }
   } catch (err) {
@@ -224,6 +228,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {product.brand.name}
               </Badge>
             ) : null}
+
+            {promoted ? <PromotedBadge className="w-fit" /> : null}
 
             {product.productType ? (
               <p

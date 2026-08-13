@@ -38,6 +38,11 @@ import {
 } from "@/features/products";
 import { pluralizeProductWord } from "@/lib/i18n";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { PromotedProductsSection } from "@/features/promotion";
+import {
+  getPromotedProducts,
+  isPromotionSurfacesEnabled,
+} from "@/lib/promotion";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type CatalogPageProps = {
@@ -65,10 +70,11 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   let result: Awaited<ReturnType<typeof listProducts>> | null = null;
   let activeCategory: Awaited<ReturnType<typeof getCategoryBySlug>> = null;
   let popularCategories: Awaited<ReturnType<typeof listRootCategories>> = [];
+  let promotedProducts: Awaited<ReturnType<typeof getPromotedProducts>> = [];
   let dbError: string | null = null;
 
   try {
-    const [tree, cityList, sellerList, productResult, categoryDetail, roots] =
+    const [tree, cityList, sellerList, productResult, categoryDetail, roots, promoted] =
       await Promise.all([
         listCategoryTree({ activeOnly: true }),
         listProductCities(),
@@ -94,12 +100,16 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           ? getCategoryBySlug(filters.category, { activeOnly: true })
           : Promise.resolve(null),
         listRootCategories({ activeOnly: true }),
+        isPromotionSurfacesEnabled() && !filters.q && !filters.category
+          ? getPromotedProducts(4)
+          : Promise.resolve([]),
       ]);
     categoryTree = tree;
     cities = cityList;
     sellers = sellerList;
     result = productResult;
     activeCategory = categoryDetail;
+    promotedProducts = promoted;
     popularCategories = roots
       .filter((c) => c.productCount > 0)
       .slice(0, 6);
@@ -156,6 +166,17 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             : [{ label: "Каталог" }]
         }
       />
+
+      {isPromotionSurfacesEnabled() &&
+      promotedProducts.length > 0 &&
+      !activeFilters &&
+      !filters.q ? (
+        <PromotedProductsSection
+          title="Продвигаемые предложения"
+          products={promotedProducts}
+          catalogHref={ROUTES.CATALOG}
+        />
+      ) : null}
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

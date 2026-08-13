@@ -18,6 +18,11 @@ import {
   getHomePopularProducts,
   getHomeRootCategories,
 } from "@/lib/home/cached-data";
+import {
+  getPromotedProducts,
+  isPromotionSurfacesEnabled,
+} from "@/lib/promotion";
+import { PromotedProductsSection } from "@/features/promotion";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 /** Always render with live DB — avoids ISR shell from a different DATABASE_URL at build. */
@@ -55,6 +60,8 @@ export default async function HomePage() {
   const showStats =
     stats != null &&
     (stats.products > 0 || stats.sellers > 0 || stats.categories > 0);
+  const promotedProducts =
+    isPromotionSurfacesEnabled() ? await getPromotedProducts(8) : [];
 
   return (
     <div className="home-marketplace flex flex-col">
@@ -137,6 +144,12 @@ export default async function HomePage() {
           catalogHref={ROUTES.CATALOG}
         />
       </div>
+
+      {isPromotionSurfacesEnabled() && promotedProducts.length > 0 ? (
+        <div className="content-visibility-auto">
+          <PromotedProductsSection products={promotedProducts} />
+        </div>
+      ) : null}
 
       <div className="content-visibility-auto">
         <HomeProductSection
