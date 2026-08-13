@@ -17,6 +17,10 @@ import {
   OrderStatusBadge,
 } from "@/features/orders";
 import { formatPrice } from "@/features/products/mappers";
+import { Store } from "lucide-react";
+
+import { EducationEmptyState } from "@/features/marketplace-education";
+import { isMarketplaceEducationEnabled } from "@/lib/marketplace-education";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import {
@@ -52,6 +56,7 @@ type PageProps = {
 export default async function SellerOrdersPage({ searchParams }: PageProps) {
   const seller = await requireSellerCabinetAccess(ROUTES.SELLER_ORDERS);
   const params = await searchParams;
+  const educationEnabled = isMarketplaceEducationEnabled();
 
   const bucketRaw = params.bucket?.toUpperCase() ?? "ALL";
   const bucket = BUCKET_TABS.some((t) => t.value === bucketRaw)
@@ -154,7 +159,14 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
       ) : orders.items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+        educationEnabled ? (
+          <EducationEmptyState
+            surface="sales"
+            icon={<Store className="size-10 text-muted-foreground" aria-hidden />}
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+        )
       ) : (
         <div className="flex flex-col gap-3">
           {orders.items.map((order) => (

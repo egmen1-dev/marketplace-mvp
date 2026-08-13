@@ -25,6 +25,15 @@ import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { BuyerProductFitBlock } from "@/features/buyer-intelligence";
 import {
+  BuyerEducationPanel,
+  BuyerSmartAssistant,
+} from "@/features/marketplace-education";
+import {
+  getBuyerEducationTopics,
+  getBuyerHelpPrompts,
+  isMarketplaceEducationEnabled,
+} from "@/lib/marketplace-education";
+import {
   getProductBuyerMatch,
   isBuyerIntelligenceEnabled,
 } from "@/lib/buyer-intelligence";
@@ -101,6 +110,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
   let promoted = false;
   let buyerMatch: Awaited<ReturnType<typeof getProductBuyerMatch>> = null;
+  const educationEnabled = isMarketplaceEducationEnabled();
+  const buyerEducationTopics = educationEnabled ? getBuyerEducationTopics() : [];
+  let buyerHelpPrompts: ReturnType<typeof getBuyerHelpPrompts> = [];
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -127,6 +139,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   if (!product) notFound();
+
+  if (educationEnabled) {
+    buyerHelpPrompts = getBuyerHelpPrompts(product.title);
+  }
 
   if (product.status === "ACTIVE") {
     incrementProductViews(product.id);
@@ -316,6 +332,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {buyerMatch ? (
             <BuyerProductFitBlock match={buyerMatch} productId={product.id} />
+          ) : null}
+
+          {buyerHelpPrompts.length > 0 ? (
+            <BuyerSmartAssistant
+              prompts={buyerHelpPrompts}
+              productId={product.id}
+            />
+          ) : null}
+
+          {buyerEducationTopics.length > 0 ? (
+            <BuyerEducationPanel
+              topics={buyerEducationTopics}
+              productId={product.id}
+            />
           ) : null}
 
           {sellerTrust ? (

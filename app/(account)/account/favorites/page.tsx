@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { AccountShell } from "@/features/account";
 import { getSessionUser } from "@/features/auth";
 import { FavoritesGrid, listFavoriteProducts } from "@/features/favorites";
+import { isMarketplaceEducationEnabled } from "@/lib/marketplace-education";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,10 @@ export default async function FavoritesPage() {
           {dbError}
         </p>
       ) : (
-        <FavoritesGrid products={products} />
+        <FavoritesGrid
+          products={products}
+          useEducationEmpty={isMarketplaceEducationEnabled()}
+        />
       )}
     </AccountShell>
   );

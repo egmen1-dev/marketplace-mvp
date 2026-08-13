@@ -1,4 +1,5 @@
 import {
+  GraduationCap,
   Heart,
   MapPin,
   Megaphone,
@@ -62,6 +63,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_MESSAGES ||
       path.startsWith(`${ROUTES.ACCOUNT_MESSAGES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_ONBOARDING,
+    label: "Старт продавца",
+    icon: GraduationCap,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_ONBOARDING ||
+      path.startsWith(`${ROUTES.ACCOUNT_ONBOARDING}/`),
   },
   {
     href: ROUTES.ACCOUNT_PRODUCTS,

@@ -19,6 +19,7 @@ import { CategoryPicker } from "@/features/seller/components/category-picker";
 import { AiUnderstandingCard } from "@/features/seller/components/ai-understanding-card";
 import { ProductImageUploader } from "@/features/seller/components/product-image-uploader";
 import { ProductAdEligibilityBanner } from "@/features/seller/components/product-ad-eligibility-banner";
+import { ProductFormEducationTips } from "@/features/marketplace-education";
 import { DynamicCharacteristicsFields } from "@/features/taxonomy/components/dynamic-characteristics-fields";
 import {
   TaxonomySelector,
@@ -52,6 +53,8 @@ type ProductFormProps = {
   uploadPathPrefix: string;
   /** Seller warehouse points for pickup linking */
   sellerPickupPoints?: PickupPointDto[];
+  /** Show contextual education tips (MARKETPLACE_EDUCATION_ENABLED) */
+  showEducationTips?: boolean;
 };
 
 export function ProductForm({
@@ -60,6 +63,7 @@ export function ProductForm({
   product,
   uploadPathPrefix,
   sellerPickupPoints = [],
+  showEducationTips = false,
 }: ProductFormProps) {
   const [title, setTitle] = useState(product?.title ?? "");
   const [categoryId, setCategoryId] = useState(
@@ -255,6 +259,9 @@ export function ProductForm({
           disabled={pending}
           pathPrefix={uploadPathPrefix}
         />
+        {showEducationTips ? (
+          <ProductFormEducationTips field="photos" />
+        ) : null}
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Название</Label>
@@ -272,6 +279,9 @@ export function ProductForm({
           />
           {state.fieldErrors?.title?.[0] ? (
             <p className="text-xs text-destructive">{state.fieldErrors.title[0]}</p>
+          ) : null}
+          {showEducationTips ? (
+            <ProductFormEducationTips field="title" />
           ) : null}
         </div>
 
@@ -329,6 +339,9 @@ export function ProductForm({
           defaults={charDefaults}
           disabled={pending}
         />
+        {showEducationTips ? (
+          <ProductFormEducationTips field="characteristics" />
+        ) : null}
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">Описание</Label>

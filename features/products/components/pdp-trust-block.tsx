@@ -155,7 +155,8 @@ export function PdpTrustBlock({
         </p>
         <p className="mt-1 flex items-start gap-2 text-sm text-muted-foreground">
           <MessageSquare className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-          Будьте первым покупателем — отзывы появятся после реальных покупок.
+          Первые отзывы помогут новым покупателям доверять товару. Будьте первым
+          покупателем — отзывы появятся после реальных покупок.
         </p>
         <p
           className="mt-2 text-sm text-muted-foreground"

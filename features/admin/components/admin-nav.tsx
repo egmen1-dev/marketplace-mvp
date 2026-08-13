@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Brain,
   BarChart3,
+  BookOpen,
   ClipboardCheck,
   ClipboardList,
   LineChart,
@@ -148,6 +149,12 @@ const NAV_ITEMS = [
     icon: Mail,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_COMMUNICATION),
+  },
+  {
+    href: ROUTES.ADMIN_EDUCATION,
+    label: "Education",
+    icon: BookOpen,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_EDUCATION),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

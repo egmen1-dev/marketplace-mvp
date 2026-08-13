@@ -4,6 +4,7 @@ import { SellerMarketplaceInsightsPanel } from "@/features/marketplace-intellige
 import { SellerOperatorInsightsPanel } from "@/features/marketplace-operator";
 import { SellerExecutionActionsPanel } from "@/features/marketplace-execution";
 import { SellerLotRecommendationPanel } from "@/features/marketplace-communication";
+import { SellerAiCoachPanel } from "@/features/marketplace-education";
 import { ROUTES } from "@/lib/constants";
 import {
   getSellerGrowthDashboard,
@@ -25,6 +26,10 @@ import {
   getSellerLotRecommendation,
   isMarketplaceCommunicationEnabled,
 } from "@/lib/marketplace-communication";
+import {
+  getSellerGrowthCoach,
+  isMarketplaceEducationEnabled,
+} from "@/lib/marketplace-education";
 
 export const dynamic = "force-dynamic";
 
@@ -39,13 +44,15 @@ export default async function AccountGrowthPage() {
   const operatorEnabled = isMarketplaceOperatorEnabled();
   const executionEnabled = isMarketplaceExecutionEnabled();
   const communicationEnabled = isMarketplaceCommunicationEnabled();
+  const educationEnabled = isMarketplaceEducationEnabled();
 
   if (
     !growthEnabled &&
     !marketplaceEnabled &&
     !operatorEnabled &&
     !executionEnabled &&
-    !communicationEnabled
+    !communicationEnabled &&
+    !educationEnabled
   ) {
     return (
       <div className="flex flex-col gap-4">
@@ -70,6 +77,7 @@ export default async function AccountGrowthPage() {
   let lotRecommendation: Awaited<
     ReturnType<typeof getSellerLotRecommendation>
   > = null;
+  let coach: Awaited<ReturnType<typeof getSellerGrowthCoach>> = null;
   let dbError: string | null = null;
 
   try {
@@ -94,6 +102,9 @@ export default async function AccountGrowthPage() {
         seller.sellerProfileId,
       );
     }
+    if (educationEnabled) {
+      coach = await getSellerGrowthCoach(seller.sellerProfileId);
+    }
   } catch (err) {
     console.error("[account/growth]", err);
     dbError = "Не удалось загрузить рекомендации";
@@ -115,6 +126,7 @@ export default async function AccountGrowthPage() {
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
         <>
+          {coach ? <SellerAiCoachPanel coach={coach} /> : null}
           {lotRecommendation ? (
             <SellerLotRecommendationPanel recommendation={lotRecommendation} />
           ) : null}
