@@ -243,6 +243,9 @@ model SellerProfile {
   conversations       Conversation[]
   financeTransactions FinanceTransaction[]
   sellerBalance       SellerBalance?
+  paymentMethods      SellerPaymentMethod[]
+  payoutRequests      PayoutRequest[]
+  payoutTransactions  PayoutTransaction[]
 
   @@index([slug])
   @@index([kind])
@@ -1168,16 +1171,101 @@ model CommissionRule {
 
 /// Virtual seller balance — pending / available / paid-out totals.
 model SellerBalance {
-  id              String   @id @default(cuid())
-  sellerId        String   @unique
-  pendingAmount   Decimal  @default(0) @db.Decimal(14, 2)
-  availableAmount Decimal  @default(0) @db.Decimal(14, 2)
-  paidAmount      Decimal  @default(0) @db.Decimal(14, 2)
-  updatedAt       DateTime @updatedAt
+  id                      String   @id @default(cuid())
+  sellerId                String   @unique
+  pendingAmount           Decimal  @default(0) @db.Decimal(14, 2)
+  availableAmount         Decimal  @default(0) @db.Decimal(14, 2)
+  paidAmount              Decimal  @default(0) @db.Decimal(14, 2)
+  reservedForPayoutAmount Decimal  @default(0) @db.Decimal(14, 2)
+  updatedAt               DateTime @updatedAt
 
   seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   @@map("seller_balances")
+}
+
+enum PayoutRequestStatus {
+  REQUESTED
+  UNDER_REVIEW
+  APPROVED
+  PROCESSING
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+enum SellerPaymentMethodType {
+  CARD
+  BANK_ACCOUNT
+}
+
+enum PayoutTransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+/// Seller payout destination — reference only, no raw payment data.
+model SellerPaymentMethod {
+  id               String                  @id @default(cuid())
+  sellerId         String
+  type             SellerPaymentMethodType
+  label            String
+  detailsReference String
+  verified         Boolean                 @default(false)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  seller         SellerProfile   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  payoutRequests PayoutRequest[]
+
+  @@index([sellerId])
+  @@map("seller_payment_methods")
+}
+
+/// Seller withdrawal request — manual admin workflow in MVP.
+model PayoutRequest {
+  id              String              @id @default(cuid())
+  sellerId        String
+  amount          Decimal             @db.Decimal(14, 2)
+  status          PayoutRequestStatus @default(REQUESTED)
+  paymentMethodId String
+  requestedAt     DateTime            @default(now())
+  approvedAt      DateTime?
+  processingAt    DateTime?
+  completedAt     DateTime?
+  rejectedAt      DateTime?
+  adminNote       String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  seller        SellerProfile       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  paymentMethod SellerPaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+  transactions  PayoutTransaction[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("payout_requests")
+}
+
+/// Record of a completed manual payout.
+model PayoutTransaction {
+  id                String                  @id @default(cuid())
+  payoutRequestId   String
+  sellerId          String
+  amount            Decimal                 @db.Decimal(14, 2)
+  status            PayoutTransactionStatus @default(PENDING)
+  externalReference String?
+  completedAt       DateTime?
+  createdAt         DateTime                @default(now())
+
+  payoutRequest PayoutRequest @relation(fields: [payoutRequestId], references: [id], onDelete: Cascade)
+  seller        SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([payoutRequestId])
+  @@index([sellerId])
+  @@map("payout_transactions")
 }
 
 /// Buyer protection dispute foundation — no full arbitration in MVP.

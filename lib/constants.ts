@@ -37,6 +37,8 @@ export const ROUTES = {
   ACCOUNT_SALES: "/account/sales",
   /** Seller virtual balance (finance foundation) */
   ACCOUNT_BALANCE: "/account/balance",
+  /** Seller payout requests and withdrawal flow */
+  ACCOUNT_PAYOUTS: "/account/payouts",
   /** Seller pickup warehouse addresses */
   ACCOUNT_PICKUP_POINTS: "/account/pickup-points",
   ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
@@ -77,9 +79,12 @@ export const ROUTES = {
   ADMIN_ANALYTICS: "/admin/analytics",
   ADMIN_ADS: "/admin/ads",
   ADMIN_FINANCE: "/admin/finance",
+  ADMIN_PAYOUTS: "/admin/payouts",
   ADMIN_CONVERSION: "/admin/conversion",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
+  /** Unified notifications inbox */
+  NOTIFICATIONS: "/notifications",
   BRANDS: "/brands",
 } as const;
 
@@ -121,6 +126,8 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/products",
   "/account/sales",
   "/account/pickup-points",
+  "/account/balance",
+  "/account/payouts",
 ] as const;
 
 export function isSellerCabinetPath(pathname: string): boolean {

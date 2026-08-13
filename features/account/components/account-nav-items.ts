@@ -90,6 +90,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
       path.startsWith(`${ROUTES.ACCOUNT_BALANCE}/`),
   },
   {
+    href: ROUTES.ACCOUNT_PAYOUTS,
+    label: "Вывод",
+    icon: Wallet,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PAYOUTS ||
+      path.startsWith(`${ROUTES.ACCOUNT_PAYOUTS}/`),
+  },
+  {
     href: ROUTES.ACCOUNT_RESERVATIONS,
     label: "Бронирования",
     icon: Ticket,
