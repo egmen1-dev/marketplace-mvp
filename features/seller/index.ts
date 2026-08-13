@@ -31,6 +31,7 @@ export {
   InventoryStatusBadge,
   StockEditor,
   SellerToastFlash,
+  ProductQualityCard,
   DashboardEmptyState,
   DashboardKpiCards,
   DashboardQuickActions,

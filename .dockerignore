@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.playwright-browsers
+test-results
+playwright-report
+coverage
+.turbo
+.vercel
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+tmp
+docs/acceptance
+agent-transcripts

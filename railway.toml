@@ -1,10 +1,13 @@
-# Railway — backup deployment (does not affect Vercel).
-# Docs: docs/BACKUP_DEPLOYMENT.md
+# Railway staging (Vercel production unchanged).
+# Docs: docs/BACKUP_DEPLOYMENT.md, docs/RAILWAY_BUILD_PIPELINE.md
+#
+# Build strategy: GitHub → Railway DOCKERFILE (native, no `railway up`).
+# Nixpacks on Metal builders currently fails with:
+#   Failed to read app source directory / unpack path missing
 
 [build]
-builder = "NIXPACKS"
-# Install phase already runs `npm ci` — do not run it again (EBUSY on cache mounts).
-buildCommand = "node scripts/write-build-info.mjs && npx prisma generate && npm run build"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "npx prisma migrate deploy && npm run start"

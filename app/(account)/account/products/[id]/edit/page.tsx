@@ -18,7 +18,8 @@ import {
   getOwnedProduct,
   ProductServiceError,
 } from "@/features/products/queries";
-import { ProductForm } from "@/features/seller";
+import { ProductForm, ProductQualityCard } from "@/features/seller";
+import { computeProductCompletenessScore } from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +82,19 @@ export default async function EditProductPage({
         </h1>
         <p className="text-sm text-muted-foreground">{product.title}</p>
       </div>
+
+      <ProductQualityCard
+        result={computeProductCompletenessScore({
+          photoCount: product.images.length,
+          titleLength: product.title.trim().length,
+          descriptionLength: (product.description ?? "").trim().length,
+          characteristicCount: product.characteristics.length,
+          hasCategory: Boolean(product.category?.id),
+          hasProductType: Boolean(product.productType?.id),
+          price: product.price,
+          hasSeller: true,
+        })}
+      />
 
       <Card>
         <CardHeader>
