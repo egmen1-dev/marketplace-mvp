@@ -19,6 +19,8 @@ import {
   ProductStatusBadge,
 } from "@/features/seller";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
+import { SellerJourneyEmptyState } from "@/features/seller-journey";
+import { getSellerJourneyEmptyState } from "@/lib/seller-journey";
 import {
   ArchiveProductButton,
   DuplicateProductButton,
@@ -97,6 +99,11 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
     console.error("[seller/products]", err);
     dbError = "Не удалось загрузить товары";
   }
+
+  const productsEmptyCopy =
+    !query && status === "ALL"
+      ? await getSellerJourneyEmptyState("products")
+      : null;
 
 
   function tabHref(value: ProductStatus | "ALL") {
@@ -188,22 +195,30 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
           {dbError ? (
             <p className="text-sm text-destructive">{dbError}</p>
           ) : products.items.length === 0 ? (
-            <div className="flex flex-col items-start gap-4 py-8">
-              <p className="text-sm text-muted-foreground">
-                {query || status !== "ALL"
-                  ? "Нет товаров по выбранным фильтрам."
-                  : "Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге."}
-              </p>
-              {!query && status === "ALL" ? (
-                <Button
-                  nativeButton={false}
-                  render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
-                >
-                  <Plus data-icon="inline-start" />
-                  Создать товар
-                </Button>
-              ) : null}
-            </div>
+            query || status !== "ALL" ? (
+              <div className="flex flex-col items-start gap-4 py-8">
+                <p className="text-sm text-muted-foreground">
+                  Нет товаров по выбранным фильтрам.
+                </p>
+              </div>
+            ) : (
+              productsEmptyCopy ? (
+                <SellerJourneyEmptyState {...productsEmptyCopy} />
+              ) : (
+                <div className="flex flex-col items-start gap-4 py-8">
+                  <p className="text-sm text-muted-foreground">
+                    Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге.
+                  </p>
+                  <Button
+                    nativeButton={false}
+                    render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
+                  >
+                    <Plus data-icon="inline-start" />
+                    Создать товар
+                  </Button>
+                </div>
+              )
+            )
           ) : (
             <table className="w-full min-w-[960px] text-left text-sm">
               <thead>

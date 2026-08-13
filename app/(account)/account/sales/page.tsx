@@ -19,11 +19,13 @@ import { formatPrice } from "@/features/products/mappers";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
+import { SellerJourneyEmptyState } from "@/features/seller-journey";
 import {
   getSellerOrderCounters,
   listSellerOrders,
 } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
+import { getSellerJourneyEmptyState } from "@/lib/seller-journey";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 import { cn } from "@/lib/utils";
 
@@ -91,6 +93,9 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
     dbError = "Не удалось загрузить заказы";
   }
 
+  const ordersEmptyCopy =
+    bucket === "ALL" ? await getSellerJourneyEmptyState("orders") : null;
+
   function tabHref(value: string) {
     const q = new URLSearchParams();
     if (value !== "ALL") q.set("bucket", value);
@@ -157,7 +162,11 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
       ) : orders.items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+        ordersEmptyCopy ? (
+          <SellerJourneyEmptyState {...ordersEmptyCopy} />
+        ) : (
+          <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+        )
       ) : (
         <div className="flex flex-col gap-3">
           {orders.items.map((order) => (

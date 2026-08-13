@@ -16,6 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { ROUTES } from "@/lib/constants";
+import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
 import { isSellerLifecycleEnabled } from "@/lib/seller-lifecycle/flags";
 
 export type AccountNavItem = {
@@ -72,6 +73,91 @@ const BUYER_NAV: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_RESERVATIONS ||
       path.startsWith(`${ROUTES.ACCOUNT_RESERVATIONS}/`),
+  },
+  {
+    href: ROUTES.SETTINGS,
+    label: "Настройки",
+    icon: Settings,
+    match: (path) =>
+      path === ROUTES.SETTINGS ||
+      path === "/settings" ||
+      path === "/account/settings",
+  },
+];
+
+/** Unified seller nav when SELLER_JOURNEY_ENABLED — AI-guided cabinet. */
+const SELLER_JOURNEY_NAV: AccountNavItem[] = [
+  {
+    href: ROUTES.ACCOUNT,
+    label: "Мой магазин",
+    icon: Store,
+    sellerOnly: true,
+    match: (path) => path === ROUTES.ACCOUNT,
+  },
+  {
+    href: ROUTES.ACCOUNT_PRODUCTS,
+    label: "Товары",
+    icon: Package,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PRODUCTS ||
+      path.startsWith(`${ROUTES.ACCOUNT_PRODUCTS}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_SALES,
+    label: "Заказы",
+    icon: ShoppingBag,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_SALES ||
+      path.startsWith(`${ROUTES.ACCOUNT_SALES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_PROMOTION_CENTER,
+    label: "Продвижение",
+    icon: Megaphone,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PROMOTION_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_PROMOTION_CENTER}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_COMMAND_CENTER,
+    label: "Аналитика",
+    icon: BarChart3,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_COMMAND_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_COMMAND_CENTER}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_GROWTH,
+    label: "AI помощник",
+    icon: Sparkles,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_GROWTH ||
+      path.startsWith(`${ROUTES.ACCOUNT_GROWTH}/`) ||
+      path === ROUTES.ACCOUNT_SELLER_START,
+  },
+  {
+    href: ROUTES.ACCOUNT_BALANCE,
+    label: "Деньги",
+    icon: Wallet,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_BALANCE ||
+      path.startsWith(`${ROUTES.ACCOUNT_BALANCE}/`) ||
+      path === ROUTES.ACCOUNT_PAYOUTS ||
+      path.startsWith(`${ROUTES.ACCOUNT_PAYOUTS}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_MESSAGES,
+    label: "Сообщения",
+    icon: MessageCircle,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_MESSAGES ||
+      path.startsWith(`${ROUTES.ACCOUNT_MESSAGES}/`),
   },
   {
     href: ROUTES.SETTINGS,
@@ -221,8 +307,11 @@ const LEGACY_SELLER_NAV: AccountNavItem[] = [
 export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = LEGACY_SELLER_NAV;
 
 export function accountNavItemsFor(isSeller: boolean): AccountNavItem[] {
-  const items = isSellerLifecycleEnabled() && isSeller
-    ? SELLER_LIFECYCLE_NAV
-    : ACCOUNT_NAV_ITEMS;
+  const items =
+    isSellerJourneyEnabled() && isSeller
+      ? SELLER_JOURNEY_NAV
+      : isSellerLifecycleEnabled() && isSeller
+        ? SELLER_LIFECYCLE_NAV
+        : ACCOUNT_NAV_ITEMS;
   return items.filter((item) => !item.sellerOnly || isSeller);
 }
