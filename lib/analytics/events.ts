@@ -62,6 +62,14 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_RECOMMENDATION_CLICK: "promotion_recommendation_click",
   /** Promotion intelligence — seller acted on recommendation */
   PROMOTION_RECOMMENDATION_ACCEPT: "promotion_recommendation_accept",
+  /** Seller growth — dashboard viewed */
+  SELLER_GROWTH_VIEW: "seller_growth_view",
+  /** Seller growth — insight viewed */
+  SELLER_INSIGHT_VIEW: "seller_insight_view",
+  /** Seller growth — action clicked */
+  SELLER_ACTION_CLICK: "seller_action_click",
+  /** Seller growth — action completed (navigation) */
+  SELLER_ACTION_COMPLETE: "seller_action_complete",
 } as const;
 
 export type AnalyticsEventName =
