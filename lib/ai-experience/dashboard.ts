@@ -14,6 +14,8 @@ export function emptySellerAiCenter(): SellerAiCenterDashboard {
     priority: null,
     opportunities: [],
     insightCards: [],
+    whatWorks: [],
+    learningExperimentId: null,
   };
 }
 
