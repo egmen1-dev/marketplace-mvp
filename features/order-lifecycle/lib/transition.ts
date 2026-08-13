@@ -252,6 +252,18 @@ export async function afterTransitionSideEffects(opts: {
     });
   }
 
+  // Finance: pending → available when order COMPLETED (does not alter OMS).
+  if (opts.status === OrderStatus.COMPLETED) {
+    try {
+      const { releaseSellerFundsOnOrderCompleted } = await import(
+        "@/features/finance/lib/ledger"
+      );
+      await releaseSellerFundsOnOrderCompleted(opts.orderId);
+    } catch (err) {
+      console.error("[order-lifecycle] finance release", err);
+    }
+  }
+
   if (opts.silent) return;
 
   const chatText = chatMessageForTransition({

@@ -1,12 +1,17 @@
+import { recordSaleForPaidOrder } from "@/features/finance/lib/ledger";
 import { log } from "@/lib/logger";
 
 /**
- * Finance / ledger integration hook — called after order is marked PAID.
- * No payout logic in MVP; reserved for future Transaction records.
+ * Finance integration after order is marked paid (post-OMS).
+ * Creates FinanceTransaction SALE + credits SellerBalance.pending.
  */
 export async function onOrderPaidForFinance(orderId: string): Promise<void> {
-  log.info("finance_order_paid_hook", {
-    orderId,
-    detail: "Future: Transaction creation, seller balance, payout schedule",
-  });
+  try {
+    await recordSaleForPaidOrder(orderId);
+  } catch (err) {
+    log.error("finance_order_paid_hook_failed", {
+      orderId,
+      message: err instanceof Error ? err.message : "unknown",
+    });
+  }
 }

@@ -17,6 +17,7 @@ import {
   Ticket,
   Upload,
   Users,
+  Wallet,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -52,6 +53,12 @@ const NAV_ITEMS = [
     label: "Заказы",
     icon: ShoppingBag,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_ORDERS),
+  },
+  {
+    href: ROUTES.ADMIN_FINANCE,
+    label: "Finance",
+    icon: Wallet,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_FINANCE),
   },
   {
     href: ROUTES.ADMIN_ADS,

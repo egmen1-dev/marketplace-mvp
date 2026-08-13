@@ -8,6 +8,7 @@ import {
   Store,
   Ticket,
   UserRound,
+  Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -78,6 +79,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_SALES ||
       path.startsWith(`${ROUTES.ACCOUNT_SALES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_BALANCE,
+    label: "Баланс",
+    icon: Wallet,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_BALANCE ||
+      path.startsWith(`${ROUTES.ACCOUNT_BALANCE}/`),
   },
   {
     href: ROUTES.ACCOUNT_RESERVATIONS,

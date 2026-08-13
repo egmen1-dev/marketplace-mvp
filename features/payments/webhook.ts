@@ -1,3 +1,4 @@
+import { StripeWebhookStatus } from "@prisma/client";
 import type Stripe from "stripe";
 
 import {
@@ -7,6 +8,7 @@ import {
 import { PaymentServiceError } from "@/features/payments/errors";
 import { getEnv } from "@/lib/env";
 import { log } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 
 export type StripeWebhookResult = {
@@ -17,15 +19,13 @@ export type StripeWebhookResult = {
   /** Business rejection that must not corrupt data on Stripe retries. */
   rejected?: boolean;
   reason?: string;
+  /** Duplicate Stripe event already PROCESSED. */
+  duplicate?: boolean;
 };
 
 /**
  * Verify Stripe webhook signature and process supported events.
- * Source of truth for marking orders PAID via `finalizePaidOrder`
- * (stock decrements only here — never on Order NEW).
- *
- * Amount / currency / stock failures return `rejected: true` without throwing,
- * so the route can respond 200 and avoid infinite retries that re-mutate state.
+ * Idempotency: Stripe event id stored in StripeWebhookEvent — PROCESSED events skip work.
  */
 export async function handleStripeWebhook(
   rawBody: string,
@@ -48,27 +48,84 @@ export async function handleStripeWebhook(
     throw new Error(`Webhook signature verification failed: ${message}`);
   }
 
+  const existing = await prisma.stripeWebhookEvent.findUnique({
+    where: { stripeEventId: event.id },
+  });
+  if (existing?.status === StripeWebhookStatus.PROCESSED) {
+    log.info("payment_webhook_duplicate_event", {
+      type: event.type,
+      eventId: event.id,
+    });
+    return {
+      handled: true,
+      type: event.type,
+      duplicate: true,
+      orderId: existing.orderId,
+    };
+  }
+
+  const row =
+    existing ??
+    (await prisma.stripeWebhookEvent.create({
+      data: {
+        stripeEventId: event.id,
+        type: event.type,
+        status: StripeWebhookStatus.RECEIVED,
+      },
+    }));
+
   log.info("payment_webhook_received", {
     type: event.type,
     eventId: event.id,
   });
 
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-      if (session.payment_status !== "paid" && session.mode === "payment") {
-        if (session.payment_status !== "no_payment_required") {
-          return { handled: false, type: event.type };
+  try {
+    let result: StripeWebhookResult;
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.payment_status !== "paid" && session.mode === "payment") {
+          if (session.payment_status !== "no_payment_required") {
+            result = { handled: false, type: event.type };
+            break;
+          }
         }
+        result = await settleCheckout(session, event.type);
+        break;
       }
-      return settleCheckout(session, event.type);
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        result = await settlePaymentIntent(paymentIntent, event.type);
+        break;
+      }
+      default:
+        result = { handled: false, type: event.type };
     }
-    case "payment_intent.succeeded": {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      return settlePaymentIntent(paymentIntent, event.type);
-    }
-    default:
-      return { handled: false, type: event.type };
+
+    await prisma.stripeWebhookEvent.update({
+      where: { id: row.id },
+      data: {
+        status: result.rejected
+          ? StripeWebhookStatus.FAILED
+          : StripeWebhookStatus.PROCESSED,
+        orderId: result.orderId ?? undefined,
+        error: result.reason ?? null,
+        processedAt: new Date(),
+      },
+    });
+
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "webhook_failed";
+    await prisma.stripeWebhookEvent.update({
+      where: { id: row.id },
+      data: {
+        status: StripeWebhookStatus.FAILED,
+        error: message.slice(0, 500),
+        processedAt: new Date(),
+      },
+    });
+    throw err;
   }
 }
 

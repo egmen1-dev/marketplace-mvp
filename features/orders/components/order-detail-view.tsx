@@ -78,7 +78,10 @@ export function OrderDetailView({
       <BuyerOrderActions orderId={order.id} status={order.status} />
 
       {isPaid && paymentSuccess ? (
-        <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+        <p
+          className="rounded-xl border border-emerald-600/30 bg-emerald-500/10 px-4 py-3 text-sm text-foreground"
+          data-testid="payment-success-banner"
+        >
           Оплата прошла успешно. Спасибо за покупку!
         </p>
       ) : null}

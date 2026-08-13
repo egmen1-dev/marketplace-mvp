@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { Lock, ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -169,10 +169,26 @@ export function CheckoutForm({
 
       <div className="flex flex-col gap-6">
         {canceled ? (
-          <p className="rounded-xl border border-border bg-surface/60 px-4 py-3 text-sm text-muted-foreground">
-            Оплата отменена. Вы можете изменить данные и попробовать снова.
+          <p
+            className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            role="alert"
+            data-testid="checkout-payment-canceled"
+          >
+            Не удалось провести оплату — оплата отменена. Вы можете изменить
+            данные и попробовать снова.
           </p>
         ) : null}
+
+        <div
+          className="flex items-start gap-2 rounded-xl border border-border bg-surface/60 px-4 py-3 text-sm text-muted-foreground"
+          data-testid="checkout-secure-badge"
+        >
+          <Lock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+          <span>
+            Безопасная оплата через Stripe. Карточные данные обрабатывает Stripe —
+            ЛОТ не хранит номер карты.
+          </span>
+        </div>
 
         <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
           <h2 className="font-heading text-lg font-medium">Получатель</h2>
@@ -420,8 +436,12 @@ export function CheckoutForm({
         </div>
 
         {!state.ok && state.error ? (
-          <p className="mt-4 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {state.error}
+          <p
+            className="mt-4 rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            role="alert"
+            data-testid="checkout-payment-error"
+          >
+            Не удалось провести оплату: {state.error}
           </p>
         ) : null}
         {failedOrderId ? (
