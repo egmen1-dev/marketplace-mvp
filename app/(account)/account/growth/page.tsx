@@ -2,6 +2,7 @@ import { requireSellerCabinetAccess } from "@/features/auth";
 import { SellerGrowthDashboardPanel } from "@/features/seller-growth";
 import { SellerMarketplaceInsightsPanel } from "@/features/marketplace-intelligence";
 import { SellerOperatorInsightsPanel } from "@/features/marketplace-operator";
+import { SellerExecutionActionsPanel } from "@/features/marketplace-execution";
 import {
   getSellerGrowthDashboard,
   isSellerGrowthEnabled,
@@ -14,6 +15,10 @@ import {
   getSellerOperatorConnection,
   isMarketplaceOperatorEnabled,
 } from "@/lib/marketplace-operator";
+import {
+  getSellerExecutionActions,
+  isMarketplaceExecutionEnabled,
+} from "@/lib/marketplace-execution";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +33,9 @@ export default async function AccountGrowthPage() {
   const marketplaceEnabled = isMarketplaceIntelligenceEnabled();
   const operatorEnabled = isMarketplaceOperatorEnabled();
 
-  if (!growthEnabled && !marketplaceEnabled && !operatorEnabled) {
+  const executionEnabled = isMarketplaceExecutionEnabled();
+
+  if (!growthEnabled && !marketplaceEnabled && !operatorEnabled && !executionEnabled) {
     return (
       <div className="flex flex-col gap-4">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
@@ -46,6 +53,9 @@ export default async function AccountGrowthPage() {
     ReturnType<typeof getSellerMarketplaceConnection>
   > = null;
   let operator: Awaited<ReturnType<typeof getSellerOperatorConnection>> = null;
+  let executionActions: Awaited<
+    ReturnType<typeof getSellerExecutionActions>
+  > = [];
   let dbError: string | null = null;
 
   try {
@@ -59,6 +69,11 @@ export default async function AccountGrowthPage() {
     }
     if (operatorEnabled) {
       operator = await getSellerOperatorConnection(seller.sellerProfileId);
+    }
+    if (executionEnabled) {
+      executionActions = await getSellerExecutionActions(
+        seller.sellerProfileId,
+      );
     }
   } catch (err) {
     console.error("[account/growth]", err);
@@ -81,6 +96,9 @@ export default async function AccountGrowthPage() {
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
         <>
+          {executionActions.length > 0 ? (
+            <SellerExecutionActionsPanel actions={executionActions} />
+          ) : null}
           {operator ? (
             <SellerOperatorInsightsPanel connection={operator} />
           ) : null}
