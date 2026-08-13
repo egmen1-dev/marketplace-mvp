@@ -82,6 +82,14 @@ export const ANALYTICS_EVENTS = {
   SELLER_MONEY_EXPLANATION_VIEW: "seller_money_explanation_view",
   SELLER_PROBLEM_VIEW: "seller_problem_view",
   SELLER_PROBLEM_FIXED: "seller_problem_fixed",
+  /** MARKETPLACE-FOUNDATION-AUDIT-001 — core readiness audit (no PII) */
+  FOUNDATION_AUDIT_VIEW: "foundation_audit_view",
+  BUYER_FLOW_CHECK: "buyer_flow_check",
+  SELLER_FLOW_CHECK: "seller_flow_check",
+  ORDER_FLOW_CHECK: "order_flow_check",
+  PAYMENT_CHECK: "payment_check",
+  FOUNDATION_ISSUE_DETECTED: "foundation_issue_detected",
+  FOUNDATION_ISSUE_FIXED: "foundation_issue_fixed",
 } as const;
 
 export type AnalyticsEventName =
