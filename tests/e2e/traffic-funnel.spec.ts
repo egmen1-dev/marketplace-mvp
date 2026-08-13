@@ -23,7 +23,7 @@ test.describe("HOTFIX-UX-003 VK traffic funnel", () => {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible({
       timeout: 500,
     });
-    const catalogCta = page.getByRole("button", { name: "Открыть каталог" });
+    const catalogCta = page.getByRole("button", { name: "Смотреть товары" });
     await expect(catalogCta).toBeVisible();
     await expect
       .poll(async () =>
@@ -31,7 +31,7 @@ test.describe("HOTFIX-UX-003 VK traffic funnel", () => {
       )
       .toBe(true);
 
-    await page.getByRole("button", { name: "Открыть каталог" }).click();
+    await page.getByRole("button", { name: "Смотреть товары" }).click();
     await expect(page).toHaveURL(/\/catalog/, { timeout: 15_000 });
     await expect(page.getByRole("heading", { name: "Каталог" })).toBeVisible({
       timeout: 15_000,
@@ -65,7 +65,7 @@ test.describe("HOTFIX-UX-003 VK traffic funnel", () => {
     const page = await ctx.newPage();
     const t0 = Date.now();
     await page.goto("/", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("button", { name: "Открыть каталог" })).toBeVisible({
+    await expect(page.getByRole("button", { name: "Смотреть товары" })).toBeVisible({
       timeout: 500,
     });
     expect(Date.now() - t0).toBeLessThan(5000);
