@@ -1,17 +1,14 @@
 # Railway staging (Vercel production unchanged).
 # Docs: docs/BACKUP_DEPLOYMENT.md, docs/RAILWAY_BUILD_PIPELINE.md
 #
-# Build strategy: GitHub → Railway DOCKERFILE (native, no `railway up`).
-# Nixpacks on Metal builders currently fails with:
-#   Failed to read app source directory / unpack path missing
+# Build strategy: GitHub → Railway DOCKERFILE + Next standalone.
 
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Keep start explicit for Railway dashboard overrides; matches Dockerfile CMD.
-startCommand = "npx prisma migrate deploy && exec npx next start -H 0.0.0.0 -p ${PORT:-8080}"
+startCommand = "./scripts/railway-start.sh"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"

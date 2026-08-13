@@ -1,5 +1,5 @@
 # Railway staging image (does not affect Vercel production).
-# Strategy: GitHub → Railway DOCKERFILE (Nixpacks is deprecated on Metal).
+# Strategy: GitHub → Railway DOCKERFILE + Next standalone.
 
 FROM node:20-bookworm-slim AS base
 WORKDIR /app
@@ -9,7 +9,6 @@ RUN apt-get update -y \
 
 FROM base AS deps
 COPY package.json package-lock.json ./
-# postinstall runs `prisma generate` — schema must exist before npm ci
 COPY prisma ./prisma
 RUN npm ci
 
@@ -29,13 +28,19 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 WORKDIR /app
-COPY --from=builder /app/package.json /app/package-lock.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
+
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/next.config.ts /app/tsconfig.json ./
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
+
+# Prisma CLI for migrate deploy at boot
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+COPY scripts/railway-start.sh ./scripts/railway-start.sh
+RUN chmod +x ./scripts/railway-start.sh
+
 EXPOSE 8080
-# Explicit host/port so Railway healthchecks can reach the process.
-CMD ["sh", "-c", "npx prisma migrate deploy && exec npx next start -H 0.0.0.0 -p ${PORT:-8080}"]
+CMD ["./scripts/railway-start.sh"]
