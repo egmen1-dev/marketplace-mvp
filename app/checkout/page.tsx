@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { CheckoutTrustNote } from "@/components/trust";
+import { CheckoutTrustNote, SafeDealBlock } from "@/components/trust";
 import { FunnelTracker } from "@/components/analytics";
 import { getSessionUser } from "@/features/auth";
 import { getCartForUser } from "@/features/cart";
@@ -13,6 +13,7 @@ import { ROUTES } from "@/lib/constants";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { prisma } from "@/lib/prisma";
 import { toPriceNumber } from "@/features/products/mappers";
+import { isTrustSafetyEnabled } from "@/lib/trust-safety";
 
 export const dynamic = "force-dynamic";
 
@@ -155,6 +156,7 @@ export default async function CheckoutPage({
         route={ROUTES.CHECKOUT}
       />
       <CheckoutTrustNote />
+      {isTrustSafetyEnabled() ? <SafeDealBlock /> : null}
       <CheckoutForm
         initialCart={cart}
         defaultName={profile?.name ?? user.name ?? ""}

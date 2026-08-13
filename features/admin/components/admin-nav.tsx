@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Package,
   Search,
+  ShieldCheck,
   ShoppingBag,
   Sparkles,
   Store,
@@ -59,6 +60,12 @@ const NAV_ITEMS = [
     label: "Finance",
     icon: Wallet,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_FINANCE),
+  },
+  {
+    href: ROUTES.ADMIN_TRUST,
+    label: "Trust",
+    icon: ShieldCheck,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_TRUST),
   },
   {
     href: ROUTES.ADMIN_ADS,

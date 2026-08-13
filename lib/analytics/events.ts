@@ -34,6 +34,14 @@ export const ANALYTICS_EVENTS = {
   SCROLL_HOMEPAGE: "scroll_homepage",
   /** DESIGN-001 homepage — sell / seller CTA tap */
   CTA_SELL_CLICK: "cta_sell_click",
+  /** Trust: buyer confirmed receipt */
+  BUYER_CONFIRMATION: "buyer_confirmation",
+  /** Trust: dispute opened */
+  DISPUTE_CREATED: "dispute_created",
+  /** Trust: dispute resolved by admin */
+  DISPUTE_RESOLVED: "dispute_resolved",
+  /** Trust: seller trust score viewed on PDP */
+  SELLER_TRUST_VIEW: "seller_trust_view",
 } as const;
 
 export type AnalyticsEventName =

@@ -6,7 +6,14 @@ import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/client";
 
 type TrustBlockViewTrackerProps = {
-  blockId: "homepage" | "catalog" | "pdp" | "cart" | "checkout";
+  blockId:
+    | "homepage"
+    | "catalog"
+    | "pdp"
+    | "cart"
+    | "checkout"
+    | "safe-deal"
+    | "why-trust";
   route?: string;
 };
 

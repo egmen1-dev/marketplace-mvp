@@ -23,6 +23,10 @@ import { PdpCharacteristics } from "@/features/products/components/pdp-character
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
+import {
+  SellerTrustScoreBadge,
+  WhyTrustBlock,
+} from "@/components/trust";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
@@ -32,6 +36,10 @@ import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { getCanonicalAppUrl } from "@/lib/env";
 import { productJsonLd } from "@/lib/seo/json-ld";
 import { brandPagePath } from "@/lib/seo/paths";
+import {
+  getSellerTrustScoreForProfile,
+  isTrustSafetyEnabled,
+} from "@/lib/trust-safety";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -92,18 +100,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let session: Awaited<ReturnType<typeof getSessionUser>> = null;
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
+  let sellerTrustScore: Awaited<
+    ReturnType<typeof getSellerTrustScoreForProfile>
+  > = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
-      [similar, sellerTrust] = await Promise.all([
+      const trustSafetyOn = isTrustSafetyEnabled();
+      [similar, sellerTrust, sellerTrustScore] = await Promise.all([
         listSimilarProducts(product.id, {
           categoryId: product.category?.id,
           price: product.price,
           limit: 8,
         }),
         getSellerTrustProfile(product.seller.slug),
+        trustSafetyOn && product.seller.id
+          ? getSellerTrustScoreForProfile(product.seller.id)
+          : Promise.resolve(null),
       ]);
     }
   } catch (err) {
@@ -296,6 +311,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             sellerVerified={Boolean(sellerTrust?.isVerified)}
           />
 
+          {isTrustSafetyEnabled() ? (
+            <WhyTrustBlock productId={product.id} />
+          ) : null}
+
           {sellerTrust ? (
             <PdpTrustBlock
               seller={sellerTrust}
@@ -309,6 +328,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
               pickupEnabled={
                 product.pickupEnabled && product.pickupPoints.length > 0
               }
+            />
+          ) : null}
+
+          {sellerTrustScore ? (
+            <SellerTrustScoreBadge
+              sellerId={sellerTrustScore.sellerId}
+              score={sellerTrustScore.score}
+              label={sellerTrustScore.label}
+              ordersCompleted={sellerTrustScore.ordersCompleted}
+              joinedAt={sellerTrustScore.joinedAt}
             />
           ) : null}
 

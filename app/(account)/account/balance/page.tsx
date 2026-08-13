@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 
+import { SellerPayoutEducation } from "@/components/trust";
 import { AccountShell } from "@/features/account";
 import { getSessionUser, loadUserAuthFromDb } from "@/features/auth";
 import { getSellerBalanceView } from "@/features/finance";
 import { formatPrice } from "@/features/products/mappers";
 import { formatDateMoscowShort } from "@/lib/format/datetime";
 import { ROUTES } from "@/lib/constants";
+import { isTrustSafetyEnabled } from "@/lib/trust-safety";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +36,7 @@ export default async function AccountBalancePage() {
       description="Средства от продаж: ожидание и доступно к выводу (выплаты — позже)."
     >
       <div className="flex flex-col gap-6" data-testid="seller-balance">
+        {isTrustSafetyEnabled() ? <SellerPayoutEducation /> : null}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-border bg-surface/50 p-5">
             <p className="text-sm text-muted-foreground">Ожидает завершения</p>

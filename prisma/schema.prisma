@@ -204,6 +204,7 @@ model User {
   pickupReservations   PickupReservation[]
   buyerConversations   Conversation[]      @relation("ConversationBuyer")
   sentMessages         Message[]
+  disputes             Dispute[]           @relation("BuyerDisputes")
 
   @@index([role])
   @@index([isBlocked])
@@ -241,6 +242,7 @@ model SellerProfile {
   conversations  Conversation[]
   financeTransactions FinanceTransaction[]
   balance        SellerBalance?
+  disputes       Dispute[]
 
   @@index([slug])
   @@index([kind])
@@ -683,6 +685,7 @@ model Order {
   events          OrderEvent[]
   reservations    PickupReservation[]
   financeTransactions FinanceTransaction[]
+  disputes        Dispute[]
 
   @@index([userId])
   @@index([status])
@@ -1185,4 +1188,47 @@ model SeoFacetRule {
   @@unique([characteristicSlug, productTypeSlug])
   @@index([enabled])
   @@map("seo_facet_rules")
+}
+
+// ─── Trust & Safety (TRUST-SAFETY-001) ───────────────────────────────────────
+
+enum DisputeStatus {
+  OPEN
+  SELLER_RESPONSE
+  UNDER_REVIEW
+  RESOLVED_BUYER
+  RESOLVED_SELLER
+}
+
+enum DisputeReason {
+  ITEM_NOT_MATCH
+  DAMAGED
+  NOT_RECEIVED
+  WRONG_ITEM
+}
+
+/// Buyer–seller dispute foundation (does not alter OMS status machine).
+model Dispute {
+  id           String        @id @default(cuid())
+  orderId      String
+  buyerUserId  String
+  sellerId     String
+  reason       DisputeReason
+  status       DisputeStatus @default(OPEN)
+  description  String?
+  resolution   String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  resolvedAt   DateTime?
+
+  order  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer  User          @relation("BuyerDisputes", fields: [buyerUserId], references: [id], onDelete: Restrict)
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([buyerUserId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("disputes")
 }
