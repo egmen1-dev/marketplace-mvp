@@ -1,6 +1,7 @@
 import { requireSellerCabinetAccess } from "@/features/auth";
 import { SellerGrowthDashboardPanel } from "@/features/seller-growth";
 import { SellerMarketplaceInsightsPanel } from "@/features/marketplace-intelligence";
+import { SellerOperatorInsightsPanel } from "@/features/marketplace-operator";
 import {
   getSellerGrowthDashboard,
   isSellerGrowthEnabled,
@@ -9,6 +10,10 @@ import {
   getSellerMarketplaceConnection,
   isMarketplaceIntelligenceEnabled,
 } from "@/lib/marketplace-intelligence";
+import {
+  getSellerOperatorConnection,
+  isMarketplaceOperatorEnabled,
+} from "@/lib/marketplace-operator";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -21,8 +26,9 @@ export default async function AccountGrowthPage() {
   const seller = await requireSellerCabinetAccess(ROUTES.ACCOUNT_GROWTH);
   const growthEnabled = isSellerGrowthEnabled();
   const marketplaceEnabled = isMarketplaceIntelligenceEnabled();
+  const operatorEnabled = isMarketplaceOperatorEnabled();
 
-  if (!growthEnabled && !marketplaceEnabled) {
+  if (!growthEnabled && !marketplaceEnabled && !operatorEnabled) {
     return (
       <div className="flex flex-col gap-4">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
@@ -39,6 +45,7 @@ export default async function AccountGrowthPage() {
   let marketplace: Awaited<
     ReturnType<typeof getSellerMarketplaceConnection>
   > = null;
+  let operator: Awaited<ReturnType<typeof getSellerOperatorConnection>> = null;
   let dbError: string | null = null;
 
   try {
@@ -49,6 +56,9 @@ export default async function AccountGrowthPage() {
       marketplace = await getSellerMarketplaceConnection(
         seller.sellerProfileId,
       );
+    }
+    if (operatorEnabled) {
+      operator = await getSellerOperatorConnection(seller.sellerProfileId);
     }
   } catch (err) {
     console.error("[account/growth]", err);
@@ -71,6 +81,9 @@ export default async function AccountGrowthPage() {
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
         <>
+          {operator ? (
+            <SellerOperatorInsightsPanel connection={operator} />
+          ) : null}
           {marketplace ? (
             <SellerMarketplaceInsightsPanel connection={marketplace} />
           ) : null}

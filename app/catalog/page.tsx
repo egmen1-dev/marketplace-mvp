@@ -39,6 +39,7 @@ import {
 import { getSessionUser } from "@/features/auth";
 import { BuyerRecommendationsSection } from "@/features/buyer-intelligence";
 import { BuyerDemandInsightsStrip } from "@/features/marketplace-intelligence";
+import { BuyerDemandActionsStrip } from "@/features/marketplace-operator";
 import { pluralizeProductWord } from "@/lib/i18n";
 import {
   getSearchBuyerRecommendations,
@@ -48,6 +49,10 @@ import {
   getBuyerDemandInsight,
   isMarketplaceIntelligenceEnabled,
 } from "@/lib/marketplace-intelligence";
+import {
+  getBuyerDemandActions,
+  isMarketplaceOperatorEnabled,
+} from "@/lib/marketplace-operator";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PromotedProductsSection } from "@/features/promotion";
 import {
@@ -89,6 +94,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     ReturnType<typeof getSearchBuyerRecommendations>
   > = null;
   let buyerDemand: Awaited<ReturnType<typeof getBuyerDemandInsight>> = null;
+  let buyerDemandActions: Awaited<ReturnType<typeof getBuyerDemandActions>> = [];
   let dbError: string | null = null;
 
   const session = await getSessionUser();
@@ -142,6 +148,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     }
     if (isMarketplaceIntelligenceEnabled() && filters.q?.trim()) {
       buyerDemand = await getBuyerDemandInsight();
+    }
+    if (isMarketplaceOperatorEnabled() && filters.q?.trim()) {
+      buyerDemandActions = await getBuyerDemandActions();
     }
   } catch (err) {
     console.error("[catalog]", err);
@@ -277,6 +286,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
           {buyerDemand ? (
             <BuyerDemandInsightsStrip insight={buyerDemand} />
+          ) : null}
+
+          {buyerDemandActions.length > 0 ? (
+            <BuyerDemandActionsStrip actions={buyerDemandActions} />
           ) : null}
 
           {buyerRecommendations &&

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Brain,
   BarChart3,
+  ClipboardList,
   LineChart,
   FolderTree,
   LayoutDashboard,
@@ -126,6 +127,12 @@ const NAV_ITEMS = [
     icon: Brain,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_INTELLIGENCE),
+  },
+  {
+    href: ROUTES.ADMIN_OPERATOR,
+    label: "Operator",
+    icon: ClipboardList,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_OPERATOR),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

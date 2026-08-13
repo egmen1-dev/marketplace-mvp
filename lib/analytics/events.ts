@@ -84,6 +84,14 @@ export const ANALYTICS_EVENTS = {
   OPPORTUNITY_VIEW: "opportunity_view",
   /** Marketplace intelligence — recommendation clicked */
   INTELLIGENCE_RECOMMENDATION_CLICK: "recommendation_click",
+  /** Marketplace operator — dashboard viewed */
+  OPERATOR_VIEW: "operator_view",
+  /** Marketplace operator — strategy block viewed */
+  STRATEGY_VIEW: "strategy_view",
+  /** Marketplace operator — action plan viewed */
+  ACTION_PLAN_VIEW: "action_plan_view",
+  /** Marketplace operator — operator marks plan for execution (advisory) */
+  RECOMMENDATION_EXECUTE: "recommendation_execute",
 } as const;
 
 export type AnalyticsEventName =
