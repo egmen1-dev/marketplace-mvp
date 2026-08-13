@@ -66,6 +66,12 @@ export const ANALYTICS_EVENTS = {
   SELLER_OPERATING_DESK_VIEW: "seller_operating_desk_view",
   SELLER_OPERATING_DESK_ISSUE_CLICK: "seller_operating_desk_issue_click",
   SELLER_OPERATING_DESK_ACTION_CLICK: "seller_operating_desk_action_click",
+  /** SELLER-OPERATIONS-WORKSPACE-001 — daily operations (no PII) */
+  SELLER_OPERATIONS_VIEW: "seller_operations_view",
+  SELLER_TASK_OPEN: "seller_task_open",
+  SELLER_TASK_COMPLETE: "seller_task_complete",
+  SELLER_PRIORITY_CLICK: "seller_priority_click",
+  SELLER_AI_ADVICE_CLICK: "seller_ai_advice_click",
 } as const;
 
 export type AnalyticsEventName =

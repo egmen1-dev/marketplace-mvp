@@ -16,6 +16,10 @@ import {
   getSellerJourneyNotifications,
   isSellerJourneyEnabled,
 } from "@/lib/seller-journey";
+import {
+  getSellerOperationsNotifications,
+  isSellerOperationsEnabled,
+} from "@/lib/seller-operations";
 
 export const dynamic = "force-dynamic";
 
@@ -31,18 +35,32 @@ export default async function NotificationsPage() {
     );
   }
 
+  const operationsEnabled = isSellerOperationsEnabled();
+  const journeyEnabled = isSellerJourneyEnabled();
+
   const notifications = [
-    ...(isSellerJourneyEnabled() && user.sellerProfileId
+    ...(operationsEnabled && user.sellerProfileId
+      ? await getSellerOperationsNotifications({
+          sellerProfileId: user.sellerProfileId,
+        })
+      : []),
+    ...(journeyEnabled && user.sellerProfileId && !operationsEnabled
       ? await getSellerJourneyNotifications({
           sellerProfileId: user.sellerProfileId,
         })
       : []),
-    ...(isSellerFirstEntryEnabled() && user.sellerProfileId && !isSellerJourneyEnabled()
+    ...(isSellerFirstEntryEnabled() &&
+    user.sellerProfileId &&
+    !journeyEnabled &&
+    !operationsEnabled
       ? await getSellerFirstEntryNotifications({
           sellerProfileId: user.sellerProfileId,
         })
       : []),
-    ...(isSellerLifecycleEnabled() && user.sellerProfileId && !isSellerJourneyEnabled()
+    ...(isSellerLifecycleEnabled() &&
+    user.sellerProfileId &&
+    !journeyEnabled &&
+    !operationsEnabled
       ? await getSellerLifecycleNotifications({
           sellerProfileId: user.sellerProfileId,
         })
