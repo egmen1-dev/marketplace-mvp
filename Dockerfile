@@ -21,7 +21,6 @@ ARG BUILD_TIME
 ENV RAILWAY_GIT_COMMIT_SHA=$RAILWAY_GIT_COMMIT_SHA
 ENV BUILD_TIME=$BUILD_TIME
 ENV NEXT_TELEMETRY_DISABLED=1
-# Re-generate after full source copy; then Next production build
 RUN npx prisma generate && npm run build
 
 FROM base AS runner
@@ -35,6 +34,8 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/next.config.ts /app/tsconfig.json ./
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
 EXPOSE 8080
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+# Explicit host/port so Railway healthchecks can reach the process.
+CMD ["sh", "-c", "npx prisma migrate deploy && exec npx next start -H 0.0.0.0 -p ${PORT:-8080}"]
