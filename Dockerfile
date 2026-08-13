@@ -29,15 +29,15 @@ ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 WORKDIR /app
 
+# Prisma CLI for migrate deploy at boot (full dependency tree, not partial copy)
+COPY package.json package-lock.json ./
+COPY prisma ./prisma
+RUN npm install prisma@6.19.3 --no-save --ignore-scripts
+
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
-
-# Prisma CLI for migrate deploy at boot
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 COPY scripts/railway-start.sh ./scripts/railway-start.sh
 RUN chmod +x ./scripts/railway-start.sh
