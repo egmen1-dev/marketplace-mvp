@@ -10,6 +10,8 @@ import {
   getAdminPromotionBillingSummary,
   listRecentPaidPromotionOrders,
 } from "@/lib/promotion/billing/queries";
+import { isPromotionIntelligenceEnabled } from "@/lib/promotion/intelligence/flags";
+import { getAdminPromotionIntelligence } from "@/lib/promotion/intelligence/recommendations";
 import { getSellerCampaignPerformanceMap } from "@/lib/promotion/analytics/queries";
 import { isPromotionAnalyticsEnabled } from "@/lib/promotion/analytics/flags";
 import { evaluatePromotionReadiness } from "@/lib/promotion/readiness";
@@ -328,6 +330,10 @@ export async function listAdminPromotionCampaigns(opts?: {
     ? await listActivePromotionPlans()
     : [];
 
+  const intelligence = isPromotionIntelligenceEnabled()
+    ? await getAdminPromotionIntelligence()
+    : null;
+
   return {
     rows,
     counts,
@@ -335,5 +341,6 @@ export async function listAdminPromotionCampaigns(opts?: {
     analyticsRows: analyticsData.rows,
     billing,
     plans,
+    intelligence,
   };
 }

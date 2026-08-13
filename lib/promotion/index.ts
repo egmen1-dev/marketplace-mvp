@@ -1,5 +1,10 @@
 export { isPromotionSurfacesEnabled, isPromotionAnalyticsEnabled } from "./flags";
 export { isPromotionBillingEnabled } from "./billing/flags";
+export { isPromotionIntelligenceEnabled } from "./intelligence/flags";
+export {
+  generatePromotionRecommendations,
+  getAdminPromotionIntelligence,
+} from "./intelligence";
 export {
   createPromotionOrder,
   createCheckoutSessionForPromotionOrder,

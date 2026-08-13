@@ -89,4 +89,5 @@ export type AdminPromotionDashboard = {
   analyticsRows: import("@/lib/promotion/analytics/types").AdminCampaignAnalyticsRow[];
   billing: AdminPromotionBillingDashboard | null;
   plans: PromotionPlanDto[];
+  intelligence: import("@/lib/promotion/intelligence/types").AdminPromotionIntelligenceSummary | null;
 };

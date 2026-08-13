@@ -56,6 +56,12 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_PAYMENT_SUCCESS: "promotion_payment_success",
   /** Promotion billing — paid period ended */
   PROMOTION_EXPIRED: "promotion_expired",
+  /** Promotion intelligence — recommendations block viewed */
+  PROMOTION_RECOMMENDATION_VIEW: "promotion_recommendation_view",
+  /** Promotion intelligence — recommendation row clicked */
+  PROMOTION_RECOMMENDATION_CLICK: "promotion_recommendation_click",
+  /** Promotion intelligence — seller acted on recommendation */
+  PROMOTION_RECOMMENDATION_ACCEPT: "promotion_recommendation_accept",
 } as const;
 
 export type AnalyticsEventName =
