@@ -5,11 +5,14 @@ import {
 } from "@/features/promotion";
 import {
   isPromotionBillingEnabled,
+  isPromotionIntelligenceEnabled,
   isPromotionSurfacesEnabled,
   isPromotionAnalyticsEnabled,
+  generatePromotionRecommendations,
   listActivePromotionPlans,
   listSellerPromotionRows,
 } from "@/lib/promotion";
+import { PromotionRecommendationsPanel } from "@/features/promotion/components/promotion-recommendations-panel";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +34,11 @@ export default async function AccountPromotionsPage() {
   }
 
   const billingEnabled = isPromotionBillingEnabled();
+  const intelligenceEnabled = isPromotionIntelligenceEnabled();
   const plans = billingEnabled ? await listActivePromotionPlans() : [];
+  const recommendationsPayload = intelligenceEnabled
+    ? await generatePromotionRecommendations(seller.sellerProfileId)
+    : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,13 +57,22 @@ export default async function AccountPromotionsPage() {
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
-        <SellerPromotionsPanel
-          rows={rows}
-          surfacesEnabled={isPromotionSurfacesEnabled()}
-          analyticsEnabled={isPromotionAnalyticsEnabled()}
-          billingEnabled={billingEnabled}
-          plans={plans}
-        />
+        <>
+          {intelligenceEnabled && recommendationsPayload ? (
+            <PromotionRecommendationsPanel
+              recommendations={recommendationsPayload.recommendations}
+              billingEnabled={billingEnabled}
+              plans={plans.length > 0 ? plans : recommendationsPayload.plans}
+            />
+          ) : null}
+          <SellerPromotionsPanel
+            rows={rows}
+            surfacesEnabled={isPromotionSurfacesEnabled()}
+            analyticsEnabled={isPromotionAnalyticsEnabled()}
+            billingEnabled={billingEnabled}
+            plans={plans}
+          />
+        </>
       )}
     </div>
   );

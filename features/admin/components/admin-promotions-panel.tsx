@@ -11,6 +11,8 @@ import type {
 } from "@/lib/promotion/analytics/types";
 import type { AdminPromotionBillingDashboard } from "@/lib/promotion/types";
 import type { AdminPromotionFilter, AdminPromotionRow } from "@/lib/promotion/types";
+import type { AdminPromotionIntelligenceSummary } from "@/lib/promotion/intelligence/types";
+import { AdminPromotionIntelligencePanel } from "@/features/admin/components/admin-promotion-intelligence-panel";
 import { formatPrice } from "@/features/products/mappers";
 import { PROMOTION_SURFACE_LABELS } from "@/lib/promotion/surfaces";
 import { ROUTES } from "@/lib/constants";
@@ -24,6 +26,7 @@ type AdminPromotionsPanelProps = {
   analyticsRows: AdminCampaignAnalyticsRow[];
   analyticsEnabled: boolean;
   billing: AdminPromotionBillingDashboard | null;
+  intelligence: AdminPromotionIntelligenceSummary | null;
 };
 
 const FILTERS: { value: AdminPromotionFilter; label: string }[] = [
@@ -51,6 +54,7 @@ export function AdminPromotionsPanel({
   analyticsRows,
   analyticsEnabled,
   billing,
+  intelligence,
 }: AdminPromotionsPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -234,6 +238,10 @@ export function AdminPromotionsPanel({
             </div>
           ) : null}
         </section>
+      ) : null}
+
+      {intelligence ? (
+        <AdminPromotionIntelligencePanel intelligence={intelligence} />
       ) : null}
 
       <div className="flex flex-wrap gap-2">
