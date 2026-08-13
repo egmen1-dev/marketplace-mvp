@@ -12,6 +12,10 @@ import {
   getSellerFirstEntryNotifications,
   isSellerFirstEntryEnabled,
 } from "@/lib/seller-first-entry";
+import {
+  getSellerJourneyNotifications,
+  isSellerJourneyEnabled,
+} from "@/lib/seller-journey";
 
 export const dynamic = "force-dynamic";
 
@@ -28,12 +32,17 @@ export default async function NotificationsPage() {
   }
 
   const notifications = [
-    ...(isSellerFirstEntryEnabled() && user.sellerProfileId
+    ...(isSellerJourneyEnabled() && user.sellerProfileId
+      ? await getSellerJourneyNotifications({
+          sellerProfileId: user.sellerProfileId,
+        })
+      : []),
+    ...(isSellerFirstEntryEnabled() && user.sellerProfileId && !isSellerJourneyEnabled()
       ? await getSellerFirstEntryNotifications({
           sellerProfileId: user.sellerProfileId,
         })
       : []),
-    ...(isSellerLifecycleEnabled() && user.sellerProfileId
+    ...(isSellerLifecycleEnabled() && user.sellerProfileId && !isSellerJourneyEnabled()
       ? await getSellerLifecycleNotifications({
           sellerProfileId: user.sellerProfileId,
         })

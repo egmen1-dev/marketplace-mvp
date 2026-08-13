@@ -59,6 +59,9 @@ export const ANALYTICS_EVENTS = {
   SELLER_ONBOARDING_STEP_COMPLETED: "seller_onboarding_step_completed",
   SELLER_ONBOARDING_COMPLETED: "seller_onboarding_completed",
   SELLER_GUIDE_ACTION_CLICK: "seller_guide_action_click",
+  /** SELLER-JOURNEY-UX-002 — unified seller journey UX (no PII) */
+  SELLER_STEP_VIEW: "seller_step_view",
+  SELLER_NEXT_ACTION_CLICK: "seller_next_action_click",
 } as const;
 
 export type AnalyticsEventName =

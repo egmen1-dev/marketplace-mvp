@@ -7,6 +7,7 @@ import {
   getSellerFirstEntryDashboard,
   isSellerFirstEntryEnabled,
 } from "@/lib/seller-first-entry";
+import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
 
 /** Redirect new sellers to /account/seller-start when eligible. */
 export async function enforceSellerFirstEntry(pathname: string) {
@@ -22,7 +23,7 @@ export async function enforceSellerFirstEntry(pathname: string) {
 }
 
 export async function loadSellerNextStepBanner(sellerProfileId: string) {
-  if (!isSellerFirstEntryEnabled()) return null;
+  if (!isSellerFirstEntryEnabled() || isSellerJourneyEnabled()) return null;
   const data = await getSellerFirstEntryDashboard(sellerProfileId);
   return data.showNextStep ? data : null;
 }

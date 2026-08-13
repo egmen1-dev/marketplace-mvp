@@ -7,8 +7,10 @@ import {
 } from "@/components/ui/card";
 import { AdminSellersTable, listAdminSellers } from "@/features/admin";
 import { AdminSellerActivationPanel } from "@/features/seller-first-entry";
+import { AdminSellerJourneyFunnelPanel } from "@/features/seller-journey";
 import { AdminSellerFunnelPanel } from "@/features/seller-lifecycle";
 import { getAdminSellerActivation } from "@/lib/seller-first-entry";
+import { getAdminSellerJourneyFunnel } from "@/lib/seller-journey";
 import { getAdminSellerFunnel } from "@/lib/seller-lifecycle";
 
 export const metadata = {
@@ -16,10 +18,11 @@ export const metadata = {
 };
 
 export default async function AdminSellersPage() {
-  const [sellers, funnel, activation] = await Promise.all([
+  const [sellers, funnel, activation, journeyFunnel] = await Promise.all([
     listAdminSellers(),
     getAdminSellerFunnel(),
     getAdminSellerActivation(),
+    getAdminSellerJourneyFunnel(),
   ]);
 
   return (
@@ -34,6 +37,18 @@ export default async function AdminSellersPage() {
       </div>
 
       <AdminSellerFunnelPanel funnel={funnel} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Seller Journey Funnel</CardTitle>
+          <CardDescription>
+            Единая воронка пути продавца — от старта до первой выплаты
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AdminSellerJourneyFunnelPanel funnel={journeyFunnel} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

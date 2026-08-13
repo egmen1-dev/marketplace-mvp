@@ -12,6 +12,13 @@ import { slugify } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { isSellerFirstEntryEnabled } from "@/lib/seller-first-entry/flags";
+import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
+
+function sellerEntryRedirect(): string {
+  if (isSellerFirstEntryEnabled()) return ROUTES.ACCOUNT_SELLER_START;
+  if (isSellerJourneyEnabled()) return ROUTES.ACCOUNT_GROWTH;
+  return ROUTES.ACCOUNT_PRODUCTS_NEW;
+}
 
 export type AuthActionState = {
   ok: boolean;
@@ -198,9 +205,7 @@ export async function becomeSellerAction(
     await unstable_update({});
     return {
       ok: true,
-      redirectTo: isSellerFirstEntryEnabled()
-        ? ROUTES.ACCOUNT_SELLER_START
-        : ROUTES.ACCOUNT_PRODUCTS_NEW,
+      redirectTo: sellerEntryRedirect(),
     };
   }
 
@@ -233,9 +238,7 @@ export async function becomeSellerAction(
 
   return {
     ok: true,
-    redirectTo: isSellerFirstEntryEnabled()
-      ? ROUTES.ACCOUNT_SELLER_START
-      : ROUTES.ACCOUNT_PRODUCTS_NEW,
+    redirectTo: sellerEntryRedirect(),
   };
 }
 
