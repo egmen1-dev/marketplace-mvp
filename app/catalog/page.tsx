@@ -40,6 +40,7 @@ import { getSessionUser } from "@/features/auth";
 import { BuyerRecommendationsSection } from "@/features/buyer-intelligence";
 import { BuyerDemandInsightsStrip } from "@/features/marketplace-intelligence";
 import { BuyerDemandActionsStrip } from "@/features/marketplace-operator";
+import { BuyerExecutionActionsStrip } from "@/features/marketplace-execution";
 import { pluralizeProductWord } from "@/lib/i18n";
 import {
   getSearchBuyerRecommendations,
@@ -53,6 +54,10 @@ import {
   getBuyerDemandActions,
   isMarketplaceOperatorEnabled,
 } from "@/lib/marketplace-operator";
+import {
+  getBuyerExecutionActions,
+  isMarketplaceExecutionEnabled,
+} from "@/lib/marketplace-execution";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PromotedProductsSection } from "@/features/promotion";
 import {
@@ -95,6 +100,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   > = null;
   let buyerDemand: Awaited<ReturnType<typeof getBuyerDemandInsight>> = null;
   let buyerDemandActions: Awaited<ReturnType<typeof getBuyerDemandActions>> = [];
+  let buyerExecutionActions: Awaited<
+    ReturnType<typeof getBuyerExecutionActions>
+  > = [];
   let dbError: string | null = null;
 
   const session = await getSessionUser();
@@ -151,6 +159,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     }
     if (isMarketplaceOperatorEnabled() && filters.q?.trim()) {
       buyerDemandActions = await getBuyerDemandActions();
+    }
+    if (isMarketplaceExecutionEnabled() && filters.q?.trim()) {
+      buyerExecutionActions = await getBuyerExecutionActions();
     }
   } catch (err) {
     console.error("[catalog]", err);
@@ -290,6 +301,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
           {buyerDemandActions.length > 0 ? (
             <BuyerDemandActionsStrip actions={buyerDemandActions} />
+          ) : null}
+
+          {buyerExecutionActions.length > 0 ? (
+            <BuyerExecutionActionsStrip actions={buyerExecutionActions} />
           ) : null}
 
           {buyerRecommendations &&

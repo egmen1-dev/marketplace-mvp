@@ -92,6 +92,16 @@ export const ANALYTICS_EVENTS = {
   ACTION_PLAN_VIEW: "action_plan_view",
   /** Marketplace operator — operator marks plan for execution (advisory) */
   RECOMMENDATION_EXECUTE: "recommendation_execute",
+  /** Marketplace execution — dashboard viewed */
+  EXECUTION_VIEW: "execution_view",
+  /** Marketplace execution — plan materialized */
+  EXECUTION_PLAN_CREATED: "execution_plan_created",
+  /** Marketplace execution — human started task */
+  TASK_STARTED: "task_started",
+  /** Marketplace execution — human completed task */
+  TASK_COMPLETED: "task_completed",
+  /** Marketplace execution — all plan tasks done */
+  PLAN_COMPLETED: "plan_completed",
 } as const;
 
 export type AnalyticsEventName =
