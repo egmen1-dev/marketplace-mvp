@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Brain,
   BarChart3,
   LineChart,
   FolderTree,
@@ -112,6 +113,12 @@ const NAV_ITEMS = [
     label: "SEO",
     icon: Search,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_SEO),
+  },
+  {
+    href: ROUTES.ADMIN_BUYERS,
+    label: "Buyers",
+    icon: Brain,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_BUYERS),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

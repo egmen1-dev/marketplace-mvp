@@ -19,6 +19,11 @@ import {
   ProductServiceError,
 } from "@/features/products/queries";
 import { ProductForm, ProductQualityCard } from "@/features/seller";
+import { SellerBuyerFitPanel } from "@/features/buyer-intelligence";
+import {
+  getSellerBuyerFitSummary,
+  isBuyerIntelligenceEnabled,
+} from "@/lib/buyer-intelligence";
 import { computeProductCompletenessScore } from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 
@@ -65,6 +70,11 @@ export default async function EditProductPage({
     console.error("[seller/products/edit]", err);
   }
 
+  const buyerFit =
+    isBuyerIntelligenceEnabled()
+      ? await getSellerBuyerFitSummary(id)
+      : null;
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -95,6 +105,8 @@ export default async function EditProductPage({
           hasSeller: true,
         })}
       />
+
+      {buyerFit ? <SellerBuyerFitPanel summary={buyerFit} /> : null}
 
       <Card>
         <CardHeader>

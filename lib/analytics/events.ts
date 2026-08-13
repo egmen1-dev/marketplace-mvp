@@ -70,6 +70,14 @@ export const ANALYTICS_EVENTS = {
   SELLER_ACTION_CLICK: "seller_action_click",
   /** Seller growth — action completed (navigation) */
   SELLER_ACTION_COMPLETE: "seller_action_complete",
+  /** Buyer intelligence — search intent parsed */
+  BUYER_INTENT_DETECTED: "buyer_intent_detected",
+  /** Buyer intelligence — advisory recommendations block viewed */
+  BUYER_RECOMMENDATION_VIEW: "buyer_recommendation_view",
+  /** Buyer intelligence — advisory recommendation clicked */
+  BUYER_RECOMMENDATION_CLICK: "buyer_recommendation_click",
+  /** Buyer intelligence — product match score computed */
+  BUYER_MATCH_SCORE: "buyer_match_score",
 } as const;
 
 export type AnalyticsEventName =
