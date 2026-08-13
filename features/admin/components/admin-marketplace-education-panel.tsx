@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { BookOpen, ListChecks, MessageSquareText } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,6 +12,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  toggleEducationContentAction,
+  updateEducationContentDescriptionAction,
+  updateEducationContentPriorityAction,
+} from "@/lib/marketplace-education/actions";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
@@ -22,13 +30,15 @@ type AdminMarketplaceEducationPanelProps = {
 export function AdminMarketplaceEducationPanel({
   data,
 }: AdminMarketplaceEducationPanelProps) {
+  const [pending, startTransition] = useTransition();
+  const [edits, setEdits] = useState<Record<string, string>>({});
+
   useEffect(() => {
-    if (!data.enabled) return;
     trackEvent({
       event: ANALYTICS_EVENTS.EDUCATION_VIEW,
       route: ROUTES.ADMIN_EDUCATION,
     });
-  }, [data.enabled]);
+  }, []);
 
   if (!data.enabled) {
     return (
@@ -37,8 +47,42 @@ export function AdminMarketplaceEducationPanel({
           <CardTitle>Education Layer выключен</CardTitle>
           <CardDescription>MARKETPLACE_EDUCATION_ENABLED=false</CardDescription>
         </CardHeader>
+        <CardContent className="text-sm text-muted-foreground">
+          Контент-реестр доступен для preview: {data.content.length} items
+        </CardContent>
       </Card>
     );
+  }
+
+  function toggle(contentId: string, enabled: boolean) {
+    startTransition(async () => {
+      const result = await toggleEducationContentAction(contentId, enabled);
+      if (!result.ok && result.error) window.alert(result.error);
+    });
+  }
+
+  function savePriority(contentId: string, value: string) {
+    const priority = Number(value);
+    if (!Number.isFinite(priority)) return;
+    startTransition(async () => {
+      const result = await updateEducationContentPriorityAction(
+        contentId,
+        priority,
+      );
+      if (!result.ok && result.error) window.alert(result.error);
+    });
+  }
+
+  function saveDescription(contentId: string) {
+    const description = edits[contentId];
+    if (!description?.trim()) return;
+    startTransition(async () => {
+      const result = await updateEducationContentDescriptionAction(
+        contentId,
+        description.trim(),
+      );
+      if (!result.ok && result.error) window.alert(result.error);
+    });
   }
 
   return (
@@ -46,6 +90,73 @@ export function AdminMarketplaceEducationPanel({
       className="flex flex-col gap-6"
       data-testid="admin-marketplace-education-panel"
     >
+      <section data-testid="education-content-cms">
+        <div className="mb-3 flex items-center gap-2">
+          <BookOpen className="size-5 text-primary" aria-hidden />
+          <h3 className="font-heading text-lg font-semibold">Content CMS</h3>
+        </div>
+        <ul className="space-y-3">
+          {data.content.map((item) => (
+            <li
+              key={item.id}
+              className="rounded-xl border border-border px-4 py-3"
+              data-testid={`education-content-${item.id}`}
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium">{item.title}</span>
+                <Badge variant="outline">{item.type}</Badge>
+                <Badge variant="secondary">{item.audience}</Badge>
+                <Badge variant={item.enabled ? "default" : "outline"}>
+                  {item.enabled ? "on" : "off"}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  priority {item.priority}
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {item.description}
+              </p>
+              <div className="mt-3 flex flex-wrap items-end gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={pending}
+                  onClick={() => toggle(item.id, !item.enabled)}
+                >
+                  {item.enabled ? "Выключить" : "Включить"}
+                </Button>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min={0}
+                    max={100}
+                    defaultValue={item.priority}
+                    className="h-8 w-20"
+                    aria-label={`Priority ${item.id}`}
+                    onBlur={(e) => savePriority(item.id, e.target.value)}
+                  />
+                </div>
+                <Input
+                  className="h-8 min-w-[220px] flex-1"
+                  placeholder="Редактировать описание"
+                  value={edits[item.id] ?? item.description}
+                  onChange={(e) =>
+                    setEdits((prev) => ({ ...prev, [item.id]: e.target.value }))
+                  }
+                />
+                <Button
+                  size="sm"
+                  disabled={pending}
+                  onClick={() => saveDescription(item.id)}
+                >
+                  Сохранить
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <section data-testid="education-guides">
         <div className="mb-3 flex items-center gap-2">
           <BookOpen className="size-5 text-primary" aria-hidden />
@@ -61,7 +172,7 @@ export function AdminMarketplaceEducationPanel({
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-xs text-muted-foreground">
-                {guide.steps.length} steps · {guide.description}
+                {guide.steps.length} steps
               </CardContent>
             </Card>
           ))}

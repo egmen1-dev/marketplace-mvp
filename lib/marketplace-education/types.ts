@@ -1,4 +1,13 @@
-export type EducationTarget = "SELLER" | "BUYER" | "ADMIN";
+export type EducationAudience = "SELLER" | "BUYER" | "ADMIN";
+
+/** @deprecated Use EducationAudience */
+export type EducationTarget = EducationAudience;
+
+export type EducationContentType =
+  | "GUIDE"
+  | "TOOLTIP"
+  | "CHECKLIST"
+  | "COACH_MESSAGE";
 
 export type EducationContext =
   | "ONBOARDING"
@@ -12,6 +21,27 @@ export type EducationContext =
   | "EMPTY_STATE"
   | "ADMIN";
 
+export type EducationContentStep = {
+  id: string;
+  title: string;
+  description: string;
+  href?: string;
+  ctaLabel?: string;
+};
+
+/** Unified education content model for guides, tooltips, checklists, coach messages. */
+export type EducationContent = {
+  id: string;
+  type: EducationContentType;
+  audience: EducationAudience;
+  context: EducationContext;
+  title: string;
+  description: string;
+  steps: EducationContentStep[];
+  priority: number;
+  enabled: boolean;
+};
+
 export type EducationGuideStep = {
   id: string;
   title: string;
@@ -22,12 +52,13 @@ export type EducationGuideStep = {
 
 export type EducationGuide = {
   id: string;
-  target: EducationTarget;
+  target: EducationAudience;
   title: string;
   description: string;
   steps: EducationGuideStep[];
   context: EducationContext;
   priority: number;
+  enabled?: boolean;
 };
 
 export type EducationTooltipContent = {
@@ -36,7 +67,9 @@ export type EducationTooltipContent = {
   title: string;
   body: string;
   context: EducationContext;
-  target: EducationTarget;
+  target: EducationAudience;
+  priority?: number;
+  enabled?: boolean;
 };
 
 export type EducationChecklistItem = {
@@ -61,12 +94,22 @@ export type QualityFactorExplanation = {
   score: number;
   max: number;
   whyImportant: string;
+  goodPoints: string[];
+  improvePoints: string[];
+  nextAction: string | null;
+  /** @deprecated Use improvePoints */
   fixHint: string | null;
 };
 
 export type QualityScoreExplanation = {
   score: number;
   factors: QualityFactorExplanation[];
+};
+
+export type SellerCoachMetrics = {
+  views: number;
+  addToCart: number;
+  sales: number;
 };
 
 export type SellerCoachStep = {
@@ -77,10 +120,14 @@ export type SellerCoachStep = {
 
 export type SellerCoachRecommendation = {
   headline: string;
+  productName?: string;
+  metrics?: SellerCoachMetrics;
+  analysis: string;
   summary: string;
   steps: SellerCoachStep[];
   href?: string;
   ctaLabel?: string;
+  sources?: string[];
 };
 
 export type BuyerHelpPrompt = {
@@ -97,9 +144,10 @@ export type BuyerEducationTopic = {
 
 export type MarketplaceEducationDashboard = {
   enabled: boolean;
+  content: EducationContent[];
   guides: EducationGuide[];
   tooltips: EducationTooltipContent[];
   checklists: EducationChecklist[];
 };
 
-export const EDUCATION_ENTITY_TYPE = "MARKETPLACE_EDUCATION_PROGRESS";
+export const EDUCATION_ENTITY_TYPE = "MARKETPLACE_EDUCATION_CONTENT";

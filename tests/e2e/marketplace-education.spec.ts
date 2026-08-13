@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { attachErrorCollector, DEMO, signIn } from "./helpers";
 
-test.describe("UX-EDUCATION-001 marketplace guidance layer", () => {
+test.describe("MARKETPLACE-EDUCATION-001 AI marketplace coach layer", () => {
   test.skip(
     process.env.MARKETPLACE_EDUCATION_ENABLED !== "true",
     "Requires MARKETPLACE_EDUCATION_ENABLED=true",
@@ -47,6 +47,16 @@ test.describe("UX-EDUCATION-001 marketplace guidance layer", () => {
     errors.assertClean();
   });
 
+  test("seller sees AI coach on growth page", async ({ page }) => {
+    const errors = attachErrorCollector(page);
+    await signIn(page, DEMO.sellerEmail);
+    await page.goto("/account/growth");
+    await expect(page.getByTestId("seller-ai-coach-panel")).toBeVisible({
+      timeout: 20_000,
+    });
+    errors.assertClean();
+  });
+
   test("admin opens education content manager", async ({ page }) => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.adminEmail);
@@ -54,6 +64,7 @@ test.describe("UX-EDUCATION-001 marketplace guidance layer", () => {
     await expect(
       page.getByTestId("admin-marketplace-education-panel"),
     ).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("education-content-cms")).toBeVisible();
     await expect(page.getByTestId("education-guides")).toBeVisible();
     errors.assertClean();
   });

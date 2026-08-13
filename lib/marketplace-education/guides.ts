@@ -1,9 +1,8 @@
 import { ROUTES } from "@/lib/constants";
 
-import { EDUCATION_CONCEPTS } from "./concepts";
 import type { EducationGuide } from "./types";
 
-/** Static education guides — integrated into user flows, not a separate help center. */
+/** Static education guides embedded in user flows. */
 export function buildEducationGuides(): EducationGuide[] {
   return [
     {
@@ -14,35 +13,35 @@ export function buildEducationGuides(): EducationGuide[] {
         "Пошаговый путь нового продавца — от карточки до первых заказов.",
       context: "ONBOARDING",
       priority: 100,
+      enabled: true,
       steps: [
         {
           id: "step-create-product",
-          title: "Создайте товар",
-          explanation: EDUCATION_CONCEPTS.seller.goodListing,
+          title: "Создать первый товар",
+          explanation: "Карточка товара — это ваша витрина",
           href: ROUTES.ACCOUNT_PRODUCTS_NEW,
           ctaLabel: "Создать товар",
         },
         {
           id: "step-add-photos",
-          title: "Добавьте фото",
-          explanation: EDUCATION_CONCEPTS.seller.photos,
+          title: "Добавить фотографии",
+          explanation: "Покупатель сначала оценивает изображение",
         },
         {
           id: "step-characteristics",
-          title: "Заполните характеристики",
-          explanation: EDUCATION_CONCEPTS.seller.characteristics,
+          title: "Заполнить характеристики",
+          explanation: "Характеристики помогают найти товар",
         },
         {
           id: "step-stock",
-          title: "Настройте остатки",
-          explanation: EDUCATION_CONCEPTS.seller.stock,
+          title: "Настроить остатки",
+          explanation: "Нет товара — нет продаж",
         },
         {
-          id: "step-promote",
-          title: "Продвигайте лучшие товары",
-          explanation: EDUCATION_CONCEPTS.seller.promotion,
-          href: ROUTES.ACCOUNT_PROMOTIONS,
-          ctaLabel: "Продвижение",
+          id: "step-first-sale",
+          title: "Получить первую продажу",
+          explanation: "Первые продажи создают доверие",
+          href: ROUTES.ACCOUNT_GROWTH,
         },
       ],
     },
@@ -53,27 +52,28 @@ export function buildEducationGuides(): EducationGuide[] {
       description: "Что проверить перед покупкой и что происходит после заказа.",
       context: "PDP",
       priority: 90,
+      enabled: true,
       steps: [
         {
           id: "step-check-product",
           title: "Проверьте характеристики",
-          explanation: EDUCATION_CONCEPTS.buyer.productFit,
+          explanation:
+            "Сравните параметры с вашей задачей — советы не меняют поиск.",
         },
         {
           id: "step-trust-seller",
           title: "Оцените продавца",
-          explanation:
-            "Смотрите метрики продавца, условия доставки и самовывоза.",
+          explanation: "Смотрите метрики, доставку и условия самовывоза.",
         },
         {
           id: "step-safe-pay",
           title: "Оплатите через площадку",
-          explanation: EDUCATION_CONCEPTS.buyer.safePurchase,
+          explanation: "Данные карты не передаются продавцу напрямую.",
         },
         {
           id: "step-after-order",
           title: "Следите за статусом заказа",
-          explanation: EDUCATION_CONCEPTS.buyer.afterOrder,
+          explanation: "После покупки статус виден в кабинете.",
           href: ROUTES.ORDERS,
           ctaLabel: "Мои покупки",
         },
@@ -83,21 +83,20 @@ export function buildEducationGuides(): EducationGuide[] {
       id: "guide-admin-education",
       target: "ADMIN",
       title: "Управление обучающим контентом",
-      description:
-        "Guides, tooltips и onboarding steps — только UX-слой, без изменения логики.",
+      description: "Guides, tooltips, checklists — только UX-слой.",
       context: "ADMIN",
       priority: 10,
+      enabled: true,
       steps: [
         {
           id: "step-preview-guides",
-          title: "Просмотр guides",
-          explanation: "Guides встроены в сценарии продавца и покупателя.",
+          title: "Список контента",
+          explanation: "Все материалы в одном реестре EducationContent.",
         },
         {
-          id: "step-preview-tooltips",
-          title: "Tooltips",
-          explanation:
-            "Контекстные подсказки у Quality Score, Promotion, Balance и Analytics.",
+          id: "step-toggle",
+          title: "Включение и приоритет",
+          explanation: "Контент можно включать, выключать и менять priority.",
         },
       ],
     },
@@ -109,7 +108,7 @@ export function guidesForTarget(
   target: EducationGuide["target"],
 ): EducationGuide[] {
   return guides
-    .filter((g) => g.target === target)
+    .filter((g) => g.target === target && (g.enabled ?? true))
     .sort((a, b) => b.priority - a.priority);
 }
 
@@ -117,9 +116,10 @@ export function guideByContext(
   guides: EducationGuide[],
   context: EducationGuide["context"],
 ): EducationGuide | null {
+  const enabled = guides.filter((g) => g.enabled ?? true);
   return (
-    guides.find((g) => g.context === context) ??
-    guides.sort((a, b) => b.priority - a.priority)[0] ??
+    enabled.find((g) => g.context === context) ??
+    [...enabled].sort((a, b) => b.priority - a.priority)[0] ??
     null
   );
 }

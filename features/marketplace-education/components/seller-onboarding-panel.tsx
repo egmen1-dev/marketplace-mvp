@@ -15,7 +15,7 @@ import {
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
-import { onboardingProgressPercent } from "@/lib/marketplace-education/progress";
+import { onboardingProgressPercent } from "@/lib/marketplace-education/coach";
 import type { EducationChecklist } from "@/lib/marketplace-education/types";
 
 type SellerOnboardingPanelProps = {

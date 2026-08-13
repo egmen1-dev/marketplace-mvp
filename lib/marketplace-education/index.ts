@@ -1,8 +1,22 @@
 export { isMarketplaceEducationEnabled } from "./flags";
-export { EDUCATION_CONCEPTS } from "./concepts";
+export {
+  toggleEducationContentAction,
+  updateEducationContentDescriptionAction,
+  updateEducationContentPriorityAction,
+} from "./actions";
+export type { EducationActionResult } from "./actions";
+export {
+  buildSellerCoachMessage,
+  explainQualityScore,
+  getFinanceEducationCopy,
+  onboardingProgressPercent,
+} from "./coach";
 export {
   buildSellerOnboardingChecklist,
+  checklistToContent,
   emptyStateEducation,
+  guideToContent,
+  tooltipToContent,
 } from "./checklists";
 export type { SellerOnboardingSignals } from "./checklists";
 export {
@@ -11,26 +25,23 @@ export {
   guidesForTarget,
 } from "./guides";
 export {
-  explainQualityScore,
-  guideProgressPercent,
-  onboardingProgressPercent,
-} from "./progress";
-export {
   assertBuyerEducationView,
   assertMarketplaceEducationAccess,
   assertSellerEducationView,
   MarketplaceEducationForbiddenError,
 } from "./permissions";
 export {
+  applyContentOverrides,
+  buildEducationContentRegistry,
   countActiveSellerProducts,
   getBuyerEducationTopics,
   getBuyerHelpPrompts,
-  getFinanceEducationCopy,
   getMarketplaceEducationDashboard,
   getQualityScoreExplanation,
   getSellerCoachRecommendation,
   getSellerGrowthCoach,
   getSellerOnboardingChecklist,
+  selectEducationContent,
 } from "./queries";
 export {
   buildEducationTooltips,
@@ -41,8 +52,12 @@ export {
 export type {
   BuyerEducationTopic,
   BuyerHelpPrompt,
+  EducationAudience,
   EducationChecklist,
   EducationChecklistItem,
+  EducationContent,
+  EducationContentStep,
+  EducationContentType,
   EducationContext,
   EducationGuide,
   EducationGuideStep,
@@ -51,6 +66,7 @@ export type {
   MarketplaceEducationDashboard,
   QualityFactorExplanation,
   QualityScoreExplanation,
+  SellerCoachMetrics,
   SellerCoachRecommendation,
   SellerCoachStep,
 } from "./types";

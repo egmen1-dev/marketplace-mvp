@@ -30,7 +30,7 @@ export function EducationTooltip({
   useEffect(() => {
     if (!open) return;
     trackEvent({
-      event: ANALYTICS_EVENTS.EDUCATION_TOOLTIP_OPENED,
+      event: ANALYTICS_EVENTS.EDUCATION_TOOLTIP_OPEN,
       route,
       entityId: tooltipId,
     });

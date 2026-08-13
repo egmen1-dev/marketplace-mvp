@@ -1,27 +1,123 @@
 import { ProductStatus } from "@prisma/client";
 
 import type { CompletenessResult } from "@/lib/conversion/completeness";
-import { ROUTES, sellerProductEditPath } from "@/lib/constants";
-import { isSellerGrowthEnabled } from "@/lib/seller-growth/flags";
 import { loadSellerHealthSnapshot } from "@/lib/seller-growth/seller-health";
 import { prisma } from "@/lib/prisma";
 
 import {
   buildSellerOnboardingChecklist,
+  checklistToContent,
+  guideToContent,
+  tooltipToContent,
   type SellerOnboardingSignals,
 } from "./checklists";
+import {
+  buildSellerCoachMessage,
+  explainQualityScore,
+  getFinanceEducationCopy,
+} from "./coach";
 import { buildEducationGuides } from "./guides";
 import { isMarketplaceEducationEnabled } from "./flags";
-import { explainQualityScore } from "./progress";
-import { buildEducationTooltips } from "./tooltips";
+import { buildEducationTooltips, selectEducationContent } from "./tooltips";
 import type {
   BuyerEducationTopic,
   BuyerHelpPrompt,
   EducationChecklist,
+  EducationContent,
   MarketplaceEducationDashboard,
   QualityScoreExplanation,
   SellerCoachRecommendation,
 } from "./types";
+import { EDUCATION_ENTITY_TYPE } from "./types";
+
+type ContentOverride = {
+  enabled?: boolean;
+  priority?: number;
+  description?: string;
+};
+
+async function loadContentOverrides(): Promise<Map<string, ContentOverride>> {
+  const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+  const rows = await prisma.adminActionLog.findMany({
+    where: {
+      entityType: EDUCATION_ENTITY_TYPE,
+      createdAt: { gte: since },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 500,
+    select: { entityId: true, action: true, meta: true },
+  });
+
+  const map = new Map<string, ContentOverride>();
+  for (const row of rows) {
+    const current = map.get(row.entityId) ?? {};
+    if (row.action === "CONTENT_ENABLED") {
+      current.enabled = true;
+    } else if (row.action === "CONTENT_DISABLED") {
+      current.enabled = false;
+    } else if (row.action === "CONTENT_PRIORITY" && row.meta) {
+      try {
+        const meta = JSON.parse(row.meta) as { priority?: number };
+        if (meta.priority != null) current.priority = meta.priority;
+      } catch {
+        /* ignore */
+      }
+    } else if (row.action === "CONTENT_EDIT" && row.meta) {
+      try {
+        const meta = JSON.parse(row.meta) as { description?: string };
+        if (meta.description) current.description = meta.description;
+      } catch {
+        /* ignore */
+      }
+    }
+    map.set(row.entityId, current);
+  }
+  return map;
+}
+
+export function buildEducationContentRegistry(): EducationContent[] {
+  const guides = buildEducationGuides().map(guideToContent);
+  const tooltips = buildEducationTooltips().map(tooltipToContent);
+  const checklist = checklistToContent(
+    buildSellerOnboardingChecklist({
+      hasProduct: false,
+      hasPhotos: false,
+      hasCharacteristics: false,
+      hasStockConfigured: false,
+      hasFirstSale: false,
+    }),
+  );
+  const coachMessage: EducationContent = {
+    id: "coach-seller-growth",
+    type: "COACH_MESSAGE",
+    audience: "SELLER",
+    context: "GROWTH",
+    title: "Ваш AI помощник",
+    description: "Контекстные рекомендации на основе просмотров, корзины и продаж.",
+    priority: 95,
+    enabled: true,
+    steps: [],
+  };
+  return [...guides, ...tooltips, checklist, coachMessage];
+}
+
+export async function applyContentOverrides(
+  content: EducationContent[],
+): Promise<EducationContent[]> {
+  const overrides = await loadContentOverrides();
+  return content.map((item) => {
+    const patch = overrides.get(item.id);
+    if (!patch) return item;
+    return {
+      ...item,
+      enabled: patch.enabled ?? item.enabled,
+      priority: patch.priority ?? item.priority,
+      description: patch.description ?? item.description,
+    };
+  });
+}
+
+export { selectEducationContent };
 
 async function loadSellerOnboardingSignals(
   sellerProfileId: string,
@@ -31,8 +127,7 @@ async function loadSellerOnboardingSignals(
     select: {
       id: true,
       stock: true,
-      promotionCampaign: { select: { id: true } },
-      _count: { select: { images: true, characteristicValues: true } },
+      _count: { select: { images: true, characteristicValues: true, orderItems: true } },
     },
     take: 50,
   });
@@ -43,14 +138,14 @@ async function loadSellerOnboardingSignals(
     (p) => p._count.characteristicValues >= 2,
   );
   const hasStockConfigured = products.some((p) => p.stock > 0);
-  const hasPromotion = products.some((p) => Boolean(p.promotionCampaign));
+  const hasFirstSale = products.some((p) => p._count.orderItems > 0);
 
   return {
     hasProduct,
     hasPhotos,
     hasCharacteristics,
     hasStockConfigured,
-    hasPromotion,
+    hasFirstSale,
   };
 }
 
@@ -73,83 +168,8 @@ export async function getSellerCoachRecommendation(
   sellerProfileId: string,
 ): Promise<SellerCoachRecommendation | null> {
   if (!isMarketplaceEducationEnabled()) return null;
-
   const health = await loadSellerHealthSnapshot(sellerProfileId);
-  if (!health || health.products.length === 0) {
-    return {
-      headline: "Ваш следующий шаг",
-      summary: "Создайте первый товар — без карточки покупатели не найдут ваш магазин.",
-      steps: [
-        {
-          order: 1,
-          text: "Создайте товар с понятным названием",
-          href: ROUTES.ACCOUNT_PRODUCTS_NEW,
-        },
-        {
-          order: 2,
-          text: "Добавьте 3+ фото",
-        },
-      ],
-      href: ROUTES.ACCOUNT_PRODUCTS_NEW,
-      ctaLabel: "Создать товар",
-    };
-  }
-
-  const weakest = [...health.products].sort(
-    (a, b) => a.qualityScore - b.qualityScore,
-  )[0];
-
-  const product = weakest;
-  const steps: SellerCoachRecommendation["steps"] = [];
-
-  if (product.blockers.some((b) => b.toLowerCase().includes("фото"))) {
-    steps.push({
-      order: steps.length + 1,
-      text: "Добавить качественные фото",
-      href: sellerProductEditPath(product.id),
-    });
-  }
-  if (
-    product.blockers.some((b) =>
-      b.toLowerCase().includes("характеристик"),
-    )
-  ) {
-    steps.push({
-      order: steps.length + 1,
-      text: "Заполнить ключевые характеристики",
-      href: sellerProductEditPath(product.id),
-    });
-  }
-  if (!product.isPromoted && product.ready) {
-    steps.push({
-      order: steps.length + 1,
-      text: "Рассмотреть продвижение для большего числа показов",
-      href: ROUTES.ACCOUNT_PROMOTIONS,
-    });
-  }
-
-  if (steps.length === 0) {
-    steps.push({
-      order: 1,
-      text: "Проверьте цену и описание — карточка уже в хорошем состоянии",
-      href: sellerProductEditPath(product.id),
-    });
-  }
-
-  const viewsHint =
-    product.views >= 10 && product.orderCount === 0
-      ? "У вас хороший товар, но мало покупок."
-      : product.views < 10
-        ? "У товара мало просмотров — улучшите видимость карточки."
-        : "Продолжайте улучшать карточки — это повышает доверие покупателей.";
-
-  return {
-    headline: "Ваш следующий шаг",
-    summary: viewsHint,
-    steps,
-    href: sellerProductEditPath(product.id),
-    ctaLabel: "Исправить",
-  };
+  return buildSellerCoachMessage({ health, sellerProfileId });
 }
 
 export function getBuyerEducationTopics(): BuyerEducationTopic[] {
@@ -159,22 +179,22 @@ export function getBuyerEducationTopics(): BuyerEducationTopic[] {
     {
       id: "buyer-why-product",
       title: "Почему этот товар?",
-      body: "Сравните характеристики, состояние и цену с вашей задачей. Советы ЛОТ не меняют поиск и ранжирование.",
+      body: "Сравните характеристики и цену с вашей задачей — это advisory, не меняет поиск.",
     },
     {
       id: "buyer-why-seller",
       title: "Почему этот продавец?",
-      body: "Смотрите метрики продавца, условия доставки и самовывоза. Новые продавцы проходят проверку площадки.",
+      body: "Смотрите метрики продавца, доставку и самовывоз.",
     },
     {
       id: "buyer-protection",
-      title: "Как работает защита покупателя?",
-      body: "Оплата через площадку, статус заказа в кабинете, условия возврата в пользовательском соглашении.",
+      title: "Как работает защита?",
+      body: "Оплата через площадку, статус заказа в кабинете, условия возврата в соглашении.",
     },
     {
       id: "buyer-delivery",
-      title: "Когда я получу товар?",
-      body: "Срок зависит от способа получения: доставка или самовывоз. Точные условия указаны на карточке и у продавца.",
+      title: "Когда доставка?",
+      body: "Срок зависит от способа получения — доставка или самовывоз на карточке.",
     },
   ];
 }
@@ -186,13 +206,19 @@ export function getBuyerHelpPrompts(productTitle: string): BuyerHelpPrompt[] {
     {
       id: "help-apartment",
       question: "Подойдёт ли для ремонта квартиры?",
-      answerPreview: `Сравните мощность, комплектацию и отзывы для «${productTitle.slice(0, 40)}». Это рекомендация, не изменение поиска.`,
+      answerPreview: `Сравните мощность и комплектацию «${productTitle.slice(0, 40)}» с вашей задачей. Только рекомендация.`,
     },
     {
       id: "help-compare",
       question: "Чем отличается от другого товара?",
       answerPreview:
-        "Откройте характеристики и похожие товары ниже — так проще сравнить без смены поискового запроса.",
+        "Откройте характеристики и похожие товары ниже — без изменения поиска.",
+    },
+    {
+      id: "help-beginner",
+      question: "Что выбрать новичку?",
+      answerPreview:
+        "Для первой покупки смотрите базовые характеристики, состояние и условия возврата.",
     },
   ];
 }
@@ -201,10 +227,13 @@ export async function getMarketplaceEducationDashboard(): Promise<MarketplaceEdu
   const enabled = isMarketplaceEducationEnabled();
   const guides = buildEducationGuides();
   const tooltips = buildEducationTooltips();
+  const baseContent = buildEducationContentRegistry();
+  const content = enabled ? await applyContentOverrides(baseContent) : baseContent;
 
   if (!enabled) {
     return {
       enabled: false,
+      content,
       guides,
       tooltips,
       checklists: [],
@@ -220,16 +249,19 @@ export async function getMarketplaceEducationDashboard(): Promise<MarketplaceEdu
     ? [await getSellerOnboardingChecklist(sampleSeller.id)].filter(
         (c): c is EducationChecklist => c !== null,
       )
-    : [buildSellerOnboardingChecklist({
-        hasProduct: false,
-        hasPhotos: false,
-        hasCharacteristics: false,
-        hasStockConfigured: false,
-        hasPromotion: false,
-      })];
+    : [
+        buildSellerOnboardingChecklist({
+          hasProduct: false,
+          hasPhotos: false,
+          hasCharacteristics: false,
+          hasStockConfigured: false,
+          hasFirstSale: false,
+        }),
+      ];
 
   return {
     enabled: true,
+    content,
     guides,
     tooltips,
     checklists,
@@ -239,36 +271,10 @@ export async function getMarketplaceEducationDashboard(): Promise<MarketplaceEdu
 export async function getSellerGrowthCoach(
   sellerProfileId: string,
 ): Promise<SellerCoachRecommendation | null> {
-  if (!isMarketplaceEducationEnabled()) return null;
-  if (isSellerGrowthEnabled()) {
-    return getSellerCoachRecommendation(sellerProfileId);
-  }
   return getSellerCoachRecommendation(sellerProfileId);
 }
 
-/** Finance education copy — UX only, no balance logic. */
-export function getFinanceEducationCopy(): {
-  title: string;
-  steps: Array<{ label: string; body: string }>;
-} {
-  return {
-    title: "Почему деньги ожидаются?",
-    steps: [
-      {
-        label: "Покупатель оплатил",
-        body: "Оплата прошла через площадку — средства зафиксированы по заказу.",
-      },
-      {
-        label: "Временное удержание",
-        body: "Деньги удерживаются до подтверждения получения — это защищает покупателя и продавца.",
-      },
-      {
-        label: "Доступность средств",
-        body: "После подтверждения получения сумма становится доступной для вывода по правилам площадки.",
-      },
-    ],
-  };
-}
+export { getFinanceEducationCopy };
 
 export async function countActiveSellerProducts(
   sellerProfileId: string,
