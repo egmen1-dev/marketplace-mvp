@@ -42,7 +42,7 @@ export function BecomeSellerButton({
         toastError(msg);
         return;
       }
-      router.push(redirectTo);
+      router.push(result.redirectTo ?? redirectTo);
       router.refresh();
     });
   }

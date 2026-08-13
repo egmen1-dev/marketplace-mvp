@@ -41,8 +41,10 @@ export const ROUTES = {
   ACCOUNT_PAYOUTS: "/account/payouts",
   /** Seller AI command center + journey */
   ACCOUNT_COMMAND_CENTER: "/account/command-center",
-  /** Intelligent promotion dashboard */
+  /** Seller promotion hub (campaigns, visibility) */
   ACCOUNT_PROMOTION_CENTER: "/account/promotion-center",
+  /** Seller first experience — «Старт продавца» */
+  ACCOUNT_SELLER_START: "/account/seller-start",
   /** Seller pickup warehouse addresses */
   ACCOUNT_PICKUP_POINTS: "/account/pickup-points",
   ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
@@ -133,6 +135,8 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/balance",
   "/account/payouts",
   "/account/command-center",
+  "/account/promotion-center",
+  "/account/seller-start",
 ] as const;
 
 export function isSellerCabinetPath(pathname: string): boolean {

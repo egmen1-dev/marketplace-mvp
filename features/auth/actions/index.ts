@@ -11,11 +11,13 @@ import { signInSchema, signUpSchema } from "@/features/auth/schemas";
 import { slugify } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { isSellerFirstEntryEnabled } from "@/lib/seller-first-entry/flags";
 
 export type AuthActionState = {
   ok: boolean;
   error?: string;
   fieldErrors?: Record<string, string[]>;
+  redirectTo?: string;
 };
 
 async function uniqueStoreSlug(base: string): Promise<string> {
@@ -194,7 +196,12 @@ export async function becomeSellerAction(
 
   if (dbUser.role === UserRole.SELLER && dbUser.sellerProfileId) {
     await unstable_update({});
-    return { ok: true };
+    return {
+      ok: true,
+      redirectTo: isSellerFirstEntryEnabled()
+        ? ROUTES.ACCOUNT_SELLER_START
+        : ROUTES.ACCOUNT_PRODUCTS_NEW,
+    };
   }
 
   const displayName = user.name ?? user.email.split("@")[0] ?? "Продавец";
@@ -224,7 +231,12 @@ export async function becomeSellerAction(
   // Refresh JWT claims so AuthNav / middleware see SELLER immediately.
   await unstable_update({});
 
-  return { ok: true };
+  return {
+    ok: true,
+    redirectTo: isSellerFirstEntryEnabled()
+      ? ROUTES.ACCOUNT_SELLER_START
+      : ROUTES.ACCOUNT_PRODUCTS_NEW,
+  };
 }
 
 export async function signOutAction(): Promise<void> {

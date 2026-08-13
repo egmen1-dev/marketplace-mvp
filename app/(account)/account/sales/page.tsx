@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { requireSellerCabinetAccess } from "@/features/auth";
 import {
   formatOrderDate,
   formatOrderStatus,
@@ -19,11 +18,13 @@ import {
 import { formatPrice } from "@/features/products/mappers";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import {
   getSellerOrderCounters,
   listSellerOrders,
 } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +51,7 @@ type PageProps = {
 };
 
 export default async function SellerOrdersPage({ searchParams }: PageProps) {
-  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_ORDERS);
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_SALES);
   const params = await searchParams;
 
   const bucketRaw = params.bucket?.toUpperCase() ?? "ALL";
@@ -104,6 +105,8 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
       <Suspense fallback={null}>
         <SellerToastFlash />
       </Suspense>
+
+      <SellerFirstEntryBannerSlot sellerProfileId={seller.sellerProfileId} />
 
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">

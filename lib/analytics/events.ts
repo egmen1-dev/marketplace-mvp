@@ -53,6 +53,12 @@ export const ANALYTICS_EVENTS = {
   SELLER_ACTIVATION_COMPLETED: "seller_activation_completed",
   SELLER_FIRST_SALE: "seller_first_sale",
   SELLER_FIRST_PAYOUT: "seller_first_payout",
+  /** SELLER-FIRST-ENTRY-001 — seller activation events (no PII) */
+  SELLER_ENTRY_STARTED: "seller_entry_started",
+  SELLER_ONBOARDING_STARTED: "seller_onboarding_started",
+  SELLER_ONBOARDING_STEP_COMPLETED: "seller_onboarding_step_completed",
+  SELLER_ONBOARDING_COMPLETED: "seller_onboarding_completed",
+  SELLER_GUIDE_ACTION_CLICK: "seller_guide_action_click",
 } as const;
 
 export type AnalyticsEventName =

@@ -8,6 +8,10 @@ import {
   getSellerLifecycleNotifications,
   isSellerLifecycleEnabled,
 } from "@/lib/seller-lifecycle";
+import {
+  getSellerFirstEntryNotifications,
+  isSellerFirstEntryEnabled,
+} from "@/lib/seller-first-entry";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +28,11 @@ export default async function NotificationsPage() {
   }
 
   const notifications = [
+    ...(isSellerFirstEntryEnabled() && user.sellerProfileId
+      ? await getSellerFirstEntryNotifications({
+          sellerProfileId: user.sellerProfileId,
+        })
+      : []),
     ...(isSellerLifecycleEnabled() && user.sellerProfileId
       ? await getSellerLifecycleNotifications({
           sellerProfileId: user.sellerProfileId,
