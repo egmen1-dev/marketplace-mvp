@@ -162,6 +162,16 @@ export const ANALYTICS_EVENTS = {
   PRIORITY_VIEW: "priority_view",
   /** Command Center — priority CTA clicked */
   PRIORITY_ACTION_CLICK: "priority_action_click",
+  /** Seller Promotion Center — dashboard viewed */
+  PROMOTION_CENTER_VIEW: "promotion_center_view",
+  /** Seller Promotion Center — product recommendation viewed */
+  PROMOTION_PRODUCT_RECOMMENDATION_VIEW: "promotion_product_recommendation_view",
+  /** Seller Promotion Center — campaign detail opened */
+  PROMOTION_CAMPAIGN_OPEN: "promotion_campaign_open",
+  /** Seller Promotion Center — budget recommendation viewed */
+  PROMOTION_BUDGET_RECOMMENDATION_VIEW: "promotion_budget_recommendation_view",
+  /** Seller Promotion Center — AI advice clicked */
+  PROMOTION_AI_ADVICE_CLICK: "promotion_ai_advice_click",
 } as const;
 
 export type AnalyticsEventName =

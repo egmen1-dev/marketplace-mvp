@@ -88,6 +88,7 @@ export const ROUTES = {
   ADMIN_COMMAND_CENTER: "/admin/command-center",
   ACCOUNT_COMMAND_CENTER: "/account/command-center",
   ACCOUNT_PROMOTIONS: "/account/promotions",
+  ACCOUNT_PROMOTION_CENTER: "/account/promotion-center",
   ACCOUNT_GROWTH: "/account/growth",
   ACCOUNT_AI_CENTER: "/account/ai-center",
   ACCOUNT_ONBOARDING: "/account/onboarding",

@@ -86,11 +86,13 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
       path.startsWith(`${ROUTES.ACCOUNT_PRODUCTS}/`),
   },
   {
-    href: ROUTES.ACCOUNT_PROMOTIONS,
+    href: ROUTES.ACCOUNT_PROMOTION_CENTER,
     label: "Продвижение",
     icon: Megaphone,
     sellerOnly: true,
     match: (path) =>
+      path === ROUTES.ACCOUNT_PROMOTION_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_PROMOTION_CENTER}/`) ||
       path === ROUTES.ACCOUNT_PROMOTIONS ||
       path.startsWith(`${ROUTES.ACCOUNT_PROMOTIONS}/`),
   },
