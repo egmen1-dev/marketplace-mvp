@@ -1,11 +1,16 @@
 import { Suspense } from "react";
 
 import { AdminPromotionsPanel } from "@/features/admin/components/admin-promotions-panel";
+import { AdminPromotionControlPanel } from "@/features/seller-promotion-center";
 import {
   isPromotionAnalyticsEnabled,
   listAdminPromotionCampaigns,
   type AdminPromotionFilter,
 } from "@/lib/promotion";
+import {
+  getAdminPromotionControlExtension,
+  isSellerPromotionCenterEnabled,
+} from "@/lib/seller-promotion-center";
 
 export const metadata = {
   title: "Promotions",
@@ -29,6 +34,9 @@ export default async function AdminPromotionsPage({
   let data: Awaited<ReturnType<typeof listAdminPromotionCampaigns>> | null =
     null;
   let dbError: string | null = null;
+  const promotionControl = isSellerPromotionCenterEnabled()
+    ? await getAdminPromotionControlExtension()
+    : { enabled: false, adSpendTotal: 0, platformRevenue: 0, activeSellers: 0, topCategories: [], sellerRows: [] };
 
   try {
     data = await listAdminPromotionCampaigns({ status: statusFilter });
@@ -52,6 +60,7 @@ export default async function AdminPromotionsPage({
         <p className="text-sm text-destructive">{dbError}</p>
       ) : data ? (
         <Suspense fallback={null}>
+          <AdminPromotionControlPanel data={promotionControl} />
           <AdminPromotionsPanel
             rows={data.rows}
             counts={data.counts}

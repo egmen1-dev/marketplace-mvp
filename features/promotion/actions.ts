@@ -46,6 +46,7 @@ function mapError(err: unknown): PromotionActionState {
 
 function revalidatePromotionPaths(productId?: string) {
   revalidatePath(ROUTES.ACCOUNT_PROMOTIONS);
+  revalidatePath(ROUTES.ACCOUNT_PROMOTION_CENTER);
   revalidatePath(ROUTES.ADMIN_PROMOTIONS);
   revalidatePath(ROUTES.HOME);
   revalidatePath(ROUTES.CATALOG);

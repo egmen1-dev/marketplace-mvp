@@ -8,6 +8,10 @@ import {
   getCommandCenterNotifications,
   isMarketplaceCommandCenterEnabled,
 } from "@/lib/marketplace-command-center";
+import {
+  getPromotionCenterNotifications,
+  isSellerPromotionCenterEnabled,
+} from "@/lib/seller-promotion-center";
 import { getAiNotifications, isAiExperienceEnabled } from "@/lib/ai-experience";
 import {
   getTrustNotifications,
@@ -34,6 +38,11 @@ export default async function NotificationsPage() {
         userId: user.id,
       })
     : [
+        ...(isSellerPromotionCenterEnabled() && user.sellerProfileId
+          ? await getPromotionCenterNotifications({
+              sellerProfileId: user.sellerProfileId,
+            })
+          : []),
         ...(isTrustSafetyEnabled()
           ? await getTrustNotifications({ sellerProfileId: user.sellerProfileId })
           : []),
@@ -43,7 +52,7 @@ export default async function NotificationsPage() {
               userId: user.id,
             })
           : []),
-      ].slice(0, 16);
+      ].slice(0, 20);
 
   return (
     <AccountShell
