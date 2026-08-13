@@ -102,6 +102,13 @@ export const ANALYTICS_EVENTS = {
   PHOTO_QUALITY_ISSUE_FOUND: "photo_quality_issue_found",
   PRODUCT_QUALITY_ISSUE_FOUND: "product_quality_issue_found",
   TRUST_SIGNAL_VIEW: "trust_signal_view",
+  /** MARKETPLACE-DELIVERY-001 */
+  DELIVERY_CREATED: "delivery_created",
+  SHIPMENT_CREATED: "shipment_created",
+  DELIVERY_TRACKING_VIEW: "delivery_tracking_view",
+  DELIVERY_STATUS_CHANGED: "delivery_status_changed",
+  DELIVERY_COMPLETED: "delivery_completed",
+  RETURN_CREATED: "return_created",
 } as const;
 
 export type AnalyticsEventName =

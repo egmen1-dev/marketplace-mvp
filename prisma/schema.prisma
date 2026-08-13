@@ -137,10 +137,21 @@ enum DeliveryMethod {
 enum DeliveryStatus {
   PENDING
   CREATED
+  READY_FOR_PICKUP
+  PICKED_UP
   IN_TRANSIT
+  AT_PICKUP_POINT
   DELIVERED
+  FAILED
   RETURNED
   CANCELLED
+}
+
+enum ReturnRequestStatus {
+  CREATED
+  APPROVED
+  REJECTED
+  COMPLETED
 }
 
 enum AddressType {
@@ -229,6 +240,7 @@ model User {
   financeTransactions  FinanceTransaction[] @relation("FinanceTransactionBuyer")
   disputesOpened       Dispute[]
   reviewsWritten       Review[]
+  returnRequests       ReturnRequest[]     @relation("ReturnRequestBuyer")
 
   @@index([role])
   @@index([isBlocked])
@@ -272,6 +284,7 @@ model SellerProfile {
   reviews             Review[]
   reputation          SellerReputation?
   moderationQueue     ModerationQueueItem[]
+  returnRequests      ReturnRequest[]
 
   @@index([slug])
   @@index([kind])
@@ -720,6 +733,7 @@ model Order {
   financeTransaction FinanceTransaction?
   disputes        Dispute[]
   reviews         Review[]
+  returnRequests  ReturnRequest[]
 
   @@index([userId])
   @@index([status])
@@ -872,6 +886,27 @@ model Delivery {
   @@index([method])
   @@index([trackingNumber])
   @@map("deliveries")
+}
+
+model ReturnRequest {
+  id        String              @id @default(cuid())
+  orderId   String
+  buyerId   String
+  sellerId  String
+  reason    String?
+  status    ReturnRequestStatus @default(CREATED)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  order  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer  User          @relation("ReturnRequestBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+  @@map("return_requests")
 }
 
 // ─── Seller pickup & reservations ────────────────────────────────────────────

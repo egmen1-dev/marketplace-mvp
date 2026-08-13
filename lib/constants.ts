@@ -35,6 +35,8 @@ export const ROUTES = {
   ACCOUNT_PRODUCTS_NEW: "/account/products/new",
   /** Seller sales / incoming orders */
   ACCOUNT_SALES: "/account/sales",
+  /** Seller fulfillment — orders to ship */
+  ACCOUNT_ORDERS_SHIP: "/account/orders/ship",
   /** Seller virtual balance (finance foundation) */
   ACCOUNT_BALANCE: "/account/balance",
   /** Seller payout requests and withdrawal flow */
@@ -95,6 +97,7 @@ export const ROUTES = {
   ADMIN_OPERATIONS: "/admin/operations",
   ADMIN_TRUST: "/admin/trust",
   ADMIN_MODERATION: "/admin/moderation",
+  ADMIN_DELIVERY: "/admin/delivery",
   /** Seller reputation hub */
   ACCOUNT_REPUTATION: "/account/reputation",
   AUTH_SIGN_IN: "/auth/sign-in",

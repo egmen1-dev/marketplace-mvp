@@ -22,8 +22,10 @@ import {
 import { PdpCharacteristics } from "@/features/products/components/pdp-characteristics";
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-trust-loop";
+import { PdpDeliveryHint } from "@/features/marketplace-delivery";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { getProductReviewsForPdp, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
+import { getPdpDeliveryHint, isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
 import { buildTrustSignals } from "@/lib/marketplace-trust-loop/moderation/risk-signals";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
@@ -97,12 +99,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
   let pdpReviews: Awaited<ReturnType<typeof getProductReviewsForPdp>> | null = null;
   let trustSignals: Awaited<ReturnType<typeof buildTrustSignals>> = null;
+  let deliveryHint: Awaited<ReturnType<typeof getPdpDeliveryHint>> = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
       const trustEnabled = isMarketplaceTrustLoopEnabled();
+      const deliveryEnabled = isMarketplaceDeliveryEnabled();
       [similar, sellerTrust, pdpReviews] = await Promise.all([
         listSimilarProducts(product.id, {
           categoryId: product.category?.id,
@@ -117,6 +121,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           sellerId: product.seller.id,
           productId: product.id,
           isVerified: Boolean(sellerTrust?.isVerified),
+        });
+      }
+      if (deliveryEnabled) {
+        deliveryHint = await getPdpDeliveryHint({
+          city: product.city,
+          minDays: 1,
+          maxDays: 3,
         });
       }
     }
@@ -323,6 +334,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               pickupEnabled={
                 product.pickupEnabled && product.pickupPoints.length > 0
               }
+            />
+          ) : null}
+
+          {deliveryHint ? (
+            <PdpDeliveryHint
+              headline={deliveryHint.headline}
+              subline={deliveryHint.subline}
             />
           ) : null}
 
