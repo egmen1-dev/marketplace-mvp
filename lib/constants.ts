@@ -78,6 +78,7 @@ export const ROUTES = {
   ADMIN_PROMOTIONS: "/admin/promotions",
   ADMIN_BUYERS: "/admin/buyers",
   ADMIN_INTELLIGENCE: "/admin/intelligence",
+  ADMIN_OPERATOR: "/admin/operator",
   ACCOUNT_PROMOTIONS: "/account/promotions",
   ACCOUNT_GROWTH: "/account/growth",
   AUTH_SIGN_IN: "/auth/sign-in",
