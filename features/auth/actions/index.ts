@@ -13,9 +13,11 @@ import { ROUTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { isSellerFirstEntryEnabled } from "@/lib/seller-first-entry/flags";
 import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
+import { isSellerOperatingDeskEnabled } from "@/lib/seller-operating-desk/flags";
 
 function sellerEntryRedirect(): string {
   if (isSellerFirstEntryEnabled()) return ROUTES.ACCOUNT_SELLER_START;
+  if (isSellerOperatingDeskEnabled()) return ROUTES.ACCOUNT_BUSINESS;
   if (isSellerJourneyEnabled()) return ROUTES.ACCOUNT_GROWTH;
   return ROUTES.ACCOUNT_PRODUCTS_NEW;
 }

@@ -19,6 +19,7 @@ import {
   getSellerJourneyDashboard,
   isSellerJourneyEnabled,
 } from "@/lib/seller-journey";
+import { isSellerOperatingDeskEnabled } from "@/lib/seller-operating-desk/flags";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +48,10 @@ export default async function AccountPage({ searchParams }: PageProps) {
     dbUser?.sellerProfileId &&
       (dbUser.role === "SELLER" || dbUser.role === "ADMIN"),
   );
+
+  if (isSeller && isSellerOperatingDeskEnabled() && !promptSell) {
+    redirect(ROUTES.ACCOUNT_BUSINESS);
+  }
 
   const [profile, favoriteIds, ordersCount] = await Promise.all([
     getUserProfile(user.id),

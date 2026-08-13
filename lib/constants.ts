@@ -41,6 +41,8 @@ export const ROUTES = {
   ACCOUNT_PAYOUTS: "/account/payouts",
   /** Seller AI command center + journey */
   ACCOUNT_COMMAND_CENTER: "/account/command-center",
+  /** Unified seller business workspace — «Мой бизнес» */
+  ACCOUNT_BUSINESS: "/account/business",
   /** Seller growth hub — unified journey + recommendations */
   ACCOUNT_GROWTH: "/account/growth",
   /** Seller promotion hub (campaigns, visibility) */
@@ -135,6 +137,7 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/sales",
   "/account/pickup-points",
   "/account/balance",
+  "/account/business",
   "/account/payouts",
   "/account/command-center",
   "/account/growth",

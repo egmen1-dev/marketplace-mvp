@@ -62,6 +62,10 @@ export const ANALYTICS_EVENTS = {
   /** SELLER-JOURNEY-UX-002 — unified seller journey UX (no PII) */
   SELLER_STEP_VIEW: "seller_step_view",
   SELLER_NEXT_ACTION_CLICK: "seller_next_action_click",
+  /** SELLER-OPERATING-DESK-001 — seller business workspace (no PII) */
+  SELLER_OPERATING_DESK_VIEW: "seller_operating_desk_view",
+  SELLER_OPERATING_DESK_ISSUE_CLICK: "seller_operating_desk_issue_click",
+  SELLER_OPERATING_DESK_ACTION_CLICK: "seller_operating_desk_action_click",
 } as const;
 
 export type AnalyticsEventName =
