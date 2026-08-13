@@ -3,6 +3,8 @@ import { SellerGrowthDashboardPanel } from "@/features/seller-growth";
 import { SellerMarketplaceInsightsPanel } from "@/features/marketplace-intelligence";
 import { SellerOperatorInsightsPanel } from "@/features/marketplace-operator";
 import { SellerExecutionActionsPanel } from "@/features/marketplace-execution";
+import { SellerLotRecommendationPanel } from "@/features/marketplace-communication";
+import { ROUTES } from "@/lib/constants";
 import {
   getSellerGrowthDashboard,
   isSellerGrowthEnabled,
@@ -19,7 +21,10 @@ import {
   getSellerExecutionActions,
   isMarketplaceExecutionEnabled,
 } from "@/lib/marketplace-execution";
-import { ROUTES } from "@/lib/constants";
+import {
+  getSellerLotRecommendation,
+  isMarketplaceCommunicationEnabled,
+} from "@/lib/marketplace-communication";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +37,16 @@ export default async function AccountGrowthPage() {
   const growthEnabled = isSellerGrowthEnabled();
   const marketplaceEnabled = isMarketplaceIntelligenceEnabled();
   const operatorEnabled = isMarketplaceOperatorEnabled();
-
   const executionEnabled = isMarketplaceExecutionEnabled();
+  const communicationEnabled = isMarketplaceCommunicationEnabled();
 
-  if (!growthEnabled && !marketplaceEnabled && !operatorEnabled && !executionEnabled) {
+  if (
+    !growthEnabled &&
+    !marketplaceEnabled &&
+    !operatorEnabled &&
+    !executionEnabled &&
+    !communicationEnabled
+  ) {
     return (
       <div className="flex flex-col gap-4">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
@@ -56,6 +67,9 @@ export default async function AccountGrowthPage() {
   let executionActions: Awaited<
     ReturnType<typeof getSellerExecutionActions>
   > = [];
+  let lotRecommendation: Awaited<
+    ReturnType<typeof getSellerLotRecommendation>
+  > = null;
   let dbError: string | null = null;
 
   try {
@@ -72,6 +86,11 @@ export default async function AccountGrowthPage() {
     }
     if (executionEnabled) {
       executionActions = await getSellerExecutionActions(
+        seller.sellerProfileId,
+      );
+    }
+    if (communicationEnabled) {
+      lotRecommendation = await getSellerLotRecommendation(
         seller.sellerProfileId,
       );
     }
@@ -96,6 +115,9 @@ export default async function AccountGrowthPage() {
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
         <>
+          {lotRecommendation ? (
+            <SellerLotRecommendationPanel recommendation={lotRecommendation} />
+          ) : null}
           {executionActions.length > 0 ? (
             <SellerExecutionActionsPanel actions={executionActions} />
           ) : null}

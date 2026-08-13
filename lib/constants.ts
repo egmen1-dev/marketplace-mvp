@@ -80,6 +80,7 @@ export const ROUTES = {
   ADMIN_INTELLIGENCE: "/admin/intelligence",
   ADMIN_OPERATOR: "/admin/operator",
   ADMIN_EXECUTION: "/admin/execution",
+  ADMIN_COMMUNICATION: "/admin/communication",
   ACCOUNT_PROMOTIONS: "/account/promotions",
   ACCOUNT_GROWTH: "/account/growth",
   AUTH_SIGN_IN: "/auth/sign-in",
