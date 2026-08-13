@@ -25,10 +25,15 @@ import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { BuyerProductFitBlock } from "@/features/buyer-intelligence";
 import { BuyerAiAssistantPanel } from "@/features/ai-experience";
+import { PdpTrustSafetyBlock } from "@/features/trust-safety";
 import {
   getBuyerAiAssistantExperience,
   isAiExperienceEnabled,
 } from "@/lib/ai-experience";
+import {
+  getPdpTrustExperience,
+  isTrustSafetyEnabled,
+} from "@/lib/trust-safety";
 import {
   BuyerEducationPanel,
   BuyerSmartAssistant,
@@ -121,6 +126,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let buyerAiAssistant: Awaited<
     ReturnType<typeof getBuyerAiAssistantExperience>
   > = { enabled: false, headline: "Помочь выбрать", prompts: [], matchSummary: null };
+  let pdpTrustExperience: Awaited<ReturnType<typeof getPdpTrustExperience>> =
+    null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -157,6 +164,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       productId: product.id,
       productTitle: product.title,
       userId: session?.id ?? null,
+    });
+  }
+
+  if (isTrustSafetyEnabled() && sellerTrust) {
+    pdpTrustExperience = await getPdpTrustExperience({
+      product,
+      seller: sellerTrust,
     });
   }
 
@@ -382,6 +396,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               pickupEnabled={
                 product.pickupEnabled && product.pickupPoints.length > 0
               }
+            />
+          ) : null}
+
+          {pdpTrustExperience ? (
+            <PdpTrustSafetyBlock
+              experience={pdpTrustExperience}
+              productId={product.id}
             />
           ) : null}
 

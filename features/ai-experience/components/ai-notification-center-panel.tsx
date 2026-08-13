@@ -13,20 +13,42 @@ import {
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
-import type { AiNotification } from "@/lib/ai-experience/types";
+
+export type InboxNotification = {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  href?: string;
+  createdAt: string;
+  read: boolean;
+};
 
 type AiNotificationCenterPanelProps = {
-  notifications: AiNotification[];
+  notifications: InboxNotification[];
 };
 
 export function AiNotificationCenterPanel({
   notifications,
 }: AiNotificationCenterPanelProps) {
-  function onOpen(id: string) {
+  function onOpen(notification: InboxNotification) {
+    if (
+      notification.type === "TRUST_WARNING" ||
+      notification.type === "TRUST_IMPROVEMENT" ||
+      notification.type === "TRANSACTION_PROTECTION"
+    ) {
+      trackEvent({
+        event: ANALYTICS_EVENTS.TRUST_VIEW,
+        route: ROUTES.NOTIFICATIONS,
+        entityId: notification.id,
+      });
+      return;
+    }
+
     trackEvent({
       event: ANALYTICS_EVENTS.AI_NOTIFICATION_OPEN,
       route: ROUTES.NOTIFICATIONS,
-      entityId: id,
+      entityId: notification.id,
     });
   }
 
@@ -34,9 +56,10 @@ export function AiNotificationCenterPanel({
     return (
       <Card data-testid="ai-notification-center">
         <CardHeader>
-          <CardTitle>AI уведомления</CardTitle>
+          <CardTitle>Уведомления</CardTitle>
           <CardDescription>
-            Внутренний inbox — без push и email. Новые рекомендации появятся здесь.
+            Внутренний inbox — без push и email. Новые рекомендации появятся
+            здесь.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -60,7 +83,7 @@ export function AiNotificationCenterPanel({
                   variant="outline"
                   nativeButton={false}
                   render={
-                    <Link href={n.href} onClick={() => onOpen(n.id)} />
+                    <Link href={n.href} onClick={() => onOpen(n)} />
                   }
                 >
                   Открыть

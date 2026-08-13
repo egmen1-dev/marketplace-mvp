@@ -134,6 +134,16 @@ export const ANALYTICS_EVENTS = {
   AI_ACTION_CLICK: "ai_action_click",
   /** AI Experience — notification opened */
   AI_NOTIFICATION_OPEN: "ai_notification_open",
+  /** Trust & Safety — trust block / center viewed */
+  TRUST_VIEW: "trust_view",
+  /** Trust & Safety — seller trust section viewed */
+  SELLER_TRUST_VIEW: "seller_trust_view",
+  /** Trust & Safety — product trust section viewed */
+  PRODUCT_TRUST_VIEW: "product_trust_view",
+  /** Trust & Safety — seller clicked improvement CTA */
+  TRUST_IMPROVEMENT_CLICK: "trust_improvement_click",
+  /** Trust & Safety — risk signal surfaced */
+  RISK_SIGNAL_VIEW: "risk_signal_view",
 } as const;
 
 export type AnalyticsEventName =
