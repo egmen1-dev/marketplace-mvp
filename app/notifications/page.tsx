@@ -4,6 +4,10 @@ import { AccountShell } from "@/features/account";
 import { getSessionUser } from "@/features/auth";
 import { ROUTES } from "@/lib/constants";
 import { getPayoutNotifications, isSellerPayoutEnabled } from "@/lib/seller-payout";
+import {
+  getSellerLifecycleNotifications,
+  isSellerLifecycleEnabled,
+} from "@/lib/seller-lifecycle";
 
 export const dynamic = "force-dynamic";
 
@@ -19,15 +23,23 @@ export default async function NotificationsPage() {
     );
   }
 
-  const notifications =
-    isSellerPayoutEnabled() && user.sellerProfileId
-      ? await getPayoutNotifications({ sellerProfileId: user.sellerProfileId })
-      : [];
+  const notifications = [
+    ...(isSellerLifecycleEnabled() && user.sellerProfileId
+      ? await getSellerLifecycleNotifications({
+          sellerProfileId: user.sellerProfileId,
+        })
+      : []),
+    ...(isSellerPayoutEnabled() && user.sellerProfileId
+      ? await getPayoutNotifications({
+          sellerProfileId: user.sellerProfileId,
+        })
+      : []),
+  ].slice(0, 12);
 
   return (
     <AccountShell
       title="Уведомления"
-      description="Статусы заявок на вывод и другие события кабинета."
+      description="Статусы пути продавца, выплат и другие события кабинета."
     >
       <div className="flex flex-col gap-3" data-testid="notifications-list">
         {notifications.length === 0 ? (
