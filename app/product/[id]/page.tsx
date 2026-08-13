@@ -23,6 +23,11 @@ import { PdpCharacteristics } from "@/features/products/components/pdp-character
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
+import { BuyerProductFitBlock } from "@/features/buyer-intelligence";
+import {
+  getProductBuyerMatch,
+  isBuyerIntelligenceEnabled,
+} from "@/lib/buyer-intelligence";
 import { PromotedBadge } from "@/features/promotion";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
@@ -95,6 +100,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
   let promoted = false;
+  let buyerMatch: Awaited<ReturnType<typeof getProductBuyerMatch>> = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -109,6 +115,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
         getSellerTrustProfile(product.seller.slug),
         isProductPromoted(product.id),
       ]);
+      if (isBuyerIntelligenceEnabled()) {
+        buyerMatch = await getProductBuyerMatch({
+          productId: product.id,
+          userId: session?.id ?? null,
+        });
+      }
     }
   } catch (err) {
     console.error("[product]", err);
@@ -301,6 +313,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             productId={product.id}
             sellerVerified={Boolean(sellerTrust?.isVerified)}
           />
+
+          {buyerMatch ? (
+            <BuyerProductFitBlock match={buyerMatch} productId={product.id} />
+          ) : null}
 
           {sellerTrust ? (
             <PdpTrustBlock

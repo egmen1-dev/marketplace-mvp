@@ -36,7 +36,13 @@ import {
   listProductSellers,
   listProducts,
 } from "@/features/products";
+import { getSessionUser } from "@/features/auth";
+import { BuyerRecommendationsSection } from "@/features/buyer-intelligence";
 import { pluralizeProductWord } from "@/lib/i18n";
+import {
+  getSearchBuyerRecommendations,
+  isBuyerIntelligenceEnabled,
+} from "@/lib/buyer-intelligence";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PromotedProductsSection } from "@/features/promotion";
 import {
@@ -74,7 +80,12 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   let promotedProducts: Awaited<
     ReturnType<typeof getCatalogPromotedProducts>
   > = [];
+  let buyerRecommendations: Awaited<
+    ReturnType<typeof getSearchBuyerRecommendations>
+  > = null;
   let dbError: string | null = null;
+
+  const session = await getSessionUser();
 
   try {
     const [tree, cityList, sellerList, productResult, categoryDetail, roots] =
@@ -116,6 +127,13 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       isPromotionSurfacesEnabled() && !filters.q
         ? await getCatalogPromotedProducts(4, activeCategory?.id ?? null)
         : [];
+    if (isBuyerIntelligenceEnabled() && filters.q?.trim()) {
+      buyerRecommendations = await getSearchBuyerRecommendations({
+        query: filters.q,
+        userId: session?.id ?? null,
+        route: "/catalog",
+      });
+    }
   } catch (err) {
     console.error("[catalog]", err);
     dbError = "Не удалось загрузить каталог. Попробуйте обновить страницу.";
@@ -247,6 +265,16 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               <CatalogSortSelect className="ml-auto" />
             </Suspense>
           </div>
+
+          {buyerRecommendations &&
+          buyerRecommendations.recommendations.length > 0 &&
+          filters.q ? (
+            <BuyerRecommendationsSection
+              recommendations={buyerRecommendations.recommendations}
+              query={filters.q}
+              route="/catalog"
+            />
+          ) : null}
 
           {dbError ? (
             <Card>
