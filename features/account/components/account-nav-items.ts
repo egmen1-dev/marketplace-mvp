@@ -6,6 +6,7 @@ import {
   Package,
   Settings,
   ShoppingBag,
+  Sparkles,
   Store,
   Ticket,
   UserRound,
@@ -79,6 +80,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_PROMOTIONS ||
       path.startsWith(`${ROUTES.ACCOUNT_PROMOTIONS}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_GROWTH,
+    label: "Рост продаж",
+    icon: Sparkles,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_GROWTH ||
+      path.startsWith(`${ROUTES.ACCOUNT_GROWTH}/`),
   },
   {
     href: ROUTES.ACCOUNT_SALES,
