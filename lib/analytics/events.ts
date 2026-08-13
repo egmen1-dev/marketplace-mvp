@@ -72,6 +72,16 @@ export const ANALYTICS_EVENTS = {
   SELLER_TASK_COMPLETE: "seller_task_complete",
   SELLER_PRIORITY_CLICK: "seller_priority_click",
   SELLER_AI_ADVICE_CLICK: "seller_ai_advice_click",
+  /** SELLER-BUSINESS-INTELLIGENCE-001 — AI business assistant (no PII) */
+  SELLER_BUSINESS_VIEW: "seller_business_view",
+  SELLER_AI_SUMMARY_VIEW: "seller_ai_summary_view",
+  SELLER_NEXT_ACTION_VIEW: "seller_next_action_view",
+  SELLER_ACTION_CLICK: "seller_action_click",
+  SELLER_INSTRUCTION_STARTED: "seller_instruction_started",
+  SELLER_INSTRUCTION_COMPLETED: "seller_instruction_completed",
+  SELLER_MONEY_EXPLANATION_VIEW: "seller_money_explanation_view",
+  SELLER_PROBLEM_VIEW: "seller_problem_view",
+  SELLER_PROBLEM_FIXED: "seller_problem_fixed",
 } as const;
 
 export type AnalyticsEventName =

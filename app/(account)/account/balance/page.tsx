@@ -1,9 +1,13 @@
-import { requireSellerSession } from "@/features/auth";
 import { SellerBalancePanel } from "@/features/finance/components/seller-balance-panel";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
+import { SellerMoneyEducationPanel } from "@/features/seller-business-intelligence";
 import { getSellerBalanceForSession } from "@/lib/finance";
 import { isSellerPayoutEnabled } from "@/lib/seller-payout/flags";
 import { ROUTES } from "@/lib/constants";
+import {
+  buildMoneyEducation,
+  isSellerBusinessIntelligenceEnabled,
+} from "@/lib/seller-business-intelligence";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const metadata = {
@@ -14,6 +18,10 @@ export default async function AccountBalancePage() {
   const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_BALANCE);
   const balance = await getSellerBalanceForSession(seller.sellerProfileId);
   const payoutEnabled = isSellerPayoutEnabled();
+  const biEnabled = isSellerBusinessIntelligenceEnabled();
+  const moneyEducation = biEnabled
+    ? buildMoneyEducation({ balance, payoutEnabled })
+    : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,6 +37,9 @@ export default async function AccountBalancePage() {
         </p>
       </div>
       <SellerBalancePanel balance={balance} payoutEnabled={payoutEnabled} />
+      {moneyEducation ? (
+        <SellerMoneyEducationPanel education={moneyEducation} />
+      ) : null}
     </div>
   );
 }
