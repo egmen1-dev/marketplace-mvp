@@ -272,3 +272,45 @@ export async function cleanupPickupFixture(page: Page, marker: string) {
   );
   expect(res.ok(), `pickup fixture cleanup failed: ${res.status()}`).toBeTruthy();
 }
+
+export type FinanceFixture = {
+  marker: string;
+  orderId: string;
+  orderNumber: string;
+  orderPath: string;
+  total: number;
+  sellerEmail: string;
+  buyerEmail: string;
+  sellerProfileId: string;
+};
+
+export function uniqueFinanceMarker(suffix?: string): string {
+  const id =
+    suffix ??
+    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  return `E2E-FINANCE-${id}`;
+}
+
+export async function createFinanceFixture(
+  page: Page,
+  opts?: { marker?: string; total?: number },
+): Promise<FinanceFixture> {
+  const marker = opts?.marker ?? uniqueFinanceMarker();
+  const res = await page.request.post("/api/e2e/finance-fixture", {
+    headers: { "x-e2e-secret": e2eSecret() },
+    data: { marker, total: opts?.total ?? 5000 },
+  });
+  expect(
+    res.ok(),
+    `finance fixture create failed: ${res.status()} ${await res.text()}`,
+  ).toBeTruthy();
+  return (await res.json()) as FinanceFixture;
+}
+
+export async function cleanupFinanceFixture(page: Page, marker: string) {
+  const res = await page.request.delete(
+    `/api/e2e/finance-fixture?marker=${encodeURIComponent(marker)}`,
+    { headers: { "x-e2e-secret": e2eSecret() } },
+  );
+  expect(res.ok(), `finance fixture cleanup failed: ${res.status()}`).toBeTruthy();
+}

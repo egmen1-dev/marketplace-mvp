@@ -35,6 +35,8 @@ export const ROUTES = {
   ACCOUNT_PRODUCTS_NEW: "/account/products/new",
   /** Seller sales / incoming orders */
   ACCOUNT_SALES: "/account/sales",
+  /** Seller virtual balance (finance foundation) */
+  ACCOUNT_BALANCE: "/account/balance",
   /** Seller pickup warehouse addresses */
   ACCOUNT_PICKUP_POINTS: "/account/pickup-points",
   ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
@@ -74,6 +76,7 @@ export const ROUTES = {
   ADMIN_MESSAGES: "/admin/messages",
   ADMIN_ANALYTICS: "/admin/analytics",
   ADMIN_ADS: "/admin/ads",
+  ADMIN_FINANCE: "/admin/finance",
   ADMIN_CONVERSION: "/admin/conversion",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",

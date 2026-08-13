@@ -61,6 +61,8 @@ export async function finalizePaidOrder(
         route: `/orders/${result.orderId}`,
         entityId: result.orderId,
       });
+      const { trackFinanceTransactionCreated } = await import("@/lib/finance");
+      void trackFinanceTransactionCreated(result.orderId);
     }
     return result;
   } catch (err) {
@@ -185,6 +187,9 @@ export async function finalizePaidOrderInTx(
     amountMinor: amountTotal ?? undefined,
     currency: paidCurrency,
   });
+
+  const { syncFinanceOnPaymentInTx } = await import("@/lib/finance");
+  await syncFinanceOnPaymentInTx(tx, orderId);
 
   return { orderId, alreadyPaid: false };
 }

@@ -331,6 +331,14 @@ export async function transitionOrderWithEffects(
     reviewEligibleAt: refreshed?.reviewEligibleAt ?? null,
   });
 
+  if (
+    result.status === OrderStatus.COMPLETED &&
+    !result.alreadyApplied
+  ) {
+    const { syncFinanceOnOrderCompleted } = await import("@/lib/finance");
+    await syncFinanceOnOrderCompleted(result.orderId);
+  }
+
   return result;
 }
 

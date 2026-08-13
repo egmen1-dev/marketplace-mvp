@@ -34,6 +34,12 @@ export const ANALYTICS_EVENTS = {
   SCROLL_HOMEPAGE: "scroll_homepage",
   /** DESIGN-001 homepage — sell / seller CTA tap */
   CTA_SELL_CLICK: "cta_sell_click",
+  /** EPIC-FINANCE-001 — finance layer events (no PII) */
+  TRANSACTION_CREATED: "transaction_created",
+  PAYMENT_HELD: "payment_held",
+  PAYMENT_RELEASED: "payment_released",
+  REFUND_CREATED: "refund_created",
+  DISPUTE_CREATED: "dispute_created",
 } as const;
 
 export type AnalyticsEventName =

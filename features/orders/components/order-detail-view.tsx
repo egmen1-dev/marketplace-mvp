@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { SafeDealBlock } from "@/features/finance/components/safe-deal-block";
 import { BuyerOrderActions } from "@/features/order-lifecycle/components/buyer-order-actions";
 import { OrderTimeline } from "@/features/order-lifecycle/components/order-timeline";
 import { OrderItemRow } from "@/features/orders/components/order-item-row";
@@ -89,6 +90,8 @@ export function OrderDetailView({
           подтверждения Stripe — обновите страницу через несколько секунд.
         </p>
       ) : null}
+
+      {isPaid ? <SafeDealBlock /> : null}
 
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-8">

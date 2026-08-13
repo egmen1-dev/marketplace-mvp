@@ -204,6 +204,8 @@ model User {
   pickupReservations   PickupReservation[]
   buyerConversations   Conversation[]      @relation("ConversationBuyer")
   sentMessages         Message[]
+  financeTransactions  FinanceTransaction[] @relation("FinanceTransactionBuyer")
+  disputesOpened       Dispute[]
 
   @@index([role])
   @@index([isBlocked])
@@ -237,8 +239,10 @@ model SellerProfile {
   user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   products       Product[]
   pickupPoints   PickupPoint[]
-  reservations   PickupReservation[]
-  conversations  Conversation[]
+  reservations        PickupReservation[]
+  conversations       Conversation[]
+  financeTransactions FinanceTransaction[]
+  sellerBalance       SellerBalance?
 
   @@index([slug])
   @@index([kind])
@@ -280,6 +284,7 @@ model Category {
   products     Product[]
   productTypes ProductType[]
   aliases      CategoryAlias[]
+  commissionRules CommissionRule[]
 
   @@unique([externalSource, externalId])
   @@index([parentId])
@@ -680,6 +685,8 @@ model Order {
   statusHistory   OrderStatusHistory[]
   events          OrderEvent[]
   reservations    PickupReservation[]
+  financeTransaction FinanceTransaction?
+  disputes        Dispute[]
 
   @@index([userId])
   @@index([status])
@@ -1099,4 +1106,96 @@ model SeoFacetRule {
   @@unique([characteristicSlug, productTypeSlug])
   @@index([enabled])
   @@map("seo_facet_rules")
+}
+
+// ─── Marketplace Finance (EPIC-FINANCE-001 foundation) ─────────────────────
+
+enum FinanceTransactionStatus {
+  PENDING
+  PAID
+  HELD
+  RELEASED
+  REFUNDED
+  DISPUTED
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED_BUYER
+  RESOLVED_SELLER
+}
+
+/// Financial operation for an order — virtual ledger, not real money movement.
+model FinanceTransaction {
+  id               String                   @id @default(cuid())
+  orderId          String                   @unique
+  buyerId          String
+  sellerId         String
+  grossAmount      Decimal                  @db.Decimal(12, 2)
+  commissionAmount Decimal                  @db.Decimal(12, 2)
+  sellerAmount     Decimal                  @db.Decimal(12, 2)
+  status           FinanceTransactionStatus @default(PENDING)
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  order  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer  User          @relation("FinanceTransactionBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("finance_transactions")
+}
+
+/// Commission rules — category-specific or platform default (categoryId null).
+model CommissionRule {
+  id         String   @id @default(cuid())
+  categoryId String?
+  percentage Decimal  @db.Decimal(5, 2)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@unique([categoryId])
+  @@index([active])
+  @@map("commission_rules")
+}
+
+/// Virtual seller balance — pending / available / paid-out totals.
+model SellerBalance {
+  id              String   @id @default(cuid())
+  sellerId        String   @unique
+  pendingAmount   Decimal  @default(0) @db.Decimal(14, 2)
+  availableAmount Decimal  @default(0) @db.Decimal(14, 2)
+  paidAmount      Decimal  @default(0) @db.Decimal(14, 2)
+  updatedAt       DateTime @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_balances")
+}
+
+/// Buyer protection dispute foundation — no full arbitration in MVP.
+model Dispute {
+  id         String        @id @default(cuid())
+  orderId    String
+  openedBy   String
+  reason     String
+  status     DisputeStatus @default(OPEN)
+  resolution String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  order        Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  openedByUser User  @relation(fields: [openedBy], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([openedBy])
+  @@index([status])
+  @@map("disputes")
 }

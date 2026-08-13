@@ -728,6 +728,45 @@ function collectSlugs(nodes: SeedCategory[], out = new Set<string>()) {
   return out;
 }
 
+async function seedCommissionRules(categoryBySlug: Map<string, string>) {
+  const defaultExisting = await prisma.commissionRule.findFirst({
+    where: { categoryId: null },
+    select: { id: true },
+  });
+  if (defaultExisting) {
+    await prisma.commissionRule.update({
+      where: { id: defaultExisting.id },
+      data: { percentage: 10, active: true },
+    });
+  } else {
+    await prisma.commissionRule.create({
+      data: { categoryId: null, percentage: 10, active: true },
+    });
+  }
+
+  const rules: { slug: string; percentage: number }[] = [
+    { slug: "tools", percentage: 8 },
+    { slug: "electronics", percentage: 5 },
+  ];
+
+  for (const rule of rules) {
+    const categoryId = categoryBySlug.get(rule.slug);
+    if (!categoryId) continue;
+    await prisma.commissionRule.upsert({
+      where: { categoryId },
+      create: {
+        categoryId,
+        percentage: rule.percentage,
+        active: true,
+      },
+      update: {
+        percentage: rule.percentage,
+        active: true,
+      },
+    });
+  }
+}
+
 async function main() {
   console.log("Seeding marketplace…");
 
@@ -1186,6 +1225,9 @@ async function main() {
   console.log(`Home-tech id: ${privateProfile.id} (Дом и техника)`);
   console.log(`Tools PRO id: ${toolsProProfile.id}`);
   console.log(`Tech Store id: ${techStoreProfile.id}`);
+
+  await seedCommissionRules(categoryBySlug);
+
   console.log(`Demo seller: seller@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Demo buyer:  buyer@demo.lot / ${DEMO_PASSWORD}`);
   console.log(`Private:     private@demo.lot / ${DEMO_PASSWORD}`);
