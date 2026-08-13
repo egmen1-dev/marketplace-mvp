@@ -29,15 +29,17 @@ ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 WORKDIR /app
 
+# Standalone Next server
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
+COPY --from=builder /app/package.json /app/package-lock.json ./
 
-# Prisma CLI for migrate deploy at boot
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# Prisma CLI + deps for migrate deploy (not bundled in standalone)
+RUN npm install prisma@6.19.3 --omit=dev --no-save --no-fund --no-audit \
+  && npx prisma generate --schema=./prisma/schema.prisma
 
 COPY scripts/railway-start.sh ./scripts/railway-start.sh
 RUN chmod +x ./scripts/railway-start.sh
