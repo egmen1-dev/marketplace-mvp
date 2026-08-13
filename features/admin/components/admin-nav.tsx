@@ -17,6 +17,7 @@ import {
   Ticket,
   Upload,
   Users,
+  Zap,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -58,6 +59,13 @@ const NAV_ITEMS = [
     label: "Ads readiness",
     icon: Megaphone,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_ADS),
+  },
+  {
+    href: ROUTES.ADMIN_PROMOTIONS,
+    label: "Promotions",
+    icon: Zap,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_PROMOTIONS),
   },
   {
     href: ROUTES.ADMIN_ANALYTICS,

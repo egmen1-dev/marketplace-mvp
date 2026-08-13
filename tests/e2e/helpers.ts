@@ -272,3 +272,54 @@ export async function cleanupPickupFixture(page: Page, marker: string) {
   );
   expect(res.ok(), `pickup fixture cleanup failed: ${res.status()}`).toBeTruthy();
 }
+
+export type PromotionFixture = {
+  marker: string;
+  productId: string;
+  productPath: string;
+  title: string;
+  price: number;
+  stock: number;
+  sellerUserId: string;
+  sellerProfileId: string;
+  sellerEmail: string;
+};
+
+export function uniquePromotionMarker(suffix?: string): string {
+  const id =
+    suffix ??
+    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  return `E2E-PROMO-${id}`;
+}
+
+/** Create promotion-ready product via server fixture. */
+export async function createPromotionFixture(
+  page: Page,
+  opts?: { marker?: string; price?: number; stock?: number },
+): Promise<PromotionFixture> {
+  const marker = opts?.marker ?? uniquePromotionMarker();
+  const res = await page.request.post("/api/e2e/promotion-fixture", {
+    headers: { "x-e2e-secret": e2eSecret() },
+    data: {
+      marker,
+      price: opts?.price ?? 12_990,
+      stock: opts?.stock ?? 5,
+    },
+  });
+  expect(
+    res.ok(),
+    `promotion fixture create failed: ${res.status()} ${await res.text()}`,
+  ).toBeTruthy();
+  return (await res.json()) as PromotionFixture;
+}
+
+export async function cleanupPromotionFixture(page: Page, marker: string) {
+  const res = await page.request.delete(
+    `/api/e2e/promotion-fixture?marker=${encodeURIComponent(marker)}`,
+    { headers: { "x-e2e-secret": e2eSecret() } },
+  );
+  expect(
+    res.ok(),
+    `promotion fixture cleanup failed: ${res.status()}`,
+  ).toBeTruthy();
+}
