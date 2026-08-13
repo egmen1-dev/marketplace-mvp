@@ -5,6 +5,10 @@ import { getSessionUser } from "@/features/auth";
 import { AiNotificationCenterPanel } from "@/features/ai-experience";
 import { getAiNotifications, isAiExperienceEnabled } from "@/lib/ai-experience";
 import { ROUTES } from "@/lib/constants";
+import {
+  getTrustNotifications,
+  isTrustSafetyEnabled,
+} from "@/lib/trust-safety";
 
 export const dynamic = "force-dynamic";
 
@@ -20,18 +24,27 @@ export default async function NotificationsPage() {
     );
   }
 
-  const notifications =
+  const [aiNotifications, trustNotifications] = await Promise.all([
     isAiExperienceEnabled()
-      ? await getAiNotifications({
+      ? getAiNotifications({
           sellerProfileId: user.sellerProfileId,
           userId: user.id,
         })
-      : [];
+      : Promise.resolve([]),
+    isTrustSafetyEnabled()
+      ? getTrustNotifications({ sellerProfileId: user.sellerProfileId })
+      : Promise.resolve([]),
+  ]);
+
+  const notifications = [...trustNotifications, ...aiNotifications].slice(
+    0,
+    16,
+  );
 
   return (
     <AccountShell
-      title="AI уведомления"
-      description="Внутренний inbox рекомендаций — без push и email."
+      title="Уведомления"
+      description="Внутренний inbox рекомендаций и trust-сигналов — без push и email."
     >
       <AiNotificationCenterPanel notifications={notifications} />
     </AccountShell>

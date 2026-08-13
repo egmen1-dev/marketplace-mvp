@@ -5,6 +5,7 @@ import { SellerOperatorInsightsPanel } from "@/features/marketplace-operator";
 import { SellerExecutionActionsPanel } from "@/features/marketplace-execution";
 import { SellerLotRecommendationPanel } from "@/features/marketplace-communication";
 import { SellerAiCoachPanel } from "@/features/marketplace-education";
+import { SellerTrustCoachPanel } from "@/features/trust-safety";
 import { ROUTES } from "@/lib/constants";
 import {
   getSellerGrowthDashboard,
@@ -30,6 +31,10 @@ import {
   getSellerGrowthCoach,
   isMarketplaceEducationEnabled,
 } from "@/lib/marketplace-education";
+import {
+  getSellerTrustCoach,
+  isTrustSafetyEnabled,
+} from "@/lib/trust-safety";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +50,7 @@ export default async function AccountGrowthPage() {
   const executionEnabled = isMarketplaceExecutionEnabled();
   const communicationEnabled = isMarketplaceCommunicationEnabled();
   const educationEnabled = isMarketplaceEducationEnabled();
+  const trustEnabled = isTrustSafetyEnabled();
 
   if (
     !growthEnabled &&
@@ -52,7 +58,8 @@ export default async function AccountGrowthPage() {
     !operatorEnabled &&
     !executionEnabled &&
     !communicationEnabled &&
-    !educationEnabled
+    !educationEnabled &&
+    !trustEnabled
   ) {
     return (
       <div className="flex flex-col gap-4">
@@ -78,6 +85,7 @@ export default async function AccountGrowthPage() {
     ReturnType<typeof getSellerLotRecommendation>
   > = null;
   let coach: Awaited<ReturnType<typeof getSellerGrowthCoach>> = null;
+  let trustCoach: Awaited<ReturnType<typeof getSellerTrustCoach>> = null;
   let dbError: string | null = null;
 
   try {
@@ -105,6 +113,9 @@ export default async function AccountGrowthPage() {
     if (educationEnabled) {
       coach = await getSellerGrowthCoach(seller.sellerProfileId);
     }
+    if (trustEnabled) {
+      trustCoach = await getSellerTrustCoach(seller.sellerProfileId);
+    }
   } catch (err) {
     console.error("[account/growth]", err);
     dbError = "Не удалось загрузить рекомендации";
@@ -127,6 +138,7 @@ export default async function AccountGrowthPage() {
       ) : (
         <>
           {coach ? <SellerAiCoachPanel coach={coach} /> : null}
+          {trustCoach ? <SellerTrustCoachPanel coach={trustCoach} /> : null}
           {lotRecommendation ? (
             <SellerLotRecommendationPanel recommendation={lotRecommendation} />
           ) : null}

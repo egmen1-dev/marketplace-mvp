@@ -17,6 +17,7 @@ import {
   MessageCircle,
   Package,
   Search,
+  Shield,
   ShoppingBag,
   Sparkles,
   Store,
@@ -162,6 +163,13 @@ const NAV_ITEMS = [
     label: "AI Center",
     icon: Bot,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_AI_CENTER),
+  },
+  {
+    href: ROUTES.ADMIN_TRUST_CENTER,
+    label: "Trust Center",
+    icon: Shield,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_TRUST_CENTER),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

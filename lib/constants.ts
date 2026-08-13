@@ -83,6 +83,7 @@ export const ROUTES = {
   ADMIN_COMMUNICATION: "/admin/communication",
   ADMIN_EDUCATION: "/admin/education",
   ADMIN_AI_CENTER: "/admin/ai-center",
+  ADMIN_TRUST_CENTER: "/admin/trust-center",
   ACCOUNT_PROMOTIONS: "/account/promotions",
   ACCOUNT_GROWTH: "/account/growth",
   ACCOUNT_AI_CENTER: "/account/ai-center",
