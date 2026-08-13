@@ -5,3 +5,5 @@
 export function isPromotionSurfacesEnabled(): boolean {
   return process.env.PROMOTION_SURFACES_ENABLED === "true";
 }
+
+export { isPromotionAnalyticsEnabled } from "@/lib/promotion/analytics/flags";

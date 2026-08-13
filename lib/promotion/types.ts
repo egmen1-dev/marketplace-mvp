@@ -4,6 +4,7 @@ import type {
 } from "@prisma/client";
 
 import type { AdEligibilityReason } from "@/lib/product-advertising";
+import type { PromotionPerformanceSummary } from "@/lib/promotion/analytics/types";
 
 export type PromotionReadiness = {
   ready: boolean;
@@ -48,6 +49,7 @@ export type SellerPromotionRow = {
   isPromoted: boolean;
   placements: PromotionPlacementDto[];
   activePlacementCount: number;
+  performance: PromotionPerformanceSummary | null;
 };
 
 export type AdminPromotionFilter = PromotionCampaignStatus | "ALL";
@@ -64,4 +66,11 @@ export type AdminPromotionRow = {
   placementCount: number;
   surfaces: PromotionSurfaceType[];
   topPriority: number | null;
+};
+
+export type AdminPromotionDashboard = {
+  rows: AdminPromotionRow[];
+  counts: { started: number; paused: number; ended: number };
+  analytics: import("@/lib/promotion/analytics/types").AdminPromotionAnalyticsSummary;
+  analyticsRows: import("@/lib/promotion/analytics/types").AdminCampaignAnalyticsRow[];
 };

@@ -13,9 +13,10 @@ describe("analytics events", () => {
     expect(ANALYTICS_EVENT_NAMES).toContain("landing_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("purchase_complete");
     expect(ANALYTICS_EVENT_NAMES).toContain("ad_landing_view");
-    expect(ANALYTICS_EVENT_NAMES.length).toBe(27);
+    expect(ANALYTICS_EVENT_NAMES.length).toBe(30);
     expect(ANALYTICS_EVENT_NAMES).toContain("promotion_impression");
     expect(ANALYTICS_EVENT_NAMES).toContain("promotion_click");
+    expect(ANALYTICS_EVENT_NAMES).toContain("promotion_dashboard_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("pdp_section_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("buy_intent");
     expect(ANALYTICS_EVENT_NAMES).toContain("seller_block_view");

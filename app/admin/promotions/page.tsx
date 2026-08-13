@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { AdminPromotionsPanel } from "@/features/admin/components/admin-promotions-panel";
 import {
+  isPromotionAnalyticsEnabled,
   listAdminPromotionCampaigns,
   type AdminPromotionFilter,
 } from "@/lib/promotion";
@@ -55,6 +56,9 @@ export default async function AdminPromotionsPage({
             rows={data.rows}
             counts={data.counts}
             activeFilter={statusFilter}
+            analytics={data.analytics}
+            analyticsRows={data.analyticsRows}
+            analyticsEnabled={isPromotionAnalyticsEnabled()}
           />
         </Suspense>
       ) : null}

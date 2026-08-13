@@ -3,7 +3,7 @@ import {
   PromotionViewTracker,
   SellerPromotionsPanel,
 } from "@/features/promotion";
-import { listSellerPromotionRows, isPromotionSurfacesEnabled } from "@/lib/promotion";
+import { listSellerPromotionRows, isPromotionSurfacesEnabled, isPromotionAnalyticsEnabled } from "@/lib/promotion";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +44,7 @@ export default async function AccountPromotionsPage() {
         <SellerPromotionsPanel
           rows={rows}
           surfacesEnabled={isPromotionSurfacesEnabled()}
+          analyticsEnabled={isPromotionAnalyticsEnabled()}
         />
       )}
     </div>

@@ -2,6 +2,7 @@ export { startPromotionAction, pausePromotionAction, endPromotionAction } from "
 export type { PromotionActionState } from "../actions";
 export { PromotedBadge } from "./promoted-badge";
 export { PromotedProductsSection } from "./promoted-products-section";
+export { PromotionCampaignAnalyticsCard } from "./promotion-campaign-analytics-card";
 export { PromotionViewTracker } from "./promotion-view-tracker";
 export {
   PromotionSurfaceTracker,

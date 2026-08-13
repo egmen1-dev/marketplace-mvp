@@ -1,4 +1,4 @@
-export { isPromotionSurfacesEnabled } from "./flags";
+export { isPromotionSurfacesEnabled, isPromotionAnalyticsEnabled } from "./flags";
 export {
   endPromotionCampaign,
   pausePromotionCampaign,
@@ -39,6 +39,7 @@ export {
 export type { PromotionBoostSignal, PromotionSurfaceSpec } from "./surfaces";
 export { PromotionSurfaceType } from "./surfaces";
 export type {
+  AdminPromotionDashboard,
   AdminPromotionFilter,
   AdminPromotionRow,
   PromotionCampaignDto,

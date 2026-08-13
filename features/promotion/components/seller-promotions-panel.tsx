@@ -13,6 +13,7 @@ import {
   pausePromotionAction,
   startPromotionAction,
 } from "@/features/promotion/actions";
+import { PromotionCampaignAnalyticsCard } from "@/features/promotion/components/promotion-campaign-analytics-card";
 import { formatPrice } from "@/features/products/mappers";
 import type { SellerPromotionRow } from "@/lib/promotion/types";
 import {
@@ -31,11 +32,13 @@ function statusLabel(row: SellerPromotionRow) {
 type SellerPromotionsPanelProps = {
   rows: SellerPromotionRow[];
   surfacesEnabled: boolean;
+  analyticsEnabled: boolean;
 };
 
 export function SellerPromotionsPanel({
   rows,
   surfacesEnabled,
+  analyticsEnabled,
 }: SellerPromotionsPanelProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -148,6 +151,17 @@ export function SellerPromotionsPanel({
                   )}
                 </ul>
               </div>
+            ) : null}
+
+            {analyticsEnabled &&
+            row.isPromoted &&
+            row.performance &&
+            row.campaign ? (
+              <PromotionCampaignAnalyticsCard
+                productId={row.productId}
+                currency={row.currency}
+                performance={row.performance}
+              />
             ) : null}
 
             <div className="flex flex-wrap gap-2 pt-1">

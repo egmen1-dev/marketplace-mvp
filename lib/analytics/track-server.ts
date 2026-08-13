@@ -35,6 +35,21 @@ export async function trackServerEvent(
       visitorId: input.visitorId ? "[set]" : undefined,
       utmSource: input.utmSource,
     });
+
+    if (process.env.PROMOTION_ANALYTICS_ENABLED === "true") {
+      try {
+        const { ingestPromotionAnalyticsEvent } = await import(
+          "@/lib/promotion/analytics/ingest"
+        );
+        await ingestPromotionAnalyticsEvent(input);
+      } catch (ingestErr) {
+        log.error("promotion_analytics_ingest_failed", {
+          event: input.event,
+          detail:
+            ingestErr instanceof Error ? ingestErr.message : String(ingestErr),
+        });
+      }
+    }
   } catch (err) {
     log.error("analytics_track_failed", {
       event: input.event,

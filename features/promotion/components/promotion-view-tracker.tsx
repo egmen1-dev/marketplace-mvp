@@ -10,7 +10,7 @@ import { ROUTES } from "@/lib/constants";
 export function PromotionViewTracker() {
   useEffect(() => {
     trackEvent({
-      event: ANALYTICS_EVENTS.PROMOTION_VIEW,
+      event: ANALYTICS_EVENTS.PROMOTION_DASHBOARD_VIEW,
       route: ROUTES.ACCOUNT_PROMOTIONS,
     });
   }, []);

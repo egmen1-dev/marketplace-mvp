@@ -5,6 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type {
+  AdminCampaignAnalyticsRow,
+  AdminPromotionAnalyticsSummary,
+} from "@/lib/promotion/analytics/types";
 import type { AdminPromotionFilter, AdminPromotionRow } from "@/lib/promotion/types";
 import { PROMOTION_SURFACE_LABELS } from "@/lib/promotion/surfaces";
 import { ROUTES } from "@/lib/constants";
@@ -14,6 +18,9 @@ type AdminPromotionsPanelProps = {
   rows: AdminPromotionRow[];
   counts: { started: number; paused: number; ended: number };
   activeFilter: AdminPromotionFilter;
+  analytics: AdminPromotionAnalyticsSummary;
+  analyticsRows: AdminCampaignAnalyticsRow[];
+  analyticsEnabled: boolean;
 };
 
 const FILTERS: { value: AdminPromotionFilter; label: string }[] = [
@@ -37,6 +44,9 @@ export function AdminPromotionsPanel({
   rows,
   counts,
   activeFilter,
+  analytics,
+  analyticsRows,
+  analyticsEnabled,
 }: AdminPromotionsPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -68,6 +78,84 @@ export function AdminPromotionsPanel({
           <p className="text-xs text-muted-foreground">Завершены</p>
         </div>
       </div>
+
+      {analyticsEnabled ? (
+        <section
+          className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4"
+          data-testid="admin-promotion-analytics"
+        >
+          <h3 className="font-heading text-base font-medium">
+            Статистика продвижения
+          </h3>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <div>
+              <p className="text-xs text-muted-foreground">Active campaigns</p>
+              <p className="font-heading text-xl tabular-nums">
+                {analytics.activeCampaigns}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Impressions</p>
+              <p className="font-heading text-xl tabular-nums">
+                {analytics.impressions}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Clicks</p>
+              <p className="font-heading text-xl tabular-nums">
+                {analytics.clicks}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">CTR</p>
+              <p className="font-heading text-xl tabular-nums">
+                {analytics.impressions > 0
+                  ? `${analytics.ctr.toFixed(1)}%`
+                  : "0%"}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Orders</p>
+              <p className="font-heading text-xl tabular-nums">
+                {analytics.orders}
+              </p>
+            </div>
+          </div>
+
+          {analyticsRows.length > 0 ? (
+            <div className="overflow-x-auto rounded-lg border border-border/60">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border text-xs text-muted-foreground">
+                    <th className="px-3 py-2">Campaign</th>
+                    <th className="px-3 py-2">Seller</th>
+                    <th className="px-3 py-2">Views</th>
+                    <th className="px-3 py-2">Orders</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analyticsRows.slice(0, 20).map((row) => (
+                    <tr
+                      key={row.campaignId}
+                      className="border-b border-border/60"
+                      data-testid={`admin-promotion-analytics-row-${row.productId}`}
+                    >
+                      <td className="px-3 py-2">{row.productTitle}</td>
+                      <td className="px-3 py-2 text-muted-foreground">
+                        {row.sellerName}
+                      </td>
+                      <td className="px-3 py-2 tabular-nums">
+                        {row.productViews}
+                      </td>
+                      <td className="px-3 py-2 tabular-nums">{row.orders}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </section>
+      ) : null}
 
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((filter) => (
