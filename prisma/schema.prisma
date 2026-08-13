@@ -525,6 +525,8 @@ model Product {
   characteristicValues ProductCharacteristicValue[]
   promotionCampaign    PromotionCampaign?
   promotionPlacements  PromotionPlacement[]
+  promotionMetrics     PromotionMetric[]
+  promotionAttributions PromotionAttribution[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -1064,6 +1066,8 @@ model PromotionCampaign {
   product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   seller  SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   placements PromotionPlacement[]
+  metrics      PromotionMetric[]
+  attributions PromotionAttribution[]
 
   @@index([sellerId])
   @@index([status])
@@ -1090,6 +1094,51 @@ model PromotionPlacement {
   @@index([productId])
   @@index([surface, active, priority])
   @@map("promotion_placements")
+}
+
+/// Daily promotion performance aggregates — analytics layer only.
+model PromotionMetric {
+  id               String   @id @default(cuid())
+  campaignId       String
+  productId        String
+  date             DateTime @db.Date
+  impressions      Int      @default(0)
+  clicks           Int      @default(0)
+  productViews     Int      @default(0)
+  addToCart        Int      @default(0)
+  checkoutStarted  Int      @default(0)
+  orders           Int      @default(0)
+  revenue          Decimal  @default(0) @db.Decimal(14, 2)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  campaign PromotionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, date])
+  @@index([campaignId, date])
+  @@index([productId])
+  @@map("promotion_metrics")
+}
+
+/// Anonymous visitor attribution — 7-day window, no user account linkage.
+model PromotionAttribution {
+  id           String   @id @default(cuid())
+  campaignId   String
+  productId    String
+  visitorId    String
+  firstTouchAt DateTime
+  lastTouchAt  DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  campaign PromotionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, visitorId])
+  @@index([visitorId, productId])
+  @@index([lastTouchAt])
+  @@map("promotion_attributions")
 }
 
 /// Conversion funnel events — no PII (page_view, add_to_cart, etc.).

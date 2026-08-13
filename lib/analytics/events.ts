@@ -44,6 +44,12 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_IMPRESSION: "promotion_impression",
   /** Promotion distribution — surface click */
   PROMOTION_CLICK: "promotion_click",
+  /** Promotion analytics — seller campaign card viewed */
+  PROMOTION_CAMPAIGN_VIEW: "promotion_campaign_view",
+  /** Promotion analytics — seller dashboard viewed */
+  PROMOTION_DASHBOARD_VIEW: "promotion_dashboard_view",
+  /** Promotion analytics — ROI block viewed */
+  PROMOTION_ROI_VIEW: "promotion_roi_view",
 } as const;
 
 export type AnalyticsEventName =

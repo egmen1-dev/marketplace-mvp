@@ -3,8 +3,11 @@ import { Prisma, ProductStatus, PromotionCampaignStatus, PromotionSurfaceType } 
 import { mapProductListItem, toPriceNumber } from "@/features/products/mappers";
 import type { ProductListItem } from "@/features/products/types";
 import { isPromotionSurfacesEnabled } from "@/lib/promotion/flags";
+import { getSellerCampaignPerformanceMap } from "@/lib/promotion/analytics/queries";
+import { isPromotionAnalyticsEnabled } from "@/lib/promotion/analytics/flags";
 import { evaluatePromotionReadiness } from "@/lib/promotion/readiness";
 import type {
+  AdminPromotionDashboard,
   AdminPromotionFilter,
   AdminPromotionRow,
   PromotionCampaignDto,
@@ -178,6 +181,12 @@ export async function listSellerPromotionRows(
     take: 100,
   });
 
+  const campaignIds = products
+    .map((p) => p.promotionCampaign?.id)
+    .filter((id): id is string => Boolean(id));
+
+  const performanceMap = await getSellerCampaignPerformanceMap(campaignIds);
+
   return products.map((product) => {
     const readiness = snapshotFromProduct(product);
     const campaign = product.promotionCampaign
@@ -208,16 +217,16 @@ export async function listSellerPromotionRows(
       isPromoted: campaign?.status === PromotionCampaignStatus.STARTED,
       placements,
       activePlacementCount: placements.filter((p) => p.active).length,
+      performance: campaign
+        ? (performanceMap.get(campaign.id) ?? null)
+        : null,
     };
   });
 }
 
 export async function listAdminPromotionCampaigns(opts?: {
   status?: AdminPromotionFilter;
-}): Promise<{
-  rows: AdminPromotionRow[];
-  counts: { started: number; paused: number; ended: number };
-}> {
+}): Promise<AdminPromotionDashboard> {
   const statusFilter = opts?.status ?? "ALL";
 
   const campaigns = await prisma.promotionCampaign.findMany({
@@ -277,5 +286,30 @@ export async function listAdminPromotionCampaigns(opts?: {
       .length,
   };
 
-  return { rows, counts };
+  const { getAdminPromotionAnalytics } = await import(
+    "@/lib/promotion/analytics/queries"
+  );
+  const analyticsData = isPromotionAnalyticsEnabled()
+    ? await getAdminPromotionAnalytics()
+    : {
+        summary: {
+          impressions: 0,
+          clicks: 0,
+          productViews: 0,
+          addToCart: 0,
+          checkoutStarted: 0,
+          orders: 0,
+          revenue: 0,
+          activeCampaigns: counts.started,
+          ctr: 0,
+        },
+        rows: [],
+      };
+
+  return {
+    rows,
+    counts,
+    analytics: analyticsData.summary,
+    analyticsRows: analyticsData.rows,
+  };
 }

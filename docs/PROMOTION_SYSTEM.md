@@ -1,8 +1,10 @@
-# Promotion System (ADS-MARKETPLACE-001 + ADS-MARKETPLACE-002)
+# Promotion System (ADS-MARKETPLACE-001 → ADS-MARKETPLACE-003)
 
 MVP internal marketplace promotion — **not** a paid ad exchange.
 
 Sellers opt in eligible products → status `STARTED` → badge on PDP + optional distribution surfaces. Surfaces sit behind `PROMOTION_SURFACES_ENABLED=false` by default and **do not change search ranking**.
+
+Performance analytics (`PROMOTION_ANALYTICS_ENABLED=false` by default) aggregates impressions, clicks, and attributed funnel events into `PromotionMetric` — **does not affect ranking**.
 
 ---
 
@@ -11,12 +13,12 @@ Sellers opt in eligible products → status `STARTED` → badge on PDP + optiona
 ```
 lib/promotion/
   readiness.ts / lifecycle.ts / queries.ts
-  surfaces.ts      — PromotionSurfaceType + boost contract
-  placements.ts    — PromotionPlacement lifecycle
+  surfaces.ts / placements.ts
+  analytics/       — ingest pipeline, attribution, ROI score (ADS-003)
 features/promotion/ — UI + server actions
 prisma:
-  PromotionCampaign  — one row per product
-  PromotionPlacement — campaign × surface slots
+  PromotionCampaign / PromotionPlacement
+  PromotionMetric / PromotionAttribution
 ```
 
 | Layer | Responsibility |
