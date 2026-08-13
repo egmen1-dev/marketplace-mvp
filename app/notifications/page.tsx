@@ -17,6 +17,10 @@ import {
   isSellerJourneyEnabled,
 } from "@/lib/seller-journey";
 import {
+  getSellerBusinessNotifications,
+  isSellerBusinessIntelligenceEnabled,
+} from "@/lib/seller-business-intelligence";
+import {
   getSellerOperationsNotifications,
   isSellerOperationsEnabled,
 } from "@/lib/seller-operations";
@@ -35,16 +39,22 @@ export default async function NotificationsPage() {
     );
   }
 
+  const biEnabled = isSellerBusinessIntelligenceEnabled();
   const operationsEnabled = isSellerOperationsEnabled();
   const journeyEnabled = isSellerJourneyEnabled();
 
   const notifications = [
-    ...(operationsEnabled && user.sellerProfileId
+    ...(biEnabled && user.sellerProfileId
+      ? await getSellerBusinessNotifications({
+          sellerProfileId: user.sellerProfileId,
+        })
+      : []),
+    ...(operationsEnabled && user.sellerProfileId && !biEnabled
       ? await getSellerOperationsNotifications({
           sellerProfileId: user.sellerProfileId,
         })
       : []),
-    ...(journeyEnabled && user.sellerProfileId && !operationsEnabled
+    ...(journeyEnabled && user.sellerProfileId && !operationsEnabled && !biEnabled
       ? await getSellerJourneyNotifications({
           sellerProfileId: user.sellerProfileId,
         })
@@ -52,7 +62,8 @@ export default async function NotificationsPage() {
     ...(isSellerFirstEntryEnabled() &&
     user.sellerProfileId &&
     !journeyEnabled &&
-    !operationsEnabled
+    !operationsEnabled &&
+    !biEnabled
       ? await getSellerFirstEntryNotifications({
           sellerProfileId: user.sellerProfileId,
         })
@@ -60,7 +71,8 @@ export default async function NotificationsPage() {
     ...(isSellerLifecycleEnabled() &&
     user.sellerProfileId &&
     !journeyEnabled &&
-    !operationsEnabled
+    !operationsEnabled &&
+    !biEnabled
       ? await getSellerLifecycleNotifications({
           sellerProfileId: user.sellerProfileId,
         })

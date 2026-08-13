@@ -9,10 +9,12 @@ import { AdminSellersTable, listAdminSellers } from "@/features/admin";
 import { AdminSellerActivationPanel } from "@/features/seller-first-entry";
 import { AdminSellerJourneyFunnelPanel } from "@/features/seller-journey";
 import { AdminSellerFunnelPanel } from "@/features/seller-lifecycle";
+import { AdminSellerActivationIntelligencePanel } from "@/features/seller-business-intelligence";
 import { AdminSellerOperationsHealthPanel } from "@/features/seller-operations";
 import { getAdminSellerActivation } from "@/lib/seller-first-entry";
 import { getAdminSellerJourneyFunnel } from "@/lib/seller-journey";
 import { getAdminSellerFunnel } from "@/lib/seller-lifecycle";
+import { getAdminSellerActivationIntelligence } from "@/lib/seller-business-intelligence";
 import { getAdminSellerOperationsHealth } from "@/lib/seller-operations";
 
 export const metadata = {
@@ -20,13 +22,14 @@ export const metadata = {
 };
 
 export default async function AdminSellersPage() {
-  const [sellers, funnel, activation, journeyFunnel, operationsHealth] =
+  const [sellers, funnel, activation, journeyFunnel, operationsHealth, activationIntel] =
     await Promise.all([
       listAdminSellers(),
       getAdminSellerFunnel(),
       getAdminSellerActivation(),
       getAdminSellerJourneyFunnel(),
       getAdminSellerOperationsHealth(),
+      getAdminSellerActivationIntelligence(),
     ]);
 
   return (
@@ -51,6 +54,18 @@ export default async function AdminSellersPage() {
         </CardHeader>
         <CardContent>
           <AdminSellerJourneyFunnelPanel funnel={journeyFunnel} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Seller Activation Intelligence</CardTitle>
+          <CardDescription>
+            AI-слой: где продавцы застревают и готовы к росту
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AdminSellerActivationIntelligencePanel data={activationIntel} />
         </CardContent>
       </Card>
 
