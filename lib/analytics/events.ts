@@ -156,6 +156,12 @@ export const ANALYTICS_EVENTS = {
   LEARNING_PATTERN_CREATED: "learning_pattern_created",
   /** Marketplace Learning — AI recommendation quality viewed */
   AI_RECOMMENDATION_QUALITY: "ai_recommendation_quality",
+  /** Command Center — unified seller/admin center viewed */
+  COMMAND_CENTER_VIEW: "command_center_view",
+  /** Command Center — priority block viewed */
+  PRIORITY_VIEW: "priority_view",
+  /** Command Center — priority CTA clicked */
+  PRIORITY_ACTION_CLICK: "priority_action_click",
 } as const;
 
 export type AnalyticsEventName =

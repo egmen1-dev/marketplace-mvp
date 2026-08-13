@@ -8,6 +8,7 @@ import {
   BookOpen,
   Bot,
   BrainCircuit,
+  Command,
   ClipboardCheck,
   ClipboardList,
   LineChart,
@@ -177,6 +178,13 @@ const NAV_ITEMS = [
     label: "Learning",
     icon: BrainCircuit,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_LEARNING),
+  },
+  {
+    href: ROUTES.ADMIN_COMMAND_CENTER,
+    label: "Command Center",
+    icon: Command,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_COMMAND_CENTER),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,
