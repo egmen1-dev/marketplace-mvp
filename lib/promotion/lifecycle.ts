@@ -108,23 +108,31 @@ export async function startPromotionCampaign(
     throw new PromotionValidationError("Продвижение уже активно");
   }
 
-  const row = existing
-    ? await prisma.promotionCampaign.update({
-        where: { id: existing.id },
-        data: {
-          status: PromotionCampaignStatus.STARTED,
-          startedAt: now,
-          endedAt: null,
-        },
-      })
-    : await prisma.promotionCampaign.create({
-        data: {
-          productId,
-          sellerId: sellerProfileId,
-          status: PromotionCampaignStatus.STARTED,
-          startedAt: now,
-        },
-      });
+  const row = await prisma.$transaction(async (tx) => {
+    const campaign = existing
+      ? await tx.promotionCampaign.update({
+          where: { id: existing.id },
+          data: {
+            status: PromotionCampaignStatus.STARTED,
+            startedAt: now,
+            endedAt: null,
+          },
+        })
+      : await tx.promotionCampaign.create({
+          data: {
+            productId,
+            sellerId: sellerProfileId,
+            status: PromotionCampaignStatus.STARTED,
+            startedAt: now,
+          },
+        });
+
+    const { activatePlacementsForCampaign } = await import(
+      "@/lib/promotion/placements"
+    );
+    await activatePlacementsForCampaign(campaign.id, productId, tx);
+    return campaign;
+  });
 
   return mapCampaign(row);
 }
@@ -142,9 +150,16 @@ export async function pausePromotionCampaign(
     throw new PromotionValidationError("Нет активного продвижения");
   }
 
-  const row = await prisma.promotionCampaign.update({
-    where: { id: existing.id },
-    data: { status: PromotionCampaignStatus.PAUSED },
+  const row = await prisma.$transaction(async (tx) => {
+    const campaign = await tx.promotionCampaign.update({
+      where: { id: existing.id },
+      data: { status: PromotionCampaignStatus.PAUSED },
+    });
+    const { deactivatePlacementsForCampaign } = await import(
+      "@/lib/promotion/placements"
+    );
+    await deactivatePlacementsForCampaign(existing.id, tx);
+    return campaign;
   });
 
   return mapCampaign(row);
@@ -163,12 +178,19 @@ export async function endPromotionCampaign(
     throw new PromotionValidationError("Кампания не найдена");
   }
 
-  const row = await prisma.promotionCampaign.update({
-    where: { id: existing.id },
-    data: {
-      status: PromotionCampaignStatus.ENDED,
-      endedAt: new Date(),
-    },
+  const row = await prisma.$transaction(async (tx) => {
+    const campaign = await tx.promotionCampaign.update({
+      where: { id: existing.id },
+      data: {
+        status: PromotionCampaignStatus.ENDED,
+        endedAt: new Date(),
+      },
+    });
+    const { deactivatePlacementsForCampaign } = await import(
+      "@/lib/promotion/placements"
+    );
+    await deactivatePlacementsForCampaign(existing.id, tx);
+    return campaign;
   });
 
   return mapCampaign(row);

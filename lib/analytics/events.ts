@@ -40,6 +40,10 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_START: "promotion_start",
   /** Promotion MVP — seller paused promotion */
   PROMOTION_PAUSE: "promotion_pause",
+  /** Promotion distribution — surface impression */
+  PROMOTION_IMPRESSION: "promotion_impression",
+  /** Promotion distribution — surface click */
+  PROMOTION_CLICK: "promotion_click",
 } as const;
 
 export type AnalyticsEventName =

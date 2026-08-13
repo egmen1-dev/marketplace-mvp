@@ -40,9 +40,10 @@ import { pluralizeProductWord } from "@/lib/i18n";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PromotedProductsSection } from "@/features/promotion";
 import {
-  getPromotedProducts,
+  getCatalogPromotedProducts,
   isPromotionSurfacesEnabled,
 } from "@/lib/promotion";
+import { PromotionSurfaceType } from "@/lib/promotion/surfaces";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 type CatalogPageProps = {
@@ -70,11 +71,13 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   let result: Awaited<ReturnType<typeof listProducts>> | null = null;
   let activeCategory: Awaited<ReturnType<typeof getCategoryBySlug>> = null;
   let popularCategories: Awaited<ReturnType<typeof listRootCategories>> = [];
-  let promotedProducts: Awaited<ReturnType<typeof getPromotedProducts>> = [];
+  let promotedProducts: Awaited<
+    ReturnType<typeof getCatalogPromotedProducts>
+  > = [];
   let dbError: string | null = null;
 
   try {
-    const [tree, cityList, sellerList, productResult, categoryDetail, roots, promoted] =
+    const [tree, cityList, sellerList, productResult, categoryDetail, roots] =
       await Promise.all([
         listCategoryTree({ activeOnly: true }),
         listProductCities(),
@@ -100,19 +103,19 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           ? getCategoryBySlug(filters.category, { activeOnly: true })
           : Promise.resolve(null),
         listRootCategories({ activeOnly: true }),
-        isPromotionSurfacesEnabled() && !filters.q && !filters.category
-          ? getPromotedProducts(4)
-          : Promise.resolve([]),
       ]);
     categoryTree = tree;
     cities = cityList;
     sellers = sellerList;
     result = productResult;
     activeCategory = categoryDetail;
-    promotedProducts = promoted;
     popularCategories = roots
       .filter((c) => c.productCount > 0)
       .slice(0, 6);
+    promotedProducts =
+      isPromotionSurfacesEnabled() && !filters.q
+        ? await getCatalogPromotedProducts(4, activeCategory?.id ?? null)
+        : [];
   } catch (err) {
     console.error("[catalog]", err);
     dbError = "Не удалось загрузить каталог. Попробуйте обновить страницу.";
@@ -175,6 +178,11 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           title="Продвигаемые предложения"
           products={promotedProducts}
           catalogHref={ROUTES.CATALOG}
+          surface={
+            activeCategory
+              ? PromotionSurfaceType.CATEGORY_TOP
+              : PromotionSurfaceType.CATALOG_TOP
+          }
         />
       ) : null}
 

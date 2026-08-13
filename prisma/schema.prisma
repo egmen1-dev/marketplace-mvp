@@ -140,6 +140,14 @@ enum PromotionCampaignStatus {
   ENDED
 }
 
+/// Promotion distribution surfaces — separate from catalog/search ranking.
+enum PromotionSurfaceType {
+  HOME_FEATURED
+  CATALOG_TOP
+  CATEGORY_TOP
+  SEARCH_BOOST
+}
+
 /// How the buyer receives goods: CDEK delivery vs seller warehouse pickup.
 enum OrderFulfillmentType {
   DELIVERY
@@ -516,6 +524,7 @@ model Product {
   conversations    Conversation[]
   characteristicValues ProductCharacteristicValue[]
   promotionCampaign    PromotionCampaign?
+  promotionPlacements  PromotionPlacement[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -1054,11 +1063,33 @@ model PromotionCampaign {
 
   product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   seller  SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  placements PromotionPlacement[]
 
   @@index([sellerId])
   @@index([status])
   @@index([status, startedAt])
   @@map("promotion_campaigns")
+}
+
+/// Where a promoted product may appear — distribution layer, not search ranking.
+model PromotionPlacement {
+  id         String               @id @default(cuid())
+  campaignId String
+  productId  String
+  surface    PromotionSurfaceType
+  position   Int                  @default(0)
+  priority   Int                  @default(0)
+  active     Boolean              @default(true)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  campaign PromotionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, surface])
+  @@index([productId])
+  @@index([surface, active, priority])
+  @@map("promotion_placements")
 }
 
 /// Conversion funnel events — no PII (page_view, add_to_cart, etc.).

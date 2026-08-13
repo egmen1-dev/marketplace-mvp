@@ -103,7 +103,12 @@ describe("promotion lifecycle integration", () => {
     } = await import("@/lib/promotion/lifecycle");
 
     const product = await prisma.product.findFirst({
-      where: { status: ProductStatus.ACTIVE, stock: { gt: 0 } },
+      where: {
+        status: ProductStatus.ACTIVE,
+        stock: { gt: 0 },
+        productTypeId: { not: null },
+        images: { some: {} },
+      },
       include: {
         images: { take: 1 },
         productType: {
@@ -112,10 +117,28 @@ describe("promotion lifecycle integration", () => {
           },
         },
         characteristicValues: true,
-        seller: { select: { isBlocked: true } },
+        seller: { select: { isBlocked: true, isVerified: true } },
       },
     });
-    if (!product || product.images.length === 0 || !product.productTypeId) {
+    if (!product || !product.productTypeId) {
+      return;
+    }
+
+    const requiredIds = new Set(
+      product.productType?.characteristics.map((c) => c.id) ?? [],
+    );
+    const filledRequired = product.characteristicValues.filter((cv) => {
+      if (!requiredIds.has(cv.definitionId)) return false;
+      if (cv.valueText?.trim()) return true;
+      if (cv.valueNumber != null) return true;
+      if (cv.valueBoolean != null) return true;
+      if (cv.valueJson != null) return true;
+      return false;
+    }).length;
+    if (
+      requiredIds.size > 0 &&
+      filledRequired < requiredIds.size
+    ) {
       return;
     }
 

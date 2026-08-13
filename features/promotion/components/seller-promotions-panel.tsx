@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { Loader2, Megaphone, Pause } from "lucide-react";
+import { Check, Loader2, Megaphone, Pause } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,10 @@ import {
 } from "@/features/promotion/actions";
 import { formatPrice } from "@/features/products/mappers";
 import type { SellerPromotionRow } from "@/lib/promotion/types";
+import {
+  PROMOTION_SURFACE_LABELS,
+  SELLER_SURFACE_LABELS,
+} from "@/lib/promotion/surfaces";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 
 function statusLabel(row: SellerPromotionRow) {
@@ -24,7 +28,15 @@ function statusLabel(row: SellerPromotionRow) {
   return "Не продвигается";
 }
 
-export function SellerPromotionsPanel({ rows }: { rows: SellerPromotionRow[] }) {
+type SellerPromotionsPanelProps = {
+  rows: SellerPromotionRow[];
+  surfacesEnabled: boolean;
+};
+
+export function SellerPromotionsPanel({
+  rows,
+  surfacesEnabled,
+}: SellerPromotionsPanelProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -52,6 +64,16 @@ export function SellerPromotionsPanel({ rows }: { rows: SellerPromotionRow[] }) 
 
   return (
     <div className="flex flex-col gap-4" data-testid="seller-promotions-panel">
+      {!surfacesEnabled ? (
+        <p
+          className="rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground"
+          data-testid="promotion-surfaces-disabled-notice"
+        >
+          Продвижение подготовлено. Размещение будет доступно после включения
+          рекламных мест на площадке.
+        </p>
+      ) : null}
+
       {rows.map((row) => (
         <article
           key={row.productId}
@@ -92,6 +114,40 @@ export function SellerPromotionsPanel({ rows }: { rows: SellerPromotionRow[] }) 
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+            ) : null}
+
+            {(row.campaign || row.isPromoted) ? (
+              <div
+                className="rounded-xl border border-border/60 bg-muted/20 px-3 py-2 text-sm"
+                data-testid={`promotion-placements-${row.productId}`}
+              >
+                <p className="font-medium">Где показывается товар</p>
+                <ul className="mt-2 space-y-1 text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <Check className="size-3.5 shrink-0 text-primary" aria-hidden />
+                    Карточка товара (badge)
+                  </li>
+                  {row.placements.length === 0 ? (
+                    <li>Размещения появятся после запуска кампании</li>
+                  ) : (
+                    row.placements.map((placement) => (
+                      <li
+                        key={placement.id}
+                        className="flex items-center gap-2"
+                      >
+                        {placement.active ? (
+                          <Check className="size-3.5 shrink-0 text-primary" aria-hidden />
+                        ) : (
+                          <span className="size-3.5 shrink-0 text-center text-xs">—</span>
+                        )}
+                        {SELLER_SURFACE_LABELS[placement.surface] ??
+                          PROMOTION_SURFACE_LABELS[placement.surface]}
+                        {!placement.active ? " (неактивно)" : null}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
             ) : null}
 
             <div className="flex flex-wrap gap-2 pt-1">
