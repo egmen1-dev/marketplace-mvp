@@ -1,10 +1,12 @@
 import {
+  Bot,
   GraduationCap,
   Heart,
   MapPin,
   Megaphone,
   MessageCircle,
   Package,
+  Bell,
   Settings,
   ShoppingBag,
   Sparkles,
@@ -92,6 +94,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
       path.startsWith(`${ROUTES.ACCOUNT_PROMOTIONS}/`),
   },
   {
+    href: ROUTES.ACCOUNT_AI_CENTER,
+    label: "AI центр",
+    icon: Bot,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_AI_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_AI_CENTER}/`),
+  },
+  {
     href: ROUTES.ACCOUNT_GROWTH,
     label: "Рост продаж",
     icon: Sparkles,
@@ -125,6 +136,14 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_PICKUP_POINTS ||
       path.startsWith(`${ROUTES.ACCOUNT_PICKUP_POINTS}/`),
+  },
+  {
+    href: ROUTES.NOTIFICATIONS,
+    label: "Уведомления",
+    icon: Bell,
+    match: (path) =>
+      path === ROUTES.NOTIFICATIONS ||
+      path.startsWith(`${ROUTES.NOTIFICATIONS}/`),
   },
   {
     href: ROUTES.SETTINGS,

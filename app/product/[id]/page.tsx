@@ -24,6 +24,11 @@ import { PdpSectionViewTracker } from "@/features/products/components/pdp-sectio
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { BuyerProductFitBlock } from "@/features/buyer-intelligence";
+import { BuyerAiAssistantPanel } from "@/features/ai-experience";
+import {
+  getBuyerAiAssistantExperience,
+  isAiExperienceEnabled,
+} from "@/lib/ai-experience";
 import {
   BuyerEducationPanel,
   BuyerSmartAssistant,
@@ -113,6 +118,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const educationEnabled = isMarketplaceEducationEnabled();
   const buyerEducationTopics = educationEnabled ? getBuyerEducationTopics() : [];
   let buyerHelpPrompts: ReturnType<typeof getBuyerHelpPrompts> = [];
+  let buyerAiAssistant: Awaited<
+    ReturnType<typeof getBuyerAiAssistantExperience>
+  > = { enabled: false, headline: "Помочь выбрать", prompts: [], matchSummary: null };
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -142,6 +150,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   if (educationEnabled) {
     buyerHelpPrompts = getBuyerHelpPrompts(product.title);
+  }
+
+  if (isAiExperienceEnabled()) {
+    buyerAiAssistant = await getBuyerAiAssistantExperience({
+      productId: product.id,
+      productTitle: product.title,
+      userId: session?.id ?? null,
+    });
   }
 
   if (product.status === "ACTIVE") {
@@ -334,7 +350,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <BuyerProductFitBlock match={buyerMatch} productId={product.id} />
           ) : null}
 
-          {buyerHelpPrompts.length > 0 ? (
+          {buyerAiAssistant.enabled ? (
+            <BuyerAiAssistantPanel
+              experience={buyerAiAssistant}
+              productId={product.id}
+            />
+          ) : buyerHelpPrompts.length > 0 ? (
             <BuyerSmartAssistant
               prompts={buyerHelpPrompts}
               productId={product.id}
