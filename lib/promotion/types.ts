@@ -5,6 +5,10 @@ import type {
 
 import type { AdEligibilityReason } from "@/lib/product-advertising";
 import type { PromotionPerformanceSummary } from "@/lib/promotion/analytics/types";
+import type {
+  PromotionOrderDto,
+  PromotionPlanDto,
+} from "@/lib/promotion/billing/types";
 
 export type PromotionReadiness = {
   ready: boolean;
@@ -50,6 +54,16 @@ export type SellerPromotionRow = {
   placements: PromotionPlacementDto[];
   activePlacementCount: number;
   performance: PromotionPerformanceSummary | null;
+  activeOrder: PromotionOrderDto | null;
+};
+
+export type AdminPromotionBillingDashboard = {
+  summary: import("@/lib/promotion/billing/types").AdminPromotionBillingSummary;
+  recentOrders: Awaited<
+    ReturnType<
+      typeof import("@/lib/promotion/billing/queries").listRecentPaidPromotionOrders
+    >
+  >;
 };
 
 export type AdminPromotionFilter = PromotionCampaignStatus | "ALL";
@@ -73,4 +87,6 @@ export type AdminPromotionDashboard = {
   counts: { started: number; paused: number; ended: number };
   analytics: import("@/lib/promotion/analytics/types").AdminPromotionAnalyticsSummary;
   analyticsRows: import("@/lib/promotion/analytics/types").AdminCampaignAnalyticsRow[];
+  billing: AdminPromotionBillingDashboard | null;
+  plans: PromotionPlanDto[];
 };

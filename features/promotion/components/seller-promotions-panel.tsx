@@ -13,9 +13,11 @@ import {
   pausePromotionAction,
   startPromotionAction,
 } from "@/features/promotion/actions";
+import { PromotionBillingControls } from "@/features/promotion/components/promotion-billing-controls";
 import { PromotionCampaignAnalyticsCard } from "@/features/promotion/components/promotion-campaign-analytics-card";
 import { formatPrice } from "@/features/products/mappers";
 import type { SellerPromotionRow } from "@/lib/promotion/types";
+import type { PromotionPlanDto } from "@/lib/promotion/billing/types";
 import {
   PROMOTION_SURFACE_LABELS,
   SELLER_SURFACE_LABELS,
@@ -33,21 +35,49 @@ type SellerPromotionsPanelProps = {
   rows: SellerPromotionRow[];
   surfacesEnabled: boolean;
   analyticsEnabled: boolean;
+  billingEnabled: boolean;
+  plans: PromotionPlanDto[];
 };
 
 export function SellerPromotionsPanel({
   rows,
   surfacesEnabled,
   analyticsEnabled,
+  billingEnabled,
+  plans,
 }: SellerPromotionsPanelProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  function run(action: (id: string) => Promise<{ ok: boolean; error?: string }>, productId: string) {
+  function run(
+    action: (id: string) => Promise<{ ok: boolean; error?: string; checkoutUrl?: string }>,
+    productId: string,
+  ) {
     startTransition(async () => {
       const result = await action(productId);
       if (!result.ok && result.error) {
         window.alert(result.error);
+        return;
+      }
+      if (result.checkoutUrl) {
+        window.location.href = result.checkoutUrl;
+        return;
+      }
+      router.refresh();
+    });
+  }
+
+  function runBilling(
+    action: () => Promise<{ ok: boolean; error?: string; checkoutUrl?: string }>,
+  ) {
+    startTransition(async () => {
+      const result = await action();
+      if (!result.ok && result.error) {
+        window.alert(result.error);
+        return;
+      }
+      if (result.checkoutUrl) {
+        window.location.href = result.checkoutUrl;
         return;
       }
       router.refresh();
@@ -164,6 +194,19 @@ export function SellerPromotionsPanel({
               />
             ) : null}
 
+            {billingEnabled ? (
+              <PromotionBillingControls
+                productId={row.productId}
+                currency={row.currency}
+                isPromoted={row.isPromoted}
+                readinessReady={row.readiness.ready}
+                activeOrder={row.activeOrder}
+                plans={plans}
+                pending={pending}
+                onPendingAction={runBilling}
+              />
+            ) : null}
+
             <div className="flex flex-wrap gap-2 pt-1">
               {row.isPromoted ? (
                 <>
@@ -192,7 +235,7 @@ export function SellerPromotionsPanel({
                     Завершить
                   </Button>
                 </>
-              ) : (
+              ) : billingEnabled ? null : (
                 <Button
                   type="button"
                   size="sm"

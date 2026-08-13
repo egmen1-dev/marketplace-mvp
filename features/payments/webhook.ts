@@ -5,6 +5,10 @@ import {
   markOrderPaidFromPaymentIntent,
 } from "@/features/payments/create-checkout-session";
 import { PaymentServiceError } from "@/features/payments/errors";
+import {
+  isPromotionCheckoutMetadata,
+  markPromotionPaidFromCheckoutSession,
+} from "@/lib/promotion/billing/checkout";
 import { getEnv } from "@/lib/env";
 import { log } from "@/lib/logger";
 import { getStripe } from "@/lib/stripe";
@@ -13,6 +17,7 @@ export type StripeWebhookResult = {
   handled: boolean;
   type: string;
   orderId?: string | null;
+  promotionOrderId?: string | null;
   alreadyPaid?: boolean;
   /** Business rejection that must not corrupt data on Stripe retries. */
   rejected?: boolean;
@@ -76,6 +81,25 @@ async function settleCheckout(
   session: Stripe.Checkout.Session,
   type: string,
 ): Promise<StripeWebhookResult> {
+  if (isPromotionCheckoutMetadata(session.metadata)) {
+    try {
+      const result = await markPromotionPaidFromCheckoutSession(session);
+      return {
+        handled: true,
+        type,
+        promotionOrderId: result.promotionOrderId,
+        alreadyPaid: result.alreadyPaid,
+      };
+    } catch (err) {
+      return rejectBusinessError(
+        err,
+        type,
+        session.metadata?.promotionOrderId ?? null,
+        "promotion",
+      );
+    }
+  }
+
   try {
     const result = await markOrderPaidFromCheckoutSession(session);
     return {
@@ -113,7 +137,8 @@ async function settlePaymentIntent(
 function rejectBusinessError(
   err: unknown,
   type: string,
-  orderId: string | null,
+  entityId: string | null,
+  kind: "order" | "promotion" = "order",
 ): StripeWebhookResult {
   if (err instanceof PaymentServiceError) {
     const safeCodes = new Set([
@@ -126,13 +151,17 @@ function rejectBusinessError(
     if (safeCodes.has(err.code)) {
       log.error("payment_webhook_rejected", {
         type,
-        orderId: orderId ?? undefined,
+        orderId: kind === "order" ? entityId ?? undefined : undefined,
+        promotionOrderId:
+          kind === "promotion" ? entityId ?? undefined : undefined,
         code: err.code,
       });
       return {
         handled: true,
         type,
-        orderId,
+        ...(kind === "promotion"
+          ? { promotionOrderId: entityId }
+          : { orderId: entityId }),
         rejected: true,
         reason: err.code,
       };

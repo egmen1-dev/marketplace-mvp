@@ -50,6 +50,12 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_DASHBOARD_VIEW: "promotion_dashboard_view",
   /** Promotion analytics — ROI block viewed */
   PROMOTION_ROI_VIEW: "promotion_roi_view",
+  /** Promotion billing — seller started checkout */
+  PROMOTION_PURCHASE_STARTED: "promotion_purchase_started",
+  /** Promotion billing — Stripe payment succeeded */
+  PROMOTION_PAYMENT_SUCCESS: "promotion_payment_success",
+  /** Promotion billing — paid period ended */
+  PROMOTION_EXPIRED: "promotion_expired",
 } as const;
 
 export type AnalyticsEventName =

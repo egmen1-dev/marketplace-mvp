@@ -208,6 +208,9 @@ export async function DELETE(request: Request) {
   const productIds = products.map((p) => p.id);
 
   if (productIds.length) {
+    await prisma.promotionOrder.deleteMany({
+      where: { productId: { in: productIds } },
+    });
     await prisma.promotionCampaign.deleteMany({
       where: { productId: { in: productIds } },
     });

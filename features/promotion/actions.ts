@@ -16,11 +16,15 @@ import {
   PromotionForbiddenError,
   PromotionValidationError,
   startPromotionCampaign,
+  renewPromotionCheckout,
+  startPromotionCheckout,
 } from "@/lib/promotion";
+import { isPromotionBillingEnabled } from "@/lib/promotion/billing/flags";
 
 export type PromotionActionState = {
   ok: boolean;
   error?: string;
+  checkoutUrl?: string;
 };
 
 function mapError(err: unknown): PromotionActionState {
@@ -55,6 +59,12 @@ export async function startPromotionAction(
 ): Promise<PromotionActionState> {
   try {
     const seller = await requireSellerSession();
+    if (isPromotionBillingEnabled()) {
+      return {
+        ok: false,
+        error: "Выберите тариф и оплатите продвижение",
+      };
+    }
     await startPromotionCampaign(seller.sellerProfileId, productId);
     await trackServerEvent({
       event: ANALYTICS_EVENTS.PROMOTION_START,
@@ -94,6 +104,54 @@ export async function endPromotionAction(
     await endPromotionCampaign(seller.sellerProfileId, productId);
     revalidatePromotionPaths(productId);
     return { ok: true };
+  } catch (err) {
+    return mapError(err);
+  }
+}
+
+export async function purchasePromotionAction(
+  productId: string,
+  planId: string,
+): Promise<PromotionActionState> {
+  try {
+    const seller = await requireSellerSession();
+    if (!isPromotionBillingEnabled()) {
+      return { ok: false, error: "Оплата продвижения пока недоступна" };
+    }
+    const result = await startPromotionCheckout(
+      seller.sellerProfileId,
+      productId,
+      planId,
+    );
+    if (!result.ok) {
+      return { ok: false, error: result.error };
+    }
+    revalidatePromotionPaths(productId);
+    return { ok: true, checkoutUrl: result.checkoutUrl };
+  } catch (err) {
+    return mapError(err);
+  }
+}
+
+export async function renewPromotionAction(
+  productId: string,
+  planId: string,
+): Promise<PromotionActionState> {
+  try {
+    const seller = await requireSellerSession();
+    if (!isPromotionBillingEnabled()) {
+      return { ok: false, error: "Оплата продвижения пока недоступна" };
+    }
+    const result = await renewPromotionCheckout(
+      seller.sellerProfileId,
+      productId,
+      planId,
+    );
+    if (!result.ok) {
+      return { ok: false, error: result.error };
+    }
+    revalidatePromotionPaths(productId);
+    return { ok: true, checkoutUrl: result.checkoutUrl };
   } catch (err) {
     return mapError(err);
   }

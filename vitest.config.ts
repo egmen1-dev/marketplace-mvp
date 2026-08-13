@@ -6,6 +6,8 @@ export default defineConfig({
     environment: "node",
     include: ["tests/**/*.test.ts"],
     exclude: ["tests/e2e/**", "node_modules/**"],
+    /** Shared DB fixtures — promotion/analytics tests mutate the same rows. */
+    fileParallelism: false,
   },
   resolve: {
     alias: {

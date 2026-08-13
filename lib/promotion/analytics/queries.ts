@@ -13,6 +13,7 @@ import type {
 } from "@/lib/promotion/analytics/types";
 import { EMPTY_METRIC_TOTALS } from "@/lib/promotion/analytics/types";
 import { isPromotionAnalyticsEnabled } from "@/lib/promotion/analytics/flags";
+import { getPromotionCostForCampaign } from "@/lib/promotion/billing/orders";
 import { prisma } from "@/lib/prisma";
 
 function mapMetricRow(row: {
@@ -75,15 +76,15 @@ export async function getCampaignPerformanceSummary(
 
   const campaign = await prisma.promotionCampaign.findUnique({
     where: { id: campaignId },
-    select: { budget: true },
+    select: { id: true },
   });
   if (!campaign) return null;
 
   const totals = await getCampaignMetricTotals(campaignId);
+  const promotionCost = await getPromotionCostForCampaign(campaignId);
   return buildPromotionPerformanceSummary({
     totals,
-    campaignBudget:
-      campaign.budget != null ? toPriceNumber(campaign.budget) : null,
+    promotionCost,
   });
 }
 
@@ -97,8 +98,16 @@ export async function getSellerCampaignPerformanceMap(
 
   const campaigns = await prisma.promotionCampaign.findMany({
     where: { id: { in: campaignIds } },
-    select: { id: true, budget: true },
+    select: { id: true },
   });
+
+  const costEntries = await Promise.all(
+    campaigns.map(async (campaign) => [
+      campaign.id,
+      await getPromotionCostForCampaign(campaign.id),
+    ] as const),
+  );
+  const costMap = new Map(costEntries);
 
   const metrics = await prisma.promotionMetric.groupBy({
     by: ["campaignId"],
@@ -136,8 +145,7 @@ export async function getSellerCampaignPerformanceMap(
       campaign.id,
       buildPromotionPerformanceSummary({
         totals,
-        campaignBudget:
-          campaign.budget != null ? toPriceNumber(campaign.budget) : null,
+        promotionCost: costMap.get(campaign.id) ?? 0,
       }),
     );
   }

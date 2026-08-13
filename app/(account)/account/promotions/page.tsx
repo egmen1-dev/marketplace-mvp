@@ -3,7 +3,13 @@ import {
   PromotionViewTracker,
   SellerPromotionsPanel,
 } from "@/features/promotion";
-import { listSellerPromotionRows, isPromotionSurfacesEnabled, isPromotionAnalyticsEnabled } from "@/lib/promotion";
+import {
+  isPromotionBillingEnabled,
+  isPromotionSurfacesEnabled,
+  isPromotionAnalyticsEnabled,
+  listActivePromotionPlans,
+  listSellerPromotionRows,
+} from "@/lib/promotion";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +29,9 @@ export default async function AccountPromotionsPage() {
     console.error("[account/promotions]", err);
     dbError = "Не удалось загрузить список товаров";
   }
+
+  const billingEnabled = isPromotionBillingEnabled();
+  const plans = billingEnabled ? await listActivePromotionPlans() : [];
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,6 +54,8 @@ export default async function AccountPromotionsPage() {
           rows={rows}
           surfacesEnabled={isPromotionSurfacesEnabled()}
           analyticsEnabled={isPromotionAnalyticsEnabled()}
+          billingEnabled={billingEnabled}
+          plans={plans}
         />
       )}
     </div>

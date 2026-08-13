@@ -19,7 +19,7 @@ export function calculatePromotionPerformanceScore(
 
 export function buildPromotionPerformanceSummary(opts: {
   totals: PromotionMetricTotals;
-  campaignBudget: number | null;
+  promotionCost: number;
 }): PromotionPerformanceSummary {
   const ctr =
     opts.totals.impressions > 0
@@ -30,11 +30,18 @@ export function buildPromotionPerformanceSummary(opts: {
       ? (opts.totals.orders / opts.totals.clicks) * 100
       : 0;
 
+  const promotionCost = opts.promotionCost;
+  const profit = opts.totals.revenue - promotionCost;
+  const roiPercent =
+    promotionCost > 0
+      ? ((opts.totals.revenue - promotionCost) / promotionCost) * 100
+      : null;
+
   const roiLabel =
-    opts.campaignBudget == null || opts.campaignBudget <= 0
+    promotionCost <= 0
       ? "Стоимость продвижения не задана"
-      : opts.totals.revenue > 0
-        ? `ROI ${((opts.totals.revenue / opts.campaignBudget) * 100).toFixed(0)}% (оценка)`
+      : roiPercent != null
+        ? `ROI ${roiPercent.toFixed(0)}% · Прибыль ${profit.toFixed(0)} ₽`
         : "Стоимость продвижения не задана";
 
   return {
@@ -42,6 +49,9 @@ export function buildPromotionPerformanceSummary(opts: {
     ctr,
     conversionRate,
     performanceScore: calculatePromotionPerformanceScore(opts.totals),
+    promotionCost,
+    profit,
+    roiPercent,
     roiLabel,
   };
 }

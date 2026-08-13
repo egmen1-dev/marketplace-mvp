@@ -13,6 +13,14 @@ import { prisma } from "@/lib/prisma";
 
 const PREV_ANALYTICS = process.env.PROMOTION_ANALYTICS_ENABLED;
 
+async function resetPromotionProductState(productId: string) {
+  await prisma.promotionMetric.deleteMany({ where: { productId } });
+  await prisma.promotionAttribution.deleteMany({ where: { productId } });
+  await prisma.promotionOrder.deleteMany({ where: { productId } });
+  await prisma.promotionPlacement.deleteMany({ where: { productId } });
+  await prisma.promotionCampaign.deleteMany({ where: { productId } });
+}
+
 describe("promotion analytics pipeline", () => {
   beforeEach(() => {
     process.env.PROMOTION_ANALYTICS_ENABLED = "true";
@@ -32,6 +40,7 @@ describe("promotion analytics pipeline", () => {
     });
     if (!seller || !product) return;
 
+    await resetPromotionProductState(product.id);
     const campaign = await prisma.promotionCampaign.create({
       data: {
         productId: product.id,
@@ -59,7 +68,9 @@ describe("promotion analytics pipeline", () => {
     } finally {
       await prisma.promotionMetric.deleteMany({ where: { campaignId: campaign.id } });
       await prisma.promotionAttribution.deleteMany({ where: { campaignId: campaign.id } });
-      await prisma.promotionCampaign.delete({ where: { id: campaign.id } });
+      await prisma.promotionOrder.deleteMany({ where: { productId: product.id } });
+      await prisma.promotionPlacement.deleteMany({ where: { productId: product.id } });
+      await prisma.promotionCampaign.deleteMany({ where: { id: campaign.id } });
     }
   });
 
@@ -73,6 +84,7 @@ describe("promotion analytics pipeline", () => {
     });
     if (!seller || !product) return;
 
+    await resetPromotionProductState(product.id);
     const campaign = await prisma.promotionCampaign.create({
       data: {
         productId: product.id,
@@ -114,7 +126,9 @@ describe("promotion analytics pipeline", () => {
     } finally {
       await prisma.promotionMetric.deleteMany({ where: { campaignId: campaign.id } });
       await prisma.promotionAttribution.deleteMany({ where: { campaignId: campaign.id } });
-      await prisma.promotionCampaign.delete({ where: { id: campaign.id } });
+      await prisma.promotionOrder.deleteMany({ where: { productId: product.id } });
+      await prisma.promotionPlacement.deleteMany({ where: { productId: product.id } });
+      await prisma.promotionCampaign.deleteMany({ where: { id: campaign.id } });
     }
   });
 
@@ -129,12 +143,28 @@ describe("promotion analytics pipeline", () => {
         orders: 2,
         revenue: 15_000,
       },
-      campaignBudget: null,
+      promotionCost: 0,
     });
 
     expect(summary.ctr).toBe(5);
     expect(summary.conversionRate).toBe(40);
     expect(summary.roiLabel).toBe("Стоимость продвижения не задана");
+
+    const paid = buildPromotionPerformanceSummary({
+      totals: {
+        impressions: 100,
+        clicks: 5,
+        productViews: 20,
+        addToCart: 3,
+        checkoutStarted: 2,
+        orders: 2,
+        revenue: 15_000,
+      },
+      promotionCost: 2990,
+    });
+    expect(paid.profit).toBe(12_010);
+    expect(paid.roiPercent).toBeCloseTo(((15_000 - 2990) / 2990) * 100);
+    expect(paid.roiLabel).toContain("ROI");
     expect(
       calculatePromotionPerformanceScore({
         impressions: 100,
@@ -156,6 +186,7 @@ describe("promotion analytics pipeline", () => {
     });
     if (!seller || !product) return;
 
+    await resetPromotionProductState(product.id);
     const campaign = await prisma.promotionCampaign.create({
       data: {
         productId: product.id,
@@ -180,7 +211,7 @@ describe("promotion analytics pipeline", () => {
       expect(totals.impressions).toBe(2);
     } finally {
       await prisma.promotionMetric.deleteMany({ where: { campaignId: campaign.id } });
-      await prisma.promotionCampaign.delete({ where: { id: campaign.id } });
+      await prisma.promotionCampaign.deleteMany({ where: { id: campaign.id } });
     }
   });
 });

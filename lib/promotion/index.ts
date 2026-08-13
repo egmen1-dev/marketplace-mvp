@@ -1,4 +1,15 @@
 export { isPromotionSurfacesEnabled, isPromotionAnalyticsEnabled } from "./flags";
+export { isPromotionBillingEnabled } from "./billing/flags";
+export {
+  createPromotionOrder,
+  createCheckoutSessionForPromotionOrder,
+  expireDuePromotionOrders,
+  finalizePaidPromotionOrder,
+  getAdminPromotionBillingSummary,
+  listActivePromotionPlans,
+  startPromotionCheckout,
+  renewPromotionCheckout,
+} from "./billing";
 export {
   endPromotionCampaign,
   pausePromotionCampaign,
