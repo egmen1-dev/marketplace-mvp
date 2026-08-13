@@ -13,6 +13,8 @@ import {
   listSellerPromotionRows,
 } from "@/lib/promotion";
 import { PromotionRecommendationsPanel } from "@/features/promotion/components/promotion-recommendations-panel";
+import { PromotionEducationBlock } from "@/features/marketplace-education";
+import { isMarketplaceEducationEnabled } from "@/lib/marketplace-education";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +41,7 @@ export default async function AccountPromotionsPage() {
   const recommendationsPayload = intelligenceEnabled
     ? await generatePromotionRecommendations(seller.sellerProfileId)
     : null;
+  const educationEnabled = isMarketplaceEducationEnabled();
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,6 +61,9 @@ export default async function AccountPromotionsPage() {
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
         <>
+          {educationEnabled ? (
+            <PromotionEducationBlock route={ROUTES.ACCOUNT_PROMOTIONS} />
+          ) : null}
           {intelligenceEnabled && recommendationsPayload ? (
             <PromotionRecommendationsPanel
               recommendations={recommendationsPayload.recommendations}

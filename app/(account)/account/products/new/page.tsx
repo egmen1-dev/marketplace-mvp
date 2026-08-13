@@ -14,6 +14,7 @@ import {
 import { listCategories } from "@/features/catalog";
 import { listSellerPickupPoints } from "@/features/pickup/queries";
 import { ProductForm } from "@/features/seller";
+import { isMarketplaceEducationEnabled } from "@/lib/marketplace-education";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export const metadata = {
 export default async function NewProductPage() {
   const seller = await requireSellerCabinetAccess(ROUTES.SELLER_NEW_PRODUCT);
   const uploadPathPrefix = `products/${seller.sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`;
+  const educationEnabled = isMarketplaceEducationEnabled();
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
   let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
@@ -76,6 +78,7 @@ export default async function NewProductPage() {
               mode="create"
               uploadPathPrefix={uploadPathPrefix}
               sellerPickupPoints={pickupPoints}
+              showEducationTips={educationEnabled}
             />
           )}
         </CardContent>

@@ -19,12 +19,17 @@ import {
   ProductServiceError,
 } from "@/features/products/queries";
 import { ProductForm, ProductQualityCard } from "@/features/seller";
+import { QualityScoreExplanationPanel } from "@/features/marketplace-education";
 import { SellerBuyerFitPanel } from "@/features/buyer-intelligence";
 import {
   getSellerBuyerFitSummary,
   isBuyerIntelligenceEnabled,
 } from "@/lib/buyer-intelligence";
 import { computeProductCompletenessScore } from "@/lib/conversion";
+import {
+  getQualityScoreExplanation,
+  isMarketplaceEducationEnabled,
+} from "@/lib/marketplace-education";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -75,6 +80,21 @@ export default async function EditProductPage({
       ? await getSellerBuyerFitSummary(id)
       : null;
 
+  const educationEnabled = isMarketplaceEducationEnabled();
+  const completeness = computeProductCompletenessScore({
+    photoCount: product.images.length,
+    titleLength: product.title.trim().length,
+    descriptionLength: (product.description ?? "").trim().length,
+    characteristicCount: product.characteristics.length,
+    hasCategory: Boolean(product.category?.id),
+    hasProductType: Boolean(product.productType?.id),
+    price: product.price,
+    hasSeller: true,
+  });
+  const qualityExplanation = educationEnabled
+    ? await getQualityScoreExplanation(completeness)
+    : null;
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -93,18 +113,13 @@ export default async function EditProductPage({
         <p className="text-sm text-muted-foreground">{product.title}</p>
       </div>
 
-      <ProductQualityCard
-        result={computeProductCompletenessScore({
-          photoCount: product.images.length,
-          titleLength: product.title.trim().length,
-          descriptionLength: (product.description ?? "").trim().length,
-          characteristicCount: product.characteristics.length,
-          hasCategory: Boolean(product.category?.id),
-          hasProductType: Boolean(product.productType?.id),
-          price: product.price,
-          hasSeller: true,
-        })}
-      />
+      <ProductQualityCard result={completeness} />
+      {qualityExplanation ? (
+        <QualityScoreExplanationPanel
+          explanation={qualityExplanation}
+          route={sellerProductEditPath(id)}
+        />
+      ) : null}
 
       {buyerFit ? <SellerBuyerFitPanel summary={buyerFit} /> : null}
 
@@ -122,6 +137,7 @@ export default async function EditProductPage({
             product={product}
             uploadPathPrefix={`products/${sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`}
             sellerPickupPoints={pickupPoints}
+            showEducationTips={educationEnabled}
           />
         </CardContent>
       </Card>

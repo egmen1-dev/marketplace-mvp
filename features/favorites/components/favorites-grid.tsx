@@ -7,13 +7,18 @@ import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/features/favorites/components/favorites-provider";
 import { ProductCard } from "@/features/products/components/product-card";
 import type { ProductListItem } from "@/features/products/types";
+import { EducationEmptyState } from "@/features/marketplace-education";
 import { ROUTES } from "@/lib/constants";
 
 type FavoritesGridProps = {
   products: ProductListItem[];
+  useEducationEmpty?: boolean;
 };
 
-export function FavoritesGrid({ products }: FavoritesGridProps) {
+export function FavoritesGrid({
+  products,
+  useEducationEmpty = false,
+}: FavoritesGridProps) {
   const { ids, ready } = useFavorites();
 
   if (!ready) {
@@ -36,6 +41,15 @@ export function FavoritesGrid({ products }: FavoritesGridProps) {
   const visible = products.filter((p) => ids.has(p.id));
 
   if (visible.length === 0) {
+    if (useEducationEmpty) {
+      return (
+        <EducationEmptyState
+          surface="favorites"
+          icon={<Heart className="size-10 text-muted-foreground" aria-hidden />}
+        />
+      );
+    }
+
     return (
       <div className="animate-fade-up flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-16 text-center">
         <Heart className="size-10 text-muted-foreground" aria-hidden />

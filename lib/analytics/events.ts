@@ -114,6 +114,18 @@ export const ANALYTICS_EVENTS = {
   COMMUNICATION_CLICKED: "communication_clicked",
   /** Marketplace communication — downstream conversion signal */
   COMMUNICATION_CONVERSION: "communication_conversion",
+  /** Marketplace education — guidance surface viewed */
+  EDUCATION_VIEW: "education_view",
+  /** Marketplace education — guide/checklist started */
+  EDUCATION_GUIDE_STARTED: "guide_started",
+  /** Marketplace education — guide/checklist completed */
+  EDUCATION_GUIDE_COMPLETED: "guide_completed",
+  /** Marketplace education — contextual tooltip opened */
+  EDUCATION_TOOLTIP_OPEN: "tooltip_open",
+  /** @deprecated Use EDUCATION_TOOLTIP_OPEN */
+  EDUCATION_TOOLTIP_OPENED: "tooltip_open",
+  /** Marketplace education — AI coach CTA clicked */
+  EDUCATION_COACH_ACTION_CLICK: "coach_action_click",
 } as const;
 
 export type AnalyticsEventName =
