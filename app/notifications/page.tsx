@@ -3,8 +3,12 @@ import { redirect } from "next/navigation";
 import { AccountShell } from "@/features/account";
 import { getSessionUser } from "@/features/auth";
 import { AiNotificationCenterPanel } from "@/features/ai-experience";
-import { getAiNotifications, isAiExperienceEnabled } from "@/lib/ai-experience";
 import { ROUTES } from "@/lib/constants";
+import {
+  getCommandCenterNotifications,
+  isMarketplaceCommandCenterEnabled,
+} from "@/lib/marketplace-command-center";
+import { getAiNotifications, isAiExperienceEnabled } from "@/lib/ai-experience";
 import {
   getTrustNotifications,
   isTrustSafetyEnabled,
@@ -24,27 +28,27 @@ export default async function NotificationsPage() {
     );
   }
 
-  const [aiNotifications, trustNotifications] = await Promise.all([
-    isAiExperienceEnabled()
-      ? getAiNotifications({
-          sellerProfileId: user.sellerProfileId,
-          userId: user.id,
-        })
-      : Promise.resolve([]),
-    isTrustSafetyEnabled()
-      ? getTrustNotifications({ sellerProfileId: user.sellerProfileId })
-      : Promise.resolve([]),
-  ]);
-
-  const notifications = [...trustNotifications, ...aiNotifications].slice(
-    0,
-    16,
-  );
+  const notifications = isMarketplaceCommandCenterEnabled()
+    ? await getCommandCenterNotifications({
+        sellerProfileId: user.sellerProfileId,
+        userId: user.id,
+      })
+    : [
+        ...(isTrustSafetyEnabled()
+          ? await getTrustNotifications({ sellerProfileId: user.sellerProfileId })
+          : []),
+        ...(isAiExperienceEnabled()
+          ? await getAiNotifications({
+              sellerProfileId: user.sellerProfileId,
+              userId: user.id,
+            })
+          : []),
+      ].slice(0, 16);
 
   return (
     <AccountShell
       title="Уведомления"
-      description="Внутренний inbox рекомендаций и trust-сигналов — без push и email."
+      description="AI recommendations, execution tasks, trust warnings, promotion and learning results — inbox only."
     >
       <AiNotificationCenterPanel notifications={notifications} />
     </AccountShell>

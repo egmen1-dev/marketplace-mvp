@@ -2,6 +2,7 @@ import {
   Bot,
   GraduationCap,
   Heart,
+  LayoutDashboard,
   MapPin,
   Megaphone,
   MessageCircle,
@@ -101,6 +102,15 @@ export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = [
     match: (path) =>
       path === ROUTES.ACCOUNT_AI_CENTER ||
       path.startsWith(`${ROUTES.ACCOUNT_AI_CENTER}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_COMMAND_CENTER,
+    label: "Command Center",
+    icon: LayoutDashboard,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_COMMAND_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_COMMAND_CENTER}/`),
   },
   {
     href: ROUTES.ACCOUNT_GROWTH,
