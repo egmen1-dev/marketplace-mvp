@@ -24,8 +24,8 @@ export function CheckoutTrustNote({ className }: CheckoutTrustNoteProps) {
         Безопасная оплата
       </p>
       <p className="text-muted-foreground">
-        Данные карты не передаются продавцу. Стоимость доставки рассчитывается
-        ниже перед оплатой.
+        Безопасная сделка: оплата удерживается до подтверждения получения.
+        Данные карты не передаются продавцу.
       </p>
       <Link
         href={ROUTES.TERMS}

@@ -23,6 +23,8 @@ import {
   getSellerOrderCounters,
   listSellerOrders,
 } from "@/features/seller/queries";
+import { SellerOrderTrustBadge } from "@/features/trust/components/seller-order-trust-badge";
+import { getSellerOrderTrustInfo } from "@/lib/trust";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -98,6 +100,15 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
     const qs = q.toString();
     return qs ? `${ROUTES.SELLER_ORDERS}?${qs}` : ROUTES.SELLER_ORDERS;
   }
+
+  const trustByOrderId = new Map(
+    await Promise.all(
+      orders.items.map(async (order) => {
+        const trust = await getSellerOrderTrustInfo(order.id);
+        return [order.id, trust] as const;
+      }),
+    ),
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -175,6 +186,11 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
                   <p className="mt-1 text-sm text-muted-foreground">
                     {order.sellerItemNames.join(", ")}
                   </p>
+                  {trustByOrderId.get(order.id) ? (
+                    <SellerOrderTrustBadge
+                      trust={trustByOrderId.get(order.id)!}
+                    />
+                  ) : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <OrderStatusBadge status={order.status} />

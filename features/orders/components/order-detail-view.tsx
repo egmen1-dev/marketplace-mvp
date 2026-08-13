@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SafeDealBlock } from "@/features/finance/components/safe-deal-block";
 import { BuyerOrderActions } from "@/features/order-lifecycle/components/buyer-order-actions";
+import { BuyerProtectionPanel } from "@/features/trust/components/buyer-protection-panel";
 import { OrderTimeline } from "@/features/order-lifecycle/components/order-timeline";
 import { OrderItemRow } from "@/features/orders/components/order-item-row";
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
@@ -11,17 +12,20 @@ import { PayOrderButton } from "@/features/orders/components/pay-order-button";
 import { PaymentProcessingRefresh } from "@/features/orders/components/payment-processing-refresh";
 import { formatOrderDate } from "@/features/orders/lib/status";
 import type { OrderDetail } from "@/features/orders/types";
+import type { OrderTrustContext } from "@/lib/trust/types";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
 
 type OrderDetailViewProps = {
   order: OrderDetail;
   paymentSuccess?: boolean;
+  trust?: OrderTrustContext | null;
 };
 
 export function OrderDetailView({
   order,
   paymentSuccess = false,
+  trust = null,
 }: OrderDetailViewProps) {
   const canPay = order.status === "NEW";
   const isPaid =
@@ -77,6 +81,8 @@ export function OrderDetailView({
       </div>
 
       <BuyerOrderActions orderId={order.id} status={order.status} />
+
+      {trust ? <BuyerProtectionPanel trust={trust} /> : null}
 
       {isPaid && paymentSuccess ? (
         <p className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">

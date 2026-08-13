@@ -48,6 +48,9 @@ enum OrderStatus {
   READY_FOR_PICKUP
   PICKED_UP
   DELIVERED
+  AWAITING_BUYER_CONFIRMATION
+  PROTECTION_PERIOD
+  DISPUTE_OPEN
   COMPLETED
   CANCELLED
   REJECTED
@@ -80,6 +83,9 @@ enum OrderEventType {
   READY_FOR_PICKUP
   PICKED_UP
   DELIVERED
+  AWAITING_BUYER_CONFIRMATION
+  PROTECTION_PERIOD
+  DISPUTE_OPENED
   COMPLETED
   CANCELLED
   RETURN_REQUESTED
@@ -205,7 +211,9 @@ model User {
   buyerConversations   Conversation[]      @relation("ConversationBuyer")
   sentMessages         Message[]
   financeTransactions  FinanceTransaction[] @relation("FinanceTransactionBuyer")
-  disputesOpened       Dispute[]
+  disputesOpened       Dispute[]            @relation("DisputeOpenedBy")
+  buyerDisputes        Dispute[]            @relation("DisputeBuyer")
+  buyerConfirmations   BuyerOrderConfirmation[]
 
   @@index([role])
   @@index([isBlocked])
@@ -243,6 +251,7 @@ model SellerProfile {
   conversations       Conversation[]
   financeTransactions FinanceTransaction[]
   sellerBalance       SellerBalance?
+  sellerDisputes      Dispute[]
 
   @@index([slug])
   @@index([kind])
@@ -674,6 +683,8 @@ model Order {
   /// Architecture: order becomes review-eligible after COMPLETED.
   reviewEligibleAt        DateTime?
   completedAt             DateTime?
+  /// Buyer protection window end — auto-confirm + release after this time.
+  protectionEndsAt        DateTime?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -687,6 +698,7 @@ model Order {
   reservations    PickupReservation[]
   financeTransaction FinanceTransaction?
   disputes        Dispute[]
+  buyerConfirmation BuyerOrderConfirmation?
 
   @@index([userId])
   @@index([status])
@@ -1122,8 +1134,21 @@ enum FinanceTransactionStatus {
 enum DisputeStatus {
   OPEN
   UNDER_REVIEW
-  RESOLVED_BUYER
-  RESOLVED_SELLER
+  BUYER_WON
+  SELLER_WON
+  REFUNDED
+}
+
+enum DisputeReason {
+  WRONG_ITEM
+  DAMAGED
+  NOT_AS_DESCRIBED
+  NOT_RECEIVED
+}
+
+enum BuyerOrderConfirmationStatus {
+  CONFIRMED
+  REPORTED_ISSUE
 }
 
 /// Financial operation for an order — virtual ledger, not real money movement.
@@ -1180,21 +1205,56 @@ model SellerBalance {
   @@map("seller_balances")
 }
 
-/// Buyer protection dispute foundation — no full arbitration in MVP.
-model Dispute {
-  id         String        @id @default(cuid())
-  orderId    String
-  openedBy   String
-  reason     String
-  status     DisputeStatus @default(OPEN)
-  resolution String?
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+/// Platform buyer protection policy (single active row in MVP).
+model ProtectionPolicy {
+  id                    String   @id @default(cuid())
+  defaultProtectionDays Int      @default(3)
+  active                Boolean  @default(true)
+  updatedAt             DateTime @updatedAt
 
-  order        Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  openedByUser User  @relation(fields: [openedBy], references: [id], onDelete: Restrict)
+  @@map("protection_policies")
+}
+
+/// Buyer receipt confirmation — triggers payout release when CONFIRMED.
+model BuyerOrderConfirmation {
+  id          String                       @id @default(cuid())
+  orderId     String                       @unique
+  buyerId     String
+  status      BuyerOrderConfirmationStatus
+  confirmedAt DateTime?
+  createdAt   DateTime                     @default(now())
+  updatedAt   DateTime                     @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer User  @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+
+  @@index([buyerId])
+  @@index([status])
+  @@map("buyer_order_confirmations")
+}
+
+/// Buyer protection dispute — blocks payout until admin resolution.
+model Dispute {
+  id          String        @id @default(cuid())
+  orderId     String
+  buyerId     String
+  sellerId    String
+  openedBy    String
+  reason      DisputeReason
+  description String?
+  status      DisputeStatus @default(OPEN)
+  resolution  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  order        Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer        User          @relation("DisputeBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller       SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  openedByUser User          @relation("DisputeOpenedBy", fields: [openedBy], references: [id], onDelete: Restrict)
 
   @@index([orderId])
+  @@index([buyerId])
+  @@index([sellerId])
   @@index([openedBy])
   @@index([status])
   @@map("disputes")

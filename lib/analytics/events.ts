@@ -40,6 +40,10 @@ export const ANALYTICS_EVENTS = {
   PAYMENT_RELEASED: "payment_released",
   REFUND_CREATED: "refund_created",
   DISPUTE_CREATED: "dispute_created",
+  /** EPIC-TRUST-001 — buyer protection events (no PII) */
+  ORDER_CONFIRMATION_VIEW: "order_confirmation_view",
+  ORDER_CONFIRMED: "order_confirmed",
+  DISPUTE_RESOLVED: "dispute_resolved",
 } as const;
 
 export type AnalyticsEventName =

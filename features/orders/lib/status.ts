@@ -16,6 +16,9 @@ export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   READY_FOR_PICKUP: "Готов к выдаче",
   PICKED_UP: "Выдан",
   DELIVERED: "Доставлен",
+  AWAITING_BUYER_CONFIRMATION: "Подтвердите получение",
+  PROTECTION_PERIOD: "Период защиты",
+  DISPUTE_OPEN: "Спор открыт",
   COMPLETED: "Завершён",
   CANCELLED: "Отменён",
   REJECTED: "Отклонён",
@@ -47,6 +50,9 @@ export const ORDER_STATUS_VARIANTS: Record<
   READY_FOR_PICKUP: "outline",
   PICKED_UP: "outline",
   DELIVERED: "outline",
+  AWAITING_BUYER_CONFIRMATION: "default",
+  PROTECTION_PERIOD: "default",
+  DISPUTE_OPEN: "destructive",
   COMPLETED: "outline",
   CANCELLED: "destructive",
   REJECTED: "destructive",
@@ -85,9 +91,16 @@ export const SELLER_ORDER_FILTER_BUCKETS = {
     "RETURN_APPROVED",
     "RETURNED",
     "REFUNDED",
+    "DISPUTE_OPEN",
   ] as OrderStatus[],
   CANCELLED: ["CANCELLED"] as OrderStatus[],
-  COMPLETED: ["DELIVERED", "PICKED_UP", "COMPLETED"] as OrderStatus[],
+  COMPLETED: [
+    "DELIVERED",
+    "PICKED_UP",
+    "AWAITING_BUYER_CONFIRMATION",
+    "PROTECTION_PERIOD",
+    "COMPLETED",
+  ] as OrderStatus[],
 } as const;
 
 export type SellerOrderFilterBucket = keyof typeof SELLER_ORDER_FILTER_BUCKETS;
