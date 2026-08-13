@@ -78,6 +78,12 @@ export const ANALYTICS_EVENTS = {
   BUYER_RECOMMENDATION_CLICK: "buyer_recommendation_click",
   /** Buyer intelligence — product match score computed */
   BUYER_MATCH_SCORE: "buyer_match_score",
+  /** Marketplace intelligence — dashboard viewed */
+  INTELLIGENCE_VIEW: "intelligence_view",
+  /** Marketplace intelligence — opportunity block viewed */
+  OPPORTUNITY_VIEW: "opportunity_view",
+  /** Marketplace intelligence — recommendation clicked */
+  INTELLIGENCE_RECOMMENDATION_CLICK: "recommendation_click",
 } as const;
 
 export type AnalyticsEventName =

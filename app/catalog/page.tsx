@@ -38,11 +38,16 @@ import {
 } from "@/features/products";
 import { getSessionUser } from "@/features/auth";
 import { BuyerRecommendationsSection } from "@/features/buyer-intelligence";
+import { BuyerDemandInsightsStrip } from "@/features/marketplace-intelligence";
 import { pluralizeProductWord } from "@/lib/i18n";
 import {
   getSearchBuyerRecommendations,
   isBuyerIntelligenceEnabled,
 } from "@/lib/buyer-intelligence";
+import {
+  getBuyerDemandInsight,
+  isMarketplaceIntelligenceEnabled,
+} from "@/lib/marketplace-intelligence";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PromotedProductsSection } from "@/features/promotion";
 import {
@@ -83,6 +88,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   let buyerRecommendations: Awaited<
     ReturnType<typeof getSearchBuyerRecommendations>
   > = null;
+  let buyerDemand: Awaited<ReturnType<typeof getBuyerDemandInsight>> = null;
   let dbError: string | null = null;
 
   const session = await getSessionUser();
@@ -133,6 +139,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         userId: session?.id ?? null,
         route: "/catalog",
       });
+    }
+    if (isMarketplaceIntelligenceEnabled() && filters.q?.trim()) {
+      buyerDemand = await getBuyerDemandInsight();
     }
   } catch (err) {
     console.error("[catalog]", err);
@@ -265,6 +274,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               <CatalogSortSelect className="ml-auto" />
             </Suspense>
           </div>
+
+          {buyerDemand ? (
+            <BuyerDemandInsightsStrip insight={buyerDemand} />
+          ) : null}
 
           {buyerRecommendations &&
           buyerRecommendations.recommendations.length > 0 &&

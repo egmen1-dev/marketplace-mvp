@@ -1,9 +1,14 @@
 import { requireSellerCabinetAccess } from "@/features/auth";
 import { SellerGrowthDashboardPanel } from "@/features/seller-growth";
+import { SellerMarketplaceInsightsPanel } from "@/features/marketplace-intelligence";
 import {
   getSellerGrowthDashboard,
   isSellerGrowthEnabled,
 } from "@/lib/seller-growth";
+import {
+  getSellerMarketplaceConnection,
+  isMarketplaceIntelligenceEnabled,
+} from "@/lib/marketplace-intelligence";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -14,8 +19,10 @@ export const metadata = {
 
 export default async function AccountGrowthPage() {
   const seller = await requireSellerCabinetAccess(ROUTES.ACCOUNT_GROWTH);
+  const growthEnabled = isSellerGrowthEnabled();
+  const marketplaceEnabled = isMarketplaceIntelligenceEnabled();
 
-  if (!isSellerGrowthEnabled()) {
+  if (!growthEnabled && !marketplaceEnabled) {
     return (
       <div className="flex flex-col gap-4">
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
@@ -29,10 +36,20 @@ export default async function AccountGrowthPage() {
   }
 
   let data: Awaited<ReturnType<typeof getSellerGrowthDashboard>> = null;
+  let marketplace: Awaited<
+    ReturnType<typeof getSellerMarketplaceConnection>
+  > = null;
   let dbError: string | null = null;
 
   try {
-    data = await getSellerGrowthDashboard(seller.sellerProfileId);
+    if (growthEnabled) {
+      data = await getSellerGrowthDashboard(seller.sellerProfileId);
+    }
+    if (marketplaceEnabled) {
+      marketplace = await getSellerMarketplaceConnection(
+        seller.sellerProfileId,
+      );
+    }
   } catch (err) {
     console.error("[account/growth]", err);
     dbError = "Не удалось загрузить рекомендации";
@@ -52,10 +69,17 @@ export default async function AccountGrowthPage() {
 
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
-      ) : data ? (
-        <SellerGrowthDashboardPanel data={data} />
       ) : (
-        <p className="text-sm text-muted-foreground">Нет данных для анализа</p>
+        <>
+          {marketplace ? (
+            <SellerMarketplaceInsightsPanel connection={marketplace} />
+          ) : null}
+          {data ? (
+            <SellerGrowthDashboardPanel data={data} />
+          ) : (
+            <p className="text-sm text-muted-foreground">Нет данных для анализа</p>
+          )}
+        </>
       )}
     </div>
   );

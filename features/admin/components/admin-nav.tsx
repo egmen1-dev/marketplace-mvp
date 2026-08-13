@@ -117,8 +117,15 @@ const NAV_ITEMS = [
   {
     href: ROUTES.ADMIN_BUYERS,
     label: "Buyers",
-    icon: Brain,
+    icon: Users,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_BUYERS),
+  },
+  {
+    href: ROUTES.ADMIN_INTELLIGENCE,
+    label: "Intelligence",
+    icon: Brain,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_INTELLIGENCE),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,
