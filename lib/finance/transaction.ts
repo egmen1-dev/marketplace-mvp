@@ -188,13 +188,19 @@ export async function refundTransaction(
 export async function createDispute(input: {
   orderId: string;
   openedBy: string;
-  reason: string;
+  buyerId: string;
+  sellerId: string;
+  reason: import("@prisma/client").DisputeReason;
+  description?: string;
 }): Promise<DisputeDto> {
   const row = await prisma.dispute.create({
     data: {
       orderId: input.orderId,
       openedBy: input.openedBy,
+      buyerId: input.buyerId,
+      sellerId: input.sellerId,
       reason: input.reason,
+      description: input.description?.trim() || null,
       status: DisputeStatus.OPEN,
     },
   });
@@ -225,8 +231,11 @@ export async function createDispute(input: {
   return {
     id: row.id,
     orderId: row.orderId,
+    buyerId: row.buyerId,
+    sellerId: row.sellerId,
     openedBy: row.openedBy,
     reason: row.reason,
+    description: row.description,
     status: row.status,
     resolution: row.resolution,
     createdAt: row.createdAt.toISOString(),

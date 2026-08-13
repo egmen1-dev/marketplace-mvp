@@ -35,6 +35,7 @@ describe("order lifecycle state machine", () => {
       OrderStatus.SHIPPED,
       OrderStatus.IN_TRANSIT,
       OrderStatus.DELIVERED,
+      OrderStatus.AWAITING_BUYER_CONFIRMATION,
       OrderStatus.COMPLETED,
     ];
     for (let i = 0; i < path.length - 1; i++) {
@@ -48,7 +49,9 @@ describe("order lifecycle state machine", () => {
               ? OrderActorRole.PAYMENT
               : i === path.length - 2
                 ? OrderActorRole.BUYER
-                : OrderActorRole.SELLER,
+                : i === path.length - 3
+                  ? OrderActorRole.SYSTEM
+                  : OrderActorRole.SELLER,
         }),
       ).toBe(true);
     }
@@ -114,7 +117,7 @@ describe("order lifecycle state machine", () => {
     ).toBe(false);
     expect(
       canTransition({
-        from: OrderStatus.DELIVERED,
+        from: OrderStatus.AWAITING_BUYER_CONFIRMATION,
         to: OrderStatus.COMPLETED,
         fulfillmentType: OrderFulfillmentType.DELIVERY,
         actorRole: OrderActorRole.BUYER,

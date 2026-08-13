@@ -122,6 +122,15 @@ export function PdpTrustBlock({
         <li className="flex items-start gap-2 rounded-xl bg-surface/60 px-3 py-2.5 text-sm">
           <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
           <span>
+            <span className="font-medium text-foreground">Безопасная сделка</span>
+            <span className="mt-0.5 block text-muted-foreground">
+              Оплата удерживается до подтверждения получения
+            </span>
+          </span>
+        </li>
+        <li className="flex items-start gap-2 rounded-xl bg-surface/60 px-3 py-2.5 text-sm">
+          <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+          <span>
             <span className="font-medium text-foreground">Безопасная оплата</span>
             <span className="mt-0.5 block text-muted-foreground">
               Оплата картой — данные не передаются продавцу

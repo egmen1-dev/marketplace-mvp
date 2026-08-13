@@ -54,8 +54,21 @@ export const DELIVERY_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.READY_FOR_PICKUP]: [],
   [OrderStatus.PICKED_UP]: [],
   [OrderStatus.DELIVERED]: [
-    OrderStatus.COMPLETED,
+    OrderStatus.AWAITING_BUYER_CONFIRMATION,
     OrderStatus.RETURN_REQUESTED,
+  ],
+  [OrderStatus.AWAITING_BUYER_CONFIRMATION]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.DISPUTE_OPEN,
+    OrderStatus.RETURN_REQUESTED,
+  ],
+  [OrderStatus.PROTECTION_PERIOD]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.DISPUTE_OPEN,
+  ],
+  [OrderStatus.DISPUTE_OPEN]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.REFUNDED,
   ],
   [OrderStatus.COMPLETED]: [OrderStatus.RETURN_REQUESTED],
   [OrderStatus.CANCELLED]: [],
@@ -103,8 +116,20 @@ export const PICKUP_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
     OrderStatus.PICKED_UP,
     OrderStatus.CANCELLED,
   ],
-  [OrderStatus.PICKED_UP]: [OrderStatus.COMPLETED],
+  [OrderStatus.PICKED_UP]: [OrderStatus.AWAITING_BUYER_CONFIRMATION],
   [OrderStatus.DELIVERED]: [],
+  [OrderStatus.AWAITING_BUYER_CONFIRMATION]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.DISPUTE_OPEN,
+  ],
+  [OrderStatus.PROTECTION_PERIOD]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.DISPUTE_OPEN,
+  ],
+  [OrderStatus.DISPUTE_OPEN]: [
+    OrderStatus.COMPLETED,
+    OrderStatus.REFUNDED,
+  ],
   [OrderStatus.COMPLETED]: [OrderStatus.RETURN_REQUESTED],
   [OrderStatus.CANCELLED]: [],
   [OrderStatus.REJECTED]: [],
@@ -140,6 +165,7 @@ const BUYER_ALLOWED = new Set<OrderStatus>([
   OrderStatus.CANCELLED,
   OrderStatus.COMPLETED,
   OrderStatus.RETURN_REQUESTED,
+  OrderStatus.DISPUTE_OPEN,
 ]);
 
 const SYSTEM_PAYMENT_ALLOWED = new Set<OrderStatus>([
@@ -202,7 +228,18 @@ function isRoleAllowedToSetStatus(
       }
       if (to === OrderStatus.COMPLETED) {
         return (
-          from === OrderStatus.DELIVERED || from === OrderStatus.PICKED_UP
+          from === OrderStatus.DELIVERED ||
+          from === OrderStatus.PICKED_UP ||
+          from === OrderStatus.AWAITING_BUYER_CONFIRMATION ||
+          from === OrderStatus.PROTECTION_PERIOD
+        );
+      }
+      if (to === OrderStatus.DISPUTE_OPEN) {
+        return (
+          from === OrderStatus.AWAITING_BUYER_CONFIRMATION ||
+          from === OrderStatus.PROTECTION_PERIOD ||
+          from === OrderStatus.DELIVERED ||
+          from === OrderStatus.PICKED_UP
         );
       }
       return BUYER_ALLOWED.has(to);
@@ -256,7 +293,11 @@ export function getExpectedNextAction(opts: {
         return "Заберите заказ в пункте самовывоза";
       case OrderStatus.PICKED_UP:
       case OrderStatus.DELIVERED:
+      case OrderStatus.AWAITING_BUYER_CONFIRMATION:
+      case OrderStatus.PROTECTION_PERIOD:
         return "Подтвердите получение";
+      case OrderStatus.DISPUTE_OPEN:
+        return "Спор открыт — ожидайте решения";
       case OrderStatus.COMPLETED:
         return "Заказ завершён";
       case OrderStatus.CANCELLED:
@@ -294,7 +335,11 @@ export function getExpectedNextAction(opts: {
       return "Дождитесь выдачи покупателю";
     case OrderStatus.PICKED_UP:
     case OrderStatus.DELIVERED:
+    case OrderStatus.AWAITING_BUYER_CONFIRMATION:
+    case OrderStatus.PROTECTION_PERIOD:
       return "Покупатель подтверждает получение";
+    case OrderStatus.DISPUTE_OPEN:
+      return "Спор — ожидайте решения администратора";
     case OrderStatus.COMPLETED:
       return "Продажа завершена";
     default:

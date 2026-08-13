@@ -72,6 +72,14 @@ export function ProductSellerCard({ seller, className }: ProductSellerCardProps)
             className="mt-2.5"
           />
 
+          <p
+            className="mt-2 text-sm text-muted-foreground"
+            data-testid="seller-safe-deal-note"
+          >
+            Продажи через безопасную сделку — выплата после подтверждения
+            покупателем.
+          </p>
+
           {(metrics.length > 0 || seller.joinedAt) && (
             <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
               {metrics.map((item) => (

@@ -61,6 +61,12 @@ const NAV_ITEMS = [
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_FINANCE),
   },
   {
+    href: ROUTES.ADMIN_DISPUTES,
+    label: "Споры",
+    icon: Ticket,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DISPUTES),
+  },
+  {
     href: ROUTES.ADMIN_ADS,
     label: "Ads readiness",
     icon: Megaphone,

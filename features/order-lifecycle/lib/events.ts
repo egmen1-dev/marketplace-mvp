@@ -19,6 +19,10 @@ const STATUS_TO_EVENT: Partial<Record<OrderStatus, OrderEventType>> = {
   [OrderStatus.READY_FOR_PICKUP]: OrderEventType.READY_FOR_PICKUP,
   [OrderStatus.PICKED_UP]: OrderEventType.PICKED_UP,
   [OrderStatus.DELIVERED]: OrderEventType.DELIVERED,
+  [OrderStatus.AWAITING_BUYER_CONFIRMATION]:
+    OrderEventType.AWAITING_BUYER_CONFIRMATION,
+  [OrderStatus.PROTECTION_PERIOD]: OrderEventType.PROTECTION_PERIOD,
+  [OrderStatus.DISPUTE_OPEN]: OrderEventType.DISPUTE_OPENED,
   [OrderStatus.COMPLETED]: OrderEventType.COMPLETED,
   [OrderStatus.CANCELLED]: OrderEventType.CANCELLED,
   [OrderStatus.RETURN_REQUESTED]: OrderEventType.RETURN_REQUESTED,
@@ -61,6 +65,12 @@ export function chatMessageForTransition(opts: {
       return `Заказ ${n}: выдан покупателю`;
     case OrderStatus.DELIVERED:
       return `Заказ ${n}: доставлен`;
+    case OrderStatus.AWAITING_BUYER_CONFIRMATION:
+      return `Заказ ${n}: ожидает подтверждения получения`;
+    case OrderStatus.PROTECTION_PERIOD:
+      return `Заказ ${n}: период защиты покупателя`;
+    case OrderStatus.DISPUTE_OPEN:
+      return `Заказ ${n}: открыт спор`;
     case OrderStatus.COMPLETED:
       return `Заказ ${n}: завершён`;
     case OrderStatus.CANCELLED:

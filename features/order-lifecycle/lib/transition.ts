@@ -155,6 +155,19 @@ export async function transitionOrderInTx(
     };
   }
 
+  if (toStatus === OrderStatus.AWAITING_BUYER_CONFIRMATION) {
+    const { computeProtectionEndsAt, getProtectionPolicy } = await import(
+      "@/lib/trust/policy"
+    );
+    const policy = await getProtectionPolicy();
+    slaPatch = {
+      ...slaPatch,
+      protectionEndsAt:
+        order.protectionEndsAt ??
+        computeProtectionEndsAt(now, policy.defaultProtectionDays),
+    };
+  }
+
   await tx.order.update({
     where: { id: order.id },
     data: {
@@ -335,8 +348,28 @@ export async function transitionOrderWithEffects(
     result.status === OrderStatus.COMPLETED &&
     !result.alreadyApplied
   ) {
-    const { syncFinanceOnOrderCompleted } = await import("@/lib/finance");
-    await syncFinanceOnOrderCompleted(result.orderId);
+    const openDispute = await prisma.dispute.findFirst({
+      where: {
+        orderId: result.orderId,
+        status: { in: ["OPEN", "UNDER_REVIEW"] },
+      },
+      select: { id: true },
+    });
+    if (!openDispute) {
+      const { syncFinanceOnOrderCompleted } = await import("@/lib/finance");
+      await syncFinanceOnOrderCompleted(result.orderId);
+    }
+  }
+
+  if (
+    (result.status === OrderStatus.DELIVERED ||
+      result.status === OrderStatus.PICKED_UP) &&
+    !result.alreadyApplied
+  ) {
+    const { enterBuyerProtectionPeriod } = await import(
+      "@/lib/trust/confirmation"
+    );
+    await enterBuyerProtectionPeriod(result.orderId);
   }
 
   return result;

@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { getSessionUser } from "@/features/auth";
 import { getOrderForUser, OrderDetailView } from "@/features/orders";
+import { getOrderTrustContext } from "@/lib/trust";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -33,10 +34,13 @@ export default async function OrderDetailPage({
     notFound();
   }
 
+  const trust = await getOrderTrustContext(id, user.id);
+
   return (
     <OrderDetailView
       order={order}
       paymentSuccess={payment === "success"}
+      trust={trust}
     />
   );
 }

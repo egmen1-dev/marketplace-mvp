@@ -25,7 +25,7 @@ export function CartTrustNote({ className }: CartTrustNoteProps) {
           aria-hidden
         />
         <span>
-          Оплата через защищённый сервис.{" "}
+          Безопасная сделка: оплата удерживается до подтверждения получения.{" "}
           <Link
             href={ROUTES.TERMS}
             className="text-primary underline-offset-4 hover:underline"

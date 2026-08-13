@@ -29,7 +29,18 @@ export function BuyerOrderActions({ orderId, status }: BuyerOrderActionsProps) {
   const canConfirm =
     status === "DELIVERED" || status === "PICKED_UP";
   const canReturn =
-    status === "DELIVERED" || status === "COMPLETED";
+    status === "DELIVERED" ||
+    status === "COMPLETED" ||
+    status === "AWAITING_BUYER_CONFIRMATION" ||
+    status === "PROTECTION_PERIOD";
+
+  if (
+    status === "AWAITING_BUYER_CONFIRMATION" ||
+    status === "PROTECTION_PERIOD" ||
+    status === "DISPUTE_OPEN"
+  ) {
+    return null;
+  }
 
   if (!canCancel && !canConfirm && !canReturn) return null;
 

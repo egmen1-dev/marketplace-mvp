@@ -52,16 +52,15 @@ export async function buyerConfirmReceivedAction(
   try {
     const user = await requireUserSession();
     await assertBuyerOwnsOrder(orderId, user.id);
-    await transitionOrderWithEffects({
-      orderId,
-      toStatus: OrderStatus.COMPLETED,
-      actorUserId: user.id,
-      actorRole: OrderActorRole.BUYER,
-      reason: "Покупатель подтвердил получение",
-    });
+    const { confirmBuyerOrder } = await import("@/lib/trust/confirmation");
+    await confirmBuyerOrder(orderId, user.id);
     return { ok: true };
   } catch (err) {
     if (err instanceof OrderLifecycleError) {
+      return { ok: false, error: err.message };
+    }
+    const { TrustError } = await import("@/lib/trust/errors");
+    if (err instanceof TrustError) {
       return { ok: false, error: err.message };
     }
     console.error("[buyerConfirmReceivedAction]", err);

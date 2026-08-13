@@ -1,4 +1,8 @@
-import type { DisputeStatus, FinanceTransactionStatus } from "@prisma/client";
+import type {
+  DisputeReason,
+  DisputeStatus,
+  FinanceTransactionStatus,
+} from "@prisma/client";
 
 export type CommissionBreakdown = {
   grossAmount: number;
@@ -51,8 +55,11 @@ export type AdminFinanceDashboard = {
 export type DisputeDto = {
   id: string;
   orderId: string;
+  buyerId: string;
+  sellerId: string;
   openedBy: string;
-  reason: string;
+  reason: DisputeReason;
+  description: string | null;
   status: DisputeStatus;
   resolution: string | null;
   createdAt: string;

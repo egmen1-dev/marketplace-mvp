@@ -28,7 +28,7 @@ export async function syncFinanceOnPaymentInTx(
   await holdFunds(paid.id, tx);
 }
 
-/** Called after order reaches COMPLETED — idempotent. */
+/** Called after order reaches COMPLETED — idempotent. Skips when dispute blocks release. */
 export async function syncFinanceOnOrderCompleted(
   orderId: string,
 ): Promise<void> {
@@ -39,12 +39,48 @@ export async function syncFinanceOnOrderCompleted(
 
   if (row.status === FinanceTransactionStatus.RELEASED) return;
 
+  const openDispute = await prisma.dispute.findFirst({
+    where: {
+      orderId,
+      status: { in: ["OPEN", "UNDER_REVIEW"] },
+    },
+    select: { id: true },
+  });
+  if (openDispute) return;
+
   await prisma.$transaction(async (tx) => {
+    if (row.status === FinanceTransactionStatus.DISPUTED) {
+      await tx.financeTransaction.update({
+        where: { id: row.id },
+        data: { status: FinanceTransactionStatus.HELD },
+      });
+    }
     await releaseFunds(row.id, tx);
   });
 
   void trackServerEvent({
     event: ANALYTICS_EVENTS.PAYMENT_RELEASED,
+    route: `${ROUTES.ORDERS}/${orderId}`,
+    entityId: orderId,
+  });
+}
+
+/** Refund after dispute resolved for buyer — idempotent. */
+export async function syncFinanceOnDisputeRefund(
+  orderId: string,
+): Promise<void> {
+  const row = await prisma.financeTransaction.findUnique({
+    where: { orderId },
+  });
+  if (!row || row.status === FinanceTransactionStatus.REFUNDED) return;
+
+  const { refundTransaction } = await import("@/lib/finance/transaction");
+  await prisma.$transaction(async (tx) => {
+    await refundTransaction(row.id, tx);
+  });
+
+  void trackServerEvent({
+    event: ANALYTICS_EVENTS.REFUND_CREATED,
     route: `${ROUTES.ORDERS}/${orderId}`,
     entityId: orderId,
   });

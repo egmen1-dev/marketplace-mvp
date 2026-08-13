@@ -77,6 +77,7 @@ export const ROUTES = {
   ADMIN_ANALYTICS: "/admin/analytics",
   ADMIN_ADS: "/admin/ads",
   ADMIN_FINANCE: "/admin/finance",
+  ADMIN_DISPUTES: "/admin/disputes",
   ADMIN_CONVERSION: "/admin/conversion",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
