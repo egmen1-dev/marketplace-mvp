@@ -1,4 +1,5 @@
 import type { AuditCheck } from "./types";
+import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 
 function check(
   id: string,
@@ -11,23 +12,33 @@ function check(
 }
 
 export function auditModerationFlow(): AuditCheck[] {
+  const trustLoop = isMarketplaceTrustLoopEnabled();
+
   return [
-    check("moderation-admin-products", "Admin product moderation UI", true),
+    check(
+      "moderation-admin-products",
+      "Admin product moderation UI",
+      trustLoop,
+      "warning",
+      trustLoop ? "/admin/moderation queue" : "Legacy admin product actions only",
+    ),
     check("moderation-hide-activate", "Hide / activate product actions", true),
     check("moderation-admin-log", "Admin action audit log", true),
     check(
       "moderation-status-enum",
       "ModerationStatus workflow (PENDING/APPROVED/REJECTED)",
-      false,
+      trustLoop,
       "warning",
-      "Products use DRAFT/ACTIVE/ARCHIVED — no pre-publish queue",
+      trustLoop
+        ? "ProductModeration + ModerationQueueItem"
+        : "Products use DRAFT/ACTIVE/ARCHIVED — no pre-publish queue",
     ),
     check(
       "moderation-auto-rules",
       "Automated prohibited-item detection",
-      false,
+      trustLoop,
       "info",
-      "Manual moderation only",
+      trustLoop ? "Rule-based prohibited product checks" : "Manual moderation only",
     ),
     check(
       "moderation-empty-cards",

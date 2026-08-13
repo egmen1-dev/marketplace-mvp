@@ -93,6 +93,10 @@ export const ROUTES = {
   ADMIN_CONVERSION: "/admin/conversion",
   ADMIN_FOUNDATION: "/admin/foundation",
   ADMIN_OPERATIONS: "/admin/operations",
+  ADMIN_TRUST: "/admin/trust",
+  ADMIN_MODERATION: "/admin/moderation",
+  /** Seller reputation hub */
+  ACCOUNT_REPUTATION: "/account/reputation",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
   /** Unified notifications inbox */

@@ -21,7 +21,10 @@ import {
 } from "@/features/products";
 import { PdpCharacteristics } from "@/features/products/components/pdp-characteristics";
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
+import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-trust-loop";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
+import { getProductReviewsForPdp, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
+import { buildTrustSignals } from "@/lib/marketplace-trust-loop/moderation/risk-signals";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
@@ -92,19 +95,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let session: Awaited<ReturnType<typeof getSessionUser>> = null;
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
+  let pdpReviews: Awaited<ReturnType<typeof getProductReviewsForPdp>> | null = null;
+  let trustSignals: Awaited<ReturnType<typeof buildTrustSignals>> = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
-      [similar, sellerTrust] = await Promise.all([
+      const trustEnabled = isMarketplaceTrustLoopEnabled();
+      [similar, sellerTrust, pdpReviews] = await Promise.all([
         listSimilarProducts(product.id, {
           categoryId: product.category?.id,
           price: product.price,
           limit: 8,
         }),
         getSellerTrustProfile(product.seller.slug),
+        trustEnabled ? getProductReviewsForPdp(product.id) : Promise.resolve(null),
       ]);
+      if (trustEnabled) {
+        trustSignals = await buildTrustSignals({
+          sellerId: product.seller.id,
+          productId: product.id,
+          isVerified: Boolean(sellerTrust?.isVerified),
+        });
+      }
     }
   } catch (err) {
     console.error("[product]", err);
@@ -310,6 +324,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 product.pickupEnabled && product.pickupPoints.length > 0
               }
             />
+          ) : null}
+
+          {trustSignals ? <PdpTrustSignalsBlock signals={trustSignals} /> : null}
+          {pdpReviews?.rating ? (
+            <PdpReviewsBlock rating={pdpReviews.rating} reviews={pdpReviews.reviews} />
           ) : null}
 
           <section

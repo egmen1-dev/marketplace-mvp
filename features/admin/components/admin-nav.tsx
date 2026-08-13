@@ -15,6 +15,7 @@ import {
   Sparkles,
   Shield,
   ShieldCheck,
+  ShieldAlert,
   Store,
   Ticket,
   Upload,
@@ -31,6 +32,18 @@ const NAV_ITEMS = [
     label: "Dashboard",
     icon: LayoutDashboard,
     match: (pathname: string) => pathname === ROUTES.ADMIN,
+  },
+  {
+    href: ROUTES.ADMIN_TRUST,
+    label: "Trust",
+    icon: ShieldAlert,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_TRUST),
+  },
+  {
+    href: ROUTES.ADMIN_MODERATION,
+    label: "Moderation",
+    icon: Shield,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_MODERATION),
   },
   {
     href: ROUTES.ADMIN_FOUNDATION,
