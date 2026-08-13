@@ -18,6 +18,7 @@ import {
   ShieldAlert,
   Store,
   Ticket,
+  Truck,
   Upload,
   Users,
   Wallet,
@@ -44,6 +45,12 @@ const NAV_ITEMS = [
     label: "Moderation",
     icon: Shield,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_MODERATION),
+  },
+  {
+    href: ROUTES.ADMIN_DELIVERY,
+    label: "Delivery",
+    icon: Truck,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DELIVERY),
   },
   {
     href: ROUTES.ADMIN_FOUNDATION,

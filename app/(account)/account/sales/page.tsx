@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { UserRole } from "@prisma/client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import {
   listSellerOrders,
 } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
+import { isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
 import { getSellerJourneyEmptyState } from "@/lib/seller-journey";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 import { cn } from "@/lib/utils";
@@ -120,6 +122,17 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
         <p className="mt-1 text-sm text-muted-foreground">
           Жизненный цикл продаж: подтверждение, сборка, отправка и выдача.
         </p>
+        {isMarketplaceDeliveryEnabled() ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            nativeButton={false}
+            render={<Link href={ROUTES.ACCOUNT_ORDERS_SHIP} />}
+          >
+            Нужно отправить →
+          </Button>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">

@@ -339,6 +339,26 @@ export async function transitionOrderWithEffects(
     await syncFinanceOnOrderCompleted(result.orderId);
   }
 
+  if (!result.alreadyApplied) {
+    try {
+      const { isMarketplaceDeliveryEnabled } = await import(
+        "@/lib/marketplace-delivery/flags"
+      );
+      if (isMarketplaceDeliveryEnabled()) {
+        const { syncDeliveryOnOrderTransition } = await import(
+          "@/lib/marketplace-delivery/delivery/lifecycle"
+        );
+        await syncDeliveryOnOrderTransition({
+          orderId: result.orderId,
+          previousStatus: result.previousStatus,
+          status: result.status,
+        });
+      }
+    } catch (err) {
+      console.error("[order-lifecycle] delivery sync", err);
+    }
+  }
+
   return result;
 }
 
