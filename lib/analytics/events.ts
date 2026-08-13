@@ -126,6 +126,14 @@ export const ANALYTICS_EVENTS = {
   EDUCATION_TOOLTIP_OPENED: "tooltip_open",
   /** Marketplace education — AI coach CTA clicked */
   EDUCATION_COACH_ACTION_CLICK: "coach_action_click",
+  /** AI Experience — unified center viewed */
+  AI_CENTER_VIEW: "ai_center_view",
+  /** AI Experience — recommendation block viewed */
+  AI_RECOMMENDATION_VIEW: "ai_recommendation_view",
+  /** AI Experience — user clicked recommended action */
+  AI_ACTION_CLICK: "ai_action_click",
+  /** AI Experience — notification opened */
+  AI_NOTIFICATION_OPEN: "ai_notification_open",
 } as const;
 
 export type AnalyticsEventName =

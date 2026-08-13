@@ -6,6 +6,7 @@ import {
   Brain,
   BarChart3,
   BookOpen,
+  Bot,
   ClipboardCheck,
   ClipboardList,
   LineChart,
@@ -155,6 +156,12 @@ const NAV_ITEMS = [
     label: "Education",
     icon: BookOpen,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_EDUCATION),
+  },
+  {
+    href: ROUTES.ADMIN_AI_CENTER,
+    label: "AI Center",
+    icon: Bot,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_AI_CENTER),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,
