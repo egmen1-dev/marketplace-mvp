@@ -22,6 +22,14 @@ import { cn } from "@/lib/utils";
 
 const DEBOUNCE_MS = 280;
 
+const POPULAR_CHIPS = [
+  "перфоратор",
+  "смартфон",
+  "ноутбук",
+  "наушники",
+  "пылесос",
+] as const;
+
 function useDebouncedSuggest(query: string) {
   const [items, setItems] = useState<ProductSuggestItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -74,12 +82,13 @@ type HeroSearchProps = {
 };
 
 /**
- * Primary homepage search with autocomplete placeholder wired to suggest API.
+ * Primary homepage search — large input, chips, autocomplete, analytics.
  */
 export function HeroSearch({ className }: HeroSearchProps) {
   const router = useRouter();
   const listId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
+  const searchStarted = useRef(false);
   const [q, setQ] = useState("");
   const [suggestOpen, setSuggestOpen] = useState(false);
   const { items, loading } = useDebouncedSuggest(q);
@@ -101,6 +110,15 @@ export function HeroSearch({ className }: HeroSearchProps) {
     },
     [router],
   );
+
+  function onSearchStart() {
+    if (searchStarted.current) return;
+    searchStarted.current = true;
+    trackEvent({
+      event: ANALYTICS_EVENTS.SEARCH_START,
+      route: ROUTES.HOME,
+    });
+  }
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -128,7 +146,7 @@ export function HeroSearch({ className }: HeroSearchProps) {
         className="flex w-full flex-col gap-3 sm:flex-row"
       >
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" />
           <Input
             name="q"
             type="search"
@@ -137,20 +155,45 @@ export function HeroSearch({ className }: HeroSearchProps) {
               setQ(e.target.value);
               setSuggestOpen(true);
             }}
-            onFocus={() => setSuggestOpen(true)}
+            onFocus={() => {
+              setSuggestOpen(true);
+              onSearchStart();
+            }}
             placeholder="Найти товар, бренд или категорию"
             aria-label="Поиск товаров"
             aria-autocomplete="list"
             aria-controls={showSuggest ? listId : undefined}
             aria-expanded={showSuggest}
             autoComplete="off"
-            className="h-12 rounded-xl border-border/80 bg-surface-elevated/90 pl-10 text-base shadow-card backdrop-blur-sm placeholder:text-muted-foreground/80 focus-visible:shadow-glow"
+            data-testid="home-hero-search"
+            className="h-14 rounded-2xl border-border bg-surface-elevated pl-12 text-base shadow-card placeholder:text-muted-foreground/80 focus-visible:shadow-glow sm:text-lg"
           />
         </div>
-        <Button type="submit" size="lg" className="h-12 shrink-0 rounded-xl px-7">
+        <Button
+          type="submit"
+          size="lg"
+          className="h-14 shrink-0 rounded-2xl px-8 text-base"
+        >
           Найти
         </Button>
       </form>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {POPULAR_CHIPS.map((chip) => (
+          <button
+            key={chip}
+            type="button"
+            className="rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-foreground"
+            onClick={() => {
+              onSearchStart();
+              setQ(chip);
+              navigate(chip);
+            }}
+          >
+            {chip}
+          </button>
+        ))}
+      </div>
 
       {showSuggest ? (
         <ul

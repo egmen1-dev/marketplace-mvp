@@ -329,3 +329,47 @@
     transform: scale(1.06);
   }
 }
+
+/*
+  DESIGN-001 — marketplace homepage shell (scoped dark tokens).
+  Does not change global defaultTheme; only applies under .home-marketplace.
+*/
+.home-marketplace {
+  --background: #0e0e0e;
+  --foreground: #ffffff;
+  --surface: #161616;
+  --surface-elevated: #1a1a1a;
+  --card: #161616;
+  --card-foreground: #ffffff;
+  --popover: #161616;
+  --popover-foreground: #ffffff;
+  --primary: #ff6a00;
+  --primary-foreground: #ffffff;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #ffffff;
+  --muted: #1a1a1a;
+  --muted-foreground: #9a9a9a;
+  --accent: #24180f;
+  --accent-foreground: #ffffff;
+  --border: #262626;
+  --input: #262626;
+  --ring: #ff6a00;
+  --shadow-glow: 0 0 0 1px rgb(255 106 0 / 30%), 0 8px 32px rgb(255 106 0 / 18%);
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 4%), 0 12px 32px rgb(0 0 0 / 45%);
+  --shadow-card-hover: 0 0 0 1px rgb(255 106 0 / 45%), 0 20px 48px rgb(0 0 0 / 55%);
+  color-scheme: dark;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.home-marketplace .home-section-title {
+  font-size: clamp(1.75rem, 4vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.home-marketplace .home-hero-title {
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}

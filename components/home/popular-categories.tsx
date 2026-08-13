@@ -9,6 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 
+import { HomeCategoryLink } from "@/components/home/home-product-grid";
 import { Button } from "@/components/ui/button";
 import { categoryPagePath } from "@/features/catalog/paths";
 import type { CategoryListItem } from "@/features/catalog/queries";
@@ -67,11 +68,11 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
         style={{ animationDelay: "80ms" }}
       >
         <div>
-          <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h2 className="home-section-title font-heading font-semibold tracking-tight">
             Популярные категории
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-            Выберите направление и начните поиск.
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+            Выберите направление — тысячи товаров в каждой.
           </p>
         </div>
         <Button
@@ -93,14 +94,15 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
           const Icon = item.icon;
 
           return (
-            <Link
+            <HomeCategoryLink
               key={item.slug}
               href={categoryPagePath(item.slug)}
+              slug={item.slug}
               className="animate-fade-up group cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               style={{ animationDelay: `${100 + index * 45}ms` }}
             >
-              <article className="flex h-full flex-col gap-4 rounded-2xl border border-transparent bg-card/80 p-4 ring-1 ring-border transition-[box-shadow,transform,background-color,border-color,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] group-hover:-translate-y-1 group-hover:border-primary/25 group-hover:bg-card group-hover:shadow-card-hover group-hover:ring-primary/35 group-active:translate-y-0 dark:group-hover:bg-card">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary transition-transform duration-[var(--duration-base)] ease-[var(--ease-out-premium)] group-hover:scale-110">
+              <article className="flex h-full min-h-[132px] flex-col gap-3 rounded-2xl border border-border bg-card/90 p-4 ring-1 ring-border transition-[box-shadow,transform,background-color,border-color,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] group-hover:-translate-y-1 group-hover:border-primary/30 group-hover:shadow-card-hover group-hover:ring-primary/35">
+                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary transition-transform duration-[var(--duration-base)] group-hover:scale-110">
                   <Icon className="size-6" aria-hidden />
                 </div>
                 <div>
@@ -114,7 +116,7 @@ export function PopularCategories({ categories }: PopularCategoriesProps) {
                   </p>
                 </div>
               </article>
-            </Link>
+            </HomeCategoryLink>
           );
         })}
       </div>

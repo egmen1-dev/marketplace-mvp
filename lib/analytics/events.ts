@@ -22,6 +22,18 @@ export const ANALYTICS_EVENTS = {
   DELIVERY_VIEW: "delivery_view",
   /** Strong buy intent (buy / sticky buy / reserve) */
   BUY_INTENT: "buy_intent",
+  /** DESIGN-001 homepage — hero featured product tap */
+  HERO_PRODUCT_CLICK: "hero_product_click",
+  /** DESIGN-001 homepage — category tile tap */
+  CATEGORY_CLICK: "category_click",
+  /** DESIGN-001 homepage — search field focused / started */
+  SEARCH_START: "search_start",
+  /** DESIGN-001 homepage — popular products grid tap */
+  POPULAR_PRODUCT_CLICK: "popular_product_click",
+  /** DESIGN-001 homepage — scroll depth milestone */
+  SCROLL_HOMEPAGE: "scroll_homepage",
+  /** DESIGN-001 homepage — sell / seller CTA tap */
+  CTA_SELL_CLICK: "cta_sell_click",
 } as const;
 
 export type AnalyticsEventName =

@@ -1,5 +1,13 @@
 export { HeroSearch } from "./hero-search";
 export { HeroShowcase } from "./hero-showcase";
+export { HeroProductLink } from "./hero-product-link";
 export { MarketplaceStats } from "./marketplace-stats";
 export { PopularCategories } from "./popular-categories";
 export { TrustSection } from "./trust-section";
+export { HomeBenefits } from "./home-benefits";
+export { HomeHeroCtas } from "./home-hero-ctas";
+export { HomeProductSection } from "./home-product-section";
+export { HomeScrollTracker } from "./home-scroll-tracker";
+export { HomeSellerCta } from "./home-seller-cta";
+export { HomeStickyCatalog } from "./home-sticky-catalog";
+export { HomeCategoryLink, HomeProductGrid } from "./home-product-grid";

@@ -25,6 +25,18 @@ export const getHomePopularProducts = unstable_cache(
   { revalidate: 60 },
 );
 
+export const getHomeNewProducts = unstable_cache(
+  async () =>
+    listProducts({
+      status: "ACTIVE",
+      pageSize: 8,
+      page: 1,
+      sort: "newest",
+    }),
+  ["home-new-products"],
+  { revalidate: 60 },
+);
+
 export const getHomeMarketplaceStats = unstable_cache(
   async () => getMarketplaceStats(),
   ["home-marketplace-stats"],
