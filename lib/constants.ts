@@ -133,3 +133,43 @@ export function isSellerCabinetPath(pathname: string): boolean {
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 }
+
+/**
+ * Map legacy `/seller/*` cabinet URLs to unified `/account/*` paths.
+ * Used by middleware edge redirects (avoids RSC redirect + React #310).
+ */
+export function resolveLegacySellerCabinetRedirect(
+  pathname: string,
+): string | null {
+  if (pathname === "/seller" || pathname === "/seller/") {
+    return ROUTES.ACCOUNT;
+  }
+  if (pathname === "/seller/dashboard") {
+    return ROUTES.ACCOUNT;
+  }
+  if (pathname.startsWith("/seller/dashboard/")) {
+    return ROUTES.ACCOUNT;
+  }
+  if (pathname === "/seller/products/new") {
+    return ROUTES.ACCOUNT_PRODUCTS_NEW;
+  }
+  if (pathname.startsWith("/seller/products/")) {
+    return `${ROUTES.ACCOUNT_PRODUCTS}${pathname.slice("/seller/products".length)}`;
+  }
+  if (pathname === "/seller/products") {
+    return ROUTES.ACCOUNT_PRODUCTS;
+  }
+  if (pathname.startsWith("/seller/orders/")) {
+    return `${ROUTES.ACCOUNT_SALES}${pathname.slice("/seller/orders".length)}`;
+  }
+  if (pathname === "/seller/orders") {
+    return ROUTES.ACCOUNT_SALES;
+  }
+  if (pathname === "/seller/analytics") {
+    return ROUTES.ACCOUNT;
+  }
+  if (pathname === "/seller/settings") {
+    return ROUTES.SETTINGS;
+  }
+  return null;
+}

@@ -75,7 +75,7 @@ export default async function HomePage() {
           className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(var(--foreground)_1px,transparent_1px),linear-gradient(90deg,var(--foreground)_1px,transparent_1px)] [background-size:56px_56px]"
         />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14 lg:py-16">
+        <div className="relative mx-auto grid min-h-[520px] max-w-7xl items-center gap-8 px-4 py-8 sm:min-h-[480px] sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-14 lg:py-16">
           <div className="flex flex-col gap-4 sm:gap-5 lg:gap-7">
             <p className="font-heading text-xs font-medium tracking-[0.24em] text-primary uppercase sm:text-sm">
               Маркетплейс {APP_NAME}
@@ -106,7 +106,7 @@ export default async function HomePage() {
             <HomeHeroCtas />
           </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden min-h-[280px] lg:block">
             <HeroShowcase featured={featured} thumbnails={heroThumbnails} />
           </div>
         </div>

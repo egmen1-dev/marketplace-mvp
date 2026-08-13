@@ -73,7 +73,7 @@ export function HomeProductSection({
                 key={product.id}
                 product={product}
                 imagePriority={section === "popular" && index < 4}
-                style={{ animationDelay: `${80 + index * 50}ms` }}
+                stableLayout
               />
             ))}
           </HomeProductGrid>

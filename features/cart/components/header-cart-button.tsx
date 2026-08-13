@@ -52,16 +52,17 @@ export function HeaderCartButton({ className }: HeaderCartButtonProps) {
       ) : (
         <ShoppingBag aria-hidden />
       )}
-      {showBadge ? (
-        <span
-          className={cn(
-            "absolute top-1 right-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] leading-none font-bold text-primary-foreground shadow-sm ring-2 ring-background",
-          )}
-          aria-hidden
-        >
-          {itemCount > 99 ? "99+" : itemCount}
-        </span>
-      ) : null}
+      <span
+        className={cn(
+          "absolute top-1 right-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full px-1 text-[10px] leading-none font-bold shadow-sm ring-2 ring-background",
+          showBadge
+            ? "bg-primary text-primary-foreground"
+            : "pointer-events-none opacity-0",
+        )}
+        aria-hidden
+      >
+        {showBadge ? (itemCount > 99 ? "99+" : itemCount) : "\u00a0"}
+      </span>
     </Button>
   );
 }

@@ -1,10 +1,23 @@
 # Production Backup Checklist — GO Day
 
-Execute **before** first RC1 production deploy. Vercel production not modified until owner GO.
+Execute **before** first production deploy (Vercel or Railway production cutover).  
+**RELEASE-HARDENING-001:** Railway staging uses the same DB discipline before promoting traffic.
 
 ---
 
-## T-minus 24 hours
+## Railway staging (pre-traffic / pre-release)
+
+- [ ] Record staging commit: `curl -sS …/api/version | jq .commit`
+- [ ] `GET /api/health` → `ok: true`, `checks.database.ok: true`
+- [ ] `railway run --service web-v2 -- npx prisma migrate status` → no pending migrations
+- [ ] Manual Postgres snapshot in Railway dashboard (Postgres service → Backup / snapshot)
+- [ ] Snapshot label: `pre-release-YYYY-MM-DD`
+- [ ] Document snapshot ID: ________________
+- [ ] Rollback: redeploy previous successful deployment ID (see [ROLLBACK.md](./ROLLBACK.md))
+
+---
+
+## T-minus 24 hours (production)
 
 - [ ] Confirm production `DATABASE_URL` provider (Neon / Prisma / etc.)
 - [ ] Enable or verify **automated backups** on DB provider dashboard

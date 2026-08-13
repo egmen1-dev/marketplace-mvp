@@ -52,7 +52,7 @@ export function HeroShowcase({
   return (
     <div
       className={cn(
-        "relative mx-auto w-full max-w-md lg:max-w-none",
+        "relative mx-auto w-full min-h-[280px] max-w-md sm:min-h-[300px] lg:max-w-none",
         compact && "max-w-none",
       )}
     >

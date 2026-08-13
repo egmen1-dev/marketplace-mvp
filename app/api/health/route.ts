@@ -11,6 +11,7 @@ type CheckResult = {
   ok: boolean;
   optional?: boolean;
   detail?: string;
+  configured?: boolean;
 };
 
 async function checkDatabase(): Promise<CheckResult> {
@@ -38,8 +39,26 @@ function checkCron(): CheckResult {
 }
 
 function checkStripe(): CheckResult {
-  const ok = Boolean(process.env.STRIPE_SECRET_KEY?.trim());
-  return { ok, optional: true, detail: ok ? "configured" : "not_configured" };
+  const secret = Boolean(process.env.STRIPE_SECRET_KEY?.trim());
+  const webhook = Boolean(process.env.STRIPE_WEBHOOK_SECRET?.trim());
+  const publishable = Boolean(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim(),
+  );
+  const configured = secret && webhook;
+  const missing: string[] = [];
+  if (!secret) missing.push("STRIPE_SECRET_KEY");
+  if (!webhook) missing.push("STRIPE_WEBHOOK_SECRET");
+  if (!publishable) missing.push("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
+  return {
+    ok: secret,
+    configured,
+    optional: true,
+    detail: configured
+      ? "configured"
+      : secret
+        ? `partial (${missing.join(", ")})`
+        : "not_configured",
+  };
 }
 
 /**

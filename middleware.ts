@@ -2,7 +2,11 @@ import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authConfig } from "@/auth.config";
-import { isSellerCabinetPath, ROUTES } from "@/lib/constants";
+import {
+  isSellerCabinetPath,
+  resolveLegacySellerCabinetRedirect,
+  ROUTES,
+} from "@/lib/constants";
 
 const { auth } = NextAuth(authConfig);
 
@@ -25,6 +29,26 @@ function isProtectedPath(pathname: string): boolean {
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
+  // Legacy seller cabinet → unified account (edge redirect avoids RSC #310).
+  const legacySellerTarget = resolveLegacySellerCabinetRedirect(pathname);
+  if (legacySellerTarget) {
+    return NextResponse.redirect(new URL(legacySellerTarget, req.url));
+  }
+
+  if (pathname.startsWith("/admin")) {
+    if (!req.auth?.user?.id) {
+      const url = new URL(ROUTES.AUTH_SIGN_IN, req.nextUrl.origin);
+      url.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(url);
+    }
+    if (req.auth.user.role !== "ADMIN") {
+      const url = new URL(ROUTES.HOME, req.nextUrl.origin);
+      url.searchParams.set("error", "admin_forbidden");
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   if (isProtectedPath(pathname)) {
     if (!req.auth?.user?.id) {
       const url = new URL(ROUTES.AUTH_SIGN_IN, req.nextUrl.origin);
@@ -43,8 +67,6 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Auth required; role + SellerProfile enforced server-side (DB) in cabinet layout.
-  // JWT role alone is not authoritative after promotions / demotions.
   if (!req.auth?.user?.id) {
     const url = new URL(ROUTES.AUTH_SIGN_IN, req.nextUrl.origin);
     url.searchParams.set("callbackUrl", pathname);

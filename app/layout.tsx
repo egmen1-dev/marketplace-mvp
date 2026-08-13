@@ -26,14 +26,14 @@ const manrope = Manrope({
   preload: true,
 });
 
-/** Heading face — not preloaded so LCP text can paint on Manrope fallback first. */
+/** Heading face — preloaded to reduce CLS on prices / hero showcase (RELEASE-HARDENING-001). */
 const unbounded = Unbounded({
   variable: "--font-heading",
   subsets: ["latin", "cyrillic"],
   display: "swap",
   weight: ["500", "600"],
   adjustFontFallback: true,
-  preload: false,
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
@@ -95,7 +95,7 @@ export default async function RootLayout({
       <head>
         <style
           dangerouslySetInnerHTML={{
-            __html: `#boot-splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fff;color:#111}.boot-splash-inner{display:flex;flex-direction:column;align-items:center;gap:.75rem}.boot-splash-spinner{width:2.5rem;height:2.5rem;border-radius:9999px;border:3px solid rgba(255,106,0,.25);border-top-color:#ff6a00;animation:boot-spin .7s linear infinite}@keyframes boot-spin{to{transform:rotate(360deg)}}.webview-compat .animate-fade-up,.webview-compat .animate-fade-in{animation:none!important;opacity:1!important;transform:none!important}`,
+            __html: `#boot-splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#fff;color:#111;transition:opacity .2s ease}.boot-splash.boot-splash--hide{opacity:0;pointer-events:none}.boot-splash-inner{display:flex;flex-direction:column;align-items:center;gap:.75rem}.boot-splash-spinner{width:2.5rem;height:2.5rem;border-radius:9999px;border:3px solid rgba(255,106,0,.25);border-top-color:#ff6a00;animation:boot-spin .7s linear infinite}@keyframes boot-spin{to{transform:rotate(360deg)}}.webview-compat .animate-fade-up,.webview-compat .animate-fade-in{animation:none!important;opacity:1!important;transform:none!important}`,
           }}
         />
       </head>

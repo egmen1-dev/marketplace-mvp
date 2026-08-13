@@ -10,6 +10,8 @@ export const ANALYTICS_EVENTS = {
   PURCHASE_COMPLETE: "purchase_complete",
   TRUST_BLOCK_VIEW: "trust_block_view",
   CTA_CLICK: "cta_click",
+  /** Featured hero product card click (homepage). */
+  HERO_PRODUCT_CLICK: "hero_product_click",
   /** Paid/ad traffic landing — fired when homepage loads with UTM attribution. */
   AD_LANDING_VIEW: "ad_landing_view",
   /** PDP section entered viewport */
@@ -22,8 +24,6 @@ export const ANALYTICS_EVENTS = {
   DELIVERY_VIEW: "delivery_view",
   /** Strong buy intent (buy / sticky buy / reserve) */
   BUY_INTENT: "buy_intent",
-  /** DESIGN-001 homepage — hero featured product tap */
-  HERO_PRODUCT_CLICK: "hero_product_click",
   /** DESIGN-001 homepage — category tile tap */
   CATEGORY_CLICK: "category_click",
   /** DESIGN-001 homepage — search field focused / started */

@@ -10,6 +10,7 @@ import {
   InventoryError,
 } from "@/features/orders/lib/inventory";
 import { PaymentServiceError } from "@/features/payments/errors";
+import { onOrderPaidForFinance } from "@/features/payments/on-order-paid";
 import {
   toStripeAmount,
   toStripeCurrency,
@@ -61,6 +62,7 @@ export async function finalizePaidOrder(
         route: `/orders/${result.orderId}`,
         entityId: result.orderId,
       });
+      void onOrderPaidForFinance(result.orderId);
     }
     return result;
   } catch (err) {

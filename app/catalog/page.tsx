@@ -193,7 +193,14 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       </div>
 
       <div className="flex gap-8">
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <div
+              className="hidden h-10 w-52 shrink-0 rounded-xl border border-input bg-surface lg:block"
+              aria-hidden
+            />
+          }
+        >
           <CatalogFiltersSidebar
             categoryTree={categoryTree}
             cities={cities}
@@ -203,7 +210,14 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
         <div className="flex min-w-0 flex-1 flex-col gap-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Suspense fallback={null}>
+            <Suspense
+              fallback={
+                <div
+                  className="h-10 min-w-[8rem] flex-1 rounded-xl border border-input bg-surface lg:hidden"
+                  aria-hidden
+                />
+              }
+            >
               <CatalogFiltersMobile
                 categoryTree={categoryTree}
                 cities={cities}

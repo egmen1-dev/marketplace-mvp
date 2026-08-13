@@ -74,6 +74,7 @@ export function InfiniteProductGrid({
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scrollReady, setScrollReady] = useState(false);
   const [exhausted, setExhausted] = useState(
     initialItems.length === 0 || initialItems.length >= total,
   );
@@ -89,6 +90,9 @@ export function InfiniteProductGrid({
     setPage(initialPage);
     setError(null);
     setExhausted(initialItems.length === 0 || initialItems.length >= total);
+    setScrollReady(false);
+    const id = window.requestAnimationFrame(() => setScrollReady(true));
+    return () => window.cancelAnimationFrame(id);
   }, [initialItems, initialPage, total]);
 
   const loadMore = useCallback(async () => {
@@ -150,7 +154,7 @@ export function InfiniteProductGrid({
 
   useEffect(() => {
     const node = sentinelRef.current;
-    if (!node || exhausted) return;
+    if (!node || exhausted || !scrollReady) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -158,12 +162,12 @@ export function InfiniteProductGrid({
           void loadMore();
         }
       },
-      { root: null, rootMargin: "600px 0px", threshold: 0 },
+      { root: null, rootMargin: "320px 0px", threshold: 0 },
     );
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [exhausted, page, items.length, loadMore]);
+  }, [exhausted, page, items.length, loadMore, scrollReady]);
 
   useEffect(() => {
     return () => abortRef.current?.abort();
@@ -176,12 +180,8 @@ export function InfiniteProductGrid({
           <ProductCard
             key={product.id}
             product={product}
-            imagePriority={index < 4}
-            style={
-              index < initialItems.length
-                ? { animationDelay: `${80 + index * 40}ms` }
-                : undefined
-            }
+            imagePriority={index < 6}
+            stableLayout
           />
         ))}
       </div>

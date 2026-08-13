@@ -23,6 +23,8 @@ type ProductCardProps = {
   style?: CSSProperties;
   /** Eager-load card image (above-the-fold grids only). */
   imagePriority?: boolean;
+  /** Skip entrance animation — above-the-fold / CLS-sensitive grids. */
+  stableLayout?: boolean;
 };
 
 /**
@@ -33,6 +35,7 @@ export function ProductCard({
   className,
   style,
   imagePriority = false,
+  stableLayout = false,
 }: ProductCardProps) {
   const href = `${ROUTES.PRODUCT}/${product.id}`;
   const image = product.primaryImage;
@@ -47,10 +50,11 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group animate-fade-up flex flex-col overflow-hidden rounded-2xl border border-transparent bg-card shadow-card ring-1 ring-border transition-[box-shadow,transform,border-color,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] hover:-translate-y-1 hover:border-primary/20 hover:shadow-card-hover hover:ring-primary/35",
+        "group flex flex-col overflow-hidden rounded-2xl border border-transparent bg-card shadow-card ring-1 ring-border transition-[box-shadow,transform,border-color,ring-color] duration-[var(--duration-base)] ease-[var(--ease-out-premium)] hover:-translate-y-1 hover:border-primary/20 hover:shadow-card-hover hover:ring-primary/35",
+        !stableLayout && "animate-fade-up",
         className,
       )}
-      style={style}
+      style={stableLayout ? undefined : style}
     >
       <div className="relative">
         <Link

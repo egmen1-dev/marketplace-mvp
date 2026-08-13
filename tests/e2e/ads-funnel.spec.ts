@@ -91,7 +91,7 @@ test.describe("ADS-READY-001 ads funnel", () => {
     await waitForEvent(events, "add_to_cart");
 
     await page.screenshot({
-      path: "/opt/cursor/artifacts/screenshots/vk-ad-funnel.png",
+      path: "docs/acceptance/rc-001/screenshots/vk-ad-funnel.png",
       fullPage: false,
     });
 

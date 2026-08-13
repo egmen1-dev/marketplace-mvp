@@ -20,7 +20,10 @@ export function PageLoadObserver({ route }: Props) {
     logPageLoadStart({ route, webview });
 
     const splash = document.getElementById("boot-splash");
-    splash?.remove();
+    if (splash) {
+      splash.classList.add("boot-splash--hide");
+      window.setTimeout(() => splash.remove(), 220);
+    }
 
     logPageLoadSuccess({
       route,
