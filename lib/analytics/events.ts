@@ -114,6 +114,19 @@ export const ANALYTICS_EVENTS = {
   LAUNCH_CHECK_PASSED: "launch_check_passed",
   LAUNCH_CHECK_FAILED: "launch_check_failed",
   PRODUCTION_HEALTH_VIEW: "production_health_view",
+  /** MARKETPLACE-DISCOVERY-001 */
+  DISCOVERY_VIEW: "discovery_view",
+  DISCOVERY_SECTION_VIEW: "discovery_section_view",
+  DISCOVERY_PRODUCT_CLICK: "discovery_product_click",
+  DISCOVERY_PRODUCT_VIEW: "discovery_product_view",
+  DISCOVERY_ADD_TO_CART: "discovery_add_to_cart",
+  DISCOVERY_PURCHASE: "discovery_purchase",
+  COLLECTION_OPENED: "collection_opened",
+  DAILY_FIND_VIEW: "daily_find_view",
+  DAILY_FIND_CLICK: "daily_find_click",
+  PRICE_GAME_STARTED: "price_game_started",
+  PRICE_GAME_COMPLETED: "price_game_completed",
+  SITUATION_SELECTED: "situation_selected",
 } as const;
 
 export type AnalyticsEventName =
