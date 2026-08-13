@@ -14,6 +14,9 @@ export type PromotionPerformanceSummary = PromotionMetricTotals & {
   ctr: number;
   conversionRate: number;
   performanceScore: number;
+  promotionCost: number;
+  profit: number;
+  roiPercent: number | null;
   roiLabel: string;
 };
 
@@ -21,6 +24,8 @@ export type AdminPromotionAnalyticsSummary = PromotionMetricTotals & {
   activeCampaigns: number;
   ctr: number;
 };
+
+export type AdminPromotionBillingSummary = import("@/lib/promotion/billing/types").AdminPromotionBillingSummary;
 
 export type AdminCampaignAnalyticsRow = {
   campaignId: string;

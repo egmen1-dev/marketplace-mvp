@@ -3,6 +3,13 @@ import { Prisma, ProductStatus, PromotionCampaignStatus, PromotionSurfaceType } 
 import { mapProductListItem, toPriceNumber } from "@/features/products/mappers";
 import type { ProductListItem } from "@/features/products/types";
 import { isPromotionSurfacesEnabled } from "@/lib/promotion/flags";
+import { isPromotionBillingEnabled } from "@/lib/promotion/billing/flags";
+import { getSellerPromotionOrderMap } from "@/lib/promotion/billing/orders";
+import { listActivePromotionPlans } from "@/lib/promotion/billing/plans";
+import {
+  getAdminPromotionBillingSummary,
+  listRecentPaidPromotionOrders,
+} from "@/lib/promotion/billing/queries";
 import { getSellerCampaignPerformanceMap } from "@/lib/promotion/analytics/queries";
 import { isPromotionAnalyticsEnabled } from "@/lib/promotion/analytics/flags";
 import { evaluatePromotionReadiness } from "@/lib/promotion/readiness";
@@ -186,6 +193,9 @@ export async function listSellerPromotionRows(
     .filter((id): id is string => Boolean(id));
 
   const performanceMap = await getSellerCampaignPerformanceMap(campaignIds);
+  const orderMap = isPromotionBillingEnabled()
+    ? await getSellerPromotionOrderMap(products.map((p) => p.id))
+    : new Map();
 
   return products.map((product) => {
     const readiness = snapshotFromProduct(product);
@@ -220,6 +230,7 @@ export async function listSellerPromotionRows(
       performance: campaign
         ? (performanceMap.get(campaign.id) ?? null)
         : null,
+      activeOrder: orderMap.get(product.id) ?? null,
     };
   });
 }
@@ -306,10 +317,23 @@ export async function listAdminPromotionCampaigns(opts?: {
         rows: [],
       };
 
+  const billing = isPromotionBillingEnabled()
+    ? {
+        summary: await getAdminPromotionBillingSummary(),
+        recentOrders: await listRecentPaidPromotionOrders(),
+      }
+    : null;
+
+  const plans = isPromotionBillingEnabled()
+    ? await listActivePromotionPlans()
+    : [];
+
   return {
     rows,
     counts,
     analytics: analyticsData.summary,
     analyticsRows: analyticsData.rows,
+    billing,
+    plans,
   };
 }

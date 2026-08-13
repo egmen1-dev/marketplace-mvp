@@ -25,6 +25,7 @@ export async function POST(request: Request) {
       handled: result.handled,
       type: result.type,
       orderId: result.orderId ?? undefined,
+      promotionOrderId: result.promotionOrderId ?? undefined,
       alreadyPaid: result.alreadyPaid ?? undefined,
       rejected: result.rejected ?? undefined,
       reason: result.reason ?? undefined,

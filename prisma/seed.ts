@@ -728,8 +728,36 @@ function collectSlugs(nodes: SeedCategory[], out = new Set<string>()) {
   return out;
 }
 
+async function seedPromotionPlans() {
+  const plans = [
+    { id: "plan_starter", name: "STARTER", durationDays: 7, price: "990.00" },
+    { id: "plan_growth", name: "GROWTH", durationDays: 14, price: "1790.00" },
+    { id: "plan_boost", name: "BOOST", durationDays: 30, price: "2990.00" },
+  ] as const;
+
+  for (const plan of plans) {
+    await prisma.promotionPlan.upsert({
+      where: { name: plan.name },
+      update: {
+        durationDays: plan.durationDays,
+        price: plan.price,
+        active: true,
+      },
+      create: {
+        id: plan.id,
+        name: plan.name,
+        durationDays: plan.durationDays,
+        price: plan.price,
+        active: true,
+      },
+    });
+  }
+}
+
 async function main() {
   console.log("Seeding marketplace…");
+
+  await seedPromotionPlans();
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12);
 

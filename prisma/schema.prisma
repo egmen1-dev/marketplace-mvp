@@ -140,6 +140,16 @@ enum PromotionCampaignStatus {
   ENDED
 }
 
+/// Paid promotion purchase lifecycle — separate from product Order/Payment.
+enum PromotionOrderStatus {
+  CREATED
+  PAYMENT_PENDING
+  PAID
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
 /// Promotion distribution surfaces — separate from catalog/search ranking.
 enum PromotionSurfaceType {
   HOME_FEATURED
@@ -255,6 +265,7 @@ model SellerProfile {
   reservations   PickupReservation[]
   conversations  Conversation[]
   promotionCampaigns PromotionCampaign[]
+  promotionOrders    PromotionOrder[]
 
   @@index([slug])
   @@index([kind])
@@ -527,6 +538,7 @@ model Product {
   promotionPlacements  PromotionPlacement[]
   promotionMetrics     PromotionMetric[]
   promotionAttributions PromotionAttribution[]
+  promotionOrders       PromotionOrder[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -1068,11 +1080,56 @@ model PromotionCampaign {
   placements PromotionPlacement[]
   metrics      PromotionMetric[]
   attributions PromotionAttribution[]
+  orders       PromotionOrder[]
 
   @@index([sellerId])
   @@index([status])
   @@index([status, startedAt])
   @@map("promotion_campaigns")
+}
+
+/// Commercial promotion tariff — duration + fixed price (RUB).
+model PromotionPlan {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  durationDays Int
+  price        Decimal  @db.Decimal(12, 2)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders PromotionOrder[]
+
+  @@map("promotion_plans")
+}
+
+/// Seller-paid promotion purchase — not mixed with product orders.
+model PromotionOrder {
+  id              String               @id @default(cuid())
+  sellerId        String
+  productId       String
+  planId          String
+  campaignId      String?
+  status          PromotionOrderStatus @default(CREATED)
+  amount          Decimal              @db.Decimal(12, 2)
+  stripeSessionId String?              @unique
+  createdAt       DateTime             @default(now())
+  startedAt       DateTime?
+  endedAt         DateTime?
+  updatedAt       DateTime             @updatedAt
+
+  seller   SellerProfile      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  product  Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  plan     PromotionPlan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+  campaign PromotionCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  @@index([sellerId])
+  @@index([productId])
+  @@index([planId])
+  @@index([campaignId])
+  @@index([status])
+  @@index([status, endedAt])
+  @@map("promotion_orders")
 }
 
 /// Where a promoted product may appear — distribution layer, not search ranking.

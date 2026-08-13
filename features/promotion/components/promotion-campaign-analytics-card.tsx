@@ -84,6 +84,13 @@ export function PromotionCampaignAnalyticsCard({
       <p className="mt-3 font-medium text-foreground">
         Выручка: {formatPrice(performance.revenue, currency)}
       </p>
+      {performance.promotionCost > 0 ? (
+        <p className="mt-1 text-sm text-muted-foreground">
+          Стоимость продвижения:{" "}
+          {formatPrice(performance.promotionCost, currency)} · Прибыль:{" "}
+          {formatPrice(performance.profit, currency)}
+        </p>
+      ) : null}
       <p className="mt-1 text-xs text-muted-foreground">
         Оценка эффективности: {performance.performanceScore}/100 (не влияет на
         выдачу)

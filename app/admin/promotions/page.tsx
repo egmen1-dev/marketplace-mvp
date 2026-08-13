@@ -59,6 +59,7 @@ export default async function AdminPromotionsPage({
             analytics={data.analytics}
             analyticsRows={data.analyticsRows}
             analyticsEnabled={isPromotionAnalyticsEnabled()}
+            billing={data.billing}
           />
         </Suspense>
       ) : null}

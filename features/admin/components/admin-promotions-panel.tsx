@@ -9,7 +9,9 @@ import type {
   AdminCampaignAnalyticsRow,
   AdminPromotionAnalyticsSummary,
 } from "@/lib/promotion/analytics/types";
+import type { AdminPromotionBillingDashboard } from "@/lib/promotion/types";
 import type { AdminPromotionFilter, AdminPromotionRow } from "@/lib/promotion/types";
+import { formatPrice } from "@/features/products/mappers";
 import { PROMOTION_SURFACE_LABELS } from "@/lib/promotion/surfaces";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -21,6 +23,7 @@ type AdminPromotionsPanelProps = {
   analytics: AdminPromotionAnalyticsSummary;
   analyticsRows: AdminCampaignAnalyticsRow[];
   analyticsEnabled: boolean;
+  billing: AdminPromotionBillingDashboard | null;
 };
 
 const FILTERS: { value: AdminPromotionFilter; label: string }[] = [
@@ -47,6 +50,7 @@ export function AdminPromotionsPanel({
   analytics,
   analyticsRows,
   analyticsEnabled,
+  billing,
 }: AdminPromotionsPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -148,6 +152,81 @@ export function AdminPromotionsPanel({
                         {row.productViews}
                       </td>
                       <td className="px-3 py-2 tabular-nums">{row.orders}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
+      {billing ? (
+        <section
+          className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4"
+          data-testid="admin-promotion-billing"
+        >
+          <h3 className="font-heading text-base font-medium">
+            Биллинг продвижения
+          </h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <p className="text-xs text-muted-foreground">Revenue</p>
+              <p
+                className="font-heading text-xl tabular-nums"
+                data-testid="admin-promotion-revenue"
+              >
+                {formatPrice(billing.summary.totalRevenue, "RUB")}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">
+                Active paid campaigns
+              </p>
+              <p
+                className="font-heading text-xl tabular-nums"
+                data-testid="admin-promotion-active-paid"
+              >
+                {billing.summary.activePaidCampaigns}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Paid orders</p>
+              <p
+                className="font-heading text-xl tabular-nums"
+                data-testid="admin-promotion-paid-orders"
+              >
+                {billing.summary.paidOrders}
+              </p>
+            </div>
+          </div>
+
+          {billing.recentOrders.length > 0 ? (
+            <div className="overflow-x-auto rounded-lg border border-border/60">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border text-xs text-muted-foreground">
+                    <th className="px-3 py-2">Товар</th>
+                    <th className="px-3 py-2">Продавец</th>
+                    <th className="px-3 py-2">Тариф</th>
+                    <th className="px-3 py-2">Сумма</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {billing.recentOrders.slice(0, 10).map((order) => (
+                    <tr
+                      key={order.id}
+                      className="border-b border-border/60"
+                      data-testid={`admin-promotion-order-${order.productId}`}
+                    >
+                      <td className="px-3 py-2">{order.productTitle}</td>
+                      <td className="px-3 py-2 text-muted-foreground">
+                        {order.sellerName}
+                      </td>
+                      <td className="px-3 py-2">{order.planName}</td>
+                      <td className="px-3 py-2 tabular-nums">
+                        {formatPrice(order.amount, "RUB")}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
