@@ -13,6 +13,7 @@ import {
   Search,
   ShoppingBag,
   Sparkles,
+  Rocket,
   Shield,
   ShieldCheck,
   ShieldAlert,
@@ -63,6 +64,30 @@ const NAV_ITEMS = [
     label: "Operations",
     icon: Shield,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_OPERATIONS),
+  },
+  {
+    href: ROUTES.ADMIN_LAUNCH,
+    label: "Launch",
+    icon: Rocket,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_LAUNCH),
+  },
+  {
+    href: ROUTES.ADMIN_HEALTH,
+    label: "Health",
+    icon: LineChart,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_HEALTH),
+  },
+  {
+    href: ROUTES.ADMIN_PAYMENTS,
+    label: "Payments",
+    icon: Wallet,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_PAYMENTS),
+  },
+  {
+    href: ROUTES.ADMIN_UX_HEALTH,
+    label: "UX Health",
+    icon: Search,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_UX_HEALTH),
   },
   {
     href: ROUTES.ADMIN_USERS,
