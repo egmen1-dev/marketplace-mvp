@@ -17,11 +17,15 @@ FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ARG RAILWAY_GIT_COMMIT_SHA
-ARG BUILD_TIME
 ENV RAILWAY_GIT_COMMIT_SHA=$RAILWAY_GIT_COMMIT_SHA
-ENV BUILD_TIME=$BUILD_TIME
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npx prisma generate && npm run build
+# Force fresh build marker into the image (also used by /api/version).
+RUN node scripts/write-build-info.mjs \
+  && npx prisma generate \
+  && npm run build \
+  && test -f lib/build-info.generated.json \
+  && mkdir -p .next/standalone/lib \
+  && cp lib/build-info.generated.json .next/standalone/lib/build-info.generated.json
 
 FROM base AS runner
 ENV NODE_ENV=production
@@ -33,6 +37,7 @@ WORKDIR /app
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+# Explicit copy in case standalone tree omitted it
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
 
 EXPOSE 8080
