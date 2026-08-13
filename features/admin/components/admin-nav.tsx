@@ -13,6 +13,8 @@ import {
   Search,
   ShoppingBag,
   Sparkles,
+  Shield,
+  ShieldCheck,
   Store,
   Ticket,
   Upload,
@@ -29,6 +31,18 @@ const NAV_ITEMS = [
     label: "Dashboard",
     icon: LayoutDashboard,
     match: (pathname: string) => pathname === ROUTES.ADMIN,
+  },
+  {
+    href: ROUTES.ADMIN_FOUNDATION,
+    label: "Foundation",
+    icon: ShieldCheck,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_FOUNDATION),
+  },
+  {
+    href: ROUTES.ADMIN_OPERATIONS,
+    label: "Operations",
+    icon: Shield,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_OPERATIONS),
   },
   {
     href: ROUTES.ADMIN_USERS,

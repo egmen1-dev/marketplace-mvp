@@ -91,6 +91,8 @@ export const ROUTES = {
   ADMIN_FINANCE: "/admin/finance",
   ADMIN_PAYOUTS: "/admin/payouts",
   ADMIN_CONVERSION: "/admin/conversion",
+  ADMIN_FOUNDATION: "/admin/foundation",
+  ADMIN_OPERATIONS: "/admin/operations",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
   /** Unified notifications inbox */
