@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { getSessionUser } from "@/features/auth";
+import { OrderReviewSection } from "@/features/marketplace-trust-loop/components/order-review-section";
 import { getOrderForUser, OrderDetailView } from "@/features/orders";
 import { ROUTES } from "@/lib/constants";
 
@@ -34,9 +35,21 @@ export default async function OrderDetailPage({
   }
 
   return (
-    <OrderDetailView
-      order={order}
-      paymentSuccess={payment === "success"}
-    />
+    <div className="flex flex-col gap-6">
+      <OrderDetailView
+        order={order}
+        paymentSuccess={payment === "success"}
+      />
+      <OrderReviewSection
+        orderId={order.id}
+        buyerId={user.id}
+        status={order.status}
+        reviewEligibleAt={order.reviewEligibleAt ?? null}
+        items={order.items.map((item) => ({
+          productId: item.productId,
+          productName: item.productName,
+        }))}
+      />
+    </div>
   );
 }

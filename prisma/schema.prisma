@@ -26,6 +26,28 @@ enum ProductStatus {
   OUT_OF_STOCK
 }
 
+/// MARKETPLACE-TRUST-LOOP-001 — review publication status
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// MARKETPLACE-TRUST-LOOP-001 — product/review moderation workflow
+enum ModerationStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  NEEDS_FIX
+}
+
+enum ModerationItemType {
+  PRODUCT
+  REVIEW
+  REPORT
+  CONTENT
+}
+
 /// Состояние товара (новый / б/у / восстановленный)
 enum ProductCondition {
   NEW
@@ -206,6 +228,7 @@ model User {
   sentMessages         Message[]
   financeTransactions  FinanceTransaction[] @relation("FinanceTransactionBuyer")
   disputesOpened       Dispute[]
+  reviewsWritten       Review[]
 
   @@index([role])
   @@index([isBlocked])
@@ -224,7 +247,6 @@ model SellerProfile {
   address          String?
   /// Free-text shipping defaults shown to buyers / used in cabinet
   shippingDefaults String?
-  /// Aggregate store rating 0–5 (placeholder until reviews land)
   rating           Decimal    @default(0) @db.Decimal(3, 2)
   isVerified       Boolean    @default(false)
   /// Set when admin verifies the seller; cleared on unverify
@@ -247,6 +269,9 @@ model SellerProfile {
   payoutRequests      PayoutRequest[]
   payoutTransactions  PayoutTransaction[]
   experienceProgress  SellerExperienceProgress?
+  reviews             Review[]
+  reputation          SellerReputation?
+  moderationQueue     ModerationQueueItem[]
 
   @@index([slug])
   @@index([kind])
@@ -516,6 +541,9 @@ model Product {
   reservations     PickupReservation[]
   conversations    Conversation[]
   characteristicValues ProductCharacteristicValue[]
+  reviews              Review[]
+  productRating        ProductRating?
+  productModeration    ProductModeration?
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -691,6 +719,7 @@ model Order {
   reservations    PickupReservation[]
   financeTransaction FinanceTransaction?
   disputes        Dispute[]
+  reviews         Review[]
 
   @@index([userId])
   @@index([status])
@@ -1303,4 +1332,118 @@ model Dispute {
   @@index([openedBy])
   @@index([status])
   @@map("disputes")
+}
+
+/// Buyer product review after completed order.
+model Review {
+  id        String       @id @default(cuid())
+  orderId   String
+  productId String
+  sellerId  String
+  buyerId   String
+  rating    Int
+  text      String?
+  pros      String?
+  cons      String?
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  order   Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller  SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer   User          @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  photos  ReviewPhoto[]
+
+  @@unique([orderId, productId, buyerId])
+  @@index([productId])
+  @@index([sellerId])
+  @@index([buyerId])
+  @@index([status])
+  @@map("reviews")
+}
+
+model ReviewPhoto {
+  id        String   @id @default(cuid())
+  reviewId  String
+  url       String
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_photos")
+}
+
+/// Aggregated product rating (trust layer — not used for search ranking).
+model ProductRating {
+  productId          String   @id
+  averageRating      Decimal  @default(0) @db.Decimal(3, 2)
+  reviewsCount       Int      @default(0)
+  rating1            Int      @default(0)
+  rating2            Int      @default(0)
+  rating3            Int      @default(0)
+  rating4            Int      @default(0)
+  rating5            Int      @default(0)
+  updatedAt          DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_ratings")
+}
+
+/// Aggregated seller reputation snapshot.
+model SellerReputation {
+  sellerId           String   @id
+  averageRating      Decimal  @default(0) @db.Decimal(3, 2)
+  reviewsCount       Int      @default(0)
+  completedOrders    Int      @default(0)
+  cancellationRate   Decimal  @default(0) @db.Decimal(5, 2)
+  trustScore         Int      @default(0)
+  positiveSentiment  Int      @default(0)
+  updatedAt          DateTime @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_reputations")
+}
+
+/// Product moderation state (separate from catalog ProductStatus).
+model ProductModeration {
+  id              String           @id @default(cuid())
+  productId       String           @unique
+  status          ModerationStatus @default(PENDING_REVIEW)
+  qualityScore    Int?
+  issues          Json?
+  prohibitedHit   Boolean          @default(false)
+  reviewedById    String?
+  reviewedAt      DateTime?
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("product_moderations")
+}
+
+/// Unified moderation queue for admin.
+model ModerationQueueItem {
+  id         String             @id @default(cuid())
+  type       ModerationItemType
+  entityId   String
+  sellerId   String?
+  status     ModerationStatus   @default(PENDING_REVIEW)
+  riskLevel  String?
+  summary    String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  seller SellerProfile? @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+
+  @@index([type, status])
+  @@index([entityId])
+  @@index([sellerId])
+  @@map("moderation_queue_items")
 }

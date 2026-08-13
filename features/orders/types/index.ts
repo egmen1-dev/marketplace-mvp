@@ -65,6 +65,7 @@ export type OrderDetail = {
   shipmentDeadline: string | null;
   pickupExpiresAt: string | null;
   isOverdue: boolean;
+  reviewEligibleAt: string | null;
   expectedNextAction: string;
   history: Array<{
     id: string;

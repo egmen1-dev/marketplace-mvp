@@ -19,6 +19,11 @@ import {
   ProductServiceError,
 } from "@/features/products/queries";
 import { ProductForm, ProductQualityCard } from "@/features/seller";
+import { ProductModerationPreview } from "@/features/marketplace-trust-loop";
+import {
+  getProductModerationPreview,
+  isMarketplaceTrustLoopEnabled,
+} from "@/lib/marketplace-trust-loop";
 import { computeProductCompletenessScore } from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 
@@ -56,10 +61,14 @@ export default async function EditProductPage({
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
   let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
+  let moderationPreview: Awaited<ReturnType<typeof getProductModerationPreview>> = null;
   try {
-    [categories, pickupPoints] = await Promise.all([
+    [categories, pickupPoints, moderationPreview] = await Promise.all([
       listCategories(),
       listSellerPickupPoints(sellerProfileId, { activeOnly: true }),
+      isMarketplaceTrustLoopEnabled()
+        ? getProductModerationPreview(id)
+        : Promise.resolve(null),
     ]);
   } catch (err) {
     console.error("[seller/products/edit]", err);
@@ -95,6 +104,14 @@ export default async function EditProductPage({
           hasSeller: true,
         })}
       />
+
+      {moderationPreview ? (
+        <ProductModerationPreview
+          qualityScore={moderationPreview.qualityScore}
+          issues={moderationPreview.issues}
+          aiAdvice={moderationPreview.aiAdvice}
+        />
+      ) : null}
 
       <Card>
         <CardHeader>

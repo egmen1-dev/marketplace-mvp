@@ -1,4 +1,5 @@
 import type { AuditCheck } from "./types";
+import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 
 function check(
   id: string,
@@ -10,15 +11,17 @@ function check(
   return { id, label, passed, severity: passed ? "info" : severity, detail };
 }
 
-/** Reviews foundation is not shipped — audit detects eligibility plumbing only. */
+/** Reviews foundation — passes when trust loop enabled. */
 export function auditReviewFlow(): AuditCheck[] {
+  const trustLoop = isMarketplaceTrustLoopEnabled();
+
   return [
     check(
       "review-model",
       "Review storage model",
-      false,
+      trustLoop,
       "critical",
-      "Review model not in schema — foundation gap",
+      trustLoop ? "Review model shipped" : "Enable MARKETPLACE_TRUST_LOOP_ENABLED",
     ),
     check(
       "review-eligibility",
@@ -30,30 +33,30 @@ export function auditReviewFlow(): AuditCheck[] {
     check(
       "review-product-rating",
       "Product rating aggregation",
-      false,
+      trustLoop,
       "warning",
-      "Planned — not implemented",
+      trustLoop ? undefined : "Planned — not implemented",
     ),
     check(
       "review-seller-rating",
       "Seller rating from reviews",
-      false,
+      trustLoop,
       "warning",
-      "SellerProfile.rating is placeholder",
+      trustLoop ? "SellerReputation aggregate" : "SellerProfile.rating is placeholder",
     ),
     check(
       "review-moderation",
       "Review moderation / reports",
-      false,
-      "warning",
-      "ReportReview flow not implemented",
+      trustLoop,
+      "info",
+      trustLoop ? "Review PENDING/APPROVED workflow" : "ReportReview flow not implemented",
     ),
     check(
       "review-post-order-ui",
       "Post-order review UI",
-      false,
+      trustLoop,
       "critical",
-      "Buyers cannot submit reviews yet",
+      trustLoop ? "Review form on order detail" : "Buyers cannot submit reviews yet",
     ),
   ];
 }

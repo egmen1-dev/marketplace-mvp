@@ -90,6 +90,18 @@ export const ANALYTICS_EVENTS = {
   PAYMENT_CHECK: "payment_check",
   FOUNDATION_ISSUE_DETECTED: "foundation_issue_detected",
   FOUNDATION_ISSUE_FIXED: "foundation_issue_fixed",
+  /** MARKETPLACE-TRUST-LOOP-001 — reviews & moderation (no PII) */
+  REVIEW_VIEW: "review_view",
+  REVIEW_STARTED: "review_started",
+  REVIEW_CREATED: "review_created",
+  REVIEW_PUBLISHED: "review_published",
+  RATING_UPDATED: "rating_updated",
+  MODERATION_ITEM_CREATED: "moderation_item_created",
+  MODERATION_APPROVED: "moderation_approved",
+  MODERATION_REJECTED: "moderation_rejected",
+  PHOTO_QUALITY_ISSUE_FOUND: "photo_quality_issue_found",
+  PRODUCT_QUALITY_ISSUE_FOUND: "product_quality_issue_found",
+  TRUST_SIGNAL_VIEW: "trust_signal_view",
 } as const;
 
 export type AnalyticsEventName =
