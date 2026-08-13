@@ -41,6 +41,7 @@ import { BuyerRecommendationsSection } from "@/features/buyer-intelligence";
 import { BuyerDemandInsightsStrip } from "@/features/marketplace-intelligence";
 import { BuyerDemandActionsStrip } from "@/features/marketplace-operator";
 import { BuyerExecutionActionsStrip } from "@/features/marketplace-execution";
+import { BuyerReactivationSignalsStrip } from "@/features/marketplace-communication";
 import { pluralizeProductWord } from "@/lib/i18n";
 import {
   getSearchBuyerRecommendations,
@@ -58,6 +59,10 @@ import {
   getBuyerExecutionActions,
   isMarketplaceExecutionEnabled,
 } from "@/lib/marketplace-execution";
+import {
+  getBuyerReactivationSignals,
+  isMarketplaceCommunicationEnabled,
+} from "@/lib/marketplace-communication";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { PromotedProductsSection } from "@/features/promotion";
 import {
@@ -102,6 +107,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   let buyerDemandActions: Awaited<ReturnType<typeof getBuyerDemandActions>> = [];
   let buyerExecutionActions: Awaited<
     ReturnType<typeof getBuyerExecutionActions>
+  > = [];
+  let buyerReactivationSignals: Awaited<
+    ReturnType<typeof getBuyerReactivationSignals>
   > = [];
   let dbError: string | null = null;
 
@@ -162,6 +170,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     }
     if (isMarketplaceExecutionEnabled() && filters.q?.trim()) {
       buyerExecutionActions = await getBuyerExecutionActions();
+    }
+    if (isMarketplaceCommunicationEnabled()) {
+      buyerReactivationSignals = await getBuyerReactivationSignals();
     }
   } catch (err) {
     console.error("[catalog]", err);
@@ -305,6 +316,10 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
           {buyerExecutionActions.length > 0 ? (
             <BuyerExecutionActionsStrip actions={buyerExecutionActions} />
+          ) : null}
+
+          {buyerReactivationSignals.length > 0 ? (
+            <BuyerReactivationSignalsStrip signals={buyerReactivationSignals} />
           ) : null}
 
           {buyerRecommendations &&

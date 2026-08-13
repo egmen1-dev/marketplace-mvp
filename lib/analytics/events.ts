@@ -102,6 +102,18 @@ export const ANALYTICS_EVENTS = {
   TASK_COMPLETED: "task_completed",
   /** Marketplace execution — all plan tasks done */
   PLAN_COMPLETED: "plan_completed",
+  /** Marketplace communication — dashboard viewed */
+  COMMUNICATION_VIEW: "communication_view",
+  /** Marketplace communication — campaign materialized */
+  COMMUNICATION_CAMPAIGN_CREATED: "communication_campaign_created",
+  /** Marketplace communication — message approved by human */
+  COMMUNICATION_MESSAGE_APPROVED: "communication_message_approved",
+  /** Marketplace communication — send recorded (no auto email yet) */
+  COMMUNICATION_MESSAGE_SENT: "communication_message_sent",
+  /** Marketplace communication — recipient clicked CTA */
+  COMMUNICATION_CLICKED: "communication_clicked",
+  /** Marketplace communication — downstream conversion signal */
+  COMMUNICATION_CONVERSION: "communication_conversion",
 } as const;
 
 export type AnalyticsEventName =

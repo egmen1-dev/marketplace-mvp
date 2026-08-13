@@ -10,6 +10,7 @@ import {
   LineChart,
   FolderTree,
   LayoutDashboard,
+  Mail,
   Megaphone,
   MessageCircle,
   Package,
@@ -140,6 +141,13 @@ const NAV_ITEMS = [
     label: "Execution",
     icon: ClipboardCheck,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_EXECUTION),
+  },
+  {
+    href: ROUTES.ADMIN_COMMUNICATION,
+    label: "Communication",
+    icon: Mail,
+    match: (pathname: string) =>
+      pathname.startsWith(ROUTES.ADMIN_COMMUNICATION),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,
