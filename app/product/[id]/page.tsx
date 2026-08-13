@@ -23,10 +23,15 @@ import { PdpCharacteristics } from "@/features/products/components/pdp-character
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-trust-loop";
 import { PdpDeliveryHint } from "@/features/marketplace-delivery";
+import { PdpDiscoveryWhyBlock } from "@/features/marketplace-discovery";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { getProductReviewsForPdp, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
 import { getPdpDeliveryHint, isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
 import { buildTrustSignals } from "@/lib/marketplace-trust-loop/moderation/risk-signals";
+import {
+  buildWhyReasons,
+  isMarketplaceDiscoveryEnabled,
+} from "@/lib/marketplace-discovery";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
@@ -100,6 +105,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let pdpReviews: Awaited<ReturnType<typeof getProductReviewsForPdp>> | null = null;
   let trustSignals: Awaited<ReturnType<typeof buildTrustSignals>> = null;
   let deliveryHint: Awaited<ReturnType<typeof getPdpDeliveryHint>> = null;
+  let discoveryReasons: Awaited<ReturnType<typeof buildWhyReasons>> = [];
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -129,6 +135,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           minDays: 1,
           maxDays: 3,
         });
+      }
+      if (isMarketplaceDiscoveryEnabled()) {
+        discoveryReasons = await buildWhyReasons(product);
       }
     }
   } catch (err) {
@@ -320,6 +329,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             productId={product.id}
             sellerVerified={Boolean(sellerTrust?.isVerified)}
           />
+
+          {discoveryReasons.length > 0 ? (
+            <PdpDiscoveryWhyBlock reasons={discoveryReasons} />
+          ) : null}
 
           {sellerTrust ? (
             <PdpTrustBlock

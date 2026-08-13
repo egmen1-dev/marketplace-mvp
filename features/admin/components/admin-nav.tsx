@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   LineChart,
+  Compass,
   FolderTree,
   LayoutDashboard,
   Megaphone,
@@ -70,6 +71,12 @@ const NAV_ITEMS = [
     label: "Launch",
     icon: Rocket,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_LAUNCH),
+  },
+  {
+    href: ROUTES.ADMIN_DISCOVERY,
+    label: "Discovery",
+    icon: Compass,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DISCOVERY),
   },
   {
     href: ROUTES.ADMIN_HEALTH,

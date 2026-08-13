@@ -110,7 +110,16 @@ export const ROUTES = {
   /** Unified notifications inbox */
   NOTIFICATIONS: "/notifications",
   BRANDS: "/brands",
+  /** Consumer discovery experience */
+  DISCOVER: "/discover",
+  DISCOVER_COLLECTIONS: "/discover/collections",
+  ACCOUNT_DISCOVERY: "/account/discovery",
+  ADMIN_DISCOVERY: "/admin/discovery",
 } as const;
+
+export function discoveryCollectionPath(slug: string) {
+  return `${ROUTES.DISCOVER_COLLECTIONS}/${slug}`;
+}
 
 export function adminOrderPath(id: string) {
   return `${ROUTES.ADMIN_ORDERS}/${id}`;
@@ -156,6 +165,7 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/command-center",
   "/account/growth",
   "/account/promotion-center",
+  "/account/discovery",
   "/account/seller-start",
 ] as const;
 

@@ -12,6 +12,7 @@ import {
   TrustSection,
 } from "@/components/home";
 import { TrustStrip } from "@/components/trust";
+import { DiscoveryHomeSection } from "@/features/marketplace-discovery";
 import {
   getHomeMarketplaceStats,
   getHomeNewProducts,
@@ -127,6 +128,10 @@ export default async function HomePage() {
           />
         </div>
       ) : null}
+
+      <div className="content-visibility-auto">
+        <DiscoveryHomeSection />
+      </div>
 
       <div className="content-visibility-auto">
         <HomeProductSection
