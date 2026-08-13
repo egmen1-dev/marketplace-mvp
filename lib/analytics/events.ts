@@ -40,6 +40,12 @@ export const ANALYTICS_EVENTS = {
   PAYMENT_RELEASED: "payment_released",
   REFUND_CREATED: "refund_created",
   DISPUTE_CREATED: "dispute_created",
+  /** SELLER-PAYOUT-001 — payout workflow events (no PII) */
+  PAYOUT_PAGE_VIEW: "payout_page_view",
+  PAYOUT_REQUEST_STARTED: "payout_request_started",
+  PAYOUT_REQUEST_CREATED: "payout_request_created",
+  PAYOUT_COMPLETED: "payout_completed",
+  PAYOUT_REJECTED: "payout_rejected",
 } as const;
 
 export type AnalyticsEventName =

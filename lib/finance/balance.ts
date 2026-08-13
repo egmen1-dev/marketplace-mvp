@@ -11,6 +11,7 @@ function mapBalance(row: {
   pendingAmount: Prisma.Decimal;
   availableAmount: Prisma.Decimal;
   paidAmount: Prisma.Decimal;
+  reservedForPayoutAmount: Prisma.Decimal;
   updatedAt: Date;
 }): SellerBalanceDto {
   return {
@@ -18,6 +19,7 @@ function mapBalance(row: {
     pendingAmount: toPriceNumber(row.pendingAmount),
     availableAmount: toPriceNumber(row.availableAmount),
     paidAmount: toPriceNumber(row.paidAmount),
+    reservedForPayoutAmount: toPriceNumber(row.reservedForPayoutAmount),
     updatedAt: row.updatedAt.toISOString(),
   };
 }
@@ -101,6 +103,7 @@ export async function getSellerBalance(
       pendingAmount: 0,
       availableAmount: 0,
       paidAmount: 0,
+      reservedForPayoutAmount: 0,
       updatedAt: new Date().toISOString(),
     };
   }

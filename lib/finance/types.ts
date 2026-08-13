@@ -25,6 +25,7 @@ export type SellerBalanceDto = {
   pendingAmount: number;
   availableAmount: number;
   paidAmount: number;
+  reservedForPayoutAmount: number;
   updatedAt: string;
 };
 
