@@ -9,21 +9,25 @@ import { AdminSellersTable, listAdminSellers } from "@/features/admin";
 import { AdminSellerActivationPanel } from "@/features/seller-first-entry";
 import { AdminSellerJourneyFunnelPanel } from "@/features/seller-journey";
 import { AdminSellerFunnelPanel } from "@/features/seller-lifecycle";
+import { AdminSellerOperationsHealthPanel } from "@/features/seller-operations";
 import { getAdminSellerActivation } from "@/lib/seller-first-entry";
 import { getAdminSellerJourneyFunnel } from "@/lib/seller-journey";
 import { getAdminSellerFunnel } from "@/lib/seller-lifecycle";
+import { getAdminSellerOperationsHealth } from "@/lib/seller-operations";
 
 export const metadata = {
   title: "Продавцы",
 };
 
 export default async function AdminSellersPage() {
-  const [sellers, funnel, activation, journeyFunnel] = await Promise.all([
-    listAdminSellers(),
-    getAdminSellerFunnel(),
-    getAdminSellerActivation(),
-    getAdminSellerJourneyFunnel(),
-  ]);
+  const [sellers, funnel, activation, journeyFunnel, operationsHealth] =
+    await Promise.all([
+      listAdminSellers(),
+      getAdminSellerFunnel(),
+      getAdminSellerActivation(),
+      getAdminSellerJourneyFunnel(),
+      getAdminSellerOperationsHealth(),
+    ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,6 +51,18 @@ export default async function AdminSellersPage() {
         </CardHeader>
         <CardContent>
           <AdminSellerJourneyFunnelPanel funnel={journeyFunnel} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Seller Operations Health</CardTitle>
+          <CardDescription>
+            Ежедневные задачи продавцов: заказы, товары и потенциал роста
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AdminSellerOperationsHealthPanel data={operationsHealth} />
         </CardContent>
       </Card>
 

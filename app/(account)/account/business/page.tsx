@@ -1,5 +1,5 @@
-import { requireSellerCabinetAccess } from "@/features/auth";
 import { SellerOperatingDeskPanel } from "@/features/seller-operating-desk";
+import { SellerOperationsTodayPanel } from "@/features/seller-operations";
 import { listSellerDashboardActivity } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
 import {
@@ -7,6 +7,10 @@ import {
   getSellerOperatingDeskRecentOrders,
   isSellerOperatingDeskEnabled,
 } from "@/lib/seller-operating-desk";
+import {
+  getSellerOperationsWorkspace,
+  isSellerOperationsEnabled,
+} from "@/lib/seller-operations";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const dynamic = "force-dynamic";
@@ -18,13 +22,19 @@ export const metadata = {
 export default async function AccountBusinessPage() {
   const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_BUSINESS);
 
-  const [data, recentOrders, activity] = await Promise.all([
-    isSellerOperatingDeskEnabled()
+  const operationsEnabled = isSellerOperationsEnabled();
+  const deskEnabled = isSellerOperatingDeskEnabled();
+
+  const [workspace, data, recentOrders, activity] = await Promise.all([
+    operationsEnabled
+      ? getSellerOperationsWorkspace(seller.sellerProfileId)
+      : Promise.resolve(null),
+    deskEnabled
       ? getSellerOperatingDeskDashboard(seller.sellerProfileId)
       : Promise.resolve({
           enabled: false as const,
           now: {
-            headline: "SELLER_OPERATING_DESK_ENABLED=false",
+            headline: "",
             summary: "",
             stats: {
               totalProducts: 0,
@@ -68,15 +78,21 @@ export default async function AccountBusinessPage() {
           Мой бизнес
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Единое рабочее место: продажи, проблемы, задачи на сегодня и деньги в
-          одном экране.
+          {operationsEnabled
+            ? "Ежедневное рабочее место: что произошло, что важно и что сделать сегодня."
+            : "Единое рабочее место: продажи, проблемы, задачи на сегодня и деньги."}
         </p>
       </div>
-      <SellerOperatingDeskPanel
-        data={data}
-        recentOrders={recentOrders.items}
-        activity={activity}
-      />
+
+      {workspace?.enabled ? (
+        <SellerOperationsTodayPanel workspace={workspace} />
+      ) : (
+        <SellerOperatingDeskPanel
+          data={data}
+          recentOrders={recentOrders.items}
+          activity={activity}
+        />
+      )}
     </div>
   );
 }
