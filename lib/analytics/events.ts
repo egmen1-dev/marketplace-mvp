@@ -144,6 +144,18 @@ export const ANALYTICS_EVENTS = {
   TRUST_IMPROVEMENT_CLICK: "trust_improvement_click",
   /** Trust & Safety — risk signal surfaced */
   RISK_SIGNAL_VIEW: "risk_signal_view",
+  /** Marketplace Learning — experiment created */
+  LEARNING_EXPERIMENT_CREATED: "learning_experiment_created",
+  /** Marketplace Learning — seller started recommended action */
+  LEARNING_ACTION_STARTED: "learning_action_started",
+  /** Marketplace Learning — seller completed recommended action */
+  LEARNING_ACTION_COMPLETED: "learning_action_completed",
+  /** Marketplace Learning — positive outcome recorded */
+  LEARNING_OUTCOME_POSITIVE: "learning_outcome_positive",
+  /** Marketplace Learning — pattern derived */
+  LEARNING_PATTERN_CREATED: "learning_pattern_created",
+  /** Marketplace Learning — AI recommendation quality viewed */
+  AI_RECOMMENDATION_QUALITY: "ai_recommendation_quality",
 } as const;
 
 export type AnalyticsEventName =

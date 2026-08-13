@@ -31,6 +31,12 @@ import {
   isSellerGrowthEnabled,
 } from "@/lib/seller-growth";
 import { loadSellerHealthSnapshot } from "@/lib/seller-growth/seller-health";
+import {
+  ensureLearningExperimentFromRecommendation,
+  getLearningCardsForAiCenter,
+  getSellerLearningInsights,
+  isMarketplaceLearningEnabled,
+} from "@/lib/marketplace-learning";
 
 import {
   buildAdminHealthCards,
@@ -219,6 +225,26 @@ export async function getSellerAiCenterDashboard(
   const picked = pickPriorityRecommendation(candidates);
   const priority = picked ? explainRecommendation(picked) : null;
 
+  let whatWorks: AiExperienceCard[] = [];
+  let learningExperimentId: string | null = null;
+
+  if (isMarketplaceLearningEnabled()) {
+    const learning = await getSellerLearningInsights(sellerProfileId);
+    if (learning.enabled) {
+      whatWorks = getLearningCardsForAiCenter(learning);
+    }
+    if (picked) {
+      const weakProduct = health?.products
+        .slice()
+        .sort((a, b) => a.qualityScore - b.qualityScore)[0];
+      learningExperimentId = await ensureLearningExperimentFromRecommendation({
+        sellerProfileId,
+        productId: weakProduct?.id ?? null,
+        recommendation: picked,
+      });
+    }
+  }
+
   return {
     enabled: true,
     title: SELLER_AI_CENTER_TITLE,
@@ -230,6 +256,8 @@ export async function getSellerAiCenterDashboard(
     priority,
     opportunities,
     insightCards,
+    whatWorks,
+    learningExperimentId,
   };
 }
 

@@ -48,6 +48,8 @@ export type SellerAiCenterDashboard = {
   priority: PriorityRecommendation | null;
   opportunities: AiExperienceCard[];
   insightCards: AiExperienceCard[];
+  whatWorks: AiExperienceCard[];
+  learningExperimentId: string | null;
 };
 
 export type AdminAiCommandCenterDashboard = {

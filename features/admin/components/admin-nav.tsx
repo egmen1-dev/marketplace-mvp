@@ -7,6 +7,7 @@ import {
   BarChart3,
   BookOpen,
   Bot,
+  BrainCircuit,
   ClipboardCheck,
   ClipboardList,
   LineChart,
@@ -170,6 +171,12 @@ const NAV_ITEMS = [
     icon: Shield,
     match: (pathname: string) =>
       pathname.startsWith(ROUTES.ADMIN_TRUST_CENTER),
+  },
+  {
+    href: ROUTES.ADMIN_LEARNING,
+    label: "Learning",
+    icon: BrainCircuit,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_LEARNING),
   },
   {
     href: ROUTES.ADMIN_AI_UNDERSTANDING,

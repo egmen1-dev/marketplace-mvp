@@ -53,7 +53,15 @@ export function SellerAiCenterPanel({ data }: SellerAiCenterPanelProps) {
     trackEvent({
       event: ANALYTICS_EVENTS.AI_ACTION_CLICK,
       route: ROUTES.ACCOUNT_AI_CENTER,
+      entityId: data.learningExperimentId ?? data.priority?.id,
     });
+    if (data.learningExperimentId && data.priority) {
+      trackEvent({
+        event: ANALYTICS_EVENTS.LEARNING_ACTION_STARTED,
+        route: ROUTES.ACCOUNT_AI_CENTER,
+        entityId: data.learningExperimentId,
+      });
+    }
   }
 
   return (
@@ -161,6 +169,24 @@ export function SellerAiCenterPanel({ data }: SellerAiCenterPanelProps) {
                     </Button>
                   </CardContent>
                 ) : null}
+              </Card>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {data.whatWorks.length > 0 ? (
+        <section data-testid="ai-what-works">
+          <h3 className="mb-3 font-heading text-lg font-semibold">
+            Что реально работает
+          </h3>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {data.whatWorks.map((card) => (
+              <Card key={card.id} data-testid={card.testId}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">{card.title}</CardTitle>
+                  <CardDescription>{card.body}</CardDescription>
+                </CardHeader>
               </Card>
             ))}
           </div>

@@ -29,6 +29,8 @@ export default async function AccountAiCenterPage() {
         priority: null,
         opportunities: [],
         insightCards: [],
+        whatWorks: [],
+        learningExperimentId: null,
       };
   const trustCoach = isTrustSafetyEnabled()
     ? await getSellerTrustCoach(seller.sellerProfileId)
