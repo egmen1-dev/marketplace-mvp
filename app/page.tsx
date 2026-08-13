@@ -19,9 +19,10 @@ import {
   getHomeRootCategories,
 } from "@/lib/home/cached-data";
 import {
-  getPromotedProducts,
+  getHomepagePromotedProducts,
   isPromotionSurfacesEnabled,
 } from "@/lib/promotion";
+import { PromotionSurfaceType } from "@/lib/promotion/surfaces";
 import { PromotedProductsSection } from "@/features/promotion";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
@@ -61,7 +62,7 @@ export default async function HomePage() {
     stats != null &&
     (stats.products > 0 || stats.sellers > 0 || stats.categories > 0);
   const promotedProducts =
-    isPromotionSurfacesEnabled() ? await getPromotedProducts(8) : [];
+    isPromotionSurfacesEnabled() ? await getHomepagePromotedProducts(8) : [];
 
   return (
     <div className="home-marketplace flex flex-col">
@@ -147,7 +148,10 @@ export default async function HomePage() {
 
       {isPromotionSurfacesEnabled() && promotedProducts.length > 0 ? (
         <div className="content-visibility-auto">
-          <PromotedProductsSection products={promotedProducts} />
+          <PromotedProductsSection
+            products={promotedProducts}
+            surface={PromotionSurfaceType.HOME_FEATURED}
+          />
         </div>
       ) : null}
 

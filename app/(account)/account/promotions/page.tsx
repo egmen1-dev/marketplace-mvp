@@ -3,7 +3,7 @@ import {
   PromotionViewTracker,
   SellerPromotionsPanel,
 } from "@/features/promotion";
-import { listSellerPromotionRows } from "@/lib/promotion";
+import { listSellerPromotionRows, isPromotionSurfacesEnabled } from "@/lib/promotion";
 import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +41,10 @@ export default async function AccountPromotionsPage() {
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
       ) : (
-        <SellerPromotionsPanel rows={rows} />
+        <SellerPromotionsPanel
+          rows={rows}
+          surfacesEnabled={isPromotionSurfacesEnabled()}
+        />
       )}
     </div>
   );

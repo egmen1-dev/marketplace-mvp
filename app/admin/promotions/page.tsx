@@ -1,17 +1,36 @@
+import { Suspense } from "react";
+
 import { AdminPromotionsPanel } from "@/features/admin/components/admin-promotions-panel";
-import { listAdminPromotionCampaigns } from "@/lib/promotion";
+import {
+  listAdminPromotionCampaigns,
+  type AdminPromotionFilter,
+} from "@/lib/promotion";
 
 export const metadata = {
   title: "Promotions",
 };
 
-export default async function AdminPromotionsPage() {
+type AdminPromotionsPageProps = {
+  searchParams: Promise<{ status?: string }>;
+};
+
+function parseFilter(raw?: string): AdminPromotionFilter {
+  if (raw === "STARTED" || raw === "PAUSED" || raw === "ENDED") return raw;
+  return "ALL";
+}
+
+export default async function AdminPromotionsPage({
+  searchParams,
+}: AdminPromotionsPageProps) {
+  const { status: statusRaw } = await searchParams;
+  const statusFilter = parseFilter(statusRaw);
+
   let data: Awaited<ReturnType<typeof listAdminPromotionCampaigns>> | null =
     null;
   let dbError: string | null = null;
 
   try {
-    data = await listAdminPromotionCampaigns();
+    data = await listAdminPromotionCampaigns({ status: statusFilter });
   } catch (err) {
     console.error("[admin/promotions]", err);
     dbError = "Не удалось загрузить кампании продвижения";
@@ -24,14 +43,20 @@ export default async function AdminPromotionsPage() {
           Promotions
         </h2>
         <p className="text-sm text-muted-foreground">
-          Активные кампании продвижения продавцов (MVP — без биллинга и аукциона).
+          Кампании, размещения и приоритеты — distribution engine без биллинга.
         </p>
       </div>
 
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
       ) : data ? (
-        <AdminPromotionsPanel rows={data.rows} counts={data.counts} />
+        <Suspense fallback={null}>
+          <AdminPromotionsPanel
+            rows={data.rows}
+            counts={data.counts}
+            activeFilter={statusFilter}
+          />
+        </Suspense>
       ) : null}
     </div>
   );
