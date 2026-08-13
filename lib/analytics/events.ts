@@ -109,6 +109,11 @@ export const ANALYTICS_EVENTS = {
   DELIVERY_STATUS_CHANGED: "delivery_status_changed",
   DELIVERY_COMPLETED: "delivery_completed",
   RETURN_CREATED: "return_created",
+  /** MARKETPLACE-LAUNCH-READINESS-001 */
+  LAUNCH_AUDIT_STARTED: "launch_audit_started",
+  LAUNCH_CHECK_PASSED: "launch_check_passed",
+  LAUNCH_CHECK_FAILED: "launch_check_failed",
+  PRODUCTION_HEALTH_VIEW: "production_health_view",
 } as const;
 
 export type AnalyticsEventName =

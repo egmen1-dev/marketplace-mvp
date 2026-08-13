@@ -98,6 +98,11 @@ export const ROUTES = {
   ADMIN_TRUST: "/admin/trust",
   ADMIN_MODERATION: "/admin/moderation",
   ADMIN_DELIVERY: "/admin/delivery",
+  ADMIN_DELIVERY_HEALTH: "/admin/delivery/health",
+  ADMIN_PAYMENTS: "/admin/payments",
+  ADMIN_HEALTH: "/admin/health",
+  ADMIN_UX_HEALTH: "/admin/ux-health",
+  ADMIN_LAUNCH: "/admin/launch",
   /** Seller reputation hub */
   ACCOUNT_REPUTATION: "/account/reputation",
   AUTH_SIGN_IN: "/auth/sign-in",
