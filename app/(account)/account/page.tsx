@@ -7,8 +7,13 @@ import {
 } from "@/features/account";
 import { getSessionUser, loadUserAuthFromDb } from "@/features/auth";
 import { listFavoriteIds } from "@/features/favorites";
+import { SellerJourneyPanel } from "@/features/seller-lifecycle";
 import { getSellerDashboardStats } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
+import {
+  getSellerLifecycleDashboard,
+  isSellerLifecycleEnabled,
+} from "@/lib/seller-lifecycle";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -50,11 +55,18 @@ export default async function AccountPage({ searchParams }: PageProps) {
 
   let productsCount: number | null = null;
   let revenue: number | null = null;
+  let journey = null;
 
   if (isSeller && dbUser?.sellerProfileId) {
-    const stats = await getSellerDashboardStats(dbUser.sellerProfileId);
+    const [stats, lifecycle] = await Promise.all([
+      getSellerDashboardStats(dbUser.sellerProfileId),
+      isSellerLifecycleEnabled()
+        ? getSellerLifecycleDashboard(dbUser.sellerProfileId)
+        : Promise.resolve(null),
+    ]);
     productsCount = stats.totalProducts;
     revenue = stats.revenue;
+    journey = lifecycle;
   }
 
   return (
@@ -71,6 +83,7 @@ export default async function AccountPage({ searchParams }: PageProps) {
         isSeller={isSeller}
         promptSell={promptSell}
       />
+      {journey?.enabled ? <SellerJourneyPanel data={journey} /> : null}
     </AccountShell>
   );
 }

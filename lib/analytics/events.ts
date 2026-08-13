@@ -46,6 +46,13 @@ export const ANALYTICS_EVENTS = {
   PAYOUT_REQUEST_CREATED: "payout_request_created",
   PAYOUT_COMPLETED: "payout_completed",
   PAYOUT_REJECTED: "payout_rejected",
+  /** SELLER-LIFECYCLE-001 — seller journey events (no PII) */
+  SELLER_JOURNEY_VIEW: "seller_journey_view",
+  SELLER_MILESTONE_REACHED: "seller_milestone_reached",
+  SELLER_NEXT_STEP_CLICK: "seller_next_step_click",
+  SELLER_ACTIVATION_COMPLETED: "seller_activation_completed",
+  SELLER_FIRST_SALE: "seller_first_sale",
+  SELLER_FIRST_PAYOUT: "seller_first_payout",
 } as const;
 
 export type AnalyticsEventName =
