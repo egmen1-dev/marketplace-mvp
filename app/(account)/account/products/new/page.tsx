@@ -8,13 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  requireSellerCabinetAccess,
-} from "@/features/auth";
 import { listCategories } from "@/features/catalog";
 import { listSellerPickupPoints } from "@/features/pickup/queries";
 import { ProductForm } from "@/features/seller";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import { ROUTES } from "@/lib/constants";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +22,7 @@ export const metadata = {
 };
 
 export default async function NewProductPage() {
-  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_NEW_PRODUCT);
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_PRODUCTS_NEW);
   const uploadPathPrefix = `products/${seller.sellerProfileId.replace(/[^a-zA-Z0-9_-]/g, "")}/`;
 
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
@@ -42,6 +41,7 @@ export default async function NewProductPage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <SellerFirstEntryBannerSlot sellerProfileId={seller.sellerProfileId} />
       <div className="flex flex-col gap-2">
         <Button
           variant="ghost"

@@ -1,9 +1,12 @@
 import { requireSellerSession } from "@/features/auth";
 import { SellerPayoutPanel } from "@/features/seller-payout";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import {
   getSellerPayoutDashboard,
   isSellerPayoutEnabled,
 } from "@/lib/seller-payout";
+import { ROUTES } from "@/lib/constants";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +15,7 @@ export const metadata = {
 };
 
 export default async function AccountPayoutsPage() {
-  const seller = await requireSellerSession();
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_PAYOUTS);
   const data = isSellerPayoutEnabled()
     ? await getSellerPayoutDashboard(seller.sellerProfileId)
     : {
@@ -30,6 +33,7 @@ export default async function AccountPayoutsPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <SellerFirstEntryBannerSlot sellerProfileId={seller.sellerProfileId} />
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
           Вывод средств

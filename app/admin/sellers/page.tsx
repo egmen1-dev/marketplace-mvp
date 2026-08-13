@@ -6,7 +6,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AdminSellersTable, listAdminSellers } from "@/features/admin";
+import { AdminSellerActivationPanel } from "@/features/seller-first-entry";
 import { AdminSellerFunnelPanel } from "@/features/seller-lifecycle";
+import { getAdminSellerActivation } from "@/lib/seller-first-entry";
 import { getAdminSellerFunnel } from "@/lib/seller-lifecycle";
 
 export const metadata = {
@@ -14,9 +16,10 @@ export const metadata = {
 };
 
 export default async function AdminSellersPage() {
-  const [sellers, funnel] = await Promise.all([
+  const [sellers, funnel, activation] = await Promise.all([
     listAdminSellers(),
     getAdminSellerFunnel(),
+    getAdminSellerActivation(),
   ]);
 
   return (
@@ -31,6 +34,18 @@ export default async function AdminSellersPage() {
       </div>
 
       <AdminSellerFunnelPanel funnel={funnel} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Seller Activation</CardTitle>
+          <CardDescription>
+            Первый вход продавца и прохождение «Старт продавца» за 30 дней
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AdminSellerActivationPanel data={activation} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

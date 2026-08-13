@@ -246,6 +246,7 @@ model SellerProfile {
   paymentMethods      SellerPaymentMethod[]
   payoutRequests      PayoutRequest[]
   payoutTransactions  PayoutTransaction[]
+  experienceProgress  SellerExperienceProgress?
 
   @@index([slug])
   @@index([kind])
@@ -1266,6 +1267,22 @@ model PayoutTransaction {
   @@index([payoutRequestId])
   @@index([sellerId])
   @@map("payout_transactions")
+}
+
+/// Optional first-entry tracking — progress is computed from catalog/orders/finance.
+model SellerExperienceProgress {
+  id             String    @id @default(cuid())
+  sellerId       String    @unique
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  dismissedAt    DateTime?
+  currentStep    String?
+  dismissedSteps String?
+  updatedAt      DateTime  @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_experience_progress")
 }
 
 /// Buyer protection dispute foundation — no full arbitration in MVP.

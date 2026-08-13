@@ -1,10 +1,12 @@
 import { requireSellerCabinetAccess } from "@/features/auth";
 import { SellerJourneyPanel } from "@/features/seller-lifecycle";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import { ROUTES } from "@/lib/constants";
 import {
   getSellerLifecycleDashboard,
   isSellerLifecycleEnabled,
 } from "@/lib/seller-lifecycle";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +15,7 @@ export const metadata = {
 };
 
 export default async function AccountCommandCenterPage() {
-  const seller = await requireSellerCabinetAccess(ROUTES.ACCOUNT_COMMAND_CENTER);
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_COMMAND_CENTER);
   const journey = isSellerLifecycleEnabled()
     ? await getSellerLifecycleDashboard(seller.sellerProfileId)
     : {
@@ -37,6 +39,7 @@ export default async function AccountCommandCenterPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <SellerFirstEntryBannerSlot sellerProfileId={seller.sellerProfileId} />
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
           AI помощник

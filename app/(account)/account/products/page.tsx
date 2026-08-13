@@ -11,9 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  requireSellerCabinetAccess,
-} from "@/features/auth";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import { listProducts } from "@/features/products/queries";
@@ -21,6 +18,7 @@ import {
   DeleteProductButton,
   ProductStatusBadge,
 } from "@/features/seller";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import {
   ArchiveProductButton,
   DuplicateProductButton,
@@ -32,6 +30,7 @@ import { getProductCompletenessMap } from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 import { formatDateMoscowShort } from "@/lib/format/datetime";
 import { pluralizeProductCount } from "@/lib/i18n";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -56,7 +55,7 @@ type PageProps = {
 };
 
 export default async function SellerProductsPage({ searchParams }: PageProps) {
-  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_PRODUCTS);
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_PRODUCTS);
   const sellerProfileId = seller.sellerProfileId;
 
   const params = await searchParams;
@@ -113,6 +112,8 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
       <Suspense fallback={null}>
         <SellerToastFlash />
       </Suspense>
+
+      <SellerFirstEntryBannerSlot sellerProfileId={sellerProfileId} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
