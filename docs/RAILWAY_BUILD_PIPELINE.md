@@ -45,7 +45,8 @@ push main
 
 ## Ops notes
 
-- Service may be named `web-staging` (renamed from `web` to clear stuck Metal snapshot affinity).
-- Public URL remains `https://web-production-e56fb.up.railway.app`
+- Prefer service **`web-v2`** (GitHub + Dockerfile). Legacy `web` / `web-staging` stuck on Metal unpack for Nixpacks/CLI uploads.
+- After `web-v2` is healthy, point the public domain `web-production-e56fb.up.railway.app` at it.
+- Dockerfile copies `prisma/` before `npm ci` because `postinstall` runs `prisma generate`.
 - Vercel production is unchanged
 - Do **not** use `railway up` for routine deploys
