@@ -241,6 +241,7 @@ model User {
   disputesOpened       Dispute[]
   reviewsWritten       Review[]
   returnRequests       ReturnRequest[]     @relation("ReturnRequestBuyer")
+  socialCollections    SocialCollection[]
 
   @@index([role])
   @@index([isBlocked])
@@ -557,6 +558,7 @@ model Product {
   reviews              Review[]
   productRating        ProductRating?
   productModeration    ProductModeration?
+  socialCollectionItems SocialCollectionItem[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -1481,4 +1483,49 @@ model ModerationQueueItem {
   @@index([entityId])
   @@index([sellerId])
   @@map("moderation_queue_items")
+}
+
+// ─── Marketplace Social Growth (MARKETPLACE-SOCIAL-GROWTH-001) ───────────────
+
+enum SocialCollectionKind {
+  USER
+  CREATOR
+}
+
+/// User «Мои находки» or public creator collection.
+model SocialCollection {
+  id            String               @id @default(cuid())
+  creatorId     String
+  slug          String
+  title         String
+  description   String?
+  coverImageUrl String?
+  kind          SocialCollectionKind @default(USER)
+  views         Int                  @default(0)
+  likes         Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  creator User                   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  items   SocialCollectionItem[]
+
+  @@unique([creatorId, slug])
+  @@index([kind])
+  @@index([createdAt])
+  @@map("social_collections")
+}
+
+model SocialCollectionItem {
+  id           String   @id @default(cuid())
+  collectionId String
+  productId    String
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  collection SocialCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  product    Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, productId])
+  @@index([productId])
+  @@map("social_collection_items")
 }

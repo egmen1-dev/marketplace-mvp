@@ -14,6 +14,7 @@ import {
   Search,
   ShoppingBag,
   Sparkles,
+  Share2,
   Rocket,
   Shield,
   ShieldCheck,
@@ -77,6 +78,12 @@ const NAV_ITEMS = [
     label: "Discovery",
     icon: Compass,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DISCOVERY),
+  },
+  {
+    href: ROUTES.ADMIN_SOCIAL_GROWTH,
+    label: "Social Growth",
+    icon: Share2,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_SOCIAL_GROWTH),
   },
   {
     href: ROUTES.ADMIN_HEALTH,

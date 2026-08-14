@@ -115,10 +115,24 @@ export const ROUTES = {
   DISCOVER_COLLECTIONS: "/discover/collections",
   ACCOUNT_DISCOVERY: "/account/discovery",
   ADMIN_DISCOVERY: "/admin/discovery",
+  /** Social growth / viral commerce */
+  SOCIAL: "/social",
+  SOCIAL_COLLECTIONS: "/social/c",
+  ACCOUNT_FINDS: "/account/finds",
+  ACCOUNT_SOCIAL_TOOLS: "/account/social-tools",
+  ADMIN_SOCIAL_GROWTH: "/admin/social-growth",
 } as const;
 
 export function discoveryCollectionPath(slug: string) {
   return `${ROUTES.DISCOVER_COLLECTIONS}/${slug}`;
+}
+
+export function socialCollectionPath(slug: string) {
+  return `${ROUTES.SOCIAL_COLLECTIONS}/${slug}`;
+}
+
+export function socialLandingPath(path: string) {
+  return `${ROUTES.SOCIAL}/${path}`;
 }
 
 export function adminOrderPath(id: string) {
@@ -166,6 +180,8 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/growth",
   "/account/promotion-center",
   "/account/discovery",
+  "/account/finds",
+  "/account/social-tools",
   "/account/seller-start",
 ] as const;
 
