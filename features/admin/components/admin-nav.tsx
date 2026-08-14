@@ -44,6 +44,12 @@ const NAV_ITEMS = [
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DASHBOARD),
   },
   {
+    href: ROUTES.ADMIN_SYSTEM_FLAGS,
+    label: "System Flags",
+    icon: ShieldAlert,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_SYSTEM_FLAGS),
+  },
+  {
     href: ROUTES.ADMIN_TRUST_CENTER,
     label: "Trust Center",
     icon: ShieldCheck,
