@@ -1,5 +1,5 @@
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
-import { AccountReputationView } from "@/features/marketplace-trust-score";
+import { AccountTrustExperienceView } from "@/features/marketplace-trust-experience";
 import { ROUTES } from "@/lib/constants";
 import {
   getSellerReputationPage,
@@ -9,6 +9,10 @@ import {
   getSellerTrustScorePage,
   isMarketplaceTrustScoreModelEnabled,
 } from "@/lib/marketplace-trust-score";
+import {
+  getSellerTrustCenter,
+  isMarketplaceTrustExperienceEnabled,
+} from "@/lib/marketplace-trust-experience";
 
 export const metadata = { title: "Моя репутация" };
 
@@ -16,28 +20,38 @@ export default async function AccountReputationPage() {
   const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_REPUTATION);
   const trustLoopEnabled = isMarketplaceTrustLoopEnabled();
   const trustScoreEnabled = isMarketplaceTrustScoreModelEnabled();
+  const experienceEnabled = isMarketplaceTrustExperienceEnabled();
 
-  const [legacy, trustScore] = await Promise.all([
+  const [legacy, trustScore, center] = await Promise.all([
     trustLoopEnabled ? getSellerReputationPage(seller.sellerProfileId) : Promise.resolve(null),
     trustScoreEnabled ? getSellerTrustScorePage(seller.sellerProfileId) : Promise.resolve(null),
+    experienceEnabled ? getSellerTrustCenter(seller.sellerProfileId) : Promise.resolve(null),
   ]);
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-          Моя репутация
+          {experienceEnabled ? "Центр доверия" : "Моя репутация"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Рейтинг доверия, отзывы покупателей и подсказки по улучшению магазина
+          {experienceEnabled
+            ? "Рейтинг доверия, факторы, история и следующий шаг для роста магазина"
+            : "Отзывы покупателей и уровень доверия вашего магазина"}
         </p>
       </div>
-      {!trustLoopEnabled && !trustScoreEnabled ? (
+      {!trustLoopEnabled && !trustScoreEnabled && !experienceEnabled ? (
         <p className="text-sm text-muted-foreground">
-          MARKETPLACE_TRUST_LOOP_ENABLED=false · MARKETPLACE_TRUST_SCORE_MODEL_ENABLED=false
+          MARKETPLACE_TRUST_LOOP_ENABLED=false · MARKETPLACE_TRUST_SCORE_MODEL_ENABLED=false ·
+          MARKETPLACE_TRUST_EXPERIENCE_ENABLED=false
         </p>
       ) : (
-        <AccountReputationView legacy={legacy} trustScore={trustScore} />
+        <AccountTrustExperienceView
+          sellerId={seller.sellerProfileId}
+          center={center}
+          legacy={legacy}
+          trustScore={trustScore}
+        />
       )}
     </div>
   );

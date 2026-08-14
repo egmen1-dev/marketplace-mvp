@@ -156,6 +156,12 @@ export const ANALYTICS_EVENTS = {
   CONVERSION_ACTION_CLICK: "conversion_action_click",
   SELLER_CONVERSION_VIEW: "seller_conversion_view",
   BUYER_SEGMENT_VIEW: "buyer_segment_view",
+  /** MARKETPLACE-TRUST-EXPERIENCE-001 */
+  TRUST_CENTER_VIEW: "trust_center_view",
+  TRUST_FACTOR_OPEN: "trust_factor_open",
+  TRUST_HISTORY_VIEW: "trust_history_view",
+  TRUST_IMPROVEMENT_CLICK: "trust_improvement_click",
+  TRUST_LEVEL_REACHED: "trust_level_reached",
 } as const;
 
 export type AnalyticsEventName =
