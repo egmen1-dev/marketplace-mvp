@@ -3,8 +3,10 @@
 import Link from "next/link";
 
 import { ProductCard } from "@/features/products/components/product-card";
-import { discoveryCollectionPath, ROUTES } from "@/lib/constants";
+import { ShareFindButton } from "@/features/marketplace-social-growth";
+import { ROUTES } from "@/lib/constants";
 import { trackDiscoveryProductClick, trackDiscoverySectionView } from "@/lib/marketplace-discovery/analytics";
+import { isSocialShareCardsEnabled } from "@/lib/marketplace-social-growth/flags";
 import type { DiscoveryFeedSection } from "@/lib/marketplace-discovery/types";
 import { useEffect } from "react";
 
@@ -33,6 +35,9 @@ export function DiscoveryFeedSectionView({ section }: DiscoveryFeedSectionViewPr
             </div>
             {reasons[0] ? (
               <p className="text-xs text-muted-foreground line-clamp-2">✓ {reasons[0].label}</p>
+            ) : null}
+            {isSocialShareCardsEnabled() ? (
+              <ShareFindButton productId={product.id} label="Поделиться" />
             ) : null}
           </div>
         ))}

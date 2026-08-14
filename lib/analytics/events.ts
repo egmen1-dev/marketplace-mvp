@@ -127,6 +127,17 @@ export const ANALYTICS_EVENTS = {
   PRICE_GAME_STARTED: "price_game_started",
   PRICE_GAME_COMPLETED: "price_game_completed",
   SITUATION_SELECTED: "situation_selected",
+  /** MARKETPLACE-SOCIAL-GROWTH-001 */
+  SHARE_CARD_VIEW: "share_card_view",
+  SHARE_CLICKED: "share_clicked",
+  CONTENT_GENERATED: "content_generated",
+  CONTENT_SHARED: "content_shared",
+  VIRAL_CARD_OPENED: "viral_card_opened",
+  EXTERNAL_VISIT: "external_visit",
+  COLLECTION_CREATED: "collection_created",
+  COLLECTION_SHARED: "collection_shared",
+  CREATOR_COLLECTION_VIEW: "creator_collection_view",
+  SOCIAL_PURCHASE: "social_purchase",
 } as const;
 
 export type AnalyticsEventName =

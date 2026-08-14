@@ -5,7 +5,9 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/features/products/mappers";
+import { ShareFindButton } from "@/features/marketplace-social-growth";
 import { ROUTES } from "@/lib/constants";
+import { isSocialShareCardsEnabled } from "@/lib/marketplace-social-growth/flags";
 import { trackDiscoveryProductClick } from "@/lib/marketplace-discovery/analytics";
 import type { DiscoveryProductCard } from "@/lib/marketplace-discovery/types";
 
@@ -63,6 +65,11 @@ export function DiscoveryDailyFind({ item }: DiscoveryDailyFindProps) {
         >
           Посмотреть товар
         </Button>
+        {isSocialShareCardsEnabled() ? (
+          <div className="mt-3">
+            <ShareFindButton productId={product.id} />
+          </div>
+        ) : null}
       </div>
     </div>
   );
