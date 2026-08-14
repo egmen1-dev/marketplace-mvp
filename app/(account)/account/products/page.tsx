@@ -20,7 +20,12 @@ import {
 } from "@/features/seller";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import { SellerJourneyEmptyState } from "@/features/seller-journey";
+import { UxEmptyStatePanel } from "@/features/marketplace-ux-completion";
 import { getSellerJourneyEmptyState } from "@/lib/seller-journey";
+import {
+  getSellerProductsEmptyState,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 import {
   ArchiveProductButton,
   DuplicateProductButton,
@@ -201,23 +206,23 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                   Нет товаров по выбранным фильтрам.
                 </p>
               </div>
+            ) : isMarketplaceUxCompletionEnabled() ? (
+              <UxEmptyStatePanel state={getSellerProductsEmptyState()} />
+            ) : productsEmptyCopy ? (
+              <SellerJourneyEmptyState {...productsEmptyCopy} />
             ) : (
-              productsEmptyCopy ? (
-                <SellerJourneyEmptyState {...productsEmptyCopy} />
-              ) : (
-                <div className="flex flex-col items-start gap-4 py-8">
-                  <p className="text-sm text-muted-foreground">
-                    Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге.
-                  </p>
-                  <Button
-                    nativeButton={false}
-                    render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
-                  >
-                    <Plus data-icon="inline-start" />
-                    Создать товар
-                  </Button>
-                </div>
-              )
+              <div className="flex flex-col items-start gap-4 py-8">
+                <p className="text-sm text-muted-foreground">
+                  Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге.
+                </p>
+                <Button
+                  nativeButton={false}
+                  render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
+                >
+                  <Plus data-icon="inline-start" />
+                  Создать товар
+                </Button>
+              </div>
             )
           ) : (
             <table className="w-full min-w-[960px] text-left text-sm">

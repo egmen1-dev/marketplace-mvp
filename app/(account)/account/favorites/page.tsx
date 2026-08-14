@@ -4,6 +4,10 @@ import { AccountShell } from "@/features/account";
 import { getSessionUser } from "@/features/auth";
 import { FavoritesGrid, listFavoriteProducts } from "@/features/favorites";
 import { ROUTES } from "@/lib/constants";
+import {
+  getFavoritesEmptyState,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +43,12 @@ export default async function FavoritesPage() {
           {dbError}
         </p>
       ) : (
-        <FavoritesGrid products={products} />
+        <FavoritesGrid
+          products={products}
+          uxEmptyState={
+            isMarketplaceUxCompletionEnabled() ? getFavoritesEmptyState() : null
+          }
+        />
       )}
     </AccountShell>
   );

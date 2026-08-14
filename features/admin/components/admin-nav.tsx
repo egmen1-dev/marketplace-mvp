@@ -38,6 +38,12 @@ const NAV_ITEMS = [
     match: (pathname: string) => pathname === ROUTES.ADMIN,
   },
   {
+    href: ROUTES.ADMIN_DASHBOARD,
+    label: "UX Overview",
+    icon: Sparkles,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DASHBOARD),
+  },
+  {
     href: ROUTES.ADMIN_TRUST,
     label: "Trust",
     icon: ShieldAlert,

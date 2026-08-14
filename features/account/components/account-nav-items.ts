@@ -16,6 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { ROUTES } from "@/lib/constants";
+import { isMarketplaceUxCompletionEnabled } from "@/lib/marketplace-ux-completion/flags";
 import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
 import { isSellerOperatingDeskEnabled } from "@/lib/seller-operating-desk/flags";
 import { isSellerLifecycleEnabled } from "@/lib/seller-lifecycle/flags";
@@ -36,6 +37,16 @@ const BUYER_NAV: AccountNavItem[] = [
     icon: UserRound,
     match: (path) => path === ROUTES.ACCOUNT,
   },
+  ...(isMarketplaceUxCompletionEnabled()
+    ? [
+        {
+          href: `${ROUTES.HOME}#discovery-home`,
+          label: "Находки",
+          icon: Sparkles,
+          match: (path: string) => path === ROUTES.HOME,
+        } as AccountNavItem,
+      ]
+    : []),
   {
     href: ROUTES.PROFILE,
     label: "Мой профиль",
