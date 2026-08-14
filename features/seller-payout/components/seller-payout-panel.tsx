@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatPrice } from "@/features/products/mappers";
+import { calculateCommission, DEFAULT_COMMISSION_PERCENT } from "@/lib/finance/commission";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/client";
 import { ROUTES } from "@/lib/constants";
@@ -81,6 +82,9 @@ export function SellerPayoutPanel({ data }: SellerPayoutPanelProps) {
 
   const parsedAmount = Number(amount.replace(/\s/g, "").replace(",", "."));
   const selectedMethod = data.methods.find((m) => m.id === methodId) ?? null;
+  const payoutCommission = Number.isFinite(parsedAmount)
+    ? calculateCommission({ grossAmount: parsedAmount }, DEFAULT_COMMISSION_PERCENT)
+    : null;
 
   function startWithdrawal() {
     void trackPayoutRequestStartedAction();
@@ -296,7 +300,19 @@ export function SellerPayoutPanel({ data }: SellerPayoutPanelProps) {
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Комиссия</dt>
-                  <dd>{formatPrice(0)}</dd>
+                  <dd>
+                    {payoutCommission
+                      ? `${formatPrice(payoutCommission.commissionAmount)} (${payoutCommission.commissionPercent}%)`
+                      : "—"}
+                  </dd>
+                </div>
+                <div className="flex justify-between border-t border-border pt-2 font-medium">
+                  <dt>К получению</dt>
+                  <dd className="tabular-nums">
+                    {payoutCommission
+                      ? formatPrice(payoutCommission.sellerAmount)
+                      : "—"}
+                  </dd>
                 </div>
               </dl>
               <div className="flex gap-2">

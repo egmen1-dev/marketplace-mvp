@@ -15,6 +15,11 @@ const BADGE_ICONS: Record<SellerBadgeVariant, React.ReactNode> = {
   STORE: <Store className="size-3" aria-hidden />,
 };
 
+const BADGE_TITLES: Partial<Record<SellerBadgeVariant, string>> = {
+  VERIFIED_SELLER:
+    "Продавец прошёл проверку и подтверждает надёжность магазина",
+};
+
 const BADGE_VARIANT: Record<
   SellerBadgeVariant,
   "default" | "secondary" | "outline"
@@ -33,6 +38,7 @@ export function SellerBadge({ variant, className }: SellerBadgeProps) {
   return (
     <Badge
       variant={BADGE_VARIANT[variant]}
+      title={BADGE_TITLES[variant]}
       className={cn("gap-1 text-[11px] font-medium", className)}
     >
       {BADGE_ICONS[variant]}

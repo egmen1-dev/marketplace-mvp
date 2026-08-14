@@ -11,6 +11,7 @@ import {
 import type { SellerConversionDashboard } from "@/lib/marketplace-conversion/seller-conversion";
 
 import { ConversionRecommendationCard } from "./conversion-recommendation-card";
+import { SellerConversionFunnelTable } from "./seller-conversion-funnel-table";
 
 type SellerConversionPanelProps = {
   dashboard: SellerConversionDashboard;
@@ -31,7 +32,7 @@ export function SellerConversionPanel({
     <div className="flex flex-col gap-4" data-testid="seller-conversion-panel">
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="font-heading text-lg font-semibold">Конверсия магазина</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <div className="rounded-xl border border-border/80 bg-surface/40 p-3">
             <p className="text-sm text-muted-foreground">Просмотры</p>
             <p className="font-heading text-2xl font-semibold tabular-nums">
@@ -39,9 +40,21 @@ export function SellerConversionPanel({
             </p>
           </div>
           <div className="rounded-xl border border-border/80 bg-surface/40 p-3">
-            <p className="text-sm text-muted-foreground">Добавления в корзину</p>
+            <p className="text-sm text-muted-foreground">Корзина</p>
             <p className="font-heading text-2xl font-semibold tabular-nums">
               {dashboard.cartAdds}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/80 bg-surface/40 p-3">
+            <p className="text-sm text-muted-foreground">Checkout</p>
+            <p className="font-heading text-2xl font-semibold tabular-nums">
+              {dashboard.checkoutStarts}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border/80 bg-surface/40 p-3">
+            <p className="text-sm text-muted-foreground">Покупки</p>
+            <p className="font-heading text-2xl font-semibold tabular-nums">
+              {dashboard.purchases}
             </p>
           </div>
           <div className="rounded-xl border border-border/80 bg-surface/40 p-3">
@@ -51,6 +64,9 @@ export function SellerConversionPanel({
             </p>
           </div>
         </div>
+        {dashboard.funnelSteps.length > 0 ? (
+          <SellerConversionFunnelTable steps={dashboard.funnelSteps} />
+        ) : null}
         {dashboard.viewToCartRate != null ? (
           <p className="mt-3 text-sm text-muted-foreground">
             View → cart: {dashboard.viewToCartRate}%

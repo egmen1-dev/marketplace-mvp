@@ -103,6 +103,8 @@ export default async function EditProductPage({
           price: product.price,
           hasSeller: true,
         })}
+        showBreakdown
+        showUpdateNote
       />
 
       {moderationPreview ? (

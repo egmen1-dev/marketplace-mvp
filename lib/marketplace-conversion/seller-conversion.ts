@@ -4,6 +4,7 @@ import { computeProductCompletenessScore } from "@/lib/conversion/completeness";
 import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 
 import { detectProductDropOff } from "./drop-offs";
+import { buildBuyerFunnelDisplay, type FunnelStepDisplay } from "./funnel";
 import { isMarketplaceConversionEnabled } from "./flags";
 import {
   recommendationsFromDropOff,
@@ -17,9 +18,12 @@ export type SellerConversionDashboard = {
   views: number;
   cartAdds: number;
   orders: number;
+  checkoutStarts: number;
+  purchases: number;
   viewToCartRate: number | null;
   blockers: string[];
   recommendations: ConversionRecommendation[];
+  funnelSteps: FunnelStepDisplay[];
 };
 
 export async function getSellerConversionDashboard(
@@ -33,15 +37,19 @@ export async function getSellerConversionDashboard(
       views: 0,
       cartAdds: 0,
       orders: 0,
+      checkoutStarts: 0,
+      purchases: 0,
       viewToCartRate: null,
       blockers: [],
       recommendations: [],
+      funnelSteps: [],
     };
   }
 
   const since = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
 
-  const [stats, products, cartGroups, viewGroups] = await Promise.all([
+  const [stats, products, cartGroups, viewGroups, analyticsGrouped] =
+    await Promise.all([
     getSellerDashboardStats(sellerProfileId),
     prisma.product.findMany({
       where: { sellerId: sellerProfileId, status: "ACTIVE" },
@@ -77,7 +85,34 @@ export async function getSellerConversionDashboard(
       },
       _count: { _all: true },
     }),
+    prisma.analyticsEvent.groupBy({
+      by: ["event"],
+      where: { createdAt: { gte: since } },
+      _count: { _all: true },
+    }),
   ]);
+
+  const eventCounts: Record<string, number> = {};
+  for (const row of analyticsGrouped) {
+    eventCounts[row.event] = row._count._all;
+  }
+
+  const funnelSteps = buildBuyerFunnelDisplay({
+    counts: {
+      page_view: eventCounts.page_view ?? stats.viewsSum,
+      product_view: eventCounts.product_view ?? stats.viewsSum,
+      add_to_cart: eventCounts.add_to_cart ?? 0,
+      checkout_start: eventCounts.checkout_start ?? 0,
+      purchase_complete: eventCounts.purchase_complete ?? stats.ordersCount,
+    },
+    uniques: {
+      page_view: eventCounts.page_view ?? stats.viewsSum,
+      product_view: eventCounts.product_view ?? stats.viewsSum,
+      add_to_cart: eventCounts.add_to_cart ?? 0,
+      checkout_start: eventCounts.checkout_start ?? 0,
+      purchase_complete: eventCounts.purchase_complete ?? stats.ordersCount,
+    },
+  });
 
   const productIds = new Set(products.map((p) => p.id));
   const cartByProduct = new Map(
@@ -169,8 +204,11 @@ export async function getSellerConversionDashboard(
     views,
     cartAdds,
     orders: stats.ordersCount,
+    checkoutStarts: eventCounts.checkout_start ?? 0,
+    purchases: stats.ordersCount,
     viewToCartRate,
     blockers: blockers.slice(0, 3),
     recommendations: recommendations.slice(0, 3),
+    funnelSteps,
   };
 }
