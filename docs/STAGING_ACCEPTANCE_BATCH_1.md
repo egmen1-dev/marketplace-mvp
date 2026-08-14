@@ -1,169 +1,115 @@
 # Staging Acceptance — Batch 1
 
-**Epic:** MARKETPLACE-STAGING-ACCEPTANCE-001  
+**Epic:** MARKETPLACE-STAGING-ACCEPTANCE-001 / MARKETPLACE-STAGING-ROLLOUT-FIX-001  
 **Date:** 2026-08-14  
 **Environment:** Railway staging — `https://web-production-e56fb.up.railway.app`  
-**Expected SHA:** `4edcb4f`
+**Service:** `web-v2` (marketplace-mvp-backup)
 
 ---
 
 ## Deploy
 
-Verified via `/api/version`:
-
 ```json
 {
   "environment": "staging",
-  "commit": "4edcb4f",
-  "buildTime": "2026-08-14T10:36:19.627Z",
+  "commit": "2576521",
+  "buildTime": "2026-08-14T11:01:07.454Z",
   "version": "0.1.0"
 }
 ```
 
-| Field | Value | Expected | Result |
-|-------|-------|----------|--------|
-| **SHA** | `4edcb4f` | `4edcb4f` | ✅ Match |
-| **buildTime** | `2026-08-14T10:36:19.627Z` | post-merge | ✅ |
-| **environment** | `staging` | `staging` | ✅ |
+| Field | Value |
+|-------|-------|
+| **SHA** | `2576521` (includes Batch 1 merge + rollout docs) |
+| **buildTime** | `2026-08-14T11:01:07.454Z` |
+| **environment** | `staging` |
 
-Debug banner (`?debug=marketplace`) shows build `4edcb4f` on staging.
+Post-rollout redeploy triggered after Railway variable update (flags live without new commit SHA).
 
 ---
 
 ## Flags
 
-Checked via `/admin/system-flags` (admin@demo.lot) and runtime env on staging.
+Set on Railway `web-v2` (2026-08-14):
 
-**Required flags (spec):** all must be `true`
+```env
+MARKETPLACE_TRUST_LOOP_ENABLED=true
+MARKETPLACE_TRUST_SCORE_MODEL_ENABLED=true
+MARKETPLACE_TRUST_EXPERIENCE_ENABLED=true
+MARKETPLACE_NEW_SELLER_TRUST_ENABLED=true
+MARKETPLACE_UX_COMPLETION_ENABLED=true
+MARKETPLACE_CONVERSION_ENABLED=true
+```
 
-| Flag | Staging | Required |
-|------|---------|----------|
-| `MARKETPLACE_TRUST_LOOP_ENABLED` | **OFF** | ON |
-| `MARKETPLACE_TRUST_SCORE_MODEL_ENABLED` | **OFF** | ON |
-| `MARKETPLACE_TRUST_EXPERIENCE_ENABLED` | **OFF** | ON |
-| `MARKETPLACE_NEW_SELLER_TRUST_ENABLED` | **OFF** | ON |
-| `MARKETPLACE_UX_COMPLETION_ENABLED` | **OFF** | ON |
-| `MARKETPLACE_CONVERSION_ENABLED` | **OFF** | ON |
+Verified on `/admin/system-flags`:
 
-All 16 registry modules show **OFF** on `/admin/system-flags`. None of the trust-stack modules are **ACTIVE**.
-
-**Action:** set variables in Railway → staging service → Variables, redeploy, re-check `/admin/system-flags`.
+| Module | Status |
+|--------|--------|
+| Trust Loop | **ACTIVE (ON)** |
+| Trust Score | **ACTIVE (ON)** |
+| Trust Experience | **ACTIVE (ON)** |
+| New Seller Trust | **ACTIVE (ON)** |
+| UX Completion | **ACTIVE (ON)** |
+| Conversion Audit | **ACTIVE (ON)** |
 
 ---
 
-## Database / Migrations
+## Database
 
-### Local `npx prisma migrate status`
+| Check | Result |
+|-------|--------|
+| `npx prisma migrate status` (staging) | ✅ `Database schema is up to date` (46 migrations) |
+| Reconciliation doc | `docs/STAGING_MIGRATION_RECONCILIATION.md` |
+| Demo seed | ✅ `npx tsx prisma/seed-demo-visibility.ts` |
 
-```
-Database schema is NOT up to date
-```
+Demo accounts (password `demo1234`):
 
-**Last common migration:** `20260812310000_analytics_attribution`
-
-**Pending in repo (not applied locally):**
-
-- `20260813140000_payment_finance_ledger`
-- `20260813150000_trust_safety_disputes`
-- `20260813170000_seller_first_entry`
-- `20260813180000_marketplace_trust_loop`
-- `20260813190000_marketplace_delivery`
-- `20260813200000_marketplace_social_growth`
-- `20260813210000_marketplace_trust_score_model`
-
-**Applied in DB but missing from repo (parallel ads branch):**
-
-- `20260813140000_promotion_campaigns`
-- `20260813160000_promotion_placements`
-- `20260813170000_trust_protection`
-- `20260813180000_promotion_analytics`
-- `20260813200000_promotion_billing`
-
-**Also applied locally:** `20260813150000_marketplace_finance`, `20260813160000_seller_payout`
-
-**Trust tables missing locally** (seed blocked): `reviews`, `seller_reputations`, `trust_score_history`, etc.
-
-```bash
-npx tsx prisma/seed-demo-visibility.ts
-# → fails: seller_reputations table does not exist
-```
-
-### Reconciliation plan (no reset, no history deletion)
-
-1. **Inventory staging DB** — on Railway Postgres, run:
-   ```sql
-   SELECT migration_name FROM _prisma_migrations ORDER BY finished_at;
-   SELECT table_name FROM information_schema.tables
-     WHERE table_schema='public' AND table_name LIKE '%review%';
-   ```
-2. **Baseline record for orphan migrations** — if promotion tables exist and are needed, add *empty* migration folders in repo matching DB names (`promotion_campaigns`, etc.) OR insert rows into `_prisma_migrations` via `prisma migrate resolve --applied <name>` after adding stub SQL files (document only, do not drop promotion tables).
-3. **Apply marketplace trust chain** — run pending migrations in order on staging:
-   ```bash
-   npx prisma migrate deploy
-   ```
-   If `payment_finance_ledger` conflicts with existing `marketplace_finance` schema, create a **reconciliation migration** that:
-   - skips duplicate `finance_transactions` creation;
-   - adds only missing columns/tables (reviews, reputations, trust_score_history);
-   - marks superseded migrations as resolved.
-4. **Verify** — `npx prisma migrate status` → `Database schema is up to date`.
-5. **Seed** — `npx tsx prisma/seed-demo-visibility.ts` on staging DB.
-6. **Re-run acceptance** — flags ON + demo personas + trust UI.
-
----
-
-## Demo data
-
-| Account | Staging login | Notes |
-|---------|---------------|-------|
-| `demo-new-seller@demo.lot` | ❌ Not found | Seed not run |
-| `demo-growing@demo.lot` | ❌ Not found | Seed not run |
-| `demo-problems@demo.lot` | ❌ Not found | Seed not run |
-| `seller@demo.lot` | ✅ Works | Main seed fallback |
-| `admin@demo.lot` | ✅ Works | Admin panels |
-
-Password (demo accounts): `demo1234`
+- `demo-new-seller@demo.lot` — Trust **70/100**, 1 product, new seller path
+- `demo-growing@demo.lot` — Trust **82/100**, reviews/orders history
+- `demo-problems@demo.lot` — Trust **58/100**, weak listing recommendations
 
 ---
 
 ## Проверенные сценарии
 
-### Buyer
+### Buyer — ✅
 
-| Route | Result | Notes |
-|-------|--------|-------|
-| `/` | ✅ | White layout, header, categories, discovery grid, trust strip; no broken debug for normal users |
-| `/catalog` | ✅ | Loads |
-| `/product/[id]` | ✅ | Trust block «Почему покупают», seller card, delivery, reviews empty state, safe payment copy |
+| Route | Result |
+|-------|--------|
+| `/product/cmssvqoas000ajsf24b4e59hj` | Trust block, seller 70/100, new seller badge, reviews, delivery |
 
-Baseline trust copy visible **without** marketplace trust flags (legacy trust-safety / design blocks).
+### Seller — ✅
 
-### Seller
+| Account | Route | Result |
+|---------|-------|--------|
+| demo-new-seller | `/account/seller-start` | Journey 4/5, next step coach |
+| demo-new-seller | `/account/reputation` | **70/100**, progress path, factor breakdown |
+| demo-growing | `/account/reputation` | **82/100**, 6 factors, history |
+| demo-problems | `/account/reputation` | **58/100**, decline reasons, fix recommendations |
 
-| Route | Account | Result | Notes |
-|-------|---------|--------|-------|
-| `/account/seller-start` | seller@demo.lot | ⚠️ | Page loads; `SELLER_FIRST_ENTRY_ENABLED=false`, `SELLER_JOURNEY_ENABLED=false` |
-| `/account/business` | seller@demo.lot | ⚠️ | Page loads; `SELLER_OPERATING_DESK_ENABLED=false` — no full business workspace |
-| `/account/reputation` | seller@demo.lot | ⚠️ | Page loads; trust flags false — **no Trust Score UX** |
-| Demo personas | demo-*@demo.lot | ❌ | Accounts missing |
+### Admin — ✅
 
-### Admin
-
-| Route | Result | Notes |
-|-------|--------|-------|
-| `/admin/system-flags` | ✅ | Loads; SHA `4edcb4f`; all modules OFF |
-| `/admin/trust-center` | ⚠️ | Loads; `MARKETPLACE_TRUST_EXPERIENCE_ENABLED=false` empty state |
-| `/admin/launch` | ⚠️ | Loads; `MARKETPLACE_LAUNCH_READINESS_ENABLED=false` |
-| `/admin/health` | ⚠️ | Loads; launch readiness flag off |
+| Route | Result |
+|-------|--------|
+| `/admin/system-flags` | All trust modules ON, SHA visible |
+| `/admin/trust-center` | Avg trust 70, 3 new sellers, decline reasons |
+| `/admin/launch` | Launch readiness dashboard (flags ON) |
+| `/admin/health` | Health dashboard operational |
 
 ---
 
 ## Найденные проблемы
 
-1. **Feature flags not enabled on Railway** — trust stack modules inactive; seller/admin pages show disabled placeholders instead of full UX.
-2. **Migration history diverged** — parallel promotion vs marketplace migration branches; trust tables not applied; `migrate deploy` cannot run cleanly without reconciliation.
-3. **Demo visibility seed not executed on staging** — acceptance personas unavailable; problem-seller scenarios untestable.
-4. **Trust Stack (full) not visible** — only baseline PDP trust copy; no score model, reputation history, new-seller trust path with flags OFF.
-5. **`/admin/system-flags` registry stale** — several modules still marked `onMainBranch: false` in code though merged to `main` (cosmetic audit issue only).
+### Resolved during rollout fix
+
+1. Migration history divergence (agent + promotion vs marketplace) — reconciled via stubs + `20260814113000_staging_trust_baseline_reconcile`.
+2. Feature flags OFF on Railway — set via `railway variable set` + redeploy.
+3. Demo personas missing — seed applied to staging Postgres.
+
+### Remaining (non-blocking)
+
+1. `MARKETPLACE_TRUST_CONVERSION_ENABLED` still OFF (not in Batch 1 required list).
+2. Registry `onMainBranch: false` labels in system-flags UI are stale cosmetic audit items.
 
 ---
 
@@ -171,43 +117,30 @@ Baseline trust copy visible **without** marketplace trust flags (legacy trust-sa
 
 | Проверка | Статус |
 |----------|--------|
-| Новый SHA на Railway | ✅ `4edcb4f` |
-| Миграции синхронизированы | ❌ Divergence; trust tables missing |
-| Flags включены | ❌ All OFF |
-| Trust Stack виден (full) | ❌ Baseline only; modules OFF |
-| Demo продавцы работают | ❌ Seed not run |
-| Buyer flow работает | ✅ Homepage + PDP |
-| Seller flow работает | ⚠️ Routes OK; features disabled |
-| Admin flow работает | ⚠️ Routes OK; dashboards empty |
+| Prisma synced | ✅ |
+| Flags enabled | ✅ |
+| Demo users created | ✅ |
+| Trust UI visible | ✅ |
+| Buyer flow passed | ✅ |
+| Seller flow passed | ✅ |
+| Admin flow passed | ✅ |
 
-### Verdict
+## Verdict
 
-**Batch 1 is NOT accepted for production-like release.**
+# Batch 1 ACCEPTED
 
-Code deploy succeeded (`4edcb4f`), but operational rollout is incomplete:
-
-1. Reconcile and apply migrations on staging Postgres  
-2. Enable required Railway feature flags  
-3. Run `prisma/seed-demo-visibility.ts`  
-4. Re-run this acceptance checklist  
-
-Only after all rows above are ✅ should Batch 2–4 rollout continue.
+Batch 1 is released on staging. Safe to proceed with Batch 2–4 rollout planning.
 
 ---
 
 ## Evidence
 
-Screenshots (staging, 2026-08-14):
+- `test1-admin-system-flags.webp` — flags ON
+- `test2-product-page-trust-block.webp` — PDP trust 70/100
+- `test3a-seller-start-journey.webp` — new seller journey
+- `test3b-new-seller-reputation.webp` — 70/100 reputation
+- `test4-growing-seller-reputation.webp` — 82/100 growing seller
+- `test5-problems-seller-reputation.webp` — 58/100 problem seller
+- `test6-admin-trust-center.webp` — admin trust analytics
 
-- Homepage: `test-evidence-homepage.webp`
-- Debug banner: `test-evidence-homepage-debug.webp`
-- Product PDP trust: `test-evidence-product-page.webp`
-- Seller reputation (flags off): `test-evidence-seller-reputation.webp`
-- Admin system flags: `test-evidence-admin-system-flags.webp`
-- Admin trust-center: `staging_admin_trust_center.png`
-- Admin launch: `staging_admin_launch.png`
-- Admin health: `staging_admin_health.png`
-- Demo login failed: `staging_demo_problems_login_failed.png`
-- Seller start disabled: `staging_seller_start_flags_disabled.png`
-
-Detailed agent log: `MARKETPLACE-STAGING-ACCEPTANCE-001-REPORT.md`
+See also: `docs/STAGING_MIGRATION_RECONCILIATION.md`, `MARKETPLACE-STAGING-ACCEPTANCE-001-REPORT.md`
