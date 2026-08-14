@@ -4,6 +4,10 @@ import { AccountShell } from "@/features/account";
 import { getSessionUser } from "@/features/auth";
 import { listOrdersForUser, OrdersList } from "@/features/orders";
 import { ROUTES } from "@/lib/constants";
+import {
+  getOrdersEmptyState,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +43,12 @@ export default async function OrdersPage() {
           {dbError}
         </p>
       ) : (
-        <OrdersList orders={orders} />
+        <OrdersList
+          orders={orders}
+          uxEmptyState={
+            isMarketplaceUxCompletionEnabled() ? getOrdersEmptyState() : null
+          }
+        />
       )}
     </AccountShell>
   );

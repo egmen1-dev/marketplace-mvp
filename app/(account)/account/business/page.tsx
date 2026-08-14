@@ -1,3 +1,4 @@
+import { SellerHomeCompletionPanel } from "@/features/marketplace-ux-completion";
 import { SellerBusinessIntelligencePanel } from "@/features/seller-business-intelligence";
 import { SellerOperatingDeskPanel } from "@/features/seller-operating-desk";
 import { SellerOperationsTodayPanel } from "@/features/seller-operations";
@@ -16,6 +17,10 @@ import {
   getSellerOperationsWorkspace,
   isSellerOperationsEnabled,
 } from "@/lib/seller-operations";
+import {
+  getSellerHomeSummary,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +36,9 @@ export default async function AccountBusinessPage() {
   const operationsEnabled = isSellerOperationsEnabled();
   const deskEnabled = isSellerOperatingDeskEnabled();
 
-  const [businessDashboard, workspace, data, recentOrders, activity] =
+  const uxEnabled = isMarketplaceUxCompletionEnabled();
+
+  const [businessDashboard, workspace, data, recentOrders, activity, sellerUx] =
     await Promise.all([
       biEnabled
         ? getSellerBusinessDashboard(seller.sellerProfileId)
@@ -79,6 +86,15 @@ export default async function AccountBusinessPage() {
           }),
       getSellerOperatingDeskRecentOrders(seller.sellerProfileId),
       listSellerDashboardActivity(seller.sellerProfileId, 6),
+      uxEnabled
+        ? getSellerHomeSummary(seller.sellerProfileId)
+        : Promise.resolve({
+            enabled: false as const,
+            headline: "",
+            stats: [],
+            nextStep: null,
+            attention: [],
+          }),
     ]);
 
   const subtitle = biEnabled
@@ -95,6 +111,10 @@ export default async function AccountBusinessPage() {
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
       </div>
+
+      {sellerUx.enabled ? (
+        <SellerHomeCompletionPanel summary={sellerUx} />
+      ) : null}
 
       {businessDashboard?.enabled ? (
         <SellerBusinessIntelligencePanel dashboard={businessDashboard} />

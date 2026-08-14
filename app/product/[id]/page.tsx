@@ -24,6 +24,7 @@ import { PdpSectionViewTracker } from "@/features/products/components/pdp-sectio
 import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-trust-loop";
 import { PdpDeliveryHint } from "@/features/marketplace-delivery";
 import { PdpDiscoveryWhyBlock } from "@/features/marketplace-discovery";
+import { PdpUxCompletionBlocks } from "@/features/marketplace-ux-completion";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { getProductReviewsForPdp, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
 import { getPdpDeliveryHint, isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
@@ -32,6 +33,11 @@ import {
   buildWhyReasons,
   isMarketplaceDiscoveryEnabled,
 } from "@/lib/marketplace-discovery";
+import {
+  buildPdpFitUx,
+  buildPdpTrustUx,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
@@ -106,6 +112,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let trustSignals: Awaited<ReturnType<typeof buildTrustSignals>> = null;
   let deliveryHint: Awaited<ReturnType<typeof getPdpDeliveryHint>> = null;
   let discoveryReasons: Awaited<ReturnType<typeof buildWhyReasons>> = [];
+  let pdpTrustUx: Awaited<ReturnType<typeof buildPdpTrustUx>> | null = null;
+  let pdpFitUx: Awaited<ReturnType<typeof buildPdpFitUx>> | null = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -138,6 +146,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
       }
       if (isMarketplaceDiscoveryEnabled()) {
         discoveryReasons = await buildWhyReasons(product);
+      }
+      if (isMarketplaceUxCompletionEnabled()) {
+        [pdpTrustUx, pdpFitUx] = await Promise.all([
+          buildPdpTrustUx({
+            product,
+            sellerVerified: Boolean(sellerTrust?.isVerified),
+          }),
+          buildPdpFitUx({ product, userId: session?.id }),
+        ]);
       }
     }
   } catch (err) {
@@ -332,6 +349,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {discoveryReasons.length > 0 ? (
             <PdpDiscoveryWhyBlock reasons={discoveryReasons} />
+          ) : null}
+
+          {pdpTrustUx && pdpFitUx ? (
+            <PdpUxCompletionBlocks trust={pdpTrustUx} fit={pdpFitUx} />
           ) : null}
 
           {sellerTrust ? (

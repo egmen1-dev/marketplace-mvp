@@ -121,6 +121,7 @@ export const ROUTES = {
   ACCOUNT_FINDS: "/account/finds",
   ACCOUNT_SOCIAL_TOOLS: "/account/social-tools",
   ADMIN_SOCIAL_GROWTH: "/admin/social-growth",
+  ADMIN_DASHBOARD: "/admin/dashboard",
 } as const;
 
 export function discoveryCollectionPath(slug: string) {

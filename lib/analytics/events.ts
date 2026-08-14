@@ -138,6 +138,17 @@ export const ANALYTICS_EVENTS = {
   COLLECTION_SHARED: "collection_shared",
   CREATOR_COLLECTION_VIEW: "creator_collection_view",
   SOCIAL_PURCHASE: "social_purchase",
+  /** MARKETPLACE-UX-COMPLETION-001 */
+  UX_PAGE_VIEW: "ux_page_view",
+  ONBOARDING_STARTED: "onboarding_started",
+  ONBOARDING_COMPLETED: "onboarding_completed",
+  EMPTY_STATE_VIEW: "empty_state_view",
+  EMPTY_STATE_ACTION_CLICK: "empty_state_action_click",
+  SETTINGS_OPENED: "settings_opened",
+  ACCOUNT_MODE_SWITCH: "account_mode_switch",
+  AI_EXPLANATION_VIEW: "ai_explanation_view",
+  SELLER_DASHBOARD_ACTION_CLICK: "seller_dashboard_action_click",
+  BUYER_DISCOVERY_OPENED: "buyer_discovery_opened",
 } as const;
 
 export type AnalyticsEventName =

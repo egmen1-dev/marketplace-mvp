@@ -4,16 +4,19 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { UxEmptyStatePanel } from "@/features/marketplace-ux-completion";
 import { useFavorites } from "@/features/favorites/components/favorites-provider";
 import { ProductCard } from "@/features/products/components/product-card";
 import type { ProductListItem } from "@/features/products/types";
 import { ROUTES } from "@/lib/constants";
+import type { UxEmptyState } from "@/lib/marketplace-ux-completion/types";
 
 type FavoritesGridProps = {
   products: ProductListItem[];
+  uxEmptyState?: UxEmptyState | null;
 };
 
-export function FavoritesGrid({ products }: FavoritesGridProps) {
+export function FavoritesGrid({ products, uxEmptyState }: FavoritesGridProps) {
   const { ids, ready } = useFavorites();
 
   if (!ready) {
@@ -36,6 +39,10 @@ export function FavoritesGrid({ products }: FavoritesGridProps) {
   const visible = products.filter((p) => ids.has(p.id));
 
   if (visible.length === 0) {
+    if (uxEmptyState) {
+      return <UxEmptyStatePanel state={uxEmptyState} />;
+    }
+
     return (
       <div className="animate-fade-up flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-16 text-center">
         <Heart className="size-10 text-muted-foreground" aria-hidden />
