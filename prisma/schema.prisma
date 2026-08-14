@@ -26,6 +26,18 @@ enum ProductStatus {
   OUT_OF_STOCK
 }
 
+/// MARKETPLACE-TRUST-SCORE-MODEL-001 — trust score change events
+enum TrustScoreEventType {
+  ORDER_CREATED
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  ORDER_CANCELLED
+  REVIEW_CREATED
+  PRODUCT_UPDATED
+  ACCOUNT_VERIFIED
+  DAILY_RECALC
+}
+
 /// MARKETPLACE-TRUST-LOOP-001 — review publication status
 enum ReviewStatus {
   PENDING
@@ -284,6 +296,7 @@ model SellerProfile {
   experienceProgress  SellerExperienceProgress?
   reviews             Review[]
   reputation          SellerReputation?
+  trustScoreHistory   TrustScoreHistory[]
   moderationQueue     ModerationQueueItem[]
   returnRequests      ReturnRequest[]
 
@@ -1443,6 +1456,23 @@ model SellerReputation {
   seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   @@map("seller_reputations")
+}
+
+/// Immutable seller trust score audit trail (MARKETPLACE-TRUST-SCORE-MODEL-001).
+model TrustScoreHistory {
+  id        String              @id @default(cuid())
+  sellerId  String
+  oldScore  Int
+  newScore  Int
+  reason    String
+  eventType TrustScoreEventType
+  createdAt DateTime            @default(now())
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId])
+  @@index([createdAt])
+  @@map("trust_score_history")
 }
 
 /// Product moderation state (separate from catalog ProductStatus).

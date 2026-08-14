@@ -64,6 +64,7 @@ export async function approveReview(reviewId: string): Promise<void> {
   const review = await prisma.review.update({
     where: { id: reviewId },
     data: { status: ReviewStatus.APPROVED },
+    include: { photos: { take: 1, select: { id: true } } },
   });
 
   await prisma.moderationQueueItem.updateMany({
@@ -74,7 +75,12 @@ export async function approveReview(reviewId: string): Promise<void> {
     data: { status: ModerationStatus.APPROVED },
   });
 
-  await recalculateRatingsForReview(review);
+  await recalculateRatingsForReview({
+    productId: review.productId,
+    sellerId: review.sellerId,
+    rating: review.rating,
+    hasPhoto: review.photos.length > 0,
+  });
   trackReviewPublished(reviewId);
 }
 

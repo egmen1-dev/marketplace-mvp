@@ -2,6 +2,11 @@ import type { ProductDetail } from "@/features/products/types";
 import { computeProductCompletenessScore } from "@/lib/conversion";
 import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 import { getProductRatingSnapshot } from "@/lib/marketplace-trust-loop/ratings/product-rating";
+import {
+  getProductTrustScoreForPdp,
+  isMarketplaceTrustScoreModelEnabled,
+  VERIFIED_SELLER_EXPLANATION,
+} from "@/lib/marketplace-trust-score";
 import { prisma } from "@/lib/prisma";
 
 import { isMarketplaceUxCompletionEnabled } from "./flags";
@@ -16,7 +21,7 @@ export async function buildPdpTrustUx(input: {
   }
 
   const reasons: string[] = [];
-  if (input.sellerVerified) reasons.push("✓ Проверенный продавец");
+  if (input.sellerVerified) reasons.push(`✓ ${VERIFIED_SELLER_EXPLANATION}`);
 
   const completeness = computeProductCompletenessScore({
     photoCount: input.product.images.length,
@@ -29,7 +34,38 @@ export async function buildPdpTrustUx(input: {
     hasSeller: true,
   });
 
-  let productScore = completeness.score;
+  let sellerScore: number | null = null;
+  let productScore: number | null = completeness.score;
+
+  if (isMarketplaceTrustScoreModelEnabled()) {
+    const productTrust = await getProductTrustScoreForPdp({
+      productId: input.product.id,
+      sellerId: input.product.seller.id,
+      stock: input.product.stock,
+      imageCount: input.product.images.length,
+      hasPrimary: Boolean(input.product.primaryImage ?? input.product.images[0]),
+      characteristicCount: input.product.characteristics.length,
+      descriptionLength: (input.product.description ?? "").length,
+    });
+    if (productTrust) {
+      sellerScore = productTrust.sellerScore;
+      productScore = productTrust.productScore;
+    }
+  } else {
+    const reputation = await prisma.sellerReputation.findUnique({
+      where: { sellerId: input.product.seller.id },
+      select: { trustScore: true },
+    });
+    sellerScore = reputation?.trustScore ?? (input.sellerVerified ? 85 : 70);
+  }
+
+  if (sellerScore == null) {
+    const reputation = await prisma.sellerReputation.findUnique({
+      where: { sellerId: input.product.seller.id },
+      select: { trustScore: true },
+    });
+    sellerScore = reputation?.trustScore ?? (input.sellerVerified ? 85 : 70);
+  }
   if (completeness.score >= 70) reasons.push("✓ Полное описание");
   reasons.push("✓ Есть доставка");
 
@@ -37,16 +73,12 @@ export async function buildPdpTrustUx(input: {
     const rating = await getProductRatingSnapshot(input.product.id);
     if (rating && rating.averageRating >= 4) {
       reasons.push(`✓ Рейтинг ${rating.averageRating.toFixed(1)}`);
-      productScore = Math.min(100, productScore + 10);
+      if (!isMarketplaceTrustScoreModelEnabled()) {
+        productScore = Math.min(100, (productScore ?? completeness.score) + 10);
+      }
     }
   }
 
-  let sellerScore: number | null = null;
-  const reputation = await prisma.sellerReputation.findUnique({
-    where: { sellerId: input.product.seller.id },
-    select: { trustScore: true },
-  });
-  sellerScore = reputation?.trustScore ?? (input.sellerVerified ? 85 : 70);
   if (sellerScore >= 80) reasons.unshift("✓ Надёжный продавец");
 
   return {

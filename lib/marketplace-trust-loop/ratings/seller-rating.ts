@@ -1,5 +1,7 @@
 import { OrderStatus, ReviewStatus } from "@prisma/client";
 
+import { NEW_SELLER_TRUST_SCORE, getTrustLevel } from "@/lib/marketplace-trust-score";
+import { isMarketplaceTrustScoreModelEnabled } from "@/lib/marketplace-trust-score/flags";
 import { prisma } from "@/lib/prisma";
 
 import type { SellerReputationSnapshot } from "../reviews/types";
@@ -8,12 +10,18 @@ function defaultSellerReputation(
   sellerId: string,
   completedOrders: number,
 ): SellerReputationSnapshot {
-  const trustScore = completedOrders >= 10 ? 60 : 50;
+  const trustScore = isMarketplaceTrustScoreModelEnabled()
+    ? NEW_SELLER_TRUST_SCORE
+    : completedOrders >= 10
+      ? 60
+      : 50;
   return {
     averageRating: 0,
     reviewsCount: 0,
     trustScore,
-    trustLabel: "Развивающийся продавец",
+    trustLabel: isMarketplaceTrustScoreModelEnabled()
+      ? getTrustLevel(trustScore).label
+      : "Развивающийся продавец",
     strengths: ["✓ качество товара"],
     improvements: ["→ добавьте больше фото упаковки"],
     completedOrders,
@@ -52,8 +60,9 @@ export async function getSellerReputationSnapshot(
     take: 10,
   });
 
-  const trustLabel =
-    rep.trustScore >= 85
+  const trustLabel = isMarketplaceTrustScoreModelEnabled()
+    ? getTrustLevel(rep.trustScore).label
+    : rep.trustScore >= 85
       ? "Высокий уровень доверия"
       : rep.trustScore >= 70
         ? "Хороший уровень доверия"
