@@ -3,19 +3,26 @@ import { Package } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { UxEmptyStatePanel } from "@/features/marketplace-ux-completion";
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
 import { formatOrderDate } from "@/features/orders/lib/status";
 import type { OrderListItem } from "@/features/orders/types";
 import { formatPrice } from "@/features/products/mappers";
 import { ROUTES } from "@/lib/constants";
 import { pluralizeProductWord } from "@/lib/i18n";
+import type { UxEmptyState } from "@/lib/marketplace-ux-completion/types";
 
 type OrdersListProps = {
   orders: OrderListItem[];
+  uxEmptyState?: UxEmptyState | null;
 };
 
-export function OrdersList({ orders }: OrdersListProps) {
+export function OrdersList({ orders, uxEmptyState }: OrdersListProps) {
   if (orders.length === 0) {
+    if (uxEmptyState) {
+      return <UxEmptyStatePanel state={uxEmptyState} />;
+    }
+
     return (
       <div className="animate-fade-up flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border bg-surface/40 px-6 py-16 text-center">
         <Package className="size-10 text-muted-foreground" />

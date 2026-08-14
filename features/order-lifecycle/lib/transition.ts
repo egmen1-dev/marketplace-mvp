@@ -252,17 +252,7 @@ export async function afterTransitionSideEffects(opts: {
     });
   }
 
-  // Finance: pending → available when order COMPLETED (does not alter OMS).
-  if (opts.status === OrderStatus.COMPLETED) {
-    try {
-      const { releaseSellerFundsOnOrderCompleted } = await import(
-        "@/features/finance/lib/ledger"
-      );
-      await releaseSellerFundsOnOrderCompleted(opts.orderId);
-    } catch (err) {
-      console.error("[order-lifecycle] finance release", err);
-    }
-  }
+  // Finance release handled by syncFinanceOnOrderCompleted below.
 
   if (opts.silent) return;
 
@@ -342,6 +332,34 @@ export async function transitionOrderWithEffects(
     completedAt: refreshed?.completedAt ?? null,
     reviewEligibleAt: refreshed?.reviewEligibleAt ?? null,
   });
+
+  if (
+    result.status === OrderStatus.COMPLETED &&
+    !result.alreadyApplied
+  ) {
+    const { syncFinanceOnOrderCompleted } = await import("@/lib/finance");
+    await syncFinanceOnOrderCompleted(result.orderId);
+  }
+
+  if (!result.alreadyApplied) {
+    try {
+      const { isMarketplaceDeliveryEnabled } = await import(
+        "@/lib/marketplace-delivery/flags"
+      );
+      if (isMarketplaceDeliveryEnabled()) {
+        const { syncDeliveryOnOrderTransition } = await import(
+          "@/lib/marketplace-delivery/delivery/lifecycle"
+        );
+        await syncDeliveryOnOrderTransition({
+          orderId: result.orderId,
+          previousStatus: result.previousStatus,
+          status: result.status,
+        });
+      }
+    } catch (err) {
+      console.error("[order-lifecycle] delivery sync", err);
+    }
+  }
 
   return result;
 }

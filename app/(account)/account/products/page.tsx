@@ -11,9 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  requireSellerCabinetAccess,
-} from "@/features/auth";
 import { ProductImage } from "@/features/products/components/product-image";
 import { formatPrice } from "@/features/products/mappers";
 import { listProducts } from "@/features/products/queries";
@@ -21,6 +18,14 @@ import {
   DeleteProductButton,
   ProductStatusBadge,
 } from "@/features/seller";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
+import { SellerJourneyEmptyState } from "@/features/seller-journey";
+import { UxEmptyStatePanel } from "@/features/marketplace-ux-completion";
+import { getSellerJourneyEmptyState } from "@/lib/seller-journey";
+import {
+  getSellerProductsEmptyState,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 import {
   ArchiveProductButton,
   DuplicateProductButton,
@@ -32,6 +37,7 @@ import { getProductCompletenessMap } from "@/lib/conversion";
 import { ROUTES, sellerProductEditPath } from "@/lib/constants";
 import { formatDateMoscowShort } from "@/lib/format/datetime";
 import { pluralizeProductCount } from "@/lib/i18n";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -56,7 +62,7 @@ type PageProps = {
 };
 
 export default async function SellerProductsPage({ searchParams }: PageProps) {
-  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_PRODUCTS);
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_PRODUCTS);
   const sellerProfileId = seller.sellerProfileId;
 
   const params = await searchParams;
@@ -99,6 +105,11 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
     dbError = "Не удалось загрузить товары";
   }
 
+  const productsEmptyCopy =
+    !query && status === "ALL"
+      ? await getSellerJourneyEmptyState("products")
+      : null;
+
 
   function tabHref(value: ProductStatus | "ALL") {
     const q = new URLSearchParams();
@@ -113,6 +124,8 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
       <Suspense fallback={null}>
         <SellerToastFlash />
       </Suspense>
+
+      <SellerFirstEntryBannerSlot sellerProfileId={sellerProfileId} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -187,13 +200,21 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
           {dbError ? (
             <p className="text-sm text-destructive">{dbError}</p>
           ) : products.items.length === 0 ? (
-            <div className="flex flex-col items-start gap-4 py-8">
-              <p className="text-sm text-muted-foreground">
-                {query || status !== "ALL"
-                  ? "Нет товаров по выбранным фильтрам."
-                  : "Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге."}
-              </p>
-              {!query && status === "ALL" ? (
+            query || status !== "ALL" ? (
+              <div className="flex flex-col items-start gap-4 py-8">
+                <p className="text-sm text-muted-foreground">
+                  Нет товаров по выбранным фильтрам.
+                </p>
+              </div>
+            ) : isMarketplaceUxCompletionEnabled() ? (
+              <UxEmptyStatePanel state={getSellerProductsEmptyState()} />
+            ) : productsEmptyCopy ? (
+              <SellerJourneyEmptyState {...productsEmptyCopy} />
+            ) : (
+              <div className="flex flex-col items-start gap-4 py-8">
+                <p className="text-sm text-muted-foreground">
+                  Пока нет товаров. Создайте первое объявление — оно сразу появится в каталоге.
+                </p>
                 <Button
                   nativeButton={false}
                   render={<Link href={ROUTES.SELLER_NEW_PRODUCT} />}
@@ -201,8 +222,8 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                   <Plus data-icon="inline-start" />
                   Создать товар
                 </Button>
-              ) : null}
-            </div>
+              </div>
+            )
           ) : (
             <table className="w-full min-w-[960px] text-left text-sm">
               <thead>
@@ -284,6 +305,16 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                           >
                             <ExternalLink data-icon="inline-start" />
                             Открыть
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            nativeButton={false}
+                            render={
+                              <Link href={`${sellerProductEditPath(product.id)}#photos`} />
+                            }
+                          >
+                            Добавить фото
                           </Button>
                           <Button
                             variant="ghost"

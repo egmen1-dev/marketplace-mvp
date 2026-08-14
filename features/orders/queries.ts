@@ -239,6 +239,7 @@ export async function getOrderForUser(
     shipmentDeadline: order.shipmentDeadline?.toISOString() ?? null,
     pickupExpiresAt: order.pickupExpiresAt?.toISOString() ?? null,
     isOverdue: order.isOverdue,
+    reviewEligibleAt: order.reviewEligibleAt?.toISOString() ?? null,
     expectedNextAction: getExpectedNextAction({
       status: order.status,
       fulfillmentType: order.fulfillmentType,

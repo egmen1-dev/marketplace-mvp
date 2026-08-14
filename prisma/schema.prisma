@@ -26,6 +26,40 @@ enum ProductStatus {
   OUT_OF_STOCK
 }
 
+/// MARKETPLACE-TRUST-SCORE-MODEL-001 — trust score change events
+enum TrustScoreEventType {
+  ORDER_CREATED
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  ORDER_CANCELLED
+  REVIEW_CREATED
+  PRODUCT_UPDATED
+  ACCOUNT_VERIFIED
+  DAILY_RECALC
+}
+
+/// MARKETPLACE-TRUST-LOOP-001 — review publication status
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// MARKETPLACE-TRUST-LOOP-001 — product/review moderation workflow
+enum ModerationStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  NEEDS_FIX
+}
+
+enum ModerationItemType {
+  PRODUCT
+  REVIEW
+  REPORT
+  CONTENT
+}
+
 /// Состояние товара (новый / б/у / восстановленный)
 enum ProductCondition {
   NEW
@@ -115,10 +149,21 @@ enum DeliveryMethod {
 enum DeliveryStatus {
   PENDING
   CREATED
+  READY_FOR_PICKUP
+  PICKED_UP
   IN_TRANSIT
+  AT_PICKUP_POINT
   DELIVERED
+  FAILED
   RETURNED
   CANCELLED
+}
+
+enum ReturnRequestStatus {
+  CREATED
+  APPROVED
+  REJECTED
+  COMPLETED
 }
 
 enum AddressType {
@@ -204,7 +249,11 @@ model User {
   pickupReservations   PickupReservation[]
   buyerConversations   Conversation[]      @relation("ConversationBuyer")
   sentMessages         Message[]
-  disputes             Dispute[]           @relation("BuyerDisputes")
+  financeTransactions  FinanceTransaction[] @relation("FinanceTransactionBuyer")
+  disputesOpened       Dispute[]
+  reviewsWritten       Review[]
+  returnRequests       ReturnRequest[]     @relation("ReturnRequestBuyer")
+  socialCollections    SocialCollection[]
 
   @@index([role])
   @@index([isBlocked])
@@ -223,7 +272,6 @@ model SellerProfile {
   address          String?
   /// Free-text shipping defaults shown to buyers / used in cabinet
   shippingDefaults String?
-  /// Aggregate store rating 0–5 (placeholder until reviews land)
   rating           Decimal    @default(0) @db.Decimal(3, 2)
   isVerified       Boolean    @default(false)
   /// Set when admin verifies the seller; cleared on unverify
@@ -238,11 +286,19 @@ model SellerProfile {
   user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   products       Product[]
   pickupPoints   PickupPoint[]
-  reservations   PickupReservation[]
-  conversations  Conversation[]
+  reservations        PickupReservation[]
+  conversations       Conversation[]
   financeTransactions FinanceTransaction[]
-  balance        SellerBalance?
-  disputes       Dispute[]
+  sellerBalance       SellerBalance?
+  paymentMethods      SellerPaymentMethod[]
+  payoutRequests      PayoutRequest[]
+  payoutTransactions  PayoutTransaction[]
+  experienceProgress  SellerExperienceProgress?
+  reviews             Review[]
+  reputation          SellerReputation?
+  trustScoreHistory   TrustScoreHistory[]
+  moderationQueue     ModerationQueueItem[]
+  returnRequests      ReturnRequest[]
 
   @@index([slug])
   @@index([kind])
@@ -284,6 +340,7 @@ model Category {
   products     Product[]
   productTypes ProductType[]
   aliases      CategoryAlias[]
+  commissionRules CommissionRule[]
 
   @@unique([externalSource, externalId])
   @@index([parentId])
@@ -511,6 +568,10 @@ model Product {
   reservations     PickupReservation[]
   conversations    Conversation[]
   characteristicValues ProductCharacteristicValue[]
+  reviews              Review[]
+  productRating        ProductRating?
+  productModeration    ProductModeration?
+  socialCollectionItems SocialCollectionItem[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -684,8 +745,10 @@ model Order {
   statusHistory   OrderStatusHistory[]
   events          OrderEvent[]
   reservations    PickupReservation[]
-  financeTransactions FinanceTransaction[]
+  financeTransaction FinanceTransaction?
   disputes        Dispute[]
+  reviews         Review[]
+  returnRequests  ReturnRequest[]
 
   @@index([userId])
   @@index([status])
@@ -779,7 +842,6 @@ model Payment {
   @@map("payments")
 }
 
-/// Stripe webhook delivery log — idempotency by Stripe event id.
 enum StripeWebhookStatus {
   RECEIVED
   PROCESSED
@@ -787,79 +849,20 @@ enum StripeWebhookStatus {
 }
 
 model StripeWebhookEvent {
-  id          String              @id @default(cuid())
+  id            String              @id @default(cuid())
   /// Stripe `evt_…` — unique, used for duplicate suppression
-  stripeEventId String            @unique
-  type        String
-  status      StripeWebhookStatus @default(RECEIVED)
-  orderId     String?
-  error       String?
-  receivedAt  DateTime            @default(now())
-  processedAt DateTime?
+  stripeEventId String              @unique
+  type          String
+  status        StripeWebhookStatus @default(RECEIVED)
+  orderId       String?
+  error         String?
+  receivedAt    DateTime            @default(now())
+  processedAt   DateTime?
 
   @@index([status])
   @@index([type])
   @@index([receivedAt])
   @@map("stripe_webhook_events")
-}
-
-/// Marketplace finance ledger entry (sale / release / refund future).
-enum FinanceTransactionType {
-  SALE
-  RELEASE
-  REFUND
-  ADJUSTMENT
-}
-
-enum FinanceTransactionStatus {
-  PENDING
-  AVAILABLE
-  REVERSED
-}
-
-model FinanceTransaction {
-  id                String                   @id @default(cuid())
-  orderId           String
-  sellerId          String
-  type              FinanceTransactionType
-  status            FinanceTransactionStatus @default(PENDING)
-  /// Gross goods amount attributed to this seller (major units)
-  grossAmount       Decimal                  @db.Decimal(12, 2)
-  /// Platform commission
-  commissionAmount  Decimal                  @db.Decimal(12, 2)
-  /// Net credited to seller (gross − commission)
-  sellerAmount      Decimal                  @db.Decimal(12, 2)
-  currency          String                   @default("RUB")
-  /// Commission rate in basis points at time of sale (1000 = 10%)
-  commissionBps     Int                      @default(1000)
-  createdAt         DateTime                 @default(now())
-  updatedAt         DateTime                 @updatedAt
-
-  order  Order         @relation(fields: [orderId], references: [id], onDelete: Restrict)
-  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
-
-  @@unique([orderId, sellerId, type])
-  @@index([sellerId])
-  @@index([orderId])
-  @@index([type])
-  @@index([status])
-  @@index([createdAt])
-  @@map("finance_transactions")
-}
-
-/// Seller wallet — pending (held) vs available (after order COMPLETED).
-model SellerBalance {
-  id              String   @id @default(cuid())
-  sellerId        String   @unique
-  pendingAmount   Decimal  @default(0) @db.Decimal(12, 2)
-  availableAmount Decimal  @default(0) @db.Decimal(12, 2)
-  currency        String   @default("RUB")
-  updatedAt       DateTime @updatedAt
-  createdAt       DateTime @default(now())
-
-  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-
-  @@map("seller_balances")
 }
 
 // ─── Address & Delivery ──────────────────────────────────────────────────────
@@ -921,6 +924,27 @@ model Delivery {
   @@index([method])
   @@index([trackingNumber])
   @@map("deliveries")
+}
+
+model ReturnRequest {
+  id        String              @id @default(cuid())
+  orderId   String
+  buyerId   String
+  sellerId  String
+  reason    String?
+  status    ReturnRequestStatus @default(CREATED)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  order  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  buyer  User          @relation("ReturnRequestBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+  @@map("return_requests")
 }
 
 // ─── Seller pickup & reservations ────────────────────────────────────────────
@@ -1190,45 +1214,371 @@ model SeoFacetRule {
   @@map("seo_facet_rules")
 }
 
-// ─── Trust & Safety (TRUST-SAFETY-001) ───────────────────────────────────────
+// ─── Marketplace Finance (EPIC-FINANCE-001 foundation) ─────────────────────
+
+enum FinanceTransactionStatus {
+  PENDING
+  PAID
+  HELD
+  RELEASED
+  REFUNDED
+  DISPUTED
+}
 
 enum DisputeStatus {
   OPEN
-  SELLER_RESPONSE
   UNDER_REVIEW
   RESOLVED_BUYER
   RESOLVED_SELLER
 }
 
-enum DisputeReason {
-  ITEM_NOT_MATCH
-  DAMAGED
-  NOT_RECEIVED
-  WRONG_ITEM
-}
-
-/// Buyer–seller dispute foundation (does not alter OMS status machine).
-model Dispute {
-  id           String        @id @default(cuid())
-  orderId      String
-  buyerUserId  String
-  sellerId     String
-  reason       DisputeReason
-  status       DisputeStatus @default(OPEN)
-  description  String?
-  resolution   String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  resolvedAt   DateTime?
+/// Financial operation for an order — virtual ledger, not real money movement.
+model FinanceTransaction {
+  id               String                   @id @default(cuid())
+  orderId          String                   @unique
+  buyerId          String
+  sellerId         String
+  grossAmount      Decimal                  @db.Decimal(12, 2)
+  commissionAmount Decimal                  @db.Decimal(12, 2)
+  sellerAmount     Decimal                  @db.Decimal(12, 2)
+  status           FinanceTransactionStatus @default(PENDING)
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
 
   order  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  buyer  User          @relation("BuyerDisputes", fields: [buyerUserId], references: [id], onDelete: Restrict)
+  buyer  User          @relation("FinanceTransactionBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
   seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
 
-  @@index([orderId])
-  @@index([buyerUserId])
+  @@index([buyerId])
   @@index([sellerId])
   @@index([status])
   @@index([createdAt])
+  @@map("finance_transactions")
+}
+
+/// Commission rules — category-specific or platform default (categoryId null).
+model CommissionRule {
+  id         String   @id @default(cuid())
+  categoryId String?
+  percentage Decimal  @db.Decimal(5, 2)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@unique([categoryId])
+  @@index([active])
+  @@map("commission_rules")
+}
+
+/// Virtual seller balance — pending / available / paid-out totals.
+model SellerBalance {
+  id                      String   @id @default(cuid())
+  sellerId                String   @unique
+  pendingAmount           Decimal  @default(0) @db.Decimal(14, 2)
+  availableAmount         Decimal  @default(0) @db.Decimal(14, 2)
+  paidAmount              Decimal  @default(0) @db.Decimal(14, 2)
+  reservedForPayoutAmount Decimal  @default(0) @db.Decimal(14, 2)
+  updatedAt               DateTime @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_balances")
+}
+
+enum PayoutRequestStatus {
+  REQUESTED
+  UNDER_REVIEW
+  APPROVED
+  PROCESSING
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+enum SellerPaymentMethodType {
+  CARD
+  BANK_ACCOUNT
+}
+
+enum PayoutTransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+/// Seller payout destination — reference only, no raw payment data.
+model SellerPaymentMethod {
+  id               String                  @id @default(cuid())
+  sellerId         String
+  type             SellerPaymentMethodType
+  label            String
+  detailsReference String
+  verified         Boolean                 @default(false)
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  seller         SellerProfile   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  payoutRequests PayoutRequest[]
+
+  @@index([sellerId])
+  @@map("seller_payment_methods")
+}
+
+/// Seller withdrawal request — manual admin workflow in MVP.
+model PayoutRequest {
+  id              String              @id @default(cuid())
+  sellerId        String
+  amount          Decimal             @db.Decimal(14, 2)
+  status          PayoutRequestStatus @default(REQUESTED)
+  paymentMethodId String
+  requestedAt     DateTime            @default(now())
+  approvedAt      DateTime?
+  processingAt    DateTime?
+  completedAt     DateTime?
+  rejectedAt      DateTime?
+  adminNote       String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  seller        SellerProfile       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  paymentMethod SellerPaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+  transactions  PayoutTransaction[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("payout_requests")
+}
+
+/// Record of a completed manual payout.
+model PayoutTransaction {
+  id                String                  @id @default(cuid())
+  payoutRequestId   String
+  sellerId          String
+  amount            Decimal                 @db.Decimal(14, 2)
+  status            PayoutTransactionStatus @default(PENDING)
+  externalReference String?
+  completedAt       DateTime?
+  createdAt         DateTime                @default(now())
+
+  payoutRequest PayoutRequest @relation(fields: [payoutRequestId], references: [id], onDelete: Cascade)
+  seller        SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([payoutRequestId])
+  @@index([sellerId])
+  @@map("payout_transactions")
+}
+
+/// Optional first-entry tracking — progress is computed from catalog/orders/finance.
+model SellerExperienceProgress {
+  id             String    @id @default(cuid())
+  sellerId       String    @unique
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  dismissedAt    DateTime?
+  currentStep    String?
+  dismissedSteps String?
+  updatedAt      DateTime  @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_experience_progress")
+}
+
+/// Buyer protection dispute foundation — no full arbitration in MVP.
+model Dispute {
+  id         String        @id @default(cuid())
+  orderId    String
+  openedBy   String
+  reason     String
+  status     DisputeStatus @default(OPEN)
+  resolution String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  order        Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  openedByUser User  @relation(fields: [openedBy], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([openedBy])
+  @@index([status])
   @@map("disputes")
+}
+
+/// Buyer product review after completed order.
+model Review {
+  id        String       @id @default(cuid())
+  orderId   String
+  productId String
+  sellerId  String
+  buyerId   String
+  rating    Int
+  text      String?
+  pros      String?
+  cons      String?
+  status    ReviewStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  order   Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller  SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer   User          @relation(fields: [buyerId], references: [id], onDelete: Restrict)
+  photos  ReviewPhoto[]
+
+  @@unique([orderId, productId, buyerId])
+  @@index([productId])
+  @@index([sellerId])
+  @@index([buyerId])
+  @@index([status])
+  @@map("reviews")
+}
+
+model ReviewPhoto {
+  id        String   @id @default(cuid())
+  reviewId  String
+  url       String
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("review_photos")
+}
+
+/// Aggregated product rating (trust layer — not used for search ranking).
+model ProductRating {
+  productId          String   @id
+  averageRating      Decimal  @default(0) @db.Decimal(3, 2)
+  reviewsCount       Int      @default(0)
+  rating1            Int      @default(0)
+  rating2            Int      @default(0)
+  rating3            Int      @default(0)
+  rating4            Int      @default(0)
+  rating5            Int      @default(0)
+  updatedAt          DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_ratings")
+}
+
+/// Aggregated seller reputation snapshot.
+model SellerReputation {
+  sellerId           String   @id
+  averageRating      Decimal  @default(0) @db.Decimal(3, 2)
+  reviewsCount       Int      @default(0)
+  completedOrders    Int      @default(0)
+  cancellationRate   Decimal  @default(0) @db.Decimal(5, 2)
+  trustScore         Int      @default(0)
+  positiveSentiment  Int      @default(0)
+  updatedAt          DateTime @updatedAt
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("seller_reputations")
+}
+
+/// Immutable seller trust score audit trail (MARKETPLACE-TRUST-SCORE-MODEL-001).
+model TrustScoreHistory {
+  id        String              @id @default(cuid())
+  sellerId  String
+  oldScore  Int
+  newScore  Int
+  reason    String
+  eventType TrustScoreEventType
+  createdAt DateTime            @default(now())
+
+  seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId])
+  @@index([createdAt])
+  @@map("trust_score_history")
+}
+
+/// Product moderation state (separate from catalog ProductStatus).
+model ProductModeration {
+  id              String           @id @default(cuid())
+  productId       String           @unique
+  status          ModerationStatus @default(PENDING_REVIEW)
+  qualityScore    Int?
+  issues          Json?
+  prohibitedHit   Boolean          @default(false)
+  reviewedById    String?
+  reviewedAt      DateTime?
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@map("product_moderations")
+}
+
+/// Unified moderation queue for admin.
+model ModerationQueueItem {
+  id         String             @id @default(cuid())
+  type       ModerationItemType
+  entityId   String
+  sellerId   String?
+  status     ModerationStatus   @default(PENDING_REVIEW)
+  riskLevel  String?
+  summary    String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  seller SellerProfile? @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+
+  @@index([type, status])
+  @@index([entityId])
+  @@index([sellerId])
+  @@map("moderation_queue_items")
+}
+
+// ─── Marketplace Social Growth (MARKETPLACE-SOCIAL-GROWTH-001) ───────────────
+
+enum SocialCollectionKind {
+  USER
+  CREATOR
+}
+
+/// User «Мои находки» or public creator collection.
+model SocialCollection {
+  id            String               @id @default(cuid())
+  creatorId     String
+  slug          String
+  title         String
+  description   String?
+  coverImageUrl String?
+  kind          SocialCollectionKind @default(USER)
+  views         Int                  @default(0)
+  likes         Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  creator User                   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  items   SocialCollectionItem[]
+
+  @@unique([creatorId, slug])
+  @@index([kind])
+  @@index([createdAt])
+  @@map("social_collections")
+}
+
+model SocialCollectionItem {
+  id           String   @id @default(cuid())
+  collectionId String
+  productId    String
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  collection SocialCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  product    Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, productId])
+  @@index([productId])
+  @@map("social_collection_items")
 }

@@ -1,11 +1,12 @@
 "use server";
 
-import { DisputeReason, DisputeStatus } from "@prisma/client";
+import { DisputeStatus } from "@prisma/client";
 
 import { getSessionUser } from "@/features/auth";
 import { buyerConfirmReceivedAction } from "@/features/order-lifecycle/actions";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackServerEvent } from "@/lib/analytics/track-server";
+import type { DisputeReason } from "@/lib/trust-safety/disputes";
 import {
   canBuyerOpenDispute,
   canTransitionDispute,
@@ -31,11 +32,7 @@ export async function createDisputeAction(input: {
       disputes: {
         where: {
           status: {
-            in: [
-              DisputeStatus.OPEN,
-              DisputeStatus.SELLER_RESPONSE,
-              DisputeStatus.UNDER_REVIEW,
-            ],
+            in: [DisputeStatus.OPEN, DisputeStatus.UNDER_REVIEW],
           },
         },
         take: 1,
@@ -110,8 +107,7 @@ export async function adminResolveDisputeAction(input: {
     where: { id: dispute.id },
     data: {
       status: input.toStatus,
-      resolution: input.resolution?.slice(0, 2000) ?? null,
-      resolvedAt: new Date(),
+      resolution: input.resolution?.slice(0, 2000) ?? dispute.resolution,
     },
   });
 

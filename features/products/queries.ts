@@ -747,6 +747,19 @@ export async function createProduct(
     );
   }
 
+  if (input.status === ProductStatus.ACTIVE) {
+    const { isMarketplaceTrustLoopEnabled } = await import(
+      "@/lib/marketplace-trust-loop/flags"
+    );
+    if (isMarketplaceTrustLoopEnabled()) {
+      throw new ProductServiceError(
+        "MODERATION_REQUIRED",
+        "Сначала сохраните черновик и отправьте товар на модерацию.",
+        400,
+      );
+    }
+  }
+
   const slug = await uniqueSlug(sellerId, input.title);
   const city =
     input.city != null && input.city.trim() !== "" ? input.city.trim() : null;
@@ -985,6 +998,28 @@ export async function updateProduct(
           400,
         );
       }
+    }
+  }
+
+  if (targetStatus === ProductStatus.ACTIVE) {
+    const { isMarketplaceTrustLoopEnabled } = await import(
+      "@/lib/marketplace-trust-loop/flags"
+    );
+    if (isMarketplaceTrustLoopEnabled()) {
+      const { assertProductModerationApproved, submitProductForModeration } =
+        await import("@/lib/marketplace-trust-loop/moderation/rules");
+      const existingMod = await prisma.productModeration.findUnique({
+        where: { productId },
+      });
+      if (!existingMod) {
+        await submitProductForModeration(productId);
+        throw new ProductServiceError(
+          "MODERATION_PENDING",
+          "Товар отправлен на проверку. После одобрения модерации можно опубликовать.",
+          400,
+        );
+      }
+      await assertProductModerationApproved(productId);
     }
   }
 

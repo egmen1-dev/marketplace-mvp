@@ -35,8 +35,22 @@ export const ROUTES = {
   ACCOUNT_PRODUCTS_NEW: "/account/products/new",
   /** Seller sales / incoming orders */
   ACCOUNT_SALES: "/account/sales",
-  /** Seller wallet — pending / available */
+  /** Seller fulfillment — orders to ship */
+  ACCOUNT_ORDERS_SHIP: "/account/orders/ship",
+  /** Seller virtual balance (finance foundation) */
   ACCOUNT_BALANCE: "/account/balance",
+  /** Seller payout requests and withdrawal flow */
+  ACCOUNT_PAYOUTS: "/account/payouts",
+  /** Seller AI command center + journey */
+  ACCOUNT_COMMAND_CENTER: "/account/command-center",
+  /** Unified seller business workspace — «Мой бизнес» */
+  ACCOUNT_BUSINESS: "/account/business",
+  /** Seller growth hub — unified journey + recommendations */
+  ACCOUNT_GROWTH: "/account/growth",
+  /** Seller promotion hub (campaigns, visibility) */
+  ACCOUNT_PROMOTION_CENTER: "/account/promotion-center",
+  /** Seller first experience — «Старт продавца» */
+  ACCOUNT_SELLER_START: "/account/seller-start",
   /** Seller pickup warehouse addresses */
   ACCOUNT_PICKUP_POINTS: "/account/pickup-points",
   ACCOUNT_PICKUP_POINTS_NEW: "/account/pickup-points/new",
@@ -76,13 +90,53 @@ export const ROUTES = {
   ADMIN_MESSAGES: "/admin/messages",
   ADMIN_ANALYTICS: "/admin/analytics",
   ADMIN_ADS: "/admin/ads",
-  ADMIN_CONVERSION: "/admin/conversion",
   ADMIN_FINANCE: "/admin/finance",
+  ADMIN_PAYOUTS: "/admin/payouts",
+  ADMIN_CONVERSION: "/admin/conversion",
+  ADMIN_FOUNDATION: "/admin/foundation",
+  ADMIN_OPERATIONS: "/admin/operations",
   ADMIN_TRUST: "/admin/trust",
+  /** Trust score analytics for admins */
+  ADMIN_TRUST_CENTER: "/admin/trust-center",
+  ADMIN_MODERATION: "/admin/moderation",
+  ADMIN_DELIVERY: "/admin/delivery",
+  ADMIN_DELIVERY_HEALTH: "/admin/delivery/health",
+  ADMIN_PAYMENTS: "/admin/payments",
+  ADMIN_HEALTH: "/admin/health",
+  ADMIN_UX_HEALTH: "/admin/ux-health",
+  ADMIN_LAUNCH: "/admin/launch",
+  /** Seller reputation hub */
+  ACCOUNT_REPUTATION: "/account/reputation",
   AUTH_SIGN_IN: "/auth/sign-in",
   AUTH_SIGN_UP: "/auth/sign-up",
+  /** Unified notifications inbox */
+  NOTIFICATIONS: "/notifications",
   BRANDS: "/brands",
+  /** Consumer discovery experience */
+  DISCOVER: "/discover",
+  DISCOVER_COLLECTIONS: "/discover/collections",
+  ACCOUNT_DISCOVERY: "/account/discovery",
+  ADMIN_DISCOVERY: "/admin/discovery",
+  /** Social growth / viral commerce */
+  SOCIAL: "/social",
+  SOCIAL_COLLECTIONS: "/social/c",
+  ACCOUNT_FINDS: "/account/finds",
+  ACCOUNT_SOCIAL_TOOLS: "/account/social-tools",
+  ADMIN_SOCIAL_GROWTH: "/admin/social-growth",
+  ADMIN_DASHBOARD: "/admin/dashboard",
 } as const;
+
+export function discoveryCollectionPath(slug: string) {
+  return `${ROUTES.DISCOVER_COLLECTIONS}/${slug}`;
+}
+
+export function socialCollectionPath(slug: string) {
+  return `${ROUTES.SOCIAL_COLLECTIONS}/${slug}`;
+}
+
+export function socialLandingPath(path: string) {
+  return `${ROUTES.SOCIAL}/${path}`;
+}
 
 export function adminOrderPath(id: string) {
   return `${ROUTES.ADMIN_ORDERS}/${id}`;
@@ -123,6 +177,15 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/sales",
   "/account/pickup-points",
   "/account/balance",
+  "/account/business",
+  "/account/payouts",
+  "/account/command-center",
+  "/account/growth",
+  "/account/promotion-center",
+  "/account/discovery",
+  "/account/finds",
+  "/account/social-tools",
+  "/account/seller-start",
 ] as const;
 
 export function isSellerCabinetPath(pathname: string): boolean {

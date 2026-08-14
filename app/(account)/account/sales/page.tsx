@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { UserRole } from "@prisma/client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,20 +11,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { requireSellerCabinetAccess } from "@/features/auth";
 import {
   formatOrderDate,
   formatOrderStatus,
   OrderStatusBadge,
 } from "@/features/orders";
 import { formatPrice } from "@/features/products/mappers";
+import { OrderFulfillmentSteps } from "@/features/seller/components/order-fulfillment-steps";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
+import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
+import { SellerJourneyEmptyState } from "@/features/seller-journey";
 import {
   getSellerOrderCounters,
   listSellerOrders,
 } from "@/features/seller/queries";
 import { ROUTES } from "@/lib/constants";
+import { isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
+import { getSellerJourneyEmptyState } from "@/lib/seller-journey";
+import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +56,7 @@ type PageProps = {
 };
 
 export default async function SellerOrdersPage({ searchParams }: PageProps) {
-  const seller = await requireSellerCabinetAccess(ROUTES.SELLER_ORDERS);
+  const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_SALES);
   const params = await searchParams;
 
   const bucketRaw = params.bucket?.toUpperCase() ?? "ALL";
@@ -90,6 +96,9 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
     dbError = "Не удалось загрузить заказы";
   }
 
+  const ordersEmptyCopy =
+    bucket === "ALL" ? await getSellerJourneyEmptyState("orders") : null;
+
   function tabHref(value: string) {
     const q = new URLSearchParams();
     if (value !== "ALL") q.set("bucket", value);
@@ -105,6 +114,33 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
         <SellerToastFlash />
       </Suspense>
 
+      <SellerFirstEntryBannerSlot sellerProfileId={seller.sellerProfileId} />
+
+      {counters.overdue > 0 ? (
+        <div
+          className="rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm"
+          data-testid="seller-orders-overdue-banner"
+        >
+          <p className="font-medium text-destructive">
+            {counters.overdue} заказ(ов) просрочено
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            Отправьте товары в срок — просрочка снижает рейтинг магазина.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            nativeButton={false}
+            render={<Link href={tabHref("OVERDUE")} />}
+          >
+            Открыть просроченные
+          </Button>
+        </div>
+      ) : null}
+
+      <OrderFulfillmentSteps />
+
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
           Заказы
@@ -112,6 +148,17 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
         <p className="mt-1 text-sm text-muted-foreground">
           Жизненный цикл продаж: подтверждение, сборка, отправка и выдача.
         </p>
+        {isMarketplaceDeliveryEnabled() ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            nativeButton={false}
+            render={<Link href={ROUTES.ACCOUNT_ORDERS_SHIP} />}
+          >
+            Нужно отправить →
+          </Button>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -154,7 +201,11 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
       ) : orders.items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+        ordersEmptyCopy ? (
+          <SellerJourneyEmptyState {...ordersEmptyCopy} />
+        ) : (
+          <p className="text-sm text-muted-foreground">Заказов пока нет</p>
+        )
       ) : (
         <div className="flex flex-col gap-3">
           {orders.items.map((order) => (

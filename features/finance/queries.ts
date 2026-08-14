@@ -1,9 +1,7 @@
-import {
-  FinanceTransactionStatus,
-  FinanceTransactionType,
-} from "@prisma/client";
+import { FinanceTransactionStatus } from "@prisma/client";
 
 import { toPriceNumber } from "@/features/products/mappers";
+import { getSellerBalance } from "@/lib/finance/balance";
 import { prisma } from "@/lib/prisma";
 
 export type SellerBalanceView = {
@@ -26,7 +24,7 @@ export async function getSellerBalanceView(
   sellerId: string,
 ): Promise<SellerBalanceView> {
   const [balance, transactions] = await Promise.all([
-    prisma.sellerBalance.findUnique({ where: { sellerId } }),
+    getSellerBalance(sellerId),
     prisma.financeTransaction.findMany({
       where: { sellerId },
       orderBy: { createdAt: "desc" },
@@ -35,13 +33,13 @@ export async function getSellerBalanceView(
   ]);
 
   return {
-    pendingAmount: toPriceNumber(balance?.pendingAmount),
-    availableAmount: toPriceNumber(balance?.availableAmount),
-    currency: balance?.currency ?? "RUB",
+    pendingAmount: balance.pendingAmount,
+    availableAmount: balance.availableAmount,
+    currency: "RUB",
     transactions: transactions.map((t) => ({
       id: t.id,
       orderId: t.orderId,
-      type: t.type,
+      type: "SALE",
       status: t.status,
       grossAmount: toPriceNumber(t.grossAmount),
       commissionAmount: toPriceNumber(t.commissionAmount),
@@ -78,7 +76,7 @@ export async function getAdminFinanceDashboard(): Promise<AdminFinanceDashboard>
       _sum: { amount: true },
     }),
     prisma.financeTransaction.findMany({
-      where: { type: FinanceTransactionType.SALE },
+      where: { status: { not: FinanceTransactionStatus.REFUNDED } },
       include: { seller: { select: { storeName: true } } },
       orderBy: { createdAt: "desc" },
       take: 40,
@@ -118,4 +116,4 @@ export async function getAdminFinanceDashboard(): Promise<AdminFinanceDashboard>
   };
 }
 
-export { FinanceTransactionStatus, FinanceTransactionType };
+export { FinanceTransactionStatus };

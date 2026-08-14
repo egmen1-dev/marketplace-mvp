@@ -45,6 +45,6 @@ export function canSellerRespondToDispute(
 ): boolean {
   return (
     actor === "seller" &&
-    isOpenDisputeStatus(disputeStatus as "OPEN" | "SELLER_RESPONSE" | "UNDER_REVIEW")
+    isOpenDisputeStatus(disputeStatus as "OPEN" | "UNDER_REVIEW")
   );
 }

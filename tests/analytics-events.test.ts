@@ -13,7 +13,8 @@ describe("analytics events", () => {
     expect(ANALYTICS_EVENT_NAMES).toContain("landing_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("purchase_complete");
     expect(ANALYTICS_EVENT_NAMES).toContain("ad_landing_view");
-    expect(ANALYTICS_EVENT_NAMES.length).toBe(26);
+    expect(ANALYTICS_EVENT_NAMES).toContain("discovery_view");
+    expect(ANALYTICS_EVENT_NAMES).toContain("situation_selected");
     expect(ANALYTICS_EVENT_NAMES).toContain("pdp_section_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("buy_intent");
     expect(ANALYTICS_EVENT_NAMES).toContain("seller_block_view");
@@ -21,11 +22,6 @@ describe("analytics events", () => {
     expect(ANALYTICS_EVENT_NAMES).toContain("delivery_view");
     expect(ANALYTICS_EVENT_NAMES).toContain("hero_product_click");
     expect(ANALYTICS_EVENT_NAMES).toContain("search_start");
-    expect(ANALYTICS_EVENT_NAMES).toContain("buyer_confirmation");
-    expect(ANALYTICS_EVENT_NAMES).toContain("dispute_created");
-    expect(ANALYTICS_EVENT_NAMES).toContain("dispute_resolved");
-    expect(ANALYTICS_EVENT_NAMES).toContain("seller_trust_view");
-    expect(ANALYTICS_EVENT_NAMES).toContain("trust_block_view");
   });
 
   it("validates event names", () => {

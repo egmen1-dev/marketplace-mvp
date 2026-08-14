@@ -12,6 +12,17 @@ import {
   TrustSection,
 } from "@/components/home";
 import { TrustStrip } from "@/components/trust";
+import { DiscoveryHomeSection } from "@/features/marketplace-discovery";
+import {
+  BuyerHomeHeader,
+  BuyerOnboardingBanner,
+} from "@/features/marketplace-ux-completion";
+import { getSessionUser } from "@/features/auth";
+import {
+  getBuyerHomeContext,
+  getBuyerOnboardingState,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
 import {
   getHomeMarketplaceStats,
   getHomeNewProducts,
@@ -56,8 +67,20 @@ export default async function HomePage() {
     stats != null &&
     (stats.products > 0 || stats.sellers > 0 || stats.categories > 0);
 
+  const uxEnabled = isMarketplaceUxCompletionEnabled();
+
+  const session = uxEnabled ? await getSessionUser() : null;
+  const [buyerHome, buyerOnboarding] = session
+    ? await Promise.all([
+        getBuyerHomeContext(session.id),
+        getBuyerOnboardingState(true),
+      ])
+    : [null, null];
+
   return (
-    <div className="home-marketplace flex flex-col">
+    <div
+      className={`home-marketplace flex flex-col${uxEnabled ? " home-marketplace--light" : ""}`}
+    >
       <HomeScrollTracker />
       <HomeStickyCatalog />
 
@@ -113,6 +136,18 @@ export default async function HomePage() {
 
         <TrustStrip className="border-border/60 bg-surface/50" />
       </section>
+
+      {buyerOnboarding?.showWelcome ? (
+        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6">
+          <BuyerOnboardingBanner show />
+        </div>
+      ) : null}
+
+      {buyerHome?.enabled ? <BuyerHomeHeader context={buyerHome} /> : null}
+
+      <div className="content-visibility-auto">
+        <DiscoveryHomeSection />
+      </div>
 
       <div className="content-visibility-auto">
         <PopularCategories categories={categories} />

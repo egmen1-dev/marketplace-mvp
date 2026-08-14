@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { DisputeReason } from "@prisma/client";
+import type { DisputeReason } from "@/lib/trust-safety/disputes";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";

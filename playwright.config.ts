@@ -21,6 +21,11 @@ function readLocalDatabaseUrl(): string | undefined {
 
 const localDatabaseUrl = readLocalDatabaseUrl();
 
+/** Local Playwright default — staging/CI should set E2E_FIXTURE_SECRET explicitly. */
+const e2eFixtureSecret =
+  process.env.E2E_FIXTURE_SECRET?.trim() || "local-e2e-fixture-secret";
+process.env.E2E_FIXTURE_SECRET = e2eFixtureSecret;
+
 const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3000);
 /** Must match AUTH / NEXT_PUBLIC_APP_URL host (localhost ≠ 127.0.0.1 for cookies+CORS). */
 const baseURL =
@@ -61,6 +66,7 @@ export default defineConfig({
       NEXT_PUBLIC_APP_URL: baseURL,
       AUTH_URL: baseURL,
       NEXTAUTH_URL: baseURL,
+      E2E_FIXTURE_SECRET: e2eFixtureSecret,
     },
   },
 });

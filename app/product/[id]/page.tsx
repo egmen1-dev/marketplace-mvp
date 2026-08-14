@@ -21,12 +21,39 @@ import {
 } from "@/features/products";
 import { PdpCharacteristics } from "@/features/products/components/pdp-characteristics";
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
+import { PdpNewSellerTrustBlocks } from "@/features/marketplace-new-seller-trust";
+import { PdpBuyerTrustExperienceBlock } from "@/features/marketplace-trust-experience";
+import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-trust-loop";
+import { PdpDeliveryHint } from "@/features/marketplace-delivery";
+import { PdpDiscoveryWhyBlock } from "@/features/marketplace-discovery";
+import { PdpUxCompletionBlocks } from "@/features/marketplace-ux-completion";
+import { PdpConversionDiagnosticsPanel } from "@/features/marketplace-conversion";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
-import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
+import { getProductReviewsForPdp, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
+import { getPdpDeliveryHint, isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
+import { buildTrustSignals } from "@/lib/marketplace-trust-loop/moderation/risk-signals";
 import {
-  SellerTrustScoreBadge,
-  WhyTrustBlock,
-} from "@/components/trust";
+  buildWhyReasons,
+  isMarketplaceDiscoveryEnabled,
+} from "@/lib/marketplace-discovery";
+import {
+  buildPdpFitUx,
+  buildPdpTrustUx,
+  isMarketplaceUxCompletionEnabled,
+} from "@/lib/marketplace-ux-completion";
+import {
+  getPdpConversionDiagnostics,
+  isMarketplaceConversionEnabled,
+} from "@/lib/marketplace-conversion";
+import {
+  getBuyerNewSellerSnapshot,
+  isMarketplaceNewSellerTrustEnabled,
+} from "@/lib/marketplace-new-seller-trust";
+import {
+  getBuyerTrustExperience,
+  isMarketplaceTrustExperienceEnabled,
+} from "@/lib/marketplace-trust-experience";
+import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
 import { getReservationAvailability } from "@/features/pickup/lib/reservation-availability";
@@ -36,10 +63,6 @@ import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { getCanonicalAppUrl } from "@/lib/env";
 import { productJsonLd } from "@/lib/seo/json-ld";
 import { brandPagePath } from "@/lib/seo/paths";
-import {
-  getSellerTrustScoreForProfile,
-  isTrustSafetyEnabled,
-} from "@/lib/trust-safety";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -100,26 +123,80 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let session: Awaited<ReturnType<typeof getSessionUser>> = null;
   let similar: Awaited<ReturnType<typeof listSimilarProducts>> = [];
   let sellerTrust: Awaited<ReturnType<typeof getSellerTrustProfile>> = null;
-  let sellerTrustScore: Awaited<
-    ReturnType<typeof getSellerTrustScoreForProfile>
-  > = null;
+  let pdpReviews: Awaited<ReturnType<typeof getProductReviewsForPdp>> | null = null;
+  let trustSignals: Awaited<ReturnType<typeof buildTrustSignals>> = null;
+  let buyerTrustExperience: Awaited<ReturnType<typeof getBuyerTrustExperience>> | null = null;
+  let buyerNewSeller: Awaited<ReturnType<typeof getBuyerNewSellerSnapshot>> | null = null;
+  let deliveryHint: Awaited<ReturnType<typeof getPdpDeliveryHint>> = null;
+  let discoveryReasons: Awaited<ReturnType<typeof buildWhyReasons>> = [];
+  let pdpTrustUx: Awaited<ReturnType<typeof buildPdpTrustUx>> | null = null;
+  let pdpFitUx: Awaited<ReturnType<typeof buildPdpFitUx>> | null = null;
+  let pdpConversionDiagnostics: Awaited<
+    ReturnType<typeof getPdpConversionDiagnostics>
+  > | null = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
     session = loaded.session;
     if (product) {
-      const trustSafetyOn = isTrustSafetyEnabled();
-      [similar, sellerTrust, sellerTrustScore] = await Promise.all([
+      const trustEnabled = isMarketplaceTrustLoopEnabled();
+      const deliveryEnabled = isMarketplaceDeliveryEnabled();
+      [similar, sellerTrust, pdpReviews] = await Promise.all([
         listSimilarProducts(product.id, {
           categoryId: product.category?.id,
           price: product.price,
           limit: 8,
         }),
         getSellerTrustProfile(product.seller.slug),
-        trustSafetyOn && product.seller.id
-          ? getSellerTrustScoreForProfile(product.seller.id)
-          : Promise.resolve(null),
+        trustEnabled ? getProductReviewsForPdp(product.id) : Promise.resolve(null),
       ]);
+      if (trustEnabled) {
+        if (isMarketplaceNewSellerTrustEnabled()) {
+          buyerNewSeller = await getBuyerNewSellerSnapshot({
+            sellerId: product.seller.id,
+            productImageCount: product.images.length,
+            productHasPrimary: Boolean(product.primaryImage ?? product.images[0]),
+            productDescriptionLength: (product.description ?? "").length,
+            productReviewsCount: pdpReviews?.rating?.reviewsCount ?? 0,
+          });
+        }
+        if (isMarketplaceTrustExperienceEnabled()) {
+          buyerTrustExperience = await getBuyerTrustExperience(product.seller.id);
+        } else if (!isMarketplaceNewSellerTrustEnabled()) {
+          trustSignals = await buildTrustSignals({
+            sellerId: product.seller.id,
+            productId: product.id,
+            isVerified: Boolean(sellerTrust?.isVerified),
+          });
+        }
+      }
+      if (deliveryEnabled) {
+        deliveryHint = await getPdpDeliveryHint({
+          city: product.city,
+          minDays: 1,
+          maxDays: 3,
+        });
+      }
+      if (isMarketplaceDiscoveryEnabled()) {
+        discoveryReasons = await buildWhyReasons(product);
+      }
+      if (isMarketplaceUxCompletionEnabled()) {
+        [pdpTrustUx, pdpFitUx] = await Promise.all([
+          buildPdpTrustUx({
+            product,
+            sellerVerified: Boolean(sellerTrust?.isVerified),
+          }),
+          buildPdpFitUx({ product, userId: session?.id }),
+        ]);
+      }
+      const canSeeConversionDiagnostics =
+        isMarketplaceConversionEnabled() &&
+        (session?.role === "ADMIN" ||
+          (session?.sellerProfileId != null &&
+            session.sellerProfileId === product.seller.id));
+      if (canSeeConversionDiagnostics) {
+        pdpConversionDiagnostics = await getPdpConversionDiagnostics(product.id);
+      }
     }
   } catch (err) {
     console.error("[product]", err);
@@ -311,13 +388,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
             sellerVerified={Boolean(sellerTrust?.isVerified)}
           />
 
-          {isTrustSafetyEnabled() ? (
-            <WhyTrustBlock productId={product.id} />
+          {discoveryReasons.length > 0 ? (
+            <PdpDiscoveryWhyBlock reasons={discoveryReasons} />
+          ) : null}
+
+          {pdpConversionDiagnostics?.enabled ? (
+            <PdpConversionDiagnosticsPanel diagnostics={pdpConversionDiagnostics} />
+          ) : null}
+
+          {pdpTrustUx && pdpFitUx ? (
+            <PdpUxCompletionBlocks trust={pdpTrustUx} fit={pdpFitUx} />
           ) : null}
 
           {sellerTrust ? (
             <PdpTrustBlock
               seller={sellerTrust}
+              trustTier={buyerNewSeller?.trustTier ?? null}
               productId={product.id}
               city={product.city}
               weightKg={product.weight}
@@ -331,14 +417,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           ) : null}
 
-          {sellerTrustScore ? (
-            <SellerTrustScoreBadge
-              sellerId={sellerTrustScore.sellerId}
-              score={sellerTrustScore.score}
-              label={sellerTrustScore.label}
-              ordersCompleted={sellerTrustScore.ordersCompleted}
-              joinedAt={sellerTrustScore.joinedAt}
+          {deliveryHint ? (
+            <PdpDeliveryHint
+              headline={deliveryHint.headline}
+              subline={deliveryHint.subline}
             />
+          ) : null}
+
+          {buyerNewSeller ? (
+            <PdpNewSellerTrustBlocks
+              snapshot={buyerNewSeller}
+              sellerId={product.seller.id}
+              productId={product.id}
+            />
+          ) : null}
+
+          {buyerTrustExperience ? (
+            <PdpBuyerTrustExperienceBlock snapshot={buyerTrustExperience} />
+          ) : trustSignals ? (
+            <PdpTrustSignalsBlock signals={trustSignals} />
+          ) : null}
+          {pdpReviews?.rating ? (
+            <PdpReviewsBlock rating={pdpReviews.rating} reviews={pdpReviews.reviews} />
           ) : null}
 
           <section

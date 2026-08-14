@@ -176,6 +176,10 @@ describe("finalizePaidOrder / webhook paid path", () => {
     vi.doMock("@/lib/logger", () => ({
       log: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     }));
+    vi.doMock("@/lib/finance", () => ({
+      syncFinanceOnPaymentInTx: vi.fn(async () => undefined),
+      trackFinanceTransactionCreated: vi.fn(async () => undefined),
+    }));
 
     const { finalizePaidOrder } = await import(
       "@/features/orders/lib/finalize-paid-order"
