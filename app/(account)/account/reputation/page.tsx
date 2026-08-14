@@ -1,16 +1,26 @@
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
-import { SellerReputationPanel } from "@/features/marketplace-trust-loop";
+import { AccountReputationView } from "@/features/marketplace-trust-score";
 import { ROUTES } from "@/lib/constants";
-import { getSellerReputationPage, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
+import {
+  getSellerReputationPage,
+  isMarketplaceTrustLoopEnabled,
+} from "@/lib/marketplace-trust-loop";
+import {
+  getSellerTrustScorePage,
+  isMarketplaceTrustScoreModelEnabled,
+} from "@/lib/marketplace-trust-score";
 
 export const metadata = { title: "Моя репутация" };
 
 export default async function AccountReputationPage() {
   const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_REPUTATION);
-  const enabled = isMarketplaceTrustLoopEnabled();
-  const reputation = enabled
-    ? await getSellerReputationPage(seller.sellerProfileId)
-    : null;
+  const trustLoopEnabled = isMarketplaceTrustLoopEnabled();
+  const trustScoreEnabled = isMarketplaceTrustScoreModelEnabled();
+
+  const [legacy, trustScore] = await Promise.all([
+    trustLoopEnabled ? getSellerReputationPage(seller.sellerProfileId) : Promise.resolve(null),
+    trustScoreEnabled ? getSellerTrustScorePage(seller.sellerProfileId) : Promise.resolve(null),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -19,15 +29,15 @@ export default async function AccountReputationPage() {
           Моя репутация
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Отзывы покупателей и уровень доверия вашего магазина
+          Рейтинг доверия, отзывы покупателей и подсказки по улучшению магазина
         </p>
       </div>
-      {!enabled || !reputation ? (
+      {!trustLoopEnabled && !trustScoreEnabled ? (
         <p className="text-sm text-muted-foreground">
-          MARKETPLACE_TRUST_LOOP_ENABLED=false
+          MARKETPLACE_TRUST_LOOP_ENABLED=false · MARKETPLACE_TRUST_SCORE_MODEL_ENABLED=false
         </p>
       ) : (
-        <SellerReputationPanel reputation={reputation} />
+        <AccountReputationView legacy={legacy} trustScore={trustScore} />
       )}
     </div>
   );

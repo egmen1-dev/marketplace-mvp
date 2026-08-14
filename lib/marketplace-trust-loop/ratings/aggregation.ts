@@ -1,6 +1,14 @@
-import { OrderStatus, ReviewStatus } from "@prisma/client";
+import { OrderStatus, ReviewStatus, TrustScoreEventType } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import {
+  describeReviewDelta,
+  handleTrustScoreEvent,
+  isMarketplaceTrustScoreModelEnabled,
+  recalculateSellerTrustScore,
+  reviewRatingDelta,
+  syncSellerTrustScoreToReputation,
+} from "@/lib/marketplace-trust-score";
 
 export async function recalculateProductRating(productId: string): Promise<void> {
   const reviews = await prisma.review.findMany({
@@ -41,6 +49,12 @@ export async function recalculateProductRating(productId: string): Promise<void>
 }
 
 export async function recalculateSellerReputation(sellerId: string): Promise<void> {
+  if (isMarketplaceTrustScoreModelEnabled()) {
+    await recalculateSellerTrustScore(sellerId, TrustScoreEventType.DAILY_RECALC);
+    await syncSellerTrustScoreToReputation(sellerId);
+    return;
+  }
+
   const [reviews, completedOrders, cancelledOrders] = await Promise.all([
     prisma.review.findMany({
       where: { sellerId, status: ReviewStatus.APPROVED },
@@ -106,9 +120,22 @@ export async function recalculateSellerReputation(sellerId: string): Promise<voi
 export async function recalculateRatingsForReview(review: {
   productId: string;
   sellerId: string;
+  rating?: number;
+  hasPhoto?: boolean;
 }): Promise<void> {
-  await Promise.all([
-    recalculateProductRating(review.productId),
-    recalculateSellerReputation(review.sellerId),
-  ]);
+  await recalculateProductRating(review.productId);
+
+  if (isMarketplaceTrustScoreModelEnabled() && review.rating != null) {
+    const hasPhoto = review.hasPhoto ?? false;
+    await handleTrustScoreEvent({
+      sellerId: review.sellerId,
+      eventType: TrustScoreEventType.REVIEW_CREATED,
+      reason: describeReviewDelta(review.rating, hasPhoto),
+      rawDelta: reviewRatingDelta(review.rating, hasPhoto),
+    });
+    await syncSellerTrustScoreToReputation(review.sellerId);
+    return;
+  }
+
+  await recalculateSellerReputation(review.sellerId);
 }

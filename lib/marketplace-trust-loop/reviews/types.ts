@@ -50,6 +50,10 @@ export type TrustSignalsSnapshot = {
   hasBuyerPhotos: boolean;
   productRating: number | null;
   reviewsCount: number;
+  trustScore?: number;
+  trustLevel?: string;
+  buyerReasons?: string[];
+  verificationDetails?: string[];
 };
 
 export type ModerationQueueSummary = {
