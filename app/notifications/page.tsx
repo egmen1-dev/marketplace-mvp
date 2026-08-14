@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 
+import Link from "next/link";
+
 import { AccountShell } from "@/features/account";
 import { getSessionUser } from "@/features/auth";
 import { ROUTES } from "@/lib/constants";
@@ -24,6 +26,10 @@ import {
   getSellerOperationsNotifications,
   isSellerOperationsEnabled,
 } from "@/lib/seller-operations";
+import {
+  getTrustExperienceNotifications,
+  isMarketplaceTrustExperienceEnabled,
+} from "@/lib/marketplace-trust-experience";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +50,9 @@ export default async function NotificationsPage() {
   const journeyEnabled = isSellerJourneyEnabled();
 
   const notifications = [
+    ...(isMarketplaceTrustExperienceEnabled() && user.sellerProfileId
+      ? await getTrustExperienceNotifications({ sellerId: user.sellerProfileId })
+      : []),
     ...(biEnabled && user.sellerProfileId
       ? await getSellerBusinessNotifications({
           sellerProfileId: user.sellerProfileId,
@@ -101,6 +110,17 @@ export default async function NotificationsPage() {
             >
               <p className="font-medium">{n.title}</p>
               <p className="mt-1 text-sm text-muted-foreground">{n.body}</p>
+              {"action" in n && n.action ? (
+                <p className="mt-2 text-sm text-foreground">Что сделать: {n.action}</p>
+              ) : null}
+              {"href" in n && n.href ? (
+                <Link
+                  href={n.href}
+                  className="mt-3 inline-block text-sm text-primary underline-offset-4 hover:underline"
+                >
+                  Открыть центр доверия
+                </Link>
+              ) : null}
             </article>
           ))
         )}

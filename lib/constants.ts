@@ -96,6 +96,8 @@ export const ROUTES = {
   ADMIN_FOUNDATION: "/admin/foundation",
   ADMIN_OPERATIONS: "/admin/operations",
   ADMIN_TRUST: "/admin/trust",
+  /** Trust score analytics for admins */
+  ADMIN_TRUST_CENTER: "/admin/trust-center",
   ADMIN_MODERATION: "/admin/moderation",
   ADMIN_DELIVERY: "/admin/delivery",
   ADMIN_DELIVERY_HEALTH: "/admin/delivery/health",
