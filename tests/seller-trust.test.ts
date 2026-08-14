@@ -1,5 +1,5 @@
 import { ProductStatus, SellerKind, UserRole } from "@prisma/client";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   getVisibleSellerMetrics,
@@ -9,11 +9,20 @@ import {
 } from "@/features/seller/lib/reputation";
 
 describe("seller trust badges", () => {
+  const PREV_FLAG = process.env.MARKETPLACE_NEW_SELLER_TRUST_ENABLED;
+
+  afterEach(() => {
+    if (PREV_FLAG === undefined) delete process.env.MARKETPLACE_NEW_SELLER_TRUST_ENABLED;
+    else process.env.MARKETPLACE_NEW_SELLER_TRUST_ENABLED = PREV_FLAG;
+  });
+
   it("shows VERIFIED_SELLER only when isVerified", () => {
+    delete process.env.MARKETPLACE_NEW_SELLER_TRUST_ENABLED;
     const verified = resolveSellerBadges({
       isVerified: true,
       kind: SellerKind.INDIVIDUAL,
       joinedAt: new Date("2020-01-01"),
+      completedOrdersCount: 1,
     });
     expect(verified).toContain("VERIFIED_SELLER");
 
@@ -23,6 +32,17 @@ describe("seller trust badges", () => {
       joinedAt: new Date("2020-01-01"),
     });
     expect(notVerified).not.toContain("VERIFIED_SELLER");
+  });
+
+  it("hides VERIFIED_SELLER for verified new sellers when new seller trust enabled", () => {
+    process.env.MARKETPLACE_NEW_SELLER_TRUST_ENABLED = "true";
+    const badges = resolveSellerBadges({
+      isVerified: true,
+      kind: SellerKind.INDIVIDUAL,
+      joinedAt: new Date("2020-01-01"),
+      completedOrdersCount: 0,
+    });
+    expect(badges).not.toContain("VERIFIED_SELLER");
   });
 
   it("shows STORE badge for SHOP kind", () => {

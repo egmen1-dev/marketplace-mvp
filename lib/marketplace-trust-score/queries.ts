@@ -2,9 +2,15 @@ import { ProductStatus, ReviewStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { computeProductCompletenessScore } from "@/lib/conversion";
+import {
+  isMarketplaceNewSellerTrustEnabled,
+  resolveTrustTier,
+  trackFirstOrderCompleted,
+} from "@/lib/marketplace-new-seller-trust";
+import { trackTrustLevelReached } from "@/lib/marketplace-trust-experience/analytics";
 
 import { computeSellerTrustScore } from "./calculator";
-import { TRUST_SCORE_USER_LABEL } from "./constants";
+import { NEW_SELLER_TRUST_SCORE, TRUST_SCORE_USER_LABEL } from "./constants";
 import { isMarketplaceTrustScoreModelEnabled } from "./flags";
 import { listTrustScoreHistory, getLatestTrustScoreHistoryReason } from "./history";
 import {
@@ -172,6 +178,35 @@ export async function syncSellerTrustScoreToReputation(sellerId: string): Promis
 
   const metrics = await gatherSellerMetrics(sellerId);
   const trustScore = await getCurrentSellerTrustScore(sellerId);
+  const previous = await prisma.sellerReputation.findUnique({
+    where: { sellerId },
+    select: { completedOrders: true, reviewsCount: true, trustScore: true },
+  });
+
+  if (
+    isMarketplaceNewSellerTrustEnabled() &&
+    (previous?.completedOrders ?? 0) === 0 &&
+    metrics.completedOrders >= 1
+  ) {
+    trackFirstOrderCompleted(sellerId);
+  }
+
+  if (isMarketplaceNewSellerTrustEnabled()) {
+    const prevTier = resolveTrustTier({
+      trustScore:
+        previous?.trustScore && previous.trustScore > 0
+          ? previous.trustScore
+          : NEW_SELLER_TRUST_SCORE,
+      completedOrders: previous?.completedOrders ?? 0,
+    });
+    const newTier = resolveTrustTier({
+      trustScore,
+      completedOrders: metrics.completedOrders,
+    });
+    if (prevTier.id !== newTier.id) {
+      trackTrustLevelReached(newTier.id);
+    }
+  }
   const positiveSentiment = await prisma.review.count({
     where: { sellerId, status: ReviewStatus.APPROVED, rating: { gte: 4 } },
   });

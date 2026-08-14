@@ -1,9 +1,14 @@
 import { OrderStatus } from "@prisma/client";
 
 import { isOrderReviewEligible } from "@/features/order-lifecycle/lib/integrations";
+import { FirstReviewPrompt } from "@/features/marketplace-new-seller-trust";
+import { ReviewForm } from "@/features/marketplace-trust-loop";
 import { prisma } from "@/lib/prisma";
 import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
-import { ReviewForm } from "@/features/marketplace-trust-loop";
+import {
+  getFirstReviewPrompt,
+  isMarketplaceNewSellerTrustEnabled,
+} from "@/lib/marketplace-new-seller-trust";
 
 type OrderReviewSectionProps = {
   orderId: string;
@@ -45,11 +50,29 @@ export async function OrderReviewSection(props: OrderReviewSectionProps) {
     );
   }
 
+  let firstReviewPrompt = null;
+  if (isMarketplaceNewSellerTrustEnabled()) {
+    const product = await prisma.product.findUnique({
+      where: { id: firstItem.productId },
+      select: { sellerId: true },
+    });
+    if (product?.sellerId) {
+      firstReviewPrompt = await getFirstReviewPrompt({
+        productId: firstItem.productId,
+        productName: firstItem.productName,
+        sellerId: product.sellerId,
+      });
+    }
+  }
+
   return (
-    <ReviewForm
-      orderId={props.orderId}
-      productId={firstItem.productId}
-      productName={firstItem.productName}
-    />
+    <div className="rounded-xl border border-border bg-card p-4">
+      {firstReviewPrompt ? <FirstReviewPrompt prompt={firstReviewPrompt} /> : null}
+      <ReviewForm
+        orderId={props.orderId}
+        productId={firstItem.productId}
+        productName={firstItem.productName}
+      />
+    </div>
   );
 }
