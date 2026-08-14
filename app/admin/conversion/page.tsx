@@ -7,6 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { AdminConversionCenterPanel } from "@/features/marketplace-conversion";
+import {
+  getAdminConversionCenter,
+  isMarketplaceConversionEnabled,
+} from "@/lib/marketplace-conversion";
 import { getConversionDashboard } from "@/lib/conversion";
 import { ROUTES } from "@/lib/constants";
 import { formatDateMoscowShort } from "@/lib/format/datetime";
@@ -22,11 +27,17 @@ function pct(n: number | null) {
 }
 
 export default async function AdminConversionPage() {
+  const conversionEnabled = isMarketplaceConversionEnabled();
+  let center: Awaited<ReturnType<typeof getAdminConversionCenter>> | null = null;
   let data: Awaited<ReturnType<typeof getConversionDashboard>> | null = null;
   let dbError: string | null = null;
 
   try {
-    data = await getConversionDashboard(7);
+    if (conversionEnabled) {
+      center = await getAdminConversionCenter(7);
+    } else {
+      data = await getConversionDashboard(7);
+    }
   } catch (err) {
     console.error("[admin/conversion]", err);
     dbError = "Не удалось загрузить conversion dashboard";
@@ -36,13 +47,18 @@ export default async function AdminConversionPage() {
     <div className="flex flex-col gap-6" data-testid="admin-conversion">
       <div>
         <h2 className="font-heading text-2xl font-semibold tracking-tight">
-          Conversion
+          {conversionEnabled ? "Conversion Center" : "Conversion"}
         </h2>
         <p className="text-sm text-muted-foreground">
-          PDP → cart → checkout. Quality score не влияет на ranking. Окно{" "}
-          {data?.windowDays ?? 7} дней.
+          {conversionEnabled
+            ? "Воронка, точки потери и возможности роста маркетплейса"
+            : "PDP → cart → checkout. Quality score не влияет на ranking."}
         </p>
-        {data ? (
+        {center?.enabled ? (
+          <p className="mt-1 text-xs text-muted-foreground">
+            С {formatDateMoscowShort(center.since)} · окно {center.windowDays} дн.
+          </p>
+        ) : data ? (
           <p className="mt-1 text-xs text-muted-foreground">
             С {formatDateMoscowShort(data.since)}
           </p>
@@ -51,6 +67,8 @@ export default async function AdminConversionPage() {
 
       {dbError ? (
         <p className="text-sm text-destructive">{dbError}</p>
+      ) : center?.enabled ? (
+        <AdminConversionCenterPanel center={center} />
       ) : data ? (
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

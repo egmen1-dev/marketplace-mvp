@@ -1,3 +1,4 @@
+import { SellerConversionPanel } from "@/features/marketplace-conversion";
 import { SellerHomeCompletionPanel } from "@/features/marketplace-ux-completion";
 import { SellerBusinessIntelligencePanel } from "@/features/seller-business-intelligence";
 import { SellerOperatingDeskPanel } from "@/features/seller-operating-desk";
@@ -18,6 +19,10 @@ import {
   isSellerOperationsEnabled,
 } from "@/lib/seller-operations";
 import {
+  getSellerConversionDashboard,
+  isMarketplaceConversionEnabled,
+} from "@/lib/marketplace-conversion";
+import {
   getSellerHomeSummary,
   isMarketplaceUxCompletionEnabled,
 } from "@/lib/marketplace-ux-completion";
@@ -37,8 +42,9 @@ export default async function AccountBusinessPage() {
   const deskEnabled = isSellerOperatingDeskEnabled();
 
   const uxEnabled = isMarketplaceUxCompletionEnabled();
+  const conversionEnabled = isMarketplaceConversionEnabled();
 
-  const [businessDashboard, workspace, data, recentOrders, activity, sellerUx] =
+  const [businessDashboard, workspace, data, recentOrders, activity, sellerUx, sellerConversion] =
     await Promise.all([
       biEnabled
         ? getSellerBusinessDashboard(seller.sellerProfileId)
@@ -95,6 +101,18 @@ export default async function AccountBusinessPage() {
             nextStep: null,
             attention: [],
           }),
+      conversionEnabled
+        ? getSellerConversionDashboard(seller.sellerProfileId)
+        : Promise.resolve({
+            enabled: false as const,
+            windowDays: 30,
+            views: 0,
+            cartAdds: 0,
+            orders: 0,
+            viewToCartRate: null,
+            blockers: [],
+            recommendations: [],
+          }),
     ]);
 
   const subtitle = biEnabled
@@ -111,6 +129,13 @@ export default async function AccountBusinessPage() {
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
       </div>
+
+      {sellerConversion.enabled ? (
+        <SellerConversionPanel
+          dashboard={sellerConversion}
+          sellerProfileId={seller.sellerProfileId}
+        />
+      ) : null}
 
       {sellerUx.enabled ? (
         <SellerHomeCompletionPanel summary={sellerUx} />

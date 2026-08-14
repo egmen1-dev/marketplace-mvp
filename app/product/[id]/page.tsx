@@ -25,6 +25,7 @@ import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-tr
 import { PdpDeliveryHint } from "@/features/marketplace-delivery";
 import { PdpDiscoveryWhyBlock } from "@/features/marketplace-discovery";
 import { PdpUxCompletionBlocks } from "@/features/marketplace-ux-completion";
+import { PdpConversionDiagnosticsPanel } from "@/features/marketplace-conversion";
 import { PdpTrustBlock } from "@/features/products/components/pdp-trust-block";
 import { getProductReviewsForPdp, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
 import { getPdpDeliveryHint, isMarketplaceDeliveryEnabled } from "@/lib/marketplace-delivery";
@@ -38,6 +39,10 @@ import {
   buildPdpTrustUx,
   isMarketplaceUxCompletionEnabled,
 } from "@/lib/marketplace-ux-completion";
+import {
+  getPdpConversionDiagnostics,
+  isMarketplaceConversionEnabled,
+} from "@/lib/marketplace-conversion";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
@@ -114,6 +119,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let discoveryReasons: Awaited<ReturnType<typeof buildWhyReasons>> = [];
   let pdpTrustUx: Awaited<ReturnType<typeof buildPdpTrustUx>> | null = null;
   let pdpFitUx: Awaited<ReturnType<typeof buildPdpFitUx>> | null = null;
+  let pdpConversionDiagnostics: Awaited<
+    ReturnType<typeof getPdpConversionDiagnostics>
+  > | null = null;
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -155,6 +163,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
           }),
           buildPdpFitUx({ product, userId: session?.id }),
         ]);
+      }
+      const canSeeConversionDiagnostics =
+        isMarketplaceConversionEnabled() &&
+        (session?.role === "ADMIN" ||
+          (session?.sellerProfileId != null &&
+            session.sellerProfileId === product.seller.id));
+      if (canSeeConversionDiagnostics) {
+        pdpConversionDiagnostics = await getPdpConversionDiagnostics(product.id);
       }
     }
   } catch (err) {
@@ -349,6 +365,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {discoveryReasons.length > 0 ? (
             <PdpDiscoveryWhyBlock reasons={discoveryReasons} />
+          ) : null}
+
+          {pdpConversionDiagnostics?.enabled ? (
+            <PdpConversionDiagnosticsPanel diagnostics={pdpConversionDiagnostics} />
           ) : null}
 
           {pdpTrustUx && pdpFitUx ? (
