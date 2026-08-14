@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Store } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { SellerReputationLink } from "@/features/marketplace-trust-conversion/components/seller-reputation-link";
 import { TrustTierBadge } from "@/features/marketplace-new-seller-trust";
 import { SellerBadges } from "@/features/seller/components/seller-badge";
 import type { TrustTier } from "@/lib/marketplace-new-seller-trust/types";
@@ -55,12 +56,13 @@ export function ProductSellerCard({ seller, trustTier, className }: ProductSelle
             Продавец
           </p>
           <h3 className="mt-0.5 font-heading text-lg font-semibold tracking-tight sm:text-xl">
-            <Link
+            <SellerReputationLink
               href={sellerPublicPath(seller.slug)}
+              sellerId={seller.id}
               className="underline-offset-4 hover:underline"
             >
               {seller.storeName}
-            </Link>
+            </SellerReputationLink>
           </h3>
 
           <p className="mt-1 text-sm text-muted-foreground">
