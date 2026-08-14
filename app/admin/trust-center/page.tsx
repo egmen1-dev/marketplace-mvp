@@ -1,10 +1,15 @@
 import Link from "next/link";
 
+import { AdminNewSellersPanel } from "@/features/marketplace-new-seller-trust";
+import {
+  getAdminNewSellerTrustStats,
+  isMarketplaceNewSellerTrustEnabled,
+} from "@/lib/marketplace-new-seller-trust";
+import { AdminTrustCenterPanel } from "@/features/marketplace-trust-experience";
 import {
   getAdminTrustCenter,
   isMarketplaceTrustExperienceEnabled,
 } from "@/lib/marketplace-trust-experience";
-import { AdminTrustCenterPanel } from "@/features/marketplace-trust-experience";
 import { AdminTrustDashboard } from "@/features/marketplace-trust-loop";
 import { getAdminTrustHealth, isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop";
 import { ROUTES } from "@/lib/constants";
@@ -17,9 +22,12 @@ export default async function AdminTrustCenterPage() {
   const experienceEnabled = isMarketplaceTrustExperienceEnabled();
   const trustLoopEnabled = isMarketplaceTrustLoopEnabled();
 
-  const [center, health] = await Promise.all([
+  const newSellerEnabled = isMarketplaceNewSellerTrustEnabled();
+
+  const [center, health, newSellerStats] = await Promise.all([
     experienceEnabled ? getAdminTrustCenter() : Promise.resolve(null),
     trustLoopEnabled ? getAdminTrustHealth() : Promise.resolve(null),
+    newSellerEnabled ? getAdminNewSellerTrustStats() : Promise.resolve(null),
   ]);
 
   return (
@@ -37,6 +45,8 @@ export default async function AdminTrustCenterPage() {
       </div>
 
       {center?.enabled ? <AdminTrustCenterPanel snapshot={center} /> : null}
+
+      {newSellerStats ? <AdminNewSellersPanel stats={newSellerStats} /> : null}
 
       {health?.enabled ? (
         <div className="flex flex-col gap-3">

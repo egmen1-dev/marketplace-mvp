@@ -21,6 +21,7 @@ import {
 } from "@/features/products";
 import { PdpCharacteristics } from "@/features/products/components/pdp-characteristics";
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
+import { PdpNewSellerTrustBlocks } from "@/features/marketplace-new-seller-trust";
 import { PdpBuyerTrustExperienceBlock } from "@/features/marketplace-trust-experience";
 import { PdpReviewsBlock, PdpTrustSignalsBlock } from "@/features/marketplace-trust-loop";
 import { PdpDeliveryHint } from "@/features/marketplace-delivery";
@@ -44,6 +45,10 @@ import {
   getPdpConversionDiagnostics,
   isMarketplaceConversionEnabled,
 } from "@/lib/marketplace-conversion";
+import {
+  getBuyerNewSellerSnapshot,
+  isMarketplaceNewSellerTrustEnabled,
+} from "@/lib/marketplace-new-seller-trust";
 import {
   getBuyerTrustExperience,
   isMarketplaceTrustExperienceEnabled,
@@ -121,6 +126,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let pdpReviews: Awaited<ReturnType<typeof getProductReviewsForPdp>> | null = null;
   let trustSignals: Awaited<ReturnType<typeof buildTrustSignals>> = null;
   let buyerTrustExperience: Awaited<ReturnType<typeof getBuyerTrustExperience>> | null = null;
+  let buyerNewSeller: Awaited<ReturnType<typeof getBuyerNewSellerSnapshot>> | null = null;
   let deliveryHint: Awaited<ReturnType<typeof getPdpDeliveryHint>> = null;
   let discoveryReasons: Awaited<ReturnType<typeof buildWhyReasons>> = [];
   let pdpTrustUx: Awaited<ReturnType<typeof buildPdpTrustUx>> | null = null;
@@ -145,9 +151,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
         trustEnabled ? getProductReviewsForPdp(product.id) : Promise.resolve(null),
       ]);
       if (trustEnabled) {
+        if (isMarketplaceNewSellerTrustEnabled()) {
+          buyerNewSeller = await getBuyerNewSellerSnapshot({
+            sellerId: product.seller.id,
+            productImageCount: product.images.length,
+            productHasPrimary: Boolean(product.primaryImage ?? product.images[0]),
+            productDescriptionLength: (product.description ?? "").length,
+            productReviewsCount: pdpReviews?.rating?.reviewsCount ?? 0,
+          });
+        }
         if (isMarketplaceTrustExperienceEnabled()) {
           buyerTrustExperience = await getBuyerTrustExperience(product.seller.id);
-        } else {
+        } else if (!isMarketplaceNewSellerTrustEnabled()) {
           trustSignals = await buildTrustSignals({
             sellerId: product.seller.id,
             productId: product.id,
@@ -388,6 +403,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {sellerTrust ? (
             <PdpTrustBlock
               seller={sellerTrust}
+              trustTier={buyerNewSeller?.trustTier ?? null}
               productId={product.id}
               city={product.city}
               weightKg={product.weight}
@@ -405,6 +421,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <PdpDeliveryHint
               headline={deliveryHint.headline}
               subline={deliveryHint.subline}
+            />
+          ) : null}
+
+          {buyerNewSeller ? (
+            <PdpNewSellerTrustBlocks
+              snapshot={buyerNewSeller}
+              sellerId={product.seller.id}
+              productId={product.id}
             />
           ) : null}
 

@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Store } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TrustTierBadge } from "@/features/marketplace-new-seller-trust";
 import { SellerBadges } from "@/features/seller/components/seller-badge";
+import type { TrustTier } from "@/lib/marketplace-new-seller-trust/types";
 import {
   formatSellerJoinedDate,
   formatSellerKindLabel,
@@ -15,10 +17,11 @@ import { cn } from "@/lib/utils";
 
 type ProductSellerCardProps = {
   seller: SellerTrustProfile;
+  trustTier?: TrustTier | null;
   className?: string;
 };
 
-export function ProductSellerCard({ seller, className }: ProductSellerCardProps) {
+export function ProductSellerCard({ seller, trustTier, className }: ProductSellerCardProps) {
   const metrics = getVisibleSellerMetrics(seller.metrics);
   const joinedLabel = formatSellerJoinedDate(seller.joinedAt);
 
@@ -64,13 +67,15 @@ export function ProductSellerCard({ seller, className }: ProductSellerCardProps)
             {formatSellerKindLabel(seller.kind)}
           </p>
 
-          <SellerBadges
-            isVerified={seller.isVerified}
-            kind={seller.kind}
-            joinedAt={seller.joinedAt}
-            completedOrdersCount={seller.metrics.completedOrdersCount}
-            className="mt-2.5"
-          />
+          <div className="mt-2.5 flex flex-wrap items-center gap-2">
+            <SellerBadges
+              isVerified={seller.isVerified}
+              kind={seller.kind}
+              joinedAt={seller.joinedAt}
+              completedOrdersCount={seller.metrics.completedOrdersCount}
+            />
+            {trustTier ? <TrustTierBadge tier={trustTier} /> : null}
+          </div>
 
           {(metrics.length > 0 || seller.joinedAt) && (
             <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">

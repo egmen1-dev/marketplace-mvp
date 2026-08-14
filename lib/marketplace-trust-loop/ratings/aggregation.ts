@@ -9,6 +9,10 @@ import {
   reviewRatingDelta,
   syncSellerTrustScoreToReputation,
 } from "@/lib/marketplace-trust-score";
+import {
+  isMarketplaceNewSellerTrustEnabled,
+  trackFirstReviewReceived,
+} from "@/lib/marketplace-new-seller-trust";
 
 export async function recalculateProductRating(productId: string): Promise<void> {
   const reviews = await prisma.review.findMany({
@@ -127,6 +131,14 @@ export async function recalculateRatingsForReview(review: {
 
   if (isMarketplaceTrustScoreModelEnabled() && review.rating != null) {
     const hasPhoto = review.hasPhoto ?? false;
+    if (isMarketplaceNewSellerTrustEnabled()) {
+      const previousReviews = await prisma.review.count({
+        where: { sellerId: review.sellerId, status: ReviewStatus.APPROVED },
+      });
+      if (previousReviews === 0) {
+        trackFirstReviewReceived(review.sellerId);
+      }
+    }
     await handleTrustScoreEvent({
       sellerId: review.sellerId,
       eventType: TrustScoreEventType.REVIEW_CREATED,

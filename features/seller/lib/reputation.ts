@@ -1,5 +1,6 @@
 import { OrderStatus, ProductStatus, SellerKind } from "@prisma/client";
 
+import { isMarketplaceNewSellerTrustEnabled, shouldShowVerifiedBadge } from "@/lib/marketplace-new-seller-trust";
 import { formatDateMoscow } from "@/lib/format/datetime";
 import { prisma } from "@/lib/prisma";
 
@@ -67,14 +68,21 @@ export function resolveSellerBadges(input: {
     badges.push("STORE");
   }
 
-  if (input.isVerified) {
+  const completedOrders = input.completedOrdersCount ?? 0;
+
+  if (
+    shouldShowVerifiedBadge({
+      isVerified: input.isVerified,
+      completedOrders,
+      newSellerTrustEnabled: isMarketplaceNewSellerTrustEnabled(),
+    })
+  ) {
     badges.push("VERIFIED_SELLER");
   }
 
   const joinedMs = new Date(input.joinedAt).getTime();
   const daysSinceJoined =
     (Date.now() - joinedMs) / (1000 * 60 * 60 * 24);
-  const completedOrders = input.completedOrdersCount ?? 0;
   const withinNewSellerWindow =
     daysSinceJoined <= NEW_SELLER_DAYS &&
     completedOrders < NEW_SELLER_MAX_COMPLETED_ORDERS;

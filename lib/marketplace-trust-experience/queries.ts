@@ -11,6 +11,10 @@ import {
   buildVerificationDetails,
   VERIFIED_SELLER_EXPLANATION,
 } from "@/lib/marketplace-trust-score/signals";
+import {
+  isMarketplaceNewSellerTrustEnabled,
+  isNewSellerStatus,
+} from "@/lib/marketplace-new-seller-trust";
 import { prisma } from "@/lib/prisma";
 
 import { getAdminTrustCenterSnapshot } from "./admin-analytics";
@@ -93,14 +97,24 @@ export async function getBuyerTrustExperience(
   if (metrics.reviewsCount > 0) {
     reasons.push(`✓ ${metrics.reviewsCount} отзывов покупателей`);
   }
-  const verificationDetails = buildVerificationDetails({
-    phoneVerified: metrics.phoneVerified,
-    paymentVerified: metrics.paymentVerified,
-    isVerified: metrics.isVerified,
-    completedOrders: metrics.completedOrders,
-  });
+  const hideBareVerification =
+    isMarketplaceNewSellerTrustEnabled() &&
+    isNewSellerStatus({
+      completedOrders: metrics.completedOrders,
+      reviewsCount: metrics.reviewsCount,
+    });
+
+  const verificationDetails = hideBareVerification
+    ? []
+    : buildVerificationDetails({
+        phoneVerified: metrics.phoneVerified,
+        paymentVerified: metrics.paymentVerified,
+        isVerified: metrics.isVerified,
+        completedOrders: metrics.completedOrders,
+      });
 
   if (
+    !hideBareVerification &&
     verificationDetails.length > 0 &&
     !reasons.some((line) => line.includes(VERIFIED_SELLER_EXPLANATION))
   ) {

@@ -17,10 +17,12 @@ import { PdpDeliveryEstimate } from "@/features/products/components/pdp-delivery
 import { PdpSectionViewTracker } from "@/features/products/components/pdp-section-view-tracker";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { APP_NAME, ROUTES } from "@/lib/constants";
+import type { TrustTier } from "@/lib/marketplace-new-seller-trust/types";
 import { cn } from "@/lib/utils";
 
 type PdpTrustBlockProps = {
   seller: SellerTrustProfile;
+  trustTier?: TrustTier | null;
   productId: string;
   city: string | null;
   weightKg?: number | null;
@@ -34,6 +36,7 @@ type PdpTrustBlockProps = {
 
 export function PdpTrustBlock({
   seller,
+  trustTier,
   productId,
   city,
   weightKg,
@@ -78,7 +81,11 @@ export function PdpTrustBlock({
         </p>
       </div>
 
-      <ProductSellerCard seller={seller} className="border-0 bg-transparent p-0" />
+      <ProductSellerCard
+        seller={seller}
+        trustTier={trustTier}
+        className="border-0 bg-transparent p-0"
+      />
 
       {isNewSeller || !hasSales ? (
         <div
