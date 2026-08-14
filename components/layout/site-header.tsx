@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart, LayoutGrid, Menu, MessageCircle, Search } from "lucide-react";
+import { Heart, LayoutGrid, Menu, MessageCircle, Search, ShoppingBag } from "lucide-react";
 
 import { Logo } from "@/components/brand";
 import { headerActionClassName } from "@/components/layout/header-action";
@@ -81,6 +81,19 @@ export async function SiteHeader({ className, user: userProp }: SiteHeaderProps)
             data-testid="header-favorites"
           >
             <Heart />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-header"
+            className={headerActionClassName("hidden md:inline-flex")}
+            aria-label="Заказы"
+            title="Заказы"
+            nativeButton={false}
+            render={<Link href={ROUTES.ORDERS} />}
+            data-testid="header-orders"
+          >
+            <ShoppingBag />
           </Button>
 
           <HeaderMessagesButton />

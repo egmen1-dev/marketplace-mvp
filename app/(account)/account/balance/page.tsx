@@ -1,3 +1,4 @@
+import { BalanceReceptionFlow } from "@/features/seller/components/balance-reception-flow";
 import { SellerBalancePanel } from "@/features/finance/components/seller-balance-panel";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
 import { SellerMoneyEducationPanel } from "@/features/seller-business-intelligence";
@@ -36,6 +37,7 @@ export default async function AccountBalancePage() {
             : "Виртуальный баланс маркетплейса. Вывод средств пока недоступен."}
         </p>
       </div>
+      <BalanceReceptionFlow />
       <SellerBalancePanel balance={balance} payoutEnabled={payoutEnabled} />
       {moneyEducation ? (
         <SellerMoneyEducationPanel education={moneyEducation} />

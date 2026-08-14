@@ -17,6 +17,7 @@ import {
   OrderStatusBadge,
 } from "@/features/orders";
 import { formatPrice } from "@/features/products/mappers";
+import { OrderFulfillmentSteps } from "@/features/seller/components/order-fulfillment-steps";
 import { SellerOrderStatusActions } from "@/features/seller/components/seller-order-status-actions";
 import { SellerToastFlash } from "@/features/seller/components/seller-toast-flash";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
@@ -114,6 +115,31 @@ export default async function SellerOrdersPage({ searchParams }: PageProps) {
       </Suspense>
 
       <SellerFirstEntryBannerSlot sellerProfileId={seller.sellerProfileId} />
+
+      {counters.overdue > 0 ? (
+        <div
+          className="rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm"
+          data-testid="seller-orders-overdue-banner"
+        >
+          <p className="font-medium text-destructive">
+            {counters.overdue} заказ(ов) просрочено
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            Отправьте товары в срок — просрочка снижает рейтинг магазина.
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            nativeButton={false}
+            render={<Link href={tabHref("OVERDUE")} />}
+          >
+            Открыть просроченные
+          </Button>
+        </div>
+      ) : null}
+
+      <OrderFulfillmentSteps />
 
       <div>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">

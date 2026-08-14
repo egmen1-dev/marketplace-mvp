@@ -109,9 +109,12 @@ export default async function AccountBusinessPage() {
             views: 0,
             cartAdds: 0,
             orders: 0,
+            checkoutStarts: 0,
+            purchases: 0,
             viewToCartRate: null,
             blockers: [],
             recommendations: [],
+            funnelSteps: [],
           }),
     ]);
 

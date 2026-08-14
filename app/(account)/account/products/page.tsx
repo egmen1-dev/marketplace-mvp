@@ -311,6 +311,16 @@ export default async function SellerProductsPage({ searchParams }: PageProps) {
                             size="sm"
                             nativeButton={false}
                             render={
+                              <Link href={`${sellerProductEditPath(product.id)}#photos`} />
+                            }
+                          >
+                            Добавить фото
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            nativeButton={false}
+                            render={
                               <Link href={sellerProductEditPath(product.id)} />
                             }
                           >

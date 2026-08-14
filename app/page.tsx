@@ -67,7 +67,9 @@ export default async function HomePage() {
     stats != null &&
     (stats.products > 0 || stats.sellers > 0 || stats.categories > 0);
 
-  const session = isMarketplaceUxCompletionEnabled() ? await getSessionUser() : null;
+  const uxEnabled = isMarketplaceUxCompletionEnabled();
+
+  const session = uxEnabled ? await getSessionUser() : null;
   const [buyerHome, buyerOnboarding] = session
     ? await Promise.all([
         getBuyerHomeContext(session.id),
@@ -76,7 +78,9 @@ export default async function HomePage() {
     : [null, null];
 
   return (
-    <div className="home-marketplace flex flex-col">
+    <div
+      className={`home-marketplace flex flex-col${uxEnabled ? " home-marketplace--light" : ""}`}
+    >
       <HomeScrollTracker />
       <HomeStickyCatalog />
 
