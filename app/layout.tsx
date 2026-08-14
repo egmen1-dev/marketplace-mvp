@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Manrope, Unbounded } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 
+import { MarketplaceDebugRoot } from "@/components/marketplace-debug/marketplace-debug-root";
 import { AuthGateToast } from "@/components/layout/auth-gate-toast";
 import { BootSplash } from "@/components/layout/boot-splash";
 import { PageLoadRoot } from "@/components/layout/page-load-root";
@@ -119,6 +120,7 @@ export default async function RootLayout({
           <CartProvider isAuthenticated={Boolean(user)}>
             <FavoritesProvider isAuthenticated={Boolean(user)}>
               <SiteHeader user={user} />
+              <MarketplaceDebugRoot />
               <main className="flex-1">{children}</main>
               <SiteFooter />
               <Suspense fallback={null}>
