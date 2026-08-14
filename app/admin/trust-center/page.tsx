@@ -2,6 +2,20 @@ import Link from "next/link";
 
 import { AdminNewSellersPanel } from "@/features/marketplace-new-seller-trust";
 import {
+  AdminTrustConversionViewTracker,
+  AdminTrustExperimentsPanel,
+  AdminTrustFunnelPanel,
+  AdminTrustImpactPanel,
+  AdminTrustInsightsPanel,
+} from "@/features/marketplace-trust-conversion";
+import {
+  getAdminTrustImpact,
+  getAdminTrustInsights,
+  getTrustConversionFunnel,
+  getTrustExperimentFoundationSnapshot,
+  isMarketplaceTrustConversionEnabled,
+} from "@/lib/marketplace-trust-conversion";
+import {
   getAdminNewSellerTrustStats,
   isMarketplaceNewSellerTrustEnabled,
 } from "@/lib/marketplace-new-seller-trust";
@@ -23,11 +37,17 @@ export default async function AdminTrustCenterPage() {
   const trustLoopEnabled = isMarketplaceTrustLoopEnabled();
 
   const newSellerEnabled = isMarketplaceNewSellerTrustEnabled();
+  const trustConversionEnabled = isMarketplaceTrustConversionEnabled();
 
-  const [center, health, newSellerStats] = await Promise.all([
+  const [center, health, newSellerStats, trustFunnel, trustImpact, trustInsights, trustExperiments] =
+    await Promise.all([
     experienceEnabled ? getAdminTrustCenter() : Promise.resolve(null),
     trustLoopEnabled ? getAdminTrustHealth() : Promise.resolve(null),
     newSellerEnabled ? getAdminNewSellerTrustStats() : Promise.resolve(null),
+    trustConversionEnabled ? getTrustConversionFunnel(7) : Promise.resolve(null),
+    trustConversionEnabled ? getAdminTrustImpact(7) : Promise.resolve(null),
+    trustConversionEnabled ? getAdminTrustInsights(7) : Promise.resolve(null),
+    trustConversionEnabled ? getTrustExperimentFoundationSnapshot() : Promise.resolve(null),
   ]);
 
   return (
@@ -46,7 +66,17 @@ export default async function AdminTrustCenterPage() {
 
       {center?.enabled ? <AdminTrustCenterPanel snapshot={center} /> : null}
 
+      {trustConversionEnabled ? <AdminTrustConversionViewTracker /> : null}
+
+      {trustImpact ? <AdminTrustImpactPanel impact={trustImpact} /> : null}
+
+      {trustFunnel ? <AdminTrustFunnelPanel funnel={trustFunnel} /> : null}
+
+      {trustInsights ? <AdminTrustInsightsPanel insights={trustInsights} /> : null}
+
       {newSellerStats ? <AdminNewSellersPanel stats={newSellerStats} /> : null}
+
+      {trustExperiments ? <AdminTrustExperimentsPanel foundation={trustExperiments} /> : null}
 
       {health?.enabled ? (
         <div className="flex flex-col gap-3">

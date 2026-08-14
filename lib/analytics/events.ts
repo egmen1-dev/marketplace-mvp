@@ -167,6 +167,12 @@ export const ANALYTICS_EVENTS = {
   FIRST_ORDER_COMPLETED: "first_order_completed",
   FIRST_REVIEW_RECEIVED: "first_review_received",
   BUYER_NEW_SELLER_PURCHASE: "buyer_new_seller_purchase",
+  /** MARKETPLACE-TRUST-CONVERSION-001 */
+  TRUST_DETAILS_OPEN: "trust_details_open",
+  SELLER_REPUTATION_OPEN: "seller_reputation_open",
+  NEW_SELLER_TRUST_VIEW: "new_seller_trust_view",
+  TRUST_PURCHASE_AFTER_VIEW: "trust_purchase_after_view",
+  TRUST_CONVERSION_VIEW: "trust_conversion_view",
 } as const;
 
 export type AnalyticsEventName =

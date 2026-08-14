@@ -48,11 +48,25 @@ import {
 import {
   getBuyerNewSellerSnapshot,
   isMarketplaceNewSellerTrustEnabled,
+  daysSinceJoined,
+  formatDaysAgoLabel,
 } from "@/lib/marketplace-new-seller-trust";
 import {
   getBuyerTrustExperience,
   isMarketplaceTrustExperienceEnabled,
 } from "@/lib/marketplace-trust-experience";
+import {
+  PdpBuyerDoubtBlock,
+  PdpNewSellerTrustOrdered,
+  PdpProductTrustExplanation,
+} from "@/features/marketplace-trust-conversion";
+import {
+  getBuyerDoubtSnapshot,
+  getProductTrustExplanationSnapshot,
+  getPdpTrustConversionAnalytics,
+  isMarketplaceTrustConversionEnabled,
+  resolvePdpTrustBlockOrder,
+} from "@/lib/marketplace-trust-conversion";
 import { PdpWhyBuyBlock } from "@/features/products/components/pdp-why-buy-block";
 import { getSellerTrustProfile } from "@/features/seller/lib/reputation";
 import { categoryPagePath } from "@/features/catalog/paths";
@@ -134,6 +148,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
   let pdpConversionDiagnostics: Awaited<
     ReturnType<typeof getPdpConversionDiagnostics>
   > | null = null;
+  let buyerDoubt: Awaited<ReturnType<typeof getBuyerDoubtSnapshot>> = null;
+  let productTrustExplanation: Awaited<
+    ReturnType<typeof getProductTrustExplanationSnapshot>
+  > = null;
+  let trustBlockOrder = resolvePdpTrustBlockOrder({
+    isNewSeller: false,
+    completedOrders: 0,
+  });
+  const trustConversionEnabled = isMarketplaceTrustConversionEnabled();
   try {
     const loaded = await loadProductForPage(id);
     product = loaded.product;
@@ -197,6 +220,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
       if (canSeeConversionDiagnostics) {
         pdpConversionDiagnostics = await getPdpConversionDiagnostics(product.id);
       }
+      if (trustConversionEnabled) {
+        const analytics = await getPdpTrustConversionAnalytics({ productId: product.id });
+        trustBlockOrder = resolvePdpTrustBlockOrder({
+          isNewSeller: buyerNewSeller?.isNewSeller ?? false,
+          completedOrders: sellerTrust?.metrics.completedOrdersCount ?? 0,
+        });
+        [buyerDoubt, productTrustExplanation] = await Promise.all([
+          getBuyerDoubtSnapshot({
+            productId: product.id,
+            views: Math.max(analytics.views, product.views),
+            cartAdds: analytics.cartAdds,
+            reviewsCount: pdpReviews?.rating?.reviewsCount ?? 0,
+            imageCount: product.images.length,
+            characteristicCount: product.characteristics.length,
+            isNewSeller: buyerNewSeller?.isNewSeller ?? false,
+            deliverySlow: false,
+          }),
+          getProductTrustExplanationSnapshot({
+            productId: product.id,
+            imageCount: product.images.length,
+            characteristicCount: product.characteristics.length,
+            reviewsCount: pdpReviews?.rating?.reviewsCount ?? 0,
+            sellerId: product.seller.id,
+          }),
+        ]);
+      }
     }
   } catch (err) {
     console.error("[product]", err);
@@ -226,6 +275,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     dimensionParts.length > 0 ? dimensionParts.join(" × ") : null;
 
   const sellerShipping = sellerTrust?.shippingDefaults?.trim() || null;
+  const sellerJoinedLabel = sellerTrust
+    ? formatDaysAgoLabel(daysSinceJoined(sellerTrust.joinedAt))
+    : undefined;
 
   const prioritySpecs = [
     ...product.characteristics.map((c) => ({
@@ -417,14 +469,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           ) : null}
 
-          {deliveryHint ? (
-            <PdpDeliveryHint
-              headline={deliveryHint.headline}
-              subline={deliveryHint.subline}
+          {trustConversionEnabled && trustBlockOrder === "new_seller" && buyerNewSeller ? (
+            <PdpNewSellerTrustOrdered
+              snapshot={buyerNewSeller}
+              productId={product.id}
+              joinedLabel={sellerJoinedLabel}
             />
-          ) : null}
-
-          {buyerNewSeller ? (
+          ) : buyerNewSeller ? (
             <PdpNewSellerTrustBlocks
               snapshot={buyerNewSeller}
               sellerId={product.seller.id}
@@ -432,14 +483,52 @@ export default async function ProductPage({ params }: ProductPageProps) {
             />
           ) : null}
 
-          {buyerTrustExperience ? (
-            <PdpBuyerTrustExperienceBlock snapshot={buyerTrustExperience} />
-          ) : trustSignals ? (
-            <PdpTrustSignalsBlock signals={trustSignals} />
+          {trustConversionEnabled && productTrustExplanation ? (
+            <PdpProductTrustExplanation
+              snapshot={productTrustExplanation}
+              productId={product.id}
+            />
           ) : null}
-          {pdpReviews?.rating ? (
-            <PdpReviewsBlock rating={pdpReviews.rating} reviews={pdpReviews.reviews} />
+
+          {trustConversionEnabled && buyerDoubt ? (
+            <PdpBuyerDoubtBlock snapshot={buyerDoubt} />
           ) : null}
+
+          {trustConversionEnabled && trustBlockOrder === "experienced" ? (
+            <>
+              {pdpReviews?.rating ? (
+                <PdpReviewsBlock rating={pdpReviews.rating} reviews={pdpReviews.reviews} />
+              ) : null}
+              {buyerTrustExperience ? (
+                <PdpBuyerTrustExperienceBlock snapshot={buyerTrustExperience} />
+              ) : trustSignals ? (
+                <PdpTrustSignalsBlock signals={trustSignals} />
+              ) : null}
+              {deliveryHint ? (
+                <PdpDeliveryHint
+                  headline={deliveryHint.headline}
+                  subline={deliveryHint.subline}
+                />
+              ) : null}
+            </>
+          ) : (
+            <>
+              {deliveryHint ? (
+                <PdpDeliveryHint
+                  headline={deliveryHint.headline}
+                  subline={deliveryHint.subline}
+                />
+              ) : null}
+              {buyerTrustExperience ? (
+                <PdpBuyerTrustExperienceBlock snapshot={buyerTrustExperience} />
+              ) : trustSignals ? (
+                <PdpTrustSignalsBlock signals={trustSignals} />
+              ) : null}
+              {pdpReviews?.rating ? (
+                <PdpReviewsBlock rating={pdpReviews.rating} reviews={pdpReviews.reviews} />
+              ) : null}
+            </>
+          )}
 
           <section
             className="rounded-2xl border border-border bg-card/50 p-4 sm:p-5"
