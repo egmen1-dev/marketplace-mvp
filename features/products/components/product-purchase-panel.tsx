@@ -25,6 +25,8 @@ import { FavoriteToggleButton } from "@/features/favorites/components/favorite-t
 import { formatPrice } from "@/features/products/mappers";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackCtaClick, trackEvent } from "@/lib/analytics/client";
+import { wasTrustViewedOnClient } from "@/lib/marketplace-trust-conversion/attribution-client";
+import { trackTrustPurchaseAfterViewClient } from "@/features/marketplace-trust-conversion/components/trust-conversion-trackers";
 import { ROUTES } from "@/lib/constants";
 import { TOAST, toastError } from "@/lib/toasts";
 import { cn } from "@/lib/utils";
@@ -114,6 +116,12 @@ export function ProductPurchasePanel({
     return Math.min(maxQty, Math.max(1, n));
   }
 
+  function trackTrustCartConversion() {
+    if (wasTrustViewedOnClient(productId)) {
+      trackTrustPurchaseAfterViewClient(productId);
+    }
+  }
+
   async function handleAdd() {
     if (outOfStock || busy) return;
     setAction("add");
@@ -129,6 +137,7 @@ export function ProductPurchasePanel({
         trackCtaClick("add_to_cart", {
           route: `${ROUTES.PRODUCT}/${productId}`,
         });
+        trackTrustCartConversion();
         toast.success(TOAST.CART_ADDED);
         window.setTimeout(() => setStatus("idle"), 1800);
       } else {
@@ -158,6 +167,7 @@ export function ProductPurchasePanel({
           entityId: productId,
         });
         trackCtaClick("buy", { route: `${ROUTES.PRODUCT}/${productId}` });
+        trackTrustCartConversion();
         toast.success(TOAST.CHECKOUT_REDIRECT);
         window.location.assign(ROUTES.CHECKOUT);
       } else {

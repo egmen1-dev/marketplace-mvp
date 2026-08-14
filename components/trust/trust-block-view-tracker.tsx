@@ -4,16 +4,20 @@ import { useEffect, useRef } from "react";
 
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { trackEvent } from "@/lib/analytics/client";
+import { markTrustViewedOnClient } from "@/lib/marketplace-trust-conversion/attribution-client";
 
 type TrustBlockViewTrackerProps = {
   blockId: "homepage" | "catalog" | "pdp" | "cart" | "checkout";
   route?: string;
+  /** When set, marks product as trust-viewed in session for conversion attribution. */
+  productId?: string;
 };
 
 /** Fires trust_block_view once when block enters viewport. */
 export function TrustBlockViewTracker({
   blockId,
   route,
+  productId,
 }: TrustBlockViewTrackerProps) {
   const fired = useRef(false);
   const ref = useRef<HTMLSpanElement>(null);
@@ -31,6 +35,7 @@ export function TrustBlockViewTracker({
           route: route ?? (typeof window !== "undefined" ? window.location.pathname : "/"),
           entityId: blockId,
         });
+        if (productId) markTrustViewedOnClient(productId);
         observer.disconnect();
       },
       { threshold: 0.25, rootMargin: "0px" },
@@ -38,7 +43,7 @@ export function TrustBlockViewTracker({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [blockId, route]);
+  }, [blockId, route, productId]);
 
   return (
     <span ref={ref} className="sr-only" aria-hidden>

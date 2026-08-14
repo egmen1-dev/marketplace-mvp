@@ -17,6 +17,10 @@ import {
   getNewSellerTrustSnapshot,
   isMarketplaceNewSellerTrustEnabled,
 } from "@/lib/marketplace-new-seller-trust";
+import {
+  getSellerTrustFeedback,
+  isMarketplaceTrustConversionEnabled,
+} from "@/lib/marketplace-trust-conversion";
 
 export const metadata = { title: "Моя репутация" };
 
@@ -27,12 +31,16 @@ export default async function AccountReputationPage() {
   const experienceEnabled = isMarketplaceTrustExperienceEnabled();
 
   const newSellerEnabled = isMarketplaceNewSellerTrustEnabled();
+  const trustConversionEnabled = isMarketplaceTrustConversionEnabled();
 
-  const [legacy, trustScore, center, newSeller] = await Promise.all([
+  const [legacy, trustScore, center, newSeller, sellerFeedback] = await Promise.all([
     trustLoopEnabled ? getSellerReputationPage(seller.sellerProfileId) : Promise.resolve(null),
     trustScoreEnabled ? getSellerTrustScorePage(seller.sellerProfileId) : Promise.resolve(null),
     experienceEnabled ? getSellerTrustCenter(seller.sellerProfileId) : Promise.resolve(null),
     newSellerEnabled ? getNewSellerTrustSnapshot(seller.sellerProfileId) : Promise.resolve(null),
+    trustConversionEnabled
+      ? getSellerTrustFeedback(seller.sellerProfileId)
+      : Promise.resolve(null),
   ]);
 
   return (
@@ -59,6 +67,7 @@ export default async function AccountReputationPage() {
           legacy={legacy}
           trustScore={trustScore}
           newSeller={newSeller}
+          sellerFeedback={sellerFeedback}
         />
       )}
     </div>

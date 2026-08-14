@@ -65,7 +65,7 @@ export function PdpTrustBlock({
       )}
       data-testid="pdp-trust-block"
     >
-      <TrustBlockViewTracker blockId="pdp" route={`${ROUTES.PRODUCT}/${productId}`} />
+      <TrustBlockViewTracker blockId="pdp" route={`${ROUTES.PRODUCT}/${productId}`} productId={productId} />
       <PdpSectionViewTracker
         section="seller"
         productId={productId}
