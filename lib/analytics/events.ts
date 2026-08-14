@@ -149,6 +149,13 @@ export const ANALYTICS_EVENTS = {
   AI_EXPLANATION_VIEW: "ai_explanation_view",
   SELLER_DASHBOARD_ACTION_CLICK: "seller_dashboard_action_click",
   BUYER_DISCOVERY_OPENED: "buyer_discovery_opened",
+  /** MARKETPLACE-CONVERSION-AUDIT-001 */
+  CONVERSION_FUNNEL_VIEW: "conversion_funnel_view",
+  DROPOFF_DETECTED: "dropoff_detected",
+  CONVERSION_PROBLEM_VIEW: "conversion_problem_view",
+  CONVERSION_ACTION_CLICK: "conversion_action_click",
+  SELLER_CONVERSION_VIEW: "seller_conversion_view",
+  BUYER_SEGMENT_VIEW: "buyer_segment_view",
 } as const;
 
 export type AnalyticsEventName =
