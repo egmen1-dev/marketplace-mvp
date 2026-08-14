@@ -13,7 +13,7 @@ Batch 1 merges the marketplace trust foundation into `main`. Because feature bra
 
 | Item | Value |
 |------|-------|
-| **Merge commit** | `93429d1` |
+| **Merge commit** | `8999c4c` (Batch 1) → `b7d4c82` (+ #58–#59) |
 | **Previous staging SHA** | `f7cab39` |
 | **Build** | ✅ `npm run build` |
 | **Tests** | ✅ 411/411 |
