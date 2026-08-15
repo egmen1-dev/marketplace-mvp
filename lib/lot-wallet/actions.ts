@@ -3,9 +3,10 @@
 import { getSessionUser } from "@/features/auth";
 import { revalidatePath } from "next/cache";
 
+import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { trackServerEvent } from "@/lib/analytics/track-server";
 import { ROUTES } from "@/lib/constants";
 
-import { trackWalletTopupStarted } from "./analytics";
 import { createWalletTopUpCheckoutSession } from "./topup";
 import { isLotWalletEnabled } from "./flags";
 
@@ -19,7 +20,12 @@ export async function startWalletTopUpAction(amountRub: number) {
     return { ok: false as const, error: "Войдите в аккаунт" };
   }
 
-  trackWalletTopupStarted();
+  void trackServerEvent({
+    event: ANALYTICS_EVENTS.WALLET_TOPUP_STARTED,
+    route: ROUTES.ACCOUNT_WALLET,
+    entityId: user.id,
+  });
+
   const result = await createWalletTopUpCheckoutSession({
     userId: user.id,
     email: user.email,
