@@ -18,6 +18,45 @@ function authorize(request: Request): boolean {
   return Boolean(got && got === expected);
 }
 
+/** Read wallet + ledger snapshot for financial acceptance (no mutations). */
+export async function GET(request: Request) {
+  if (!authorize(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const url = new URL(request.url);
+  const email = url.searchParams.get("email")?.trim() || DEFAULT_EMAIL;
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: { sellerProfile: true },
+  });
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const wallet = await prisma.userWallet.findUnique({ where: { userId: user.id } });
+  const ledgerEntryCount = await prisma.walletLedgerEntry.count({
+    where: { userId: user.id },
+  });
+  const sellerBalance = user.sellerProfile
+    ? await prisma.sellerBalance.findUnique({
+        where: { sellerId: user.sellerProfile.id },
+      })
+    : null;
+
+  return NextResponse.json({
+    userId: user.id,
+    email,
+    topupSpendableAmount: Number(wallet?.topupSpendableAmount ?? 0),
+    bonusSpendableAmount: Number(wallet?.bonusSpendableAmount ?? 0),
+    sellerAvailableAmount: Number(sellerBalance?.availableAmount ?? 0),
+    sellerReservedAmount: Number(sellerBalance?.reservedForPayoutAmount ?? 0),
+    sellerPendingAmount: Number(sellerBalance?.pendingAmount ?? 0),
+    sellerPaidAmount: Number(sellerBalance?.paidAmount ?? 0),
+    ledgerEntryCount,
+  });
+}
+
 export async function POST(request: Request) {
   if (!authorize(request)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -112,6 +151,9 @@ export async function POST(request: Request) {
   }
 
   const wallet = await prisma.userWallet.findUnique({ where: { userId: user.id } });
+  const ledgerEntryCount = await prisma.walletLedgerEntry.count({
+    where: { userId: user.id },
+  });
   const sellerBalance = user.sellerProfile
     ? await prisma.sellerBalance.findUnique({
         where: { sellerId: user.sellerProfile.id },
@@ -125,6 +167,9 @@ export async function POST(request: Request) {
     bonusSpendableAmount: Number(wallet?.bonusSpendableAmount ?? 0),
     sellerAvailableAmount: Number(sellerBalance?.availableAmount ?? 0),
     sellerReservedAmount: Number(sellerBalance?.reservedForPayoutAmount ?? 0),
+    sellerPendingAmount: Number(sellerBalance?.pendingAmount ?? 0),
+    sellerPaidAmount: Number(sellerBalance?.paidAmount ?? 0),
+    ledgerEntryCount,
   });
 }
 
