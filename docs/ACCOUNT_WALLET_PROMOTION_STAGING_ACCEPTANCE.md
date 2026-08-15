@@ -10,15 +10,32 @@
 
 | Step | Status |
 |------|--------|
-| Code merged / pushed | PR #61 — branch `cursor/account-wallet-promotion-unification-001-d03e` |
-| `npx prisma migrate deploy` (migration `20260815100000_lot_wallet_foundation`) | Required on staging |
+| Code merged / pushed | PR #61 — branch `cursor/account-wallet-promotion-unification-001-d03e` (pending merge to `main`) |
+| `npx prisma migrate deploy` (migration `20260815100000_lot_wallet_foundation`) | ✅ Applied to staging DB (2026-08-15) |
 | `LOT_WALLET_ENABLED=true` (default ON unless `false`) | Set on Railway |
 | `SELLER_PROMOTION_CENTER_ENABLED=true` (default ON) | Set on Railway |
-| Visual smoke | Pending post-deploy |
+| Visual smoke | Partial — promotion center live on staging; wallet route after merge |
 
 ---
 
-## Implemented surfaces
+## Staging smoke (pre-merge, 2026-08-15)
+
+Environment: `https://web-production-e56fb.up.railway.app`
+
+| Account | «Продвижение» in nav | `/account/promotion-center` | `/account/wallet` |
+|---------|----------------------|----------------------------|-------------------|
+| `demo-growing@demo.lot` | ✅ | ✅ loads | ❌ 404 (code not on main yet) |
+| `seller@demo.lot` | ⚠️ hidden (legacy nav until wallet flag + deploy) | ✅ loads | ❌ 404 |
+| `demo-problems@demo.lot` | ⚠️ hidden (legacy nav) | ✅ loads | ❌ 404 |
+
+After PR #61 merge + Railway deploy with `LOT_WALLET_ENABLED=true`:
+- `/account/wallet` must return 200
+- Seller nav must show «Кошелёк» and «Продвижение» for all demo sellers (one click)
+- `/account/business` must show `business-wallet-promotion-cards`
+
+Screenshots captured during smoke: `staging_account.png`, `staging_account_business.png`, `staging_account_promotion-center.png`, `staging_account_settings.png`
+
+---
 
 | Surface | Route | Status |
 |---------|-------|--------|
@@ -76,8 +93,15 @@ Requires before commercial wallet:
 ## Verdict
 
 ```text
-STAGING ACCEPTANCE: PENDING MIGRATION + VISUAL SMOKE
+STAGING ACCEPTANCE: PARTIAL — DB migration applied; wallet UI pending PR #61 merge + deploy
 ```
 
+Post-merge re-check required:
+1. `/account/wallet` 200 + tabs
+2. Unified seller nav («Кошелёк», «Продвижение») for all demo sellers
+3. Business dashboard compact cards
+4. Account overview wallet snapshot + «Открыть кошелёк»
+
 Code build: ✅ `npm run build`  
-Unit tests: ✅ wallet + nav + routes
+Unit tests: ✅ wallet + nav + routes  
+Migration: ✅ `20260815100000_lot_wallet_foundation` on staging DB
