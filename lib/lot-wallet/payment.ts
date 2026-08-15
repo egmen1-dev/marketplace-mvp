@@ -12,7 +12,7 @@ import {
 import { appendWalletLedgerEntry, getOrCreateUserWallet, getWalletOverview } from "./queries";
 import { isLotWalletEnabled } from "./flags";
 
-export type InternalProductType = "PROMOTION" | "SUBSCRIPTION" | "INTERNAL_SERVICE";
+export type InternalProductType = "PROMOTION" | "SUBSCRIPTION" | "INTERNAL_SERVICE" | "PRODUCT_ORDER";
 
 export async function payInternalProduct(input: {
   userId: string;
@@ -44,7 +44,9 @@ export async function payInternalProduct(input: {
   const ledgerType: WalletLedgerType =
     input.productType === "PROMOTION"
       ? "PROMOTION_PURCHASE"
-      : "INTERNAL_SERVICE_PURCHASE";
+      : input.productType === "PRODUCT_ORDER"
+        ? "PRODUCT_PURCHASE"
+        : "INTERNAL_SERVICE_PURCHASE";
 
   try {
     await prisma.$transaction(async (tx) => {

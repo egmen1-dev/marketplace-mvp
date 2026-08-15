@@ -10,6 +10,8 @@ import { CheckoutForm } from "@/features/orders";
 import type { CheckoutPickupOption } from "@/features/orders/components/checkout-form";
 import { calcPrepaymentAmount } from "@/features/pickup/lib/prepayment";
 import { ROUTES } from "@/lib/constants";
+import { isLotWalletEnabled, walletSpendableForCheckout } from "@/lib/lot-wallet";
+import { loadUserAuthFromDb } from "@/features/auth";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
 import { prisma } from "@/lib/prisma";
 import { toPriceNumber } from "@/features/products/mappers";
@@ -36,13 +38,22 @@ export default async function CheckoutPage({
     );
   }
 
-  const [cart, profile] = await Promise.all([
+  const [cart, profile, dbUser] = await Promise.all([
     getCartForUser(user.id),
     prisma.user.findUnique({
       where: { id: user.id },
       select: { phone: true, name: true },
     }),
+    loadUserAuthFromDb(user.id),
   ]);
+
+  const walletEnabled = isLotWalletEnabled();
+  const walletSpendable = walletEnabled
+    ? await walletSpendableForCheckout({
+        userId: user.id,
+        sellerProfileId: dbUser?.sellerProfileId ?? null,
+      })
+    : 0;
 
   let sellerPickupAvailable = false;
   const sellerPickupOptions: CheckoutPickupOption[] = [];
@@ -167,6 +178,8 @@ export default async function CheckoutPage({
         preferSellerPickup={
           fulfillment === "SELLER_PICKUP" || fulfillment === "pickup"
         }
+        walletEnabled={walletEnabled}
+        walletSpendable={walletSpendable}
       />
     </div>
   );

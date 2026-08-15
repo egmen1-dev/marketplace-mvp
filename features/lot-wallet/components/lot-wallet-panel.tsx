@@ -15,6 +15,7 @@ import type {
   WalletOverview,
   WalletTab,
 } from "@/lib/lot-wallet/types";
+import { WalletTopUpForm } from "@/features/lot-wallet/components/wallet-topup-form";
 import { trackWalletView } from "@/lib/lot-wallet/analytics";
 import { cn } from "@/lib/utils";
 
@@ -59,10 +60,18 @@ export function LotWalletPanel({
   const router = useRouter();
   const searchParams = useSearchParams();
   const tab = (searchParams.get("tab") as WalletTab | null) ?? "overview";
+  const topupStatus = searchParams.get("topup");
 
   useEffect(() => {
     trackWalletView(tab);
   }, [tab]);
+
+  const topupSuccessMessage =
+    topupStatus === "success"
+      ? "Пополнение прошло успешно. Средства появятся в истории после подтверждения оплаты."
+      : topupStatus === "canceled"
+        ? "Оплата отменена. Сумма не была списана."
+        : undefined;
 
   function setTab(next: WalletTab) {
     const params = new URLSearchParams(searchParams.toString());
@@ -202,14 +211,7 @@ export function LotWalletPanel({
             Пополненные средства можно тратить на покупки и продвижение, но нельзя вывести
             как доход от продаж.
           </p>
-          <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
-            Оплата картой через Stripe для пополнения подключается отдельным типом платежа{" "}
-            <code className="text-xs">WALLET_TOP_UP</code>. На staging используйте демо-фикстуры
-            или дождитесь включения провайдера.
-          </div>
-          <Button className="mt-4" disabled>
-            Пополнить (скоро)
-          </Button>
+          <WalletTopUpForm onSuccessMessage={topupSuccessMessage} />
         </div>
       ) : null}
 

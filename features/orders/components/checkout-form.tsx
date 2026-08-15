@@ -44,6 +44,8 @@ type CheckoutFormProps = {
   sellerPickupAvailable?: boolean;
   /** Prefer seller pickup when opened from PDP «Забронировать». */
   preferSellerPickup?: boolean;
+  walletEnabled?: boolean;
+  walletSpendable?: number;
 };
 
 export function CheckoutForm({
@@ -54,6 +56,8 @@ export function CheckoutForm({
   sellerPickupOptions = [],
   sellerPickupAvailable = false,
   preferSellerPickup = false,
+  walletEnabled = false,
+  walletSpendable = 0,
 }: CheckoutFormProps) {
   const router = useRouter();
   const { refresh } = useCart();
@@ -81,6 +85,7 @@ export function CheckoutForm({
   const [sellerPointId, setSellerPointId] = useState(
     sellerPickupOptions[0]?.point.id ?? "",
   );
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "wallet">("card");
   const [fullName, setFullName] = useState(defaultName);
   const [phone, setPhone] = useState(defaultPhone);
 
@@ -134,6 +139,8 @@ export function CheckoutForm({
     fulfillmentType === "SELLER_PICKUP"
       ? Boolean(sellerPointId) && !pending && !isEmpty
       : Boolean(deliveryQuote) && !pending && !isEmpty;
+  const walletInsufficient =
+    paymentMethod === "wallet" && walletEnabled && walletSpendable < orderTotal;
 
   if (isEmpty) {
     return (
@@ -164,6 +171,7 @@ export function CheckoutForm({
       action={formAction}
       className="grid gap-8 lg:grid-cols-[1fr_340px]"
     >
+      <input type="hidden" name="paymentMethod" value={paymentMethod} />
       <input type="hidden" name="fulfillmentType" value={fulfillmentType} />
       <input type="hidden" name="sellerPickupPointId" value={sellerPointId} />
 
@@ -189,6 +197,54 @@ export function CheckoutForm({
             ЛОТ не хранит номер карты.
           </span>
         </div>
+
+        <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
+          <h2 className="font-heading text-lg font-medium">Способ оплаты</h2>
+          <div className="mt-4 flex flex-col gap-2">
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border px-4 py-3">
+              <input
+                type="radio"
+                name="paymentMethodChoice"
+                checked={paymentMethod === "card"}
+                onChange={() => setPaymentMethod("card")}
+                className="mt-1"
+              />
+              <span>
+                <span className="font-medium">Банковская карта</span>
+                <span className="mt-1 block text-sm text-muted-foreground">
+                  Оплата через Stripe
+                </span>
+              </span>
+            </label>
+            {walletEnabled ? (
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border px-4 py-3">
+                <input
+                  type="radio"
+                  name="paymentMethodChoice"
+                  checked={paymentMethod === "wallet"}
+                  onChange={() => setPaymentMethod("wallet")}
+                  className="mt-1"
+                  data-testid="checkout-payment-wallet"
+                />
+                <span>
+                  <span className="font-medium">Кошелёк ЛОТ</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">
+                    Доступно: {formatPrice(walletSpendable, cart.currency)}
+                  </span>
+                </span>
+              </label>
+            ) : null}
+          </div>
+          {walletEnabled && paymentMethod === "wallet" && walletSpendable < orderTotal ? (
+            <p className="mt-3 text-sm text-amber-700">
+              В кошельке: {formatPrice(walletSpendable, cart.currency)} · не хватает:{" "}
+              {formatPrice(orderTotal - walletSpendable, cart.currency)}{" "}
+              <Link href={`${ROUTES.ACCOUNT_WALLET}?tab=topup`} className="underline">
+                Пополнить
+              </Link>
+            </p>
+          ) : null}
+        </section>
 
         <section className="rounded-2xl border border-border bg-surface/40 p-5 sm:p-6">
           <h2 className="font-heading text-lg font-medium">Получатель</h2>
@@ -459,13 +515,15 @@ export function CheckoutForm({
           type="submit"
           size="cta"
           className="mt-6 w-full"
-          disabled={!canPay}
+          disabled={!canPay || walletInsufficient}
         >
           {pending
             ? "Оформляем…"
-            : fulfillmentType === "SELLER_PICKUP"
-              ? "Забронировать"
-              : "Оплатить"}
+            : paymentMethod === "wallet"
+              ? `Оплатить ${formatPrice(orderTotal, cart.currency)}`
+              : fulfillmentType === "SELLER_PICKUP"
+                ? "Забронировать"
+                : "Оплатить"}
         </Button>
       </aside>
     </form>
