@@ -26,6 +26,12 @@ export type AccountOverviewSection = {
   }>;
 };
 
+export type AccountWalletSnapshot = {
+  availableAmount: number;
+  pendingAmount: number;
+  href: string;
+};
+
 export type AccountOverview = {
   enabled: boolean;
   mode: AccountMode;
@@ -37,6 +43,7 @@ export type AccountOverview = {
     city: string | null;
     avatarUrl: string | null;
   };
+  walletSnapshot: AccountWalletSnapshot | null;
   sections: AccountOverviewSection[];
 };
 

@@ -1,5 +1,6 @@
 import { ROUTES } from "@/lib/constants";
 import { isLotWalletEnabled } from "@/lib/lot-wallet/flags";
+import type { WalletBuckets } from "@/lib/lot-wallet/types";
 
 import { getAccountMode } from "./actions";
 import { isMarketplaceUxCompletionEnabled } from "./flags";
@@ -18,6 +19,7 @@ export async function buildAccountOverview(input: {
   ordersCount: number;
   productsCount: number | null;
   revenue: number | null;
+  walletBuckets?: WalletBuckets | null;
 }): Promise<AccountOverview> {
   if (!isMarketplaceUxCompletionEnabled()) {
     return {
@@ -31,6 +33,7 @@ export async function buildAccountOverview(input: {
         city: input.profile.city,
         avatarUrl: input.profile.avatarUrl,
       },
+      walletSnapshot: null,
       sections: [],
     };
   }
@@ -51,17 +54,39 @@ export async function buildAccountOverview(input: {
     ],
   };
 
+  const walletSnapshot =
+    isLotWalletEnabled() && input.walletBuckets
+      ? {
+          availableAmount: input.walletBuckets.spendableAmount,
+          pendingAmount: input.walletBuckets.pendingFromSales,
+          href: walletHref,
+        }
+      : null;
+
   const walletSection = {
     id: "wallet",
     title: "💳 Кошелёк ЛОТ",
-    items: [
-      {
-        label: "Доступно",
-        value: input.revenue != null ? `${Math.round(input.revenue)} ₽` : "Открыть",
-        href: walletHref,
-      },
-      { label: "Управление", value: "Открыть кошелёк", href: walletHref },
-    ],
+    items: walletSnapshot
+      ? [
+          {
+            label: "Доступно",
+            value: `${Math.round(walletSnapshot.availableAmount).toLocaleString("ru-RU")} ₽`,
+            href: walletHref,
+          },
+          {
+            label: "Ожидается",
+            value: `${Math.round(walletSnapshot.pendingAmount).toLocaleString("ru-RU")} ₽`,
+            href: walletHref,
+          },
+        ]
+      : [
+          {
+            label: "Доступно",
+            value: input.revenue != null ? `${Math.round(input.revenue)} ₽` : "Открыть",
+            href: walletHref,
+          },
+          { label: "Управление", value: "Открыть кошелёк", href: walletHref },
+        ],
   };
 
   const sellerSection = input.isSeller
@@ -117,6 +142,7 @@ export async function buildAccountOverview(input: {
       city: input.profile.city,
       avatarUrl: input.profile.avatarUrl,
     },
+    walletSnapshot,
     sections,
   };
 }

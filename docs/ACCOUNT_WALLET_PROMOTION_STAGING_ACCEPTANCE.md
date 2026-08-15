@@ -10,7 +10,7 @@
 
 | Step | Status |
 |------|--------|
-| Code merged / pushed | Pending PR |
+| Code merged / pushed | PR #61 — branch `cursor/account-wallet-promotion-unification-001-d03e` |
 | `npx prisma migrate deploy` (migration `20260815100000_lot_wallet_foundation`) | Required on staging |
 | `LOT_WALLET_ENABLED=true` (default ON unless `false`) | Set on Railway |
 | `SELLER_PROMOTION_CENTER_ENABLED=true` (default ON) | Set on Railway |
@@ -22,7 +22,8 @@
 
 | Surface | Route | Status |
 |---------|-------|--------|
-| Unified account overview | `/account` | ✅ Wallet + business sections |
+| Unified account overview | `/account` | ✅ Wallet snapshot + «Открыть кошелёк» |
+| Business dashboard cards | `/account/business` | ✅ Деньги + Продвижение compact blocks |
 | Unified settings (inline) | `/account/settings` | ✅ Profile, password, notifications |
 | Profile compatibility | `/profile` | ✅ Redirects to settings |
 | LOT Wallet | `/account/wallet?tab=*` | ✅ Overview, topup stub, withdraw, history |
