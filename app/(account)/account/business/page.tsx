@@ -44,6 +44,47 @@ export default async function AccountBusinessPage() {
   const uxEnabled = isMarketplaceUxCompletionEnabled();
   const conversionEnabled = isMarketplaceConversionEnabled();
 
+  // Operating desk queries are only rendered when BI and Operations panels are off.
+  const needsOperatingDeskFallback =
+    !biEnabled && !(operationsEnabled && !biEnabled) && deskEnabled;
+
+  const emptyDeskDashboard = {
+    enabled: false as const,
+    now: {
+      headline: "",
+      summary: "",
+      stats: {
+        totalProducts: 0,
+        activeProducts: 0,
+        salesCount: 0,
+        ordersCount: 0,
+        revenue: 0,
+        viewsSum: 0,
+        favoritesSum: 0,
+        lowStockCount: 0,
+      },
+      orderCounters: {
+        newCount: 0,
+        inProgress: 0,
+        awaitingShipment: 0,
+        readyForPickup: 0,
+        overdue: 0,
+      },
+    },
+    issues: [],
+    todayActions: [],
+    money: {
+      pendingAmount: 0,
+      availableAmount: 0,
+      paidAmount: 0,
+      headline: "",
+      explanation: "",
+      ctaLabel: "",
+      ctaHref: ROUTES.ACCOUNT,
+    },
+    coach: null,
+  };
+
   const [businessDashboard, workspace, data, recentOrders, activity, sellerUx, sellerConversion] =
     await Promise.all([
       biEnabled
@@ -52,46 +93,15 @@ export default async function AccountBusinessPage() {
       operationsEnabled && !biEnabled
         ? getSellerOperationsWorkspace(seller.sellerProfileId)
         : Promise.resolve(null),
-      deskEnabled
+      needsOperatingDeskFallback
         ? getSellerOperatingDeskDashboard(seller.sellerProfileId)
-        : Promise.resolve({
-            enabled: false as const,
-            now: {
-              headline: "",
-              summary: "",
-              stats: {
-                totalProducts: 0,
-                activeProducts: 0,
-                salesCount: 0,
-                ordersCount: 0,
-                revenue: 0,
-                viewsSum: 0,
-                favoritesSum: 0,
-                lowStockCount: 0,
-              },
-              orderCounters: {
-                newCount: 0,
-                inProgress: 0,
-                awaitingShipment: 0,
-                readyForPickup: 0,
-                overdue: 0,
-              },
-            },
-            issues: [],
-            todayActions: [],
-            money: {
-              pendingAmount: 0,
-              availableAmount: 0,
-              paidAmount: 0,
-              headline: "",
-              explanation: "",
-              ctaLabel: "",
-              ctaHref: ROUTES.ACCOUNT,
-            },
-            coach: null,
-          }),
-      getSellerOperatingDeskRecentOrders(seller.sellerProfileId),
-      listSellerDashboardActivity(seller.sellerProfileId, 6),
+        : Promise.resolve(emptyDeskDashboard),
+      needsOperatingDeskFallback
+        ? getSellerOperatingDeskRecentOrders(seller.sellerProfileId)
+        : Promise.resolve({ items: [] }),
+      needsOperatingDeskFallback
+        ? listSellerDashboardActivity(seller.sellerProfileId, 6)
+        : Promise.resolve([]),
       uxEnabled
         ? getSellerHomeSummary(seller.sellerProfileId)
         : Promise.resolve({
