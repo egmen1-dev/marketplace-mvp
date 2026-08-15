@@ -38,12 +38,34 @@ function checkCron(): CheckResult {
   return { ok, optional: true, detail: ok ? "configured" : "not_configured" };
 }
 
-function checkStripe(): CheckResult {
-  const secret = Boolean(process.env.STRIPE_SECRET_KEY?.trim());
-  const webhook = Boolean(process.env.STRIPE_WEBHOOK_SECRET?.trim());
-  const publishable = Boolean(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim(),
-  );
+function stripeKeyPrefix(value: string | undefined, expected: string): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  return trimmed.startsWith(expected) ? expected : trimmed.slice(0, 8);
+}
+
+function stripeEnvironment(secretKey: string | undefined): "test" | "live" | "unknown" | null {
+  const trimmed = secretKey?.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("sk_test_")) return "test";
+  if (trimmed.startsWith("sk_live_")) return "live";
+  return "unknown";
+}
+
+function checkStripe(): CheckResult & {
+  apiKeyConfigured?: boolean;
+  webhookSecretConfigured?: boolean;
+  publishableKeyConfigured?: boolean;
+  secretKeyPrefix?: string | null;
+  publishableKeyPrefix?: string | null;
+  environment?: "test" | "live" | "unknown" | null;
+} {
+  const secretRaw = process.env.STRIPE_SECRET_KEY?.trim();
+  const webhookRaw = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+  const publishableRaw = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim();
+  const secret = Boolean(secretRaw);
+  const webhook = Boolean(webhookRaw);
+  const publishable = Boolean(publishableRaw);
   const configured = secret && webhook;
   const missing: string[] = [];
   if (!secret) missing.push("STRIPE_SECRET_KEY");
@@ -53,6 +75,13 @@ function checkStripe(): CheckResult {
     ok: secret,
     configured,
     optional: true,
+    apiKeyConfigured: secret,
+    webhookSecretConfigured: webhook,
+    publishableKeyConfigured: publishable,
+    secretKeyPrefix: stripeKeyPrefix(secretRaw, "sk_test_") ?? stripeKeyPrefix(secretRaw, "sk_live_"),
+    publishableKeyPrefix:
+      stripeKeyPrefix(publishableRaw, "pk_test_") ?? stripeKeyPrefix(publishableRaw, "pk_live_"),
+    environment: stripeEnvironment(secretRaw),
     detail: configured
       ? "configured"
       : secret
