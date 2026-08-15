@@ -36,7 +36,7 @@ test.describe("FINANCIAL-E2E wallet checkout staging", () => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.sellerEmail);
     await page.goto("/account/wallet");
-    await expect(page.getByText(/5[\s\u00a0]?000/)).toBeVisible({
+    await expect(page.getByText(/5[\s\u00a0]?000/).first()).toBeVisible({
       timeout: 20_000,
     });
     errors.assertClean();
