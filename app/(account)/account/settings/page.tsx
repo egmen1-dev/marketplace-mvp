@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
 import {
+  AccountSettingsUnifiedPanel,
   AccountShell,
+  getNotificationPrefsForUser,
   getUserProfile,
 } from "@/features/account";
 import { SettingsCompletionPanel } from "@/features/marketplace-ux-completion";
@@ -13,6 +13,7 @@ import {
   buildSettingsView,
   isMarketplaceUxCompletionEnabled,
 } from "@/lib/marketplace-ux-completion";
+import { isLotWalletEnabled } from "@/lib/lot-wallet";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,23 @@ export default async function SettingsPage() {
       (dbUser.role === "SELLER" || dbUser.role === "ADMIN"),
   );
 
+  const notificationPrefs = await getNotificationPrefsForUser(user.id);
+
+  if (isLotWalletEnabled()) {
+    return (
+      <AccountShell
+        title="Настройки"
+        description="Профиль, безопасность и уведомления — в одном месте."
+      >
+        <AccountSettingsUnifiedPanel
+          profile={profile}
+          notificationPrefs={notificationPrefs}
+          isSeller={isSeller}
+        />
+      </AccountShell>
+    );
+  }
+
   const settingsView = isMarketplaceUxCompletionEnabled()
     ? buildSettingsView({ email: profile.email, isSeller })
     : null;
@@ -51,24 +69,11 @@ export default async function SettingsPage() {
       {settingsView?.enabled ? (
         <SettingsCompletionPanel view={settingsView} />
       ) : (
-        <div className="animate-fade-up space-y-4 rounded-2xl border border-border bg-card/60 p-5 shadow-card sm:p-6">
-          <p className="text-sm text-muted-foreground">
-            Имя, телефон, город и аватар редактируются в профиле. Email используется
-            для входа и уведомлений по заказам.
-          </p>
-          <div className="rounded-xl border border-border/80 bg-surface/40 px-4 py-3 text-sm">
-            <p>
-              <span className="text-muted-foreground">Email: </span>
-              <span className="font-medium">{profile.email}</span>
-            </p>
-          </div>
-          <Button
-            nativeButton={false}
-            render={<Link href={`${ROUTES.PROFILE}?edit=1`} />}
-          >
-            Редактировать профиль
-          </Button>
-        </div>
+        <AccountSettingsUnifiedPanel
+          profile={profile}
+          notificationPrefs={notificationPrefs}
+          isSeller={isSeller}
+        />
       )}
     </AccountShell>
   );

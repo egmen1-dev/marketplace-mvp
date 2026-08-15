@@ -1,4 +1,5 @@
 import { ROUTES } from "@/lib/constants";
+import { isLotWalletEnabled } from "@/lib/lot-wallet/flags";
 
 import { getAccountMode } from "./actions";
 import { isMarketplaceUxCompletionEnabled } from "./flags";
@@ -36,6 +37,10 @@ export async function buildAccountOverview(input: {
 
   const mode: AccountMode = input.isSeller ? await getAccountMode() : "buyer";
 
+  const walletHref = isLotWalletEnabled()
+    ? ROUTES.ACCOUNT_WALLET
+    : ROUTES.ACCOUNT_BALANCE;
+
   const buyerSection = {
     id: "buyer",
     title: "🛒 Покупки",
@@ -46,13 +51,16 @@ export async function buildAccountOverview(input: {
     ],
   };
 
-  const profileSection = {
-    id: "profile",
-    title: "👤 Профиль",
+  const walletSection = {
+    id: "wallet",
+    title: "💳 Кошелёк ЛОТ",
     items: [
-      { label: "Имя", value: input.profile.name?.trim() || "—", href: ROUTES.PROFILE },
-      { label: "Телефон", value: input.profile.phone ?? "—", href: ROUTES.PROFILE },
-      { label: "Город", value: input.profile.city ?? "—", href: ROUTES.PROFILE },
+      {
+        label: "Доступно",
+        value: input.revenue != null ? `${Math.round(input.revenue)} ₽` : "Открыть",
+        href: walletHref,
+      },
+      { label: "Управление", value: "Открыть кошелёк", href: walletHref },
     ],
   };
 
@@ -72,14 +80,14 @@ export async function buildAccountOverview(input: {
             href: ROUTES.ACCOUNT_PRODUCTS,
           },
           {
-            label: "Продажи",
+            label: "Заказы",
             value: String(input.ordersCount),
             href: ROUTES.ACCOUNT_SALES,
           },
           {
-            label: "Баланс",
-            value: input.revenue != null ? `${Math.round(input.revenue)} ₽` : "—",
-            href: ROUTES.ACCOUNT_BALANCE,
+            label: "Продвижение",
+            value: "Управлять",
+            href: ROUTES.ACCOUNT_PROMOTION_CENTER,
           },
         ],
       }
@@ -88,10 +96,12 @@ export async function buildAccountOverview(input: {
   const settingsSection = {
     id: "settings",
     title: "⚙️ Настройки",
-    items: [{ label: "Настройки аккаунта", value: "Открыть", href: ROUTES.SETTINGS }],
+    items: [
+      { label: "Профиль и безопасность", value: "Открыть", href: ROUTES.SETTINGS },
+    ],
   };
 
-  const sections: AccountOverviewSection[] = [profileSection, buyerSection];
+  const sections: AccountOverviewSection[] = [buyerSection, walletSection];
   if (sellerSection && mode === "seller") sections.push(sellerSection);
   if (mode === "buyer" && sellerSection) sections.push(sellerSection);
   sections.push(settingsSection);

@@ -19,11 +19,13 @@ import { TOAST, toastError } from "@/lib/toasts";
 type ProfileEditFormProps = {
   profile: UserProfile;
   onCancelHref?: string;
+  onSavedHref?: string;
 };
 
 export function ProfileEditForm({
   profile,
   onCancelHref = ROUTES.PROFILE,
+  onSavedHref = ROUTES.PROFILE,
 }: ProfileEditFormProps) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -82,7 +84,7 @@ export function ProfileEditForm({
           return;
         }
         toast.success(TOAST.SETTINGS_SAVED);
-        router.push(ROUTES.PROFILE);
+        router.push(onSavedHref);
         router.refresh();
       })();
     });

@@ -254,6 +254,9 @@ model User {
   reviewsWritten       Review[]
   returnRequests       ReturnRequest[]     @relation("ReturnRequestBuyer")
   socialCollections    SocialCollection[]
+  wallet               UserWallet?
+  walletLedgerEntries  WalletLedgerEntry[]
+  notificationPrefs    UserNotificationPrefs?
 
   @@index([role])
   @@index([isBlocked])
@@ -1369,6 +1372,78 @@ model PayoutTransaction {
   @@index([payoutRequestId])
   @@index([sellerId])
   @@map("payout_transactions")
+}
+
+/// User-scoped LOT wallet buckets (top-up / bonus — non-withdrawable spendable).
+model UserWallet {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  topupSpendableAmount Decimal  @default(0) @db.Decimal(14, 2)
+  bonusSpendableAmount Decimal  @default(0) @db.Decimal(14, 2)
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_wallets")
+}
+
+enum WalletLedgerType {
+  SELLER_SALE
+  BUYER_TOP_UP
+  PRODUCT_PURCHASE
+  PROMOTION_PURCHASE
+  INTERNAL_SERVICE_PURCHASE
+  BONUS_CREDIT
+  REFUND
+  PAYOUT_REQUEST
+  PAYOUT_COMPLETED
+  PAYOUT_REVERSED
+}
+
+enum WalletLedgerDirection {
+  CREDIT
+  DEBIT
+}
+
+/// Append-only wallet ledger for user-visible history and audit.
+model WalletLedgerEntry {
+  id                 String                @id @default(cuid())
+  userId             String
+  type               WalletLedgerType
+  direction          WalletLedgerDirection
+  amount             Decimal               @db.Decimal(14, 2)
+  spendableDelta     Decimal               @default(0) @db.Decimal(14, 2)
+  withdrawableDelta  Decimal               @default(0) @db.Decimal(14, 2)
+  title              String
+  subtitle           String?
+  referenceType      String?
+  referenceId        String?
+  idempotencyKey     String?               @unique
+  createdAt          DateTime              @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([type])
+  @@map("wallet_ledger_entries")
+}
+
+/// Inline-editable notification preferences (account settings).
+model UserNotificationPrefs {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  ordersEnabled         Boolean  @default(true)
+  messagesEnabled       Boolean  @default(true)
+  deliveryEnabled       Boolean  @default(true)
+  priceDropEnabled      Boolean  @default(true)
+  sellerPromoEnabled    Boolean  @default(true)
+  growthTipsEnabled     Boolean  @default(true)
+  lotNewsEnabled        Boolean  @default(false)
+  updatedAt             DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_notification_prefs")
 }
 
 /// Optional first-entry tracking — progress is computed from catalog/orders/finance.
