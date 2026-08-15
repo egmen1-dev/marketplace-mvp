@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-import { hashPassword } from "@/features/auth/lib/password";
+import { hashPassword, verifyPassword } from "@/features/auth/lib/password";
 import { prisma } from "@/lib/prisma";
 
 const changePasswordSchema = z
   .object({
+    currentPassword: z.string().min(1, "Введите текущий пароль"),
     password: z.string().min(8, "Минимум 8 символов"),
     passwordConfirm: z.string(),
   })
@@ -31,6 +32,11 @@ export async function changePasswordAction(
   });
   if (!row?.passwordHash) {
     return { ok: false, error: "Смена пароля недоступна для этого аккаунта" };
+  }
+
+  const currentValid = await verifyPassword(parsed.data.currentPassword, row.passwordHash);
+  if (!currentValid) {
+    return { ok: false, error: "Текущий пароль указан неверно" };
   }
 
   const passwordHash = await hashPassword(parsed.data.password);

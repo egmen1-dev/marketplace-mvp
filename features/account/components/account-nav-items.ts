@@ -50,13 +50,6 @@ const BUYER_NAV: AccountNavItem[] = [
       ]
     : []),
   {
-    href: ROUTES.PROFILE,
-    label: "Мой профиль",
-    icon: UserRound,
-    match: (path) =>
-      path === ROUTES.PROFILE || path.startsWith(`${ROUTES.PROFILE}/`),
-  },
-  {
     href: ROUTES.ORDERS,
     label: "Покупки",
     icon: ShoppingBag,

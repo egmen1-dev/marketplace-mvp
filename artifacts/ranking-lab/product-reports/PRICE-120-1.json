@@ -1,0 +1,38 @@
+{
+  "productId": "PRICE-120-1",
+  "productName": "Шуруповёрт цена 20% #1",
+  "eligibility": "ELIGIBLE",
+  "eligibilityReasons": [],
+  "currentRankingScore": 70,
+  "currentTestPosition": 46,
+  "organicScore": 70,
+  "promotionContribution": 0,
+  "qualityGate": "PASS",
+  "factorBreakdown": {
+    "photos": 95,
+    "description": 90,
+    "seo": 92,
+    "category": 90,
+    "inventory": 95,
+    "trust": 82,
+    "reviews": 90,
+    "shipping": 85,
+    "ctr": 16,
+    "conversion": 10,
+    "price": 72
+  },
+  "mainBlockers": [],
+  "strongestFactors": [
+    "Достаточно качественных фото",
+    "Высокий trust score продавца"
+  ],
+  "nextBestAction": "Сделайте цену конкурентнее",
+  "simulation": {
+    "ifImproved": "improve_first_photo",
+    "scoreFrom": 70,
+    "scoreTo": 70,
+    "positionFrom": 1,
+    "positionTo": 1
+  },
+  "lastRecalculatedAt": "2026-08-15T10:55:39.916Z"
+}

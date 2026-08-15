@@ -133,6 +133,22 @@ async function settleCheckout(
   session: Stripe.Checkout.Session,
   type: string,
 ): Promise<StripeWebhookResult> {
+  if (session.metadata?.purpose === "wallet_top_up") {
+    const { creditWalletTopUpFromCheckoutSession } = await import(
+      "@/lib/lot-wallet/credit-topup"
+    );
+    const credit = await creditWalletTopUpFromCheckoutSession(session);
+    if (!credit.ok) {
+      return {
+        handled: credit.reason === "not_wallet_top_up",
+        type,
+        rejected: credit.reason !== "not_wallet_top_up",
+        reason: credit.reason,
+      };
+    }
+    return { handled: true, type, orderId: null };
+  }
+
   try {
     const result = await markOrderPaidFromCheckoutSession(session);
     return {

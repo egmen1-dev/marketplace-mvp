@@ -56,6 +56,8 @@ export async function createOrderFromCartAction(
     };
   }
 
+  const paymentMethod = formData.get("paymentMethod") === "wallet" ? "wallet" : "card";
+
   const result = await createOrderFromCart(user.id, parsed.data);
 
   if (!result.ok) {
@@ -73,6 +75,31 @@ export async function createOrderFromCartAction(
     select: { total: true },
   });
   const charge = order ? Number(order.total) : 0;
+
+  if (paymentMethod === "wallet" && charge > 0) {
+    const { payOrderWithLotWallet } = await import("@/lib/lot-wallet/pay-order");
+    const { isLotWalletEnabled } = await import("@/lib/lot-wallet/flags");
+    if (!isLotWalletEnabled()) {
+      return { ok: false, error: "Кошелёк ЛОТ временно недоступен", orderId: result.orderId };
+    }
+    const paid = await payOrderWithLotWallet({
+      userId: user.id,
+      orderId: result.orderId,
+    });
+    if (!paid.ok) {
+      return { ok: false, error: paid.error, orderId: result.orderId };
+    }
+    void trackServerEvent({
+      event: ANALYTICS_EVENTS.WALLET_PRODUCT_PURCHASE,
+      route: orderPath(result.orderId),
+      entityId: result.orderId,
+    });
+    return {
+      ok: true,
+      orderId: result.orderId,
+      orderNumber: result.orderNumber,
+    };
+  }
 
   // Free reservation (0% prepayment) — no Stripe charge
   if (charge <= 0) {

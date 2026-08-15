@@ -1,0 +1,39 @@
+{
+  "productId": "TRUST-58-1",
+  "productName": "Шуруповёрт trust 58 #1",
+  "eligibility": "ELIGIBLE",
+  "eligibilityReasons": [],
+  "currentRankingScore": 67,
+  "currentTestPosition": 86,
+  "organicScore": 67,
+  "promotionContribution": 0,
+  "qualityGate": "PASS",
+  "factorBreakdown": {
+    "photos": 95,
+    "description": 90,
+    "seo": 92,
+    "category": 90,
+    "inventory": 95,
+    "trust": 58,
+    "reviews": 90,
+    "shipping": 85,
+    "ctr": 16,
+    "conversion": 10,
+    "price": 72
+  },
+  "mainBlockers": [
+    "Trust score 58"
+  ],
+  "strongestFactors": [
+    "Достаточно качественных фото"
+  ],
+  "nextBestAction": "Сделайте цену конкурентнее",
+  "simulation": {
+    "ifImproved": "improve_first_photo",
+    "scoreFrom": 67,
+    "scoreTo": 67,
+    "positionFrom": 1,
+    "positionTo": 1
+  },
+  "lastRecalculatedAt": "2026-08-15T10:55:39.917Z"
+}

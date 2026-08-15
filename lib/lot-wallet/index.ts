@@ -13,6 +13,10 @@ export {
   listWalletHistory,
 } from "./queries";
 export { payInternalProduct, walletSpendableForCheckout } from "./payment";
+export { payOrderWithLotWallet } from "./pay-order";
+export { createWalletTopUpCheckoutSession } from "./topup";
+export { creditWalletTopUpFromCheckoutSession } from "./credit-topup";
+export { startWalletTopUpAction } from "./actions";
 export type {
   WalletBuckets,
   WalletHistoryFilter,

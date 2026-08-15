@@ -30,7 +30,7 @@ export type FinalizePaidOrderInput = {
   currency: string | null | undefined;
   stripeSessionId?: string | null;
   stripePaymentIntentId?: string | null;
-  source: "checkout.session" | "payment_intent";
+  source: "checkout.session" | "payment_intent" | "lot_wallet";
 };
 
 export type FinalizePaidOrderResult = {
@@ -138,7 +138,15 @@ export async function finalizePaidOrderInTx(
     return { orderId, alreadyPaid: true };
   }
 
-  assertStripeMatchesOrder(amountTotal, currency, order, source);
+  if (source !== "lot_wallet") {
+    assertStripeMatchesOrder(amountTotal, currency, order, source);
+  } else if (amountTotal == null) {
+    throw new PaymentServiceError(
+      "AMOUNT_MISSING",
+      "Wallet payment amount missing",
+      400,
+    );
+  }
 
   await commitInventory(orderId, tx);
 

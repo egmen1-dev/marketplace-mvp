@@ -1,0 +1,37 @@
+{
+  "productId": "PHOTO-3-2",
+  "productName": "Шуруповёрт 3 фото #2",
+  "eligibility": "ELIGIBLE",
+  "eligibilityReasons": [],
+  "currentRankingScore": 68,
+  "currentTestPosition": 82,
+  "organicScore": 68,
+  "promotionContribution": 0,
+  "qualityGate": "PASS",
+  "factorBreakdown": {
+    "photos": 82,
+    "description": 90,
+    "seo": 92,
+    "category": 90,
+    "inventory": 95,
+    "trust": 82,
+    "reviews": 90,
+    "shipping": 85,
+    "ctr": 16,
+    "conversion": 10,
+    "price": 72
+  },
+  "mainBlockers": [],
+  "strongestFactors": [
+    "Высокий trust score продавца"
+  ],
+  "nextBestAction": "Добавьте ещё 3 фото",
+  "simulation": {
+    "ifImproved": "Улучшить первое фото",
+    "scoreFrom": 68,
+    "scoreTo": 70,
+    "positionFrom": 1,
+    "positionTo": 1
+  },
+  "lastRecalculatedAt": "2026-08-15T10:55:39.917Z"
+}
