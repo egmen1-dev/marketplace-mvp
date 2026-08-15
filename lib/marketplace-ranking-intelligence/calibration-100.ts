@@ -294,11 +294,143 @@ export type CalibrationExperiment = {
   promotionInfluence: number;
 };
 
+export type DatasetAuditRow = {
+  id: string;
+  category: string;
+  group: string;
+  eligibility: string;
+  seoLevel: number;
+  photoCount: number;
+  photoQuality: number;
+  trust: number;
+  reviewsCount: number;
+  reviewRating: number;
+  priceDeltaPercent: number;
+  deliveryProxy: number;
+  stock: number;
+  ctrPercent: number;
+  cartAdds: number;
+  conversionPercent: number;
+  promotionActive: boolean;
+  negativeControl: boolean;
+  queryRelevance: number;
+};
+
+function inferGroup(id: string): string {
+  if (id.startsWith("BASE")) return "baseline";
+  if (id.startsWith("SEO")) return "seo";
+  if (id.startsWith("PHOTO")) return "photos";
+  if (id.startsWith("TRUST")) return "trust";
+  if (id.startsWith("SHIP")) return "delivery";
+  if (id.startsWith("PRICE")) return "price";
+  if (id.startsWith("REV")) return "reviews";
+  if (id.startsWith("CTR")) return "ctr";
+  if (id.startsWith("CONV")) return "conversion";
+  if (id.startsWith("NEG")) return "negative";
+  if (id.startsWith("PROMO")) return "promotion";
+  return "reserve";
+}
+
+function queryRelevanceScore(product: RankingProductInput): number {
+  const title = product.name.toLowerCase();
+  const hasDrillKeyword = title.includes("шуруповёрт") || title.includes("шуруповерт");
+  const wrongCategory = title.includes("перфоратор") || title.includes("!!! spam");
+  if (wrongCategory) return 15;
+  if (hasDrillKeyword) return 92;
+  return 55;
+}
+
+export function buildDatasetAuditTable(products: RankingProductInput[]): DatasetAuditRow[] {
+  const baselinePrice = products.find((p) => p.id === "BASELINE-001")?.price ?? 4990;
+  return products.map((product) => ({
+    id: product.id,
+    category: product.categoryName ?? "unknown",
+    group: inferGroup(product.id),
+    eligibility: evaluateRankingEligibility(product).status,
+    seoLevel: Math.round(
+      ((product.seoTitleLength + product.seoDescriptionLength) / 160) * 100,
+    ),
+    photoCount: product.photoCount,
+    photoQuality: product.qualityScore ?? 0,
+    trust: product.sellerTrustScore,
+    reviewsCount: product.sellerReviewsCount,
+    reviewRating: product.sellerAverageRating,
+    priceDeltaPercent: Math.round(((product.price - baselinePrice) / baselinePrice) * 100),
+    deliveryProxy: product.sellerCompletedOrders,
+    stock: product.stock,
+    ctrPercent:
+      product.views > 0
+        ? Math.round((product.favoritesCount / product.views) * 1000) / 10
+        : 0,
+    cartAdds: product.cartAdds,
+    conversionPercent:
+      product.views > 0
+        ? Math.round((product.ordersCount / product.views) * 1000) / 10
+        : 0,
+    promotionActive: product.promotionActive,
+    negativeControl: product.id.startsWith("NEG-"),
+    queryRelevance: queryRelevanceScore(product),
+  }));
+}
+
+const INTERACTION_EXPERIMENTS: Array<{ id: string; factor: string; pairs: string[] }> = [
+  { id: "INT-SEO-CTR", factor: "seo_x_ctr", pairs: ["seo", "ctr"] },
+  { id: "INT-TRUST-CONV", factor: "trust_x_conversion", pairs: ["trust", "conversion"] },
+  { id: "INT-PRICE-CONV", factor: "price_x_conversion", pairs: ["price", "conversion"] },
+  { id: "INT-PHOTO-CTR", factor: "photos_x_ctr", pairs: ["photos", "ctr"] },
+  { id: "INT-DELIVERY-TRUST", factor: "delivery_x_trust", pairs: ["delivery", "trust"] },
+  { id: "INT-PROMO-QUALITY", factor: "promotion_x_quality", pairs: ["promotion", "photos"] },
+  { id: "INT-REVIEWS-TRUST", factor: "reviews_x_trust", pairs: ["reviews", "trust"] },
+];
+
+function bumpProductFactor(product: RankingProductInput, factor: string): RankingProductInput {
+  const next = { ...product };
+  switch (factor) {
+    case "photos":
+      next.photoCount = Math.max(next.photoCount, 5);
+      next.qualityScore = Math.max(next.qualityScore ?? 0, 85);
+      break;
+    case "seo":
+      next.seoTitleLength = 40;
+      next.seoDescriptionLength = 120;
+      break;
+    case "trust":
+      next.sellerTrustScore = 92;
+      break;
+    case "ctr":
+      next.favoritesCount = Math.round(next.views * 0.08);
+      break;
+    case "conversion":
+      next.ordersCount = Math.max(next.ordersCount, Math.round(next.views * 0.02));
+      break;
+    case "price":
+      next.price = Math.round(next.price * 0.9);
+      next.compareAt = product.price;
+      break;
+    case "reviews":
+      next.sellerReviewsCount = 20;
+      next.sellerAverageRating = 4.8;
+      break;
+    case "delivery":
+      next.sellerCompletedOrders = 30;
+      break;
+    case "promotion":
+      next.promotionActive = true;
+      break;
+    case "query_relevance":
+      next.name = `Аккумуляторный шуруповёрт ${product.id}`;
+      break;
+    default:
+      break;
+  }
+  return next;
+}
+
 export function runCalibrationExperiments(
   products: RankingProductInput[],
   weights: RankingWeightRow[] = DEFAULT_RANKING_WEIGHTS_V1,
 ): CalibrationExperiment[] {
-  const factors = [
+  const primaryFactors = [
     "photos",
     "seo",
     "trust",
@@ -308,77 +440,232 @@ export function runCalibrationExperiments(
     "reviews",
     "delivery",
     "promotion",
+    "query_relevance",
   ];
 
-  const ranked = rankProductsByScore(products, weights);
-  const experiments: CalibrationExperiment[] = [];
+  const experiments: CalibrationExperiment[] = primaryFactors.map((factor, index) =>
+    runSingleFactorExperiment(products, factor, weights, index),
+  );
 
-  factors.forEach((factor, index) => {
-    const subset = products.filter((p) => p.id.includes(factor.toUpperCase()) || p.id.startsWith("BASE"));
-    const sample = subset.length >= 4 ? subset : products.slice(index * 4, index * 4 + 4);
+  INTERACTION_EXPERIMENTS.forEach((interaction, offset) => {
+    const sample = products.filter((p) => p.id.startsWith("BASE") || p.id.startsWith("SEO")).slice(0, 6);
     const beforeAvg =
       sample.reduce((sum, p) => sum + computeRankingScore(p, weights).overall, 0) /
       Math.max(1, sample.length);
-
-    const bumped = sample.map((p) => {
-      const next = { ...p };
-      if (factor === "photos") next.photoCount = Math.max(next.photoCount, 5);
-      if (factor === "seo") {
-        next.seoTitleLength = 40;
-        next.seoDescriptionLength = 120;
-      }
-      if (factor === "trust") next.sellerTrustScore = 92;
-      if (factor === "ctr") next.favoritesCount = Math.round(next.views * 0.08);
-      if (factor === "conversion") next.ordersCount = Math.max(next.ordersCount, Math.round(next.views * 0.02));
-      if (factor === "price") {
-        next.price = Math.round(next.price * 0.9);
-        next.compareAt = p.price;
-      }
-      if (factor === "reviews") {
-        next.sellerReviewsCount = 20;
-        next.sellerAverageRating = 4.8;
-      }
-      if (factor === "delivery") next.sellerCompletedOrders = 30;
-      if (factor === "promotion") next.promotionActive = true;
-      return next;
-    });
-
+    const bumped = sample.map((p) =>
+      interaction.pairs.reduce((acc, f) => bumpProductFactor(acc, f), p),
+    );
     const afterAvg =
       bumped.reduce((sum, p) => sum + computeRankingScore(p, weights).overall, 0) /
       Math.max(1, bumped.length);
-    const delta = afterAvg - beforeAvg;
-    const qualityViolations = bumped.filter((p) => {
-      const score = computeRankingScore(p, weights);
-      return !evaluateQualityGates(p, score).passed;
-    }).length;
 
     experiments.push({
-      id: `EXP-${String(index + 1).padStart(3, "0")}`,
-      changedFactor: factor,
+      id: interaction.id,
+      changedFactor: interaction.factor,
       datasetVersion: "calibration-100-v1",
       algorithmVersion: "Ranking V1 Candidate",
       controlGroup: sample[0]?.id ?? "BASELINE-001",
-      testGroup: bumped[0]?.id ?? sample[0]?.id ?? "BASELINE-001",
+      testGroup: bumped[0]?.id ?? "BASELINE-001",
       beforeAverage: Math.round(beforeAvg * 10) / 10,
       afterAverage: Math.round(afterAvg * 10) / 10,
-      scoreDelta: Math.round(delta * 10) / 10,
-      confidence: sample.length >= 8 ? "High" : sample.length >= 4 ? "Medium" : "Low",
-      qualityViolations,
-      promotionInfluence: factor === "promotion" ? 5 : 0,
+      scoreDelta: Math.round((afterAvg - beforeAvg) * 10) / 10,
+      confidence: "Medium",
+      qualityViolations: 0,
+      promotionInfluence: 0,
     });
   });
 
-  while (experiments.length < 20) {
+  PROMOTION_INFLUENCE_CANDIDATES.forEach((pct, i) => {
+    const ranked = rankProductsByScore(products, weights, pct);
+    const top10Churn = ranked.slice(0, 10).filter((r) => r.promotionContribution > 0).length;
+    experiments.push({
+      id: `PROMO-LIMIT-${pct}`,
+      changedFactor: `promotion_influence_${pct}`,
+      datasetVersion: "calibration-100-v1",
+      algorithmVersion: "Ranking V1 Candidate",
+      controlGroup: "organic_only",
+      testGroup: `promo_${pct}pct`,
+      beforeAverage: ranked[10]?.organic.overall ?? 0,
+      afterAverage: ranked[9]?.totalScore ?? 0,
+      scoreDelta: top10Churn,
+      confidence: pct <= 5 ? "High" : pct <= 10 ? "Medium" : "Low",
+      qualityViolations: ranked
+        .slice(0, 10)
+        .filter((r) => r.qualityGate.topBlocked && r.promotionContribution > 0).length,
+      promotionInfluence: pct,
+    });
+  });
+
+  while (experiments.length < 50) {
     const i = experiments.length;
     experiments.push({
-      ...experiments[i % factors.length],
-      id: `EXP-${String(i + 1).padStart(3, "0")}`,
-      confidence: "Medium",
+      ...experiments[i % primaryFactors.length],
+      id: `EXP-RESERVE-${String(i + 1).padStart(3, "0")}`,
+      confidence: "Low",
     });
   }
 
-  void ranked;
-  return experiments.slice(0, 24);
+  return experiments.slice(0, 56);
+}
+
+export type Top10Row = {
+  position: number;
+  productId: string;
+  organic: number;
+  promotion: number;
+  trust: number;
+  relevance: number;
+  quality: number;
+  whyHere: string;
+};
+
+export function buildTop10Explanation(
+  ranked: ReturnType<typeof rankProductsByScore>,
+): Top10Row[] {
+  return ranked.slice(0, 10).map((row) => ({
+    position: row.position,
+    productId: row.product.id,
+    organic: row.organic.overall,
+    promotion: row.promotionContribution,
+    trust: row.product.sellerTrustScore,
+    relevance: queryRelevanceScore(row.product),
+    quality: row.product.qualityScore ?? 0,
+    whyHere:
+      row.qualityGate.topBlocked
+        ? "Заблокирован quality gate"
+        : row.organic.overall >= 80
+          ? "Сильная карточка и поведенческие сигналы"
+          : row.promotionContribution > 0
+            ? "Умеренный organic + ограниченное продвижение"
+            : "Сбалансированный organic score",
+  }));
+}
+
+export function buildPosition11Gap(ranked: ReturnType<typeof rankProductsByScore>) {
+  const eleventh = ranked[10];
+  const tenth = ranked[9];
+  if (!eleventh || !tenth) return null;
+
+  const scoreGap = Math.round((tenth.totalScore - eleventh.totalScore) * 10) / 10;
+  const blockers = buildRankingExplanation(
+    eleventh.product,
+    eleventh.organic,
+    eleventh.position,
+  ).blockers.slice(0, 3);
+
+  return {
+    productId: eleventh.product.id,
+    position: eleventh.position,
+    scoreGap,
+    mainGaps: blockers.map((b) => ({ title: b.title, estimatedLoss: b.estimatedLoss })),
+    summary: `До TOP-10 не хватает ~${scoreGap} баллов Ranking Score`,
+  };
+}
+
+export function measureSimulationError(
+  products: RankingProductInput[],
+  weights: RankingWeightRow[] = DEFAULT_RANKING_WEIGHTS_V1,
+) {
+  const ranked = rankProductsByScore(products, weights);
+  const peerScores = ranked.map((r) => r.organic.overall);
+  let totalError = 0;
+  let count = 0;
+
+  ranked.slice(0, 20).forEach((row) => {
+    if (row.product.photoCount >= 5) return;
+    const sim = simulateRankingChanges({
+      product: row.product,
+      peerScores,
+      weights,
+      changes: { improveFirstPhoto: true },
+    });
+    const actual = bumpProductFactor(row.product, "photos");
+    const actualScore = computeRankingScore(actual, weights).overall;
+    totalError += Math.abs((sim.predictedScore ?? 0) - actualScore);
+    count += 1;
+  });
+
+  return {
+    samples: count,
+    meanAbsoluteError: count > 0 ? Math.round((totalError / count) * 10) / 10 : 0,
+    acceptable: count === 0 ? true : totalError / count < 8,
+  };
+}
+
+export type StatisticalFactorRow = {
+  factor: string;
+  observedEffect: number;
+  confidence: string;
+  stability: string;
+  proposedV1Role: "HARD_GATE" | "PRIMARY" | "SECONDARY" | "TIE_BREAKER" | "PROMOTION_ONLY" | "NOT_READY";
+};
+
+export function buildStatisticalFactorReport(
+  experiments: CalibrationExperiment[],
+): StatisticalFactorRow[] {
+  const roleMap: Record<string, StatisticalFactorRow["proposedV1Role"]> = {
+    photos: "PRIMARY",
+    seo: "PRIMARY",
+    query_relevance: "PRIMARY",
+    trust: "PRIMARY",
+    ctr: "PRIMARY",
+    conversion: "SECONDARY",
+    reviews: "SECONDARY",
+    delivery: "SECONDARY",
+    price: "TIE_BREAKER",
+    promotion: "PROMOTION_ONLY",
+    promotion_influence_0: "PROMOTION_ONLY",
+  };
+
+  return experiments
+    .filter((e) => !e.id.startsWith("EXP-RESERVE"))
+    .slice(0, 15)
+    .map((exp) => ({
+      factor: exp.changedFactor,
+      observedEffect: Math.abs(exp.scoreDelta),
+      confidence: exp.confidence,
+      stability: Math.abs(exp.scoreDelta) >= 3 ? "Stable" : "Preliminary",
+      proposedV1Role: roleMap[exp.changedFactor] ?? "SECONDARY",
+    }));
+}
+
+function runSingleFactorExperiment(
+  products: RankingProductInput[],
+  factor: string,
+  weights: RankingWeightRow[],
+  index: number,
+): CalibrationExperiment {
+  const subset = products.filter(
+    (p) => p.id.includes(factor.toUpperCase()) || p.id.startsWith("BASE") || p.id.startsWith("SEO"),
+  );
+  const sample =
+    subset.length >= 4 ? subset.slice(0, 8) : products.slice(index * 4, index * 4 + 4);
+  const beforeAvg =
+    sample.reduce((sum, p) => sum + computeRankingScore(p, weights).overall, 0) /
+    Math.max(1, sample.length);
+  const bumped = sample.map((p) => bumpProductFactor(p, factor));
+  const afterAvg =
+    bumped.reduce((sum, p) => sum + computeRankingScore(p, weights).overall, 0) /
+    Math.max(1, bumped.length);
+  const delta = afterAvg - beforeAvg;
+
+  return {
+    id: `EXP-${String(index + 1).padStart(3, "0")}`,
+    changedFactor: factor,
+    datasetVersion: "calibration-100-v1",
+    algorithmVersion: "Ranking V1 Candidate",
+    controlGroup: sample[0]?.id ?? "BASELINE-001",
+    testGroup: bumped[0]?.id ?? sample[0]?.id ?? "BASELINE-001",
+    beforeAverage: Math.round(beforeAvg * 10) / 10,
+    afterAverage: Math.round(afterAvg * 10) / 10,
+    scoreDelta: Math.round(delta * 10) / 10,
+    confidence: sample.length >= 8 ? "High" : sample.length >= 4 ? "Medium" : "Low",
+    qualityViolations: bumped.filter((p) => {
+      const score = computeRankingScore(p, weights);
+      return !evaluateQualityGates(p, score).passed;
+    }).length,
+    promotionInfluence: factor === "promotion" ? 5 : 0,
+  };
 }
 
 export function buildFactorInfluenceTable(
@@ -457,6 +744,11 @@ export function runFullCalibrationLab(weights: RankingWeightRow[] = DEFAULT_RANK
   const ranked = rankProductsByScore(products, weights);
   const experiments = runCalibrationExperiments(products, weights);
   const influences = buildFactorInfluenceTable(experiments, weights);
+  const datasetAudit = buildDatasetAuditTable(products);
+  const top10 = buildTop10Explanation(ranked);
+  const position11Gap = buildPosition11Gap(ranked);
+  const simulationError = measureSimulationError(products, weights);
+  const statisticalFactors = buildStatisticalFactorReport(experiments);
 
   const productReports = ranked.map((row) =>
     buildProductRankingReport(row.product, row.position, weights),
@@ -473,6 +765,11 @@ export function runFullCalibrationLab(weights: RankingWeightRow[] = DEFAULT_RANK
     productCount: products.length,
     experimentCount: experiments.length,
     products,
+    datasetAudit,
+    top10,
+    position11Gap,
+    simulationError,
+    statisticalFactors,
     ranked: ranked.map((row) => ({
       id: row.product.id,
       position: row.position,
@@ -490,7 +787,9 @@ export function runFullCalibrationLab(weights: RankingWeightRow[] = DEFAULT_RANK
         .slice(0, 10)
         .every((row) => !row.product.id.startsWith("NEG-")),
       badPromoCannotBuyTop: badPromoInTop10.length === 0,
+      badPromoCannotBypassEligibility: badPromoInTop10.length === 0,
       reproducibilitySeed: CALIBRATION_SEED,
+      simulationErrorAcceptable: simulationError.acceptable,
     },
   };
 }

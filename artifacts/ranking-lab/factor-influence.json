@@ -27,12 +27,12 @@
   {
     "factorKey": "trust",
     "label": "Доверие",
-    "influencePercent": 6
+    "influencePercent": 5
   },
   {
     "factorKey": "reviews",
     "label": "Отзывы",
-    "influencePercent": 3
+    "influencePercent": 4
   },
   {
     "factorKey": "shipping",

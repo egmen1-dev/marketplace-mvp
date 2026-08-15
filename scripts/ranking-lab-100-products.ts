@@ -11,6 +11,7 @@ mkdirSync(reportsDir, { recursive: true });
 const lab = runFullCalibrationLab();
 
 writeFileSync(join(outDir, "100-products.json"), JSON.stringify(lab.products, null, 2));
+writeFileSync(join(outDir, "dataset-audit.json"), JSON.stringify(lab.datasetAudit, null, 2));
 writeFileSync(
   join(outDir, "experiment-results.json"),
   JSON.stringify(
@@ -20,6 +21,10 @@ writeFileSync(
       algorithmVersion: lab.algorithmVersion,
       experimentCount: lab.experimentCount,
       experiments: lab.experiments,
+      top10: lab.top10,
+      position11Gap: lab.position11Gap,
+      simulationError: lab.simulationError,
+      statisticalFactors: lab.statisticalFactors,
       qualityChecks: lab.qualityChecks,
     },
     null,
