@@ -127,6 +127,10 @@ export const ROUTES = {
   ADMIN_DISCOVERY: "/admin/discovery",
   /** Admin ranking intelligence center */
   ADMIN_RANKING: "/admin/ranking",
+  /** Admin ranking lab 1000 — analysis only */
+  ADMIN_RANKING_LAB: "/admin/ranking-lab",
+  /** Seller ranking academy — lab recommendations */
+  ACCOUNT_RANKING_ACADEMY: "/account/ranking-academy",
   /** Social growth / viral commerce */
   SOCIAL: "/social",
   SOCIAL_COLLECTIONS: "/social/c",
