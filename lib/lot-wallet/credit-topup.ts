@@ -28,7 +28,7 @@ export async function creditWalletTopUpFromCheckoutSession(
 
   await prisma.$transaction(async (tx) => {
     await getOrCreateUserWallet(userId, tx);
-    await appendWalletLedgerEntry(
+    const created = await appendWalletLedgerEntry(
       {
         userId,
         type: "BUYER_TOP_UP",
@@ -44,6 +44,7 @@ export async function creditWalletTopUpFromCheckoutSession(
       },
       tx,
     );
+    if (!created) return;
     await tx.userWallet.update({
       where: { userId },
       data: { topupSpendableAmount: { increment: amountRub } },

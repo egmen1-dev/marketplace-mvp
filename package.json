@@ -20,6 +20,7 @@
     "taxonomy:dedupe": "tsx scripts/dedupe-product-types.ts",
     "taxonomy:import": "tsx scripts/taxonomy-import.ts",
     "ranking:lab:100": "tsx scripts/ranking-lab-100-products.ts",
+    "finance:invariants": "node scripts/check-financial-invariants.mjs",
     "postinstall": "prisma generate"
   },
   "prisma": {
