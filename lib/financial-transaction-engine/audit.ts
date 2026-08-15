@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { prisma } from "@/lib/prisma";
 
 import type { FinancialEngineContext, FinancialEnginePhase } from "./types";
@@ -26,7 +28,7 @@ export async function writeFinancialAuditLog(input: {
       orderId: input.context.orderId,
       referenceType: input.context.referenceType,
       referenceId: input.context.referenceId,
-      detail: input.detail ?? undefined,
+      detail: (input.detail ?? undefined) as Prisma.InputJsonValue | undefined,
     },
   });
   return row.id;

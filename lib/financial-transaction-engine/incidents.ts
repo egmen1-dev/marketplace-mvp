@@ -1,6 +1,7 @@
 import {
   FinancialIncidentSeverity,
   FinancialIncidentStatus,
+  Prisma,
 } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
@@ -42,7 +43,7 @@ export async function createFinancialIncident(
       operationType: input.operationType,
       referenceType: input.referenceType,
       referenceId: input.referenceId,
-      metadata: input.metadata ?? undefined,
+      metadata: (input.metadata ?? undefined) as Prisma.InputJsonValue | undefined,
     },
   });
   return row.id;

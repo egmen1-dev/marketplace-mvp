@@ -137,7 +137,7 @@ export async function handleStripeWebhook(
             orderId: raced.orderId,
           };
         }
-        row = raced ?? undefined;
+        row = raced;
       }
       if (!row) throw err;
     }

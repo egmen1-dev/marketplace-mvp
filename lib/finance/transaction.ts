@@ -24,7 +24,7 @@ type Tx = Prisma.TransactionClient;
 function mapTransaction(row: {
   id: string;
   orderId: string;
-  buyerId: string;
+  buyerId: string | null;
   sellerId: string;
   grossAmount: Prisma.Decimal;
   commissionAmount: Prisma.Decimal;
@@ -36,7 +36,7 @@ function mapTransaction(row: {
   return {
     id: row.id,
     orderId: row.orderId,
-    buyerId: row.buyerId,
+    buyerId: row.buyerId ?? "",
     sellerId: row.sellerId,
     grossAmount: toPriceNumber(row.grossAmount),
     commissionAmount: toPriceNumber(row.commissionAmount),
