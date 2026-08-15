@@ -28,13 +28,34 @@ curl -sS https://web-production-e56fb.up.railway.app/api/health
 
 | Area | Status |
 |------|--------|
-| **Code + unit/integration tests** | ✅ Implemented on branch |
-| **Wallet idempotency fixes** | ✅ Ledger-before-balance pattern |
-| **Financial reconciliation tooling** | ✅ Script + library |
-| **Stripe runtime on staging** | ❌ **BLOCKED** |
-| **FINANCIAL E2E (real transactions)** | ❌ **NOT ACCEPTED** |
+| **Code + unit/integration tests** | ✅ PR #65 merged (`7ec975f`) |
+| **Wallet idempotency fixes** | ✅ |
+| **Staging UI + bucket display (fixture seed)** | ✅ verified 2026-08-15 |
+| **Wallet checkout / promotion / payout UI** | ✅ visible on staging |
+| **Stripe runtime on staging** | ❌ **BLOCKED** (user skipped secrets) |
+| **Real Stripe top-up E2E** | ❌ **NOT ACCEPTED** |
+| **FINANCIAL E2E overall** | ⚠️ **PARTIAL** — non-Stripe flows only |
 
-**FINANCIAL E2E: ACCEPTED** cannot be declared until real Stripe test payments complete on staging.
+**FINANCIAL E2E: ACCEPTED** cannot be declared until real Stripe test payment + webhook on staging.
+
+### Staging fixture seed (without Stripe)
+
+For acceptance without Stripe keys, run against staging `DATABASE_URL`:
+
+```bash
+npx tsx scripts/seed-financial-acceptance-fixture.ts
+```
+
+Seeds `seller@demo.lot`: 5 000 ₽ top-up (spendable only) + 20 000 ₽ seller available (withdrawable).
+
+Verified on staging UI:
+- Wallet shows 25 000 ₽ spendable / 20 000 ₽ withdrawable
+- History shows +5 000 ₽ пополнение
+- Checkout shows «Кошелёк ЛОТ»
+- Promotion center shows wallet balance
+- Admin `/admin/wallet` accessible
+
+Screenshots: `/opt/cursor/artifacts/financial-e2e-*.png`
 
 ---
 

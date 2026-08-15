@@ -74,12 +74,17 @@ async function main() {
     }
   }
 
-  const completedWithReserve = await prisma.payoutRequest.count({
-    where: {
-      status: "COMPLETED",
-      seller: { balance: { reservedForPayoutAmount: { gt: 0 } } },
-    },
+  const completedPayouts = await prisma.payoutRequest.findMany({
+    where: { status: "COMPLETED" },
+    select: { sellerId: true },
   });
+  let completedWithReserve = 0;
+  for (const p of completedPayouts) {
+    const bal = await prisma.sellerBalance.findUnique({ where: { sellerId: p.sellerId } });
+    if (bal && Number(bal.reservedForPayoutAmount) > 0) {
+      completedWithReserve += 1;
+    }
+  }
   if (completedWithReserve > 0) {
     issues.push(`completed payouts with reserved balance: ${completedWithReserve}`);
   }
