@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,16 +39,27 @@ export function AccountSettingsUnifiedPanel({
   notificationPrefs: initialPrefs,
   isSeller,
 }: AccountSettingsUnifiedPanelProps) {
+  const searchParams = useSearchParams();
   const [prefs, setPrefs] = useState(initialPrefs);
+  const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     trackAccountSettingsView();
   }, []);
+
+  useEffect(() => {
+    const section = searchParams.get("section");
+    if (!section) return;
+    const el = document.getElementById(section);
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [searchParams]);
 
   function saveNotifications() {
     startTransition(() => {
@@ -68,6 +80,7 @@ export function AccountSettingsUnifiedPanel({
     startTransition(() => {
       void (async () => {
         const result = await changePasswordAction({
+          currentPassword,
           password,
           passwordConfirm,
         });
@@ -76,6 +89,7 @@ export function AccountSettingsUnifiedPanel({
           toastError(result.error ?? "Ошибка");
           return;
         }
+        setCurrentPassword("");
         setPassword("");
         setPasswordConfirm("");
         toast.success("Пароль обновлён");
@@ -103,6 +117,26 @@ export function AccountSettingsUnifiedPanel({
         <h2 className="font-heading text-lg font-semibold">Безопасность</h2>
         <form onSubmit={savePassword} className="mt-4 space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="current-password">Текущий пароль</Label>
+            <div className="relative">
+              <Input
+                id="current-password"
+                type={showCurrentPassword ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
+                onClick={() => setShowCurrentPassword((v) => !v)}
+                aria-label={showCurrentPassword ? "Скрыть пароль" : "Показать пароль"}
+              >
+                {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="new-password">Новый пароль</Label>
             <div className="relative">
               <Input
@@ -124,19 +158,29 @@ export function AccountSettingsUnifiedPanel({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm-password">Подтвердите пароль</Label>
-            <Input
-              id="confirm-password"
-              type={showPassword ? "text" : "password"}
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-              autoComplete="new-password"
-            />
+            <Label htmlFor="confirm-password">Повторите пароль</Label>
+            <div className="relative">
+              <Input
+                id="confirm-password"
+                type={showPasswordConfirm ? "text" : "password"}
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
+                onClick={() => setShowPasswordConfirm((v) => !v)}
+                aria-label={showPasswordConfirm ? "Скрыть пароль" : "Показать пароль"}
+              >
+                {showPasswordConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
+            </div>
           </div>
           {passwordError ? (
             <p className="text-sm text-destructive">{passwordError}</p>
           ) : null}
-          <Button type="submit" disabled={isPending || !password}>
+          <Button type="submit" disabled={isPending || !password || !currentPassword}>
             {isPending ? <Loader2 className="size-4 animate-spin" /> : "Сохранить пароль"}
           </Button>
         </form>

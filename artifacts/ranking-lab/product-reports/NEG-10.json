@@ -1,0 +1,41 @@
+{
+  "productId": "NEG-10",
+  "productName": "Negative control #10",
+  "eligibility": "NOT_ELIGIBLE",
+  "eligibilityReasons": [
+    "Отклонено системой доверия"
+  ],
+  "currentRankingScore": 63,
+  "currentTestPosition": 99,
+  "organicScore": 63,
+  "promotionContribution": 0,
+  "qualityGate": "PASS",
+  "factorBreakdown": {
+    "photos": 95,
+    "description": 90,
+    "seo": 92,
+    "category": 90,
+    "inventory": 95,
+    "trust": 25,
+    "reviews": 90,
+    "shipping": 85,
+    "ctr": 16,
+    "conversion": 10,
+    "price": 72
+  },
+  "mainBlockers": [
+    "Trust score 25"
+  ],
+  "strongestFactors": [
+    "Достаточно качественных фото"
+  ],
+  "nextBestAction": "Сделайте цену конкурентнее",
+  "simulation": {
+    "ifImproved": "improve_first_photo",
+    "scoreFrom": 63,
+    "scoreTo": 63,
+    "positionFrom": 1,
+    "positionTo": 1
+  },
+  "lastRecalculatedAt": "2026-08-15T10:55:39.917Z"
+}

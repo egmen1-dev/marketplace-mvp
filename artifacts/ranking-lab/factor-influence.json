@@ -1,0 +1,57 @@
+[
+  {
+    "factorKey": "photos",
+    "label": "Фото",
+    "influencePercent": 5
+  },
+  {
+    "factorKey": "description",
+    "label": "Описание",
+    "influencePercent": 6
+  },
+  {
+    "factorKey": "seo",
+    "label": "SEO",
+    "influencePercent": 5
+  },
+  {
+    "factorKey": "category",
+    "label": "Категория",
+    "influencePercent": 5
+  },
+  {
+    "factorKey": "inventory",
+    "label": "Наличие",
+    "influencePercent": 4
+  },
+  {
+    "factorKey": "trust",
+    "label": "Доверие",
+    "influencePercent": 6
+  },
+  {
+    "factorKey": "reviews",
+    "label": "Отзывы",
+    "influencePercent": 3
+  },
+  {
+    "factorKey": "shipping",
+    "label": "Скорость отправки",
+    "influencePercent": 3
+  },
+  {
+    "factorKey": "ctr",
+    "label": "CTR",
+    "influencePercent": 9
+  },
+  {
+    "factorKey": "conversion",
+    "label": "Конверсия",
+    "influencePercent": 3
+  },
+  {
+    "factorKey": "price",
+    "label": "Цена",
+    "influencePercent": 3
+  }
+]

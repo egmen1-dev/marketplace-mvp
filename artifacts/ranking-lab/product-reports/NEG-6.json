@@ -1,0 +1,41 @@
+{
+  "productId": "NEG-6",
+  "productName": "Negative control #6",
+  "eligibility": "NOT_ELIGIBLE",
+  "eligibilityReasons": [
+    "Нет фото"
+  ],
+  "currentRankingScore": 56,
+  "currentTestPosition": 100,
+  "organicScore": 56,
+  "promotionContribution": 0,
+  "qualityGate": "FAIL",
+  "factorBreakdown": {
+    "photos": 0,
+    "description": 90,
+    "seo": 92,
+    "category": 90,
+    "inventory": 95,
+    "trust": 82,
+    "reviews": 90,
+    "shipping": 85,
+    "ctr": 16,
+    "conversion": 10,
+    "price": 72
+  },
+  "mainBlockers": [
+    "Только 0 фото"
+  ],
+  "strongestFactors": [
+    "Высокий trust score продавца"
+  ],
+  "nextBestAction": "Добавьте ещё 3 фото",
+  "simulation": {
+    "ifImproved": "Улучшить первое фото",
+    "scoreFrom": 56,
+    "scoreTo": 70,
+    "positionFrom": 1,
+    "positionTo": 1
+  },
+  "lastRecalculatedAt": "2026-08-15T10:55:39.917Z"
+}

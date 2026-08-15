@@ -1,0 +1,39 @@
+{
+  "productId": "PHOTO-1-1",
+  "productName": "Шуруповёрт 1 фото #1",
+  "eligibility": "ELIGIBLE",
+  "eligibilityReasons": [],
+  "currentRankingScore": 64,
+  "currentTestPosition": 94,
+  "organicScore": 64,
+  "promotionContribution": 0,
+  "qualityGate": "FAIL",
+  "factorBreakdown": {
+    "photos": 55,
+    "description": 90,
+    "seo": 92,
+    "category": 90,
+    "inventory": 95,
+    "trust": 82,
+    "reviews": 90,
+    "shipping": 85,
+    "ctr": 16,
+    "conversion": 10,
+    "price": 72
+  },
+  "mainBlockers": [
+    "Только 1 фото"
+  ],
+  "strongestFactors": [
+    "Высокий trust score продавца"
+  ],
+  "nextBestAction": "Добавьте ещё 3 фото",
+  "simulation": {
+    "ifImproved": "Улучшить первое фото",
+    "scoreFrom": 64,
+    "scoreTo": 70,
+    "positionFrom": 1,
+    "positionTo": 1
+  },
+  "lastRecalculatedAt": "2026-08-15T10:55:39.917Z"
+}
