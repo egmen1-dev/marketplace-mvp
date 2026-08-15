@@ -6,7 +6,7 @@ import { toPriceNumber } from "@/features/products/mappers";
 import { loadUserAuthFromDb } from "@/features/auth";
 import { prisma } from "@/lib/prisma";
 
-import { payInternalProduct } from "./payment";
+import { payInternalProductWithFinalize } from "./payment";
 import { isLotWalletEnabled } from "./flags";
 import { walletSpendableForCheckout } from "./payment";
 
@@ -46,7 +46,7 @@ export async function payOrderWithLotWallet(input: {
     };
   }
 
-  const debit = await payInternalProduct({
+  const debit = await payInternalProductWithFinalize({
     userId: input.userId,
     sellerProfileId: dbUser?.sellerProfileId ?? null,
     productType: "PRODUCT_ORDER",
@@ -54,25 +54,17 @@ export async function payOrderWithLotWallet(input: {
     referenceId: order.id,
     title: `Покупка · заказ ${order.orderNumber}`,
     idempotencyKey: `order:wallet:${order.id}`,
-  });
-
-  if (!debit.ok) return debit;
-
-  try {
-    await prisma.$transaction(async (tx) => {
+    finalize: async (tx) => {
       await finalizePaidOrderInTx(tx, {
         orderId: order.id,
         amountTotal: toStripeAmount(amount),
         currency: "RUB",
         source: "lot_wallet",
       });
-    });
-  } catch (err) {
-    return {
-      ok: false,
-      error: err instanceof Error ? err.message : "Не удалось завершить оплату",
-    };
-  }
+    },
+  });
+
+  if (!debit.ok) return debit;
 
   return { ok: true };
 }

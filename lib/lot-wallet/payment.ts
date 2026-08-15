@@ -1,4 +1,5 @@
 import type { WalletLedgerType } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { reverseAvailableBalance } from "@/lib/finance/balance";
@@ -13,6 +14,80 @@ import { appendWalletLedgerEntry, getOrCreateUserWallet, getWalletOverview } fro
 import { isLotWalletEnabled } from "./flags";
 
 export type InternalProductType = "PROMOTION" | "SUBSCRIPTION" | "INTERNAL_SERVICE" | "PRODUCT_ORDER";
+
+type Tx = Prisma.TransactionClient;
+
+async function payInternalProductInTx(
+  tx: Tx,
+  input: {
+    userId: string;
+    sellerProfileId: string | null;
+    productType: InternalProductType;
+    amount: number;
+    referenceId: string;
+    title: string;
+    idempotencyKey: string;
+    buckets: Awaited<ReturnType<typeof getWalletOverview>>["buckets"];
+  },
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const ledgerType: WalletLedgerType =
+    input.productType === "PROMOTION"
+      ? "PROMOTION_PURCHASE"
+      : input.productType === "PRODUCT_ORDER"
+        ? "PRODUCT_PURCHASE"
+        : "INTERNAL_SERVICE_PURCHASE";
+
+  const wallet = await getOrCreateUserWallet(input.userId, tx);
+  let remaining = input.amount;
+  const topup = Number(wallet.topupSpendableAmount);
+  const bonus = Number(wallet.bonusSpendableAmount);
+  const withdrawable = input.buckets.withdrawableAmount;
+
+  const fromTopup = Math.min(remaining, topup);
+  remaining -= fromTopup;
+  const fromBonus = Math.min(remaining, bonus);
+  remaining -= fromBonus;
+  const fromWithdrawable = Math.min(remaining, withdrawable);
+
+  if (fromTopup + fromBonus + fromWithdrawable < input.amount) {
+    return { ok: false, error: "Недостаточно средств в кошельке" };
+  }
+
+  const created = await appendWalletLedgerEntry(
+    {
+      userId: input.userId,
+      type: ledgerType,
+      direction: "DEBIT",
+      amount: input.amount,
+      spendableDelta: -input.amount,
+      withdrawableDelta: -fromWithdrawable,
+      title: input.title,
+      referenceType: input.productType,
+      referenceId: input.referenceId,
+      idempotencyKey: input.idempotencyKey,
+    },
+    tx,
+  );
+  if (!created) return { ok: true };
+
+  if (fromTopup > 0) {
+    await tx.userWallet.update({
+      where: { userId: input.userId },
+      data: { topupSpendableAmount: { decrement: fromTopup } },
+    });
+  }
+  if (fromBonus > 0) {
+    await tx.userWallet.update({
+      where: { userId: input.userId },
+      data: { bonusSpendableAmount: { decrement: fromBonus } },
+    });
+  }
+  if (fromWithdrawable > 0 && input.sellerProfileId) {
+    await reverseAvailableBalance(input.sellerProfileId, fromWithdrawable, tx);
+  }
+
+  return { ok: true };
+}
 
 export async function payInternalProduct(input: {
   userId: string;
@@ -41,63 +116,62 @@ export async function payInternalProduct(input: {
     };
   }
 
-  const ledgerType: WalletLedgerType =
-    input.productType === "PROMOTION"
-      ? "PROMOTION_PURCHASE"
-      : input.productType === "PRODUCT_ORDER"
-        ? "PRODUCT_PURCHASE"
-        : "INTERNAL_SERVICE_PURCHASE";
+  try {
+    return await prisma.$transaction(async (tx) =>
+      payInternalProductInTx(tx, { ...input, buckets: overview.buckets }),
+    );
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Не удалось списать средства",
+    };
+  }
+}
+
+export async function payInternalProductWithFinalize(input: {
+  userId: string;
+  sellerProfileId: string | null;
+  productType: InternalProductType;
+  amount: number;
+  referenceId: string;
+  title: string;
+  idempotencyKey: string;
+  finalize: (tx: Tx) => Promise<void>;
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!isLotWalletEnabled()) {
+    return { ok: false, error: "Кошелёк ЛОТ временно недоступен" };
+  }
+
+  const overview = await getWalletOverview({
+    userId: input.userId,
+    sellerProfileId: input.sellerProfileId,
+  });
+
+  try {
+    assertSpendableAmount(overview.buckets, input.amount);
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Недостаточно средств",
+    };
+  }
 
   try {
     await prisma.$transaction(async (tx) => {
-      const wallet = await getOrCreateUserWallet(input.userId, tx);
-      let remaining = input.amount;
-      const topup = Number(wallet.topupSpendableAmount);
-      const bonus = Number(wallet.bonusSpendableAmount);
-      const withdrawable = overview.buckets.withdrawableAmount;
-
-      const fromTopup = Math.min(remaining, topup);
-      remaining -= fromTopup;
-      const fromBonus = Math.min(remaining, bonus);
-      remaining -= fromBonus;
-      const fromWithdrawable = Math.min(remaining, withdrawable);
-
-      if (fromTopup + fromBonus + fromWithdrawable < input.amount) {
-        throw new Error("Недостаточно средств в кошельке");
+      const debit = await payInternalProductInTx(tx, {
+        userId: input.userId,
+        sellerProfileId: input.sellerProfileId,
+        productType: input.productType,
+        amount: input.amount,
+        referenceId: input.referenceId,
+        title: input.title,
+        idempotencyKey: input.idempotencyKey,
+        buckets: overview.buckets,
+      });
+      if (!debit.ok) {
+        throw new Error(debit.error);
       }
-
-      const created = await appendWalletLedgerEntry(
-        {
-          userId: input.userId,
-          type: ledgerType,
-          direction: "DEBIT",
-          amount: input.amount,
-          spendableDelta: -input.amount,
-          withdrawableDelta: -fromWithdrawable,
-          title: input.title,
-          referenceType: input.productType,
-          referenceId: input.referenceId,
-          idempotencyKey: input.idempotencyKey,
-        },
-        tx,
-      );
-      if (!created) return;
-
-      if (fromTopup > 0) {
-        await tx.userWallet.update({
-          where: { userId: input.userId },
-          data: { topupSpendableAmount: { decrement: fromTopup } },
-        });
-      }
-      if (fromBonus > 0) {
-        await tx.userWallet.update({
-          where: { userId: input.userId },
-          data: { bonusSpendableAmount: { decrement: fromBonus } },
-        });
-      }
-      if (fromWithdrawable > 0 && input.sellerProfileId) {
-        await reverseAvailableBalance(input.sellerProfileId, fromWithdrawable, tx);
-      }
+      await input.finalize(tx);
     });
     return { ok: true };
   } catch (err) {
