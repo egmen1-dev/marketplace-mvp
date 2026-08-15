@@ -1,25 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const walletUpdate = vi.fn();
+import {
+  createFinancialEngineTxMock,
+  mockPrismaFinancialTransaction,
+} from "./helpers/financial-tx-mock";
+
 const appendLedger = vi.fn();
 
-vi.mock("@/lib/prisma", () => ({
-  prisma: {
-    $transaction: async (fn: (tx: unknown) => Promise<void>) =>
-      fn({
-        userWallet: { update: walletUpdate },
-      }),
-  },
+vi.mock("@/lib/financial-transaction-engine/verification", () => ({
+  verifyWalletLedgerMatchesBalanceInTx: vi.fn(async () => {}),
+  verifyWalletOrderPaidInTx: vi.fn(async () => {}),
+  verifySellerBalanceNonNegativeInTx: vi.fn(async () => {}),
 }));
 
 vi.mock("@/lib/lot-wallet/queries", () => ({
   getOrCreateUserWallet: vi.fn(async () => ({})),
   appendWalletLedgerEntry: (...args: unknown[]) => appendLedger(...args),
+  hasWalletLedgerIdempotencyKey: vi.fn(async () => false),
 }));
 
 describe("wallet top-up idempotency", () => {
+  let walletUpdate: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
+    const mock = createFinancialEngineTxMock();
+    walletUpdate = mock.walletUpdate;
+    vi.doMock("@/lib/prisma", () => mockPrismaFinancialTransaction(mock.tx));
   });
 
   it("does not double-credit when ledger idempotency key already exists", async () => {

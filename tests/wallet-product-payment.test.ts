@@ -1,10 +1,20 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+import {
+  createFinancialEngineTxMock,
+  mockPrismaFinancialTransaction,
+} from "./helpers/financial-tx-mock";
+
 const appendLedger = vi.fn();
-const walletUpdate = vi.fn();
 const reverseAvailable = vi.fn();
 
 vi.mock("@/lib/lot-wallet/flags", () => ({ isLotWalletEnabled: () => true }));
+
+vi.mock("@/lib/financial-transaction-engine/verification", () => ({
+  verifyWalletLedgerMatchesBalanceInTx: vi.fn(async () => {}),
+  verifyWalletOrderPaidInTx: vi.fn(async () => {}),
+  verifySellerBalanceNonNegativeInTx: vi.fn(async () => {}),
+}));
 
 vi.mock("@/lib/lot-wallet/queries", () => ({
   getOrCreateUserWallet: vi.fn(async () => ({
@@ -24,24 +34,22 @@ vi.mock("@/lib/lot-wallet/queries", () => ({
     },
   })),
   appendWalletLedgerEntry: (...args: unknown[]) => appendLedger(...args),
+  hasWalletLedgerIdempotencyKey: vi.fn(async () => false),
 }));
 
 vi.mock("@/lib/finance/balance", () => ({
   reverseAvailableBalance: (...args: unknown[]) => reverseAvailable(...args),
 }));
 
-vi.mock("@/lib/prisma", () => ({
-  prisma: {
-    $transaction: async (fn: (tx: unknown) => Promise<void>) =>
-      fn({
-        userWallet: { update: walletUpdate },
-      }),
-  },
-}));
-
 describe("wallet product payment", () => {
+  let walletUpdate: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
+    const mock = createFinancialEngineTxMock({ topup: 5000 });
+    walletUpdate = mock.walletUpdate;
+    vi.doMock("@/lib/prisma", () => mockPrismaFinancialTransaction(mock.tx));
   });
 
   it("creates ledger before debiting top-up bucket", async () => {
@@ -70,6 +78,9 @@ describe("wallet product payment", () => {
   it("does not debit when duplicate idempotency key exists", async () => {
     appendLedger.mockResolvedValue(false);
     const { payInternalProduct } = await import("@/lib/lot-wallet/payment");
+    vi.mocked(
+      (await import("@/lib/lot-wallet/queries")).hasWalletLedgerIdempotencyKey,
+    ).mockResolvedValueOnce(true);
     const result = await payInternalProduct({
       userId: "u1",
       sellerProfileId: null,
