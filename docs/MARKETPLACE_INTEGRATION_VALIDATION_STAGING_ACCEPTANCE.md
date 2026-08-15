@@ -13,7 +13,7 @@
 |------|---------|
 | **ACCOUNT UX** | **ACCEPTED** (staging visual + functional smoke) |
 | **LOT WALLET (UI / nav / buckets)** | **ACCEPTED** (code + visual; bucket rules unit-tested) |
-| **LOT WALLET (financial E2E)** | **NOT ACCEPTED** — Stripe `not_configured`; top-up E2E blocked |
+| **LOT WALLET (financial E2E)** | **NOT ACCEPTED** — Stripe `not_configured`; see `docs/MARKETPLACE_FINANCIAL_E2E_ACCEPTANCE.md` |
 | **PROMOTION** | **ACCEPTED** (visibility + visual; wallet pay E2E blocked by balance/Stripe) |
 | **RANKING LAB** | **ACCEPTED** (50 experiments, 100-product audit, artifacts regenerated) |
 | **LIVE RANKING** | **NOT ENABLED** (by design) |
