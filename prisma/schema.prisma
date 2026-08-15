@@ -575,6 +575,8 @@ model Product {
   productRating        ProductRating?
   productModeration    ProductModeration?
   socialCollectionItems SocialCollectionItem[]
+  rankingSnapshot      ProductRankingSnapshot?
+  rankingHistory       ProductRankingHistory[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -1656,4 +1658,143 @@ model SocialCollectionItem {
   @@unique([collectionId, productId])
   @@index([productId])
   @@map("social_collection_items")
+}
+
+// ─── Marketplace Ranking Intelligence (MARKETPLACE-RANKING-INTELLIGENCE-001) ─
+// Advisory layer only — does NOT drive catalog/search sort unless explicitly enabled later.
+
+enum RankingEligibilityStatus {
+  ELIGIBLE
+  NOT_ELIGIBLE
+}
+
+enum RankingHistoryEventType {
+  RECALCULATED
+  CONTENT_UPDATED
+  REVIEW_APPROVED
+  TRUST_CHANGED
+  WEIGHT_VERSION_CHANGED
+  QUALITY_GATE_FAILED
+  SIMULATION
+  MANUAL
+}
+
+enum RankingExperimentStatus {
+  DRAFT
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+/// Versioned ranking algorithm configuration.
+model RankingAlgorithmVersion {
+  id          String   @id @default(cuid())
+  version     String   @unique
+  label       String
+  description String?
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  weights     RankingWeight[]
+  snapshots   ProductRankingSnapshot[]
+  history     ProductRankingHistory[]
+  experiments RankingExperiment[]
+  influences  RankingInfluenceSnapshot[]
+
+  @@map("ranking_algorithm_versions")
+}
+
+/// Configurable factor weights per algorithm version.
+model RankingWeight {
+  id            String @id @default(cuid())
+  versionId     String
+  factorKey     String
+  groupKey      String
+  label         String
+  weightPercent Int
+
+  version RankingAlgorithmVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, factorKey])
+  @@index([versionId])
+  @@map("ranking_weights")
+}
+
+/// Latest computed ranking intelligence snapshot per product.
+model ProductRankingSnapshot {
+  productId         String                   @id
+  overallScore      Int
+  productScore      Int
+  sellerScore       Int
+  behaviourScore    Int
+  commercialScore   Int
+  estimatedPosition Int?
+  eligibility       RankingEligibilityStatus
+  topBlockedReason  String?
+  algorithmVersion  String
+  versionId         String?
+  computedAt        DateTime                 @updatedAt
+
+  product Product                  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  version RankingAlgorithmVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  @@index([overallScore])
+  @@index([eligibility])
+  @@index([algorithmVersion])
+  @@map("product_ranking_snapshots")
+}
+
+/// Immutable ranking score change audit trail.
+model ProductRankingHistory {
+  id               String                  @id @default(cuid())
+  productId        String
+  oldScore         Int
+  newScore         Int
+  reason           String
+  algorithmVersion String
+  eventType        RankingHistoryEventType
+  versionId        String?
+  createdAt        DateTime                @default(now())
+
+  product Product                  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  version RankingAlgorithmVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  @@index([productId, createdAt])
+  @@map("product_ranking_history")
+}
+
+/// Ranking Lab experiment definition + report.
+model RankingExperiment {
+  id             String                  @id @default(cuid())
+  name           String
+  purpose        String
+  datasetSize    Int
+  changedFactor  String
+  status         RankingExperimentStatus @default(DRAFT)
+  versionId      String?
+  beforeMetrics  Json?
+  afterMetrics   Json?
+  rankingImpact  String?
+  confidence     String?
+  createdById    String?
+  createdAt      DateTime                @default(now())
+  completedAt    DateTime?
+
+  version RankingAlgorithmVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("ranking_experiments")
+}
+
+/// Stored influence analysis from completed experiments.
+model RankingInfluenceSnapshot {
+  id         String   @id @default(cuid())
+  versionId  String
+  influences Json
+  computedAt DateTime @default(now())
+
+  version RankingAlgorithmVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@index([versionId, computedAt])
+  @@map("ranking_influence_snapshots")
 }

@@ -120,7 +120,11 @@ export const ROUTES = {
   DISCOVER: "/discover",
   DISCOVER_COLLECTIONS: "/discover/collections",
   ACCOUNT_DISCOVERY: "/account/discovery",
+  /** Seller ranking intelligence dashboard */
+  ACCOUNT_RANKING: "/account/ranking",
   ADMIN_DISCOVERY: "/admin/discovery",
+  /** Admin ranking intelligence center */
+  ADMIN_RANKING: "/admin/ranking",
   /** Social growth / viral commerce */
   SOCIAL: "/social",
   SOCIAL_COLLECTIONS: "/social/c",
@@ -189,6 +193,7 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/growth",
   "/account/promotion-center",
   "/account/discovery",
+  "/account/ranking",
   "/account/finds",
   "/account/social-tools",
   "/account/seller-start",

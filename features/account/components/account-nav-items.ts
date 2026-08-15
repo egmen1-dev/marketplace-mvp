@@ -17,6 +17,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { ROUTES } from "@/lib/constants";
 import { isLotWalletEnabled } from "@/lib/lot-wallet/flags";
+import { isMarketplaceRankingIntelligenceEnabled } from "@/lib/marketplace-ranking-intelligence/flags";
 import { isMarketplaceUxCompletionEnabled } from "@/lib/marketplace-ux-completion/flags";
 import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
 import { isSellerOperatingDeskEnabled } from "@/lib/seller-operating-desk/flags";
@@ -136,6 +137,19 @@ const SELLER_OPERATING_DESK_NAV: AccountNavItem[] = [
       path === ROUTES.ACCOUNT_PROMOTION_CENTER ||
       path.startsWith(`${ROUTES.ACCOUNT_PROMOTION_CENTER}/`),
   },
+  ...(isMarketplaceRankingIntelligenceEnabled()
+    ? [
+        {
+          href: ROUTES.ACCOUNT_RANKING,
+          label: "Позиция",
+          icon: BarChart3,
+          sellerOnly: true,
+          match: (path: string) =>
+            path === ROUTES.ACCOUNT_RANKING ||
+            path.startsWith(`${ROUTES.ACCOUNT_RANKING}/`),
+        } as AccountNavItem,
+      ]
+    : []),
   {
     href: ROUTES.ACCOUNT_COMMAND_CENTER,
     label: "Аналитика",
@@ -212,6 +226,19 @@ const SELLER_JOURNEY_NAV: AccountNavItem[] = [
       path === ROUTES.ACCOUNT_PROMOTION_CENTER ||
       path.startsWith(`${ROUTES.ACCOUNT_PROMOTION_CENTER}/`),
   },
+  ...(isMarketplaceRankingIntelligenceEnabled()
+    ? [
+        {
+          href: ROUTES.ACCOUNT_RANKING,
+          label: "Позиция",
+          icon: BarChart3,
+          sellerOnly: true,
+          match: (path: string) =>
+            path === ROUTES.ACCOUNT_RANKING ||
+            path.startsWith(`${ROUTES.ACCOUNT_RANKING}/`),
+        } as AccountNavItem,
+      ]
+    : []),
   {
     href: ROUTES.ACCOUNT_COMMAND_CENTER,
     label: "Аналитика",
@@ -439,6 +466,19 @@ const UNIFIED_SELLER_NAV: AccountNavItem[] = [
       path.startsWith(`${ROUTES.ACCOUNT_PROMOTION_CENTER}/`) ||
       path === ROUTES.ACCOUNT_PROMOTIONS,
   },
+  ...(isMarketplaceRankingIntelligenceEnabled()
+    ? [
+        {
+          href: ROUTES.ACCOUNT_RANKING,
+          label: "Позиция",
+          icon: BarChart3,
+          sellerOnly: true,
+          match: (path: string) =>
+            path === ROUTES.ACCOUNT_RANKING ||
+            path.startsWith(`${ROUTES.ACCOUNT_RANKING}/`),
+        } as AccountNavItem,
+      ]
+    : []),
   {
     href: ROUTES.ACCOUNT_COMMAND_CENTER,
     label: "Аналитика",

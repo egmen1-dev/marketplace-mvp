@@ -94,6 +94,12 @@ const NAV_ITEMS = [
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_DISCOVERY),
   },
   {
+    href: ROUTES.ADMIN_RANKING,
+    label: "Ranking",
+    icon: LineChart,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_RANKING),
+  },
+  {
     href: ROUTES.ADMIN_SOCIAL_GROWTH,
     label: "Social Growth",
     icon: Share2,

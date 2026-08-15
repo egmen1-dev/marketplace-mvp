@@ -190,6 +190,18 @@ export const MODULE_REGISTRY: ModuleRegistryEntry[] = [
     defaultBlockers: ["Не смержено в main", "Блоки на homepage скрыты без flag"],
   },
   {
+    id: "ranking_intelligence",
+    name: "Ranking Intelligence",
+    envVar: "MARKETPLACE_RANKING_INTELLIGENCE_ENABLED",
+    markerPath: "lib/marketplace-ranking-intelligence/flags.ts",
+    onMainBranch: false,
+    prNumber: null,
+    buyerRoutes: [],
+    sellerRoutes: ["/account/ranking"],
+    adminRoutes: ["/admin/ranking"],
+    defaultBlockers: ["Не смержено в main", "Intelligence-only — не меняет live search"],
+  },
+  {
     id: "social_growth",
     name: "Social Growth",
     envVar: "MARKETPLACE_SOCIAL_GROWTH_ENABLED",
