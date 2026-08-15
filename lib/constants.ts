@@ -252,5 +252,13 @@ export function resolveLegacySellerCabinetRedirect(
   if (pathname === "/seller/settings") {
     return ROUTES.SETTINGS;
   }
+  if (process.env.LOT_WALLET_ENABLED !== "false") {
+    if (pathname === ROUTES.ACCOUNT_BALANCE) {
+      return `${ROUTES.ACCOUNT_WALLET}?tab=overview`;
+    }
+    if (pathname === ROUTES.ACCOUNT_PAYOUTS) {
+      return `${ROUTES.ACCOUNT_WALLET}?tab=withdraw`;
+    }
+  }
   return null;
 }

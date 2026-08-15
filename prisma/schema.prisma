@@ -750,7 +750,7 @@ model Order {
   statusHistory   OrderStatusHistory[]
   events          OrderEvent[]
   reservations    PickupReservation[]
-  financeTransaction FinanceTransaction?
+  financeTransactions FinanceTransaction[]
   disputes        Dispute[]
   reviews         Review[]
   returnRequests  ReturnRequest[]
@@ -1237,27 +1237,41 @@ enum DisputeStatus {
   RESOLVED_SELLER
 }
 
+/// Legacy-compatible ledger row type (DB column retained since payment_finance_ledger).
+enum FinanceTransactionType {
+  SALE
+  RELEASE
+  REFUND
+  ADJUSTMENT
+}
+
 /// Financial operation for an order — virtual ledger, not real money movement.
 model FinanceTransaction {
   id               String                   @id @default(cuid())
-  orderId          String                   @unique
-  buyerId          String
+  orderId          String
+  buyerId          String?
   sellerId         String
+  type             FinanceTransactionType   @default(SALE)
   grossAmount      Decimal                  @db.Decimal(12, 2)
   commissionAmount Decimal                  @db.Decimal(12, 2)
   sellerAmount     Decimal                  @db.Decimal(12, 2)
+  currency         String                   @default("RUB")
+  commissionBps    Int                      @default(1000)
   status           FinanceTransactionStatus @default(PENDING)
   createdAt        DateTime                 @default(now())
   updatedAt        DateTime                 @updatedAt
 
   order  Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  buyer  User          @relation("FinanceTransactionBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
+  buyer  User?         @relation("FinanceTransactionBuyer", fields: [buyerId], references: [id], onDelete: Restrict)
   seller SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Restrict)
 
+  @@unique([orderId, sellerId, type])
   @@index([buyerId])
   @@index([sellerId])
   @@index([status])
+  @@index([type])
   @@index([createdAt])
+  @@index([orderId])
   @@map("finance_transactions")
 }
 

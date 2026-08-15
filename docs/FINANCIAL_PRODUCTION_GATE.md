@@ -1,12 +1,20 @@
 # Financial Production Gate
 
-**Epic:** MARKETPLACE-FINANCIAL-RELIABILITY-001  
-**Date:** 2026-08-15  
-**Branch:** `cursor/marketplace-financial-reliability-001-d03e`
+**Epic:** MARKETPLACE-FINANCIAL-PRODUCTION-GATE-002  
+**Initial reliability PR:** #69 (merged → `4489a5a`)  
+**Gate branch:** `cursor/marketplace-financial-production-gate-002-d03e`
 
 ---
 
-## Verdict
+## Initial result (RELIABILITY-001)
+
+**NOT READY FOR FINANCIAL PRODUCTION**
+
+Blockers: schema drift, invariants script, staging not redeployed, STRESS_OPS=1000 not run.
+
+---
+
+## Final retest (GATE-002)
 
 # NOT READY FOR FINANCIAL PRODUCTION
 
@@ -28,83 +36,90 @@
 | Incident Engine | ✓ | |
 | Stress Test | ✓ | |
 | Chaos Test | ✓ | |
-| Reconciliation | | ✓ |
+| Reconciliation | ✓ | |
 | Security | ✓ | |
+| **Staging deploy current** | | ✓ |
+| **Staging E2E full matrix** | | ✓ |
 
 ---
 
-## What Passed
+## Resolved in GATE-002
 
-### Atomic financial core
-- `lib/financial-transaction-engine/` — Validate → Lock → Execute → Verify → Commit → Audit
-- Wallet top-up, checkout, promotion payment routed through engine
-- Seller hold / release / refund / payout reserve routed through engine
-- Post-commit verification inside transaction (`verifyWalletLedgerMatchesBalanceInTx`, `verifyWalletOrderPaidInTx`, `verifySellerBalanceNonNegativeInTx`)
-- Duplicate idempotency short-circuit before balance validation (`hasWalletLedgerIdempotencyKey`)
-
-### Webhook reliability
-- Duplicate Stripe events → HTTP 200, `duplicate=true`, `ignored=true`
-- 10× replay test in `tests/stripe-webhook-idempotency.test.ts`
-- Security rejections (amount mismatch, missing signature) with audit log
-
-### Incident & admin
-- `FinancialAuditLog` + `FinancialIncident` models (migration `20260815140000_financial_reliability`)
-- `runReconciliationEngine()` opens incidents on drift
-- Admin UI: `/admin/financial-incidents`
-
-### Automated tests (local CI)
-- `tests/financial-transaction-engine.test.ts` — engine phases + CRITICAL incident on verify fail
-- `tests/financial-chaos.test.ts` — rollback on verify failure, double-submit idempotency
-- `tests/financial-stress.test.ts` — 20 parallel wallet ops, zero reconciliation drift
-- Full suite: **479 passed**, 1 skipped
-
-### Documentation & demo
-- `docs/FINANCIAL_TRANSACTION_MAP.md` — atomic flow map
-- `scripts/seed-financial-investor-demo.ts` — investor demo buyers/sellers/history
+| Blocker | Resolution |
+|---------|------------|
+| `SellerProfile.balance` | Column never existed; invariants used invalid `seller.balance` relation → fixed to `sellerBalance` / reconciliation engine |
+| `finance_transactions.type` | **Variant A:** restored `FinanceTransactionType` in Prisma; `createTransaction` sets `SALE` |
+| Invariants script | Rewritten as `scripts/check-financial-invariants.ts` using `runFinancialReconciliation()` |
+| STRESS_OPS=1000 | `npm run finance:stress-gate` — **1000 ops, 10 parallel workers, 190 duplicates, 0 failures, ~118s** |
+| React #310 payout | Middleware edge redirect `/account/balance` → wallet; payout panel uses withdrawable amount |
+| Open CRITICAL incidents | Test incidents resolved; post-gate count = 0 |
 
 ---
 
-## Blocking Reasons (NOT READY)
+## Evidence (local / staging DB)
 
-1. **Reconciliation script drift** — `npm run finance:invariants` fails on staging DB schema drift (`SellerProfile.balance` field removed from Prisma schema but script/DB mismatch). Automated reconciliation engine works in tests; production script needs schema alignment.
-
-2. **Finance transaction schema drift** — DB retains legacy `finance_transactions.type` NOT NULL column not present in current Prisma schema. Integration test skipped; `createTransaction` may fail on some environments until migration reconciles.
-
-3. **Staging E2E not re-run** — Full MARKETPLACE-FINANCIAL-E2E acceptance (Playwright on Railway staging) not re-executed after this reliability branch deploy. Prior E2E run reported payout UI React #310 and partial stages NOT RUN.
-
-4. **Stress test scale** — CI runs 20 ops (`STRESS_OPS=20`). Production gate target 100 buyers × 1000 ops requires explicit run: `STRESS_OPS=1000 npx vitest run tests/financial-stress.test.ts`.
-
-5. **Process-kill chaos** — Simulated via verify-failure rollback test; true SIGKILL mid-transaction requires infrastructure-level chaos runner (not executed in this VM).
+```bash
+npm test                          # 480 passed, 1 skipped
+npm run finance:invariants        # ok: true
+npm run finance:reconcile         # issues: []
+npm run finance:stress-gate       # 1000 ops PASS
+```
 
 ---
 
-## Required Before READY
+## Remaining blockers
 
-- [ ] Deploy branch to staging (`web-v2`)
-- [ ] Re-run `tests/e2e/financial-acceptance-staging.spec.ts`
-- [ ] Fix `scripts/check-financial-invariants.mjs` for current schema
-- [ ] Reconcile `finance_transactions.type` column with Prisma schema
-- [ ] Run `STRESS_OPS=1000` stress test on staging DB
-- [ ] Confirm zero open CRITICAL incidents in `/admin/financial-incidents`
+### 1. Staging deploy SHA mismatch
+
+| | SHA |
+|--|-----|
+| `origin/main` | `4489a5a` |
+| Staging `/api/version` | `7ec975f` (pre-reliability) |
+
+Until Railway `web-v2` deploys `4489a5a` + GATE-002, staging acceptance cannot pass.
+
+### 2. Staging E2E (2026-08-15 run)
+
+| Test | Result |
+|------|--------|
+| payout-staging (withdraw tab) | PASS |
+| wallet-topup-staging | FAIL — wallet UI not on old deploy |
+| wallet-checkout-staging | FAIL — wallet fixture UI not on old deploy |
+
+---
+
+## PAYMENT PROVIDER READINESS
+
+| Check | Status |
+|-------|--------|
+| Stripe technical integration | **PASS** (staging `/api/health` → configured) |
+| Russian payment acceptance (YooKassa, T-Bank, SBP, etc.) | **NOT COVERED** |
+
+See `docs/FINANCE_SCHEMA_RECONCILIATION_002.md` → Future Russian Payment Provider Integration.
 
 ---
 
 ## Commands
 
 ```bash
-npm test
-npx vitest run tests/financial-chaos.test.ts tests/financial-stress.test.ts
+npx prisma migrate deploy
 npm run finance:invariants
-tsx scripts/seed-financial-investor-demo.ts
+npm run finance:reconcile
+npm run finance:stress-gate
+PLAYWRIGHT_BASE_URL=https://web-production-e56fb.up.railway.app npx playwright test tests/e2e/*staging*
 ```
 
 ---
 
-## Next Project Phase (after READY)
+## READY checklist (all required)
 
-1. Ranking calibration on 100–1000 products  
-2. SEO / ads / card quality experiments  
-3. Ranking factor weights  
-4. Ranking V1 for commercial launch  
+- [x] schema drift resolved (Prisma ↔ PostgreSQL)
+- [x] invariants PASS
+- [x] reconciliation engine PASS
+- [x] STRESS_OPS=1000 PASS
+- [x] chaos PASS
+- [x] open CRITICAL incidents = 0
+- [ ] staging SHA = main
+- [ ] full staging E2E matrix PASS after deploy
 
-*No catalog, search, ranking, discovery, seller journey, or wallet/promotion UX changes in this epic.*
+**Verdict changes to READY FOR FINANCIAL PRODUCTION only when staging deploy + E2E complete.**

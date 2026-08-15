@@ -20,7 +20,9 @@
     "taxonomy:dedupe": "tsx scripts/dedupe-product-types.ts",
     "taxonomy:import": "tsx scripts/taxonomy-import.ts",
     "ranking:lab:100": "tsx scripts/ranking-lab-100-products.ts",
-    "finance:invariants": "node scripts/check-financial-invariants.mjs",
+    "finance:invariants": "tsx scripts/check-financial-invariants.ts",
+    "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
+    "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

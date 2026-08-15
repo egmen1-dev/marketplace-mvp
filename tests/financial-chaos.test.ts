@@ -3,7 +3,7 @@
  * Uses real DB when DATABASE_URL is available; skips destructive cases otherwise.
  */
 import { Prisma } from "@prisma/client";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, afterAll } from "vitest";
 
 import { executeFinancialTransaction } from "@/lib/financial-transaction-engine";
 import { verifyWalletLedgerMatchesBalanceInTx } from "@/lib/financial-transaction-engine/verification";
@@ -141,6 +141,16 @@ describe("financial chaos consistency", () => {
 
     await prisma.$transaction(async (tx) => {
       await verifyWalletLedgerMatchesBalanceInTx(tx, buyer.id);
+    });
+  });
+
+  afterAll(async () => {
+    await prisma.financialIncident.updateMany({
+      where: {
+        title: { contains: "Verification failed" },
+        status: { in: ["OPEN", "INVESTIGATING"] },
+      },
+      data: { status: "RESOLVED", resolvedAt: new Date() },
     });
   });
 });

@@ -78,9 +78,13 @@ export async function createPayoutRequest(input: {
     where: { sellerId: input.sellerId },
   });
   const availableAmount = balance ? toPriceNumber(balance.availableAmount) : 0;
+  const reservedAmount = balance
+    ? toPriceNumber(balance.reservedForPayoutAmount)
+    : 0;
+  const withdrawableAmount = Math.max(0, availableAmount - reservedAmount);
   const validationError = validatePayoutAmount({
     amount: input.amount,
-    availableAmount,
+    availableAmount: withdrawableAmount,
   });
   if (validationError) {
     throw new PayoutBalanceError(validationError);

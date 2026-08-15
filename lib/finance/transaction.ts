@@ -1,6 +1,7 @@
 import {
   DisputeStatus,
   FinanceTransactionStatus,
+  FinanceTransactionType,
   Prisma,
 } from "@prisma/client";
 
@@ -50,23 +51,30 @@ export async function createTransaction(
   orderId: string,
   tx: Tx = prisma,
 ): Promise<FinanceTransactionDto> {
-  const existing = await tx.financeTransaction.findUnique({
-    where: { orderId },
+  const split = await calculateCommissionForOrder(orderId, tx);
+
+  const existing = await tx.financeTransaction.findFirst({
+    where: {
+      orderId,
+      sellerId: split.sellerId,
+      type: FinanceTransactionType.SALE,
+    },
   });
   if (existing) {
     return mapTransaction(existing);
   }
-
-  const split = await calculateCommissionForOrder(orderId, tx);
 
   const row = await tx.financeTransaction.create({
     data: {
       orderId,
       buyerId: split.buyerId,
       sellerId: split.sellerId,
+      type: FinanceTransactionType.SALE,
       grossAmount: new Prisma.Decimal(split.grossAmount.toFixed(2)),
       commissionAmount: new Prisma.Decimal(split.commissionAmount.toFixed(2)),
       sellerAmount: new Prisma.Decimal(split.sellerAmount.toFixed(2)),
+      currency: "RUB",
+      commissionBps: Math.round(split.commissionPercent * 100),
       status: FinanceTransactionStatus.PENDING,
     },
   });
@@ -370,6 +378,8 @@ export async function createDispute(input: {
 export async function getTransactionByOrderId(
   orderId: string,
 ): Promise<FinanceTransactionDto | null> {
-  const row = await prisma.financeTransaction.findUnique({ where: { orderId } });
+  const row = await prisma.financeTransaction.findFirst({
+    where: { orderId, type: FinanceTransactionType.SALE },
+  });
   return row ? mapTransaction(row) : null;
 }

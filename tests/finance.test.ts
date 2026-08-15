@@ -47,7 +47,9 @@ describe("finance permissions", () => {
 });
 
 describe("transaction lifecycle integration", () => {
-  it.skip("creates HELD transaction and updates seller pending balance", async () => {
+  it(
+    "creates HELD transaction and updates seller pending balance",
+    async () => {
     const seller = await prisma.sellerProfile.findFirst({
       select: { id: true, userId: true },
     });
@@ -122,5 +124,7 @@ describe("transaction lifecycle integration", () => {
       await prisma.orderItem.deleteMany({ where: { orderId: order.id } });
       await prisma.order.delete({ where: { id: order.id } });
     }
-  });
+  },
+  30_000,
+  );
 });

@@ -1,6 +1,7 @@
 import {
   DisputeStatus,
   FinanceTransactionStatus,
+  FinanceTransactionType,
   OrderStatus,
 } from "@prisma/client";
 
@@ -20,18 +21,18 @@ export async function getOrderTrustContext(orderId: string) {
     include: {
       payment: true,
       disputes: { orderBy: { createdAt: "desc" }, take: 5 },
-      financeTransaction: true,
+      financeTransactions: { where: { type: FinanceTransactionType.SALE } },
     },
   });
   if (!order) return null;
 
   const openDispute = order.disputes.find((d) => isOpenDisputeStatus(d.status));
+  const saleTx = order.financeTransactions[0];
   const protection = deriveBuyerProtectionState({
     orderStatus: order.status,
     paymentStatus: order.payment?.status ?? null,
     hasOpenDispute: Boolean(openDispute),
-    fundsReleased:
-      order.financeTransaction?.status === FinanceTransactionStatus.RELEASED,
+    fundsReleased: saleTx?.status === FinanceTransactionStatus.RELEASED,
   });
 
   return {
