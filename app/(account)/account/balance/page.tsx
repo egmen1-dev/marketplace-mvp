@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import { BalanceReceptionFlow } from "@/features/seller/components/balance-reception-flow";
 import { SellerBalancePanel } from "@/features/finance/components/seller-balance-panel";
 import { SellerFirstEntryBannerSlot } from "@/features/seller-first-entry";
@@ -10,12 +12,17 @@ import {
   isSellerBusinessIntelligenceEnabled,
 } from "@/lib/seller-business-intelligence";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
+import { isLotWalletEnabled } from "@/lib/lot-wallet";
 
 export const metadata = {
   title: "Баланс",
 };
 
 export default async function AccountBalancePage() {
+  if (isLotWalletEnabled()) {
+    redirect(`${ROUTES.ACCOUNT_WALLET}?tab=overview`);
+  }
+
   const seller = await enforceSellerFirstEntry(ROUTES.ACCOUNT_BALANCE);
   const balance = await getSellerBalanceForSession(seller.sellerProfileId);
   const payoutEnabled = isSellerPayoutEnabled();

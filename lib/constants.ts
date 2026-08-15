@@ -37,10 +37,14 @@ export const ROUTES = {
   ACCOUNT_SALES: "/account/sales",
   /** Seller fulfillment — orders to ship */
   ACCOUNT_ORDERS_SHIP: "/account/orders/ship",
-  /** Seller virtual balance (finance foundation) */
+  /** Seller virtual balance (finance foundation) — legacy; redirects to wallet */
   ACCOUNT_BALANCE: "/account/balance",
-  /** Seller payout requests and withdrawal flow */
+  /** Seller payout requests — legacy; redirects to wallet withdraw tab */
   ACCOUNT_PAYOUTS: "/account/payouts",
+  /** Unified LOT Wallet — buyer + seller money */
+  ACCOUNT_WALLET: "/account/wallet",
+  /** Legacy alias → promotion center */
+  ACCOUNT_PROMOTIONS: "/account/promotions",
   /** Seller AI command center + journey */
   ACCOUNT_COMMAND_CENTER: "/account/command-center",
   /** Unified seller business workspace — «Мой бизнес» */
@@ -178,8 +182,9 @@ export const ACCOUNT_SELLER_PREFIXES = [
   "/account/sales",
   "/account/pickup-points",
   "/account/balance",
-  "/account/business",
   "/account/payouts",
+  "/account/wallet",
+  "/account/business",
   "/account/command-center",
   "/account/growth",
   "/account/promotion-center",

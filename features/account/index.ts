@@ -13,6 +13,11 @@ export {
   recordProductViewAction,
   listHistoryAction,
 } from "./actions";
+export {
+  changePasswordAction,
+  getNotificationPrefsForUser,
+  updateNotificationPrefsAction,
+} from "./actions/settings-actions";
 export { updateProfileSchema, type UpdateProfileInput } from "./schemas";
 export type { UserProfile, ProfileUpdateResult } from "./types";
 export {
@@ -24,4 +29,5 @@ export {
   ProfileView,
   ProfileEditForm,
   HistoryGrid,
+  AccountSettingsUnifiedPanel,
 } from "./components";

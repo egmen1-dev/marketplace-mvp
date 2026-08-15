@@ -177,6 +177,23 @@ export const ANALYTICS_EVENTS = {
   NEW_SELLER_TRUST_VIEW: "new_seller_trust_view",
   TRUST_PURCHASE_AFTER_VIEW: "trust_purchase_after_view",
   TRUST_CONVERSION_VIEW: "trust_conversion_view",
+  /** LOT Wallet + account unification */
+  WALLET_VIEW: "wallet_view",
+  WALLET_TOPUP_STARTED: "wallet_topup_started",
+  WALLET_TOPUP_COMPLETED: "wallet_topup_completed",
+  WALLET_PAYMENT_SELECTED: "wallet_payment_selected",
+  WALLET_PRODUCT_PURCHASE: "wallet_product_purchase",
+  WALLET_INTERNAL_PURCHASE: "wallet_internal_purchase",
+  WALLET_PROMOTION_PURCHASE: "wallet_promotion_purchase",
+  WALLET_PAYOUT_STARTED: "wallet_payout_started",
+  WALLET_PAYOUT_CREATED: "wallet_payout_created",
+  WALLET_TRANSACTION_HISTORY_VIEW: "wallet_transaction_history_view",
+  PROMOTION_CENTER_VIEW: "promotion_center_view",
+  PROMOTION_PRODUCT_SELECTED: "promotion_product_selected",
+  PROMOTION_WALLET_PAYMENT_SELECTED: "promotion_wallet_payment_selected",
+  ACCOUNT_SETTINGS_VIEW: "account_settings_view",
+  PROFILE_UPDATED: "profile_updated",
+  NOTIFICATION_SETTINGS_UPDATED: "notification_settings_updated",
 } as const;
 
 export type AnalyticsEventName =

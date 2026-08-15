@@ -1,5 +1,6 @@
 import { SellerConversionPanel } from "@/features/marketplace-conversion";
 import { SellerHomeCompletionPanel } from "@/features/marketplace-ux-completion";
+import { BusinessWalletPromotionCards } from "@/features/lot-wallet/components/business-wallet-promotion-cards";
 import { SellerBusinessIntelligencePanel } from "@/features/seller-business-intelligence";
 import { SellerOperatingDeskPanel } from "@/features/seller-operating-desk";
 import { SellerOperationsTodayPanel } from "@/features/seller-operations";
@@ -26,6 +27,11 @@ import {
   getSellerHomeSummary,
   isMarketplaceUxCompletionEnabled,
 } from "@/lib/marketplace-ux-completion";
+import { getWalletOverview, isLotWalletEnabled } from "@/lib/lot-wallet";
+import {
+  getPromotionCenterDashboard,
+  isSellerPromotionCenterEnabled,
+} from "@/lib/seller-promotion-center";
 import { enforceSellerFirstEntry } from "@/lib/seller-first-entry/server";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +49,8 @@ export default async function AccountBusinessPage() {
 
   const uxEnabled = isMarketplaceUxCompletionEnabled();
   const conversionEnabled = isMarketplaceConversionEnabled();
+  const walletEnabled = isLotWalletEnabled();
+  const promotionEnabled = isSellerPromotionCenterEnabled();
 
   // Operating desk queries are only rendered when BI and Operations panels are off.
   const needsOperatingDeskFallback =
@@ -85,7 +93,7 @@ export default async function AccountBusinessPage() {
     coach: null,
   };
 
-  const [businessDashboard, workspace, data, recentOrders, activity, sellerUx, sellerConversion] =
+  const [businessDashboard, workspace, data, recentOrders, activity, sellerUx, sellerConversion, walletOverview, promotionDashboard] =
     await Promise.all([
       biEnabled
         ? getSellerBusinessDashboard(seller.sellerProfileId)
@@ -126,6 +134,34 @@ export default async function AccountBusinessPage() {
             recommendations: [],
             funnelSteps: [],
           }),
+      walletEnabled
+        ? getWalletOverview({
+            userId: seller.userId,
+            sellerProfileId: seller.sellerProfileId,
+          })
+        : Promise.resolve({
+            enabled: false as const,
+            buckets: {
+              spendableAmount: 0,
+              withdrawableAmount: 0,
+              pendingFromSales: 0,
+              topupAmount: 0,
+              bonusAmount: 0,
+              reservedForPayout: 0,
+              totalAvailableDisplay: 0,
+            },
+            recentEntries: [],
+          }),
+      promotionEnabled
+        ? getPromotionCenterDashboard(seller.sellerProfileId)
+        : Promise.resolve({
+            enabled: false as const,
+            activeCampaigns: 0,
+            spent30d: 0,
+            orders30d: 0,
+            revenue30d: 0,
+            products: [],
+          }),
     ]);
 
   const subtitle = biEnabled
@@ -142,6 +178,22 @@ export default async function AccountBusinessPage() {
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
       </div>
+
+      {walletEnabled || promotionEnabled ? (
+        <BusinessWalletPromotionCards
+          walletEnabled={walletEnabled && walletOverview.enabled}
+          promotionEnabled={promotionEnabled && promotionDashboard.enabled}
+          buckets={walletOverview.enabled ? walletOverview.buckets : null}
+          promotion={
+            promotionDashboard.enabled
+              ? {
+                  activeCampaigns: promotionDashboard.activeCampaigns,
+                  spent30d: promotionDashboard.spent30d,
+                }
+              : null
+          }
+        />
+      ) : null}
 
       {sellerConversion.enabled ? (
         <SellerConversionPanel

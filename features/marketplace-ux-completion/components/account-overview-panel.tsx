@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
 import type { AccountOverview } from "@/lib/marketplace-ux-completion/types";
 
 import { AccountModeSwitch } from "./account-mode-switch";
@@ -35,6 +36,15 @@ export function AccountOverviewPanel({ overview }: AccountOverviewPanelProps) {
               </li>
             ))}
           </ul>
+          {section.id === "wallet" && overview.walletSnapshot ? (
+            <Button
+              className="mt-4 min-h-12 w-full sm:w-auto"
+              nativeButton={false}
+              render={<Link href={overview.walletSnapshot.href} />}
+            >
+              Открыть кошелёк
+            </Button>
+          ) : null}
         </section>
       ))}
     </div>

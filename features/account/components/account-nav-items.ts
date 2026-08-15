@@ -16,6 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { ROUTES } from "@/lib/constants";
+import { isLotWalletEnabled } from "@/lib/lot-wallet/flags";
 import { isMarketplaceUxCompletionEnabled } from "@/lib/marketplace-ux-completion/flags";
 import { isSellerJourneyEnabled } from "@/lib/seller-journey/flags";
 import { isSellerOperatingDeskEnabled } from "@/lib/seller-operating-desk/flags";
@@ -393,10 +394,139 @@ const LEGACY_SELLER_NAV: AccountNavItem[] = [
   ...BUYER_NAV.slice(5),
 ];
 
+/** Target seller nav — wallet unification epic. */
+const UNIFIED_SELLER_NAV: AccountNavItem[] = [
+  {
+    href: ROUTES.ACCOUNT,
+    label: "Мой аккаунт",
+    icon: UserRound,
+    match: (path) => path === ROUTES.ACCOUNT,
+  },
+  {
+    href: ROUTES.ACCOUNT_BUSINESS,
+    label: "Мой бизнес",
+    icon: Store,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_BUSINESS ||
+      path.startsWith(`${ROUTES.ACCOUNT_BUSINESS}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_PRODUCTS,
+    label: "Товары",
+    icon: Package,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PRODUCTS ||
+      path.startsWith(`${ROUTES.ACCOUNT_PRODUCTS}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_SALES,
+    label: "Заказы",
+    icon: ShoppingBag,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_SALES ||
+      path.startsWith(`${ROUTES.ACCOUNT_SALES}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_PROMOTION_CENTER,
+    label: "Продвижение",
+    icon: Megaphone,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_PROMOTION_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_PROMOTION_CENTER}/`) ||
+      path === ROUTES.ACCOUNT_PROMOTIONS,
+  },
+  {
+    href: ROUTES.ACCOUNT_COMMAND_CENTER,
+    label: "Аналитика",
+    icon: BarChart3,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_COMMAND_CENTER ||
+      path.startsWith(`${ROUTES.ACCOUNT_COMMAND_CENTER}/`),
+  },
+  {
+    href: ROUTES.ACCOUNT_WALLET,
+    label: "Кошелёк",
+    icon: Wallet,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_WALLET ||
+      path.startsWith(`${ROUTES.ACCOUNT_WALLET}/`) ||
+      path === ROUTES.ACCOUNT_BALANCE ||
+      path === ROUTES.ACCOUNT_PAYOUTS,
+  },
+  {
+    href: ROUTES.ACCOUNT_REPUTATION,
+    label: "Репутация",
+    icon: Sparkles,
+    sellerOnly: true,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_REPUTATION ||
+      path.startsWith(`${ROUTES.ACCOUNT_REPUTATION}/`),
+  },
+  {
+    href: ROUTES.SETTINGS,
+    label: "Настройки",
+    icon: Settings,
+    match: (path) =>
+      path === ROUTES.SETTINGS ||
+      path === ROUTES.PROFILE ||
+      path === "/settings",
+  },
+];
+
+const BUYER_NAV_UNIFIED: AccountNavItem[] = [
+  {
+    href: ROUTES.ACCOUNT,
+    label: "Мой аккаунт",
+    icon: UserRound,
+    match: (path) => path === ROUTES.ACCOUNT,
+  },
+  {
+    href: ROUTES.ORDERS,
+    label: "Покупки",
+    icon: ShoppingBag,
+    match: (path) =>
+      path === ROUTES.ORDERS || path.startsWith(`${ROUTES.ORDERS}/`),
+  },
+  {
+    href: ROUTES.FAVORITES,
+    label: "Избранное",
+    icon: Heart,
+    match: (path) => path === ROUTES.FAVORITES,
+  },
+  {
+    href: ROUTES.ACCOUNT_WALLET,
+    label: "Кошелёк",
+    icon: Wallet,
+    match: (path) =>
+      path === ROUTES.ACCOUNT_WALLET ||
+      path === ROUTES.ACCOUNT_BALANCE ||
+      path === ROUTES.ACCOUNT_PAYOUTS,
+  },
+  {
+    href: ROUTES.SETTINGS,
+    label: "Настройки",
+    icon: Settings,
+    match: (path) =>
+      path === ROUTES.SETTINGS ||
+      path === ROUTES.PROFILE ||
+      path === "/settings",
+  },
+];
+
 /** Unified account nav — discoverable naming for chat. */
 export const ACCOUNT_NAV_ITEMS: AccountNavItem[] = LEGACY_SELLER_NAV;
 
 export function accountNavItemsFor(isSeller: boolean): AccountNavItem[] {
+  if (isLotWalletEnabled()) {
+    const items = isSeller ? UNIFIED_SELLER_NAV : BUYER_NAV_UNIFIED;
+    return items.filter((item) => !item.sellerOnly || isSeller);
+  }
+
   const items =
     isSellerOperatingDeskEnabled() && isSeller
       ? SELLER_OPERATING_DESK_NAV

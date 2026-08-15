@@ -16,6 +16,7 @@ import {
   buildAccountOverview,
   isMarketplaceUxCompletionEnabled,
 } from "@/lib/marketplace-ux-completion";
+import { getWalletOverview, isLotWalletEnabled } from "@/lib/lot-wallet";
 import {
   getSellerLifecycleDashboard,
   isSellerLifecycleEnabled,
@@ -104,6 +105,14 @@ export default async function AccountPage({ searchParams }: PageProps) {
           ordersCount,
           productsCount,
           revenue,
+          walletBuckets: isLotWalletEnabled()
+            ? (
+                await getWalletOverview({
+                  userId: user.id,
+                  sellerProfileId: dbUser?.sellerProfileId ?? null,
+                })
+              ).buckets
+            : null,
         })
       : null;
 
