@@ -66,6 +66,23 @@ export async function payInternalProduct(input: {
         throw new Error("Недостаточно средств в кошельке");
       }
 
+      const created = await appendWalletLedgerEntry(
+        {
+          userId: input.userId,
+          type: ledgerType,
+          direction: "DEBIT",
+          amount: input.amount,
+          spendableDelta: -input.amount,
+          withdrawableDelta: -fromWithdrawable,
+          title: input.title,
+          referenceType: input.productType,
+          referenceId: input.referenceId,
+          idempotencyKey: input.idempotencyKey,
+        },
+        tx,
+      );
+      if (!created) return;
+
       if (fromTopup > 0) {
         await tx.userWallet.update({
           where: { userId: input.userId },
@@ -81,22 +98,6 @@ export async function payInternalProduct(input: {
       if (fromWithdrawable > 0 && input.sellerProfileId) {
         await reverseAvailableBalance(input.sellerProfileId, fromWithdrawable, tx);
       }
-
-      await appendWalletLedgerEntry(
-        {
-          userId: input.userId,
-          type: ledgerType,
-          direction: "DEBIT",
-          amount: input.amount,
-          spendableDelta: -input.amount,
-          withdrawableDelta: -fromWithdrawable,
-          title: input.title,
-          referenceType: input.productType,
-          referenceId: input.referenceId,
-          idempotencyKey: input.idempotencyKey,
-        },
-        tx,
-      );
     });
     return { ok: true };
   } catch (err) {

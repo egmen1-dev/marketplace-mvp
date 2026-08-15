@@ -121,12 +121,12 @@ export async function appendWalletLedgerEntry(
     idempotencyKey?: string;
   },
   tx: Tx = prisma,
-): Promise<void> {
+): Promise<boolean> {
   if (input.idempotencyKey) {
     const existing = await tx.walletLedgerEntry.findUnique({
       where: { idempotencyKey: input.idempotencyKey },
     });
-    if (existing) return;
+    if (existing) return false;
   }
 
   await tx.walletLedgerEntry.create({
@@ -144,4 +144,5 @@ export async function appendWalletLedgerEntry(
       idempotencyKey: input.idempotencyKey,
     },
   });
+  return true;
 }
