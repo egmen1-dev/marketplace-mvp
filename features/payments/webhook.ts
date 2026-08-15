@@ -1,4 +1,4 @@
-import { StripeWebhookStatus } from "@prisma/client";
+import { Prisma, StripeWebhookStatus } from "@prisma/client";
 import type Stripe from "stripe";
 
 import {
@@ -6,6 +6,7 @@ import {
   markOrderPaidFromPaymentIntent,
 } from "@/features/payments/create-checkout-session";
 import { PaymentServiceError } from "@/features/payments/errors";
+import { writeFinancialAuditLog } from "@/lib/financial-transaction-engine/audit";
 import { getEnv } from "@/lib/env";
 import { log } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
@@ -16,12 +17,38 @@ export type StripeWebhookResult = {
   type: string;
   orderId?: string | null;
   alreadyPaid?: boolean;
-  /** Business rejection that must not corrupt data on Stripe retries. */
   rejected?: boolean;
   reason?: string;
-  /** Duplicate Stripe event already PROCESSED. */
   duplicate?: boolean;
+  ignored?: boolean;
 };
+
+function isUniqueViolation(err: unknown): boolean {
+  return (
+    err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002"
+  );
+}
+
+async function auditWebhook(input: {
+  eventId: string;
+  type: string;
+  phase: string;
+  outcome: "ok" | "fail" | "skip";
+  detail?: Record<string, unknown>;
+}) {
+  await writeFinancialAuditLog({
+    context: {
+      operationType: "STRIPE_ORDER_PAY",
+      idempotencyKey: `stripe:event:${input.eventId}`,
+      referenceType: "STRIPE_WEBHOOK",
+      referenceId: input.eventId,
+      metadata: { type: input.type },
+    },
+    phase: input.phase as "validate" | "audit",
+    outcome: input.outcome,
+    detail: input.detail,
+  });
+}
 
 /**
  * Verify Stripe webhook signature and process supported events.
@@ -36,6 +63,13 @@ export async function handleStripeWebhook(
     throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
   }
   if (!signature) {
+    await auditWebhook({
+      eventId: "unknown",
+      type: "unknown",
+      phase: "validate",
+      outcome: "fail",
+      detail: { reason: "missing_signature" },
+    });
     throw new Error("Missing Stripe-Signature header");
   }
 
@@ -45,6 +79,13 @@ export async function handleStripeWebhook(
     event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Invalid signature";
+    await auditWebhook({
+      eventId: "unknown",
+      type: "unknown",
+      phase: "validate",
+      outcome: "fail",
+      detail: { reason: message },
+    });
     throw new Error(`Webhook signature verification failed: ${message}`);
   }
 
@@ -56,23 +97,51 @@ export async function handleStripeWebhook(
       type: event.type,
       eventId: event.id,
     });
+    await auditWebhook({
+      eventId: event.id,
+      type: event.type,
+      phase: "audit",
+      outcome: "skip",
+      detail: { duplicate: true },
+    });
     return {
       handled: true,
       type: event.type,
       duplicate: true,
+      ignored: true,
       orderId: existing.orderId,
     };
   }
 
-  const row =
-    existing ??
-    (await prisma.stripeWebhookEvent.create({
-      data: {
-        stripeEventId: event.id,
-        type: event.type,
-        status: StripeWebhookStatus.RECEIVED,
-      },
-    }));
+  let row = existing;
+  if (!row) {
+    try {
+      row = await prisma.stripeWebhookEvent.create({
+        data: {
+          stripeEventId: event.id,
+          type: event.type,
+          status: StripeWebhookStatus.RECEIVED,
+        },
+      });
+    } catch (err) {
+      if (isUniqueViolation(err)) {
+        const raced = await prisma.stripeWebhookEvent.findUnique({
+          where: { stripeEventId: event.id },
+        });
+        if (raced?.status === StripeWebhookStatus.PROCESSED) {
+          return {
+            handled: true,
+            type: event.type,
+            duplicate: true,
+            ignored: true,
+            orderId: raced.orderId,
+          };
+        }
+        row = raced ?? undefined;
+      }
+      if (!row) throw err;
+    }
+  }
 
   log.info("payment_webhook_received", {
     type: event.type,
@@ -86,7 +155,7 @@ export async function handleStripeWebhook(
         const session = event.data.object as Stripe.Checkout.Session;
         if (session.payment_status !== "paid" && session.mode === "payment") {
           if (session.payment_status !== "no_payment_required") {
-            result = { handled: false, type: event.type };
+            result = { handled: false, type: event.type, ignored: true };
             break;
           }
         }
@@ -99,7 +168,7 @@ export async function handleStripeWebhook(
         break;
       }
       default:
-        result = { handled: false, type: event.type };
+        result = { handled: false, type: event.type, ignored: true };
     }
 
     await prisma.stripeWebhookEvent.update({
@@ -114,6 +183,19 @@ export async function handleStripeWebhook(
       },
     });
 
+    await auditWebhook({
+      eventId: event.id,
+      type: event.type,
+      phase: "audit",
+      outcome: "ok",
+      detail: {
+        handled: result.handled,
+        duplicate: result.duplicate,
+        ignored: result.ignored,
+        rejected: result.rejected,
+      },
+    });
+
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : "webhook_failed";
@@ -124,6 +206,13 @@ export async function handleStripeWebhook(
         error: message.slice(0, 500),
         processedAt: new Date(),
       },
+    });
+    await auditWebhook({
+      eventId: event.id,
+      type: event.type,
+      phase: "audit",
+      outcome: "fail",
+      detail: { message },
     });
     throw err;
   }
@@ -144,9 +233,16 @@ async function settleCheckout(
         type,
         rejected: credit.reason !== "not_wallet_top_up",
         reason: credit.reason,
+        ignored: credit.reason === "not_wallet_top_up",
       };
     }
-    return { handled: true, type, orderId: null };
+    return {
+      handled: true,
+      type,
+      orderId: null,
+      duplicate: credit.duplicate,
+      ignored: credit.duplicate,
+    };
   }
 
   try {
@@ -156,6 +252,8 @@ async function settleCheckout(
       type,
       orderId: result.orderId,
       alreadyPaid: result.alreadyPaid,
+      ignored: result.alreadyPaid,
+      duplicate: result.alreadyPaid,
     };
   } catch (err) {
     return rejectBusinessError(err, type, session.metadata?.orderId ?? null);
@@ -173,6 +271,8 @@ async function settlePaymentIntent(
       type,
       orderId: result.orderId,
       alreadyPaid: result.alreadyPaid,
+      ignored: result.alreadyPaid,
+      duplicate: result.alreadyPaid,
     };
   } catch (err) {
     return rejectBusinessError(
@@ -208,6 +308,7 @@ function rejectBusinessError(
         orderId,
         rejected: true,
         reason: err.code,
+        ignored: true,
       };
     }
   }

@@ -20,22 +20,27 @@ export async function POST(request: Request) {
 
   try {
     const result = await handleStripeWebhook(rawBody, signature);
-    return NextResponse.json({
-      received: true,
-      handled: result.handled,
-      type: result.type,
-      orderId: result.orderId ?? undefined,
-      alreadyPaid: result.alreadyPaid ?? undefined,
-      rejected: result.rejected ?? undefined,
-      reason: result.reason ?? undefined,
-    });
+    return NextResponse.json(
+      {
+        received: true,
+        handled: result.handled,
+        type: result.type,
+        orderId: result.orderId ?? undefined,
+        alreadyPaid: result.alreadyPaid ?? undefined,
+        rejected: result.rejected ?? undefined,
+        reason: result.reason ?? undefined,
+        duplicate: result.duplicate ?? false,
+        ignored: result.ignored ?? false,
+      },
+      { status: 200 },
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Webhook error";
     const isSig =
       message.includes("signature") || message.includes("Stripe-Signature");
     console.error("[stripe webhook]", message);
     return NextResponse.json(
-      { error: message },
+      { error: message, received: false },
       { status: isSig ? 400 : 500 },
     );
   }
