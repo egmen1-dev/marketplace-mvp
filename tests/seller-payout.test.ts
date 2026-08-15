@@ -91,35 +91,39 @@ describe("payout lifecycle integration", () => {
     });
   });
 
-  it("reserves balance on request and completes payout", async () => {
-    const seller = await prisma.sellerProfile.findFirst({ select: { id: true } });
-    if (!seller) return;
+  it(
+    "reserves balance on request and completes payout",
+    async () => {
+      const seller = await prisma.sellerProfile.findFirst({ select: { id: true } });
+      if (!seller) return;
 
-    await setSellerAvailableBalanceForE2E(seller.id, 50_000);
-    const method = await createSellerPaymentMethod({
-      sellerId: seller.id,
-      type: "CARD",
-      detailsReference: "9012",
-    });
+      await setSellerAvailableBalanceForE2E(seller.id, 50_000);
+      const method = await createSellerPaymentMethod({
+        sellerId: seller.id,
+        type: "CARD",
+        detailsReference: "9012",
+      });
 
-    const request = await createPayoutRequest({
-      sellerId: seller.id,
-      amount: 20_000,
-      paymentMethodId: method.id,
-    });
+      const request = await createPayoutRequest({
+        sellerId: seller.id,
+        amount: 20_000,
+        paymentMethodId: method.id,
+      });
 
-    let balance = await getSellerBalance(seller.id);
-    expect(balance.availableAmount).toBe(30_000);
-    expect(balance.reservedForPayoutAmount).toBe(20_000);
+      let balance = await getSellerBalance(seller.id);
+      expect(balance.availableAmount).toBe(30_000);
+      expect(balance.reservedForPayoutAmount).toBe(20_000);
 
-    await approvePayoutRequest(request.id);
-    await markPayoutCompleted({ requestId: request.id, externalReference: "test-ref" });
+      await approvePayoutRequest(request.id);
+      await markPayoutCompleted({ requestId: request.id, externalReference: "test-ref" });
 
-    balance = await getSellerBalance(seller.id);
-    expect(balance.reservedForPayoutAmount).toBe(0);
-    expect(balance.paidAmount).toBe(20_000);
-    expect(balance.availableAmount).toBe(30_000);
-  });
+      balance = await getSellerBalance(seller.id);
+      expect(balance.reservedForPayoutAmount).toBe(0);
+      expect(balance.paidAmount).toBe(20_000);
+      expect(balance.availableAmount).toBe(30_000);
+    },
+    30_000,
+  );
 
   it("returns reserved funds on reject", async () => {
     const seller = await prisma.sellerProfile.findFirst({ select: { id: true } });

@@ -1,6 +1,8 @@
 import { PayoutRequestStatus, Prisma } from "@prisma/client";
 
 import { toPriceNumber } from "@/features/products/mappers";
+import { executeFinancialTransaction } from "@/lib/financial-transaction-engine";
+import { verifySellerBalanceNonNegativeInTx } from "@/lib/financial-transaction-engine/verification";
 import { prisma } from "@/lib/prisma";
 
 import { assertPaymentMethodOwned } from "./methods";
@@ -85,26 +87,51 @@ export async function createPayoutRequest(input: {
   }
 
   try {
-    return await prisma.$transaction(async (tx) => {
-      await reserveAvailableForPayout(input.sellerId, input.amount, tx);
-
-      const row = await tx.payoutRequest.create({
-        data: {
-          sellerId: input.sellerId,
-          amount: input.amount,
-          paymentMethodId: input.paymentMethodId,
-          status: PayoutRequestStatus.UNDER_REVIEW,
-          requestedAt: new Date(),
+    const result = await executeFinancialTransaction(
+      {
+        operationType: "PAYOUT_RESERVE",
+        idempotencyKey: `payout:request:${input.sellerId}:${input.amount}:${input.paymentMethodId}:${Date.now()}`,
+        sellerId: input.sellerId,
+        referenceType: "PAYOUT_REQUEST",
+        amountRub: input.amount,
+      },
+      {
+        validate: () => {
+          if (validationError) throw new PayoutBalanceError(validationError);
         },
-        include: {
-          paymentMethod: {
-            select: { label: true, detailsReference: true },
-          },
+        lock: async (tx) => {
+          await tx.sellerBalance.findUnique({ where: { sellerId: input.sellerId } });
         },
-      });
+        execute: async (tx) => {
+          await reserveAvailableForPayout(input.sellerId, input.amount, tx);
 
-      return mapRequest(row);
-    });
+          const row = await tx.payoutRequest.create({
+            data: {
+              sellerId: input.sellerId,
+              amount: input.amount,
+              paymentMethodId: input.paymentMethodId,
+              status: PayoutRequestStatus.UNDER_REVIEW,
+              requestedAt: new Date(),
+            },
+            include: {
+              paymentMethod: {
+                select: { label: true, detailsReference: true },
+              },
+            },
+          });
+
+          return mapRequest(row);
+        },
+        verify: async (tx) => {
+          await verifySellerBalanceNonNegativeInTx(tx, input.sellerId);
+        },
+      },
+    );
+
+    if (!result.ok) {
+      throw new PayoutBalanceError(result.error);
+    }
+    return result.value;
   } catch (err) {
     if (err instanceof PayoutBalanceError) throw err;
     throw err;

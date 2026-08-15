@@ -5,6 +5,8 @@ import {
 } from "@prisma/client";
 
 import { toPriceNumber } from "@/features/products/mappers";
+import { executeFinancialTransaction } from "@/lib/financial-transaction-engine";
+import { verifySellerBalanceNonNegativeInTx } from "@/lib/financial-transaction-engine/verification";
 import {
   addPendingBalance,
   releasePendingToAvailable,
@@ -93,9 +95,9 @@ export async function markPaid(
   return mapTransaction(updated);
 }
 
-export async function holdFunds(
+export async function holdFundsInTx(
   transactionId: string,
-  tx: Tx = prisma,
+  tx: Tx,
 ): Promise<FinanceTransactionDto> {
   const row = await tx.financeTransaction.findUnique({
     where: { id: transactionId },
@@ -126,9 +128,53 @@ export async function holdFunds(
   return mapTransaction(updated);
 }
 
-export async function releaseFunds(
+export async function holdFunds(
   transactionId: string,
   tx: Tx = prisma,
+): Promise<FinanceTransactionDto> {
+  if (tx !== prisma) {
+    return holdFundsInTx(transactionId, tx);
+  }
+
+  const row = await prisma.financeTransaction.findUnique({
+    where: { id: transactionId },
+  });
+  if (!row) {
+    throw new FinanceError("NOT_FOUND", "Транзакция не найдена");
+  }
+
+  const result = await executeFinancialTransaction(
+    {
+      operationType: "SELLER_HOLD",
+      idempotencyKey: `hold:${transactionId}`,
+      sellerId: row.sellerId,
+      orderId: row.orderId,
+      referenceType: "FINANCE_TRANSACTION",
+      referenceId: transactionId,
+      amountRub: toPriceNumber(row.sellerAmount),
+    },
+    {
+      lock: async (lockTx) => {
+        await lockTx.financeTransaction.findUnique({
+          where: { id: transactionId },
+        });
+      },
+      execute: async (execTx) => holdFundsInTx(transactionId, execTx),
+      verify: async (verifyTx) => {
+        await verifySellerBalanceNonNegativeInTx(verifyTx, row.sellerId);
+      },
+    },
+  );
+
+  if (!result.ok) {
+    throw new FinanceError("INVALID_STATE", result.error);
+  }
+  return result.value;
+}
+
+export async function releaseFundsInTx(
+  transactionId: string,
+  tx: Tx,
 ): Promise<FinanceTransactionDto> {
   const row = await tx.financeTransaction.findUnique({
     where: { id: transactionId },
@@ -156,9 +202,53 @@ export async function releaseFunds(
   return mapTransaction(updated);
 }
 
-export async function refundTransaction(
+export async function releaseFunds(
   transactionId: string,
   tx: Tx = prisma,
+): Promise<FinanceTransactionDto> {
+  if (tx !== prisma) {
+    return releaseFundsInTx(transactionId, tx);
+  }
+
+  const row = await prisma.financeTransaction.findUnique({
+    where: { id: transactionId },
+  });
+  if (!row) {
+    throw new FinanceError("NOT_FOUND", "Транзакция не найдена");
+  }
+
+  const result = await executeFinancialTransaction(
+    {
+      operationType: "SELLER_RELEASE",
+      idempotencyKey: `release:${transactionId}`,
+      sellerId: row.sellerId,
+      orderId: row.orderId,
+      referenceType: "FINANCE_TRANSACTION",
+      referenceId: transactionId,
+      amountRub: toPriceNumber(row.sellerAmount),
+    },
+    {
+      lock: async (lockTx) => {
+        await lockTx.financeTransaction.findUnique({
+          where: { id: transactionId },
+        });
+      },
+      execute: async (execTx) => releaseFundsInTx(transactionId, execTx),
+      verify: async (verifyTx) => {
+        await verifySellerBalanceNonNegativeInTx(verifyTx, row.sellerId);
+      },
+    },
+  );
+
+  if (!result.ok) {
+    throw new FinanceError("INVALID_STATE", result.error);
+  }
+  return result.value;
+}
+
+export async function refundTransactionInTx(
+  transactionId: string,
+  tx: Tx,
 ): Promise<FinanceTransactionDto> {
   const row = await tx.financeTransaction.findUnique({
     where: { id: transactionId },
@@ -183,6 +273,50 @@ export async function refundTransaction(
     data: { status: FinanceTransactionStatus.REFUNDED },
   });
   return mapTransaction(updated);
+}
+
+export async function refundTransaction(
+  transactionId: string,
+  tx: Tx = prisma,
+): Promise<FinanceTransactionDto> {
+  if (tx !== prisma) {
+    return refundTransactionInTx(transactionId, tx);
+  }
+
+  const row = await prisma.financeTransaction.findUnique({
+    where: { id: transactionId },
+  });
+  if (!row) {
+    throw new FinanceError("NOT_FOUND", "Транзакция не найдена");
+  }
+
+  const result = await executeFinancialTransaction(
+    {
+      operationType: "REFUND",
+      idempotencyKey: `refund:${transactionId}`,
+      sellerId: row.sellerId,
+      orderId: row.orderId,
+      referenceType: "FINANCE_TRANSACTION",
+      referenceId: transactionId,
+      amountRub: toPriceNumber(row.sellerAmount),
+    },
+    {
+      lock: async (lockTx) => {
+        await lockTx.financeTransaction.findUnique({
+          where: { id: transactionId },
+        });
+      },
+      execute: async (execTx) => refundTransactionInTx(transactionId, execTx),
+      verify: async (verifyTx) => {
+        await verifySellerBalanceNonNegativeInTx(verifyTx, row.sellerId);
+      },
+    },
+  );
+
+  if (!result.ok) {
+    throw new FinanceError("INVALID_STATE", result.error);
+  }
+  return result.value;
 }
 
 export async function createDispute(input: {

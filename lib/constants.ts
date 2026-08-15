@@ -106,6 +106,8 @@ export const ROUTES = {
   ADMIN_DELIVERY: "/admin/delivery",
   ADMIN_DELIVERY_HEALTH: "/admin/delivery/health",
   ADMIN_PAYMENTS: "/admin/payments",
+  ADMIN_FINANCIAL_INCIDENTS: "/admin/financial-incidents",
+  ADMIN_WALLET: "/admin/wallet",
   ADMIN_HEALTH: "/admin/health",
   ADMIN_UX_HEALTH: "/admin/ux-health",
   ADMIN_LAUNCH: "/admin/launch",

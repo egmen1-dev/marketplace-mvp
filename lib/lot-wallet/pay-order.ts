@@ -1,14 +1,14 @@
-import { OrderStatus, PaymentStatus } from "@prisma/client";
+import { OrderStatus } from "@prisma/client";
 
 import { finalizePaidOrderInTx } from "@/features/orders/lib/finalize-paid-order";
 import { toStripeAmount } from "@/features/payments/lib/amounts";
 import { toPriceNumber } from "@/features/products/mappers";
 import { loadUserAuthFromDb } from "@/features/auth";
+import { verifyWalletOrderPaidInTx } from "@/lib/financial-transaction-engine/verification";
 import { prisma } from "@/lib/prisma";
 
-import { payInternalProduct } from "./payment";
+import { payInternalProductWithFinalize, walletSpendableForCheckout } from "./payment";
 import { isLotWalletEnabled } from "./flags";
-import { walletSpendableForCheckout } from "./payment";
 
 export async function payOrderWithLotWallet(input: {
   userId: string;
@@ -46,7 +46,7 @@ export async function payOrderWithLotWallet(input: {
     };
   }
 
-  const debit = await payInternalProduct({
+  return payInternalProductWithFinalize({
     userId: input.userId,
     sellerProfileId: dbUser?.sellerProfileId ?? null,
     productType: "PRODUCT_ORDER",
@@ -54,25 +54,21 @@ export async function payOrderWithLotWallet(input: {
     referenceId: order.id,
     title: `Покупка · заказ ${order.orderNumber}`,
     idempotencyKey: `order:wallet:${order.id}`,
-  });
-
-  if (!debit.ok) return debit;
-
-  try {
-    await prisma.$transaction(async (tx) => {
+    orderId: order.id,
+    finalize: async (tx) => {
       await finalizePaidOrderInTx(tx, {
         orderId: order.id,
         amountTotal: toStripeAmount(amount),
         currency: "RUB",
         source: "lot_wallet",
       });
-    });
-  } catch (err) {
-    return {
-      ok: false,
-      error: err instanceof Error ? err.message : "Не удалось завершить оплату",
-    };
-  }
-
-  return { ok: true };
+    },
+    verifyAfter: async (tx) => {
+      await verifyWalletOrderPaidInTx(tx, {
+        userId: input.userId,
+        orderId: order.id,
+        amountRub: amount,
+      });
+    },
+  });
 }

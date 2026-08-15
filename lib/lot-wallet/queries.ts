@@ -106,6 +106,17 @@ export async function listWalletHistory(input: {
   return rows.map(mapEntry);
 }
 
+export async function hasWalletLedgerIdempotencyKey(
+  idempotencyKey: string,
+  tx: Tx = prisma,
+): Promise<boolean> {
+  const existing = await tx.walletLedgerEntry.findUnique({
+    where: { idempotencyKey },
+    select: { id: true },
+  });
+  return Boolean(existing);
+}
+
 export async function appendWalletLedgerEntry(
   input: {
     userId: string;

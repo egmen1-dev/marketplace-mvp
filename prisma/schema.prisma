@@ -1798,3 +1798,61 @@ model RankingInfluenceSnapshot {
   @@index([versionId, computedAt])
   @@map("ranking_influence_snapshots")
 }
+
+enum FinancialIncidentSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum FinancialIncidentStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+  IGNORED
+}
+
+/// Append-only audit trail for financial engine phases.
+model FinancialAuditLog {
+  id              String   @id @default(cuid())
+  operationType   String
+  phase           String
+  outcome         String
+  idempotencyKey  String?
+  userId          String?
+  sellerId        String?
+  orderId         String?
+  referenceType   String?
+  referenceId     String?
+  detail          Json?
+  createdAt       DateTime @default(now())
+
+  @@index([operationType, createdAt])
+  @@index([idempotencyKey])
+  @@index([userId])
+  @@map("financial_audit_logs")
+}
+
+/// Operational incidents from verification failures or reconciliation drift.
+model FinancialIncident {
+  id               String                    @id @default(cuid())
+  severity         FinancialIncidentSeverity
+  status           FinancialIncidentStatus   @default(OPEN)
+  title            String
+  description      String
+  cause            String?
+  affectedSummary  String?
+  remediation      String?
+  operationType    String?
+  referenceType    String?
+  referenceId      String?
+  metadata         Json?
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  resolvedAt       DateTime?
+
+  @@index([severity, status, createdAt])
+  @@index([operationType])
+  @@map("financial_incidents")
+}

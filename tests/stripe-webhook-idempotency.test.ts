@@ -4,6 +4,7 @@ const findUnique = vi.fn();
 const create = vi.fn();
 const update = vi.fn();
 const constructEvent = vi.fn();
+const auditCreate = vi.fn();
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -11,6 +12,9 @@ vi.mock("@/lib/prisma", () => ({
       findUnique,
       create,
       update,
+    },
+    financialAuditLog: {
+      create: auditCreate,
     },
   },
 }));
@@ -42,6 +46,7 @@ vi.mock("@/features/payments/create-checkout-session", () => ({
 describe("Stripe webhook hardening", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auditCreate.mockResolvedValue({ id: "audit_1" });
     constructEvent.mockReturnValue({
       id: "evt_test_1",
       type: "checkout.session.completed",
@@ -77,7 +82,29 @@ describe("Stripe webhook hardening", () => {
     );
     const result = await handleStripeWebhook("{}", "sig");
     expect(result.duplicate).toBe(true);
+    expect(result.ignored).toBe(true);
     expect(create).not.toHaveBeenCalled();
+  });
+
+  it("returns duplicate+ignored for 10 identical replays", async () => {
+    findUnique.mockResolvedValue({
+      id: "row1",
+      stripeEventId: "evt_test_1",
+      status: "PROCESSED",
+      orderId: "ord_1",
+    });
+    const { handleStripeWebhook } = await import(
+      "@/features/payments/webhook"
+    );
+
+    for (let i = 0; i < 10; i += 1) {
+      const result = await handleStripeWebhook("{}", "sig");
+      expect(result.duplicate).toBe(true);
+      expect(result.ignored).toBe(true);
+      expect(result.handled).toBe(true);
+    }
+    expect(create).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
   });
 
   it("records RECEIVED then PROCESSED on success", async () => {
