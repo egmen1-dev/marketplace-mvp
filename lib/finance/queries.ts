@@ -1,4 +1,4 @@
-import { FinanceTransactionStatus, Prisma } from "@prisma/client";
+import { FinanceTransactionStatus, FinanceTransactionType, Prisma } from "@prisma/client";
 
 import { toPriceNumber } from "@/features/products/mappers";
 import { ANALYTICS_EVENTS } from "@/lib/analytics/events";
@@ -32,8 +32,8 @@ export async function syncFinanceOnPaymentInTx(
 export async function syncFinanceOnOrderCompleted(
   orderId: string,
 ): Promise<void> {
-  const row = await prisma.financeTransaction.findUnique({
-    where: { orderId },
+  const row = await prisma.financeTransaction.findFirst({
+    where: { orderId, type: FinanceTransactionType.SALE },
   });
   if (!row) return;
 

@@ -69,6 +69,11 @@ export function SellerPayoutPanel({ data }: SellerPayoutPanelProps) {
     });
   }, [data.enabled]);
 
+  const withdrawableAmount = Math.max(
+    0,
+    data.balance.availableAmount - data.balance.reservedForPayoutAmount,
+  );
+
   if (!data.enabled) {
     return (
       <Card data-testid="seller-payout-panel">
@@ -100,8 +105,8 @@ export function SellerPayoutPanel({ data }: SellerPayoutPanelProps) {
       window.alert(`Минимальная сумма вывода — ${MIN_PAYOUT_AMOUNT} ₽`);
       return;
     }
-    if (parsedAmount > data.balance.availableAmount) {
-      window.alert("Сумма превышает доступный баланс");
+    if (parsedAmount > withdrawableAmount) {
+      window.alert("Сумма превышает доступный для вывода баланс");
       return;
     }
     setStep("method");
@@ -167,7 +172,7 @@ export function SellerPayoutPanel({ data }: SellerPayoutPanelProps) {
     <div className="flex flex-col gap-6" data-testid="seller-payout-panel">
       <div className="flex flex-wrap items-center gap-3">
       <Link
-        href={ROUTES.ACCOUNT_BALANCE}
+        href={`${ROUTES.ACCOUNT_WALLET}?tab=withdraw`}
         className="inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm hover:bg-muted"
       >
         <ArrowLeft className="size-4" />
@@ -182,7 +187,7 @@ export function SellerPayoutPanel({ data }: SellerPayoutPanelProps) {
             Вывод средств
           </CardTitle>
           <CardDescription>
-            Доступно: {formatPrice(data.balance.availableAmount)}
+            Доступно к выводу: {formatPrice(withdrawableAmount)}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
