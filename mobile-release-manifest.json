@@ -1,0 +1,36 @@
+{
+  "appName": "ЛОТ",
+  "packageId": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.0-alpha",
+  "versionCode": 1,
+  "releaseChannel": "alpha",
+  "commitSha": "924f5b3",
+  "apiVersion": "mobile-v1",
+  "schemaVersion": "1",
+  "artifactSha256": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585",
+  "artifactSizeBytes": 92668706,
+  "artifactPath": "apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
+  "artifactFileName": "lot-android-alpha-0.1.0.apk",
+  "buildDate": "2026-08-16",
+  "supportedBackendVersions": ["mobile-v1"],
+  "physicalDeviceTested": false,
+  "deviceModel": null,
+  "androidVersion": null,
+  "acceptanceDate": "2026-08-16",
+  "knownP0": 2,
+  "knownP1": 1,
+  "verdict": "PHYSICAL_ACCEPTANCE_NOT_RUN",
+  "knownBlockers": [
+    "Physical Android device not available in cloud agent — hard gate NOT RUN",
+    "Staging backend not deployed with APP-SHELL-0 mobile bearer bridge (buyer/home, catalog, wallet 404; cart Bearer 401)",
+    "Checkout payment provider staging-only on Alpha",
+    "Wave 6 staging deploy pending (PR #83) for seller/home endpoint on staging"
+  ],
+  "downloadUrl": null,
+  "updateRequired": false,
+  "alphaDistribution": {
+    "ready": false,
+    "hostingUrl": null,
+    "rollbackArtifact": null
+  }
+}
