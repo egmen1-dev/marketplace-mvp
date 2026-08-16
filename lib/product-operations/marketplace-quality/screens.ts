@@ -48,7 +48,7 @@ export const MARKETPLACE_SCREENS: MarketplaceScreenDefinition[] = [
   { id: "favorites", name: "Favorites", route: "(tabs)/favorites", sourceFiles: ["apps/mobile/app/(tabs)/favorites.tsx"], journey: "buyer" },
   { id: "cart", name: "Cart", route: "cart", sourceFiles: ["apps/mobile/app/cart.tsx", "apps/mobile/src/features/cart-checkout/CartExperience.tsx"], journey: "buyer" },
   { id: "checkout", name: "Checkout", route: "checkout", sourceFiles: ["apps/mobile/app/checkout.tsx", "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx"], journey: "buyer" },
-  { id: "orders", name: "Orders", route: "(tabs)/orders", sourceFiles: ["apps/mobile/app/(tabs)/orders.tsx"], journey: "buyer" },
+  { id: "orders", name: "Orders", route: "(tabs)/orders", sourceFiles: ["apps/mobile/app/(tabs)/orders.tsx", "apps/mobile/src/features/orders/OrdersExperience.tsx", "apps/mobile/app/order/[id].tsx"], journey: "buyer" },
   { id: "profile", name: "Profile", route: "(tabs)/profile", sourceFiles: ["apps/mobile/app/(tabs)/profile.tsx"], journey: "shared" },
   { id: "seller_home", name: "Seller Home", route: "(tabs)/seller-home", sourceFiles: ["apps/mobile/app/(tabs)/seller-home.tsx"], journey: "seller" },
   { id: "seller_products", name: "Seller Products", route: "(tabs)/seller-products", sourceFiles: ["apps/mobile/app/(tabs)/seller-products.tsx"], journey: "seller" },

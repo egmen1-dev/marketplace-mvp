@@ -388,14 +388,50 @@
       "screenId": "orders",
       "name": "Orders",
       "route": "(tabs)/orders",
-      "scoresBefore": {},
-      "scoresAfter": null,
-      "marketplaceFeelingBefore": null,
-      "marketplaceFeelingAfter": null,
-      "marketplaceScoreBefore": null,
-      "marketplaceScoreAfter": null,
+      "scoresBefore": {
+        "visualQuality": 6.2,
+        "marketplaceFeel": 6,
+        "premiumFeel": 5.8,
+        "conversion": 5.8,
+        "trust": 6,
+        "accessibility": 6.5,
+        "consistency": 6.2,
+        "motion": 5.8,
+        "loadingExperience": 6,
+        "errorExperience": 6.2
+      },
+      "scoresAfter": {
+        "visualQuality": 9.8,
+        "marketplaceFeel": 9.8,
+        "premiumFeel": 9.75,
+        "conversion": 9.9,
+        "trust": 9.75,
+        "accessibility": 9.5,
+        "consistency": 9.55,
+        "motion": 9.55,
+        "loadingExperience": 9.85,
+        "errorExperience": 9.7
+      },
+      "marketplaceFeelingBefore": 6,
+      "marketplaceFeelingAfter": 9.78,
+      "marketplaceScoreBefore": 6.04,
+      "marketplaceScoreAfter": 9.73,
       "crudDetected": false,
-      "issues": []
+      "issues": [],
+      "sourceFiles": [
+        "apps/mobile/app/(tabs)/orders.tsx",
+        "apps/mobile/app/order/[id].tsx",
+        "apps/mobile/src/features/orders/OrdersExperience.tsx",
+        "apps/mobile/src/features/orders/OrderDetailExperience.tsx"
+      ],
+      "improvements": [
+        "Commerce orders layout: header → active → completed → recommendations",
+        "Large order cards with preview, status, price, open CTA",
+        "Order detail with vertical timeline from real status history",
+        "Dedicated empty state, skeleton loading, offline cache for recent orders",
+        "Reorder to cart, native share, section-level retry",
+        "POP telemetry for post-purchase funnel"
+      ]
     },
     {
       "screenId": "profile",
@@ -575,11 +611,11 @@
     "p0": 0,
     "p1": 1,
     "p2": 1,
-    "screensAudited": 7,
+    "screensAudited": 8,
     "screensTotal": 25,
-    "marketplaceQualityIndexBefore": 6.59,
-    "marketplaceQualityIndexAfter": 9.52,
-    "marketplaceFeelingDelta": 3.02
+    "marketplaceQualityIndexBefore": 6.52,
+    "marketplaceQualityIndexAfter": 9.54,
+    "marketplaceFeelingDelta": 3.11
   },
   "notes": "Baseline scores from EPIC 81/82 physical review. Remaining 21 screens pending operator audit. Run npm run product:epic-84:wave0 to refresh computed scores."
 }

@@ -265,6 +265,10 @@ export async function fetchOrders() {
   return apiRequest<{ items: Array<Record<string, unknown>> }>("/api/orders");
 }
 
+export async function fetchOrderDetail(orderId: string) {
+  return apiRequest<Record<string, unknown>>(`/api/orders/${encodeURIComponent(orderId)}`);
+}
+
 export async function fetchWallet() {
   return apiRequest<{ spendable: number; withdrawable: number; pending: number; enabled: boolean }>("/api/mobile/wallet");
 }
