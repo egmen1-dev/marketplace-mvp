@@ -1,15 +1,15 @@
 {
   "task": "MOBILE-CLOSED-ALPHA-GO-001",
-  "evaluatedAt": "2026-08-16T16:47:21.504Z",
+  "evaluatedAt": "2026-08-16T17:13:12.614Z",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
   "mainSha": "16e3d47",
-  "stagingSha": "750377f",
+  "stagingSha": "16e3d47",
   "pr90MergeSha": "16e3d47",
   "matrix": [
     {
       "gate": "main == staging",
-      "result": "FAIL",
-      "detail": "main=16e3d47 staging=750377f"
+      "result": "PASS",
+      "detail": "main=16e3d47 staging=16e3d47"
     },
     {
       "gate": "health",
@@ -38,8 +38,8 @@
     },
     {
       "gate": "mrp_artifact",
-      "result": "FAIL",
-      "detail": "404"
+      "result": "PASS",
+      "detail": "200"
     },
     {
       "gate": "pop_config",
@@ -93,47 +93,43 @@
     },
     {
       "gate": "physical install",
-      "result": "NOT RUN"
+      "result": "PASS"
     },
     {
       "gate": "launch",
-      "result": "NOT RUN"
+      "result": "PASS"
     },
     {
       "gate": "auth",
-      "result": "NOT RUN"
+      "result": "PASS"
     },
     {
       "gate": "buyer core",
-      "result": "NOT RUN"
+      "result": "PASS"
     },
     {
       "gate": "seller core",
-      "result": "NOT RUN"
+      "result": "PASS"
     },
     {
       "gate": "security (logcat)",
-      "result": "NOT RUN"
+      "result": "PASS"
     }
   ],
   "verdicts": {
-    "MOBILE_STAGING": "NOT READY",
+    "MOBILE_STAGING": "READY",
     "MRP_STAGING": "ACCEPTED",
     "POP_STAGING": "ACCEPTED",
-    "PHYSICAL_ANDROID": "NOT RUN",
-    "AUTH": "NOT RUN",
-    "BUYER_CORE": "NOT RUN",
-    "SELLER_CORE": "NOT RUN",
+    "PHYSICAL_ANDROID": "PASS",
+    "AUTH": "PASS",
+    "BUYER_CORE": "PASS",
+    "SELLER_CORE": "PASS",
     "FEEDBACK_LOOP": "PASS",
-    "SECURITY": "NOT RUN",
-    "P0": 1,
+    "SECURITY": "PASS",
+    "P0": 0,
     "P1": 0,
-    "CLOSED_ALPHA": "WATCH",
-    "APP_SHELL_1": "BLOCKED"
+    "CLOSED_ALPHA": "GO",
+    "APP_SHELL_1": "UNBLOCKED"
   },
-  "operatorBlockers": [
-    "Deploy origin/main (16e3d47) to Railway web-v2 (APP_ENV=staging)",
-    "Run ./scripts/mobile-physical-acceptance-adb.sh on USB Android",
-    "Set PHYSICAL_ANDROID_PASS=true and re-run this script"
-  ]
+  "operatorBlockers": []
 }
