@@ -26,6 +26,8 @@
     "mobile:test": "npm test --prefix apps/mobile",
     "mobile:lint": "npm run typecheck --prefix apps/mobile",
     "mobile:validate": "npm run mobile:typecheck && npm run mobile:test",
+    "mobile:write-build-info": "node scripts/write-mobile-build-info.mjs",
+    "mobile:verify-build": "tsx scripts/mobile-verify-build.ts",
     "mobile:staging-smoke": "tsx scripts/mobile-staging-integration-smoke.ts",
     "mobile:release-gate": "tsx scripts/mobile-release-gate-003-staging.ts",
     "mobile:closed-alpha:publish": "tsx scripts/epic-80-publish-closed-alpha-release.ts",

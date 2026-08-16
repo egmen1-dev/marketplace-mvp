@@ -83,8 +83,8 @@ export default function BootScreen() {
     };
   }, [attempt, applyResult]);
 
-  const openDiagnostics = useCallback(() => {
-    router.push("/startup-diagnostics");
+  const openBuildInfo = useCallback(() => {
+    router.push("/build-info");
   }, [router]);
 
   if (unsupported) {
@@ -102,8 +102,8 @@ export default function BootScreen() {
     <View style={styles.container}>
       <Pressable
         accessibilityRole="imagebutton"
-        accessibilityHint="Удерживайте для диагностики запуска"
-        onLongPress={openDiagnostics}
+        accessibilityHint="Удерживайте для информации о билде"
+        onLongPress={openBuildInfo}
         delayLongPress={800}
         style={styles.brand}
       >

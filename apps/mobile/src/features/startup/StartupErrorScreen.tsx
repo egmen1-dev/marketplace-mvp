@@ -10,6 +10,7 @@ import { PrimaryButton, SecondaryButton } from "../../components/ui";
 import { buildDiagnosticsReport } from "../../diagnostics/diagnostics-service";
 import { copyDiagnosticsText, exportDiagnosticsJson, shareProblemReport } from "../../diagnostics/diagnostics-actions";
 import { runConnectivityCheck } from "../../diagnostics/connectivity-check";
+import { BuildInfoPanel } from "./BuildInfoPanel";
 import { colors, radii, spacing, typography } from "../../theme/tokens";
 
 type Props = {
@@ -117,6 +118,8 @@ export function StartupErrorScreen({ failure, bootId, retryCount, onRetry }: Pro
         <Text style={styles.label}>Код</Text>
         <Text style={styles.mono}>{failure.code}</Text>
       </View>
+
+      <BuildInfoPanel compact />
 
       <PrimaryButton label="Повторить" onPress={onRetry} fullWidth />
 
