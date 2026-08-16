@@ -28,11 +28,13 @@ import {
 } from "../knowledge-reasoning";
 import { recommendationHasValidEvidence } from "@/lib/ccos/knowledge";
 import { isCcosProductPlatformEnabled } from "@/lib/ccos/product";
+import { isCcosTwinPlatformEnabled } from "@/lib/ccos/twin";
 import {
   buildMarketplaceProductUnderstanding,
   collectProductUnderstandingActions,
   productUnderstandingSummary,
 } from "../../product";
+import { buildMarketplaceTwinDecisionReport } from "../../twin";
 
 import { blockerFromObservations, orchestrateDecision } from "./decision";
 import {
@@ -176,6 +178,26 @@ export async function getMarketplaceBrainReport(
     topActionTitle: nextBestAction?.title ?? null,
   });
 
+  const twinDecisionReport =
+    isCcosTwinPlatformEnabled() &&
+    (contextInput?.includeSimulations ?? resolveMarketplaceBrainMaturity() === "L3_SIMULATOR")
+      ? await buildMarketplaceTwinDecisionReport({ productId })
+      : null;
+
+  const bestTwinScenario = twinDecisionReport?.bestScenarioId
+    ? twinDecisionReport.scenarios.find((s) => s.scenarioId === twinDecisionReport.bestScenarioId)
+    : null;
+
+  const twinSummary = twinDecisionReport
+    ? {
+        scenarioCount: twinDecisionReport.scenarioCount,
+        bestScenarioLabel: bestTwinScenario?.scenarioLabel ?? null,
+        bestPositionDelta: bestTwinScenario?.predicted.positionDelta ?? null,
+        bestCtrDeltaPct: bestTwinScenario?.predicted.ctrDeltaPct ?? null,
+        modelConfidence: bestTwinScenario?.confidence.overall ?? null,
+      }
+    : undefined;
+
   const { strengths, weaknesses } = buildFactorDeltas(signals);
   const summary = buildSellerSummary({
     context,
@@ -212,9 +234,12 @@ export async function getMarketplaceBrainReport(
     decision,
     confidence,
     maturity: resolveMarketplaceBrainMaturity(),
-    brainVersion: isCcosKnowledgePlatformEnabled()
-      ? currentMarketplaceBrainVersion()
-      : BRAIN_V1_VERSION,
+    brainVersion:
+      isCcosKnowledgePlatformEnabled() ||
+      isCcosProductPlatformEnabled() ||
+      isCcosTwinPlatformEnabled()
+        ? currentMarketplaceBrainVersion()
+        : BRAIN_V1_VERSION,
     advisoryOnly: ADVISORY_ONLY,
     publisherHealth,
     provenance: buildProvenance(observations),
@@ -226,6 +251,8 @@ export async function getMarketplaceBrainReport(
     productSummary: productUnderstanding
       ? productUnderstandingSummary(productUnderstanding)
       : undefined,
+    twinDecisionReport,
+    twinSummary,
   };
 
   trackCcosEvent("ccos_brain_report_generated");

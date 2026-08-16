@@ -219,6 +219,16 @@ export function AdminCognitiveProductPanel({
       {report.simulations.length > 0 ? (
         <section className="rounded-xl border p-4">
           <h2 className="font-medium">Prediction / simulation</h2>
+          {report.twinSummary ? (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Twin: {report.twinSummary.scenarioCount} scenarios · best «
+              {report.twinSummary.bestScenarioLabel ?? "—"}» · Δpos{" "}
+              {report.twinSummary.bestPositionDelta ?? "—"} · confidence{" "}
+              {report.twinSummary.modelConfidence != null
+                ? `${Math.round(report.twinSummary.modelConfidence * 100)}%`
+                : "—"}
+            </p>
+          ) : null}
           {report.simulations.map((sim) => (
             <div key={sim.intervention} className="mt-2 text-sm">
               <p className="font-medium">{sim.intervention}</p>
@@ -226,6 +236,39 @@ export function AdminCognitiveProductPanel({
               <p className="text-xs text-muted-foreground">{sim.modelSource}</p>
             </div>
           ))}
+        </section>
+      ) : null}
+
+      {report.twinDecisionReport ? (
+        <section className="rounded-xl border p-4" data-testid="admin-twin-decision">
+          <h2 className="font-medium">Digital Twin Decision (Wave 5)</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Shadow ranking only · human approval required
+          </p>
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead>
+                <tr className="border-b text-xs text-muted-foreground">
+                  <th className="py-2 pr-3">Scenario</th>
+                  <th className="py-2 pr-3">Δ pos</th>
+                  <th className="py-2 pr-3">Δ CTR</th>
+                  <th className="py-2 pr-3">Risk</th>
+                  <th className="py-2 pr-3">Confidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {report.twinDecisionReport.comparison.slice(0, 6).map((row) => (
+                  <tr key={row.scenarioId} className="border-b border-border/50">
+                    <td className="py-2 pr-3">{row.label}</td>
+                    <td className="py-2 pr-3 tabular-nums">{row.positionDelta ?? "—"}</td>
+                    <td className="py-2 pr-3 tabular-nums">{row.ctrDeltaPct ?? "—"}%</td>
+                    <td className="py-2 pr-3">{row.riskScore}</td>
+                    <td className="py-2 pr-3">{Math.round(row.confidence * 100)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </section>
       ) : null}
 

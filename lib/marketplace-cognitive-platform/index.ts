@@ -24,3 +24,9 @@ export {
   collectProductUnderstandingActions,
   productUnderstandingSummary,
 } from "./product";
+export {
+  buildMarketplaceTwinDecisionReport,
+  buildMarketplaceTwinReplay,
+  toMobileScenarioSimulatorResponse,
+  toOfflineTwinCachePayload,
+} from "./twin";

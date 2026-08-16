@@ -320,3 +320,9 @@ export async function getAdminRankingDashboard(): Promise<AdminRankingDashboard>
 }
 
 export { loadProductInput };
+
+export async function loadPeerScoresForProduct(productId: string): Promise<number[]> {
+  const input = await loadProductInput(productId);
+  if (!input) return [];
+  return peerScoresForCategory(input.categoryId, input.id);
+}
