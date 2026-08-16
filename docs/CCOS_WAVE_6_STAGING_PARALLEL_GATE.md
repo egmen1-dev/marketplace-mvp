@@ -6,8 +6,8 @@
 
 | Step | Status |
 |---|---|
-| PR #83 merge to main | ⬜ Pending operator merge |
-| Railway deploy `web-v2` | ⬜ Pending |
+| PR #83 merge to main | ✅ Merged (`baceeb4`) |
+| Railway deploy `web-v2` | ⬜ Pending operator deploy |
 | `CCOS_EVOLUTION_PLATFORM_ENABLED=true` on staging | ⬜ Pending |
 | `npx tsx scripts/ccos-wave-6-staging-acceptance.ts` | Ran locally |
 
