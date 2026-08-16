@@ -2031,3 +2031,123 @@ model MobileReleaseAnalyticsEvent {
   @@index([releaseId])
   @@map("mobile_release_analytics_events")
 }
+
+enum ProductFlagStage {
+  OFF
+  INTERNAL
+  ALPHA
+  BETA
+  PRODUCTION
+}
+
+enum ProductOpsSurface {
+  WEB
+  MOBILE
+  ALL
+}
+
+model ProductFlagOverride {
+  id        String            @id @default(cuid())
+  key       String
+  stage     ProductFlagStage  @default(OFF)
+  surface   ProductOpsSurface @default(ALL)
+  enabled   Boolean           @default(false)
+  notes     String            @default("")
+  updatedBy String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([key, surface])
+  @@map("product_flag_overrides")
+}
+
+model RemoteConfigEntry {
+  id        String            @id @default(cuid())
+  key       String
+  value     Json
+  surface   ProductOpsSurface @default(MOBILE)
+  version   Int               @default(1)
+  updatedBy String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([key, surface])
+  @@map("remote_config_entries")
+}
+
+model ProductTelemetryEvent {
+  id           String            @id @default(cuid())
+  eventType    String
+  surface      ProductOpsSurface @default(MOBILE)
+  screen       String?
+  sessionId    String?
+  deviceIdHash String?
+  versionCode  Int?
+  versionName  String?
+  platform     String?
+  metadata     Json?
+  createdAt    DateTime          @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([sessionId])
+  @@index([deviceIdHash])
+  @@map("product_telemetry_events")
+}
+
+model ProductFeedbackItem {
+  id             String   @id @default(cuid())
+  content        String
+  classification String
+  confidence     Float    @default(0)
+  source         String   @default("mobile")
+  userId         String?
+  deviceIdHash   String?
+  versionCode    Int?
+  screen         String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  @@index([classification, createdAt])
+  @@map("product_feedback_items")
+}
+
+model ProductSessionStep {
+  id           String   @id @default(cuid())
+  sessionId    String
+  stepOrder    Int
+  screen       String
+  action       String   @default("view")
+  deviceIdHash String?
+  versionCode  Int?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([sessionId, stepOrder])
+  @@map("product_session_steps")
+}
+
+model ProductExperiment {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  status    String   @default("draft")
+  variants  Json
+  winner    String?
+  metrics   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("product_experiments")
+}
+
+model ProductOpsAuditEvent {
+  id        String   @id @default(cuid())
+  action    String
+  entityKey String
+  actorId   String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([entityKey, createdAt])
+  @@map("product_ops_audit_events")
+}

@@ -2,6 +2,7 @@ import { apiRequest } from "../api/client";
 import type { BootstrapPayload } from "../types/api";
 import { getDeviceId } from "../storage/secure-session";
 import { loadAppConfig } from "../config/env";
+import { getSessionId } from "../telemetry/session";
 
 export type MobileUpdateInfo = {
   latestVersion: string;
@@ -34,6 +35,22 @@ export async function fetchMobileUpdate(): Promise<MobileUpdateInfo> {
 
 export async function fetchBootstrap(): Promise<BootstrapPayload> {
   return apiRequest<BootstrapPayload>("/api/mobile/bootstrap");
+}
+
+export type RemoteConfigPayload = {
+  surface: string;
+  config: Record<string, unknown>;
+  flags: Array<{ key: string; stage: string; enabled: boolean }>;
+  experiments: Array<{ key: string; name: string; variant: { id: string; name: string } }>;
+};
+
+export async function fetchRemoteConfig(): Promise<RemoteConfigPayload> {
+  const deviceId = getDeviceId();
+  return apiRequest<RemoteConfigPayload>(`/api/product-ops/config?surface=mobile&deviceId=${encodeURIComponent(deviceId)}`);
+}
+
+export async function fetchMobileConfig() {
+  return apiRequest<Record<string, unknown>>("/api/mobile/config");
 }
 
 export async function fetchNavigation() {
@@ -121,16 +138,33 @@ export async function postTelemetry(event: {
   event: string;
   errorCode?: string;
 }) {
+  const appConfig = loadAppConfig();
   try {
     await apiRequest("/api/mobile/telemetry", {
       method: "POST",
       body: JSON.stringify({
-        appVersion: "0.1.0-alpha",
+        appVersion: appConfig.appVersion,
         platform: "android",
+        sessionId: getSessionId(),
+        deviceId: getDeviceId(),
+        versionCode: Number(appConfig.buildNumber) || 1,
         ...event,
       }),
     });
   } catch {
     // telemetry must not block UX
   }
+}
+
+export async function submitProductFeedback(input: { content: string; screen?: string }) {
+  const appConfig = loadAppConfig();
+  return apiRequest<{ classification: string; recorded: boolean }>("/api/product-ops/feedback", {
+    method: "POST",
+    body: JSON.stringify({
+      content: input.content,
+      screen: input.screen,
+      deviceId: getDeviceId(),
+      versionCode: Number(appConfig.buildNumber) || 1,
+    }),
+  });
 }

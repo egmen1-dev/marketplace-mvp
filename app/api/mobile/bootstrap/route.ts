@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
-import { buildMobileBootstrapPayload } from "@/lib/mobile/bootstrap";
+import { buildMobileBootstrapWithRemoteConfig } from "@/lib/product-operations/remote-config";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
 
 /**
@@ -12,7 +12,7 @@ export async function GET() {
   const blocked = ccosApiGuard();
   if (blocked) return blocked;
 
-  const payload = buildMobileBootstrapPayload();
+  const payload = await buildMobileBootstrapWithRemoteConfig();
   return NextResponse.json(
     withMobileApiContract(payload, `${payload.apiVersion}:${payload.brainCapabilities.brainVersion}`),
   );
