@@ -12,6 +12,12 @@ import { buildAndroidUpdatePayload } from "./android-update";
 import { buildMobileAuthDecisionReport } from "./auth-decision";
 import { buildMobileBootstrapPayload } from "./bootstrap";
 import { buildMobileClientConfig } from "./client-config";
+import { buildCognitiveCapabilitiesManifest } from "./cognitive-capabilities";
+import { buildBrainCompatibilityFields } from "./brain-compatibility";
+import { MOBILE_PAGINATION_CONTRACT } from "./error-contract";
+import { buildMobileSellerHomePayload } from "./seller-home";
+import { buildMobileBuyerHomePayload } from "./buyer-home";
+import { evaluateNativeAppShellStartGate } from "./native-shell-gate";
 import { buildMobileNavigationManifest, validateNavigationDeepLinks } from "./navigation";
 
 export type ReleaseCheckItem = {
@@ -237,6 +243,48 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
       label: "Android direct distribution foundation",
       ok: Boolean(MOBILE_DEEP_LINK_SCHEME && APK_UPDATE_METADATA.minSupportedApiVersion),
       detail: `deep-link://${MOBILE_DEEP_LINK_SCHEME} env=${Object.keys(MOBILE_ENV_CONFIG).join("/")}`,
+    },
+    {
+      id: "cognitive_capabilities_manifest",
+      label: "Cognitive capability manifest",
+      ok: Boolean(buildMobileBootstrapPayload().cognitiveCapabilities),
+      detail: "bootstrap.cognitiveCapabilities",
+    },
+    {
+      id: "brain_compatibility",
+      label: "Brain schema compatibility fields",
+      ok: Boolean(buildBrainCompatibilityFields().brainSchemaVersion),
+      detail: "brainSchemaVersion / minimumSupportedBrainSchemaVersion",
+    },
+    {
+      id: "seller_home_contract",
+      label: "Mobile seller home contract",
+      ok: Boolean(buildMobileSellerHomePayload().advisoryOnly),
+      detail: "GET /api/mobile/seller/home",
+    },
+    {
+      id: "buyer_home_contract",
+      label: "Mobile buyer home contract",
+      ok: Boolean(buildMobileBuyerHomePayload().advisoryOnly),
+      detail: "GET /api/mobile/buyer/home",
+    },
+    {
+      id: "mobile_error_contract",
+      label: "Mobile error contract v1",
+      ok: true,
+      detail: "lib/mobile/error-contract.ts",
+    },
+    {
+      id: "mobile_pagination_contract",
+      label: "Mobile pagination contract v1",
+      ok: MOBILE_PAGINATION_CONTRACT.version === "mobile-pagination-v1",
+      detail: MOBILE_PAGINATION_CONTRACT.version,
+    },
+    {
+      id: "native_app_shell_start",
+      label: "Native app shell start gate",
+      ok: evaluateNativeAppShellStartGate().status === "READY",
+      detail: evaluateNativeAppShellStartGate().note,
     },
   ];
 

@@ -5,6 +5,8 @@ import { isCcosProductPlatformEnabled } from "@/lib/ccos/product/flags";
 import { KNOWLEDGE_GRAPH_CONTRACT_VERSION, GRAPH_ENGINE_VERSION } from "@/lib/ccos/graph/types";
 import { TWIN_CONTRACT_VERSION } from "@/lib/ccos/twin/types";
 import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
+import { getActiveBrainVersion } from "@/lib/ccos/rollback/brain";
+import { buildBrainCompatibilityFields } from "./brain-compatibility";
 
 export type MobileClientConfigPayload = {
   apiVersion: typeof MOBILE_API_VERSION;
@@ -24,6 +26,9 @@ export type MobileClientConfigPayload = {
     maxConcurrentSyncRequests: number;
     graphPathDepthMax: number;
   };
+  brainSchemaVersion: string;
+  minimumSupportedBrainSchemaVersion: string;
+  supportedModes: ("buyer" | "seller")[];
   advisoryOnly: true;
 };
 
@@ -45,13 +50,15 @@ export function buildMobileClientConfig(): MobileClientConfigPayload {
   if (cognitive) supportedFeatures.push("brain_advisory_report");
   if (isCcosProductPlatformEnabled()) supportedFeatures.push("product_genome");
 
+  const brainCompat = buildBrainCompatibilityFields();
+
   return {
     apiVersion: MOBILE_API_VERSION,
     schemaVersion: MOBILE_SCHEMA_VERSION,
     releaseChannel: resolveReleaseChannel(),
     environments: MOBILE_ENV_CONFIG,
     modules: {
-      brain: { enabled: cognitive, version: currentMarketplaceBrainVersion() },
+      brain: { enabled: cognitive, version: getActiveBrainVersion() || currentMarketplaceBrainVersion() },
       productGenome: { enabled: isCcosProductPlatformEnabled() },
       graph: {
         enabled: graphOn,
@@ -67,6 +74,9 @@ export function buildMobileClientConfig(): MobileClientConfigPayload {
       maxConcurrentSyncRequests: 20,
       graphPathDepthMax: 12,
     },
+    brainSchemaVersion: brainCompat.brainSchemaVersion,
+    minimumSupportedBrainSchemaVersion: brainCompat.minimumSupportedBrainSchemaVersion,
+    supportedModes: ["buyer", "seller"],
     advisoryOnly: true,
   };
 }

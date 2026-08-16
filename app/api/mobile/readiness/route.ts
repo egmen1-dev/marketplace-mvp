@@ -11,6 +11,10 @@ import {
 import { runReleaseReadinessCheck } from "@/lib/mobile/release-readiness";
 import { buildAppShellReadinessReport } from "@/lib/mobile/app-shell-readiness";
 import { buildMobileAuthDecisionReport } from "@/lib/mobile/auth-decision";
+import { evaluateNativeAppShellStartGate } from "@/lib/mobile/native-shell-gate";
+import { buildCognitiveCapabilitiesManifest } from "@/lib/mobile/cognitive-capabilities";
+import { buildBrainCompatibilityFields } from "@/lib/mobile/brain-compatibility";
+import { MOBILE_PAGINATION_CONTRACT } from "@/lib/mobile/error-contract";
 
 /**
  * Release Readiness Checklist
@@ -32,6 +36,11 @@ export async function GET() {
         appShellBlockers: appShell.blockers,
         authDecision: authDecision.decision,
         authNativeReady: authDecision.nativeAppReady,
+        nativeAppShellStart: evaluateNativeAppShellStartGate().status,
+        cognitiveCapabilities: buildCognitiveCapabilitiesManifest(),
+        brainCompatibility: buildBrainCompatibilityFields(),
+        errorContractVersion: "mobile-error-v1",
+        paginationContract: MOBILE_PAGINATION_CONTRACT,
         apiContract: {
           apiVersion: MOBILE_API_VERSION,
           schemaVersion: MOBILE_SCHEMA_VERSION,
