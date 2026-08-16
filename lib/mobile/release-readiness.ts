@@ -8,10 +8,11 @@ import {
   MOBILE_MIN_SUPPORTED_APP_VERSION,
   MOBILE_RECOMMENDED_APP_VERSION,
 } from "./api-contract";
-import { MOBILE_DEEP_LINK_PATTERNS } from "./deep-links";
 import { buildAndroidUpdatePayload } from "./android-update";
+import { buildMobileAuthDecisionReport } from "./auth-decision";
 import { buildMobileBootstrapPayload } from "./bootstrap";
 import { buildMobileClientConfig } from "./client-config";
+import { buildMobileNavigationManifest, validateNavigationDeepLinks } from "./navigation";
 
 export type ReleaseCheckItem = {
   id: string;
@@ -119,10 +120,34 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
       detail: "docs/MOBILE_AUTH_ARCHITECTURE.md + session/refresh/logout route foundation",
     },
     {
+      id: "auth_decision",
+      label: "Mobile auth decision documented",
+      ok: buildMobileAuthDecisionReport().decision === "A",
+      detail: "docs/MOBILE_AUTH_DECISION.md — Decision A (JWT session)",
+    },
+    {
+      id: "session_support",
+      label: "Mobile session endpoint",
+      ok: true,
+      detail: "POST /api/mobile/auth/session — JWT status probe",
+    },
+    {
+      id: "deep_link_resolver",
+      label: "Deep link resolver API",
+      ok: true,
+      detail: "GET /api/mobile/deep-link/resolve",
+    },
+    {
+      id: "navigation_manifest",
+      label: "Navigation manifest API",
+      ok: validateNavigationDeepLinks() && buildMobileNavigationManifest().items.length > 0,
+      detail: "GET /api/mobile/navigation — role-aware server-driven nav",
+    },
+    {
       id: "deep_links",
       label: "Deep link contract",
-      ok: Boolean(MOBILE_DEEP_LINK_PATTERNS.product && MOBILE_DEEP_LINK_PATTERNS.wallet),
-      detail: "lot:// patterns + GET /api/mobile/deep-link/resolve",
+      ok: validateNavigationDeepLinks(),
+      detail: "lot:// patterns aligned with navigation manifest",
     },
     {
       id: "offline_cache",
