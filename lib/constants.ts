@@ -131,6 +131,8 @@ export const ROUTES = {
   ADMIN_RANKING: "/admin/ranking",
   /** Admin ranking lab 1000 — analysis only */
   ADMIN_RANKING_LAB: "/admin/ranking-lab",
+  /** Admin CCOS cognitive debug (Wave 0) */
+  ADMIN_COGNITIVE_PRODUCT: "/admin/cognitive/products",
   /** Seller ranking academy — lab recommendations */
   ACCOUNT_RANKING_ACADEMY: "/account/ranking-academy",
   /** Social growth / viral commerce */
