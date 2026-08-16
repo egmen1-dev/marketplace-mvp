@@ -155,7 +155,7 @@ export function collectActionCandidates(input: {
 export function selectNextBestAction(
   candidates: ActionCandidate[],
   decision: CognitiveDecision,
-): { primary: BrainRecommendation | null; candidates: ActionCandidate[] } {
+): { primary: BrainRecommendation | null; primaryCandidate: ActionCandidate | null; candidates: ActionCandidate[] } {
   const scored = [...candidates].map((c) => {
     let score = c.score;
     if (c.category === "promotion" && decision.blockedCapabilities.includes("promotion_advice")) {
@@ -172,7 +172,7 @@ export function selectNextBestAction(
 
   scored.sort((a, b) => b.score - a.score);
   const primary = scored.find((c) => !c.suppressed && c.score > 0);
-  if (!primary) return { primary: null, candidates: scored };
+  if (!primary) return { primary: null, primaryCandidate: null, candidates: scored };
 
   return {
     primary: {
@@ -183,6 +183,7 @@ export function selectNextBestAction(
       ctaLabel: primary.ctaLabel,
       score: primary.score,
     },
+    primaryCandidate: primary,
     candidates: scored,
   };
 }

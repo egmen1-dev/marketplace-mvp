@@ -1,0 +1,40 @@
+import type { BrainVersionRegistryEntry } from "./types";
+
+export const KNOWLEDGE_PACK_VERSION = "knowledge-pack-v1";
+export const REASONING_PACK_VERSION = "reasoning-pack-v1";
+export const EXPERIMENT_REGISTRY_VERSION = "experiment-registry-v1";
+export const KNOWLEDGE_REPOSITORY_VERSION = "knowledge-repository-v1";
+
+const REGISTRY: BrainVersionRegistryEntry[] = [
+  {
+    brainVersion: "marketplace-brain-v1",
+    knowledgePackVersion: KNOWLEDGE_PACK_VERSION,
+    reasoningPackVersion: REASONING_PACK_VERSION,
+    experimentVersion: EXPERIMENT_REGISTRY_VERSION,
+    releasedAt: "2026-08-16T00:00:00.000Z",
+    notes: "Wave 1 advisory brain baseline",
+  },
+  {
+    brainVersion: "marketplace-brain-v2-knowledge",
+    knowledgePackVersion: "knowledge-pack-v2",
+    reasoningPackVersion: "reasoning-pack-v2",
+    experimentVersion: EXPERIMENT_REGISTRY_VERSION,
+    releasedAt: new Date().toISOString(),
+    notes: "Wave 2 verified-knowledge reasoning",
+  },
+];
+
+export function getBrainVersionRegistry(): BrainVersionRegistryEntry[] {
+  return [...REGISTRY];
+}
+
+export function resolveBrainVersionEntry(brainVersion: string): BrainVersionRegistryEntry {
+  return (
+    REGISTRY.find((r) => r.brainVersion === brainVersion) ??
+    REGISTRY[REGISTRY.length - 1]
+  );
+}
+
+export function currentMarketplaceBrainVersion(): string {
+  return "marketplace-brain-v2-knowledge";
+}

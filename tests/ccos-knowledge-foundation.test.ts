@@ -1,17 +1,17 @@
 import { describe, expect, it, beforeEach } from "vitest";
 
 import { createEvidence } from "@/lib/ccos/knowledge/evidence";
+import { proposeHypothesis } from "@/lib/ccos/knowledge/hypothesis";
 import {
-  InMemoryKnowledgeStore,
-  proposeHypothesis,
-  resetKnowledgeStore,
-  setKnowledgeStore,
-} from "@/lib/ccos/knowledge/store";
+  InMemoryKnowledgeRepository,
+  resetKnowledgeRepository,
+  setKnowledgeRepository,
+} from "@/lib/ccos/knowledge/repository";
 
 describe("ccos knowledge foundation", () => {
   beforeEach(() => {
-    resetKnowledgeStore();
-    setKnowledgeStore(new InMemoryKnowledgeStore());
+    resetKnowledgeRepository();
+    setKnowledgeRepository(new InMemoryKnowledgeRepository());
   });
 
   it("stores evidence and proposed hypotheses only", () => {
@@ -19,10 +19,10 @@ describe("ccos knowledge foundation", () => {
       observationIds: ["obs-1"],
       claim: "CTR 1.8% при медиане категории 3.1%",
       confidence: 0.6,
-      scope: { category: "socks" },
+      scope: { pack: "marketplace", categories: ["socks"] },
     });
 
-    const store = new InMemoryKnowledgeStore();
+    const store = new InMemoryKnowledgeRepository();
     store.saveEvidence(evidence);
 
     const hypothesis = proposeHypothesis({
@@ -38,7 +38,7 @@ describe("ccos knowledge foundation", () => {
   });
 
   it("blocks observation → verified knowledge shortcut", () => {
-    const store = new InMemoryKnowledgeStore();
+    const store = new InMemoryKnowledgeRepository();
     expect(() => store.tryPromoteObservationToKnowledge()).toThrow(
       /Evidence → Hypothesis → Experiment/,
     );

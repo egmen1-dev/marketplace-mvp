@@ -62,6 +62,13 @@ export function CognitiveProductPreviewCard({
           {report.nextBestAction?.why ? (
             <p className="mt-1 text-xs text-muted-foreground">{report.nextBestAction.why}</p>
           ) : null}
+          {report.recommendationEvidence.length > 0 ? (
+            <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+              {report.recommendationEvidence.slice(0, 3).map((e) => (
+                <li key={e.claim}>• {e.claim}</li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
 

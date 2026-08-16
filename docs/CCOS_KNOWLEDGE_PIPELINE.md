@@ -31,9 +31,20 @@ Observation
 
 ## Wave 0 API
 
-- `KnowledgeStore` interface + `InMemoryKnowledgeStore`
+- `KnowledgeRepository` interface + `InMemoryKnowledgeRepository`
 - `createEvidence()`, `proposeHypothesis()` — status stays `PROPOSED`
 - `tryPromoteObservationToKnowledge()` — throws (safety test)
+
+## Wave 2 extensions
+
+- Full `KnowledgeFact` lifecycle: candidate → verified → deprecated → archived
+- `approveKnowledge()` human approval workflow
+- `completeExperiment()` → candidate knowledge
+- Evidence Engine auto-builds evidence for Brain recommendations
+- Shared read API: `/api/ccos/knowledge`
+- Mobile compact API: `/api/ccos/brain/mobile`
+
+See `docs/CCOS_WAVE_2_KNOWLEDGE_PLATFORM.md`.
 
 ## Evidence contract
 

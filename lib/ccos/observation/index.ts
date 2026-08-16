@@ -6,3 +6,4 @@ export * from "./normalize";
 export * from "./dedupe";
 export * from "./record";
 export * from "./registry";
+export * from "./bus";

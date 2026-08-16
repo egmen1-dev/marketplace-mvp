@@ -103,6 +103,32 @@ export function AdminCognitiveProductPanel({
       </section>
 
       <section className="rounded-xl border p-4">
+        <h2 className="font-medium">Verified knowledge used</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          reasoning {report.reasoningPackVersion} · pack {report.knowledgePackVersion}
+        </p>
+        {report.knowledgeFactIds.length === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">No verified facts matched scope</p>
+        ) : (
+          <ul className="mt-2 space-y-1 text-sm">
+            {report.knowledgeFactIds.map((id) => (
+              <li key={id} className="font-mono text-xs">{id}</li>
+            ))}
+          </ul>
+        )}
+        {report.recommendationEvidence.length > 0 ? (
+          <>
+            <h3 className="mt-3 text-xs font-medium text-muted-foreground">Recommendation evidence</h3>
+            <ul className="mt-1 space-y-1 text-sm">
+              {report.recommendationEvidence.map((e) => (
+                <li key={e.claim}>{e.claim}</li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+      </section>
+
+      <section className="rounded-xl border p-4">
         <h2 className="font-medium">Decision orchestrator</h2>
         <p className="mt-1 text-sm">
           allowed={String(report.decision.allowed)} · blocked:{" "}
