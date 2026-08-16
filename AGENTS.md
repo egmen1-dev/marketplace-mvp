@@ -116,3 +116,17 @@ Physical Android acceptance cannot be fully automated in cloud — document `NOT
 | EPIC | EPIC 83 — Minimum Supported Version (published) |
 
 See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matrix.
+
+## EPIC 84 — Marketplace Productization (active)
+
+**Philosophy shift:** stop building platforms; start building product value users feel every day.
+
+| Rule | Detail |
+|------|--------|
+| Forbidden | New Brain / Graph / Twin / infra EPICs until EPIC 84 completes |
+| Required | ≥2 Product Deliverables + ≥2 Release Deliverables per wave |
+| KPI | Register → understand → find → open → add → return |
+| Wave 0 | UX audit every screen — `docs/product/EPIC_84_WAVE_0_UX_AUDIT.md` |
+| Release verdict | POP auto GO/WATCH/NO-GO — `npm run product:epic-84:gate` |
+
+See `docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md`.

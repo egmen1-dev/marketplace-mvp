@@ -1,0 +1,146 @@
+{
+  "epic": "EPIC-84",
+  "phase": "Marketplace Productization · Wave 0",
+  "generatedAt": "2026-08-16T19:20:14.316Z",
+  "verdict": "PASS",
+  "productReleaseVerdict": "WATCH",
+  "rows": [
+    {
+      "id": "doc_EPIC_84_MARKETPLACE_PRODUCTIZATION.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md"
+    },
+    {
+      "id": "doc_EPIC_84_WAVE_0_UX_AUDIT.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_WAVE_0_UX_AUDIT.md"
+    },
+    {
+      "id": "release_verdict_module",
+      "ok": true
+    },
+    {
+      "id": "release_verdict_api",
+      "ok": true
+    },
+    {
+      "id": "seller_journey_funnel",
+      "ok": true,
+      "detail": "getSellerJourneyFunnel"
+    },
+    {
+      "id": "pop_release_verdict",
+      "ok": true,
+      "detail": "WATCH"
+    },
+    {
+      "id": "pop_metrics_pack",
+      "ok": true,
+      "detail": "dau=1 crashFree=100%"
+    }
+  ],
+  "releaseDeliverables": {
+    "metricsPack": {
+      "adoptionPercent": 0,
+      "dau": 1,
+      "retention7d": 100,
+      "crashFreeRate": 100,
+      "updateRatePercent": 0,
+      "buyerFunnelHealthy": false,
+      "sellerFunnelHealthy": false,
+      "buyerFunnel": [
+        {
+          "screen": "boot",
+          "count": 0,
+          "dropOffRate": 0
+        },
+        {
+          "screen": "login",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "home",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "catalog",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "product",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "cart",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "checkout",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "purchase",
+          "count": 0,
+          "dropOffRate": 100
+        }
+      ],
+      "sellerFunnel": [
+        {
+          "screen": "login",
+          "count": 0,
+          "dropOffRate": 0
+        },
+        {
+          "screen": "seller_home",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "seller_products",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "seller_product",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "seller_edit",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "seller_stats",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "seller_wallet",
+          "count": 0,
+          "dropOffRate": 100
+        },
+        {
+          "screen": "seller_orders",
+          "count": 0,
+          "dropOffRate": 100
+        }
+      ],
+      "latestVersionName": "0.1.2-alpha",
+      "latestVersionCode": 3
+    },
+    "automaticVerdict": "WATCH",
+    "reasons": [
+      "DAU 1 < 3 (insufficient cohort)",
+      "physical Android acceptance pending",
+      "buyer funnel incomplete or no telemetry",
+      "seller funnel incomplete or no telemetry"
+    ]
+  }
+}
