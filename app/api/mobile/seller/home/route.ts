@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
-import { buildMobileSellerHomePayload } from "@/lib/mobile/seller-home";
+import { buildMobileSellerHomeFromRequest } from "@/lib/mobile/seller-home-data";
 
-export async function GET() {
+export async function GET(request: Request) {
   const blocked = ccosApiGuard();
   if (blocked) return blocked;
 
-  return NextResponse.json(
-    withMobileApiContract(buildMobileSellerHomePayload(), "mobile-seller-home-v1"),
-  );
+  const payload = await buildMobileSellerHomeFromRequest(request);
+  return NextResponse.json(withMobileApiContract(payload, "mobile-seller-home-v1"));
 }
