@@ -7,6 +7,7 @@ export function createHypothesis(input: {
   evidenceIds: string[];
   confidence: number;
   proposedBy: CognitiveHypothesis["proposedBy"];
+  experimentIds?: string[];
 }): CognitiveHypothesis {
   return {
     id: `hyp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
@@ -16,6 +17,7 @@ export function createHypothesis(input: {
     confidence: Math.min(1, Math.max(0, input.confidence)),
     status: "PROPOSED",
     proposedBy: input.proposedBy,
+    experimentIds: input.experimentIds,
     createdAt: new Date().toISOString(),
   };
 }

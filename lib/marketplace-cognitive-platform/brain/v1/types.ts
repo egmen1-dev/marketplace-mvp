@@ -22,6 +22,12 @@ export type BrainBlocker = {
   enforcementNote: string;
 };
 
+export type BrainEvidenceSummary = {
+  claim: string;
+  confidence: number;
+  source?: string;
+};
+
 export type BrainRecommendation = {
   title: string;
   why: string;
@@ -31,6 +37,8 @@ export type BrainRecommendation = {
   score: number;
   suppressed?: boolean;
   suppressionReason?: string;
+  evidence?: BrainEvidenceSummary[];
+  knowledgeFactIds?: string[];
 };
 
 export type BrainSimulation = {
@@ -94,6 +102,10 @@ export interface MarketplaceBrainReport {
   advisoryOnly: true;
   publisherHealth: PublisherHealth[];
   provenance: Array<{ claim: string; sourceModule: string; sourceVersion: string }>;
+  knowledgeFactIds: string[];
+  recommendationEvidence: BrainEvidenceSummary[];
+  reasoningPackVersion: string;
+  knowledgePackVersion: string;
 }
 
 export type MarketplaceBrainContextInput = {

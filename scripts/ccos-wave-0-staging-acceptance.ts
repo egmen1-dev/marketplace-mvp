@@ -312,7 +312,7 @@ async function main() {
     observationIds: ["obs-test"],
     claim: "CTR 1.8% при медиане категории 3.1%",
     confidence: 0.55,
-    scope: { category: "test" },
+    scope: { pack: "marketplace", categories: ["test"] },
   });
   const hypothesis = proposeHypothesis({
     claim: "Сильное главное фото повышает CTR",

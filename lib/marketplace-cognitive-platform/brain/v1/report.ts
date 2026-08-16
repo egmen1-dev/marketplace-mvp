@@ -16,6 +16,17 @@ import { buildMarketplaceGenomeV1 } from "../../genome/contextual";
 import { ensureMarketplacePublishersRegistered } from "../../publishers/registry";
 import { buildMarketplaceContextualSignals } from "../../signals/build-signals";
 import { buildProvenance } from "../explain";
+import { getKnowledgeRepository, isCcosKnowledgePlatformEnabled, KNOWLEDGE_PACK_VERSION } from "@/lib/ccos/knowledge";
+import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
+
+import {
+  applyKnowledgeToCandidate,
+  buildKnowledgeReasoning,
+  finalizeRecommendation,
+  seedDefaultMarketplaceKnowledge,
+  summarizeEvidence,
+} from "../knowledge-reasoning";
+import { recommendationHasValidEvidence } from "@/lib/ccos/knowledge";
 
 import { blockerFromObservations, orchestrateDecision } from "./decision";
 import {
@@ -100,15 +111,46 @@ export async function getMarketplaceBrainReport(
   });
 
   const behaviourPresent = hasBehaviourData(observations);
-  const actionCandidates = collectActionCandidates({
+  let actionCandidates = collectActionCandidates({
     observations,
     signals,
     productId,
     qualityGateFailed: gateFailed,
     hasBehaviourData: behaviourPresent,
   });
-  const { primary: nextBestAction, candidates: rankedCandidates } =
+
+  if (isCcosKnowledgePlatformEnabled()) {
+    seedDefaultMarketplaceKnowledge(getKnowledgeRepository());
+    const verifiedFacts = getKnowledgeRepository().listVerifiedFacts("marketplace");
+    actionCandidates = actionCandidates.map((c) => applyKnowledgeToCandidate(c, verifiedFacts));
+  }
+
+  const { primary: nextBestActionRaw, primaryCandidate, candidates: rankedCandidates } =
     selectNextBestAction(actionCandidates, decision);
+
+  const knowledgeReasoning = isCcosKnowledgePlatformEnabled()
+    ? buildKnowledgeReasoning({
+        observations,
+        signals,
+        context,
+        primaryAction: primaryCandidate,
+      })
+    : null;
+
+  let nextBestAction = nextBestActionRaw;
+  if (knowledgeReasoning && nextBestActionRaw) {
+    if (recommendationHasValidEvidence(knowledgeReasoning.evidence)) {
+      nextBestAction = finalizeRecommendation(nextBestActionRaw, knowledgeReasoning.evidence);
+    } else {
+      nextBestAction = {
+        ...nextBestActionRaw,
+        evidence: summarizeEvidence(knowledgeReasoning.evidence),
+      };
+    }
+    if (nextBestAction && knowledgeReasoning.verifiedFacts.length > 0) {
+      nextBestAction.knowledgeFactIds = knowledgeReasoning.verifiedFacts.slice(0, 2).map((f) => f.id);
+    }
+  }
 
   const simulations = await buildBrainSimulations({
     productId,
@@ -154,10 +196,16 @@ export async function getMarketplaceBrainReport(
     decision,
     confidence,
     maturity: resolveMarketplaceBrainMaturity(),
-    brainVersion: BRAIN_V1_VERSION,
+    brainVersion: isCcosKnowledgePlatformEnabled()
+      ? currentMarketplaceBrainVersion()
+      : BRAIN_V1_VERSION,
     advisoryOnly: ADVISORY_ONLY,
     publisherHealth,
     provenance: buildProvenance(observations),
+    knowledgeFactIds: knowledgeReasoning?.verifiedFacts.map((f) => f.id) ?? [],
+    recommendationEvidence: nextBestAction?.evidence ?? [],
+    reasoningPackVersion: knowledgeReasoning?.reasoningPackVersion ?? "reasoning-pack-v1",
+    knowledgePackVersion: KNOWLEDGE_PACK_VERSION,
   };
 
   trackCcosEvent("ccos_brain_report_generated");
