@@ -17,6 +17,17 @@ export class ApiClientError extends Error {
 let memoryAccessToken: string | null = null;
 let refreshInFlight: Promise<string | null> | null = null;
 
+export const DEFAULT_FETCH_TIMEOUT_MS = 15_000;
+
+function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs = DEFAULT_FETCH_TIMEOUT_MS): Promise<Response> {
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+  const signal =
+    init.signal && typeof AbortSignal.any === "function"
+      ? AbortSignal.any([init.signal, timeoutSignal])
+      : timeoutSignal;
+  return fetch(url, { ...init, signal });
+}
+
 export function setMemoryAccessToken(token: string | null): void {
   memoryAccessToken = token;
 }
@@ -38,7 +49,7 @@ async function refreshAccessToken(): Promise<string | null> {
     if (!refreshToken) return null;
 
     const config = loadAppConfig();
-    const res = await fetch(`${config.apiBaseUrl}/api/mobile/auth/refresh`, {
+    const res = await fetchWithTimeout(`${config.apiBaseUrl}/api/mobile/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
@@ -88,7 +99,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}, retry 
   if (!headers.has("Content-Type") && init.body) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(`${config.apiBaseUrl}${path}`, { ...init, headers });
+  const res = await fetchWithTimeout(`${config.apiBaseUrl}${path}`, { ...init, headers });
 
   if (res.status === 401 && retry) {
     const err = await parseError(res);
@@ -105,7 +116,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}, retry 
 
 export async function login(input: { email: string; password: string; pendingDeepLink?: string }) {
   const config = loadAppConfig();
-  const res = await fetch(`${config.apiBaseUrl}/api/mobile/auth/session`, {
+  const res = await fetchWithTimeout(`${config.apiBaseUrl}/api/mobile/auth/session`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

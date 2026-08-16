@@ -1,11 +1,13 @@
 import { UpdateGate } from "./UpdateGate";
 import { useUpdateCheck } from "../update/use-update-check";
+import { useAppStore } from "../store/app-store";
 
-/** Runs once per cold start — optional/recommended on launch; required blocks interaction. */
+/** Runs after bootstrap — optional/recommended never blocks cold start navigation. */
 export function UpdateHost() {
-  const { info, visible, setVisible } = useUpdateCheck(true);
+  const bootstrapped = useAppStore((s) => s.bootstrapped);
+  const { info, visible, setVisible } = useUpdateCheck(bootstrapped);
 
-  if (!info || !visible) return null;
+  if (!bootstrapped || !info || !visible) return null;
 
   return (
     <UpdateGate

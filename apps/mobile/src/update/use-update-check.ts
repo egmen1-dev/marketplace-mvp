@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { fetchMobileUpdate, postTelemetry } from "../api/endpoints";
+import { emitStartupEvent, STARTUP_EVENTS } from "../boot/startup-telemetry";
 import { shouldShowUpdatePrompt } from "./update-defer-storage";
 import { UPDATE_ANALYTICS } from "./types";
 
@@ -13,29 +14,33 @@ export function useUpdateCheck(autoCheck = false) {
   const check = useCallback(async () => {
     setLoading(true);
     setError(null);
+    emitStartupEvent(STARTUP_EVENTS.updateCheckStart);
     try {
       const payload = await fetchMobileUpdate();
       setInfo(payload);
+      emitStartupEvent(STARTUP_EVENTS.updateCheckOk, payload.updateState);
 
       if (payload.updateState !== "NO_UPDATE") {
-        await postTelemetry({
+        void postTelemetry({
           screen: "update",
           event: UPDATE_ANALYTICS.available,
           errorCode: payload.versionName,
-        });
+        }).catch(() => null);
       }
 
       const show = await shouldShowUpdatePrompt(payload);
       if (show && payload.updateState !== "NO_UPDATE") {
         setVisible(true);
-        await postTelemetry({
+        void postTelemetry({
           screen: "update",
           event: UPDATE_ANALYTICS.viewed,
           errorCode: payload.versionName,
-        });
+        }).catch(() => null);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "network_error");
+      const message = err instanceof Error ? err.message : "network_error";
+      emitStartupEvent(STARTUP_EVENTS.updateCheckFail, message.slice(0, 80));
+      setError(message);
     } finally {
       setLoading(false);
     }
