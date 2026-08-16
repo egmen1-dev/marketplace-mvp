@@ -131,6 +131,8 @@ See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matri
 | KPI | Register → understand → find → open → add → return |
 | Wave 0 | Product Design Audit — `docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md` |
 | Quality index | POP MQI — degrades release to WATCH/NO-GO if index drops |
-| Gates | `npm run product:epic-84:wave0` · `npm run product:epic-84:gate` |
+| Gates | `npm run product:epic-84:wave0` · `npm run product:epic-84:gate` · sprint gates |
+
+**Product Sprint completion rule:** a sprint is done only after (1) code gate PASS, (2) Marketplace Score gate PASS, (3) physical screenshot acceptance on Android.
 
 See `docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md`.

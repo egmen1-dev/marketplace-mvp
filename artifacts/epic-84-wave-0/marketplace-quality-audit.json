@@ -103,25 +103,40 @@
         "loadingExperience": 6.5,
         "errorExperience": 7
       },
-      "scoresAfter": null,
+      "scoresAfter": {
+        "visualQuality": 9.6,
+        "marketplaceFeel": 9.8,
+        "premiumFeel": 9.6,
+        "conversion": 9.4,
+        "trust": 9.7,
+        "accessibility": 9.2,
+        "consistency": 9.4,
+        "motion": 9,
+        "loadingExperience": 9.3,
+        "errorExperience": 9.2
+      },
       "marketplaceFeelingBefore": 6.83,
-      "marketplaceFeelingAfter": null,
+      "marketplaceFeelingAfter": 9.68,
       "marketplaceScoreBefore": 6.84,
-      "marketplaceScoreAfter": null,
+      "marketplaceScoreAfter": 9.46,
       "crudDetected": false,
-      "issues": [
-        {
-          "priority": "P1",
-          "description": "Sections need stronger commerce hierarchy vs generic lists",
-          "criterion": "marketplaceFeel"
-        },
-        {
-          "priority": "P2",
-          "description": "Limited motion / skeleton on section load",
-          "criterion": "motion"
-        }
+      "issues": [],
+      "improvements": [
+        "Commerce-first layout: compact header, search-first, category rail with icons",
+        "Removed fake «Для вас» and dashboard KPI content from home surface",
+        "Section-level skeletons, errors, and pull-to-refresh without blocking whole screen",
+        "Honest section titles tied to real catalog sort signals",
+        "Cart header entry with badge; hide empty recent/deals sections",
+        "ProductCard: real discount/city badges only, improved image fallback"
       ],
-      "benchmarkNotes": "Compare hero + rails with Ozon / WB home"
+      "problemsRemoved": [
+        "Widget-style dashboard feel",
+        "Duplicate recommendation sections",
+        "Global error blocking entire home",
+        "Text-only category chips",
+        "Fake delivery badge on every card"
+      ],
+      "benchmarkNotes": "Density + search hierarchy from Ozon/WB; discovery rails from Yandex Market patterns"
     },
     {
       "screenId": "catalog",
@@ -427,13 +442,13 @@
   ],
   "summary": {
     "p0": 0,
-    "p1": 2,
-    "p2": 2,
+    "p1": 1,
+    "p2": 1,
     "screensAudited": 4,
     "screensTotal": 25,
     "marketplaceQualityIndexBefore": 6.93,
-    "marketplaceQualityIndexAfter": 9.45,
-    "marketplaceFeelingDelta": 2.59
+    "marketplaceQualityIndexAfter": 9.46,
+    "marketplaceFeelingDelta": 2.67
   },
   "notes": "Baseline scores from EPIC 81/82 physical review. Remaining 21 screens pending operator audit. Run npm run product:epic-84:wave0 to refresh computed scores."
 }

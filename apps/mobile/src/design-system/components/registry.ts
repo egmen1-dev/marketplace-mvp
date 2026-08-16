@@ -23,7 +23,7 @@ export const DESIGN_SYSTEM_COMPONENTS: DesignSystemComponent[] = [
   { name: "Search", module: "components/ui/CommerceSearchBar", status: "ready" },
   { name: "Primary CTA (Login)", module: "design-system/components/PrimaryCTA", status: "ready" },
   { name: "Card", module: "components/ui/cards", status: "ready" },
-  { name: "ProductCard", module: "components/ui/ProductCard", status: "needs_redesign" },
+  { name: "ProductCard", module: "components/ui/ProductCard", status: "needs_redesign", notes: "Sprint 2: real badges; full card refresh in Sprint 3" },
   { name: "SellerCard", module: "components/ui/cards", status: "needs_redesign" },
   { name: "MetricCard", module: "components/ui/cards", status: "needs_redesign" },
   { name: "WalletCard", module: "components/ui/cards", status: "needs_redesign" },

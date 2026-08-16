@@ -19,3 +19,7 @@ export { IconButton } from "./components/IconButton";
 export { AuthErrorCard } from "./components/AuthErrorCard";
 export { PrimaryCTA } from "./components/PrimaryCTA";
 export { TrustPill } from "./components/TrustPill";
+export { CommerceSectionHeader } from "./components/CommerceSectionHeader";
+export { BuyerHomeHeader } from "./components/BuyerHomeHeader";
+export { CategoryRail, CategoryRailSkeleton } from "./components/CategoryRail";
+export { SectionErrorCard } from "./components/SectionErrorCard";
