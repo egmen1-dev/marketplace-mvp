@@ -32,6 +32,7 @@
 # misc
 .DS_Store
 *.pem
+artifacts/mobile/*.apk
 
 # debug
 npm-debug.log*

@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 import type { MobileReleaseChannelId } from "@prisma/client";
 
+import { CLOSED_ALPHA_APK_DOWNLOAD_URL, CLOSED_ALPHA_GITHUB_RELEASE_URL } from "./constants";
 import { getLatestPublishedRelease, listReleaseVersions } from "./registry";
 import type { ReleaseVersion } from "./types";
 
@@ -32,6 +33,18 @@ export type MobileReleaseManifest = {
   alphaDistribution: {
     ready: boolean;
     hostingUrl: string | null;
+    recommendedHosting?: string;
+    releasePageUrl?: string | null;
+  };
+  launchGate?: {
+    epic: string;
+    mobPa001: string;
+    mobPa002: string;
+    physicalVerdict: string;
+    closedAlphaVerdict: string;
+    appShell1Status: string;
+    knownP0: number;
+    knownP1: number;
   };
   source: "mobile-release-platform";
   generatedAt: string;
@@ -78,7 +91,19 @@ export async function buildReleaseManifestFromRegistry(): Promise<MobileReleaseM
     })),
     alphaDistribution: {
       ready: Boolean(latest?.downloadUrl),
-      hostingUrl: latest?.downloadUrl ?? null,
+      hostingUrl: latest?.downloadUrl ?? CLOSED_ALPHA_APK_DOWNLOAD_URL,
+      recommendedHosting: "GitHub Release asset (immutable HTTPS)",
+      releasePageUrl: CLOSED_ALPHA_GITHUB_RELEASE_URL,
+    },
+    launchGate: {
+      epic: "EPIC-80",
+      mobPa001: "OPEN",
+      mobPa002: "CLOSED",
+      physicalVerdict: "NOT_RUN",
+      closedAlphaVerdict: "WATCH",
+      appShell1Status: "BLOCKED",
+      knownP0: 1,
+      knownP1: 0,
     },
     source: "mobile-release-platform",
     generatedAt: new Date().toISOString(),

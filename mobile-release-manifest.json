@@ -4,50 +4,41 @@
   "versionName": "0.1.0-alpha",
   "versionCode": 1,
   "releaseChannel": "alpha",
-  "commitSha": "1e9e15e",
+  "commitSha": "750377f",
   "apiVersion": "mobile-v1",
   "schemaVersion": "1",
   "artifactSha256": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585",
   "artifactSizeBytes": 92668706,
-  "artifactFileName": "lot-android-alpha-0.1.0.apk",
+  "artifactFileName": "lot-android-0.1.0-alpha.apk",
   "buildDate": "2026-08-16",
-  "supportedBackendVersions": ["mobile-v1"],
-  "stagingCommit": "1e9e15e",
-  "mainCommit": "1e9e15e",
-  "stagingDeployStatus": "READY",
-  "physicalDeviceTested": false,
-  "deviceModel": null,
-  "androidVersion": null,
-  "testDate": "2026-08-16",
-  "buyerFlow": "NOT_RUN",
-  "sellerFlow": "NOT_RUN",
-  "auth": "NOT_RUN",
-  "offline": "NOT_RUN",
-  "deepLinks": "NOT_RUN",
-  "mobPa001": "OPEN",
-  "mobPa002": "CLOSED",
-  "knownP0": 1,
-  "knownP1": 0,
-  "physicalVerdict": "NOT_RUN",
-  "closedAlphaVerdict": "NO-GO",
-  "appShell1Status": "BLOCKED",
-  "downloadUrl": null,
+  "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk",
   "updateRequired": false,
   "releaseHistory": [
     {
       "versionName": "0.1.0-alpha",
       "versionCode": 1,
-      "commitSha": "1e9e15e",
+      "commitSha": "750377f",
       "artifactSha256": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585",
-      "acceptanceStatus": "STAGING_READY_PHYSICAL_PENDING",
-      "changelog": "APP-SHELL-0 Alpha foundation",
-      "knownIssues": ["Physical device acceptance pending", "Checkout staging-only"]
+      "acceptanceStatus": "PUBLISHED",
+      "changelog": "APP-SHELL-0 Alpha foundation"
     }
   ],
   "alphaDistribution": {
-    "ready": false,
-    "recommendedHosting": "GitHub Release asset or controlled HTTPS bucket",
-    "hostingUrl": null,
-    "rollbackArtifact": null
-  }
+    "ready": true,
+    "hostingUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk",
+    "recommendedHosting": "GitHub Release asset (immutable HTTPS)",
+    "releasePageUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.0"
+  },
+  "launchGate": {
+    "epic": "EPIC-80",
+    "mobPa001": "OPEN",
+    "mobPa002": "CLOSED",
+    "physicalVerdict": "NOT_RUN",
+    "closedAlphaVerdict": "WATCH",
+    "appShell1Status": "BLOCKED",
+    "knownP0": 1,
+    "knownP1": 0
+  },
+  "source": "mobile-release-platform",
+  "generatedAt": "2026-08-16T16:42:30.150Z"
 }
