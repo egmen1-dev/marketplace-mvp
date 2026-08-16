@@ -191,6 +191,21 @@ export type RankingProductInput = {
   cartAdds: number;
   ordersCount: number;
   promotionActive: boolean;
+  /** Advisory content quality signals — from Content Quality Intelligence layer */
+  photoQuality?: number | null;
+  thumbnailQuality?: number | null;
+  descriptionQuality?: number | null;
+  seoQuality?: number | null;
+  attributesQuality?: number | null;
+  videoQuality?: number | null;
+  consistencyQuality?: number | null;
+  commercialQuality?: number | null;
+  photoRelevance?: number | null;
+  effectivePhotoCount?: number | null;
+  contentQualityScore?: number | null;
+  contentQualityGateFailed?: boolean;
+  contentQualityTopBlocked?: boolean;
+  contentQualityGateReason?: string | null;
 };
 
 export type RankingSimulateInput = {

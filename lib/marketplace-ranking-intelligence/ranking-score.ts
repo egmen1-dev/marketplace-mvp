@@ -4,6 +4,7 @@ import type {
   RankingScoreBreakdown,
   RankingWeightRow,
 } from "./types";
+import { isMarketplaceContentQualityEnabled } from "@/lib/marketplace-content-quality/flags";
 import { weightsByGroup } from "./ranking-weights";
 
 function clampScore(value: number): number {
@@ -21,12 +22,33 @@ function factorScores(input: RankingProductInput): Record<string, number> {
   const ctr = input.views > 0 ? Math.min(100, (input.favoritesCount / input.views) * 400) : 40;
   const conversion =
     input.views > 0 ? Math.min(100, (input.ordersCount / input.views) * 500) : 45;
-  const photoScore =
-    input.photoCount >= 5 ? 95 : input.photoCount >= 3 ? 82 : input.photoCount >= 1 ? 55 : 0;
-  const descriptionScore =
-    input.descriptionLength >= 120 ? 90 : input.descriptionLength >= 40 ? 70 : 35;
-  const seoScore =
-    input.seoTitleLength >= 20 && input.seoDescriptionLength >= 60
+  const useContentQuality =
+    isMarketplaceContentQualityEnabled() &&
+    (input.photoQuality != null || input.descriptionQuality != null);
+
+  const photoScore = useContentQuality
+    ? clampScore(
+        (input.photoQuality ?? 50) * 0.45 +
+          (input.thumbnailQuality ?? input.photoQuality ?? 50) * 0.2 +
+          (input.photoRelevance ?? input.photoQuality ?? 50) * 0.35,
+      )
+    : input.photoCount >= 5
+      ? 95
+      : input.photoCount >= 3
+        ? 82
+        : input.photoCount >= 1
+          ? 55
+          : 0;
+  const descriptionScore = useContentQuality
+    ? clampScore(input.descriptionQuality ?? 50)
+    : input.descriptionLength >= 120
+      ? 90
+      : input.descriptionLength >= 40
+        ? 70
+        : 35;
+  const seoScore = useContentQuality
+    ? clampScore(input.seoQuality ?? 50)
+    : input.seoTitleLength >= 20 && input.seoDescriptionLength >= 60
       ? 92
       : input.seoTitleLength >= 8 || input.seoDescriptionLength >= 30
         ? 68

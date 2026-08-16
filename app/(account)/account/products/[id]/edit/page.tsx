@@ -19,6 +19,11 @@ import {
   ProductServiceError,
 } from "@/features/products/queries";
 import { ProductForm, ProductQualityCard } from "@/features/seller";
+import { ContentQualityCard } from "@/features/marketplace-content-quality";
+import {
+  getLatestQualitySnapshot,
+  isMarketplaceContentQualityEnabled,
+} from "@/lib/marketplace-content-quality";
 import { ProductModerationPreview } from "@/features/marketplace-trust-loop";
 import {
   getProductModerationPreview,
@@ -62,12 +67,16 @@ export default async function EditProductPage({
   let categories: Awaited<ReturnType<typeof listCategories>> = [];
   let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
   let moderationPreview: Awaited<ReturnType<typeof getProductModerationPreview>> = null;
+  let contentQualitySnapshot: Awaited<ReturnType<typeof getLatestQualitySnapshot>> = null;
   try {
-    [categories, pickupPoints, moderationPreview] = await Promise.all([
+    [categories, pickupPoints, moderationPreview, contentQualitySnapshot] = await Promise.all([
       listCategories(),
       listSellerPickupPoints(sellerProfileId, { activeOnly: true }),
       isMarketplaceTrustLoopEnabled()
         ? getProductModerationPreview(id)
+        : Promise.resolve(null),
+      isMarketplaceContentQualityEnabled()
+        ? getLatestQualitySnapshot(id)
         : Promise.resolve(null),
     ]);
   } catch (err) {
@@ -92,20 +101,24 @@ export default async function EditProductPage({
         <p className="text-sm text-muted-foreground">{product.title}</p>
       </div>
 
-      <ProductQualityCard
-        result={computeProductCompletenessScore({
-          photoCount: product.images.length,
-          titleLength: product.title.trim().length,
-          descriptionLength: (product.description ?? "").trim().length,
-          characteristicCount: product.characteristics.length,
-          hasCategory: Boolean(product.category?.id),
-          hasProductType: Boolean(product.productType?.id),
-          price: product.price,
-          hasSeller: true,
-        })}
-        showBreakdown
-        showUpdateNote
-      />
+      {isMarketplaceContentQualityEnabled() ? (
+        <ContentQualityCard snapshot={contentQualitySnapshot} pending={!contentQualitySnapshot} />
+      ) : (
+        <ProductQualityCard
+          result={computeProductCompletenessScore({
+            photoCount: product.images.length,
+            titleLength: product.title.trim().length,
+            descriptionLength: (product.description ?? "").trim().length,
+            characteristicCount: product.characteristics.length,
+            hasCategory: Boolean(product.category?.id),
+            hasProductType: Boolean(product.productType?.id),
+            price: product.price,
+            hasSeller: true,
+          })}
+          showBreakdown
+          showUpdateNote
+        />
+      )}
 
       {moderationPreview ? (
         <ProductModerationPreview
