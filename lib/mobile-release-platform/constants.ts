@@ -54,7 +54,7 @@ export const CLOSED_ALPHA_RELEASE_013 = {
   sha256: "b2e7a07d811ab9e8561eac849e282adc9477fb75495302f488c8404f11166859",
   artifactSizeBytes: 105632443,
   artifactFileName: "lot-android-alpha-0.1.3.apk",
-  gitCommit: "8e04510",
+  gitCommit: "478f8cb",
   releaseNotes:
     "EPIC-84 Startup Diagnostics P0\nCrash & Diagnostics P1\nStartup ID / Stage / Error Code\nCopy & Export diagnostics\nConnectivity panel\nHidden diagnostics screen\nLogin Sprint 1\nBuyer Home Sprint 2\nCatalog Sprint 3\nPDP Sprint 4\nBuild metadata on startup error",
   githubTag: "closed-alpha-0.1.3",

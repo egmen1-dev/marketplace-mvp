@@ -1,19 +1,27 @@
 {
   "appName": "ЛОТ",
   "packageId": "ru.lot.marketplace.alpha",
-  "versionName": "0.1.2-alpha",
-  "versionCode": 3,
+  "versionName": "0.1.3-alpha",
+  "versionCode": 4,
   "releaseChannel": "alpha",
-  "commitSha": "feb4b8d",
+  "commitSha": "c3eaf0b",
   "apiVersion": "mobile-v1",
   "schemaVersion": "1",
-  "artifactSha256": "8cf4217c183885ed307e03d6667e039d7e5934743fd7f72f638293d76021b407",
-  "artifactSizeBytes": 93609459,
-  "artifactFileName": "lot-android-0.1.2-alpha.apk",
+  "artifactSha256": "b2e7a07d811ab9e8561eac849e282adc9477fb75495302f488c8404f11166859",
+  "artifactSizeBytes": 105632443,
+  "artifactFileName": "lot-android-0.1.3-alpha.apk",
   "buildDate": "2026-08-16",
-  "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk",
+  "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.3/lot-android-alpha-0.1.3.apk",
   "updateRequired": false,
   "releaseHistory": [
+    {
+      "versionName": "0.1.3-alpha",
+      "versionCode": 4,
+      "commitSha": "c3eaf0b",
+      "artifactSha256": "b2e7a07d811ab9e8561eac849e282adc9477fb75495302f488c8404f11166859",
+      "acceptanceStatus": "PUBLISHED",
+      "changelog": "EPIC-84 Startup Diagnostics P0"
+    },
     {
       "versionName": "0.1.2-alpha",
       "versionCode": 3,
@@ -41,9 +49,9 @@
   ],
   "alphaDistribution": {
     "ready": true,
-    "hostingUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk",
+    "hostingUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.3/lot-android-alpha-0.1.3.apk",
     "recommendedHosting": "GitHub Release asset (immutable HTTPS)",
-    "releasePageUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2"
+    "releasePageUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.3"
   },
   "launchGate": {
     "epic": "EPIC-83",
@@ -57,17 +65,17 @@
     "seamlessUpdateVerdict": "PENDING_PHYSICAL"
   },
   "knownIssues": [
-    "Physical Android acceptance pending operator pass",
-    "Seamless update E2E pending 0.1.2→0.1.3"
+    "Physical Android acceptance required for 0.1.3 cohort",
+    "Cart/Checkout sprints pending"
   ],
   "acceptanceStatus": "PUBLISHED",
   "minimumSupportedVersionCode": 3,
   "minimumSupportedVersionName": "0.1.2-alpha",
   "previousRelease": {
-    "versionName": "0.1.1-alpha",
-    "versionCode": 2,
-    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk"
+    "versionName": "0.1.2-alpha",
+    "versionCode": 3,
+    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk"
   },
   "source": "mobile-release-platform",
-  "generatedAt": "2026-08-16T19:04:58.062Z"
+  "generatedAt": "2026-08-16T20:24:05.957Z"
 }
