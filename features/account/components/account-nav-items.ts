@@ -141,6 +141,15 @@ const SELLER_OPERATING_DESK_NAV: AccountNavItem[] = [
             path === ROUTES.ACCOUNT_RANKING ||
             path.startsWith(`${ROUTES.ACCOUNT_RANKING}/`),
         } as AccountNavItem,
+        {
+          href: ROUTES.ACCOUNT_RANKING_ACADEMY,
+          label: "Ranking Academy",
+          icon: BarChart3,
+          sellerOnly: true,
+          match: (path: string) =>
+            path === ROUTES.ACCOUNT_RANKING_ACADEMY ||
+            path.startsWith(`${ROUTES.ACCOUNT_RANKING_ACADEMY}/`),
+        } as AccountNavItem,
       ]
     : []),
   {
@@ -229,6 +238,15 @@ const SELLER_JOURNEY_NAV: AccountNavItem[] = [
           match: (path: string) =>
             path === ROUTES.ACCOUNT_RANKING ||
             path.startsWith(`${ROUTES.ACCOUNT_RANKING}/`),
+        } as AccountNavItem,
+        {
+          href: ROUTES.ACCOUNT_RANKING_ACADEMY,
+          label: "Ranking Academy",
+          icon: BarChart3,
+          sellerOnly: true,
+          match: (path: string) =>
+            path === ROUTES.ACCOUNT_RANKING_ACADEMY ||
+            path.startsWith(`${ROUTES.ACCOUNT_RANKING_ACADEMY}/`),
         } as AccountNavItem,
       ]
     : []),
@@ -469,6 +487,15 @@ const UNIFIED_SELLER_NAV: AccountNavItem[] = [
           match: (path: string) =>
             path === ROUTES.ACCOUNT_RANKING ||
             path.startsWith(`${ROUTES.ACCOUNT_RANKING}/`),
+        } as AccountNavItem,
+        {
+          href: ROUTES.ACCOUNT_RANKING_ACADEMY,
+          label: "Ranking Academy",
+          icon: BarChart3,
+          sellerOnly: true,
+          match: (path: string) =>
+            path === ROUTES.ACCOUNT_RANKING_ACADEMY ||
+            path.startsWith(`${ROUTES.ACCOUNT_RANKING_ACADEMY}/`),
         } as AccountNavItem,
       ]
     : []),

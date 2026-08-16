@@ -95,13 +95,26 @@ export async function runFinancialReconciliation(): Promise<FinancialReconciliat
       issues.push(`user ${wallet.userId}: bucket projection mismatch`);
     }
 
+    const walletOnlySpendable = expectedTopup + expectedBonus;
+    if (Math.abs(ledgerSpendable - walletOnlySpendable) > 0.01) {
+      ledgerMismatch += 1;
+      issues.push(
+        `user ${wallet.userId}: wallet ledger mismatch (spendable ${ledgerSpendable} vs topup+bonus ${walletOnlySpendable})`,
+      );
+    }
+
+    const sellerLedgerAgg = await prisma.walletLedgerEntry.aggregate({
+      where: { userId: wallet.userId, type: "SELLER_SALE" },
+      _sum: { withdrawableDelta: true },
+    });
+    const sellerLedgerWithdrawable = toNum(sellerLedgerAgg._sum.withdrawableDelta);
     if (
-      Math.abs(ledgerSpendable - buckets.spendableAmount) > 0.01 ||
-      Math.abs(ledgerWithdrawable - buckets.withdrawableAmount) > 0.01
+      sellerLedgerWithdrawable > 0.01 &&
+      Math.abs(sellerLedgerWithdrawable - expectedWithdrawable) > 0.01
     ) {
       ledgerMismatch += 1;
       issues.push(
-        `user ${wallet.userId}: ledger sum mismatch (spendable ${ledgerSpendable} vs ${buckets.spendableAmount})`,
+        `user ${wallet.userId}: seller ledger withdrawable mismatch (${sellerLedgerWithdrawable} vs ${expectedWithdrawable})`,
       );
     }
   }

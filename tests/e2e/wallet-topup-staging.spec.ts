@@ -29,10 +29,12 @@ test.describe("FINANCIAL-E2E wallet top-up staging", () => {
     const errors = attachErrorCollector(page);
     await signIn(page, DEMO.sellerEmail);
     await page.goto("/account/wallet?tab=topup");
-    await expect(page.getByRole("heading", { name: /кошел/i })).toBeVisible({
+    await expect(page.getByRole("heading", { name: "Кошелёк ЛОТ" })).toBeVisible({
       timeout: 20_000,
     });
-    await expect(page.getByRole("button", { name: /пополн/i })).toBeVisible();
+    await expect(
+      page.getByTestId("wallet-topup-form").getByRole("button", { name: "Пополнить" }),
+    ).toBeVisible();
     errors.assertClean();
   });
 });
