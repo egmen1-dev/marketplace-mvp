@@ -25,7 +25,11 @@ export async function buildMarketplaceTwinDecisionReport(input: {
     ? await buildMarketplaceProductUnderstanding(input.productId)
     : null;
   const verifiedFacts = getBrainReadableKnowledge({ pack: "marketplace" });
-  const graph = buildCausalKnowledgeGraph({ productUnderstanding, verifiedFacts });
+  const graph = buildCausalKnowledgeGraph({
+    productId: input.productId,
+    productUnderstanding,
+    verifiedFacts,
+  });
 
   const report = await runTwinSimulation({
     productId: input.productId,

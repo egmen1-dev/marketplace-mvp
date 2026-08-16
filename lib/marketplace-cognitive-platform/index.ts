@@ -30,3 +30,8 @@ export {
   toMobileScenarioSimulatorResponse,
   toOfflineTwinCachePayload,
 } from "./twin";
+export {
+  buildMarketplaceKnowledgeGraph,
+  buildMobileGraphInsights,
+  buildAndCacheMarketplaceGraphInsights,
+} from "./graph";
