@@ -125,6 +125,8 @@ export const ROUTES = {
   /** Seller ranking intelligence dashboard */
   ACCOUNT_RANKING: "/account/ranking",
   ADMIN_DISCOVERY: "/admin/discovery",
+  /** Admin content quality intelligence center */
+  ADMIN_CONTENT_QUALITY: "/admin/content-quality",
   /** Admin ranking intelligence center */
   ADMIN_RANKING: "/admin/ranking",
   /** Social growth / viral commerce */

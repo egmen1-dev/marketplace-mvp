@@ -1,9 +1,20 @@
 import type { RankingProductInput, RankingScoreBreakdown, QualityGateResult } from "./types";
+import { isMarketplaceContentQualityEnabled } from "@/lib/marketplace-content-quality/flags";
 
 export function evaluateQualityGates(
   input: RankingProductInput,
   score: RankingScoreBreakdown,
 ): QualityGateResult {
+  if (
+    isMarketplaceContentQualityEnabled() &&
+    input.contentQualityTopBlocked
+  ) {
+    return {
+      passed: false,
+      topBlocked: true,
+      reason: input.contentQualityGateReason ?? "Content quality gate FAIL",
+    };
+  }
   if (input.photoCount <= 0) {
     return { passed: false, topBlocked: true, reason: "Нет главного фото" };
   }
