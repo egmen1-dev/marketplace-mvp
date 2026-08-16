@@ -144,6 +144,43 @@ export function ContentQualityCard({
             </ul>
           </div>
 
+          {snapshot.photoEvaluations.length > 0 ? (
+            <div className="mt-3" data-testid="content-quality-photos">
+              <p className="text-xs font-medium text-muted-foreground">Фотографии</p>
+              <ul className="mt-2 space-y-2">
+                {snapshot.photoEvaluations.slice(0, 8).map((img) => (
+                  <li
+                    key={img.imageId}
+                    className="flex items-start gap-2 rounded-lg border border-border/60 p-2"
+                  >
+                    <img
+                      src={img.url}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-md border object-cover"
+                    />
+                    <div className="min-w-0 flex-1 text-xs">
+                      <p className="font-medium">
+                        Фото {img.index}
+                        {img.isPrimary ? " · главное" : ""}
+                        <span className="ml-2 tabular-nums text-muted-foreground">
+                          {img.score}/100
+                        </span>
+                      </p>
+                      <p className="text-muted-foreground">
+                        Релевантность: {img.relevance}/100
+                      </p>
+                      {img.evidence.reasons[0] ? (
+                        <p className="mt-0.5 text-amber-800 dark:text-amber-300">
+                          {img.evidence.reasons[0]}
+                        </p>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
           {next ? <NextActionBlock action={next} /> : null}
 
           <p className="mt-3 text-xs text-muted-foreground">

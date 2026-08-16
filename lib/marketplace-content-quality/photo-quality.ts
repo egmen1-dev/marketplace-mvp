@@ -1,5 +1,33 @@
 import type { ImageQualityEvaluation, ProductImageInput, ProductQualityInput } from "./types";
-import { clampScore, tokenize } from "./utils";
+import { clampScore, overlapRatio, tokenize } from "./utils";
+
+const UNRELATED_OBJECT_TOKENS = [
+  "носок",
+  "носки",
+  "sock",
+  "socks",
+  "чайник",
+  "kettle",
+  "обувь",
+  "shoe",
+  "shoes",
+];
+
+function altContradictsProduct(name: string, alt: string): boolean {
+  const nameTokens = tokenize(name);
+  const altTokens = tokenize(alt);
+  if (nameTokens.length === 0 || altTokens.length === 0) return false;
+  if (overlapRatio(nameTokens, altTokens) >= 0.2) return false;
+  return altTokens.some((t) =>
+    UNRELATED_OBJECT_TOKENS.some((u) => t.includes(u) || u.includes(t)),
+  );
+}
+
+function identityToken(img: ProductImageInput): string {
+  const alt = (img.alt ?? "").toLowerCase();
+  if (alt.trim()) return alt.trim();
+  return (img.pathname ?? img.url).toLowerCase();
+}
 
 export type PhotoQualityBundle = {
   photo: {
@@ -28,6 +56,7 @@ function dedupeKey(img: ProductImageInput): string {
 function estimatePerImageScore(
   img: ProductImageInput,
   index: number,
+  productName: string,
   nameTokens: string[],
   hints: ProductQualityInput["hints"],
 ): ImageQualityEvaluation {
@@ -41,6 +70,8 @@ function estimatePerImageScore(
     relevance = hints.photoRelevance;
   } else if (hints?.allPhotosIrrelevant || hints?.irrelevantPhotos) {
     relevance = 0;
+  } else if (altContradictsProduct(productName, img.alt ?? "")) {
+    relevance = clampScore(4 + index);
   }
 
   let technical = hints?.primaryPhotoQuality ?? clampScore(55 + (img.isPrimary ? 15 : 8));
@@ -55,7 +86,13 @@ function estimatePerImageScore(
   if (score >= 80) tags.push("strong");
 
   const reasons: string[] = [];
-  if (relevance < 30) reasons.push("Изображение слабо связано с товаром");
+  if (relevance < 30) {
+    reasons.push(
+      relevance <= 8
+        ? "Не соответствует заявленному товару"
+        : "Изображение слабо связано с товаром",
+    );
+  }
   if (technical < 45) reasons.push("Техническое качество ниже нормы");
   if (score >= 75) reasons.push("Фото полезно покупателю");
 
@@ -87,7 +124,7 @@ export function evaluatePhotoQuality(input: ProductQualityInput): PhotoQualityBu
     Math.max(1, Math.round(uploadedPhotoCount * (1 - duplicateRatio)));
 
   const imageEvaluations = images.map((img, i) =>
-    estimatePerImageScore(img, i, nameTokens, hints),
+    estimatePerImageScore(img, i, input.name, nameTokens, hints),
   );
 
   const avgRelevance =
@@ -121,13 +158,22 @@ export function evaluatePhotoQuality(input: ProductQualityInput): PhotoQualityBu
   const lighting = clampScore(hints?.lightingScore ?? primaryScore * 0.88);
   const readability = clampScore(hints?.readabilityScore ?? 70);
 
+  const mismatchAlts = new Set(images.map((img) => identityToken(img)));
+  const identityMismatchFromAlts =
+    mismatchAlts.size >= 3 &&
+    images.length >= 3 &&
+    !hints?.productIdentityScore &&
+    !hints?.productIdentityMismatch;
+
   const irrelevant =
     hints?.allPhotosIrrelevant === true ||
     hints?.irrelevantPhotos === true ||
-    avgRelevance < 20;
+    avgRelevance < 20 ||
+    imageEvaluations.filter((e) => e.relevance < 25).length >= Math.ceil(uploadedPhotoCount * 0.6);
   const relevanceScore = irrelevant ? clampScore(avgRelevance * 0.3) : clampScore(avgRelevance);
 
-  const identityMismatch = hints?.productIdentityMismatch === true;
+  const identityMismatch =
+    hints?.productIdentityMismatch === true || identityMismatchFromAlts;
   const identityScore = clampScore(
     hints?.productIdentityScore ?? (identityMismatch ? 8 : Math.max(relevanceScore, 55)),
   );
