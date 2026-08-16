@@ -1,5 +1,36 @@
 import { apiRequest } from "../api/client";
 import type { BootstrapPayload } from "../types/api";
+import { getDeviceId } from "../storage/secure-session";
+import { loadAppConfig } from "../config/env";
+
+export type MobileUpdateInfo = {
+  latestVersion: string;
+  versionCode: number;
+  versionName: string;
+  updateRequired: boolean;
+  mandatory: boolean;
+  downloadUrl: string | null;
+  sha256: string | null;
+  releaseNotes: string[];
+  channel: string;
+  rollout: { percent: number; eligible: boolean };
+  compatibility: {
+    compatible: boolean;
+    forceUpgrade: boolean;
+  };
+};
+
+export async function fetchMobileUpdate(): Promise<MobileUpdateInfo> {
+  const config = loadAppConfig();
+  const versionCode = Number(config.buildNumber) || 1;
+  const deviceId = getDeviceId();
+  const qs = new URLSearchParams({
+    versionCode: String(versionCode),
+    deviceId,
+    channel: "CLOSED_ALPHA",
+  });
+  return apiRequest<MobileUpdateInfo>(`/api/mobile/update?${qs.toString()}`);
+}
 
 export async function fetchBootstrap(): Promise<BootstrapPayload> {
   return apiRequest<BootstrapPayload>("/api/mobile/bootstrap");

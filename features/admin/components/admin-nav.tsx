@@ -19,6 +19,7 @@ import {
   Shield,
   ShieldCheck,
   ShieldAlert,
+  Smartphone,
   Store,
   Ticket,
   Truck,
@@ -48,6 +49,12 @@ const NAV_ITEMS = [
     label: "System Flags",
     icon: ShieldAlert,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_SYSTEM_FLAGS),
+  },
+  {
+    href: ROUTES.ADMIN_MOBILE_RELEASES,
+    label: "Mobile Releases",
+    icon: Smartphone,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_MOBILE_RELEASES),
   },
   {
     href: ROUTES.ADMIN_TRUST_CENTER,

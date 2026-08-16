@@ -1938,3 +1938,96 @@ model MobileAuthSession {
   @@index([revokedAt])
   @@map("mobile_auth_sessions")
 }
+
+/// EPIC-78 — Mobile Release Platform (MRP) Wave 0
+
+enum MobileReleaseChannelId {
+  INTERNAL
+  DEVELOPER
+  CLOSED_ALPHA
+  OPEN_ALPHA
+  BETA
+  RC
+  PRODUCTION
+}
+
+enum MobileReleaseStatus {
+  DRAFT
+  PUBLISHED
+  ROLLED_BACK
+  ARCHIVED
+}
+
+model MobileReleaseVersion {
+  id                String                 @id @default(cuid())
+  versionName       String
+  versionCode       Int                    @unique
+  gitCommit         String
+  sha256            String
+  channel           MobileReleaseChannelId @default(CLOSED_ALPHA)
+  releaseNotes      String                 @default("")
+  publishedAt       DateTime?
+  minBackendVersion String                 @default("mobile-v1")
+  minAppVersion     String
+  buildNumber       String                 @default("1")
+  status            MobileReleaseStatus    @default(DRAFT)
+  downloadUrl       String?
+  artifactSizeBytes Int?
+  rolloutPercent    Int                    @default(100)
+  mandatory         Boolean                @default(false)
+  packageId         String                 @default("ru.lot.marketplace.alpha")
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  testerAssignments MobileReleaseTesterAssignment[]
+  analyticsEvents MobileReleaseAnalyticsEvent[]
+
+  @@index([channel, status])
+  @@index([status, publishedAt])
+  @@map("mobile_release_versions")
+}
+
+model MobileReleaseTester {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String?
+  deviceModel    String?
+  androidVersion String?
+  status         String   @default("invited")
+  feedback       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  assignments MobileReleaseTesterAssignment[]
+
+  @@map("mobile_release_testers")
+}
+
+model MobileReleaseTesterAssignment {
+  id         String   @id @default(cuid())
+  testerId   String
+  releaseId  String
+  assignedAt DateTime @default(now())
+
+  tester  MobileReleaseTester  @relation(fields: [testerId], references: [id], onDelete: Cascade)
+  release MobileReleaseVersion @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@unique([testerId, releaseId])
+  @@map("mobile_release_tester_assignments")
+}
+
+model MobileReleaseAnalyticsEvent {
+  id           String   @id @default(cuid())
+  releaseId    String?
+  eventType    String
+  versionCode  Int?
+  deviceIdHash String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  release MobileReleaseVersion? @relation(fields: [releaseId], references: [id], onDelete: SetNull)
+
+  @@index([eventType, createdAt])
+  @@index([releaseId])
+  @@map("mobile_release_analytics_events")
+}

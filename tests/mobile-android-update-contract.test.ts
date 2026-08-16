@@ -1,11 +1,31 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { buildAndroidUpdatePayload } from "@/lib/mobile/android-update";
 import { MOBILE_API_VERSION } from "@/lib/mobile/api-contract";
 
+const emptyRelease = null;
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    mobileReleaseVersion: {
+      count: vi.fn(async () => 0),
+      findFirst: vi.fn(async () => emptyRelease),
+    },
+  },
+}));
+
+vi.mock("@/lib/mobile-release-platform/registry", () => ({
+  seedRegistryFromManifestIfEmpty: vi.fn(async () => null),
+  getLatestPublishedRelease: vi.fn(async () => emptyRelease),
+}));
+
 describe("mobile android update contract", () => {
-  it("returns foundation payload without download URL", () => {
-    const payload = buildAndroidUpdatePayload();
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns foundation payload without download URL when registry is empty", async () => {
+    const payload = await buildAndroidUpdatePayload();
     expect(payload.versionCode).toBe(1);
     expect(payload.versionName).toBe("0.0.0-dev");
     expect(payload.minimumSupportedVersionCode).toBe(1);
