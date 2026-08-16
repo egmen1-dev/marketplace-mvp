@@ -1,0 +1,37 @@
+import { NextResponse } from "next/server";
+
+import { ccosApiGuard } from "@/lib/ccos/api/guards";
+import {
+  withMobileApiContract,
+  MOBILE_API_VERSION,
+  MOBILE_SCHEMA_VERSION,
+  MOBILE_DEEP_LINK_SCHEME,
+  APK_UPDATE_METADATA,
+} from "@/lib/mobile/api-contract";
+import { runReleaseReadinessCheck } from "@/lib/mobile/release-readiness";
+
+/**
+ * Release Readiness Checklist
+ * GET /api/mobile/readiness
+ */
+export async function GET() {
+  const blocked = ccosApiGuard();
+  if (blocked) return blocked;
+
+  const report = runReleaseReadinessCheck();
+  return NextResponse.json(
+    withMobileApiContract(
+      {
+        ...report,
+        appReadiness: report.ready ? "READY" : "NOT_READY",
+        apiContract: {
+          apiVersion: MOBILE_API_VERSION,
+          schemaVersion: MOBILE_SCHEMA_VERSION,
+        },
+        deepLinkScheme: MOBILE_DEEP_LINK_SCHEME,
+        apkUpdateMetadata: APK_UPDATE_METADATA,
+      },
+      report.evaluatedAt,
+    ),
+  );
+}

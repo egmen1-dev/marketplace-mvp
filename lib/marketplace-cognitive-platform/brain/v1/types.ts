@@ -6,6 +6,7 @@ import type { UniversalObservation } from "@/lib/ccos/observation/types";
 import type { PublisherHealth } from "@/lib/ccos/observation/types";
 import type { ContextualSignal } from "@/lib/ccos/signals/types";
 import type { TwinDecisionReport } from "@/lib/ccos/twin";
+import type { CausalKnowledgeGraph, MobileGraphInsights } from "@/lib/ccos/graph";
 
 import type { MarketplaceGenomeV1 } from "../../genome/contextual";
 
@@ -123,6 +124,9 @@ export interface MarketplaceBrainReport {
     bestCtrDeltaPct: number | null;
     modelConfidence: number | null;
   };
+  knowledgeGraph?: CausalKnowledgeGraph | null;
+  graphInsights?: MobileGraphInsights | null;
+  graphHealth?: CausalKnowledgeGraph["health"] | null;
 }
 
 export type MarketplaceBrainContextInput = {

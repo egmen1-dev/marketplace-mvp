@@ -29,12 +29,14 @@ import {
 import { recommendationHasValidEvidence } from "@/lib/ccos/knowledge";
 import { isCcosProductPlatformEnabled } from "@/lib/ccos/product";
 import { isCcosTwinPlatformEnabled } from "@/lib/ccos/twin";
+import { isCcosGraphPlatformEnabled, capRecommendationConfidence } from "@/lib/ccos/graph";
 import {
   buildMarketplaceProductUnderstanding,
   collectProductUnderstandingActions,
   productUnderstandingSummary,
 } from "../../product";
 import { buildMarketplaceTwinDecisionReport } from "../../twin";
+import { buildAndCacheMarketplaceGraphInsights } from "../../graph";
 
 import { blockerFromObservations, orchestrateDecision } from "./decision";
 import {
@@ -110,6 +112,11 @@ export async function getMarketplaceBrainReport(
   if (observations.length === 0 && publisherHealth.every((p) => p.status === "SKIPPED")) {
     return null;
   }
+
+  const graphBundle =
+    isCcosGraphPlatformEnabled()
+      ? await buildAndCacheMarketplaceGraphInsights({ productId, observations })
+      : null;
 
   const baseGenome = aggregateGenomeFromObservations(observations);
   const signals = buildMarketplaceContextualSignals(observations, context);
@@ -209,12 +216,15 @@ export async function getMarketplaceBrainReport(
   });
   const explanation = buildExplanationLines({ summary, strengths, weaknesses });
 
-  const confidence = Math.min(
+  const confidenceRaw = Math.min(
     1,
     baseGenome.confidence * 0.45 +
       context.confidence.overall * 0.25 +
       genome.contextual.confidence * 0.3,
   );
+  const confidence = graphBundle
+    ? capRecommendationConfidence(graphBundle.graph.propagatedConfidence, confidenceRaw)
+    : confidenceRaw;
 
   const report: MarketplaceBrainReport = {
     productId,
@@ -237,6 +247,7 @@ export async function getMarketplaceBrainReport(
     brainVersion:
       isCcosKnowledgePlatformEnabled() ||
       isCcosProductPlatformEnabled() ||
+      isCcosGraphPlatformEnabled() ||
       isCcosTwinPlatformEnabled()
         ? currentMarketplaceBrainVersion()
         : BRAIN_V1_VERSION,
@@ -253,6 +264,9 @@ export async function getMarketplaceBrainReport(
       : undefined,
     twinDecisionReport,
     twinSummary,
+    knowledgeGraph: graphBundle?.graph ?? null,
+    graphInsights: graphBundle?.insights ?? null,
+    graphHealth: graphBundle?.graph.health ?? null,
   };
 
   trackCcosEvent("ccos_brain_report_generated");

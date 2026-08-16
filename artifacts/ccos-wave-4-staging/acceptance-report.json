@@ -1,0 +1,315 @@
+{
+  "generatedAt": "2026-08-16T13:28:32.581Z",
+  "epic": "EPIC-77-WAVE-4-STAGING-ACCEPTANCE-001",
+  "mergeChain": [
+    "PR #78 Wave 3",
+    "PR #79 Wave 5",
+    "PR #80 Wave 4"
+  ],
+  "mainSha": "673e1c6a83f360cf549347a820da19cd8fa9a374",
+  "stagingSha": "8e61721",
+  "stagingVersion": {
+    "environment": "staging",
+    "commit": "8e61721",
+    "buildTime": "2026-08-16T11:25:15.720Z",
+    "version": "0.1.0"
+  },
+  "stagingHealth": {
+    "ok": true,
+    "service": "marketplace-mvp",
+    "timestamp": "2026-08-16T13:28:04.738Z",
+    "version": {
+      "commit": "8e61721",
+      "buildTime": "2026-08-16T11:25:15.720Z"
+    },
+    "checks": {
+      "database": {
+        "ok": true
+      },
+      "auth": {
+        "ok": true
+      },
+      "storage": {
+        "ok": true,
+        "optional": true,
+        "detail": "configured"
+      },
+      "cron": {
+        "ok": true,
+        "optional": true,
+        "detail": "configured"
+      },
+      "stripe": {
+        "ok": true,
+        "configured": true,
+        "optional": true,
+        "detail": "configured"
+      }
+    }
+  },
+  "flags": {
+    "CCOS_ENABLED": "true",
+    "CCOS_GRAPH_PLATFORM_ENABLED": "true",
+    "CCOS_TWIN_PLATFORM_ENABLED": "true",
+    "MARKETPLACE_BRAIN_LEVEL": "simulator"
+  },
+  "acceptanceProduct": {
+    "id": "cmsvn0s1q0001jsm47pfmoear",
+    "slug": "cq-accept-good-fan",
+    "sellerId": "cmsmzrxgj0005y0w6jhe5qqle",
+    "views": 0,
+    "name": "Напольный вентилятор TurboAir 40 см"
+  },
+  "performance": {
+    "buildMs": 1,
+    "traverseMs": 0,
+    "concurrent20Ms": 1
+  },
+  "graph": {
+    "version": "graph-engine-v1.1",
+    "nodeCount": 27,
+    "edgeCount": 22,
+    "coverage": 0.9148148148148147,
+    "propagatedConfidence": 0.48478863636363634,
+    "health": {
+      "coverage": 0.9148148148148147,
+      "density": 0.031,
+      "connectedComponents": 7,
+      "averageConfidence": 0.65,
+      "nodeCount": 27,
+      "edgeCount": 22,
+      "orphanNodeCount": 5,
+      "lowConfidenceEdgeCount": 5,
+      "label": "moderate"
+    }
+  },
+  "whyPath": {
+    "question": "Почему товар плохо продаётся?",
+    "rootCauseId": "node_photo",
+    "path": [
+      {
+        "nodeId": "node_photo",
+        "label": "Фото",
+        "kind": "photo"
+      },
+      {
+        "nodeId": "node_ctr",
+        "label": "CTR",
+        "kind": "ctr",
+        "weight": 0.42,
+        "confidence": 0.72,
+        "source": "ranking-lab",
+        "evidence": "causes (causal) w=0.42"
+      }
+    ],
+    "confidence": 0.735,
+    "explanation": "Фото → CTR"
+  },
+  "counterfactual": {
+    "question": "Что было бы, если заменить фото, а не снизить цену?",
+    "baselineAction": "снизить цену",
+    "alternativeAction": "заменить фото",
+    "predictedOutcome": "Альтернатива «заменить фото» вероятнее улучшит CTR через Фото",
+    "confidence": 0.6419999999999999,
+    "path": [
+      {
+        "nodeId": "node_price",
+        "label": "Цена",
+        "kind": "price"
+      },
+      {
+        "nodeId": "node_revenue",
+        "label": "Revenue",
+        "kind": "revenue",
+        "weight": 0.4,
+        "confidence": 0.72,
+        "source": "marketplace",
+        "evidence": "influences (causal) w=0.40"
+      },
+      {
+        "nodeId": "node_ctr",
+        "label": "CTR",
+        "kind": "ctr",
+        "weight": 0.35,
+        "confidence": 0.72,
+        "source": "marketplace",
+        "evidence": "influences (causal) w=0.35"
+      }
+    ],
+    "advisoryOnly": true
+  },
+  "compactInsights": {
+    "mainReason": "Есть признаки, что главное фото может снижать переходы в карточку, а это ограничивает продажи.",
+    "topFactors": [
+      {
+        "label": "Фото",
+        "influence": 0.42
+      }
+    ],
+    "nextAction": "Замените главное фото",
+    "confidence": 0.5090280681818182
+  },
+  "readiness": {
+    "ready": true,
+    "passed": 16,
+    "total": 16,
+    "checks": [
+      {
+        "id": "ccos_enabled",
+        "label": "CCOS enabled",
+        "ok": true,
+        "detail": "CCOS_ENABLED=true"
+      },
+      {
+        "id": "brain_enabled",
+        "label": "Marketplace Brain available",
+        "ok": true,
+        "detail": "Cognitive platform or knowledge platform flag"
+      },
+      {
+        "id": "graph_enabled",
+        "label": "Graph platform enabled",
+        "ok": true,
+        "detail": "CCOS_GRAPH_PLATFORM_ENABLED=true"
+      },
+      {
+        "id": "twin_enabled",
+        "label": "Twin platform enabled",
+        "ok": true,
+        "detail": "CCOS_TWIN_PLATFORM_ENABLED=true"
+      },
+      {
+        "id": "knowledge_sync",
+        "label": "Knowledge platform enabled",
+        "ok": true,
+        "detail": "Verified knowledge read APIs available"
+      },
+      {
+        "id": "autopilot_off",
+        "label": "Autopilot disabled (L4 blocked)",
+        "ok": true,
+        "detail": "Autopilot must remain off before public release"
+      },
+      {
+        "id": "mobile_dashboard_api",
+        "label": "Mobile dashboard route registered",
+        "ok": true,
+        "detail": "GET /api/mobile/dashboard?productId="
+      },
+      {
+        "id": "mobile_graph_insights_api",
+        "label": "Mobile graph insights API",
+        "ok": true,
+        "detail": "GET/POST /api/ccos/graph/insights?compact=1"
+      },
+      {
+        "id": "mobile_graph_cache_api",
+        "label": "Offline graph cache API",
+        "ok": true,
+        "detail": "GET/POST /api/ccos/graph/cache"
+      },
+      {
+        "id": "mobile_api_contract_version",
+        "label": "API contract version",
+        "ok": true,
+        "detail": "mobile-api-v1 / mobile-schema-v1"
+      },
+      {
+        "id": "mobile_auth_compatibility",
+        "label": "Auth compatibility (session routes unchanged)",
+        "ok": true,
+        "detail": "Existing NextAuth/session routes remain primary auth path"
+      },
+      {
+        "id": "required_flags",
+        "label": "Required CCOS flags for staging",
+        "ok": true,
+        "detail": "CCOS + GRAPH + TWIN flags"
+      },
+      {
+        "id": "brain_health",
+        "label": "Brain health path available",
+        "ok": true,
+        "detail": "Brain report APIs reachable when cognitive platform enabled"
+      },
+      {
+        "id": "graph_health",
+        "label": "Graph health metrics available",
+        "ok": true,
+        "detail": "Graph build + health in cognitive report"
+      },
+      {
+        "id": "twin_health",
+        "label": "Twin health path available",
+        "ok": true,
+        "detail": "Twin simulation APIs reachable"
+      },
+      {
+        "id": "apk_distribution_foundation",
+        "label": "Android direct distribution foundation",
+        "ok": true,
+        "detail": "deep-link://marketplace-mvp env=dev/staging/prod"
+      }
+    ],
+    "evaluatedAt": "2026-08-16T13:28:32.581Z"
+  },
+  "gates": {
+    "deploy_health": "PASS",
+    "staging_equals_main": "PARTIAL",
+    "flags_runtime": "PASS",
+    "real_product": "PASS",
+    "cognitive_available": "PASS",
+    "graph_build": "PASS",
+    "required_nodes": "PASS",
+    "edge_provenance": "PASS",
+    "causal_vs_correlation": "PASS",
+    "confidence_propagation_cap": "PASS",
+    "why_path": "PASS",
+    "why_path_evidence": "PASS",
+    "counterfactual": "PASS",
+    "category_subgraph": "PASS",
+    "season_context": "PASS",
+    "query_graph": "PASS",
+    "need_graph_merge": "PASS",
+    "knowledge_promotion": "PASS",
+    "multi_source_evidence": "PASS",
+    "evidence_conflict": "PASS",
+    "graph_versioning": "PASS",
+    "graph_rollback": "PASS",
+    "graph_health": "PASS",
+    "orphan_node_test": "PASS",
+    "cycle_safe_traversal": "PASS",
+    "path_depth_limit": "PASS",
+    "daos_contract": "PASS",
+    "quicksale_contract": "PASS",
+    "twin_full_graph": "PASS",
+    "twin_same_scenario": "PASS",
+    "twin_confidence_source": "PASS",
+    "brain_integration": "PASS",
+    "seller_ux": "PASS",
+    "admin_debug_fields": "PASS",
+    "no_false_causal_claims": "PASS",
+    "performance": "PASS",
+    "cache_key": "PASS",
+    "concurrency": "PASS",
+    "live_search_isolation": "PASS",
+    "finance_isolation": "PASS",
+    "moderation_isolation": "PASS",
+    "mobile_graph_insights_api": "PASS",
+    "offline_graph_cache": "PASS",
+    "mobile_dashboard_api": "PASS",
+    "api_versioning": "PASS",
+    "mobile_readiness": "PASS",
+    "universal_graph_contract": "PASS",
+    "cross_app_provenance": "PASS",
+    "autopilot_disabled": "PASS"
+  },
+  "verdict": "CCOS WAVE 4 KNOWLEDGE GRAPH: ACCEPTED",
+  "subVerdicts": {
+    "digitalTwin": "FULL GRAPH CONNECTED",
+    "marketplaceBrain": "GRAPH-AWARE",
+    "liveRanking": "UNCHANGED",
+    "autopilot": "DISABLED",
+    "appReadiness": "READY"
+  }
+}

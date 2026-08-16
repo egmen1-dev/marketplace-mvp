@@ -140,6 +140,35 @@ export function AdminCognitiveProductPanel({
         </section>
       ) : null}
 
+      {report.graphInsights ? (
+        <section className="rounded-xl border p-4" data-testid="admin-knowledge-graph">
+          <h2 className="font-medium">Knowledge Graph (Wave 4)</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {report.knowledgeGraph?.version ?? "graph"} · health{" "}
+            {report.graphHealth?.label ?? "—"} · coverage{" "}
+            {report.graphHealth ? Math.round(report.graphHealth.coverage * 100) : "—"}%
+          </p>
+          <p className="mt-2 text-sm">
+            <span className="text-muted-foreground">Главная причина: </span>
+            {report.graphInsights.primaryCause}
+          </p>
+          <p className="mt-1 text-sm">
+            <span className="text-muted-foreground">Рекомендация: </span>
+            {report.graphInsights.recommendedAction}
+          </p>
+          <ul className="mt-2 space-y-1 text-sm">
+            {report.graphInsights.topFactors.map((f) => (
+              <li key={f.label}>
+                {f.label} · influence {Math.round(f.influence * 100)}%
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Why path: {report.graphInsights.whyPath.explanation}
+          </p>
+        </section>
+      ) : null}
+
       <section className="rounded-xl border p-4">
         <h2 className="font-medium">Contextual signals</h2>
         {report.signals.length === 0 ? (

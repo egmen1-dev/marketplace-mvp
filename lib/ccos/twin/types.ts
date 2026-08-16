@@ -192,5 +192,6 @@ export type BuildTwinSimulationInput = {
   productUnderstanding?: import("@/lib/ccos/product").ProductUnderstanding | null;
   verifiedFactCount?: number;
   graphCoverage?: number;
+  graphPropagatedConfidence?: number;
   history?: TwinReplayEvent[];
 };

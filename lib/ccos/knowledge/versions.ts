@@ -23,6 +23,14 @@ const REGISTRY: BrainVersionRegistryEntry[] = [
     notes: "Wave 3 Product Understanding integration",
   },
   {
+    brainVersion: "marketplace-brain-v4-graph",
+    knowledgePackVersion: "knowledge-pack-v2",
+    reasoningPackVersion: "reasoning-pack-v4-graph",
+    experimentVersion: "experiment-registry-v1",
+    releasedAt: new Date().toISOString(),
+    notes: "Wave 4 Cognitive Knowledge Graph Platform",
+  },
+  {
     brainVersion: "marketplace-brain-v5-twin",
     knowledgePackVersion: "knowledge-pack-v2",
     reasoningPackVersion: "reasoning-pack-v5-twin",
@@ -46,6 +54,9 @@ export function resolveBrainVersionEntry(brainVersion: string): BrainVersionRegi
 export function currentMarketplaceBrainVersion(): string {
   if (process.env.CCOS_TWIN_PLATFORM_ENABLED === "true") {
     return "marketplace-brain-v5-twin";
+  }
+  if (process.env.CCOS_GRAPH_PLATFORM_ENABLED === "true") {
+    return "marketplace-brain-v4-graph";
   }
   if (process.env.CCOS_PRODUCT_PLATFORM_ENABLED === "true") {
     return "marketplace-brain-v3-product";
