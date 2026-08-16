@@ -5,7 +5,12 @@
 
 ## 1. Download
 
-1. Obtain APK from team channel (not public store).
+**HTTPS (immutable):**  
+https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk
+
+Release page: https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.0
+
+1. Download APK from link above (or team channel mirror).
 2. Verify SHA256 before install:
 
 ```bash

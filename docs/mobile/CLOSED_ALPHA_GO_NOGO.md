@@ -1,48 +1,32 @@
-# Closed Alpha GO/NO-GO
+# Closed Alpha GO / NO-GO (EPIC 80)
 
-**Gate:** MOBILE-RELEASE-GATE-003  
-**Date:** 2026-08-16
+**Updated:** 2026-08-16 · gate `npm run mobile:closed-alpha:gate`
 
-## Decision
+## Verdict: WATCH → NO-GO until staging deploy + physical PASS
 
-```text
-CLOSED ALPHA: NO-GO
-APP-SHELL-1:  BLOCKED
-```
+| Gate | Status |
+|------|--------|
+| MOBILE STAGING | **NOT READY** — staging @ `1e9e15e`, main @ `750377f` |
+| PHYSICAL ANDROID (MOB-PA-001) | **NOT RUN** |
+| MRP publish on staging | **NOT PUBLISHED** (run publish after migrate) |
+| APK HTTPS | **READY** — [GitHub Release](https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.0) |
+| POP telemetry | **READY on main** — pending staging deploy |
+| P0 | **1** (physical pending) |
+| APP-SHELL-1 | **BLOCKED** |
 
-## Criteria checklist
+## Operator checklist
 
-| Criterion | Required | Actual |
-|---|---|---|
-| Staging backend READY | ✅ | ✅ MOBILE STAGING BACKEND = **READY** |
-| MOB-PA-002 closed | ✅ | ✅ **CLOSED** |
-| Physical device PASS | ✅ | ❌ **NOT RUN** |
-| AUTH PASS (device) | ✅ | ❌ NOT RUN |
-| SECURITY PASS | ✅ | ✅ staging API scan PASS |
-| P0 = 0 | ✅ | ❌ **P0 = 1** (MOB-PA-001) |
-| Buyer core usable (device) | ✅ | NOT VERIFIED |
-| Seller core usable (device) | ✅ | NOT VERIFIED |
+1. Deploy `origin/main` to Railway staging
+2. `npx prisma migrate deploy` on staging DB
+3. `npm run mobile:closed-alpha:publish` (with `CLOSED_ALPHA_TESTER_EMAIL`)
+4. `./scripts/mobile-physical-acceptance-adb.sh` on USB Android
+5. `PHYSICAL_ANDROID_PASS=true npm run mobile:closed-alpha:gate`
+6. If GO → invite 5–10 testers (`docs/mobile/ALPHA_TESTER_PACKAGE.md`)
 
-## Open P0
+## Product deliverables
 
-| ID | Issue | Owner |
-|---|---|---|
-| MOB-PA-001 | Physical Android acceptance not executed | Operator + device |
+- ✅ APK HTTPS + SHA256 immutable artifact
+- ⬜ First Closed Alpha release live on staging MRP
+- ⬜ Real feedback loop verified on device
 
-## Closed issues
-
-| ID | Status |
-|---|---|
-| MOB-PA-002 | **CLOSED** — staging mobile bridge live @ `1e9e15e` |
-
-## Next action (single path)
-
-```text
-USB Android → adb install → physical smoke → update manifest → GO
-```
-
-No new mobile features until GO.
-
-## When GO
-
-Immediately start **APP-SHELL-1 — Android Alpha Productization** (camera, push, polish, closed 5–10 users).
+See `docs/mobile/EPIC_80_CLOSED_ALPHA_LAUNCH_GATE.md`.

@@ -1,0 +1,109 @@
+{
+  "epic": "EPIC-80",
+  "evaluatedAt": "2026-08-16T16:41:21.462Z",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "mainSha": "750377f",
+  "stagingSha": "1e9e15e",
+  "checks": [
+    {
+      "id": "staging_equals_main",
+      "ok": false,
+      "detail": "staging=1e9e15e main=750377f"
+    },
+    {
+      "id": "health",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "mobile_readiness",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "mobile_bootstrap",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "mobile_config",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "mobile_update",
+      "ok": false,
+      "detail": "404"
+    },
+    {
+      "id": "mobile_artifact",
+      "ok": false,
+      "detail": "404"
+    },
+    {
+      "id": "product_ops_config",
+      "ok": false,
+      "detail": "404"
+    },
+    {
+      "id": "apk_sha256",
+      "ok": true,
+      "detail": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585"
+    },
+    {
+      "id": "apk_https_url",
+      "ok": true,
+      "detail": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk"
+    },
+    {
+      "id": "update_real_build",
+      "ok": false,
+      "detail": "{}"
+    },
+    {
+      "id": "update_not_forced",
+      "ok": false,
+      "detail": "undefined"
+    },
+    {
+      "id": "admin_mobile_releases",
+      "ok": true,
+      "detail": "307"
+    },
+    {
+      "id": "admin_product_health",
+      "ok": true,
+      "detail": "307"
+    },
+    {
+      "id": "admin_operations",
+      "ok": true,
+      "detail": "307"
+    },
+    {
+      "id": "admin_closed_alpha",
+      "ok": true,
+      "detail": "307"
+    }
+  ],
+  "passed": 10,
+  "total": 16,
+  "automatedOk": false,
+  "verdicts": {
+    "MOBILE_STAGING": "NOT_READY",
+    "PHYSICAL_ANDROID": "NOT_RUN",
+    "P0": 1,
+    "P1": 0,
+    "MRP": "NOT_ACCEPTED",
+    "POP": "NOT_ACCEPTED",
+    "CLOSED_ALPHA_RELEASE": "NOT_PUBLISHED",
+    "CLOSED_ALPHA": "NO-GO",
+    "APP_SHELL_1": "BLOCKED"
+  },
+  "operatorNextSteps": [
+    "Run ./scripts/mobile-physical-acceptance-adb.sh on USB Android",
+    "Deploy origin/main to Railway staging (750377f+)",
+    "Run npx tsx scripts/epic-80-publish-closed-alpha-release.ts on staging DB",
+    "Apply prisma migrate deploy on staging DB"
+  ]
+}
