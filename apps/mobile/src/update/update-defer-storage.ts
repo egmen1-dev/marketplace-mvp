@@ -32,9 +32,10 @@ export async function clearUpdateDefer(): Promise<void> {
 }
 
 export async function shouldShowUpdatePrompt(info: MobileUpdateInfo): Promise<boolean> {
-  if (info.updateState === "NO_UPDATE" || info.updateState === "REQUIRED_UPDATE") {
-    return info.updateState === "REQUIRED_UPDATE";
+  if (info.updateState === "UNSUPPORTED_CLIENT" || info.updateState === "REQUIRED_UPDATE") {
+    return true;
   }
+  if (info.updateState === "NO_UPDATE") return false;
 
   const defer = await loadUpdateDefer();
   if (!defer || defer.versionCode !== info.versionCode) return true;

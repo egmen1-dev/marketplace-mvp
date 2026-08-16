@@ -1,3 +1,4 @@
+import { getMinimumSupportedVersion, isClientBelowMinimumSupported } from "../baseline";
 import { MOBILE_API_VERSION } from "@/lib/mobile/api-contract";
 import { getActiveBrainVersion } from "@/lib/ccos/rollback/brain";
 
@@ -27,6 +28,7 @@ function parseVersionCode(name: string): number {
 export function evaluateCompatibility(
   release: ReleaseVersion | null,
   input: CompatibilityInput,
+  channel: ReleaseVersion["channel"] = "CLOSED_ALPHA",
 ): CompatibilityResult {
   const minAppVersion = release?.minAppVersion ?? "0.0.0-dev";
   const minBackendVersion = release?.minBackendVersion ?? "mobile-v1";
@@ -34,6 +36,12 @@ export function evaluateCompatibility(
 
   let compatible = true;
   let forceUpgrade = Boolean(release?.mandatory);
+
+  if (isClientBelowMinimumSupported(input.clientVersionCode, channel)) {
+    compatible = false;
+    forceUpgrade = true;
+    reasons.push("client_below_minimum_supported");
+  }
 
   if (input.clientVersionCode < 1) {
     compatible = false;
@@ -56,7 +64,7 @@ export function evaluateCompatibility(
 
   return {
     minBackendVersion,
-    minAppVersion,
+    minAppVersion: getMinimumSupportedVersion(channel)?.versionName ?? minAppVersion,
     minApiVersion: MOBILE_API_VERSION,
     brainVersion: getActiveBrainVersion(),
     compatible,

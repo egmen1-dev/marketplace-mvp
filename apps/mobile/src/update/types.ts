@@ -1,4 +1,9 @@
-export type MobileUpdateState = "NO_UPDATE" | "OPTIONAL_UPDATE" | "RECOMMENDED_UPDATE" | "REQUIRED_UPDATE";
+export type MobileUpdateState =
+  | "NO_UPDATE"
+  | "OPTIONAL_UPDATE"
+  | "RECOMMENDED_UPDATE"
+  | "REQUIRED_UPDATE"
+  | "UNSUPPORTED_CLIENT";
 
 export type UpdateFlowError =
   | "network_error"

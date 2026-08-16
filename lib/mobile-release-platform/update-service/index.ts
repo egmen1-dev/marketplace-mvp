@@ -1,11 +1,13 @@
 import type { MobileReleaseChannelId } from "@prisma/client";
 
+import { isClientBelowMinimumSupported, getMinimumSupportedVersion } from "../baseline";
 import { evaluateCompatibility, type CompatibilityInput } from "../compatibility";
 import { parseReleaseNotes } from "../registry/map-release";
 import { getLatestPublishedRelease, listReleaseVersions } from "../registry";
 import { isDeviceEligibleForRollout } from "../release-manager";
 import type { MobileUpdatePayload } from "../types";
 import { resolveUpdateState } from "./resolve-update-state";
+import { buildUnsupportedClientPayload } from "./unsupported-client";
 
 export type UpdateQuery = CompatibilityInput & {
   channel?: MobileReleaseChannelId;
@@ -13,7 +15,7 @@ export type UpdateQuery = CompatibilityInput & {
 };
 
 const CLOSED_ALPHA_KNOWN_ISSUES = [
-  "Cart line item thumbnails require 0.1.1-alpha+",
+  "0.1.0-alpha is prototype — minimum supported is 0.1.2-alpha",
   "Full wallet ledger not available on mobile API yet",
   "Physical Android acceptance required before cohort expansion",
 ];
@@ -23,7 +25,16 @@ export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVers
   const latest = await getLatestPublishedRelease(channel);
   const history = await listReleaseVersions();
   const previous = history.find((row) => row.versionCode < (latest?.versionCode ?? 0)) ?? null;
-  const compatibility = evaluateCompatibility(latest, query);
+
+  if (isClientBelowMinimumSupported(query.clientVersionCode, channel)) {
+    return buildUnsupportedClientPayload({
+      clientVersionCode: query.clientVersionCode,
+      channel,
+      latest,
+    });
+  }
+
+  const compatibility = evaluateCompatibility(latest, query, channel);
   const rolloutEligible = latest
     ? isDeviceEligibleForRollout(query.deviceId, latest.rolloutPercent)
     : false;
@@ -42,12 +53,14 @@ export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVers
     compatible: compatibility.compatible,
   });
 
+  const minimum = getMinimumSupportedVersion(channel);
+
   return {
     latestVersion: latest?.versionName ?? "0.0.0-dev",
     versionCode: latest?.versionCode ?? 1,
     versionName: latest?.versionName ?? "0.0.0-dev",
-    minimumVersion: latest?.minAppVersion ?? "0.0.0-dev",
-    minimumSupportedVersionCode: previous?.versionCode ?? 1,
+    minimumVersion: minimum?.versionName ?? latest?.minAppVersion ?? "0.0.0-dev",
+    minimumSupportedVersionCode: minimum?.versionCode ?? latest?.versionCode ?? 1,
     updateRequired,
     updateState,
     mandatory: latest?.mandatory ?? false,
@@ -77,7 +90,7 @@ export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVers
   };
 }
 
-/** Backward-compatible shape for existing android/update clients */
+/** Android/update alias — same unified payload since EPIC 83 */
 export async function buildLegacyAndroidUpdatePayload(query: UpdateQuery = { clientVersionCode: 1 }) {
   const payload = await buildMobileUpdatePayload(query);
   return {
@@ -85,6 +98,9 @@ export async function buildLegacyAndroidUpdatePayload(query: UpdateQuery = { cli
     versionName: payload.versionName,
     minimumVersion: payload.minimumVersion,
     minimumSupportedVersionCode: payload.minimumSupportedVersionCode,
+    minimumVersionCode: payload.minimumVersionCode,
+    minimumVersionName: payload.minimumVersionName,
+    reason: payload.reason,
     latestVersion: payload.latestVersion,
     updateRequired: payload.updateRequired,
     updateState: payload.updateState,

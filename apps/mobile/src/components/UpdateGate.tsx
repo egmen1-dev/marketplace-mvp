@@ -16,6 +16,7 @@ type Props = {
 };
 
 function titleForState(state: MobileUpdateState, versionName: string) {
+  if (state === "UNSUPPORTED_CLIENT") return "Эта версия ЛОТ больше не поддерживается";
   if (state === "REQUIRED_UPDATE") return "Эта версия ЛОТ больше не поддерживается";
   return `Доступна новая версия ЛОТ\n\n${versionName}`;
 }
@@ -23,7 +24,7 @@ function titleForState(state: MobileUpdateState, versionName: string) {
 export function UpdateGate({ info, visible, onDismiss }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const required = info.updateState === "REQUIRED_UPDATE";
+  const required = info.updateState === "REQUIRED_UPDATE" || info.updateState === "UNSUPPORTED_CLIENT";
   const dismissible = !required;
 
   async function onUpdate() {

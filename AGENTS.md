@@ -71,6 +71,26 @@ Launch → bootstrap → update check → optional/required UI → download URL 
 
 Do not force users to manually hunt APK files. In-app APK download with SHA256 verify is optional v2; browser/download-manager flow is acceptable v1.
 
+## Minimum supported version (EPIC 83+)
+
+Closed Alpha support baseline:
+
+```text
+minimumSupportedVersionCode = 3  (0.1.2-alpha)
+```
+
+Clients below minimum receive `UNSUPPORTED_CLIENT` and must upgrade. Prototype `0.1.0-alpha` and transitional `0.1.1-alpha` are not supported.
+
+## Release lifecycle (mandatory from 0.1.2)
+
+Every Closed Alpha release MUST follow:
+
+```text
+build → publish → MRP → update available → install → telemetry → adoption % → rollout → rollback
+```
+
+Gate: `npm run mobile:epic-83:gate`
+
 ## Testing expectations
 
 Before marking a mobile EPIC accepted:
@@ -80,6 +100,7 @@ npm run build
 cd apps/mobile && npm run typecheck
 npm run mobile:release-gate
 npm run mobile:closed-alpha:gate   # when EPIC touches Alpha release
+npm run mobile:epic-83:gate        # when EPIC touches minimum supported / boot pipeline
 ```
 
 Physical Android acceptance cannot be fully automated in cloud — document `NOT_RUN` honestly when operator pass is pending.
@@ -88,9 +109,11 @@ Physical Android acceptance cannot be fully automated in cloud — document `NOT
 
 | Field | Value |
 |-------|-------|
-| Version | `0.1.1-alpha` |
-| versionCode | `2` |
-| Previous | `0.1.0-alpha` (code 1) |
-| EPIC | EPIC 82 — Closed Alpha Stabilization |
+| Version | `0.1.2-alpha` |
+| versionCode | `3` |
+| Minimum supported | `0.1.2-alpha` (code 3) |
+| Prototype (unsupported) | `0.1.0-alpha` (code 1) |
+| Transitional | `0.1.1-alpha` (code 2) |
+| EPIC | EPIC 83 — Minimum Supported Version |
 
-See `docs/mobile/EPIC_82_CLOSED_ALPHA_STABILIZATION.md` for the active gate matrix.
+See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matrix.

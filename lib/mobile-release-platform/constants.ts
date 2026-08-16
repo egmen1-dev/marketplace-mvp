@@ -1,4 +1,4 @@
-/** Immutable Closed Alpha APK metadata — EPIC 80 / EPIC 82 source of truth */
+/** Immutable Closed Alpha APK metadata — EPIC 80 / EPIC 82 / EPIC 83 source of truth */
 
 export const CLOSED_ALPHA_RELEASE_010 = {
   versionName: "0.1.0-alpha",
@@ -9,6 +9,7 @@ export const CLOSED_ALPHA_RELEASE_010 = {
   gitCommit: "750377f",
   releaseNotes: "APP-SHELL-0 Alpha foundation\nClosed Alpha launch gate",
   githubTag: "closed-alpha-0.1.0",
+  supportStatus: "PROTOTYPE_UNSUPPORTED",
 } as const;
 
 /** EPIC 82 — Closed Alpha 0.1.1 release artifact (built 2026-08-16) */
@@ -25,25 +26,41 @@ export const CLOSED_ALPHA_RELEASE_011 = {
   knownIssues: [
     "Wallet full ledger requires future mobile API",
     "Seller sales detail pending backend endpoint",
-    "Physical Android update E2E pending operator pass",
   ],
   acceptanceStatus: "PUBLISHED",
+  supportStatus: "TRANSITIONAL",
 } as const;
 
-/** Current active Closed Alpha release pointer */
-export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_011;
+/** EPIC 83 — First supported Closed Alpha baseline (0.1.2-alpha) */
+export const CLOSED_ALPHA_RELEASE_012 = {
+  versionName: "0.1.2-alpha",
+  versionCode: 3,
+  sha256: "pending-build",
+  artifactSizeBytes: null as number | null,
+  artifactFileName: "lot-android-alpha-0.1.2.apk",
+  gitCommit: "pending",
+  releaseNotes:
+    "Minimum supported Closed Alpha baseline\nBoot hardening with timeouts and telemetry\nUnsupported client screen\nAutomatic update lifecycle via MRP",
+  githubTag: "closed-alpha-0.1.2",
+  knownIssues: ["Physical Android acceptance pending for 0.1.2 publish"],
+  acceptanceStatus: "DRAFT",
+  supportStatus: "FIRST_SUPPORTED",
+} as const;
 
-export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_010;
+/** Current active Closed Alpha release pointer — update after 0.1.2 APK build */
+export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_012;
+
+export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_011;
 
 export const CLOSED_ALPHA_APK_DOWNLOAD_URL =
   process.env.MOBILE_APK_DOWNLOAD_URL ??
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk";
 
 export const CLOSED_ALPHA_APK_PREVIOUS_DOWNLOAD_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk";
 
 export const CLOSED_ALPHA_GITHUB_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.1";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2";
 
 export const CLOSED_ALPHA_GITHUB_PREVIOUS_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.0";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.1";

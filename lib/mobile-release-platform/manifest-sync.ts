@@ -3,7 +3,12 @@ import { join } from "node:path";
 
 import type { MobileReleaseChannelId } from "@prisma/client";
 
-import { CLOSED_ALPHA_APK_DOWNLOAD_URL, CLOSED_ALPHA_GITHUB_RELEASE_URL, CLOSED_ALPHA_RELEASE_011 } from "./constants";
+import {
+  CLOSED_ALPHA_APK_DOWNLOAD_URL,
+  CLOSED_ALPHA_GITHUB_RELEASE_URL,
+  CLOSED_ALPHA_RELEASE_012,
+} from "./constants";
+import { CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_CODE } from "./baseline";
 import { getLatestPublishedRelease, listReleaseVersions } from "./registry";
 import type { ReleaseVersion } from "./types";
 
@@ -54,6 +59,8 @@ export type MobileReleaseManifest = {
     versionCode: number;
     downloadUrl: string | null;
   } | null;
+  minimumSupportedVersionCode: number;
+  minimumSupportedVersionName: string;
   source: "mobile-release-platform";
   generatedAt: string;
 };
@@ -105,7 +112,7 @@ export async function buildReleaseManifestFromRegistry(): Promise<MobileReleaseM
       releasePageUrl: CLOSED_ALPHA_GITHUB_RELEASE_URL,
     },
     launchGate: {
-      epic: "EPIC-82",
+      epic: "EPIC-83",
       mobPa001: "OPEN",
       mobPa002: "CLOSED",
       physicalVerdict: "NOT_RUN",
@@ -115,8 +122,10 @@ export async function buildReleaseManifestFromRegistry(): Promise<MobileReleaseM
       knownP1: 2,
       seamlessUpdateVerdict: "PENDING_PHYSICAL",
     },
-    knownIssues: [...CLOSED_ALPHA_RELEASE_011.knownIssues],
-    acceptanceStatus: CLOSED_ALPHA_RELEASE_011.acceptanceStatus,
+    knownIssues: [...CLOSED_ALPHA_RELEASE_012.knownIssues],
+    acceptanceStatus: CLOSED_ALPHA_RELEASE_012.acceptanceStatus,
+    minimumSupportedVersionCode: CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_CODE,
+    minimumSupportedVersionName: CLOSED_ALPHA_RELEASE_012.versionName,
     previousRelease: previous
       ? {
           versionName: previous.versionName,

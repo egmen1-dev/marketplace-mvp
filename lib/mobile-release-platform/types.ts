@@ -20,7 +20,12 @@ export type ReleaseVersion = {
   packageId: string;
 };
 
-export type MobileUpdateState = "NO_UPDATE" | "OPTIONAL_UPDATE" | "RECOMMENDED_UPDATE" | "REQUIRED_UPDATE";
+export type MobileUpdateState =
+  | "NO_UPDATE"
+  | "OPTIONAL_UPDATE"
+  | "RECOMMENDED_UPDATE"
+  | "REQUIRED_UPDATE"
+  | "UNSUPPORTED_CLIENT";
 
 export type MobileUpdatePayload = {
   latestVersion: string;
@@ -28,6 +33,10 @@ export type MobileUpdatePayload = {
   versionName: string;
   minimumVersion: string;
   minimumSupportedVersionCode: number;
+  /** EPIC 83 — explicit minimum gate fields for unsupported clients */
+  minimumVersionCode?: number;
+  minimumVersionName?: string;
+  reason?: "CLIENT_TOO_OLD";
   updateRequired: boolean;
   updateState: MobileUpdateState;
   mandatory: boolean;

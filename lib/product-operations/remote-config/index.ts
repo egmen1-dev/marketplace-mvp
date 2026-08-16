@@ -84,11 +84,27 @@ export async function buildMobileClientConfigWithRemoteConfig(): Promise<
   return merged;
 }
 
+async function getRemoteConfigMapWithTimeout(
+  surface: Parameters<typeof getRemoteConfigMap>[0] = "MOBILE",
+  timeoutMs = 3000,
+): Promise<RemoteConfigMap> {
+  try {
+    return await Promise.race([
+      getRemoteConfigMap(surface),
+      new Promise<RemoteConfigMap>((resolve) => {
+        setTimeout(() => resolve({}), timeoutMs);
+      }),
+    ]);
+  } catch {
+    return {};
+  }
+}
+
 export async function buildMobileBootstrapWithRemoteConfig(): Promise<
   MobileBootstrapPayload & { remoteConfig: RemoteConfigMap }
 > {
   const base = buildMobileBootstrapPayload();
-  const remoteConfig = await getRemoteConfigMap("MOBILE");
+  const remoteConfig = await getRemoteConfigMapWithTimeout("MOBILE");
 
   const recommendedSyncIntervalSec =
     typeof remoteConfig.recommendedSyncIntervalSec === "number"

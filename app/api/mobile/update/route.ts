@@ -13,8 +13,9 @@ export async function GET(request: Request) {
   const deviceId = url.searchParams.get("deviceId") ?? undefined;
   const channel = url.searchParams.get("channel") as "CLOSED_ALPHA" | undefined;
 
+  const clientVersionCode = Number.isFinite(versionCode) ? versionCode : 1;
   const payload = await buildMobileUpdatePayload({
-    clientVersionCode: Number.isFinite(versionCode) ? versionCode : 1,
+    clientVersionCode,
     deviceId,
     channel,
   });

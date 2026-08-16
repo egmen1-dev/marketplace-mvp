@@ -3,13 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { evaluateCompatibility } from "@/lib/mobile-release-platform/compatibility";
 import { channelLabel } from "@/lib/mobile-release-platform/channels";
 import { isDeviceEligibleForRollout } from "@/lib/mobile-release-platform/release-manager";
+import { getLatestPublishedRelease, listReleaseVersions } from "@/lib/mobile-release-platform/registry";
 import { buildMobileUpdatePayload } from "@/lib/mobile-release-platform/update-service";
 import type { ReleaseVersion } from "@/lib/mobile-release-platform/types";
 
 const publishedRelease: ReleaseVersion = {
   id: "rel-1",
-  versionName: "0.1.0-alpha",
-  versionCode: 2,
+  versionName: "0.1.2-alpha",
+  versionCode: 3,
   gitCommit: "abc1234",
   sha256: "sha256-test",
   channel: "CLOSED_ALPHA",
@@ -47,10 +48,17 @@ describe("mobile release platform wave 0", () => {
     vi.clearAllMocks();
   });
 
-  it("evaluates compatibility for older client", () => {
-    const result = evaluateCompatibility(publishedRelease, { clientVersionCode: 1 });
+  it("evaluates compatibility for supported client", () => {
+    const result = evaluateCompatibility(publishedRelease, { clientVersionCode: 3 });
     expect(result.compatible).toBe(true);
     expect(result.forceUpgrade).toBe(false);
+  });
+
+  it("flags prototype clients below minimum supported", () => {
+    const result = evaluateCompatibility(publishedRelease, { clientVersionCode: 1 });
+    expect(result.compatible).toBe(false);
+    expect(result.forceUpgrade).toBe(true);
+    expect(result.reasons).toContain("client_below_minimum_supported");
   });
 
   it("returns channel labels for Closed Alpha", () => {
@@ -62,20 +70,29 @@ describe("mobile release platform wave 0", () => {
     expect(isDeviceEligibleForRollout(undefined, 50)).toBe(false);
   });
 
-  it("builds update payload with download URL for eligible device", async () => {
+  it("builds update payload with download URL for eligible device behind latest", async () => {
+    const latest = { ...publishedRelease, versionCode: 4, versionName: "0.1.3-alpha" };
+    vi.mocked(getLatestPublishedRelease).mockResolvedValueOnce(latest);
+
+    const payload = await buildMobileUpdatePayload({
+      clientVersionCode: 3,
+      deviceId: "lot-android-34",
+      channel: "CLOSED_ALPHA",
+    });
+
+    expect(payload.latestVersion).toBe("0.1.3-alpha");
+    expect(payload.downloadUrl).toBe("https://example.com/lot.apk");
+    expect(payload.updateState).toBe("OPTIONAL_UPDATE");
+  });
+
+  it("returns UNSUPPORTED_CLIENT for prototype versionCode 1", async () => {
     const payload = await buildMobileUpdatePayload({
       clientVersionCode: 1,
       deviceId: "lot-android-34",
       channel: "CLOSED_ALPHA",
     });
-
-    expect(payload.latestVersion).toBe("0.1.0-alpha");
-    expect(payload.downloadUrl).toBe("https://example.com/lot.apk");
-    expect(payload.sha256).toBe("sha256-test");
-    expect(payload.updateState).toBe("OPTIONAL_UPDATE");
-    expect(payload.releaseNotes).toEqual(["Closed Alpha build", "Bug fixes"]);
-    expect(payload.compatibility.compatible).toBe(true);
-    expect(payload.rollout.percent).toBe(100);
+    expect(payload.updateState).toBe("UNSUPPORTED_CLIENT");
+    expect(payload.reason).toBe("CLIENT_TOO_OLD");
   });
 
   it("documents unified update route", async () => {
