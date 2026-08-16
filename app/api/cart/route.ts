@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/features/auth";
+import { resolveRequestUser } from "@/features/auth/resolve-request-user";
 import {
   addToCart,
   CartServiceError,
@@ -13,10 +14,10 @@ import {
   updateCartItemSchema,
 } from "@/features/cart/schemas";
 
-async function requireUserId(): Promise<
+async function requireUserId(request: Request): Promise<
   { userId: string } | { response: NextResponse }
 > {
-  const user = await getSessionUser();
+  const user = await resolveRequestUser(request);
   if (!user) {
     return {
       response: NextResponse.json({ error: "Требуется вход" }, { status: 401 }),
@@ -40,9 +41,9 @@ function handleCartError(err: unknown, context: string) {
 }
 
 /** GET /api/cart — current user's cart with products and totals. */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const auth = await requireUserId();
+    const auth = await requireUserId(request);
     if ("response" in auth) return auth.response;
 
     const cart = await getCartForUser(auth.userId);
@@ -55,7 +56,7 @@ export async function GET() {
 /** POST /api/cart — add item (increments if exists). Body: { productId, quantity? } */
 export async function POST(request: Request) {
   try {
-    const auth = await requireUserId();
+    const auth = await requireUserId(request);
     if ("response" in auth) return auth.response;
 
     let body: unknown;
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
 /** PATCH /api/cart — set quantity. Body: { productId, quantity } (0 removes). */
 export async function PATCH(request: Request) {
   try {
-    const auth = await requireUserId();
+    const auth = await requireUserId(request);
     if ("response" in auth) return auth.response;
 
     let body: unknown;
@@ -125,7 +126,7 @@ export async function PATCH(request: Request) {
 /** DELETE /api/cart?productId=… — remove one line. */
 export async function DELETE(request: Request) {
   try {
-    const auth = await requireUserId();
+    const auth = await requireUserId(request);
     if ("response" in auth) return auth.response;
 
     const productId = new URL(request.url).searchParams.get("productId");
