@@ -29,7 +29,7 @@ async function main() {
   const mainSha = execSync("git rev-parse origin/main", { encoding: "utf8" }).trim().slice(0, 7);
 
   const version = await json("/api/version");
-  const stagingSha = String((version.body as { sha?: string }).sha ?? "").slice(0, 7);
+  const stagingSha = String((version.body as { commit?: string; sha?: string }).commit ?? (version.body as { sha?: string }).sha ?? "").slice(0, 7);
   results.push({
     name: "staging_sha_equals_main",
     ok: stagingSha === mainSha,

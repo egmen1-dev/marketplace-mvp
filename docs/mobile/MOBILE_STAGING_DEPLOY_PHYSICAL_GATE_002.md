@@ -15,14 +15,14 @@ Close P0 blockers MOB-PA-001 (physical device) and MOB-PA-002 (staging backend b
 |---|---|
 | PR #84 / APP-SHELL-0 on main | ✅ Merged locally to main branch |
 | `npm run build` | ✅ PASS (tsconfig exclude apps/mobile + seller-home-data fixes) |
-| staging SHA == main SHA | ⬜ Pending Railway deploy |
-| mobile buyer/home | ⬜ Pending deploy |
-| mobile seller/home | ⬜ Pending deploy |
-| catalog API | ⬜ Pending deploy |
-| cart Bearer | ⬜ Pending deploy |
-| orders Bearer | ⬜ Pending deploy |
-| favorites Bearer | ⬜ Pending deploy |
-| wallet Bearer | ⬜ Pending deploy |
+| staging SHA == main SHA | ⬜ **PENDING** — staging `baceeb4`, main `152d3ab` (PR #86 merged, deploy not landed) |
+| mobile buyer/home | ✅ 200 on staging (Wave 6 route) |
+| mobile seller/home | ✅ 200 + real data shape |
+| catalog API | ❌ 404 until deploy |
+| cart Bearer | ❌ 401 until deploy |
+| orders Bearer | ❌ 401 until deploy |
+| favorites Bearer | ❌ 404 until deploy |
+| wallet Bearer | ❌ 404 until deploy |
 | web cookie auth | ⬜ Verify post-deploy |
 | physical install | **NOT RUN** — no USB device in cloud VM |
 | launch / auth / flows | **NOT RUN** |
