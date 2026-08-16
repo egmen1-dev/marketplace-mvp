@@ -17,6 +17,7 @@ vi.mock("@/lib/prisma", () => ({
 vi.mock("@/lib/mobile-release-platform/registry", () => ({
   seedRegistryFromManifestIfEmpty: vi.fn(async () => null),
   getLatestPublishedRelease: vi.fn(async () => emptyRelease),
+  listReleaseVersions: vi.fn(async () => []),
 }));
 
 describe("mobile android update contract", () => {
@@ -24,16 +25,15 @@ describe("mobile android update contract", () => {
     vi.clearAllMocks();
   });
 
-  it("returns foundation payload without download URL when registry is empty", async () => {
+  it("returns unsupported payload when registry is empty and client is below minimum", async () => {
     const payload = await buildAndroidUpdatePayload();
-    expect(payload.versionCode).toBe(1);
-    expect(payload.versionName).toBe("0.0.0-dev");
-    expect(payload.minimumSupportedVersionCode).toBe(1);
-    expect(payload.latestVersion).toBe("0.0.0-dev");
-    expect(payload.updateRequired).toBe(false);
+    expect(payload.updateState).toBe("UNSUPPORTED_CLIENT");
+    expect(payload.reason).toBe("CLIENT_TOO_OLD");
+    expect(payload.versionCode).toBe(3);
+    expect(payload.versionName).toBe("0.1.2-alpha");
+    expect(payload.minimumSupportedVersionCode).toBe(3);
+    expect(payload.updateRequired).toBe(true);
     expect(payload.downloadUrl).toBeNull();
-    expect(payload.sha256).toBeNull();
-    expect(payload.publishedAt).toBeNull();
     expect(payload.advisoryOnly).toBe(true);
   });
 

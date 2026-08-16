@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import type { MobileUpdateInfo } from "../api/endpoints";
+
 export type AppMode = "buyer" | "seller";
 
 type TabBadges = {
@@ -16,6 +18,7 @@ type AppState = {
   remoteConfig: Record<string, unknown>;
   userRole: string | null;
   sellerCapable: boolean;
+  pendingUpdate: MobileUpdateInfo | null;
   badges: TabBadges;
   setMode: (mode: AppMode) => void;
   setBootstrapped: (value: boolean) => void;
@@ -23,6 +26,7 @@ type AppState = {
   setPendingDeepLink: (uri: string | null) => void;
   setRemoteConfig: (config: Record<string, unknown>) => void;
   setUserRole: (role: string | null) => void;
+  setPendingUpdate: (update: MobileUpdateInfo | null) => void;
   setBadges: (badges: Partial<TabBadges>) => void;
 };
 
@@ -38,6 +42,7 @@ export const useAppStore = create<AppState>((set) => ({
   remoteConfig: {},
   userRole: null,
   sellerCapable: false,
+  pendingUpdate: null,
   badges: { cart: 0, favorites: 0, orders: 0 },
   setMode: (mode) => set({ mode }),
   setBootstrapped: (bootstrapped) => set({ bootstrapped }),
@@ -50,5 +55,6 @@ export const useAppStore = create<AppState>((set) => ({
       sellerCapable: isSellerRole(role),
       mode: isSellerRole(role) ? "seller" : "buyer",
     }),
+  setPendingUpdate: (pendingUpdate) => set({ pendingUpdate }),
   setBadges: (badges) => set((state) => ({ badges: { ...state.badges, ...badges } })),
 }));

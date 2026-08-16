@@ -4,12 +4,20 @@ import { getDeviceId } from "../storage/secure-session";
 import { loadAppConfig } from "../config/env";
 import { getSessionId } from "../telemetry/session";
 
-export type MobileUpdateState = "NO_UPDATE" | "OPTIONAL_UPDATE" | "RECOMMENDED_UPDATE" | "REQUIRED_UPDATE";
+export type MobileUpdateState =
+  | "NO_UPDATE"
+  | "OPTIONAL_UPDATE"
+  | "RECOMMENDED_UPDATE"
+  | "REQUIRED_UPDATE"
+  | "UNSUPPORTED_CLIENT";
 
 export type MobileUpdateInfo = {
   latestVersion: string;
   versionCode: number;
   versionName: string;
+  minimumVersionName?: string;
+  minimumVersionCode?: number;
+  reason?: "CLIENT_TOO_OLD";
   updateRequired: boolean;
   updateState: MobileUpdateState;
   mandatory: boolean;
@@ -63,15 +71,30 @@ export async function fetchMobileUpdate(): Promise<MobileUpdateInfo> {
     deviceId,
     channel: "CLOSED_ALPHA",
   });
-  const raw = await apiRequest<MobileUpdateInfo & { updateState?: MobileUpdateState }>(`/api/mobile/update?${qs.toString()}`);
+  const raw = await apiRequest<
+    MobileUpdateInfo & {
+      updateState?: MobileUpdateState;
+      minimumVersionName?: string;
+      minimumVersionCode?: number;
+      reason?: "CLIENT_TOO_OLD";
+    }
+  >(`/api/mobile/update?${qs.toString()}`);
   const updateState =
     raw.updateState ??
-    (raw.updateRequired || raw.mandatory
-      ? "REQUIRED_UPDATE"
-      : raw.downloadUrl && raw.versionCode > versionCode && raw.rollout.eligible
-        ? "OPTIONAL_UPDATE"
-        : "NO_UPDATE");
-  return { ...raw, updateState };
+    (raw.reason === "CLIENT_TOO_OLD"
+      ? "UNSUPPORTED_CLIENT"
+      : raw.updateRequired || raw.mandatory
+        ? "REQUIRED_UPDATE"
+        : raw.downloadUrl && raw.versionCode > versionCode && raw.rollout.eligible
+          ? "OPTIONAL_UPDATE"
+          : "NO_UPDATE");
+  return {
+    ...raw,
+    updateState,
+    minimumVersionName: raw.minimumVersionName,
+    minimumVersionCode: raw.minimumVersionCode,
+    reason: raw.reason,
+  };
 }
 
 export async function fetchBootstrap(): Promise<BootstrapPayload> {

@@ -21,6 +21,10 @@ import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
 import { getActiveBrainVersion } from "@/lib/ccos/rollback/brain";
 import { buildCognitiveCapabilitiesManifest } from "./cognitive-capabilities";
 import { buildBrainCompatibilityFields } from "./brain-compatibility";
+import {
+  CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_CODE,
+  CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_NAME,
+} from "@/lib/mobile-release-platform/baseline";
 import { KNOWLEDGE_GRAPH_CONTRACT_VERSION } from "@/lib/ccos/graph/types";
 import { TWIN_CONTRACT_VERSION } from "@/lib/ccos/twin/types";
 
@@ -55,6 +59,7 @@ export type MobileBootstrapPayload = {
   supportedSchemaVersions: string[];
   recommendedSyncIntervalSec: number;
   minimumSupportedAppVersion: string;
+  minimumSupportedVersionCode: number;
   recommendedAppVersion: string;
   forceUpgrade: boolean;
   endpoints: {
@@ -117,7 +122,8 @@ export function buildMobileBootstrapPayload(): MobileBootstrapPayload {
     supportedModes: ["buyer", "seller"],
     supportedSchemaVersions: [MOBILE_SCHEMA_VERSION],
     recommendedSyncIntervalSec: 900,
-    minimumSupportedAppVersion: MOBILE_MIN_SUPPORTED_APP_VERSION,
+    minimumSupportedAppVersion: CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_NAME,
+    minimumSupportedVersionCode: CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_CODE,
     recommendedAppVersion: MOBILE_RECOMMENDED_APP_VERSION,
     forceUpgrade: false,
     endpoints: {

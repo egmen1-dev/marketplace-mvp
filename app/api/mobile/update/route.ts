@@ -2,10 +2,6 @@ import { NextResponse } from "next/server";
 
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
-import {
-  buildLegacyMobileUpdatePayload,
-  LEGACY_MOBILE_UPDATE_MAX_VERSION_CODE,
-} from "@/lib/mobile-release-platform/update-service/legacy";
 import { buildMobileUpdatePayload } from "@/lib/mobile-release-platform/update-service";
 
 export async function GET(request: Request) {
@@ -24,10 +20,5 @@ export async function GET(request: Request) {
     channel,
   });
 
-  const body =
-    clientVersionCode <= LEGACY_MOBILE_UPDATE_MAX_VERSION_CODE
-      ? buildLegacyMobileUpdatePayload(payload)
-      : payload;
-
-  return NextResponse.json(withMobileApiContract(body, payload.latestVersion));
+  return NextResponse.json(withMobileApiContract(payload, payload.latestVersion));
 }
