@@ -21,9 +21,10 @@ describe("ranking lab 1000", () => {
     expect(new Set(products.map((p) => p.id)).size).toBe(1000);
   });
 
-  it("runs full lab pipeline with importance and bad product verdict", () => {
+  it("runs full lab pipeline with importance and bad product verdict", async () => {
     resetRankingLabCache();
-    const report = runRankingLab1000();
+    process.env.MARKETPLACE_CONTENT_QUALITY_ENABLED = "true";
+    const report = await runRankingLab1000();
     expect(report.datasetSize).toBe(1000);
     expect(report.importance.length).toBeGreaterThan(5);
     const totalInfluence = report.importance.reduce((s, r) => s + r.influencePercent, 0);

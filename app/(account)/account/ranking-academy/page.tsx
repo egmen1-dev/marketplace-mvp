@@ -12,12 +12,12 @@ export const metadata = { title: "Ranking Academy" };
 export default async function RankingAcademyPage() {
   await enforceSellerFirstEntry(ROUTES.ACCOUNT_RANKING_ACADEMY);
   const enabled = isRankingLabEnabled();
-  const report = enabled ? getRankingLab1000Report() : null;
+  const report = enabled ? await getRankingLab1000Report() : null;
   const sampleProductId =
     report?.ranked.find((r) => r.position >= 40 && r.position <= 55)?.product.id ??
     report?.ranked[Math.floor((report?.ranked.length ?? 0) / 2)]?.product.id ??
     null;
-  const lab = sampleProductId ? getProductLabReport(sampleProductId) : null;
+  const lab = sampleProductId ? await getProductLabReport(sampleProductId) : null;
 
   return (
     <div className="flex flex-col gap-6">

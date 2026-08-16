@@ -20,3 +20,9 @@ for (const row of report.importance.slice(0, 5)) {
   console.log(`  ${row.label}: ${row.influencePercent}%`);
 }
 console.log(`\nBad product lab: ${report.badProductLab.verdict} — ${report.badProductLab.summary}`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

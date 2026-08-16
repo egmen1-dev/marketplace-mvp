@@ -29,6 +29,15 @@ function identityToken(img: ProductImageInput): string {
   return (img.pathname ?? img.url).toLowerCase();
 }
 
+function imagesShowProductFamily(name: string, images: ProductImageInput[]): boolean {
+  const nameTokens = tokenize(name);
+  if (nameTokens.length === 0) return true;
+  const aligned = images.filter(
+    (img) => overlapRatio(nameTokens, tokenize(img.alt ?? "")) >= 0.15,
+  ).length;
+  return aligned >= Math.ceil(images.length * 0.5);
+}
+
 export type PhotoQualityBundle = {
   photo: {
     score: number;
@@ -50,7 +59,12 @@ export type PhotoQualityBundle = {
 };
 
 function dedupeKey(img: ProductImageInput): string {
-  return (img.pathname ?? img.url).toLowerCase();
+  try {
+    const u = new URL(img.url);
+    return `${u.origin}${u.pathname}`.toLowerCase();
+  } catch {
+    return (img.pathname ?? img.url).toLowerCase();
+  }
 }
 
 function estimatePerImageScore(
@@ -158,12 +172,12 @@ export function evaluatePhotoQuality(input: ProductQualityInput): PhotoQualityBu
   const lighting = clampScore(hints?.lightingScore ?? primaryScore * 0.88);
   const readability = clampScore(hints?.readabilityScore ?? 70);
 
-  const mismatchAlts = new Set(images.map((img) => identityToken(img)));
+  const contradictoryImages = images.filter((img) =>
+    altContradictsProduct(input.name, img.alt ?? ""),
+  ).length;
   const identityMismatchFromAlts =
-    mismatchAlts.size >= 3 &&
-    images.length >= 3 &&
-    !hints?.productIdentityScore &&
-    !hints?.productIdentityMismatch;
+    contradictoryImages >= 2 ||
+    (contradictoryImages >= 1 && !imagesShowProductFamily(input.name, images));
 
   const irrelevant =
     hints?.allPhotosIrrelevant === true ||

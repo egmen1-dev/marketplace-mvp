@@ -1,0 +1,12 @@
+factorKey,label,influencePercent,avgContribution
+photos,Фото,22.1,2.6
+ctr,CTR,18.9,-4.8
+trust,Доверие,14.6,1.5
+description,Описание,10.2,-1.7
+inventory,Наличие,7.9,2
+conversion,Конверсия,7.8,-2
+reviews,Отзывы,6.9,2.2
+seo,SEO,4,-2.4
+shipping,Скорость отправки,2.8,1.6
+category,Категория,2.7,2.8
+price,Цена,2.1,1.3

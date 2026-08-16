@@ -1,0 +1,130 @@
+{
+  "generatedAt": "2026-08-16T10:04:45.004Z",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "provider": {
+    "layer": "marketplace-content-quality",
+    "daosRealProvider": "NOT CONNECTED",
+    "runtimeProvider": "rule-based-fallback",
+    "fallbackUsed": true
+  },
+  "productIds": {
+    "goodId": "cmsvn0s1q0001jsm47pfmoear",
+    "avgId": "cmsvn0snl0007jsm4eeqb2lqr",
+    "badId": "cmsvn0t4j000bjsm4dma9f8fp",
+    "irrId": "cmsvn0tj1000fjsm4tzgwn10k",
+    "dupId": "cmsvn0tzz000njsm41pf4iphj"
+  },
+  "evaluations": {
+    "goodId": {
+      "overallScore": 65,
+      "topEligibility": "ELIGIBLE",
+      "failedGates": [],
+      "effectivePhotoCount": 3,
+      "uploadedPhotoCount": 4,
+      "provider": "rule-based-fallback",
+      "qualityModelVersion": "content-quality-v1",
+      "criticVersion": "marketplace-critics-v1",
+      "providerVersion": "rule-based-fallback-v1"
+    },
+    "avgId": {
+      "overallScore": 55,
+      "topEligibility": "ELIGIBLE",
+      "failedGates": [],
+      "effectivePhotoCount": 2,
+      "uploadedPhotoCount": 2,
+      "provider": "rule-based-fallback",
+      "qualityModelVersion": "content-quality-v1",
+      "criticVersion": "marketplace-critics-v1",
+      "providerVersion": "rule-based-fallback-v1"
+    },
+    "badId": {
+      "overallScore": 39,
+      "topEligibility": "ELIGIBLE",
+      "failedGates": [],
+      "effectivePhotoCount": 1,
+      "uploadedPhotoCount": 2,
+      "provider": "rule-based-fallback",
+      "qualityModelVersion": "content-quality-v1",
+      "criticVersion": "marketplace-critics-v1",
+      "providerVersion": "rule-based-fallback-v1"
+    },
+    "irrId": {
+      "overallScore": 49,
+      "topEligibility": "BLOCKED",
+      "failedGates": [
+        "IRRELEVANT_CONTENT",
+        "PRODUCT_IDENTITY_MISMATCH"
+      ],
+      "effectivePhotoCount": 1,
+      "uploadedPhotoCount": 6,
+      "provider": "rule-based-fallback",
+      "qualityModelVersion": "content-quality-v1",
+      "criticVersion": "marketplace-critics-v1",
+      "providerVersion": "rule-based-fallback-v1"
+    },
+    "dupId": {
+      "overallScore": 40,
+      "topEligibility": "ELIGIBLE",
+      "failedGates": [],
+      "effectivePhotoCount": 1,
+      "uploadedPhotoCount": 10,
+      "provider": "rule-based-fallback",
+      "qualityModelVersion": "content-quality-v1",
+      "criticVersion": "marketplace-critics-v1",
+      "providerVersion": "rule-based-fallback-v1"
+    }
+  },
+  "scenarios": [
+    {
+      "scenario": "good product",
+      "expected": "HIGH",
+      "actual": "65 (MEDIUM)",
+      "result": "PARTIAL"
+    },
+    {
+      "scenario": "average product",
+      "expected": "MEDIUM",
+      "actual": "55 (MEDIUM)",
+      "result": "PASS"
+    },
+    {
+      "scenario": "bad product",
+      "expected": "LOW",
+      "actual": "39 (LOW)",
+      "result": "PASS"
+    },
+    {
+      "scenario": "irrelevant photos",
+      "expected": "Gate FAIL / TOP BLOCKED",
+      "actual": "score=49, gates=IRRELEVANT_CONTENT,PRODUCT_IDENTITY_MISMATCH, top=BLOCKED",
+      "result": "PASS"
+    },
+    {
+      "scenario": "duplicates + spam",
+      "expected": "effectivePhotoCount low, manipulation warning",
+      "actual": "uploaded=10, effective=1, seo=25, manip=20",
+      "result": "PASS"
+    },
+    {
+      "scenario": "dirty socks control",
+      "expected": "QUALITY_GATE_FAIL",
+      "actual": "{\"photoRelevance\":0,\"qualityGateFailed\":true,\"topBlocked\":true,\"failedGates\":[\"IRRELEVANT_CONTENT\",\"PRODUCT_IDENTITY_MISMATCH\",\"NO_RELEVANT_MAIN_PHOTO\"],\"overallScore\":56}",
+      "result": "PASS"
+    },
+    {
+      "scenario": "quality vs quantity",
+      "expected": "4 good > 20 bad",
+      "actual": "{\"badPhotoScore\":4,\"goodPhotoScore\":99,\"badEffectiveCount\":1,\"goodEffectiveCount\":4,\"goodWins\":true}",
+      "result": "PASS"
+    },
+    {
+      "scenario": "promoted junk",
+      "expected": "quality card wins",
+      "actual": "{\"verdict\":\"PASS\",\"productAPosition\":2,\"productBPosition\":1,\"productAGated\":true,\"productBPromotionBlocked\":false,\"notes\":[\"Product A hard-gated — expected\",\"Promotion не обходит quality gate для Product A\"]}",
+      "result": "PASS"
+    }
+  ],
+  "verdict": "CONTENT QUALITY STAGING: PARTIAL",
+  "liveRanking": "OFF",
+  "rankingLabV2": "PENDING"
+}
