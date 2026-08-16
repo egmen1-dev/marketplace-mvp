@@ -70,7 +70,7 @@ export const CLOSED_ALPHA_RELEASE_014 = {
   sha256: "b50a3c44be0094461b3ce1ee17241901b122d0d3ce425708959b0b48da09940c",
   artifactSizeBytes: 105750351,
   artifactFileName: "lot-android-alpha-0.1.4.apk",
-  gitCommit: "pending-hotfix",
+  gitCommit: "16480b9",
   releaseNotes:
     "P0 startup crash hotfix\nLazy Expo Router imports (no sync eager route graph)\nNew Architecture disabled for release stability\nDeferred NetworkBanner/UpdateHost until post-bootstrap\nStartup Fatal Error recovery layer\nBoot stage logcat markers (NATIVE_START / ROUTER_ENTRY)\nPrevious crash detection on next launch\n0.1.4-alpha versionCode 5",
   githubTag: "closed-alpha-0.1.4",
