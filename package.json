@@ -30,6 +30,7 @@
     "mobile:release-gate": "tsx scripts/mobile-release-gate-003-staging.ts",
     "mobile:closed-alpha:publish": "tsx scripts/epic-80-publish-closed-alpha-release.ts",
     "mobile:closed-alpha:publish-011": "tsx scripts/epic-82-publish-closed-alpha-011.ts",
+    "mobile:closed-alpha:publish-012": "tsx scripts/epic-83-publish-closed-alpha-012.ts",
     "mobile:closed-alpha:gate": "tsx scripts/epic-80-closed-alpha-launch-gate.ts",
     "mobile:epic-82:gate": "tsx scripts/epic-82-closed-alpha-stabilization-gate.ts",
     "mobile:epic-83:gate": "tsx scripts/epic-83-minimum-supported-version-gate.ts",

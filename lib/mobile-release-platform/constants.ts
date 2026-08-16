@@ -35,15 +35,15 @@ export const CLOSED_ALPHA_RELEASE_011 = {
 export const CLOSED_ALPHA_RELEASE_012 = {
   versionName: "0.1.2-alpha",
   versionCode: 3,
-  sha256: "pending-build",
-  artifactSizeBytes: null as number | null,
+  sha256: "8cf4217c183885ed307e03d6667e039d7e5934743fd7f72f638293d76021b407",
+  artifactSizeBytes: 93609459,
   artifactFileName: "lot-android-alpha-0.1.2.apk",
-  gitCommit: "pending",
+  gitCommit: "feb4b8d",
   releaseNotes:
-    "Minimum supported Closed Alpha baseline\nBoot hardening with timeouts and telemetry\nUnsupported client screen\nAutomatic update lifecycle via MRP",
+    "First supported Closed Alpha baseline\nMobile UX Wave 1/2\nSeller product navigation fix\nNew design system\nImproved catalog and PDP\nStartup timeout and retry\nMinimum supported version enforcement\nUnsupported client screen\nUpdate-flow hardening",
   githubTag: "closed-alpha-0.1.2",
-  knownIssues: ["Physical Android acceptance pending for 0.1.2 publish"],
-  acceptanceStatus: "DRAFT",
+  knownIssues: ["Physical Android acceptance pending operator pass", "Seamless update E2E pending 0.1.2→0.1.3"],
+  acceptanceStatus: "PUBLISHED",
   supportStatus: "FIRST_SUPPORTED",
 } as const;
 
