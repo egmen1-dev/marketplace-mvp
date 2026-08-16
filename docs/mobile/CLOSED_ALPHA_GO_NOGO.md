@@ -2,17 +2,21 @@
 
 **Updated:** 2026-08-16 · gate `npm run mobile:closed-alpha:gate`
 
-## Verdict: WATCH → NO-GO until staging deploy + physical PASS
+## Verdict: WATCH — staging deploy + physical PASS remain
 
 | Gate | Status |
 |------|--------|
-| MOBILE STAGING | **NOT READY** — staging @ `1e9e15e`, main @ `750377f` |
-| PHYSICAL ANDROID (MOB-PA-001) | **NOT RUN** |
-| MRP publish on staging | **NOT PUBLISHED** (run publish after migrate) |
-| APK HTTPS | **READY** — [GitHub Release](https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.0) |
-| POP telemetry | **READY on main** — pending staging deploy |
-| P0 | **1** (physical pending) |
+| MOBILE STAGING | **NOT READY** — staging @ `750377f`, main @ `16e3d47` |
+| DB migrations | **PASS** — epic78 + epic79 on Railway Postgres |
+| MRP release | **PUBLISHED** — `0.1.0-alpha` + HTTPS URL |
+| First tester | **PASS** — `alpha-tester@demo.lot` |
+| POP feedback/telemetry | **PASS** (API verified on staging) |
+| PHYSICAL ANDROID | **NOT RUN** |
+| P0 | **1** |
+| CLOSED ALPHA | **WATCH** |
 | APP-SHELL-1 | **BLOCKED** |
+
+Runbook: `docs/mobile/MOBILE_CLOSED_ALPHA_GO_001.md`
 
 ## Operator checklist
 
