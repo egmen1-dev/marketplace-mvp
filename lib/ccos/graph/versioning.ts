@@ -2,6 +2,21 @@ import type { GraphVersionSnapshot } from "./types";
 import { GRAPH_ENGINE_VERSION, KNOWLEDGE_GRAPH_CONTRACT_VERSION } from "./types";
 
 const versions: GraphVersionSnapshot[] = [];
+let activeGraphVersion: string | null = null;
+
+export function getActiveGraphVersion(): string {
+  if (activeGraphVersion && versions.some((v) => v.version === activeGraphVersion)) {
+    return activeGraphVersion;
+  }
+  return versions.at(-1)?.version ?? "graph-engine-v1.0";
+}
+
+export function setActiveGraphVersion(version: string): GraphVersionSnapshot | null {
+  const snap = versions.find((v) => v.version === version);
+  if (!snap) return null;
+  activeGraphVersion = version;
+  return snap;
+}
 
 export function snapshotGraphVersion(input: {
   version: string;
@@ -26,8 +41,12 @@ export function listGraphVersions(): GraphVersionSnapshot[] {
 }
 
 export function rollbackGraphVersion(version: string): GraphVersionSnapshot | null {
-  const snap = versions.find((v) => v.version === version);
-  return snap ?? null;
+  return setActiveGraphVersion(version);
+}
+
+/** @deprecated Use lib/ccos/rollback performGraphRollback for governed rollback */
+export function lookupGraphVersion(version: string): GraphVersionSnapshot | null {
+  return versions.find((v) => v.version === version) ?? null;
 }
 
 export type GraphVersionDiff = {
@@ -74,4 +93,5 @@ export function nextGraphVersionLabel(): string {
 
 export function resetGraphVersions(): void {
   versions.length = 0;
+  activeGraphVersion = null;
 }

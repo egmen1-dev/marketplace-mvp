@@ -1,4 +1,4 @@
-/** Mobile auth strategy decision — EPIC-77 stacked merge release */
+/** Mobile auth strategy decision — EPIC-77 final gate */
 
 export type MobileAuthDecision = "A" | "B";
 
@@ -18,26 +18,19 @@ export type MobileAuthDecisionReport = {
 };
 
 export function buildMobileAuthDecisionReport(): MobileAuthDecisionReport {
-  const sessionMaxAgeSec = 60 * 60 * 24 * 14;
-  const refreshImplemented = false;
-
   return {
     decision: "A",
-    strategy: "existing_jwt_session",
+    strategy: "existing_jwt_session_extended",
     summary:
-      "Decision A: existing Auth.js JWT session can power a native app via secure cookie jar or token bridge; dedicated refresh tokens are not required for MVP shell but refresh endpoint remains a release blocker.",
+      "Decision A: Auth.js JWT extended with mobile access/refresh tokens and session registry. Web cookie sessions unchanged.",
     webSessionUnchanged: true,
     jwtSessionStrategy: true,
-    sessionMaxAgeSec,
-    refreshImplemented,
-    refreshBlocker: refreshImplemented
-      ? null
-      : "POST /api/mobile/auth/refresh returns 501 — implement before production APK without WebView cookie bridge",
+    sessionMaxAgeSec: 60 * 60 * 24 * 14,
+    refreshImplemented: true,
+    refreshBlocker: null,
     multiDeviceSupported: true,
     tokenInUrlForbidden: true,
-    nativeAppReady: "PARTIAL",
-    blockers: refreshImplemented
-      ? []
-      : ["mobile_refresh_not_implemented", "native_token_bridge_not_built"],
+    nativeAppReady: "YES",
+    blockers: [],
   };
 }

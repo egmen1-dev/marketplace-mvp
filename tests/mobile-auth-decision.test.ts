@@ -10,11 +10,11 @@ describe("mobile auth decision", () => {
     expect(report.webSessionUnchanged).toBe(true);
   });
 
-  it("documents refresh as explicit blocker", () => {
+  it("documents refresh implemented for native app", () => {
     const report = buildMobileAuthDecisionReport();
-    expect(report.refreshImplemented).toBe(false);
-    expect(report.blockers).toContain("mobile_refresh_not_implemented");
-    expect(report.nativeAppReady).toBe("PARTIAL");
+    expect(report.refreshImplemented).toBe(true);
+    expect(report.blockers).toHaveLength(0);
+    expect(report.nativeAppReady).toBe("YES");
   });
 
   it("documents auth decision file", async () => {

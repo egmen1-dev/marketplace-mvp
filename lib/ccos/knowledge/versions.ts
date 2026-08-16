@@ -1,6 +1,7 @@
 import type { BrainVersionRegistryEntry } from "./types";
 
-export const KNOWLEDGE_PACK_VERSION = "knowledge-pack-v1";
+export const KNOWLEDGE_PACK_VERSION = "knowledge-pack-v2";
+export const KNOWLEDGE_PACK_PREVIOUS = "knowledge-pack-v1";
 export const REASONING_PACK_VERSION = "reasoning-pack-v1";
 export const EXPERIMENT_REGISTRY_VERSION = "experiment-registry-v1";
 export const KNOWLEDGE_REPOSITORY_VERSION = "knowledge-repository-v1";
@@ -13,6 +14,14 @@ const REGISTRY: BrainVersionRegistryEntry[] = [
     experimentVersion: EXPERIMENT_REGISTRY_VERSION,
     releasedAt: "2026-08-16T00:00:00.000Z",
     notes: "Wave 1 advisory brain baseline",
+  },
+  {
+    brainVersion: "marketplace-brain-v2-knowledge",
+    knowledgePackVersion: "knowledge-pack-v2",
+    reasoningPackVersion: "reasoning-pack-v2",
+    experimentVersion: EXPERIMENT_REGISTRY_VERSION,
+    releasedAt: "2026-08-16T12:00:00.000Z",
+    notes: "Wave 2 Knowledge & Experiment Platform",
   },
   {
     brainVersion: "marketplace-brain-v3-product",

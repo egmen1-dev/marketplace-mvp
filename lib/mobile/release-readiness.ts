@@ -127,9 +127,21 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
     },
     {
       id: "session_support",
-      label: "Mobile session endpoint",
+      label: "Mobile login/session endpoint",
       ok: true,
-      detail: "POST /api/mobile/auth/session — JWT status probe",
+      detail: "POST /api/mobile/auth/session — login + status",
+    },
+    {
+      id: "mobile_refresh_api",
+      label: "Mobile refresh endpoint",
+      ok: buildMobileAuthDecisionReport().refreshImplemented,
+      detail: "POST /api/mobile/auth/refresh — token rotation",
+    },
+    {
+      id: "mobile_logout_api",
+      label: "Mobile logout endpoint",
+      ok: true,
+      detail: "POST /api/mobile/auth/logout — session revocation",
     },
     {
       id: "deep_link_resolver",

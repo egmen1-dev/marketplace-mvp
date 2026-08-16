@@ -4,6 +4,7 @@ import {
   KNOWLEDGE_PACK_VERSION,
 } from "@/lib/ccos/knowledge/versions";
 import { listGraphVersions, rollbackGraphVersion } from "@/lib/ccos/graph/versioning";
+import { isRollbackFoundationReady } from "@/lib/ccos/rollback";
 
 import {
   createShadowEvaluationStub,
@@ -48,7 +49,7 @@ export function buildEvolutionReadinessReport(input?: {
   }
   const audit = input.dependencyAudit;
   const versions = resolveVersionPointers();
-  const graphRollbackOk = rollbackGraphVersion(versions.graph.previous ?? "") != null || listGraphVersions().length > 0;
+  const rollbackReady = isRollbackFoundationReady();
 
   const checkList: EvolutionReadinessCheck[] = [
     {
@@ -84,8 +85,8 @@ export function buildEvolutionReadinessReport(input?: {
     {
       id: "rollbackAvailable",
       label: "Rollback available",
-      ok: graphRollbackOk && Boolean(versions.brain.previous),
-      detail: `graph rollback + brain previous ${versions.brain.previous ?? "n/a"}`,
+      ok: rollbackReady,
+      detail: `graph ${versions.graph.current}→${versions.graph.previous ?? "n/a"}, brain ${versions.brain.current}→${versions.brain.previous ?? "n/a"}`,
     },
     {
       id: "shadowSimulationAvailable",

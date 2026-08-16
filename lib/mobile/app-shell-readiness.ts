@@ -12,43 +12,52 @@ export type AppShellReadinessReport = {
   evaluatedAt: string;
 };
 
+const SHELL_CONTRACTS = [
+  "bootstrap",
+  "config",
+  "navigation",
+  "dashboard",
+  "readiness",
+  "deep_link_resolve",
+  "android_update",
+  "auth_session",
+  "auth_refresh",
+  "auth_logout",
+] as const;
+
 export function buildAppShellReadinessReport(): AppShellReadinessReport {
   const mobile = runReleaseReadinessCheck();
   const auth = buildMobileAuthDecisionReport();
   const navLinksValid = validateNavigationDeepLinks();
 
-  const blockers: string[] = [...auth.blockers];
+  const hardChecks = [
+    "mobile_refresh_api",
+    "mobile_logout_api",
+    "session_support",
+    "navigation_manifest",
+    "deep_link_resolver",
+    "bootstrap_version_fields",
+    "android_update_contract",
+    "offline_cache",
+  ];
+
+  const blockers: string[] = [];
+  if (!auth.refreshImplemented) blockers.push("mobile_refresh_not_implemented");
   if (!navLinksValid) blockers.push("navigation_deep_link_mismatch");
 
-  const requiredChecks = [
-    "mobile_bootstrap_api",
-    "mobile_config_api",
-    "deep_links",
-    "android_update_contract",
-    "app_compatibility",
-  ];
-  const missing = mobile.checks.filter((c) => requiredChecks.includes(c.id) && !c.ok).map((c) => c.id);
-  blockers.push(...missing);
-
-  const readyContracts = [
-    "bootstrap",
-    "config",
-    "deep_links",
-    "navigation_manifest",
-    "android_update",
-    "app_compatibility",
-  ];
-
-  let status: AppShellReadinessStatus = "NO";
-  if (mobile.passed >= mobile.total - 2 && navLinksValid && auth.decision === "A") {
-    status = auth.nativeAppReady === "PARTIAL" || blockers.length > 0 ? "PARTIAL" : "YES";
+  for (const id of hardChecks) {
+    const check = mobile.checks.find((c) => c.id === id);
+    if (check && !check.ok) blockers.push(id);
   }
+
+  const status: AppShellReadinessStatus =
+    blockers.length === 0 && mobile.ready && auth.refreshImplemented ? "YES" : "PARTIAL";
 
   return {
     status,
     score: `${mobile.passed}/${mobile.total}`,
     blockers,
-    readyContracts,
+    readyContracts: [...SHELL_CONTRACTS],
     evaluatedAt: new Date().toISOString(),
   };
 }

@@ -1,9 +1,5 @@
-import {
-  currentMarketplaceBrainVersion,
-  getBrainVersionRegistry,
-  KNOWLEDGE_PACK_VERSION,
-} from "@/lib/ccos/knowledge/versions";
-import { listGraphVersions } from "@/lib/ccos/graph/versioning";
+import { KNOWLEDGE_PACK_VERSION } from "@/lib/ccos/knowledge/versions";
+import { resolveRollbackVersionPointers } from "@/lib/ccos/rollback";
 
 /** Evolution readiness contracts — no Evolution Engine in PRE-WAVE-6 */
 
@@ -58,23 +54,5 @@ export interface VersionPointerSet {
 }
 
 export function resolveVersionPointers(): VersionPointerSet {
-  const brainRegistry = getBrainVersionRegistry();
-  const currentBrain = currentMarketplaceBrainVersion();
-  const brainIdx = brainRegistry.findIndex((r) => r.brainVersion === currentBrain);
-  const graphVersions = listGraphVersions();
-
-  return {
-    brain: {
-      current: currentBrain,
-      previous: brainIdx > 0 ? brainRegistry[brainIdx - 1]?.brainVersion ?? null : null,
-    },
-    graph: {
-      current: graphVersions.at(-1)?.version ?? "graph-engine-v1.0",
-      previous: graphVersions.length > 1 ? graphVersions.at(-2)?.version ?? null : null,
-    },
-    knowledge: {
-      current: KNOWLEDGE_PACK_VERSION,
-      previous: "knowledge-pack-v1",
-    },
-  };
+  return resolveRollbackVersionPointers();
 }

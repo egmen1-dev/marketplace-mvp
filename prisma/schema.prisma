@@ -257,6 +257,7 @@ model User {
   wallet               UserWallet?
   walletLedgerEntries  WalletLedgerEntry[]
   notificationPrefs    UserNotificationPrefs?
+  mobileAuthSessions   MobileAuthSession[]
 
   @@index([role])
   @@index([isBlocked])
@@ -1917,4 +1918,23 @@ model FinancialIncident {
   @@index([severity, status, createdAt])
   @@index([operationType])
   @@map("financial_incidents")
+}
+
+/// Native mobile refresh sessions — isolated from web NextAuth cookie sessions.
+model MobileAuthSession {
+  id               String    @id @default(cuid())
+  userId           String
+  deviceIdHash     String?
+  refreshTokenHash String    @unique
+  rotatedFromHash  String?
+  createdAt        DateTime  @default(now())
+  lastUsedAt       DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([revokedAt])
+  @@map("mobile_auth_sessions")
 }

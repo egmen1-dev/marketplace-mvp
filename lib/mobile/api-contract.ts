@@ -2,6 +2,8 @@
 
 export const MOBILE_API_VERSION = "mobile-api-v1";
 export const MOBILE_SCHEMA_VERSION = "mobile-schema-v1";
+/** Numeric API version — frozen at v1 for App Shell contract */
+export const MOBILE_API_VERSION_NUMBER = 1;
 
 export type MobileApiEnvelope<T> = T & {
   apiVersion: typeof MOBILE_API_VERSION;
