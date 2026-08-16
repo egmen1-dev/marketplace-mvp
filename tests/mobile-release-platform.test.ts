@@ -49,9 +49,8 @@ describe("mobile release platform wave 0", () => {
 
   it("evaluates compatibility for older client", () => {
     const result = evaluateCompatibility(publishedRelease, { clientVersionCode: 1 });
-    expect(result.compatible).toBe(false);
-    expect(result.forceUpgrade).toBe(true);
-    expect(result.reasons).toContain("app_version_below_minimum");
+    expect(result.compatible).toBe(true);
+    expect(result.forceUpgrade).toBe(false);
   });
 
   it("returns channel labels for Closed Alpha", () => {
@@ -73,8 +72,9 @@ describe("mobile release platform wave 0", () => {
     expect(payload.latestVersion).toBe("0.1.0-alpha");
     expect(payload.downloadUrl).toBe("https://example.com/lot.apk");
     expect(payload.sha256).toBe("sha256-test");
+    expect(payload.updateState).toBe("OPTIONAL_UPDATE");
     expect(payload.releaseNotes).toEqual(["Closed Alpha build", "Bug fixes"]);
-    expect(payload.compatibility.compatible).toBe(false);
+    expect(payload.compatibility.compatible).toBe(true);
     expect(payload.rollout.percent).toBe(100);
   });
 

@@ -4,14 +4,18 @@ import { getDeviceId } from "../storage/secure-session";
 import { loadAppConfig } from "../config/env";
 import { getSessionId } from "../telemetry/session";
 
+export type MobileUpdateState = "NO_UPDATE" | "OPTIONAL_UPDATE" | "RECOMMENDED_UPDATE" | "REQUIRED_UPDATE";
+
 export type MobileUpdateInfo = {
   latestVersion: string;
   versionCode: number;
   versionName: string;
   updateRequired: boolean;
+  updateState: MobileUpdateState;
   mandatory: boolean;
   downloadUrl: string | null;
   sha256: string | null;
+  artifactSizeBytes?: number | null;
   releaseNotes: string[];
   channel: string;
   rollout: { percent: number; eligible: boolean };
@@ -19,6 +23,8 @@ export type MobileUpdateInfo = {
     compatible: boolean;
     forceUpgrade: boolean;
   };
+  previousRelease?: { versionName: string; versionCode: number; downloadUrl: string | null } | null;
+  knownIssues?: string[];
 };
 
 export type CatalogParams = {
@@ -57,7 +63,15 @@ export async function fetchMobileUpdate(): Promise<MobileUpdateInfo> {
     deviceId,
     channel: "CLOSED_ALPHA",
   });
-  return apiRequest<MobileUpdateInfo>(`/api/mobile/update?${qs.toString()}`);
+  const raw = await apiRequest<MobileUpdateInfo & { updateState?: MobileUpdateState }>(`/api/mobile/update?${qs.toString()}`);
+  const updateState =
+    raw.updateState ??
+    (raw.updateRequired || raw.mandatory
+      ? "REQUIRED_UPDATE"
+      : raw.downloadUrl && raw.versionCode > versionCode && raw.rollout.eligible
+        ? "OPTIONAL_UPDATE"
+        : "NO_UPDATE");
+  return { ...raw, updateState };
 }
 
 export async function fetchBootstrap(): Promise<BootstrapPayload> {

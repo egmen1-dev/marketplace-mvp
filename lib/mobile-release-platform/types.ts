@@ -20,6 +20,8 @@ export type ReleaseVersion = {
   packageId: string;
 };
 
+export type MobileUpdateState = "NO_UPDATE" | "OPTIONAL_UPDATE" | "RECOMMENDED_UPDATE" | "REQUIRED_UPDATE";
+
 export type MobileUpdatePayload = {
   latestVersion: string;
   versionCode: number;
@@ -27,9 +29,11 @@ export type MobileUpdatePayload = {
   minimumVersion: string;
   minimumSupportedVersionCode: number;
   updateRequired: boolean;
+  updateState: MobileUpdateState;
   mandatory: boolean;
   downloadUrl: string | null;
   sha256: string | null;
+  artifactSizeBytes: number | null;
   releaseNotes: string[];
   channel: MobileReleaseChannelId;
   rollout: { percent: number; eligible: boolean };
@@ -41,6 +45,8 @@ export type MobileUpdatePayload = {
     forceUpgrade: boolean;
   };
   publishedAt: string | null;
+  previousRelease: { versionName: string; versionCode: number; downloadUrl: string | null } | null;
+  knownIssues: string[];
   advisoryOnly: true;
 };
 

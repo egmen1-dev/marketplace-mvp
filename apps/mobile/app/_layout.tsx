@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NetworkBanner } from "../src/components/NetworkBanner";
+import { UpdateHost } from "../src/components/UpdateHost";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
 import { colors } from "../src/theme/tokens";
 
@@ -12,6 +13,7 @@ function RootShell() {
   return (
     <>
       <NetworkBanner />
+      <UpdateHost />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.white },

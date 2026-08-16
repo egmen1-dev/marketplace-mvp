@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import type { MobileReleaseChannelId } from "@prisma/client";
 
-import { CLOSED_ALPHA_APK_DOWNLOAD_URL, CLOSED_ALPHA_GITHUB_RELEASE_URL } from "./constants";
+import { CLOSED_ALPHA_APK_DOWNLOAD_URL, CLOSED_ALPHA_GITHUB_RELEASE_URL, CLOSED_ALPHA_RELEASE_011 } from "./constants";
 import { getLatestPublishedRelease, listReleaseVersions } from "./registry";
 import type { ReleaseVersion } from "./types";
 
@@ -45,7 +45,15 @@ export type MobileReleaseManifest = {
     appShell1Status: string;
     knownP0: number;
     knownP1: number;
+    seamlessUpdateVerdict?: string;
   };
+  knownIssues?: string[];
+  acceptanceStatus?: string;
+  previousRelease?: {
+    versionName: string;
+    versionCode: number;
+    downloadUrl: string | null;
+  } | null;
   source: "mobile-release-platform";
   generatedAt: string;
 };
@@ -65,6 +73,7 @@ export async function buildReleaseManifestFromRegistry(): Promise<MobileReleaseM
 
   const versionName = latest?.versionName ?? "0.0.0-dev";
   const versionCode = latest?.versionCode ?? 1;
+  const previous = history.find((r) => r.versionCode < versionCode) ?? null;
 
   return {
     appName: "ЛОТ",
@@ -96,15 +105,25 @@ export async function buildReleaseManifestFromRegistry(): Promise<MobileReleaseM
       releasePageUrl: CLOSED_ALPHA_GITHUB_RELEASE_URL,
     },
     launchGate: {
-      epic: "EPIC-80",
+      epic: "EPIC-82",
       mobPa001: "OPEN",
       mobPa002: "CLOSED",
       physicalVerdict: "NOT_RUN",
       closedAlphaVerdict: "WATCH",
       appShell1Status: "BLOCKED",
-      knownP0: 1,
-      knownP1: 0,
+      knownP0: 0,
+      knownP1: 2,
+      seamlessUpdateVerdict: "PENDING_PHYSICAL",
     },
+    knownIssues: [...CLOSED_ALPHA_RELEASE_011.knownIssues],
+    acceptanceStatus: CLOSED_ALPHA_RELEASE_011.acceptanceStatus,
+    previousRelease: previous
+      ? {
+          versionName: previous.versionName,
+          versionCode: previous.versionCode,
+          downloadUrl: previous.downloadUrl,
+        }
+      : null,
     source: "mobile-release-platform",
     generatedAt: new Date().toISOString(),
   };

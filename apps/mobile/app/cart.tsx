@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
 import { fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
@@ -12,7 +12,7 @@ import { colors, layout, radii, spacing, typography } from "../src/theme/tokens"
 type CartItem = {
   productId: string;
   quantity: number;
-  product?: { id?: string; title?: string; price?: number };
+  product?: { id?: string; title?: string; price?: number; primaryImage?: { url?: string } | null };
   lineTotal?: number;
 };
 
@@ -78,6 +78,13 @@ export default function CartScreen() {
         ) : (
           items.map((item) => (
             <View key={item.productId} style={styles.row}>
+              {item.product?.primaryImage?.url ? (
+                <Image source={{ uri: item.product.primaryImage.url }} style={styles.thumb} />
+              ) : (
+                <View style={styles.thumbFallback}>
+                  <Text style={styles.thumbFallbackText}>📦</Text>
+                </View>
+              )}
               <View style={{ flex: 1 }}>
                 <Text style={styles.itemTitle}>{item.product?.title ?? "Товар"}</Text>
                 <Text style={styles.itemPrice}>{formatPrice(item.product?.price ?? 0)}</Text>
@@ -112,6 +119,9 @@ const styles = StyleSheet.create({
   title: { ...typography.h1 },
   error: { color: colors.danger },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
+  thumb: { width: 56, height: 56, borderRadius: radii.md, backgroundColor: colors.gray100 },
+  thumbFallback: { width: 56, height: 56, borderRadius: radii.md, backgroundColor: colors.gray100, alignItems: "center", justifyContent: "center" },
+  thumbFallbackText: { fontSize: 22 },
   itemTitle: { ...typography.subtitle },
   itemPrice: { ...typography.body, color: colors.orange },
   qtyBtn: { minWidth: layout.inputHeight, minHeight: layout.inputHeight, alignItems: "center", justifyContent: "center", backgroundColor: colors.gray100, borderRadius: radii.sm },
