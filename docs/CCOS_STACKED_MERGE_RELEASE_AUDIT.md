@@ -50,4 +50,26 @@ Live sort / autopilot remain OFF.
 
 ## Post-merge release marker
 
-Updated after merge — see `docs/CCOS_FULL_STACK_STAGING_ACCEPTANCE.md`.
+```text
+origin/main = 618b3fe (2026-08-16)
+```
+
+Merged via fast-forward: Wave 1 → Wave 2 → Wave 3 → Wave 5 → Wave 4 → RC-1 → Pre-Wave-6 → release acceptance (mobile nav/auth).
+
+## Staging deploy status
+
+| Check | Value |
+|---|---|
+| `origin/main` | `618b3fe` |
+| Staging `/api/version` | `618b3fe` ✅ |
+| Deploy gate | **PASS** — staging SHA == main SHA |
+| Deploy time | 2026-08-16T13:57:46Z |
+
+After deploy, re-run:
+
+```bash
+tsx scripts/ccos-full-stack-staging-acceptance.ts
+tsx scripts/ccos-wave-4-staging-acceptance.ts
+```
+
+Latest result: **CCOS FULL STACK STAGING: ACCEPTED** (see `artifacts/ccos-full-stack-staging/acceptance-report.json`).

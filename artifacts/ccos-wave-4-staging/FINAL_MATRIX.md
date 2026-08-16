@@ -3,7 +3,7 @@
 Verdict: **CCOS WAVE 4 KNOWLEDGE GRAPH: ACCEPTED**
 
 | deploy_health | PASS |
-| staging_equals_main | PARTIAL |
+| staging_equals_main | PASS |
 | flags_runtime | PASS |
 | real_product | PASS |
 | cognitive_available | PASS |

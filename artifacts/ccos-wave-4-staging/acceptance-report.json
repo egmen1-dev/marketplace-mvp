@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-08-16T13:28:32.581Z",
+  "generatedAt": "2026-08-16T14:01:55.525Z",
   "epic": "EPIC-77-WAVE-4-STAGING-ACCEPTANCE-001",
   "mergeChain": [
     "PR #78 Wave 3",
     "PR #79 Wave 5",
     "PR #80 Wave 4"
   ],
-  "mainSha": "673e1c6a83f360cf549347a820da19cd8fa9a374",
-  "stagingSha": "8e61721",
+  "mainSha": "618b3fef455c2e926e9a8968a6a68007211baf89",
+  "stagingSha": "618b3fe",
   "stagingVersion": {
     "environment": "staging",
-    "commit": "8e61721",
-    "buildTime": "2026-08-16T11:25:15.720Z",
+    "commit": "618b3fe",
+    "buildTime": "2026-08-16T13:57:46.912Z",
     "version": "0.1.0"
   },
   "stagingHealth": {
     "ok": true,
     "service": "marketplace-mvp",
-    "timestamp": "2026-08-16T13:28:04.738Z",
+    "timestamp": "2026-08-16T14:01:24.749Z",
     "version": {
-      "commit": "8e61721",
-      "buildTime": "2026-08-16T11:25:15.720Z"
+      "commit": "618b3fe",
+      "buildTime": "2026-08-16T13:57:46.912Z"
     },
     "checks": {
       "database": {
@@ -151,8 +151,8 @@
   },
   "readiness": {
     "ready": true,
-    "passed": 16,
-    "total": 16,
+    "passed": 30,
+    "total": 30,
     "checks": [
       {
         "id": "ccos_enabled",
@@ -191,6 +191,18 @@
         "detail": "Autopilot must remain off before public release"
       },
       {
+        "id": "mobile_bootstrap_api",
+        "label": "Mobile bootstrap API",
+        "ok": true,
+        "detail": "GET /api/mobile/bootstrap"
+      },
+      {
+        "id": "mobile_config_api",
+        "label": "Mobile config API",
+        "ok": true,
+        "detail": "GET /api/mobile/config"
+      },
+      {
         "id": "mobile_dashboard_api",
         "label": "Mobile dashboard route registered",
         "ok": true,
@@ -216,9 +228,81 @@
       },
       {
         "id": "mobile_auth_compatibility",
-        "label": "Auth compatibility (session routes unchanged)",
+        "label": "Auth architecture foundation",
         "ok": true,
-        "detail": "Existing NextAuth/session routes remain primary auth path"
+        "detail": "JWT session strategy documented; POST /api/mobile/auth/session status stub"
+      },
+      {
+        "id": "auth_architecture",
+        "label": "Mobile auth architecture documented",
+        "ok": true,
+        "detail": "docs/MOBILE_AUTH_ARCHITECTURE.md + session/refresh/logout route foundation"
+      },
+      {
+        "id": "auth_decision",
+        "label": "Mobile auth decision documented",
+        "ok": true,
+        "detail": "docs/MOBILE_AUTH_DECISION.md — Decision A (JWT session)"
+      },
+      {
+        "id": "session_support",
+        "label": "Mobile session endpoint",
+        "ok": true,
+        "detail": "POST /api/mobile/auth/session — JWT status probe"
+      },
+      {
+        "id": "deep_link_resolver",
+        "label": "Deep link resolver API",
+        "ok": true,
+        "detail": "GET /api/mobile/deep-link/resolve"
+      },
+      {
+        "id": "navigation_manifest",
+        "label": "Navigation manifest API",
+        "ok": true,
+        "detail": "GET /api/mobile/navigation — role-aware server-driven nav"
+      },
+      {
+        "id": "deep_links",
+        "label": "Deep link contract",
+        "ok": true,
+        "detail": "lot:// patterns aligned with navigation manifest"
+      },
+      {
+        "id": "offline_cache",
+        "label": "Offline graph cache API",
+        "ok": true,
+        "detail": "GET/POST /api/ccos/graph/cache"
+      },
+      {
+        "id": "api_versioning",
+        "label": "API versioning on mobile endpoints",
+        "ok": true,
+        "detail": "mobile-api-v1 / mobile-schema-v1"
+      },
+      {
+        "id": "app_compatibility",
+        "label": "App version compatibility",
+        "ok": true,
+        "detail": "min=0.0.0-dev recommended=0.0.0-dev"
+      },
+      {
+        "id": "android_update_contract",
+        "label": "Android update metadata contract",
+        "ok": true,
+        "detail": "GET /api/mobile/android/update — foundation without APK binary"
+      },
+      {
+        "id": "bootstrap_version_fields",
+        "label": "Bootstrap app compatibility fields",
+        "ok": true,
+        "detail": "minimumSupportedAppVersion / recommendedAppVersion / forceUpgrade"
+      },
+      {
+        "id": "config_version_fields",
+        "label": "Config release channel + schema",
+        "ok": true,
+        "detail": "apiVersion / schemaVersion / releaseChannel"
       },
       {
         "id": "required_flags",
@@ -251,11 +335,11 @@
         "detail": "deep-link://marketplace-mvp env=dev/staging/prod"
       }
     ],
-    "evaluatedAt": "2026-08-16T13:28:32.581Z"
+    "evaluatedAt": "2026-08-16T14:01:55.525Z"
   },
   "gates": {
     "deploy_health": "PASS",
-    "staging_equals_main": "PARTIAL",
+    "staging_equals_main": "PASS",
     "flags_runtime": "PASS",
     "real_product": "PASS",
     "cognitive_available": "PASS",
