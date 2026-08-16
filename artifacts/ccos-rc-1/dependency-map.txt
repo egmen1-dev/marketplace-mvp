@@ -1,0 +1,12 @@
+Marketplace Brain (adapter)
+↓
+Graph
+↓
+  (graph → knowledge)
+Twin / Product
+↓
+Knowledge
+↓
+Observation
+↓
+Publishers → Content Quality / Ranking / Trust
