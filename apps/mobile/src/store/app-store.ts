@@ -7,10 +7,12 @@ type AppState = {
   bootstrapped: boolean;
   offline: boolean;
   pendingDeepLink: string | null;
+  remoteConfig: Record<string, unknown>;
   setMode: (mode: AppMode) => void;
   setBootstrapped: (value: boolean) => void;
   setOffline: (value: boolean) => void;
   setPendingDeepLink: (uri: string | null) => void;
+  setRemoteConfig: (config: Record<string, unknown>) => void;
 };
 
 export const useAppStore = create<AppState>((set) => ({
@@ -18,8 +20,10 @@ export const useAppStore = create<AppState>((set) => ({
   bootstrapped: false,
   offline: false,
   pendingDeepLink: null,
+  remoteConfig: {},
   setMode: (mode) => set({ mode }),
   setBootstrapped: (bootstrapped) => set({ bootstrapped }),
   setOffline: (offline) => set({ offline }),
   setPendingDeepLink: (pendingDeepLink) => set({ pendingDeepLink }),
+  setRemoteConfig: (remoteConfig) => set({ remoteConfig }),
 }));

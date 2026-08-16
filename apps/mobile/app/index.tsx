@@ -2,13 +2,14 @@ import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 
-import { fetchBootstrap } from "../src/api/endpoints";
+import { fetchBootstrap, fetchRemoteConfig, postTelemetry } from "../src/api/endpoints";
 import { getAccessToken, getSessionMeta } from "../src/storage/secure-session";
 import { useAppStore } from "../src/store/app-store";
 import { colors, spacing, typography } from "../src/theme/tokens";
 
 export default function BootScreen() {
   const setBootstrapped = useAppStore((s) => s.setBootstrapped);
+  const setRemoteConfig = useAppStore((s) => s.setRemoteConfig);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState<"login" | "app" | null>(null);
 
@@ -17,9 +18,12 @@ export default function BootScreen() {
     (async () => {
       try {
         await fetchBootstrap();
+        const remote = await fetchRemoteConfig().catch(() => null);
+        await postTelemetry({ screen: "boot", event: "session_start" });
         const token = await getAccessToken();
         const meta = await getSessionMeta();
         if (cancelled) return;
+        if (remote?.config) setRemoteConfig(remote.config);
         setBootstrapped(true);
         setReady(token && meta ? "app" : "login");
       } catch (err) {
@@ -29,7 +33,7 @@ export default function BootScreen() {
     return () => {
       cancelled = true;
     };
-  }, [setBootstrapped]);
+  }, [setBootstrapped, setRemoteConfig]);
 
   if (ready === "app") return <Redirect href="/(tabs)" />;
   if (ready === "login") return <Redirect href="/login" />;
