@@ -1,23 +1,64 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { bootMark } from "../src/boot/early-boot";
-import { NetworkBanner } from "../src/components/NetworkBanner";
+import { bootMark, bootStage } from "../src/boot/early-boot";
+import { isBootModuleEnabled } from "../src/boot/boot-isolation";
+import { loadPreviousCrash, type PreviousCrashRecord } from "../src/boot/previous-crash";
 import { RootErrorBoundary } from "../src/components/RootErrorBoundary";
 import { StartupFatalGate } from "../src/components/StartupFatalGate";
-import { UpdateHost } from "../src/components/UpdateHost";
+import { PreviousCrashNotice } from "../src/components/PreviousCrashNotice";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
+import { useAppStore } from "../src/store/app-store";
 import { colors } from "../src/theme/tokens";
 
+bootStage("ROOT_LAYOUT_INIT");
 bootMark("app/_layout imports resolved");
+
+const LazyNetworkBanner = lazy(() =>
+  import("../src/components/NetworkBanner").then((m) => ({ default: m.NetworkBanner })),
+);
+const LazyUpdateHost = lazy(() =>
+  import("../src/components/UpdateHost").then((m) => ({ default: m.UpdateHost })),
+);
+
+function DeferredProviders() {
+  const bootstrapped = useAppStore((s) => s.bootstrapped);
+  const showNetwork = bootstrapped && isBootModuleEnabled("network");
+  const showUpdate = bootstrapped && isBootModuleEnabled("update");
+
+  return (
+    <>
+      {showNetwork ? (
+        <Suspense fallback={null}>
+          <LazyNetworkBanner />
+        </Suspense>
+      ) : null}
+      {showUpdate ? (
+        <Suspense fallback={null}>
+          <LazyUpdateHost />
+        </Suspense>
+      ) : null}
+    </>
+  );
+}
 
 function RootShell() {
   useDeepLinkHandler();
+  const [previousCrash, setPreviousCrash] = useState<PreviousCrashRecord | null>(null);
+
+  useEffect(() => {
+    if (!isBootModuleEnabled("diagnostics")) return;
+    void loadPreviousCrash().then(setPreviousCrash);
+  }, []);
+
   return (
     <>
-      <NetworkBanner />
-      <UpdateHost />
+      {previousCrash ? (
+        <PreviousCrashNotice record={previousCrash} onDismiss={() => setPreviousCrash(null)} />
+      ) : null}
+      <DeferredProviders />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.white },
@@ -41,6 +82,7 @@ function RootShell() {
 }
 
 export default function RootLayout() {
+  bootStage("PROVIDERS_INIT");
   bootMark("RootLayout render");
   return (
     <RootErrorBoundary>

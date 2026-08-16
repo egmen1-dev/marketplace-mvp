@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Image } from "expo-image";
 import { memo } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { OrderListCardView } from "../../features/orders/types";
 import { usePressScale } from "../../hooks/usePressScale";
@@ -23,14 +23,8 @@ export const OrderCard = memo(function OrderCard({ order, onPress }: Props) {
   const tone = order.isActive ? brand.primarySoft : surface.backgroundMuted;
 
   return (
-    <Pressable
-      onPress={onPress}
-      onPressIn={onPressIn}
-      onPressOut={onPressOut}
-      style={[styles.card, { transform: [{ scale }] }]}
-      accessibilityRole="button"
-      accessibilityLabel={`Заказ ${order.orderNumber}, ${order.statusLabel}, ${formatPrice(order.total, currency)}`}
-    >
+    <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} accessibilityRole="button" accessibilityLabel={`Заказ ${order.orderNumber}, ${order.statusLabel}, ${formatPrice(order.total, currency)}`}>
+      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
       <View style={styles.row}>
         <View style={styles.imageWrap}>
           {order.previewImageUrl ? (
@@ -60,6 +54,7 @@ export const OrderCard = memo(function OrderCard({ order, onPress }: Props) {
           <MaterialCommunityIcons name="chevron-right" size={18} color={brand.primary} />
         </View>
       </View>
+      </Animated.View>
     </Pressable>
   );
 });

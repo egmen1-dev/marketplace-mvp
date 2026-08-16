@@ -1,5 +1,5 @@
 import { Redirect, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import {
@@ -12,13 +12,16 @@ import { bootPipelineHungFailure } from "../src/boot/boot-errors";
 import { bootLogger } from "../src/boot/boot-logger";
 import { getCurrentBootId, getCurrentRetryCount } from "../src/boot/boot-session";
 import { saveStartupReport } from "../src/boot/boot-storage";
+import { bootMark, bootStage } from "../src/boot/early-boot";
 import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
-import { StartupErrorScreen } from "../src/features/startup/StartupErrorScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
-import { bootMark } from "../src/boot/early-boot";
 import { useAppStore } from "../src/store/app-store";
 import { colors, spacing, typography } from "../src/theme/tokens";
+
+const LazyStartupErrorScreen = lazy(() =>
+  import("../src/features/startup/StartupErrorScreen").then((m) => ({ default: m.StartupErrorScreen })),
+);
 
 export default function BootScreen() {
   const router = useRouter();
@@ -52,6 +55,7 @@ export default function BootScreen() {
   );
 
   useEffect(() => {
+    bootStage("BOOT_PIPELINE_INIT");
     let cancelled = false;
     finishedRef.current = false;
     setFailure(null);
@@ -113,12 +117,21 @@ export default function BootScreen() {
         <Text style={styles.tagline}>Маркетплейс, которому доверяют</Text>
       </Pressable>
       {failure ? (
-        <StartupErrorScreen
-          failure={failure}
-          bootId={getCurrentBootId()}
-          retryCount={getCurrentRetryCount()}
-          onRetry={() => setAttempt((n) => n + 1)}
-        />
+        <Suspense
+          fallback={
+            <>
+              <ActivityIndicator color={colors.orange} size="large" />
+              <Text style={styles.caption}>Загрузка диагностики…</Text>
+            </>
+          }
+        >
+          <LazyStartupErrorScreen
+            failure={failure}
+            bootId={getCurrentBootId()}
+            retryCount={getCurrentRetryCount()}
+            onRetry={() => setAttempt((n) => n + 1)}
+          />
+        </Suspense>
       ) : (
         <>
           <ActivityIndicator color={colors.orange} size="large" />

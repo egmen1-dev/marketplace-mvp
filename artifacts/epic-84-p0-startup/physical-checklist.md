@@ -1,38 +1,42 @@
-# EPIC-84 P0 Startup — Physical Acceptance (Android)
+# EPIC-84 P0 — Physical Acceptance (Android)
 
-Run on a physical device with `0.1.2-alpha` or newer build containing P0 startup diagnostics.
+**Target build:** `0.1.4-alpha` (versionCode **5**) — P0 startup crash hotfix  
+**Previous failing build:** `0.1.3-alpha` (versionCode 4)
 
 ## Preconditions
 
-- Install APK from Closed Alpha channel
-- Enable USB debugging / wireless adb optional for logcat
-- Long-press splash logo → **Startup Diagnostics** screen available
+- Install **release APK** (`assembleRelease`), not Metro dev client
+- Verify build via long-press splash → **Build Info** (commit, versionCode, SHA)
+- Optional: `adb logcat | grep LOT` for boot trail
 
-## Checklist
+## P0 cold launch (blocker)
 
 | # | Scenario | Steps | Expected |
 |---|----------|-------|----------|
-| 1 | Offline bootstrap | Airplane mode ON → cold start | Error screen: stage **Bootstrap**, reason **Network unavailable** or timeout ≤ 8s |
-| 2 | Online recovery | Tap **Повторить** with network ON | App reaches Login or Home without reinstall |
-| 3 | Retry pipeline | From error screen tap **Повторить** | Splash → pipeline restarts (not full OS app kill) |
-| 4 | Bootstrap timeout | Throttle/block `/api/mobile/bootstrap` > 8s | Stage Bootstrap, reason Request timeout |
-| 5 | Update timeout | Block `/api/mobile/update` | App still launches (update stage recovered) |
-| 6 | Session expired | Inject expired JWT in SecureStore | Opens **Login**, diagnostics show session recovered |
-| 7 | Remote config fail | Block `/api/product-ops/config` | App launches with cached/default config |
-| 8 | Post-retry launch | After any recovered failure + Retry | Successful boot within normal timeouts |
+| 1 | Cold launch ×10 | Force-stop → launch ×10 | **10/10** no process crash (no instant return to home) |
+| 2 | Boot trail | logcat during launch | `NATIVE_START` → `JS_BUNDLE_START` → `ROUTER_ENTRY` → `ROOT_LAYOUT_INIT` → `BOOT_PIPELINE_INIT` |
+| 3 | Happy path | Online cold start | Splash → Login or Home |
+| 4 | Offline boot | Airplane mode → cold start | Controlled error/recovery — **no process crash** |
+| 5 | Fatal JS (if injectable) | Dev-only throw after bundle | **Startup Fatal Error** with Crash ID + stack — app stays open |
 
-## Evidence
+## Startup pipeline (recoverable errors)
 
-Capture for each scenario:
+| # | Scenario | Expected |
+|---|----------|----------|
+| 6 | Offline bootstrap | Startup Error: stage Bootstrap, network reason |
+| 7 | Retry | **Повторить** → pipeline restarts |
+| 8 | Session expired | Opens Login |
+| 9 | Diagnostics | Long-press splash → Build Info → Startup Diagnostics |
 
-1. Startup Error Screen screenshot (stage + reason visible), OR
-2. Login/Home screen after recovery, AND
-3. Startup Diagnostics screenshot (stage durations + last error)
+## Regression smoke (buyer funnel)
 
-Store under `artifacts/epic-84-p0-startup/screenshots/`.
+After cold launch PASS: Login → Home → Catalog → PDP → Cart → Orders
 
 ## Sign-off
 
-- [ ] All 8 scenarios PASS on physical Android
-- [ ] No generic «Не удалось загрузить приложение» without details observed
-- [ ] `npm run product:epic-84:p0-startup` PASS in CI
+- [ ] Cold launch **10/10 PASS** on same device that crashed on 0.1.3
+- [ ] `npm run mobile:release-smoke` PASS
+- [ ] `npm run product:epic-84:p0-startup` PASS
+- [ ] P0 **CLOSED** — operator sign-off required
+
+See `docs/product/EPIC_84_P0_FATAL_CRASH_RESOLUTION.md` for ROOT CAUSE and fix details.

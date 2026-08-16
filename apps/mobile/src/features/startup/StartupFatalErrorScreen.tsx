@@ -1,8 +1,14 @@
+import * as Clipboard from "expo-clipboard";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { getBootMarks } from "../../boot/early-boot";
+import {
+  getBootMarks,
+  getFatalCrashId,
+  getFatalStage,
+} from "../../boot/early-boot";
+import { getMobileBuildInfo } from "../../config/build-info";
 import { StartupBuildStamp } from "./StartupBuildStamp";
-import { PrimaryButton } from "../../components/ui";
+import { PrimaryButton, SecondaryButton } from "../../components/ui";
 import { colors, radii, spacing, typography } from "../../theme/tokens";
 
 type Props = {
@@ -14,15 +20,51 @@ type Props = {
 export function StartupFatalErrorScreen({ error, componentStack, onRetry }: Props) {
   const bootMarks = getBootMarks();
   const stack = error.stack ?? componentStack ?? "Stack trace unavailable";
+  const build = getMobileBuildInfo();
+  const crashId = getFatalCrashId() ?? `crash-${Date.now().toString(36)}`;
+  const stage = getFatalStage();
+
+  const diagnosticsText = [
+    `Startup Fatal Error`,
+    `Crash ID: ${crashId}`,
+    `Stage: ${stage}`,
+    `Exception: ${error.name}: ${error.message}`,
+    `Version: ${build.versionName} (${build.versionCode})`,
+    `Commit: ${build.gitSha}`,
+    `Build: ${build.buildDate}`,
+    ``,
+    `Stack trace:`,
+    stack,
+    componentStack ? `\nComponent stack:\n${componentStack}` : "",
+    bootMarks.length ? `\nBoot trail:\n${bootMarks.join("\n")}` : "",
+  ].join("\n");
+
+  const copyDiagnostics = async () => {
+    await Clipboard.setStringAsync(diagnosticsText);
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container} accessibilityRole="alert">
       <Text style={styles.title}>Startup Fatal Error</Text>
-      <Text style={styles.subtitle}>Приложение перехватило исключение при запуске и не закрылось.</Text>
+      <Text style={styles.subtitle}>
+        JS recovery layer перехватил исключение. Native crash до загрузки bundle не перехватывается.
+      </Text>
+
+      <View style={styles.block}>
+        <Text style={styles.label}>Crash ID</Text>
+        <Text style={styles.value}>{crashId}</Text>
+      </View>
+
+      <View style={styles.block}>
+        <Text style={styles.label}>Stage</Text>
+        <Text style={styles.value}>{stage}</Text>
+      </View>
 
       <View style={styles.block}>
         <Text style={styles.label}>Исключение</Text>
-        <Text style={styles.value}>{error.name}: {error.message}</Text>
+        <Text style={styles.value}>
+          {error.name}: {error.message}
+        </Text>
       </View>
 
       <View style={styles.block}>
@@ -54,6 +96,7 @@ export function StartupFatalErrorScreen({ error, componentStack, onRetry }: Prop
 
       <StartupBuildStamp />
 
+      <SecondaryButton label="Копировать диагностику" onPress={copyDiagnostics} fullWidth />
       {onRetry ? <PrimaryButton label="Попробовать снова" onPress={onRetry} fullWidth /> : null}
     </ScrollView>
   );

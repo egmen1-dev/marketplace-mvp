@@ -21,6 +21,7 @@ const REQUIRED_FILES = [
   "lib/mobile/boot/types.ts",
   "lib/mobile/boot/errors.ts",
   "apps/mobile/index.js",
+  "apps/mobile/app.config.js",
   "apps/mobile/src/boot/early-boot.ts",
   "apps/mobile/src/boot/fatal-bootstrap.tsx",
   "apps/mobile/src/boot/boot-types.ts",
@@ -71,6 +72,15 @@ function main() {
   });
   rows.push({ id: "layout_boot_marks", ok: layoutSource.includes("bootMark") });
   rows.push({ id: "index_boot_marks", ok: indexSource.includes("bootMark") });
+
+  const appConfig = readFileSync(join(root, "apps/mobile/app.config.js"), "utf8");
+  rows.push({ id: "lazy_router_import_mode", ok: appConfig.includes("EXPO_ROUTER_IMPORT_MODE") && appConfig.includes("lazy") });
+  rows.push({ id: "new_arch_disabled_release", ok: appConfig.includes("newArchEnabled: false") });
+  rows.push({ id: "native_boot_marker_plugin", ok: existsSync(join(root, "apps/mobile/plugins/withLotBootMarkers.js")) });
+  rows.push({ id: "previous_crash_module", ok: existsSync(join(root, "apps/mobile/src/boot/previous-crash.ts")) });
+  rows.push({ id: "boot_isolation_module", ok: existsSync(join(root, "apps/mobile/src/boot/boot-isolation.ts")) });
+  rows.push({ id: "deferred_root_providers", ok: layoutSource.includes("LazyNetworkBanner") && layoutSource.includes("LazyUpdateHost") });
+  rows.push({ id: "lazy_startup_error_screen", ok: indexSource.includes("LazyStartupErrorScreen") });
 
   const fatalScreen = readFileSync(
     join(root, "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx"),

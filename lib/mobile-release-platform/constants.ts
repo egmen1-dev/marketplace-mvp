@@ -63,20 +63,36 @@ export const CLOSED_ALPHA_RELEASE_013 = {
   supportStatus: "FIRST_SUPPORTED",
 } as const;
 
-/** Current active Closed Alpha release pointer — update after 0.1.3 APK build */
-export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_013;
+/** EPIC 84 P0 — Closed Alpha 0.1.4-alpha hotfix (startup crash guard + lazy routes) */
+export const CLOSED_ALPHA_RELEASE_014 = {
+  versionName: "0.1.4-alpha",
+  versionCode: 5,
+  sha256: "b50a3c44be0094461b3ce1ee17241901b122d0d3ce425708959b0b48da09940c",
+  artifactSizeBytes: 105750351,
+  artifactFileName: "lot-android-alpha-0.1.4.apk",
+  gitCommit: "pending-hotfix",
+  releaseNotes:
+    "P0 startup crash hotfix\nLazy Expo Router imports (no sync eager route graph)\nNew Architecture disabled for release stability\nDeferred NetworkBanner/UpdateHost until post-bootstrap\nStartup Fatal Error recovery layer\nBoot stage logcat markers (NATIVE_START / ROUTER_ENTRY)\nPrevious crash detection on next launch\n0.1.4-alpha versionCode 5",
+  githubTag: "closed-alpha-0.1.4",
+  knownIssues: ["Physical 10× cold-launch acceptance required before cohort expansion"],
+  acceptanceStatus: "PENDING_PHYSICAL",
+  supportStatus: "FIRST_SUPPORTED",
+} as const;
 
-export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_012;
+/** Current active Closed Alpha release pointer — update after 0.1.4 physical PASS */
+export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_014;
+
+export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_013;
 
 export const CLOSED_ALPHA_APK_DOWNLOAD_URL =
   process.env.MOBILE_APK_DOWNLOAD_URL ??
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.3/lot-android-alpha-0.1.3.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.4/lot-android-alpha-0.1.4.apk";
 
 export const CLOSED_ALPHA_APK_PREVIOUS_DOWNLOAD_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.3/lot-android-alpha-0.1.3.apk";
 
 export const CLOSED_ALPHA_GITHUB_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.3";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.4";
 
 export const CLOSED_ALPHA_GITHUB_PREVIOUS_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.3";
