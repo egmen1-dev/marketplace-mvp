@@ -7,13 +7,13 @@ export {
   guardTwinFinancialAction,
   guardTwinModerationAction,
 } from "./governance";
-export { DEFAULT_SCENARIOS, resolveScenarios, applyScenarioToRankingInput } from "./scenarios";
-export { shadowRankingScore, shadowRankingSimulate, estimateBehaviourDeltas, SHADOW_RANKING_VERSION } from "./shadow-ranking";
+export { DEFAULT_SCENARIOS, resolveScenarios } from "./scenarios";
+export { BASELINE_SCENARIO } from "./types";
 export { runMonteCarloSimulation } from "./monte-carlo";
 export { assessScenarioRisk } from "./risk";
 export { computeTwinConfidence } from "./confidence";
-export { buildTwinState, buildMarketplaceTwinStateFromInput } from "./state-builder";
-export { runTwinSimulation, runTwinSimulationWithRankingInput } from "./simulation";
+export { buildTwinStateFromSimulation, buildTwinStateFromInput } from "./state-builder";
+export { runTwinSimulation, DEFAULT_SIMULATION_PORT_ID } from "./simulation";
 export { compareDecisionScenarios, pickBestScenarioId } from "./decision-compare";
 export { buildTwinReplayFromHistory } from "./replay";
 export { saveTwinSimulationMemory, recordTwinActualOutcome, listTwinMemory, resetTwinMemory } from "./memory";

@@ -1,14 +1,13 @@
-import type { TwinReplayEvent } from "./types";
-import type { RankingProductInput } from "@/lib/marketplace-ranking-intelligence/types";
+import type { TwinReplayEvent, TwinEntityMetrics } from "./types";
 
 export function buildTwinReplayFromHistory(input: {
-  rankingInput: RankingProductInput;
+  metrics: TwinEntityMetrics;
   history?: TwinReplayEvent[];
 }): TwinReplayEvent[] {
   if (input.history?.length) return input.history;
 
-  const views = Math.max(1, input.rankingInput.views);
-  const ctr = Math.round((input.rankingInput.favoritesCount / views) * 1000) / 10;
+  const views = Math.max(1, input.metrics.views);
+  const ctr = Math.round((input.metrics.favoritesCount / views) * 1000) / 10;
 
   return [
     {

@@ -1,23 +1,17 @@
-import type { RankingProductInput } from "@/lib/marketplace-ranking-intelligence/types";
+import type { RankingSimulationResult } from "@/lib/ccos/simulation";
 import type { BuildTwinSimulationInput, TwinAppId, TwinState } from "./types";
 import { TWIN_CONTRACT_VERSION } from "./types";
-import { shadowRankingScore } from "./shadow-ranking";
-import { estimatePosition } from "@/lib/marketplace-ranking-intelligence/ranking-simulator";
-import type { RankingWeightRow } from "@/lib/marketplace-ranking-intelligence/types";
 
-export function buildTwinState(input: {
+export function buildTwinStateFromSimulation(input: {
   productId: string;
   app?: TwinAppId;
-  rankingInput: RankingProductInput;
-  peerScores: number[];
-  weights: RankingWeightRow[];
+  entityLabel: string;
+  baseline: RankingSimulationResult;
   graphCoverage?: number;
   knowledgeCoverage?: number;
   sampleSize?: number;
 }): TwinState {
-  const score = shadowRankingScore(input.rankingInput, input.weights);
-  const position = estimatePosition(score.overall, input.peerScores, input.rankingInput.id);
-  const views = Math.max(1, input.rankingInput.views);
+  const dims = input.baseline.dimensions;
 
   return {
     version: "twin-state-v1",
@@ -25,46 +19,45 @@ export function buildTwinState(input: {
     entity: {
       id: input.productId,
       type: "product",
-      label: input.rankingInput.name,
+      label: input.entityLabel,
       app: input.app ?? "marketplace",
     },
     snapshotAt: new Date().toISOString(),
     dimensions: {
-      rankingScore: score.overall,
-      position,
-      ctr: Math.round((input.rankingInput.favoritesCount / views) * 1000) / 10,
-      conversion: Math.round((input.rankingInput.ordersCount / views) * 1000) / 10,
-      revenueIndex: Math.round(score.overall * (input.rankingInput.ordersCount + 1)),
-      trust: input.rankingInput.sellerTrustScore,
-      contentQuality: input.rankingInput.contentQualityScore ?? input.rankingInput.photoQuality ?? null,
-      promotionActive: input.rankingInput.promotionActive,
-      price: input.rankingInput.price,
-      photoCount: input.rankingInput.photoCount,
-      hasVideo: input.rankingInput.hasVideo,
+      rankingScore: dims?.rankingScore ?? input.baseline.relativeScore ?? null,
+      position: dims?.position ?? input.baseline.estimatedPosition ?? null,
+      ctr: dims?.ctr ?? null,
+      conversion: dims?.conversion ?? null,
+      revenueIndex: dims?.revenueIndex ?? null,
+      trust: dims?.trust ?? null,
+      contentQuality: dims?.contentQuality ?? null,
+      promotionActive: dims?.promotionActive ?? false,
+      price: dims?.price ?? null,
+      photoCount: dims?.photoCount ?? null,
+      hasVideo: dims?.hasVideo ?? false,
     },
     graphCoverage: input.graphCoverage ?? 0,
     knowledgeCoverage: input.knowledgeCoverage ?? 0,
-    sampleSize: input.sampleSize ?? input.rankingInput.views,
+    sampleSize: input.sampleSize ?? 1,
     advisoryOnly: true,
   };
 }
 
-export function buildMarketplaceTwinStateFromInput(
+export function buildTwinStateFromInput(
   input: BuildTwinSimulationInput & {
-    rankingInput: RankingProductInput;
-    peerScores: number[];
-    weights: RankingWeightRow[];
+    baseline: RankingSimulationResult;
   },
 ): TwinState {
   const knowledgeCoverage = Math.min(1, (input.verifiedFactCount ?? 0) / 5);
-  return buildTwinState({
+  const sampleSize = input.entityMetrics?.views ?? 1;
+
+  return buildTwinStateFromSimulation({
     productId: input.productId,
-    app: input.app ?? "marketplace",
-    rankingInput: input.rankingInput,
-    peerScores: input.peerScores,
-    weights: input.weights,
+    app: input.app,
+    entityLabel: input.entityLabel ?? input.productId,
+    baseline: input.baseline,
     graphCoverage: input.graphCoverage ?? 0,
     knowledgeCoverage,
-    sampleSize: input.rankingInput.views,
+    sampleSize,
   });
 }

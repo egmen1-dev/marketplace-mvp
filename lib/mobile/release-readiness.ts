@@ -4,7 +4,14 @@ import {
   MOBILE_DEEP_LINK_SCHEME,
   MOBILE_ENV_CONFIG,
   APK_UPDATE_METADATA,
+  MOBILE_APP_VERSION,
+  MOBILE_MIN_SUPPORTED_APP_VERSION,
+  MOBILE_RECOMMENDED_APP_VERSION,
 } from "./api-contract";
+import { MOBILE_DEEP_LINK_PATTERNS } from "./deep-links";
+import { buildAndroidUpdatePayload } from "./android-update";
+import { buildMobileBootstrapPayload } from "./bootstrap";
+import { buildMobileClientConfig } from "./client-config";
 
 export type ReleaseCheckItem = {
   id: string;
@@ -101,9 +108,63 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
     },
     {
       id: "mobile_auth_compatibility",
-      label: "Auth compatibility (session routes unchanged)",
+      label: "Auth architecture foundation",
       ok: true,
-      detail: "Existing NextAuth/session routes remain primary auth path",
+      detail: "JWT session strategy documented; POST /api/mobile/auth/session status stub",
+    },
+    {
+      id: "auth_architecture",
+      label: "Mobile auth architecture documented",
+      ok: true,
+      detail: "docs/MOBILE_AUTH_ARCHITECTURE.md + session/refresh/logout route foundation",
+    },
+    {
+      id: "deep_links",
+      label: "Deep link contract",
+      ok: Boolean(MOBILE_DEEP_LINK_PATTERNS.product && MOBILE_DEEP_LINK_PATTERNS.wallet),
+      detail: "lot:// patterns + GET /api/mobile/deep-link/resolve",
+    },
+    {
+      id: "offline_cache",
+      label: "Offline graph cache API",
+      ok: true,
+      detail: "GET/POST /api/ccos/graph/cache",
+    },
+    {
+      id: "api_versioning",
+      label: "API versioning on mobile endpoints",
+      ok: Boolean(MOBILE_API_VERSION && MOBILE_SCHEMA_VERSION),
+      detail: `${MOBILE_API_VERSION} / ${MOBILE_SCHEMA_VERSION}`,
+    },
+    {
+      id: "app_compatibility",
+      label: "App version compatibility",
+      ok: Boolean(MOBILE_MIN_SUPPORTED_APP_VERSION && MOBILE_RECOMMENDED_APP_VERSION),
+      detail: `min=${MOBILE_MIN_SUPPORTED_APP_VERSION} recommended=${MOBILE_RECOMMENDED_APP_VERSION}`,
+    },
+    {
+      id: "android_update_contract",
+      label: "Android update metadata contract",
+      ok: buildAndroidUpdatePayload().downloadUrl === null,
+      detail: "GET /api/mobile/android/update — foundation without APK binary",
+    },
+    {
+      id: "bootstrap_version_fields",
+      label: "Bootstrap app compatibility fields",
+      ok: (() => {
+        const b = buildMobileBootstrapPayload();
+        return Boolean(b.minimumSupportedAppVersion && b.recommendedAppVersion && b.forceUpgrade === false);
+      })(),
+      detail: "minimumSupportedAppVersion / recommendedAppVersion / forceUpgrade",
+    },
+    {
+      id: "config_version_fields",
+      label: "Config release channel + schema",
+      ok: (() => {
+        const c = buildMobileClientConfig();
+        return Boolean(c.apiVersion && c.schemaVersion && c.releaseChannel);
+      })(),
+      detail: "apiVersion / schemaVersion / releaseChannel",
     },
     {
       id: "required_flags",

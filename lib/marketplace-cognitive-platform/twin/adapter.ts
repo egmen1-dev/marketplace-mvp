@@ -1,3 +1,8 @@
+import {
+  ensureMarketplaceRankingSimulationPortRegistered,
+  MARKETPLACE_RANKING_SIMULATION_PORT_ID,
+  type MarketplaceSimulationBinding,
+} from "../adapters/ranking-simulation.adapter";
 import { buildCausalKnowledgeGraph } from "@/lib/ccos/graph";
 import { getBrainReadableKnowledge } from "@/lib/ccos/knowledge";
 import {
@@ -17,6 +22,8 @@ export async function buildMarketplaceTwinDecisionReport(input: {
   monteCarloIterations?: number;
   history?: TwinReplayEvent[];
 }): Promise<TwinDecisionReport | null> {
+  ensureMarketplaceRankingSimulationPortRegistered();
+
   const rankingInput = await loadProductInput(input.productId);
   if (!rankingInput) return null;
 
@@ -31,13 +38,24 @@ export async function buildMarketplaceTwinDecisionReport(input: {
     verifiedFacts,
   });
 
+  const binding: MarketplaceSimulationBinding = {
+    rankingInput,
+    peerScores,
+  };
+
   const report = await runTwinSimulation({
     productId: input.productId,
     app: "marketplace",
-    rankingInput,
-    peerScores,
     scenarioIds: input.scenarioIds,
     monteCarloIterations: input.monteCarloIterations,
+    simulationPortId: MARKETPLACE_RANKING_SIMULATION_PORT_ID,
+    simulationBinding: binding,
+    entityLabel: rankingInput.name,
+    entityMetrics: {
+      views: rankingInput.views,
+      favoritesCount: rankingInput.favoritesCount,
+      ordersCount: rankingInput.ordersCount,
+    },
     graphCoverage: graph.coverage,
     graphPropagatedConfidence: graph.propagatedConfidence,
     verifiedFactCount: verifiedFacts.length,
@@ -58,5 +76,11 @@ export async function buildMarketplaceTwinDecisionReport(input: {
 export async function buildMarketplaceTwinReplay(productId: string): Promise<TwinReplayEvent[]> {
   const rankingInput = await loadProductInput(productId);
   if (!rankingInput) return [];
-  return buildTwinReplayFromHistory({ rankingInput });
+  return buildTwinReplayFromHistory({
+    metrics: {
+      views: rankingInput.views,
+      favoritesCount: rankingInput.favoritesCount,
+      ordersCount: rankingInput.ordersCount,
+    },
+  });
 }

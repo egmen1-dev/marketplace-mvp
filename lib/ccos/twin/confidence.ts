@@ -5,6 +5,7 @@ export function computeTwinConfidence(input: {
   knowledgeCoverage: number;
   graphCoverage: number;
   graphPropagatedConfidence?: number;
+  simulationPortConfidence?: number;
   monteCarloStability?: number;
   hasBehaviourData?: boolean;
 }): TwinConfidence {
@@ -23,12 +24,14 @@ export function computeTwinConfidence(input: {
     stability * 0.25 +
     behaviour;
 
-  const overall = Math.min(
-    1,
-    input.graphPropagatedConfidence != null
-      ? Math.min(rawOverall, input.graphPropagatedConfidence * 1.05)
-      : rawOverall,
-  );
+  let overall = rawOverall;
+  if (input.graphPropagatedConfidence != null) {
+    overall = Math.min(overall, input.graphPropagatedConfidence * 1.05);
+  }
+  if (input.simulationPortConfidence != null) {
+    overall = Math.min(overall, input.simulationPortConfidence * 1.05);
+  }
+  overall = Math.min(1, overall);
 
   const label = overall >= 0.75 ? "high" : overall >= 0.45 ? "medium" : "low";
   const reason =

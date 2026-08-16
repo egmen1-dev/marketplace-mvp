@@ -12,6 +12,9 @@ export type CcosModuleId =
   | "signals"
   | "api"
   | "rc"
+  | "simulation"
+  | "contracts"
+  | "evolution"
   | "core";
 
 export type DependencyEdge = {
@@ -32,12 +35,19 @@ export type AdapterBoundaryFinding = {
   importsMarketplaceDomain: boolean;
 };
 
+export type DependencyLayerAnalysis = {
+  layers: Array<{ id: string; label: string }>;
+  forbiddenViolations: string[];
+  moduleLayer: Record<string, string>;
+};
+
 export type DependencyAuditReport = {
   generatedAt: string;
   rcVersion: "rc-1";
   modules: CcosModuleId[];
   edges: DependencyEdge[];
   layerStack: string[];
+  layerAnalysis: DependencyLayerAnalysis;
   cycles: string[][];
   marketplaceViolations: MarketplaceImportViolation[];
   adapterFindings: AdapterBoundaryFinding[];
@@ -47,6 +57,7 @@ export type DependencyAuditReport = {
     cycleCount: number;
     violationCount: number;
     edgeCount: number;
+    forbiddenEdgeCount: number;
   };
 };
 

@@ -1,3 +1,6 @@
+import type { UniversalObservation } from "@/lib/ccos/observation/types";
+import type { ScenarioAction, ScenarioActionType, SimulationScenario } from "@/lib/ccos/contracts/scenario";
+
 /** CCOS Wave 5 — Cognitive Digital Twin & Decision Simulation Platform */
 
 export const TWIN_CONTRACT_VERSION = "twin-v1";
@@ -39,27 +42,18 @@ export interface TwinState {
   advisoryOnly: true;
 }
 
-export type ScenarioActionType =
-  | "replace_first_photo"
-  | "add_video"
-  | "change_price"
-  | "change_seo"
-  | "enable_promotion"
-  | "improve_description"
-  | "reorder_photos"
-  | "combined";
+export type {
+  ScenarioAction,
+  ScenarioActionType,
+  SimulationScenario as TwinScenario,
+} from "@/lib/ccos/contracts/scenario";
 
-export interface ScenarioAction {
-  type: ScenarioActionType;
-  params?: Record<string, number | boolean | string>;
-}
-
-export interface TwinScenario {
-  id: string;
-  label: string;
-  actions: ScenarioAction[];
-  type: ScenarioActionType;
-}
+export const BASELINE_SCENARIO = {
+  id: "baseline",
+  label: "Baseline",
+  type: "combined" as const,
+  actions: [],
+} satisfies import("@/lib/ccos/contracts/scenario").SimulationScenario;
 
 export interface TwinMonteCarloResult {
   iterations: number;
@@ -93,9 +87,13 @@ export interface TwinConfidence {
   label: "high" | "medium" | "low";
 }
 
+export type TwinSimulationStatus = "OK" | "DEGRADED" | "TIMEOUT" | "ERROR";
+
 export interface TwinResult {
   scenarioId: string;
   scenarioLabel: string;
+  simulationStatus: TwinSimulationStatus;
+  failedPort?: string;
   predicted: {
     position?: number | null;
     positionDelta?: number;
@@ -107,6 +105,12 @@ export interface TwinResult {
   monteCarlo: TwinMonteCarloResult;
   risk: TwinRiskAssessment;
   confidence: TwinConfidence;
+  portProvenance?: {
+    portId: string;
+    app: string;
+    module: string;
+    version: string;
+  };
   advisoryOnly: true;
 }
 
@@ -145,6 +149,12 @@ export interface TwinReplayEvent {
   valueBefore: number | null;
   valueAfter: number | null;
   cause?: string;
+}
+
+export interface TwinEntityMetrics {
+  views: number;
+  favoritesCount: number;
+  ordersCount: number;
 }
 
 export interface TwinMemoryRecord {
@@ -186,9 +196,11 @@ export type BuildTwinSimulationInput = {
   app?: TwinAppId;
   scenarioIds?: string[];
   monteCarloIterations?: number;
-  rankingInput?: import("@/lib/marketplace-ranking-intelligence/types").RankingProductInput;
-  peerScores?: number[];
-  weights?: import("@/lib/marketplace-ranking-intelligence/types").RankingWeightRow[];
+  simulationPortId?: string;
+  simulationBinding?: unknown;
+  entityLabel?: string;
+  entityMetrics?: TwinEntityMetrics;
+  observations?: UniversalObservation[];
   productUnderstanding?: import("@/lib/ccos/product").ProductUnderstanding | null;
   verifiedFactCount?: number;
   graphCoverage?: number;

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T13:35:23.475Z",
+  "generatedAt": "2026-08-16T13:47:50.953Z",
   "rcVersion": "rc-1",
   "modules": [
     "core",
@@ -13,7 +13,10 @@
     "memory",
     "signals",
     "api",
-    "rc"
+    "rc",
+    "simulation",
+    "contracts",
+    "evolution"
   ],
   "edges": [
     {
@@ -40,6 +43,16 @@
       "from": "api",
       "to": "twin",
       "via": "lib/ccos/api/twin-guards.ts"
+    },
+    {
+      "from": "evolution",
+      "to": "knowledge",
+      "via": "lib/ccos/evolution/readiness.ts"
+    },
+    {
+      "from": "evolution",
+      "to": "graph",
+      "via": "lib/ccos/evolution/readiness.ts"
     },
     {
       "from": "graph",
@@ -87,6 +100,11 @@
       "via": "lib/ccos/rc/readiness-dashboard.ts"
     },
     {
+      "from": "rc",
+      "to": "evolution",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
       "from": "signals",
       "to": "context",
       "via": "lib/ccos/signals/interpret.ts"
@@ -97,6 +115,16 @@
       "via": "lib/ccos/signals/interpret.ts"
     },
     {
+      "from": "simulation",
+      "to": "observation",
+      "via": "lib/ccos/simulation/types.ts"
+    },
+    {
+      "from": "simulation",
+      "to": "contracts",
+      "via": "lib/ccos/simulation/types.ts"
+    },
+    {
       "from": "twin",
       "to": "governance",
       "via": "lib/ccos/twin/governance.ts"
@@ -105,6 +133,21 @@
       "from": "twin",
       "to": "knowledge",
       "via": "lib/ccos/twin/learning-feedback.ts"
+    },
+    {
+      "from": "twin",
+      "to": "simulation",
+      "via": "lib/ccos/twin/state-builder.ts"
+    },
+    {
+      "from": "twin",
+      "to": "observation",
+      "via": "lib/ccos/twin/types.ts"
+    },
+    {
+      "from": "twin",
+      "to": "contracts",
+      "via": "lib/ccos/twin/types.ts"
     }
   ],
   "layerStack": [
@@ -116,63 +159,7 @@
     "Publishers / Content Quality / Ranking / Trust"
   ],
   "cycles": [],
-  "marketplaceViolations": [
-    {
-      "file": "lib/ccos/twin/replay.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/types",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/scenarios.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/types",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/shadow-ranking.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-score",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/shadow-ranking.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-simulator",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/shadow-ranking.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/types",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/simulation.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-weights",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/simulation.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-version",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/simulation.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/types",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/state-builder.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/types",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/state-builder.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-simulator",
-      "layer": "twin"
-    },
-    {
-      "file": "lib/ccos/twin/state-builder.ts",
-      "importPath": "@/lib/marketplace-ranking-intelligence/types",
-      "layer": "twin"
-    }
-  ],
+  "marketplaceViolations": [],
   "adapterFindings": [
     {
       "adapter": "marketplace-cognitive-platform/brain",
@@ -196,10 +183,53 @@
     }
   ],
   "passed": true,
-  "architectureClean": false,
+  "architectureClean": true,
   "summary": {
     "cycleCount": 0,
-    "violationCount": 11,
-    "edgeCount": 18
+    "violationCount": 0,
+    "edgeCount": 26,
+    "forbiddenEdgeCount": 0
+  },
+  "layerAnalysis": {
+    "layers": [
+      {
+        "id": "ccos_core",
+        "label": "CCOS Core"
+      },
+      {
+        "id": "marketplace_binding",
+        "label": "Marketplace Binding"
+      },
+      {
+        "id": "application_routes",
+        "label": "Application Routes"
+      },
+      {
+        "id": "execution_systems",
+        "label": "Execution Systems"
+      },
+      {
+        "id": "external_apps",
+        "label": "External Apps"
+      }
+    ],
+    "forbiddenViolations": [],
+    "moduleLayer": {
+      "observation": "ccos_core",
+      "knowledge": "ccos_core",
+      "graph": "ccos_core",
+      "twin": "ccos_core",
+      "product": "ccos_core",
+      "simulation": "ccos_core",
+      "contracts": "ccos_core",
+      "context": "ccos_core",
+      "governance": "ccos_core",
+      "memory": "ccos_core",
+      "signals": "ccos_core",
+      "api": "ccos_core",
+      "rc": "ccos_core",
+      "evolution": "ccos_core",
+      "core": "ccos_core"
+    }
   }
 }

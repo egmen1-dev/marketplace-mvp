@@ -7,7 +7,9 @@ import { MARKETPLACE_BRAIN_MATURITY } from "@/lib/ccos/governance/maturity";
 import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
 import { runReleaseReadinessCheck } from "@/lib/mobile/release-readiness";
 
+import { buildEvolutionReadinessReport } from "@/lib/ccos/evolution/readiness";
 import { runCcosDependencyAudit } from "./dependency-audit";
+import { classifyDependencyLayers } from "./dependency-layers";
 import type { CcosReadinessDashboard, ReadinessRow, ReadinessStatus } from "./types";
 
 function row(id: string, label: string, status: ReadinessStatus, detail: string): ReadinessRow {
@@ -26,6 +28,12 @@ export function buildCcosReadinessDashboard(): CcosReadinessDashboard {
       "Observation",
       ccosOn ? "ready" : "disabled",
       "Universal observation bus + publishers",
+    ),
+    row(
+      "context",
+      "Context",
+      ccosOn ? "ready" : "disabled",
+      "Query/category/seller context packs",
     ),
     row(
       "knowledge",
@@ -59,8 +67,8 @@ export function buildCcosReadinessDashboard(): CcosReadinessDashboard {
       process.env.MARKETPLACE_COGNITIVE_PLATFORM_ENABLED === "true" ? "ready" : "pending",
       "Adapter layer + cognitive product report",
     ),
-    row("daos", "DAOS", "stub", "Synthetic cross-app contract only"),
-    row("quicksale", "QuickSale", "stub", "Synthetic cross-app contract only"),
+    row("daos", "DAOS", "stub", "Contract ready — live connection not started"),
+    row("quicksale", "QuickSale", "stub", "Contract ready — live connection not started"),
     row("learning", "Learning", "pending", "Not in RC-1 scope"),
     row("evolution", "Evolution", "pending", "Wave 6 — blocked until RC pass"),
     row(
@@ -105,8 +113,11 @@ export function buildCcosReadinessDashboard(): CcosReadinessDashboard {
 }
 
 export function getCcosReadinessWithAudit() {
+  const dependencyAudit = runCcosDependencyAudit();
   return {
     dashboard: buildCcosReadinessDashboard(),
-    dependencyAudit: runCcosDependencyAudit(),
+    dependencyAudit,
+    dependencyLayers: classifyDependencyLayers(dependencyAudit),
+    evolutionReadiness: buildEvolutionReadinessReport({ dependencyAudit }),
   };
 }
