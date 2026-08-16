@@ -60,17 +60,21 @@ Deployed checks for:
 
 Payload sizes and latency recorded in acceptance artifact.
 
-## Verdicts (updated after run)
-
-See latest `artifacts/ccos-full-stack-staging/acceptance-report.json`.
+## Verdicts (2026-08-16 — deploy `618b3fe` / main `3eb91d6`)
 
 ```text
-CCOS FULL STACK STAGING:     (see artifact)
-WAVE 4 KNOWLEDGE GRAPH:      (see artifact)
-WAVE 5 DIGITAL TWIN:         (see artifact)
-EVOLUTION ENGINE READINESS:  (see artifact)
-APP SHELL READINESS:         (see artifact)
+CCOS FULL STACK STAGING:     ACCEPTED
+WAVE 4 KNOWLEDGE GRAPH:      ACCEPTED
+WAVE 5 DIGITAL TWIN:         ACCEPTED
+CCOS DEPENDENCY CLEAN:       YES
+EVOLUTION ENGINE READINESS:  NOT READY (rollbackAvailable=false)
+LIVE RANKING:                UNCHANGED
+AUTOPILOT:                   DISABLED
+APP RELEASE READINESS:       30/30
+APP SHELL READINESS:         PARTIAL
 ```
+
+Staging mobile latency baseline (ms / bytes): bootstrap 98/1069, config 94/984, navigation 97/349, readiness 100/4517.
 
 ## STOP conditions
 
