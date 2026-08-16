@@ -1,36 +1,36 @@
 {
-  "generatedAt": "2026-08-16T14:01:17.532Z",
+  "generatedAt": "2026-08-16T14:21:42.290Z",
   "stagingBase": "https://web-production-e56fb.up.railway.app",
-  "originMainSha": "618b3fe",
-  "stagingSha": "618b3fe",
+  "originMainSha": "58ea6f4",
+  "stagingSha": "58ea6f4",
   "mobileLatency": {
     "/api/mobile/bootstrap": {
-      "ms": 98,
+      "ms": 96,
       "bytes": 1069,
       "ok": true
     },
     "/api/mobile/config": {
-      "ms": 94,
+      "ms": 93,
       "bytes": 984,
       "ok": true
     },
     "/api/mobile/readiness": {
-      "ms": 100,
-      "bytes": 4517,
+      "ms": 116,
+      "bytes": 4715,
       "ok": true
     },
     "/api/mobile/navigation": {
-      "ms": 97,
+      "ms": 122,
       "bytes": 349,
       "ok": true
     },
     "/api/mobile/android/update": {
-      "ms": 99,
-      "bytes": 297,
+      "ms": 96,
+      "bytes": 390,
       "ok": true
     },
     "/api/mobile/deep-link/resolve?uri=lot%3A%2F%2Fhome": {
-      "ms": 120,
+      "ms": 94,
       "bytes": 175,
       "ok": true
     }
@@ -44,7 +44,7 @@
     {
       "id": "main_equals_staging",
       "result": "PASS",
-      "detail": "staging=618b3fe main=618b3fe"
+      "detail": "staging=58ea6f4 main=58ea6f4"
     },
     {
       "id": "health",
@@ -54,32 +54,32 @@
     {
       "id": "mobile__api_mobile_bootstrap",
       "result": "PASS",
-      "detail": "200 98ms 1069B"
+      "detail": "200 96ms 1069B"
     },
     {
       "id": "mobile__api_mobile_config",
       "result": "PASS",
-      "detail": "200 94ms 984B"
+      "detail": "200 93ms 984B"
     },
     {
       "id": "mobile__api_mobile_readiness",
       "result": "PASS",
-      "detail": "200 100ms 4517B"
+      "detail": "200 116ms 4715B"
     },
     {
       "id": "mobile__api_mobile_navigation",
       "result": "PASS",
-      "detail": "200 97ms 349B"
+      "detail": "200 122ms 349B"
     },
     {
       "id": "mobile__api_mobile_android_update",
       "result": "PASS",
-      "detail": "200 99ms 297B"
+      "detail": "200 96ms 390B"
     },
     {
       "id": "mobile__api_mobile_deep-link_resolve",
       "result": "PASS",
-      "detail": "200 120ms 175B"
+      "detail": "200 94ms 175B"
     },
     {
       "id": "mobile_auth_session",
@@ -98,18 +98,18 @@
     },
     {
       "id": "evolution_readiness_honest",
-      "result": "PARTIAL",
-      "detail": "ready=false checks={\"dependencyClean\":true,\"graphAccepted\":true,\"twinAccepted\":true,\"brainVersioned\":true,\"knowledgeVersioned\":true,\"rollbackAvailable\":false,\"shadowSimulationAvailable\":true,\"humanApprovalFoundation\":true}"
+      "result": "PASS",
+      "detail": "ready=true checks={\"dependencyClean\":true,\"graphAccepted\":true,\"twinAccepted\":true,\"brainVersioned\":true,\"knowledgeVersioned\":true,\"rollbackAvailable\":true,\"shadowSimulationAvailable\":true,\"humanApprovalFoundation\":true}"
     },
     {
       "id": "mobile_readiness_local",
       "result": "PASS",
-      "detail": "30/30"
+      "detail": "32/32"
     },
     {
       "id": "app_shell_readiness",
-      "result": "PARTIAL",
-      "detail": "PARTIAL"
+      "result": "PASS",
+      "detail": "YES"
     }
   ],
   "verdicts": {
@@ -117,10 +117,10 @@
     "wave4KnowledgeGraph": "ACCEPTED",
     "wave5DigitalTwin": "ACCEPTED",
     "ccosDependencyClean": "YES",
-    "evolutionEngineReadiness": "NOT READY",
+    "evolutionEngineReadiness": "READY",
     "liveRanking": "UNCHANGED",
     "autopilot": "DISABLED",
-    "appReleaseReadiness": "30/30",
-    "appShellReadiness": "PARTIAL"
+    "appReleaseReadiness": "32/32",
+    "appShellReadiness": "YES"
   }
 }
