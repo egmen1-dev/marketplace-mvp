@@ -33,6 +33,8 @@ export interface StartupReport {
   durationMs: number;
   startedAt: string;
   finishedAt: string;
+  bootId?: string;
+  retryCount?: number;
   destination?: "login" | "app";
   failure?: BootFailure;
   stages: BootStageReport[];

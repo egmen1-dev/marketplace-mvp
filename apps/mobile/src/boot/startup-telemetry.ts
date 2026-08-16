@@ -1,4 +1,5 @@
 import { BootStage } from "./boot-types";
+import { getCurrentBootId } from "./boot-session";
 import { postTelemetry } from "../api/endpoints";
 
 export const STARTUP_EVENTS = {
@@ -8,6 +9,7 @@ export const STARTUP_EVENTS = {
   bootStageFailed: "BOOT_STAGE_FAILED",
   bootCompleted: "BOOT_COMPLETED",
   bootAborted: "BOOT_ABORTED",
+  bootFailed: "BOOT_FAILED",
   bootRetry: "BOOT_RETRY",
   /** @deprecated legacy alias */
   appStart: "BOOT_STARTED",
@@ -27,9 +29,16 @@ export const STARTUP_EVENTS = {
   bootTimeout: "BOOT_ABORTED",
 } as const;
 
+function formatDetail(detail?: string, bootId?: string): string | undefined {
+  const id = bootId ?? getCurrentBootId();
+  if (!detail) return id;
+  return `${id}|${detail}`;
+}
+
 /** Fire-and-forget startup telemetry — never blocks boot. */
-export function emitStartupEvent(event: string, detail?: string): void {
-  void postTelemetry({ screen: "boot", event, errorCode: detail }).catch(() => null);
+export function emitStartupEvent(event: string, detail?: string, bootId?: string): void {
+  const id = bootId ?? getCurrentBootId();
+  void postTelemetry({ screen: "boot", event, errorCode: formatDetail(detail, id), bootId: id }).catch(() => null);
 }
 
 export function emitBootStageEvent(
@@ -37,6 +46,7 @@ export function emitBootStageEvent(
   stage: BootStage,
   durationMs?: number,
   detail?: string,
+  bootId?: string,
 ): void {
   const event =
     phase === "started"
@@ -45,5 +55,5 @@ export function emitBootStageEvent(
         ? STARTUP_EVENTS.bootStageSuccess
         : STARTUP_EVENTS.bootStageFailed;
   const payload = [stage, durationMs !== undefined ? `${durationMs}ms` : null, detail].filter(Boolean).join(":");
-  emitStartupEvent(event, payload);
+  emitStartupEvent(event, payload, bootId);
 }

@@ -10,6 +10,7 @@ import {
 } from "../src/boot/run-startup-pipeline";
 import { bootPipelineHungFailure } from "../src/boot/boot-errors";
 import { bootLogger } from "../src/boot/boot-logger";
+import { getCurrentBootId, getCurrentRetryCount } from "../src/boot/boot-session";
 import { saveStartupReport } from "../src/boot/boot-storage";
 import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
@@ -67,7 +68,10 @@ export default function BootScreen() {
       finishedRef.current = true;
       const durationMs = bootLogger.elapsedMs();
       const hungFailure = bootPipelineHungFailure(durationMs);
-      const report = bootLogger.complete(false);
+      const report = bootLogger.complete(false, undefined, {
+        bootId: getCurrentBootId(),
+        retryCount: getCurrentRetryCount(),
+      });
       void saveStartupReport(report);
       emitStartupEvent(STARTUP_EVENTS.bootAborted, hungFailure.code);
       setFailure(hungFailure);
@@ -108,7 +112,12 @@ export default function BootScreen() {
         <Text style={styles.tagline}>Маркетплейс, которому доверяют</Text>
       </Pressable>
       {failure ? (
-        <StartupErrorScreen failure={failure} onRetry={() => setAttempt((n) => n + 1)} />
+        <StartupErrorScreen
+          failure={failure}
+          bootId={getCurrentBootId()}
+          retryCount={getCurrentRetryCount()}
+          onRetry={() => setAttempt((n) => n + 1)}
+        />
       ) : (
         <>
           <ActivityIndicator color={colors.orange} size="large" />

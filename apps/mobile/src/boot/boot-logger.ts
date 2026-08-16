@@ -72,13 +72,15 @@ class BootLoggerImpl {
     this.stageTimer = null;
   }
 
-  complete(success: boolean, destination?: "login" | "app"): StartupReport {
+  complete(success: boolean, destination?: "login" | "app", meta?: { bootId: string; retryCount: number }): StartupReport {
     const finishedAt = Date.now();
     const report: StartupReport = {
       success,
       durationMs: finishedAt - this.bootStartedAt,
       startedAt: new Date(this.bootStartedAt).toISOString(),
       finishedAt: new Date(finishedAt).toISOString(),
+      bootId: meta?.bootId ?? "BOOT-000000",
+      retryCount: meta?.retryCount ?? 0,
       destination,
       failure: success ? undefined : this.lastFailure ?? undefined,
       stages: [...this.stages],
