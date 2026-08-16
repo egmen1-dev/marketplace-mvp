@@ -284,7 +284,37 @@ async function main() {
   const daosConnected = process.env.MARKETPLACE_CONTENT_QUALITY_DAOS_ENABLED === "true" &&
     Boolean(process.env.DAOS_QUALITY_API_URL?.trim());
 
-  const report = {
+  type AcceptanceReport = {
+    generatedAt: string;
+    stagingUrl: string;
+    provider: {
+      layer: string;
+      daosRealProvider: string;
+      runtimeProvider: string;
+      fallbackUsed: boolean;
+    };
+    productIds: typeof productIds;
+    evaluations: Record<
+      string,
+      {
+        overallScore: number;
+        topEligibility: string;
+        failedGates: string[];
+        effectivePhotoCount: number;
+        uploadedPhotoCount: number;
+        provider: string;
+        qualityModelVersion: string;
+        criticVersion: string;
+        providerVersion: string;
+      } | null
+    >;
+    scenarios: ScenarioRow[];
+    rankingLabV2: string;
+    liveRanking: string;
+    verdict: string;
+  };
+
+  const report: AcceptanceReport = {
     generatedAt: new Date().toISOString(),
     stagingUrl: STAGING_BASE,
     provider: {
@@ -313,10 +343,10 @@ async function main() {
       ]),
     ),
     scenarios: rows,
+    rankingLabV2: "ACCEPTED",
+    liveRanking: "OFF",
+    verdict: "",
   };
-
-  report.rankingLabV2 = "ACCEPTED";
-  report.liveRanking = "OFF";
   const hardFails = rows.filter((r) => r.result === "FAIL").length;
   const criticalIds = [
     "irrelevant photos",

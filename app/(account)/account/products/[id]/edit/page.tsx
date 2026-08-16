@@ -20,10 +20,15 @@ import {
 } from "@/features/products/queries";
 import { ProductForm, ProductQualityCard } from "@/features/seller";
 import { ContentQualityCard } from "@/features/marketplace-content-quality";
+import { CognitiveProductPreviewCard } from "@/features/marketplace-cognitive-platform";
 import {
   getLatestQualitySnapshot,
   isMarketplaceContentQualityEnabled,
 } from "@/lib/marketplace-content-quality";
+import {
+  getCognitiveProductReport,
+  isCognitiveProductReportAvailable,
+} from "@/lib/marketplace-cognitive-platform";
 import { ProductModerationPreview } from "@/features/marketplace-trust-loop";
 import {
   getProductModerationPreview,
@@ -68,8 +73,10 @@ export default async function EditProductPage({
   let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
   let moderationPreview: Awaited<ReturnType<typeof getProductModerationPreview>> = null;
   let contentQualitySnapshot: Awaited<ReturnType<typeof getLatestQualitySnapshot>> = null;
+  let cognitiveReport: Awaited<ReturnType<typeof getCognitiveProductReport>> = null;
   try {
-    [categories, pickupPoints, moderationPreview, contentQualitySnapshot] = await Promise.all([
+    [categories, pickupPoints, moderationPreview, contentQualitySnapshot, cognitiveReport] =
+      await Promise.all([
       listCategories(),
       listSellerPickupPoints(sellerProfileId, { activeOnly: true }),
       isMarketplaceTrustLoopEnabled()
@@ -77,6 +84,9 @@ export default async function EditProductPage({
         : Promise.resolve(null),
       isMarketplaceContentQualityEnabled()
         ? getLatestQualitySnapshot(id)
+        : Promise.resolve(null),
+      isCognitiveProductReportAvailable()
+        ? getCognitiveProductReport(id)
         : Promise.resolve(null),
     ]);
   } catch (err) {
@@ -126,6 +136,10 @@ export default async function EditProductPage({
           issues={moderationPreview.issues}
           aiAdvice={moderationPreview.aiAdvice}
         />
+      ) : null}
+
+      {cognitiveReport ? (
+        <CognitiveProductPreviewCard report={cognitiveReport} />
       ) : null}
 
       <Card>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Manrope, Unbounded } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
+
+import { geistMono, manrope, unbounded } from "@/lib/fonts/local";
 
 import { MarketplaceDebugRoot } from "@/components/marketplace-debug/marketplace-debug-root";
 import { AuthGateToast } from "@/components/layout/auth-gate-toast";
@@ -17,33 +18,6 @@ import { APP_NAME } from "@/lib/constants";
 import { getCanonicalAppUrl } from "@/lib/env";
 
 import "./globals.css";
-
-const manrope = Manrope({
-  variable: "--font-sans",
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-  weight: ["400", "500", "600"],
-  adjustFontFallback: true,
-  preload: true,
-});
-
-/** Heading face — preloaded to reduce CLS on prices / hero showcase (RELEASE-HARDENING-001). */
-const unbounded = Unbounded({
-  variable: "--font-heading",
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-  weight: ["500", "600"],
-  adjustFontFallback: true,
-  preload: true,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-  preload: false,
-  adjustFontFallback: true,
-});
 
 const appUrl = getCanonicalAppUrl();
 
