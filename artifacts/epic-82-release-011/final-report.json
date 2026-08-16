@@ -1,0 +1,81 @@
+{
+  "epic": "EPIC-82-RELEASE-0.1.1-001",
+  "generatedAt": "2026-08-16T18:02:00.000Z",
+  "merge": {
+    "pr": 93,
+    "mergeSha": "1e872b7654724205ed09ff288616315ed2315eb4",
+    "metadataCommitSha": "d9e6ccd7022dd55787918f542eb6bbc431f3fb65",
+    "currentMainSha": "d9e6ccd7022dd55787918f542eb6bbc431f3fb65"
+  },
+  "deploy": {
+    "stagingUrl": "https://web-production-e56fb.up.railway.app",
+    "stagingSha": "d9e6ccd",
+    "mainSha": "d9e6ccd",
+    "shaMatch": true
+  },
+  "apk": {
+    "built": true,
+    "versionName": "0.1.1-alpha",
+    "versionCode": 2,
+    "packageId": "ru.lot.marketplace.alpha",
+    "artifactFileName": "lot-android-alpha-0.1.1.apk",
+    "artifactSizeBytes": 93599499,
+    "sha256": "bf17bebf67d06078b552a7fadac517fb8eccf8791f3724d543bfb41dfcfa1392",
+    "buildCommit": "d9e6ccd",
+    "buildDate": "2026-08-16"
+  },
+  "githubRelease": {
+    "tag": "closed-alpha-0.1.1",
+    "url": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.1",
+    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk"
+  },
+  "mrp": {
+    "published": true,
+    "versionName": "0.1.1-alpha",
+    "versionCode": 2,
+    "channel": "CLOSED_ALPHA",
+    "status": "PUBLISHED",
+    "mandatory": false,
+    "sha256": "bf17bebf67d06078b552a7fadac517fb8eccf8791f3724d543bfb41dfcfa1392",
+    "artifactSizeBytes": 93599499,
+    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk",
+    "history": ["0.1.0-alpha", "0.1.1-alpha"],
+    "rollbackSafety": "PASS"
+  },
+  "updateApi": {
+    "versionCode1": {
+      "updateState": "OPTIONAL_UPDATE",
+      "latestVersion": "0.1.1-alpha",
+      "updateRequired": false,
+      "downloadUrlPresent": true,
+      "sha256Real": true
+    },
+    "versionCode2": {
+      "updateState": "NO_UPDATE"
+    }
+  },
+  "cloudGates": {
+    "npmBuild": "PASS",
+    "mobileTypecheck": "PASS",
+    "mobileReleaseGate": "PASS",
+    "epic82Gate": "PASS"
+  },
+  "verdicts": {
+    "apkBuilt": "YES",
+    "published": "YES",
+    "mrpMetadata": "PASS",
+    "updateOfferReady": "READY",
+    "physicalUpdate": "NOT RUN",
+    "physicalAndroid": "NOT RUN",
+    "seamlessUpdateE2E": "NOT RUN",
+    "closedAlpha": "WATCH"
+  },
+  "physicalSessionChecklist": [
+    "User remains authenticated after update",
+    "Refresh session works",
+    "Buyer/seller mode preserved",
+    "Local cache intact",
+    "Favourites/cart accessible",
+    "App does not re-prompt 0.1.1 after install"
+  ]
+}
