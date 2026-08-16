@@ -1,5 +1,4 @@
-import type { CognitiveContext } from "@/lib/ccos/context/types";
-import { createContextId } from "@/lib/ccos/context/types";
+import { buildCognitiveContext, type BuildCognitiveContextInput } from "@/lib/ccos/context/builder";
 import { collectObservations } from "@/lib/ccos/observation/registry";
 import {
   ADVISORY_ONLY,
@@ -21,15 +20,14 @@ import type { CognitiveProductReport } from "./types";
 
 export async function getCognitiveProductReport(
   productId: string,
-  context?: Partial<CognitiveContext>,
+  context?: BuildCognitiveContextInput["overrides"],
 ): Promise<CognitiveProductReport | null> {
   ensureMarketplacePublishersRegistered();
 
-  const cognitiveContext: CognitiveContext = {
-    id: context?.id ?? createContextId(productId),
-    ...context,
-    createdAt: context?.createdAt ?? new Date().toISOString(),
-  };
+  const cognitiveContext = await buildCognitiveContext({
+    productId,
+    overrides: context,
+  });
 
   const { observations, publisherHealth } = await collectObservations({
     app: "marketplace",

@@ -1,8 +1,8 @@
-import type { CognitiveProductReport } from "@/lib/marketplace-cognitive-platform/brain/types";
+import type { MarketplaceBrainReport } from "@/lib/marketplace-cognitive-platform/brain/v1/types";
 import { cn } from "@/lib/utils";
 
 type CognitiveProductPreviewCardProps = {
-  report: CognitiveProductReport;
+  report: MarketplaceBrainReport;
   className?: string;
 };
 
@@ -13,17 +13,13 @@ function scoreTone(score: number | null): string {
   return "text-destructive";
 }
 
-/** Seller-facing compact advisory block — no internal debug fields. */
+/** Seller-facing compact advisory block — Wave 1 summary, no internal debug fields. */
 export function CognitiveProductPreviewCard({
   report,
   className,
 }: CognitiveProductPreviewCardProps) {
-  const profileScore = report.genome.overall;
-  const confidencePct = Math.round(report.genome.confidence * 100);
-  const mainIssue =
-    report.nextStep ??
-    report.explanation.factorDeltas.find((d) => d.delta < 0)?.label ??
-    null;
+  const profileScore = report.genome.contextual.overall ?? report.genome.base.overall;
+  const confidencePct = Math.round(report.confidence * 100);
 
   return (
     <div
@@ -35,11 +31,15 @@ export function CognitiveProductPreviewCard({
         Экспериментальная функция. Не влияет напрямую на выдачу.
       </p>
 
+      {report.summary.contextLabel ? (
+        <p className="mt-2 text-xs text-muted-foreground">{report.summary.contextLabel}</p>
+      ) : null}
+
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div>
-          <p className="text-xs text-muted-foreground">Профиль карточки</p>
-          <p className={cn("text-2xl font-semibold tabular-nums", scoreTone(profileScore))}>
-            {profileScore != null ? `${profileScore}/100` : "—"}
+          <p className="text-xs text-muted-foreground">Сейчас</p>
+          <p className={cn("text-sm font-medium", scoreTone(profileScore))}>
+            {report.summary.now}
           </p>
         </div>
         <div>
@@ -48,24 +48,48 @@ export function CognitiveProductPreviewCard({
         </div>
       </div>
 
-      {report.strengths.length > 0 ? (
-        <div className="mt-3">
-          <p className="text-xs font-medium text-muted-foreground">Сильные стороны</p>
-          <ul className="mt-1 space-y-1 text-sm">
-            {report.strengths.slice(0, 3).map((s) => (
-              <li key={s}>✓ {s}</li>
-            ))}
-          </ul>
+      <div className="mt-3 rounded-lg border border-border/60 bg-muted/20 p-3">
+        <p className="text-xs font-medium text-muted-foreground">Почему</p>
+        <p className="mt-1 text-sm">{report.summary.why}</p>
+      </div>
+
+      {report.summary.nextStep ? (
+        <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+          <p className="text-xs font-medium text-amber-800 dark:text-amber-300">
+            Главный следующий шаг
+          </p>
+          <p className="mt-1 text-sm font-medium">{report.summary.nextStep}</p>
+          {report.nextBestAction?.why ? (
+            <p className="mt-1 text-xs text-muted-foreground">{report.nextBestAction.why}</p>
+          ) : null}
         </div>
       ) : null}
 
-      {mainIssue ? (
-        <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-          <p className="text-xs font-medium text-amber-800 dark:text-amber-300">
-            {report.nextStep ? "Следующий шаг" : "Главная проблема"}
-          </p>
-          <p className="mt-1 text-sm">⚠ {mainIssue}</p>
+      {report.summary.predictionHint ? (
+        <div className="mt-3 rounded-lg border border-border/60 p-3">
+          <p className="text-xs font-medium text-muted-foreground">Что изменится</p>
+          <p className="mt-1 text-sm text-muted-foreground">{report.summary.predictionHint}</p>
         </div>
+      ) : null}
+
+      {report.strengths.length > 0 ? (
+        <details className="mt-3 text-sm">
+          <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
+            Подробнее
+          </summary>
+          <ul className="mt-2 space-y-1">
+            {report.strengths.slice(0, 2).map((s) => (
+              <li key={s.label} className="text-emerald-700 dark:text-emerald-400">
+                + {s.label}
+              </li>
+            ))}
+            {report.weaknesses.slice(0, 2).map((w) => (
+              <li key={w.label} className="text-destructive">
+                − {w.label}
+              </li>
+            ))}
+          </ul>
+        </details>
       ) : null}
     </div>
   );

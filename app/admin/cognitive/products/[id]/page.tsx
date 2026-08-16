@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AdminCognitiveProductPanel } from "@/features/marketplace-cognitive-platform";
 import { ROUTES } from "@/lib/constants";
 import {
-  getCognitiveProductReport,
+  getMarketplaceBrainReport,
   isCognitiveProductReportAvailable,
 } from "@/lib/marketplace-cognitive-platform";
 
@@ -13,12 +13,19 @@ export const dynamic = "force-dynamic";
 
 type AdminCognitiveProductPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{
+    query?: string;
+    compareQuery?: string;
+    device?: "mobile" | "desktop" | "tablet";
+  }>;
 };
 
 export default async function AdminCognitiveProductPage({
   params,
+  searchParams,
 }: AdminCognitiveProductPageProps) {
   const { id } = await params;
+  const { query, compareQuery, device } = await searchParams;
 
   if (!isCognitiveProductReportAvailable()) {
     return (
@@ -29,7 +36,12 @@ export default async function AdminCognitiveProductPage({
     );
   }
 
-  const report = await getCognitiveProductReport(id);
+  const [report, compareReport] = await Promise.all([
+    getMarketplaceBrainReport(id, { query, device }),
+    compareQuery
+      ? getMarketplaceBrainReport(id, { query: compareQuery, device })
+      : Promise.resolve(null),
+  ]);
   if (!report) notFound();
 
   return (
@@ -45,11 +57,14 @@ export default async function AdminCognitiveProductPage({
           ← Products
         </Button>
         <h1 className="font-heading text-2xl font-semibold tracking-tight">
-          Cognitive Debug
+          Cognitive Debug (Wave 1)
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">Product {id}</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Debug: добавьте ?query=тихий+вентилятор&compareQuery=вентилятор&device=mobile
+        </p>
       </div>
-      <AdminCognitiveProductPanel report={report} />
+      <AdminCognitiveProductPanel report={report} compareReport={compareReport} />
     </div>
   );
 }

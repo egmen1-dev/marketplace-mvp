@@ -1,5 +1,4 @@
 import type { BrainMaturityLevel } from "./maturity";
-import { requireBrainCapability } from "./maturity";
 
 export const ADVISORY_ONLY = true as const;
 
@@ -14,7 +13,6 @@ export function denyAutopilotExecution(level: BrainMaturityLevel): void {
   if (level === "L4_AUTOPILOT") {
     throw new Error("Autopilot execution is disabled in Wave 0 — human confirmation required");
   }
-  requireBrainCapability(level, "execute");
 }
 
 export function assertNoFinancialExecution(action: string): never {

@@ -26,7 +26,7 @@ import {
   isMarketplaceContentQualityEnabled,
 } from "@/lib/marketplace-content-quality";
 import {
-  getCognitiveProductReport,
+  getMarketplaceBrainReport,
   isCognitiveProductReportAvailable,
 } from "@/lib/marketplace-cognitive-platform";
 import { ProductModerationPreview } from "@/features/marketplace-trust-loop";
@@ -73,7 +73,7 @@ export default async function EditProductPage({
   let pickupPoints: Awaited<ReturnType<typeof listSellerPickupPoints>> = [];
   let moderationPreview: Awaited<ReturnType<typeof getProductModerationPreview>> = null;
   let contentQualitySnapshot: Awaited<ReturnType<typeof getLatestQualitySnapshot>> = null;
-  let cognitiveReport: Awaited<ReturnType<typeof getCognitiveProductReport>> = null;
+  let cognitiveReport: Awaited<ReturnType<typeof getMarketplaceBrainReport>> = null;
   try {
     [categories, pickupPoints, moderationPreview, contentQualitySnapshot, cognitiveReport] =
       await Promise.all([
@@ -86,7 +86,7 @@ export default async function EditProductPage({
         ? getLatestQualitySnapshot(id)
         : Promise.resolve(null),
       isCognitiveProductReportAvailable()
-        ? getCognitiveProductReport(id)
+        ? getMarketplaceBrainReport(id)
         : Promise.resolve(null),
     ]);
   } catch (err) {

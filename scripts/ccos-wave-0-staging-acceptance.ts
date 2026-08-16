@@ -84,7 +84,7 @@ async function pickAcceptanceProduct(): Promise<{
         { slug: "cq-accept-good-fan" },
         { slug: { startsWith: "cq-accept" } },
       ],
-      productQualitySnapshot: { isNot: null },
+      qualitySnapshot: { isNot: null },
     },
     select: {
       id: true,
@@ -97,7 +97,7 @@ async function pickAcceptanceProduct(): Promise<{
   if (cqProduct) return cqProduct;
 
   const anyWithSnapshot = await prisma.product.findFirst({
-    where: { productQualitySnapshot: { isNot: null } },
+    where: { qualitySnapshot: { isNot: null } },
     orderBy: { updatedAt: "desc" },
     select: { id: true, slug: true, sellerId: true, views: true, name: true },
   });
@@ -190,7 +190,8 @@ async function main() {
     gates,
     "rankingPublisher",
     metrics.has(OBSERVATION_METRICS.ranking.score) ||
-      report?.publisherHealth.some((p) => p.name.includes("ranking") && p.status !== "OK"),
+      (report?.publisherHealth.some((p) => p.name.includes("ranking") && p.status !== "OK") ??
+        false),
     true,
   );
 
