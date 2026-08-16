@@ -217,7 +217,7 @@ function main() {
       detail: hasCommit
         ? `found ${expectedCommit}`
         : isPublishedArtifact
-          ? `legacy APK — commit not embedded (pre build-info); manifest=${manifest?.commitSha ?? "?"}"`
+          ? `legacy APK — commit not embedded (pre build-info); manifest=${manifest?.commitSha ?? "?"}`
           : `missing ${expectedCommit}`,
     });
     rows.push({
