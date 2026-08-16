@@ -50,8 +50,14 @@ export function buildAppShellReadinessReport(): AppShellReadinessReport {
     if (check && !check.ok) blockers.push(id);
   }
 
+  const hardChecksPass = hardChecks.every((id) => mobile.checks.find((c) => c.id === id)?.ok === true);
+
   const status: AppShellReadinessStatus =
-    blockers.length === 0 && mobile.ready && auth.refreshImplemented ? "YES" : "PARTIAL";
+    blockers.length === 0 && hardChecksPass && auth.refreshImplemented
+      ? "YES"
+      : blockers.length === 0
+        ? "PARTIAL"
+        : "NO";
 
   return {
     status,
