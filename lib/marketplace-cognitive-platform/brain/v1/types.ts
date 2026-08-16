@@ -5,6 +5,7 @@ import type { BrainMaturityLevel } from "@/lib/ccos/governance/maturity";
 import type { UniversalObservation } from "@/lib/ccos/observation/types";
 import type { PublisherHealth } from "@/lib/ccos/observation/types";
 import type { ContextualSignal } from "@/lib/ccos/signals/types";
+import type { TwinDecisionReport } from "@/lib/ccos/twin";
 
 import type { MarketplaceGenomeV1 } from "../../genome/contextual";
 
@@ -113,6 +114,14 @@ export interface MarketplaceBrainReport {
     needSolved: string;
     idealContentHint: string;
     confidenceLabel: string;
+  };
+  twinDecisionReport?: TwinDecisionReport | null;
+  twinSummary?: {
+    scenarioCount: number;
+    bestScenarioLabel: string | null;
+    bestPositionDelta: number | null;
+    bestCtrDeltaPct: number | null;
+    modelConfidence: number | null;
   };
 }
 
