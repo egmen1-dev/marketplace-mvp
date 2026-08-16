@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-import { getSessionUser } from "@/features/auth";
+import { resolveRequestUser } from "@/features/auth/resolve-request-user";
 import { listOrdersForUser } from "@/features/orders";
 
 /** GET /api/orders — current user's orders. */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const user = await getSessionUser();
+    const user = await resolveRequestUser(request);
     if (!user) {
       return NextResponse.json({ error: "Требуется вход" }, { status: 401 });
     }
