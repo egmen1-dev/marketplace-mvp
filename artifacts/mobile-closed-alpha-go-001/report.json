@@ -1,0 +1,135 @@
+{
+  "task": "MOBILE-CLOSED-ALPHA-GO-001",
+  "evaluatedAt": "2026-08-16T17:13:12.614Z",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "mainSha": "16e3d47",
+  "stagingSha": "16e3d47",
+  "pr90MergeSha": "16e3d47",
+  "matrix": [
+    {
+      "gate": "main == staging",
+      "result": "PASS",
+      "detail": "main=16e3d47 staging=16e3d47"
+    },
+    {
+      "gate": "health",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "migrations",
+      "result": "PASS",
+      "detail": "verified via prisma migrate status on Railway DB (epic78+epic79 applied)"
+    },
+    {
+      "gate": "mrp_update",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "mrp_android_update",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "mrp_manifest",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "mrp_artifact",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "pop_config",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "mobile_readiness",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "mobile_bootstrap",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "mobile_config",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "update metadata",
+      "result": "PASS",
+      "detail": "0.1.0-alpha url=true sha=91adc382"
+    },
+    {
+      "gate": "feedback loop (API)",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "telemetry (API)",
+      "result": "PASS",
+      "detail": "200"
+    },
+    {
+      "gate": "apk sha256",
+      "result": "PASS",
+      "detail": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585"
+    },
+    {
+      "gate": "release published",
+      "result": "PASS",
+      "detail": "MRP CLOSED_ALPHA 0.1.0-alpha PUBLISHED on staging DB"
+    },
+    {
+      "gate": "first tester",
+      "result": "PASS",
+      "detail": "alpha-tester@demo.lot assigned via mobile:closed-alpha:publish"
+    },
+    {
+      "gate": "physical install",
+      "result": "PASS"
+    },
+    {
+      "gate": "launch",
+      "result": "PASS"
+    },
+    {
+      "gate": "auth",
+      "result": "PASS"
+    },
+    {
+      "gate": "buyer core",
+      "result": "PASS"
+    },
+    {
+      "gate": "seller core",
+      "result": "PASS"
+    },
+    {
+      "gate": "security (logcat)",
+      "result": "PASS"
+    }
+  ],
+  "verdicts": {
+    "MOBILE_STAGING": "READY",
+    "MRP_STAGING": "ACCEPTED",
+    "POP_STAGING": "ACCEPTED",
+    "PHYSICAL_ANDROID": "PASS",
+    "AUTH": "PASS",
+    "BUYER_CORE": "PASS",
+    "SELLER_CORE": "PASS",
+    "FEEDBACK_LOOP": "PASS",
+    "SECURITY": "PASS",
+    "P0": 0,
+    "P1": 0,
+    "CLOSED_ALPHA": "GO",
+    "APP_SHELL_1": "UNBLOCKED"
+  },
+  "operatorBlockers": []
+}
