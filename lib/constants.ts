@@ -133,6 +133,8 @@ export const ROUTES = {
   ADMIN_RANKING_LAB: "/admin/ranking-lab",
   /** Admin CCOS cognitive debug (Wave 0) */
   ADMIN_COGNITIVE_PRODUCT: "/admin/cognitive/products",
+  /** Admin CCOS RC-1 readiness dashboard */
+  ADMIN_CCOS: "/admin/ccos",
   /** Seller ranking academy — lab recommendations */
   ACCOUNT_RANKING_ACADEMY: "/account/ranking-academy",
   /** Social growth / viral commerce */

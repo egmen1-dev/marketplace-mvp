@@ -64,6 +64,18 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
       detail: "Autopilot must remain off before public release",
     },
     {
+      id: "mobile_bootstrap_api",
+      label: "Mobile bootstrap API",
+      ok: true,
+      detail: "GET /api/mobile/bootstrap",
+    },
+    {
+      id: "mobile_config_api",
+      label: "Mobile config API",
+      ok: true,
+      detail: "GET /api/mobile/config",
+    },
+    {
       id: "mobile_dashboard_api",
       label: "Mobile dashboard route registered",
       ok: true,

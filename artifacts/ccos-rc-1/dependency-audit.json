@@ -1,0 +1,205 @@
+{
+  "generatedAt": "2026-08-16T13:35:23.475Z",
+  "rcVersion": "rc-1",
+  "modules": [
+    "core",
+    "observation",
+    "knowledge",
+    "graph",
+    "twin",
+    "product",
+    "context",
+    "governance",
+    "memory",
+    "signals",
+    "api",
+    "rc"
+  ],
+  "edges": [
+    {
+      "from": "api",
+      "to": "graph",
+      "via": "lib/ccos/api/graph-guards.ts"
+    },
+    {
+      "from": "api",
+      "to": "core",
+      "via": "lib/ccos/api/guards.ts"
+    },
+    {
+      "from": "api",
+      "to": "knowledge",
+      "via": "lib/ccos/api/guards.ts"
+    },
+    {
+      "from": "api",
+      "to": "product",
+      "via": "lib/ccos/api/product-guards.ts"
+    },
+    {
+      "from": "api",
+      "to": "twin",
+      "via": "lib/ccos/api/twin-guards.ts"
+    },
+    {
+      "from": "graph",
+      "to": "product",
+      "via": "lib/ccos/graph/builder.ts"
+    },
+    {
+      "from": "graph",
+      "to": "knowledge",
+      "via": "lib/ccos/graph/promotion.ts"
+    },
+    {
+      "from": "graph",
+      "to": "observation",
+      "via": "lib/ccos/graph/builder.ts"
+    },
+    {
+      "from": "rc",
+      "to": "core",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
+      "from": "rc",
+      "to": "graph",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
+      "from": "rc",
+      "to": "twin",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
+      "from": "rc",
+      "to": "knowledge",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
+      "from": "rc",
+      "to": "product",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
+      "from": "rc",
+      "to": "governance",
+      "via": "lib/ccos/rc/readiness-dashboard.ts"
+    },
+    {
+      "from": "signals",
+      "to": "context",
+      "via": "lib/ccos/signals/interpret.ts"
+    },
+    {
+      "from": "signals",
+      "to": "observation",
+      "via": "lib/ccos/signals/interpret.ts"
+    },
+    {
+      "from": "twin",
+      "to": "governance",
+      "via": "lib/ccos/twin/governance.ts"
+    },
+    {
+      "from": "twin",
+      "to": "knowledge",
+      "via": "lib/ccos/twin/learning-feedback.ts"
+    }
+  ],
+  "layerStack": [
+    "Observation",
+    "Knowledge",
+    "Graph",
+    "Twin",
+    "Marketplace Brain (adapter)",
+    "Publishers / Content Quality / Ranking / Trust"
+  ],
+  "cycles": [],
+  "marketplaceViolations": [
+    {
+      "file": "lib/ccos/twin/replay.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/types",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/scenarios.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/types",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/shadow-ranking.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-score",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/shadow-ranking.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-simulator",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/shadow-ranking.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/types",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/simulation.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-weights",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/simulation.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-version",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/simulation.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/types",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/state-builder.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/types",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/state-builder.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/ranking-simulator",
+      "layer": "twin"
+    },
+    {
+      "file": "lib/ccos/twin/state-builder.ts",
+      "importPath": "@/lib/marketplace-ranking-intelligence/types",
+      "layer": "twin"
+    }
+  ],
+  "adapterFindings": [
+    {
+      "adapter": "marketplace-cognitive-platform/brain",
+      "importsCcos": true,
+      "importsMarketplaceDomain": true
+    },
+    {
+      "adapter": "marketplace-cognitive-platform/graph",
+      "importsCcos": true,
+      "importsMarketplaceDomain": false
+    },
+    {
+      "adapter": "marketplace-cognitive-platform/twin",
+      "importsCcos": true,
+      "importsMarketplaceDomain": true
+    },
+    {
+      "adapter": "marketplace-cognitive-platform/product",
+      "importsCcos": true,
+      "importsMarketplaceDomain": true
+    }
+  ],
+  "passed": true,
+  "architectureClean": false,
+  "summary": {
+    "cycleCount": 0,
+    "violationCount": 11,
+    "edgeCount": 18
+  }
+}

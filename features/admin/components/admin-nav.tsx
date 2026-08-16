@@ -109,6 +109,12 @@ const NAV_ITEMS = [
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_RANKING_LAB),
   },
   {
+    href: ROUTES.ADMIN_CCOS,
+    label: "CCOS Readiness",
+    icon: Sparkles,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CCOS),
+  },
+  {
     href: ROUTES.ADMIN_CONTENT_QUALITY,
     label: "Content Quality",
     icon: Search,
