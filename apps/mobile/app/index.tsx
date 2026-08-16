@@ -16,6 +16,7 @@ import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry"
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
 import { StartupErrorScreen } from "../src/features/startup/StartupErrorScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
+import { bootMark } from "../src/boot/early-boot";
 import { useAppStore } from "../src/store/app-store";
 import { colors, spacing, typography } from "../src/theme/tokens";
 
@@ -136,3 +137,5 @@ const styles = StyleSheet.create({
   tagline: { ...typography.body, color: colors.gray500 },
   caption: { ...typography.caption, color: colors.gray500, marginTop: spacing.md },
 });
+
+bootMark("app/index module evaluated");

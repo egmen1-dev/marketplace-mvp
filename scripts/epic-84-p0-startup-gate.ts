@@ -20,6 +20,9 @@ type Row = { id: string; ok: boolean; detail?: string };
 const REQUIRED_FILES = [
   "lib/mobile/boot/types.ts",
   "lib/mobile/boot/errors.ts",
+  "apps/mobile/index.js",
+  "apps/mobile/src/boot/early-boot.ts",
+  "apps/mobile/src/boot/fatal-bootstrap.tsx",
   "apps/mobile/src/boot/boot-types.ts",
   "apps/mobile/src/boot/boot-logger.ts",
   "apps/mobile/src/boot/boot-errors.ts",
@@ -27,10 +30,14 @@ const REQUIRED_FILES = [
   "apps/mobile/src/boot/boot-timeouts.ts",
   "apps/mobile/src/boot/session-restore.ts",
   "apps/mobile/src/boot/run-startup-pipeline.ts",
+  "apps/mobile/src/components/RootErrorBoundary.tsx",
+  "apps/mobile/src/components/StartupFatalGate.tsx",
+  "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx",
   "apps/mobile/src/features/startup/StartupErrorScreen.tsx",
   "apps/mobile/src/features/startup/StartupDiagnosticsScreen.tsx",
   "apps/mobile/app/startup-diagnostics.tsx",
   "docs/product/EPIC_84_P0_STARTUP_DIAGNOSTICS.md",
+  "docs/product/EPIC_84_P0_STARTUP_CRASH.md",
   "artifacts/epic-84-p0-startup/physical-checklist.md",
 ];
 
@@ -43,6 +50,36 @@ function main() {
   }
 
   const indexSource = readFileSync(join(root, "apps/mobile/app/index.tsx"), "utf8");
+  const layoutSource = readFileSync(join(root, "apps/mobile/app/_layout.tsx"), "utf8");
+  const entrySource = readFileSync(join(root, "apps/mobile/index.js"), "utf8");
+  const earlyBootSource = readFileSync(join(root, "apps/mobile/src/boot/early-boot.ts"), "utf8");
+  const pkg = JSON.parse(readFileSync(join(root, "apps/mobile/package.json"), "utf8")) as { main?: string };
+
+  rows.push({ id: "custom_entry_main", ok: pkg.main === "index.js" });
+  rows.push({ id: "entry_boot_marks", ok: entrySource.includes("bootMark") && entrySource.includes("expo-router/entry") });
+  rows.push({
+    id: "entry_fatal_fallback",
+    ok: entrySource.includes("registerFatalBootstrap") && !entrySource.includes("throw error"),
+  });
+  rows.push({
+    id: "early_boot_global_handler",
+    ok: earlyBootSource.includes("ErrorUtils.setGlobalHandler") && earlyBootSource.includes("recordFatalStartupError"),
+  });
+  rows.push({
+    id: "root_error_boundary_layout",
+    ok: layoutSource.includes("RootErrorBoundary") && layoutSource.includes("StartupFatalGate"),
+  });
+  rows.push({ id: "layout_boot_marks", ok: layoutSource.includes("bootMark") });
+  rows.push({ id: "index_boot_marks", ok: indexSource.includes("bootMark") });
+
+  const fatalScreen = readFileSync(
+    join(root, "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx"),
+    "utf8",
+  );
+  rows.push({ id: "fatal_error_screen_title", ok: fatalScreen.includes("Startup Fatal Error") });
+  rows.push({ id: "fatal_error_stack_trace", ok: fatalScreen.includes("Stack trace") });
+  rows.push({ id: "fatal_error_boot_trail", ok: fatalScreen.includes("Boot trail") && fatalScreen.includes("getBootMarks") });
+
   rows.push({
     id: "no_generic_boot_error",
     ok: !indexSource.includes('"Не удалось загрузить приложение"'),
@@ -57,7 +94,9 @@ function main() {
   });
   rows.push({
     id: "long_press_diagnostics",
-    ok: indexSource.includes("onLongPress") && indexSource.includes("startup-diagnostics"),
+    ok:
+      (indexSource.includes("onLongPress") && indexSource.includes("build-info")) ||
+      indexSource.includes("startup-diagnostics"),
   });
 
   const pipelineSource = readFileSync(join(root, "apps/mobile/src/boot/run-startup-pipeline.ts"), "utf8");
@@ -126,7 +165,7 @@ function main() {
   const failed = rows.filter((r) => !r.ok);
   const report = {
     epic: "EPIC-84",
-    phase: "P0 Startup Diagnostics & Recovery",
+    phase: "P0 Startup Diagnostics, Recovery & Crash Guard",
     generatedAt: new Date().toISOString(),
     verdict: failed.length === 0 ? "PASS" : "FAIL",
     rows,

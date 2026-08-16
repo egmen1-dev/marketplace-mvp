@@ -1,5 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
+import { bootMark } from "./early-boot";
 import type { BootFailure, StartupReport } from "./boot-types";
 import type { BootHistoryEntry } from "../../../../lib/mobile/diagnostics/types";
 import { loadAppConfig } from "../config/env";
@@ -91,3 +92,5 @@ export async function loadRemoteConfigCache(): Promise<Record<string, unknown> |
 }
 
 export const DEFAULT_REMOTE_CONFIG: Record<string, unknown> = {};
+
+bootMark("boot-storage module evaluated");

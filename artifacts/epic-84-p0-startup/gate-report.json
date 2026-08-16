@@ -1,7 +1,7 @@
 {
   "epic": "EPIC-84",
-  "phase": "P0 Startup Diagnostics & Recovery",
-  "generatedAt": "2026-08-16T19:55:10.941Z",
+  "phase": "P0 Startup Diagnostics, Recovery & Crash Guard",
+  "generatedAt": "2026-08-16T20:45:34.203Z",
   "verdict": "PASS",
   "rows": [
     {
@@ -13,6 +13,21 @@
       "id": "file_errors.ts",
       "ok": true,
       "detail": "lib/mobile/boot/errors.ts"
+    },
+    {
+      "id": "file_index.js",
+      "ok": true,
+      "detail": "apps/mobile/index.js"
+    },
+    {
+      "id": "file_early-boot.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/early-boot.ts"
+    },
+    {
+      "id": "file_fatal-bootstrap.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/fatal-bootstrap.tsx"
     },
     {
       "id": "file_boot-types.ts",
@@ -50,6 +65,21 @@
       "detail": "apps/mobile/src/boot/run-startup-pipeline.ts"
     },
     {
+      "id": "file_RootErrorBoundary.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/components/RootErrorBoundary.tsx"
+    },
+    {
+      "id": "file_StartupFatalGate.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/components/StartupFatalGate.tsx"
+    },
+    {
+      "id": "file_StartupFatalErrorScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx"
+    },
+    {
       "id": "file_StartupErrorScreen.tsx",
       "ok": true,
       "detail": "apps/mobile/src/features/startup/StartupErrorScreen.tsx"
@@ -70,9 +100,54 @@
       "detail": "docs/product/EPIC_84_P0_STARTUP_DIAGNOSTICS.md"
     },
     {
+      "id": "file_EPIC_84_P0_STARTUP_CRASH.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_P0_STARTUP_CRASH.md"
+    },
+    {
       "id": "file_physical-checklist.md",
       "ok": true,
       "detail": "artifacts/epic-84-p0-startup/physical-checklist.md"
+    },
+    {
+      "id": "custom_entry_main",
+      "ok": true
+    },
+    {
+      "id": "entry_boot_marks",
+      "ok": true
+    },
+    {
+      "id": "entry_fatal_fallback",
+      "ok": true
+    },
+    {
+      "id": "early_boot_global_handler",
+      "ok": true
+    },
+    {
+      "id": "root_error_boundary_layout",
+      "ok": true
+    },
+    {
+      "id": "layout_boot_marks",
+      "ok": true
+    },
+    {
+      "id": "index_boot_marks",
+      "ok": true
+    },
+    {
+      "id": "fatal_error_screen_title",
+      "ok": true
+    },
+    {
+      "id": "fatal_error_stack_trace",
+      "ok": true
+    },
+    {
+      "id": "fatal_error_boot_trail",
+      "ok": true
     },
     {
       "id": "no_generic_boot_error",

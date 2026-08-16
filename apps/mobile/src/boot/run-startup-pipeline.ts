@@ -11,6 +11,7 @@ import {
   STARTUP_EVENTS,
 } from "./startup-telemetry";
 import { withTimeout } from "./with-timeout";
+import { bootMark } from "./early-boot";
 import type { MobileUpdateInfo } from "../api/endpoints";
 import { fetchBootstrap, fetchMobileUpdate, fetchRemoteConfig, postTelemetry } from "../api/endpoints";
 
@@ -188,3 +189,5 @@ export async function runStartupPipeline(options?: { isRetry?: boolean }): Promi
     report,
   };
 }
+
+bootMark("run-startup-pipeline module evaluated");

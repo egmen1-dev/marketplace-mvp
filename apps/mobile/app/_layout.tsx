@@ -2,11 +2,15 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { ErrorBoundary } from "../src/components/ErrorBoundary";
+import { bootMark } from "../src/boot/early-boot";
 import { NetworkBanner } from "../src/components/NetworkBanner";
+import { RootErrorBoundary } from "../src/components/RootErrorBoundary";
+import { StartupFatalGate } from "../src/components/StartupFatalGate";
 import { UpdateHost } from "../src/components/UpdateHost";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
 import { colors } from "../src/theme/tokens";
+
+bootMark("app/_layout imports resolved");
 
 function RootShell() {
   useDeepLinkHandler();
@@ -37,12 +41,17 @@ function RootShell() {
 }
 
 export default function RootLayout() {
+  bootMark("RootLayout render");
   return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" />
-      <ErrorBoundary>
-        <RootShell />
-      </ErrorBoundary>
-    </SafeAreaProvider>
+    <RootErrorBoundary>
+      <StartupFatalGate>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <RootShell />
+        </SafeAreaProvider>
+      </StartupFatalGate>
+    </RootErrorBoundary>
   );
 }
+
+bootMark("app/_layout module evaluated");
