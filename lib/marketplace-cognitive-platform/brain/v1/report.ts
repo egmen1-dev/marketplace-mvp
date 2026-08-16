@@ -17,7 +17,7 @@ import { ensureMarketplacePublishersRegistered } from "../../publishers/registry
 import { buildMarketplaceContextualSignals } from "../../signals/build-signals";
 import { buildProvenance } from "../explain";
 import { getKnowledgeRepository, isCcosKnowledgePlatformEnabled, KNOWLEDGE_PACK_VERSION } from "@/lib/ccos/knowledge";
-import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
+import { getActiveBrainVersion } from "@/lib/ccos/rollback/brain";
 
 import {
   applyKnowledgeToCandidate,
@@ -249,7 +249,7 @@ export async function getMarketplaceBrainReport(
       isCcosProductPlatformEnabled() ||
       isCcosGraphPlatformEnabled() ||
       isCcosTwinPlatformEnabled()
-        ? currentMarketplaceBrainVersion()
+        ? getActiveBrainVersion()
         : BRAIN_V1_VERSION,
     advisoryOnly: ADVISORY_ONLY,
     publisherHealth,

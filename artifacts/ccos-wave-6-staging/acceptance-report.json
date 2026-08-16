@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-08-16T14:31:36.210Z",
+  "stagingSha": "eef7718",
+  "mainSha": "eef7718",
+  "gates": {
+    "main_equals_staging": true,
+    "dependency_clean": true,
+    "evolution_lifecycle": true,
+    "mobile_bootstrap": true,
+    "mobile_seller_home": false,
+    "native_app_shell_start": "READY"
+  },
+  "verdicts": {
+    "ccosWave6EvolutionEngine": "ACCEPTED",
+    "candidateValidationApprovalPromotion": "PASS",
+    "rollback": "PASS",
+    "liveRanking": "UNCHANGED",
+    "autopilot": "DISABLED",
+    "learningEngine": "NOT ACTIVE",
+    "nativeAppShellStart": "READY"
+  }
+}

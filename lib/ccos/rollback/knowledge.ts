@@ -59,6 +59,11 @@ export function resetKnowledgeRollbackState(): void {
   activeKnowledgePackOverride = null;
 }
 
+/** Atomic bundle promotion — switches active knowledge pack pointer. */
+export function setActiveKnowledgePackVersionForPromotion(version: string): void {
+  activeKnowledgePackOverride = version;
+}
+
 export function canRollbackKnowledge(fromVersion: string, toVersion: string): boolean {
   return (
     Boolean(getVerifiedKnowledgeVersion(fromVersion)) &&

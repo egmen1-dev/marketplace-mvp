@@ -18,6 +18,9 @@ import {
   assertBrainCapability,
 } from "@/lib/ccos/governance/maturity";
 import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
+import { getActiveBrainVersion } from "@/lib/ccos/rollback/brain";
+import { buildCognitiveCapabilitiesManifest } from "./cognitive-capabilities";
+import { buildBrainCompatibilityFields } from "./brain-compatibility";
 import { KNOWLEDGE_GRAPH_CONTRACT_VERSION } from "@/lib/ccos/graph/types";
 import { TWIN_CONTRACT_VERSION } from "@/lib/ccos/twin/types";
 
@@ -45,6 +48,10 @@ export type MobileBootstrapPayload = {
     execute: boolean;
     brainVersion: string;
   };
+  cognitiveCapabilities: ReturnType<typeof buildCognitiveCapabilitiesManifest>;
+  brainSchemaVersion: string;
+  minimumSupportedBrainSchemaVersion: string;
+  supportedModes: ("buyer" | "seller")[];
   supportedSchemaVersions: string[];
   recommendedSyncIntervalSec: number;
   minimumSupportedAppVersion: string;
@@ -77,6 +84,9 @@ export function buildMobileBootstrapPayload(): MobileBootstrapPayload {
         ? MOBILE_ENV_CONFIG.prod.baseUrl
         : MOBILE_ENV_CONFIG.staging.baseUrl;
 
+  const brainCompat = buildBrainCompatibilityFields();
+  const cognitiveCapabilities = buildCognitiveCapabilitiesManifest();
+
   return {
     apiVersion: MOBILE_API_VERSION,
     schemaVersion: MOBILE_SCHEMA_VERSION,
@@ -99,8 +109,12 @@ export function buildMobileBootstrapPayload(): MobileBootstrapPayload {
       recommend: assertBrainCapability(MARKETPLACE_BRAIN_MATURITY, "recommend"),
       simulate: assertBrainCapability(MARKETPLACE_BRAIN_MATURITY, "simulate"),
       execute: assertBrainCapability(MARKETPLACE_BRAIN_MATURITY, "execute"),
-      brainVersion: currentMarketplaceBrainVersion(),
+      brainVersion: getActiveBrainVersion() || currentMarketplaceBrainVersion(),
     },
+    cognitiveCapabilities,
+    brainSchemaVersion: brainCompat.brainSchemaVersion,
+    minimumSupportedBrainSchemaVersion: brainCompat.minimumSupportedBrainSchemaVersion,
+    supportedModes: ["buyer", "seller"],
     supportedSchemaVersions: [MOBILE_SCHEMA_VERSION],
     recommendedSyncIntervalSec: 900,
     minimumSupportedAppVersion: MOBILE_MIN_SUPPORTED_APP_VERSION,

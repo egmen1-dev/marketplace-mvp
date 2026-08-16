@@ -63,6 +63,15 @@ export function resetBrainRollbackState(): void {
   activeBrainOverride = null;
 }
 
+/** Atomic bundle promotion — switches active brain pointer only (history preserved). */
+export function setActiveBrainVersionForPromotion(_previousVersion: string, nextVersion: string): void {
+  activeBrainOverride = nextVersion;
+}
+
+export function setActiveBrainVersion(version: string): void {
+  activeBrainOverride = version;
+}
+
 export function canRollbackBrain(fromVersion: string, toVersion: string): boolean {
   return Boolean(getVerifiedBrainVersion(fromVersion)) && Boolean(getVerifiedBrainVersion(toVersion));
 }
