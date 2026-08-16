@@ -3,9 +3,9 @@ export const MOBILE_BUILD_INFO = {
   "version": "0.1.4",
   "versionName": "0.1.4-alpha",
   "versionCode": 5,
-  "commit": "7abcbd9",
-  "gitSha": "7abcbd924074bc4d9393d015ff16444d6fb62184",
-  "buildTime": "2026-08-16T20:58:03.281Z",
+  "commit": "16480b9",
+  "gitSha": "16480b91c2e8748c267aaade62951d908b6ddd18",
+  "buildTime": "2026-08-16T20:58:10.456Z",
   "environment": "alpha",
   "branch": "cursor/mobile-p0-startup-crash-d03e",
   "packageName": "ru.lot.marketplace.alpha"
