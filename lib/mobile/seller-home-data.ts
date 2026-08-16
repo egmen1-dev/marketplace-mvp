@@ -17,13 +17,13 @@ export async function buildMobileSellerHomeForUser(userId: string, sellerProfile
       where: {
         sellerId: sellerProfileId,
         status: ProductStatus.ACTIVE,
-        OR: [{ stock: { lte: 0 } }, { moderationStatus: { not: "APPROVED" } }],
+        stock: { lte: 0 },
       },
     }),
     prisma.order.count({
       where: {
-        sellerProfileId,
         status: { in: [OrderStatus.PAID, OrderStatus.PROCESSING] },
+        items: { some: { product: { sellerId: sellerProfileId } } },
       },
     }),
     Promise.resolve(0),
