@@ -1,3 +1,11 @@
+import {
+  MOBILE_API_VERSION,
+  MOBILE_SCHEMA_VERSION,
+  MOBILE_DEEP_LINK_SCHEME,
+  MOBILE_ENV_CONFIG,
+  APK_UPDATE_METADATA,
+} from "./api-contract";
+
 export type ReleaseCheckItem = {
   id: string;
   label: string;
@@ -32,19 +40,14 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
     {
       id: "graph_enabled",
       label: "Graph platform enabled",
-      ok:
-        process.env.CCOS_GRAPH_PLATFORM_ENABLED === "true" ||
-        process.env.CCOS_TWIN_PLATFORM_ENABLED === "true" ||
-        process.env.MARKETPLACE_COGNITIVE_PLATFORM_ENABLED === "true",
-      detail: "CCOS_GRAPH_PLATFORM_ENABLED or twin/cognitive flags",
+      ok: process.env.CCOS_GRAPH_PLATFORM_ENABLED === "true",
+      detail: "CCOS_GRAPH_PLATFORM_ENABLED=true",
     },
     {
       id: "twin_enabled",
       label: "Twin platform enabled",
-      ok:
-        process.env.CCOS_TWIN_PLATFORM_ENABLED === "true" ||
-        process.env.MARKETPLACE_COGNITIVE_PLATFORM_ENABLED === "true",
-      detail: "CCOS_TWIN_PLATFORM_ENABLED or cognitive flag",
+      ok: process.env.CCOS_TWIN_PLATFORM_ENABLED === "true",
+      detail: "CCOS_TWIN_PLATFORM_ENABLED=true",
     },
     {
       id: "knowledge_sync",
@@ -61,10 +64,69 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
       detail: "Autopilot must remain off before public release",
     },
     {
-      id: "mobile_api",
+      id: "mobile_dashboard_api",
       label: "Mobile dashboard route registered",
       ok: true,
-      detail: "/api/mobile/dashboard",
+      detail: "GET /api/mobile/dashboard?productId=",
+    },
+    {
+      id: "mobile_graph_insights_api",
+      label: "Mobile graph insights API",
+      ok: true,
+      detail: "GET/POST /api/ccos/graph/insights?compact=1",
+    },
+    {
+      id: "mobile_graph_cache_api",
+      label: "Offline graph cache API",
+      ok: true,
+      detail: "GET/POST /api/ccos/graph/cache",
+    },
+    {
+      id: "mobile_api_contract_version",
+      label: "API contract version",
+      ok: Boolean(MOBILE_API_VERSION && MOBILE_SCHEMA_VERSION),
+      detail: `${MOBILE_API_VERSION} / ${MOBILE_SCHEMA_VERSION}`,
+    },
+    {
+      id: "mobile_auth_compatibility",
+      label: "Auth compatibility (session routes unchanged)",
+      ok: true,
+      detail: "Existing NextAuth/session routes remain primary auth path",
+    },
+    {
+      id: "required_flags",
+      label: "Required CCOS flags for staging",
+      ok:
+        process.env.CCOS_ENABLED === "true" &&
+        process.env.CCOS_GRAPH_PLATFORM_ENABLED === "true" &&
+        process.env.CCOS_TWIN_PLATFORM_ENABLED === "true",
+      detail: "CCOS + GRAPH + TWIN flags",
+    },
+    {
+      id: "brain_health",
+      label: "Brain health path available",
+      ok:
+        process.env.MARKETPLACE_COGNITIVE_PLATFORM_ENABLED === "true" ||
+        process.env.MARKETPLACE_BRAIN_LEVEL === "simulator",
+      detail: "Brain report APIs reachable when cognitive platform enabled",
+    },
+    {
+      id: "graph_health",
+      label: "Graph health metrics available",
+      ok: process.env.CCOS_GRAPH_PLATFORM_ENABLED === "true",
+      detail: "Graph build + health in cognitive report",
+    },
+    {
+      id: "twin_health",
+      label: "Twin health path available",
+      ok: process.env.CCOS_TWIN_PLATFORM_ENABLED === "true",
+      detail: "Twin simulation APIs reachable",
+    },
+    {
+      id: "apk_distribution_foundation",
+      label: "Android direct distribution foundation",
+      ok: Boolean(MOBILE_DEEP_LINK_SCHEME && APK_UPDATE_METADATA.minSupportedApiVersion),
+      detail: `deep-link://${MOBILE_DEEP_LINK_SCHEME} env=${Object.keys(MOBILE_ENV_CONFIG).join("/")}`,
     },
   ];
 

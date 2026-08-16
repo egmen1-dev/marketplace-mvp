@@ -44,7 +44,8 @@ MARKETPLACE_BRAIN_LEVEL=simulator
 4. Verify `resolveOrderBy()` unchanged (no graph imports)
 5. Confirm autopilot execution throws
 
-## Verdict
+## Roadmap rule (Wave 4+)
 
-- [ ] **RELEASE READINESS: PASS**
-- [ ] **RELEASE READINESS: FAIL**
+Each subsequent CCOS Wave must include **minimum 2 concrete App Release deliverables** — real endpoints, version contracts, offline capability, deep links, push/auth foundation. Not abstract “mobile ready”.
+
+Wave 4 deliverables: compact graph insights API, mobile dashboard bundle, graph offline cache, API contract versioning + readiness checklist.

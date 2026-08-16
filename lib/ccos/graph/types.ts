@@ -62,12 +62,23 @@ export interface GraphEdge {
   relation: GraphEdgeRelation;
   weight: number;
   causal: boolean;
+  confidence: number;
+  version: string;
+  app?: GraphAppId;
   evidenceIds?: string[];
   sources?: string[];
+  verified?: boolean;
+  conflict?: boolean;
 }
 
 /** @deprecated alias — use GraphEdge */
 export type CausalGraphEdge = GraphEdge;
+
+export type GraphEdgeDraft = Omit<
+  GraphEdge,
+  "id" | "confidence" | "version" | "sources" | "verified" | "app" | "conflict" | "evidenceIds"
+> &
+  Partial<Pick<GraphEdge, "confidence" | "version" | "sources" | "verified" | "app" | "conflict" | "evidenceIds">>;
 
 export interface GraphHealth {
   coverage: number;
@@ -76,6 +87,8 @@ export interface GraphHealth {
   averageConfidence: number;
   nodeCount: number;
   edgeCount: number;
+  orphanNodeCount: number;
+  lowConfidenceEdgeCount: number;
   label: "strong" | "moderate" | "sparse";
 }
 
@@ -105,7 +118,15 @@ export interface CausalKnowledgeGraph {
 export interface GraphWhyPath {
   question: string;
   rootCauseId: string;
-  path: Array<{ nodeId: string; label: string; kind: GraphNodeKind; weight?: number }>;
+  path: Array<{
+    nodeId: string;
+    label: string;
+    kind: GraphNodeKind;
+    weight?: number;
+    evidence?: string;
+    source?: string;
+    confidence?: number;
+  }>;
   confidence: number;
   explanation: string;
 }
@@ -126,6 +147,7 @@ export interface AggregatedGraphEvidence {
   evidenceIds: string[];
   sources: string[];
   factIds: string[];
+  conflict?: boolean;
 }
 
 export interface MobileGraphInsights {
@@ -136,8 +158,16 @@ export interface MobileGraphInsights {
   confidence: number;
   confidenceLabel: "high" | "medium" | "low";
   whyPath: GraphWhyPath;
+  sellerExplanation: string;
   advisoryOnly: true;
 }
+
+export type MobileGraphInsightsCompact = {
+  mainReason: string;
+  topFactors: Array<{ label: string; influence: number }>;
+  nextAction: string;
+  confidence: number;
+};
 
 export interface GraphCacheEntry {
   productId: string;
@@ -151,8 +181,11 @@ export type BuildKnowledgeGraphInput = {
   productId?: string;
   productUnderstanding?: import("@/lib/ccos/product").ProductUnderstanding | null;
   verifiedFacts?: import("@/lib/ccos/knowledge/types").KnowledgeFact[];
+  candidateFacts?: import("@/lib/ccos/knowledge/types").KnowledgeFact[];
   observations?: import("@/lib/ccos/observation/types").UniversalObservation[];
   packId?: GraphPackId;
   categorySlug?: string | null;
+  queryText?: string | null;
+  season?: string | null;
   weakSignals?: Array<{ metric: string; score: number | null; label: string }>;
 };

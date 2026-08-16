@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
 import { buildMobileDashboard } from "@/lib/mobile/dashboard";
+import { withMobileApiContract } from "@/lib/mobile/api-contract";
 import { isCognitiveProductReportAvailable } from "@/lib/marketplace-cognitive-platform";
 
 /**
@@ -26,5 +27,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Dashboard unavailable" }, { status: 404 });
   }
 
-  return NextResponse.json(dashboard);
+  return NextResponse.json(withMobileApiContract(dashboard, dashboard.knowledgeSyncVersion));
 }

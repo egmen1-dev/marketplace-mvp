@@ -21,10 +21,14 @@ import {
   cacheGraphInsights,
   getCachedGraphInsights,
   buildGraphCacheEntry,
+  assertEdgeProvenance,
+  detectEvidenceConflict,
+  diffGraphVersions,
+  snapshotGraphVersion,
 } from "@/lib/ccos/graph";
 import { createEvidence } from "@/lib/ccos/knowledge/evidence";
 import { buildProductUnderstanding } from "@/lib/ccos/product";
-import { buildMobileGraphInsights } from "@/lib/marketplace-cognitive-platform/graph";
+import { buildMobileGraphInsights, toCompactMobileGraphInsights } from "@/lib/marketplace-cognitive-platform/graph";
 import { runReleaseReadinessCheck } from "@/lib/mobile/release-readiness";
 import { currentMarketplaceBrainVersion } from "@/lib/ccos/knowledge/versions";
 import { marketplaceScope } from "@/lib/ccos/knowledge/scope";
@@ -194,6 +198,85 @@ describe("ccos wave 4 knowledge graph platform", () => {
     expect(isCcosGraphPlatformEnabled()).toBe(false);
     process.env.CCOS_ENABLED = prevCcos;
     process.env.CCOS_GRAPH_PLATFORM_ENABLED = prevGraph;
+  });
+
+  it("detects evidence conflict without blind averaging", () => {
+    const conflict = aggregateEvidenceForGraph({
+      evidence: [
+        createEvidence({
+          observationIds: ["o1"],
+          claim: "Photo improves CTR",
+          confidence: 0.72,
+          scope: marketplaceScope("fans"),
+        }),
+        createEvidence({
+          observationIds: ["o2"],
+          claim: "Photo снижает CTR",
+          confidence: 0.7,
+          scope: marketplaceScope("fans"),
+        }),
+      ],
+    });
+    expect(detectEvidenceConflict(conflict)).toBe(true);
+    expect(conflict[0].confidence).toBeLessThan(0.72);
+  });
+
+  it("requires edge provenance on materialized edges", () => {
+    const graph = buildKnowledgeGraph({});
+    expect(graph.edges.every((e) => assertEdgeProvenance(e))).toBe(true);
+  });
+
+  it("merges need graph into causal graph", () => {
+    const graph = buildKnowledgeGraph({
+      productUnderstanding: buildProductUnderstanding({ title: "Напольный вентилятор" }),
+    });
+    expect(graph.nodes.some((n) => n.kind === "need")).toBe(true);
+    expect(graph.edges.some((e) => e.sources?.includes("need-graph"))).toBe(true);
+  });
+
+  it("marks candidate facts as unverified edges", () => {
+    resetGraphEngine();
+    resetGraphVersions();
+    const graph = buildKnowledgeGraph({
+      candidateFacts: [
+        {
+          id: "cand1",
+          title: "Test candidate",
+          description: "",
+          confidence: 0.5,
+          scope: marketplaceScope("fans"),
+          status: "candidate",
+          createdAt: new Date().toISOString(),
+          brainVersion: "v1",
+          knowledgeVersion: "v1",
+          sources: [{ system: "analytics", module: "test", version: "v1" }],
+          evidenceIds: [],
+          author: { type: "brain" },
+          timeline: [],
+        },
+      ],
+    });
+    expect(graph.edges.some((e) => e.verified === false)).toBe(true);
+  });
+
+  it("builds compact mobile graph insights without internal dump", () => {
+    const graph = buildKnowledgeGraph({});
+    const insights = buildMobileGraphInsights({ productId: "p1", graph });
+    const compact = toCompactMobileGraphInsights(insights);
+    expect(compact.mainReason.length).toBeGreaterThan(0);
+    expect(compact.topFactors.length).toBeGreaterThan(0);
+    expect(compact).not.toHaveProperty("whyPath");
+    expect(insights.sellerExplanation.length).toBeGreaterThan(10);
+  });
+
+  it("diffs graph versions after controlled change", () => {
+    resetGraphVersions();
+    const g1 = buildKnowledgeGraph({});
+    snapshotGraphVersion({ version: "test-v1", nodes: g1.nodes, edges: g1.edges });
+    const g2 = buildKnowledgeGraph({ season: "winter" });
+    snapshotGraphVersion({ version: "test-v2", nodes: g2.nodes, edges: g2.edges });
+    const diff = diffGraphVersions("test-v1", "test-v2");
+    expect(diff).not.toBeNull();
   });
 
   it("core causal chain matches spec weights sum pattern", () => {

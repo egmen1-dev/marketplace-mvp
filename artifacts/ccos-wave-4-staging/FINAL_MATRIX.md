@@ -1,0 +1,53 @@
+# Wave 4 Staging Acceptance Matrix
+
+Verdict: **CCOS WAVE 4 KNOWLEDGE GRAPH: ACCEPTED**
+
+| deploy_health | PASS |
+| staging_equals_main | PARTIAL |
+| flags_runtime | PASS |
+| real_product | PASS |
+| cognitive_available | PASS |
+| graph_build | PASS |
+| required_nodes | PASS |
+| edge_provenance | PASS |
+| causal_vs_correlation | PASS |
+| confidence_propagation_cap | PASS |
+| why_path | PASS |
+| why_path_evidence | PASS |
+| counterfactual | PASS |
+| category_subgraph | PASS |
+| season_context | PASS |
+| query_graph | PASS |
+| need_graph_merge | PASS |
+| knowledge_promotion | PASS |
+| multi_source_evidence | PASS |
+| evidence_conflict | PASS |
+| graph_versioning | PASS |
+| graph_rollback | PASS |
+| graph_health | PASS |
+| orphan_node_test | PASS |
+| cycle_safe_traversal | PASS |
+| path_depth_limit | PASS |
+| daos_contract | PASS |
+| quicksale_contract | PASS |
+| twin_full_graph | PASS |
+| twin_same_scenario | PASS |
+| twin_confidence_source | PASS |
+| brain_integration | PASS |
+| seller_ux | PASS |
+| admin_debug_fields | PASS |
+| no_false_causal_claims | PASS |
+| performance | PASS |
+| cache_key | PASS |
+| concurrency | PASS |
+| live_search_isolation | PASS |
+| finance_isolation | PASS |
+| moderation_isolation | PASS |
+| mobile_graph_insights_api | PASS |
+| offline_graph_cache | PASS |
+| mobile_dashboard_api | PASS |
+| api_versioning | PASS |
+| mobile_readiness | PASS |
+| universal_graph_contract | PASS |
+| cross_app_provenance | PASS |
+| autopilot_disabled | PASS |

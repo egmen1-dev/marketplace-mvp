@@ -67,6 +67,7 @@ export async function runTwinSimulation(input: BuildTwinSimulationInput): Promis
         sampleSize: baseline.sampleSize,
         knowledgeCoverage: baseline.knowledgeCoverage,
         graphCoverage: baseline.graphCoverage,
+        graphPropagatedConfidence: input.graphPropagatedConfidence,
         hasBehaviourData: input.rankingInput.views > 20,
       }),
       advisoryOnly: true,
@@ -81,6 +82,7 @@ export async function runTwinSimulation(input: BuildTwinSimulationInput): Promis
       sampleSize: baseline.sampleSize,
       knowledgeCoverage: baseline.knowledgeCoverage,
       graphCoverage: baseline.graphCoverage,
+      graphPropagatedConfidence: input.graphPropagatedConfidence,
       monteCarloStability: baseResult.monteCarlo.probabilities.ctrGrowth ?? 0.5,
       hasBehaviourData: input.rankingInput.views > 20,
     });

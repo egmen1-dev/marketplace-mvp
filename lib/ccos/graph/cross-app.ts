@@ -12,11 +12,14 @@ export function crossAppGraphExtensions(app: GraphAppId): {
         { id: "daos_contrast", label: "Contrast", kind: "contrast", confidence: 0.68, app: "daos" },
         { id: "daos_composition", label: "Composition", kind: "composition", confidence: 0.72, app: "daos" },
       ],
-      edges: materializeEdges([
-        { from: "daos_lighting", to: "node_photo", relation: "causes", weight: 0.5, causal: true },
-        { from: "daos_contrast", to: "node_ctr", relation: "influences", weight: 0.38, causal: true },
-        { from: "daos_composition", to: "node_photo", relation: "causes", weight: 0.45, causal: true },
-      ]),
+      edges: materializeEdges(
+        [
+          { from: "daos_lighting", to: "node_photo", relation: "causes", weight: 0.5, causal: true },
+          { from: "daos_contrast", to: "node_ctr", relation: "influences", weight: 0.38, causal: true },
+          { from: "daos_composition", to: "node_photo", relation: "causes", weight: 0.45, causal: true },
+        ],
+        { app: "daos" },
+      ),
     };
   }
 
@@ -45,10 +48,13 @@ export function crossAppGraphExtensions(app: GraphAppId): {
           app: "quicksale",
         },
       ],
-      edges: materializeEdges([
-        { from: "qs_buyer_intent", to: "node_conversion", relation: "influences", weight: 0.42, causal: true },
-        { from: "qs_decision_maker", to: "node_price", relation: "influences", weight: 0.35, causal: false },
-      ]),
+      edges: materializeEdges(
+        [
+          { from: "qs_buyer_intent", to: "node_conversion", relation: "influences", weight: 0.42, causal: true },
+          { from: "qs_decision_maker", to: "node_price", relation: "influences", weight: 0.35, causal: false },
+        ],
+        { app: "quicksale" },
+      ),
     };
   }
 

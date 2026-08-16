@@ -9,7 +9,8 @@ import {
   getGraphEngine,
   resetGraphEngine,
 } from "@/lib/ccos/graph";
-import type { MobileGraphInsights, CausalKnowledgeGraph } from "@/lib/ccos/graph";
+import { formatSellerGraphExplanation } from "@/lib/ccos/graph/seller-copy";
+import type { MobileGraphInsights, MobileGraphInsightsCompact, CausalKnowledgeGraph } from "@/lib/ccos/graph";
 import { isCcosProductPlatformEnabled } from "@/lib/ccos/product";
 import { buildMarketplaceProductUnderstanding } from "../product/adapter";
 import { OBSERVATION_METRICS } from "@/lib/ccos/observation/metrics";
@@ -111,7 +112,21 @@ export function buildMobileGraphInsights(input: {
     confidence,
     confidenceLabel: confidenceLabel(confidence),
     whyPath: why,
+    sellerExplanation: formatSellerGraphExplanation({
+      primaryCause: why.path[0]?.label ?? topFactors[0]?.label ?? "фактор",
+      confidence,
+      kind: topFactors[0]?.kind,
+    }),
     advisoryOnly: true,
+  };
+}
+
+export function toCompactMobileGraphInsights(insights: MobileGraphInsights): MobileGraphInsightsCompact {
+  return {
+    mainReason: insights.sellerExplanation || insights.primaryCause,
+    topFactors: insights.topFactors.map((f) => ({ label: f.label, influence: f.influence })),
+    nextAction: insights.recommendedAction,
+    confidence: insights.confidence,
   };
 }
 

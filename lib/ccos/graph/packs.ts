@@ -1,9 +1,9 @@
-import type { GraphEdge, GraphNode, GraphPackId } from "./types";
+import type { GraphEdge, GraphNode, GraphPackId, GraphEdgeDraft } from "./types";
 import { materializeEdges } from "./edges";
 
 const PACK_SUBGRAPHS: Record<
   GraphPackId,
-  { nodes: GraphNode[]; edges: Array<Omit<GraphEdge, "id">> }
+  { nodes: GraphNode[]; edges: GraphEdgeDraft[] }
 > = {
   fans: {
     nodes: [

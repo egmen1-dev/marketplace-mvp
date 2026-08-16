@@ -39,6 +39,14 @@ export function computeGraphHealth(
     nodeCount === 0 ? 0 : nodes.reduce((s, n) => s + n.confidence, 0) / nodeCount;
   const connectedComponents = countConnectedComponents(nodes, edges);
 
+  const connectedIds = new Set<string>();
+  for (const e of edges) {
+    connectedIds.add(e.from);
+    connectedIds.add(e.to);
+  }
+  const orphanNodeCount = nodes.filter((n) => !connectedIds.has(n.id)).length;
+  const lowConfidenceEdgeCount = edges.filter((e) => e.confidence < 0.45).length;
+
   const label =
     coverage >= 0.65 && density >= 0.08 ? "strong" : coverage >= 0.35 ? "moderate" : "sparse";
 
@@ -49,6 +57,17 @@ export function computeGraphHealth(
     averageConfidence: Math.round(averageConfidence * 100) / 100,
     nodeCount,
     edgeCount,
+    orphanNodeCount,
+    lowConfidenceEdgeCount,
     label,
   };
+}
+
+export function detectOrphanNodes(nodes: GraphNode[], edges: GraphEdge[]): GraphNode[] {
+  const connectedIds = new Set<string>();
+  for (const e of edges) {
+    connectedIds.add(e.from);
+    connectedIds.add(e.to);
+  }
+  return nodes.filter((n) => !connectedIds.has(n.id));
 }

@@ -1,8 +1,13 @@
 import type { KnowledgeFact } from "@/lib/ccos/knowledge/types";
 import type { GraphEdge, GraphNode } from "./types";
+import { GRAPH_ENGINE_VERSION } from "./types";
 import { getGraphEngine } from "./engine";
 
-export function promoteFactToGraph(fact: KnowledgeFact): { node: GraphNode; edge?: GraphEdge } {
+export function promoteFactToGraph(
+  fact: KnowledgeFact,
+  options?: { verified?: boolean },
+): { node: GraphNode; edge?: GraphEdge } {
+  const verified = options?.verified ?? fact.status === "verified";
   const engine = getGraphEngine();
   const node: GraphNode = {
     id: `fact_${fact.id}`,
@@ -15,6 +20,15 @@ export function promoteFactToGraph(fact: KnowledgeFact): { node: GraphNode; edge
   };
   engine.addNode(node);
 
+  const baseEdge = {
+    confidence: fact.confidence,
+    version: GRAPH_ENGINE_VERSION,
+    app: "marketplace" as const,
+    verified,
+    sources: fact.sources.map((s) => `${s.system}/${s.module}`),
+    evidenceIds: fact.evidenceIds,
+  };
+
   let edge: GraphEdge | undefined;
   if (fact.title.toLowerCase().includes("фото") || fact.title.toLowerCase().includes("photo")) {
     edge = {
@@ -23,8 +37,8 @@ export function promoteFactToGraph(fact: KnowledgeFact): { node: GraphNode; edge
       to: "node_photo",
       relation: "influences",
       weight: fact.confidence * 0.6,
-      causal: true,
-      evidenceIds: fact.evidenceIds,
+      causal: verified,
+      ...baseEdge,
     };
     engine.addEdge(edge);
   } else if (fact.title.toLowerCase().includes("ctr")) {
@@ -32,10 +46,10 @@ export function promoteFactToGraph(fact: KnowledgeFact): { node: GraphNode; edge
       id: `promo_${fact.id}_ctr`,
       from: node.id,
       to: "node_ctr",
-      relation: "causes",
+      relation: verified ? "causes" : "correlates",
       weight: fact.confidence * 0.5,
-      causal: true,
-      evidenceIds: fact.evidenceIds,
+      causal: verified,
+      ...baseEdge,
     };
     engine.addEdge(edge);
   } else {
@@ -46,7 +60,7 @@ export function promoteFactToGraph(fact: KnowledgeFact): { node: GraphNode; edge
       relation: "correlates",
       weight: fact.confidence * 0.4,
       causal: false,
-      evidenceIds: fact.evidenceIds,
+      ...baseEdge,
     };
     engine.addEdge(edge);
   }

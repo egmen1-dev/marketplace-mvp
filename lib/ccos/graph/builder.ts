@@ -63,26 +63,104 @@ export function buildKnowledgeGraph(input: BuildKnowledgeGraphInput): CausalKnow
   }
 
   if (input.productUnderstanding) {
+    const productNodeId = `product_${input.productId ?? "unknown"}`;
     engine.addNode({
-      id: `product_${input.productId ?? "unknown"}`,
+      id: productNodeId,
       label: input.productUnderstanding.identity.productType ?? "Product",
       kind: "product",
       confidence: input.productUnderstanding.identity.confidence,
       packId,
     });
+
+    const needIdMap = new Map<string, string>();
     for (const need of input.productUnderstanding.needGraph.nodes) {
+      const needNodeId = `need_${need.id}`;
+      needIdMap.set(need.id, needNodeId);
       engine.addNode({
-        id: `need_${need.id}`,
+        id: needNodeId,
         label: need.label,
-        kind: need.type === "need" ? "need" : "factor",
+        kind: need.type === "need" ? "need" : need.type === "product" ? "product" : "factor",
         confidence: input.productUnderstanding.identity.confidence,
         packId,
       });
     }
+
+    for (const needEdge of input.productUnderstanding.needGraph.edges) {
+      const from = needIdMap.get(needEdge.from);
+      const to = needIdMap.get(needEdge.to);
+      if (!from || !to) continue;
+      engine.addEdge({
+        id: `need_edge_${needEdge.from}_${needEdge.to}`,
+        from,
+        to,
+        relation: needEdge.relation === "causes" ? "causes" : needEdge.relation === "satisfies" ? "satisfies" : "influences",
+        weight: 0.45,
+        causal: needEdge.relation === "causes" || needEdge.relation === "satisfies",
+        confidence: input.productUnderstanding.identity.confidence * 0.85,
+        version: GRAPH_ENGINE_VERSION,
+        app: "marketplace",
+        verified: true,
+        sources: ["need-graph", "marketplace"],
+      });
+      if (needEdge.relation === "satisfies") {
+        engine.addEdge({
+          id: `need_product_${needEdge.to}_${productNodeId}`,
+          from: to,
+          to: productNodeId,
+          relation: "satisfies",
+          weight: 0.5,
+          causal: true,
+          confidence: input.productUnderstanding.identity.confidence * 0.8,
+          version: GRAPH_ENGINE_VERSION,
+          app: "marketplace",
+          verified: true,
+          sources: ["need-graph", "marketplace"],
+        });
+      }
+    }
+  }
+
+  if (input.queryText) {
+    engine.addNode({
+      id: "query_context",
+      label: input.queryText,
+      kind: "query",
+      confidence: 0.68,
+      packId,
+    });
+    if (input.queryText.toLowerCase().includes("тих")) {
+      engine.addEdge({
+        id: "query_noise_context",
+        from: "query_context",
+        to: "pack_fans_noise",
+        relation: "influences",
+        weight: 0.42,
+        causal: true,
+        confidence: 0.62,
+        version: GRAPH_ENGINE_VERSION,
+        app: "marketplace",
+        verified: true,
+        sources: ["search", "marketplace"],
+      });
+    }
+  }
+
+  if (input.season) {
+    engine.addNode({
+      id: `season_${input.season}`,
+      label: input.season,
+      kind: "season",
+      confidence: 0.6,
+      packId,
+    });
   }
 
   for (const fact of input.verifiedFacts ?? []) {
-    promoteFactToGraph(fact);
+    promoteFactToGraph(fact, { verified: true });
+  }
+
+  for (const fact of input.candidateFacts ?? []) {
+    promoteFactToGraph(fact, { verified: false });
   }
 
   for (const obs of input.observations ?? []) {

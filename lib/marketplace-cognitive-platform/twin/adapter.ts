@@ -39,6 +39,7 @@ export async function buildMarketplaceTwinDecisionReport(input: {
     scenarioIds: input.scenarioIds,
     monteCarloIterations: input.monteCarloIterations,
     graphCoverage: graph.coverage,
+    graphPropagatedConfidence: graph.propagatedConfidence,
     verifiedFactCount: verifiedFacts.length,
     productUnderstanding,
     history: input.history,
