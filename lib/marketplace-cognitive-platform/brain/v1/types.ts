@@ -1,9 +1,10 @@
 import type { BuildCognitiveContextInput } from "@/lib/ccos/context/builder";
 import type { CognitiveContext } from "@/lib/ccos/context/types";
-import type { ContextualSignal } from "@/lib/ccos/signals/types";
+import type { ProductUnderstanding } from "@/lib/ccos/product";
 import type { BrainMaturityLevel } from "@/lib/ccos/governance/maturity";
 import type { UniversalObservation } from "@/lib/ccos/observation/types";
 import type { PublisherHealth } from "@/lib/ccos/observation/types";
+import type { ContextualSignal } from "@/lib/ccos/signals/types";
 
 import type { MarketplaceGenomeV1 } from "../../genome/contextual";
 
@@ -106,6 +107,13 @@ export interface MarketplaceBrainReport {
   recommendationEvidence: BrainEvidenceSummary[];
   reasoningPackVersion: string;
   knowledgePackVersion: string;
+  productUnderstanding?: ProductUnderstanding | null;
+  productSummary?: {
+    whatIsSold: string;
+    needSolved: string;
+    idealContentHint: string;
+    confidenceLabel: string;
+  };
 }
 
 export type MarketplaceBrainContextInput = {

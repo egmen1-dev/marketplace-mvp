@@ -27,6 +27,12 @@ import {
   summarizeEvidence,
 } from "../knowledge-reasoning";
 import { recommendationHasValidEvidence } from "@/lib/ccos/knowledge";
+import { isCcosProductPlatformEnabled } from "@/lib/ccos/product";
+import {
+  buildMarketplaceProductUnderstanding,
+  collectProductUnderstandingActions,
+  productUnderstandingSummary,
+} from "../../product";
 
 import { blockerFromObservations, orchestrateDecision } from "./decision";
 import {
@@ -88,6 +94,11 @@ export async function getMarketplaceBrainReport(
     overrides: contextInput?.contextOverrides,
   });
 
+  const productUnderstanding =
+    isCcosProductPlatformEnabled()
+      ? await buildMarketplaceProductUnderstanding(productId)
+      : null;
+
   const { observations, publisherHealth } = await collectObservations({
     app: "marketplace",
     entity: { type: "product", id: productId },
@@ -123,6 +134,11 @@ export async function getMarketplaceBrainReport(
     seedDefaultMarketplaceKnowledge(getKnowledgeRepository());
     const verifiedFacts = getKnowledgeRepository().listVerifiedFacts("marketplace");
     actionCandidates = actionCandidates.map((c) => applyKnowledgeToCandidate(c, verifiedFacts));
+  }
+
+  if (productUnderstanding) {
+    const productActions = collectProductUnderstandingActions(productUnderstanding, productId);
+    actionCandidates = [...productActions, ...actionCandidates];
   }
 
   const { primary: nextBestActionRaw, primaryCandidate, candidates: rankedCandidates } =
@@ -206,6 +222,10 @@ export async function getMarketplaceBrainReport(
     recommendationEvidence: nextBestAction?.evidence ?? [],
     reasoningPackVersion: knowledgeReasoning?.reasoningPackVersion ?? "reasoning-pack-v1",
     knowledgePackVersion: KNOWLEDGE_PACK_VERSION,
+    productUnderstanding,
+    productSummary: productUnderstanding
+      ? productUnderstandingSummary(productUnderstanding)
+      : undefined,
   };
 
   trackCcosEvent("ccos_brain_report_generated");
