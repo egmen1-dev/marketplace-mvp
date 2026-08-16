@@ -121,9 +121,9 @@ async function main() {
   console.log(
     JSON.stringify(
       {
-        apiVersion: (stripe as unknown as { _api?: { version?: string } }).getApiField?.(
-          "version",
-        ) ?? "2026-07-29.dahlia (from lib/stripe.ts)",
+        apiVersion:
+          (stripe as unknown as { _api?: { version?: string } })._api?.version ??
+          "2026-07-29.dahlia (from lib/stripe.ts)",
         stripePackageVersion: "stripe@^22.4.0",
       },
       null,
@@ -137,12 +137,16 @@ async function main() {
     amountRub: 500,
   });
 
+  const payloadLog = payload as typeof payload & {
+    automatic_payment_methods?: unknown;
+  };
+
   console.log("\n=== CHECKOUT SESSION CREATE PAYLOAD (FULL) ===");
   console.log(
     JSON.stringify(
       {
-        payment_method_types: payload.payment_method_types ?? null,
-        automatic_payment_methods: payload.automatic_payment_methods ?? null,
+        payment_method_types: payloadLog.payment_method_types ?? null,
+        automatic_payment_methods: payloadLog.automatic_payment_methods ?? null,
         currency: payload.line_items?.[0]?.price_data?.currency ?? null,
         mode: payload.mode,
         success_url: payload.success_url,
@@ -240,21 +244,26 @@ async function main() {
 
   console.log("\n=== STRIPE ACCOUNT CAPABILITIES ===");
   try {
-    const account = await stripe.accounts.retrieve();
-    console.log(
-      JSON.stringify(
-        {
-          id: account.id,
-          country: account.country,
-          default_currency: account.default_currency,
-          charges_enabled: account.charges_enabled,
-          payouts_enabled: account.payouts_enabled,
-          capabilities: account.capabilities,
-        },
-        null,
-        2,
-      ),
-    );
+    const accountId = process.env.STRIPE_ACCOUNT_ID?.trim();
+    if (!accountId) {
+      console.log("STRIPE_ACCOUNT_ID not set — skip accounts.retrieve");
+    } else {
+      const account = await stripe.accounts.retrieve(accountId);
+      console.log(
+        JSON.stringify(
+          {
+            id: account.id,
+            country: account.country,
+            default_currency: account.default_currency,
+            charges_enabled: account.charges_enabled,
+            payouts_enabled: account.payouts_enabled,
+            capabilities: account.capabilities,
+          },
+          null,
+          2,
+        ),
+      );
+    }
   } catch (err) {
     console.log("accounts.retrieve failed (standard key — expected):");
     console.log(JSON.stringify(stripeErrorFields(err), null, 2));
