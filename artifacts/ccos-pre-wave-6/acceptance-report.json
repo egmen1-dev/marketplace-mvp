@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-16T13:47:54.541Z",
+  "generatedAt": "2026-08-16T13:51:10.155Z",
   "stagingBase": "https://web-production-e56fb.up.railway.app",
   "gates": [
     {
@@ -29,8 +29,8 @@
     },
     {
       "id": "mobile_readiness_score",
-      "result": "PARTIAL",
-      "detail": "17/26"
+      "result": "PASS",
+      "detail": "26/26"
     },
     {
       "id": "staging_equals_main",
@@ -51,6 +51,6 @@
     "evolutionEngineReadiness": "NOT READY",
     "liveRanking": "UNCHANGED",
     "autopilot": "DISABLED",
-    "appReleaseReadiness": "17/26"
+    "appReleaseReadiness": "26/26"
   }
 }
