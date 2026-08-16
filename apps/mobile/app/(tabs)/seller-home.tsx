@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 
 import { fetchSellerHome } from "../../src/api/endpoints";
 import {
@@ -8,17 +8,19 @@ import {
   EmptyState,
   ErrorState,
   InfoCard,
-  LoadingState,
   MetricCard,
   PageScroll,
   PrimaryButton,
   SecondaryButton,
+  SectionHeader,
+  SkeletonGrid,
   WalletCard,
 } from "../../src/components/ui";
+import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
 import { formatPrice } from "../../src/utils/format";
 import { useAppStore } from "../../src/store/app-store";
-import { colors, spacing, typography } from "../../src/theme/tokens";
+import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 type SellerHomeData = {
   money?: { available: number; pending: number };
@@ -29,11 +31,10 @@ type SellerHomeData = {
 };
 
 export default function SellerHomeScreen() {
+  const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
   const sellerCapable = useAppStore((s) => s.sellerCapable);
-  const [data, setData] = useState<SellerHomeData | null>(
-    () => (readSnapshot<SellerHomeData>("seller-home")?.payload ?? null),
-  );
+  const [data, setData] = useState<SellerHomeData | null>(() => readSnapshot<SellerHomeData>("seller-home")?.payload ?? null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,72 +66,105 @@ export default function SellerHomeScreen() {
     return (
       <EmptyState
         title="Режим продавца недоступен"
-        description="Этот аккаунт не является продавцом. Переключитесь в режим покупателя или войдите под seller@demo.lot."
+        description="Войдите под аккаунтом продавца, чтобы открыть кабинет."
         actionLabel="В профиль"
         onAction={() => router.push("/(tabs)/profile")}
       />
     );
   }
 
-  if (loading && !data) return <LoadingState label="Загружаем кабинет…" />;
+  if (loading && !data) {
+    return (
+      <PageScroll>
+        <SkeletonGrid count={2} />
+      </PageScroll>
+    );
+  }
 
   const money = data?.money;
   const orders = data?.orders;
   const products = data?.products;
   const promotion = data?.promotion;
   const intelligence = data?.intelligence;
+  const todayTasks = [
+    orders?.needAction ? `Обработать ${orders.needAction} заказ(ов)` : null,
+    products?.needAttention ? `Проверить ${products.needAttention} товар(ов) с нулевым остатком` : null,
+    promotion?.active === 0 ? "Запустить продвижение для роста продаж" : null,
+  ].filter(Boolean) as string[];
 
   return (
     <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
-      <AppHeader title="Кабинет продавца" subtitle="Сводка за сегодня" />
+      <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
+        <AppHeader title="Сегодня" subtitle="Что важно сделать прямо сейчас" />
 
-      {offline ? <Text style={styles.offline}>Оффлайн — показаны сохранённые данные</Text> : null}
-      {error ? <ErrorState title="Ошибка" description={error} onRetry={load} /> : null}
+        {offline ? <Text style={styles.offline}>Оффлайн — показаны сохранённые данные</Text> : null}
+        {error ? <ErrorState title="Ошибка" description={error} onRetry={load} /> : null}
 
-      <WalletCard balance={money?.available ?? 0} withdrawable={money?.available ?? 0} pending={money?.pending ?? 0} />
+        <View style={styles.todayCard}>
+          {todayTasks.length > 0 ? (
+            todayTasks.map((task) => (
+              <Text key={task} style={styles.todayItem}>
+                • {task}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.todayItem}>• Все задачи на сегодня выполнены</Text>
+          )}
+        </View>
 
-      <View style={styles.metricsGrid}>
-        <MetricCard label="Товаров" value={String(products?.active ?? 0)} hint="активных" tone="neutral" />
-        <MetricCard label="Нужно внимания" value={String(products?.needAttention ?? 0)} tone={(products?.needAttention ?? 0) > 0 ? "warning" : "neutral"} />
-        <MetricCard label="Заказы" value={String(orders?.needAction ?? 0)} hint="требуют действия" tone={(orders?.needAction ?? 0) > 0 ? "danger" : "success"} />
-        <MetricCard label="Продвижение" value={String(promotion?.active ?? 0)} hint="активных кампаний" tone="neutral" />
-      </View>
+        <SectionHeader title="Заказы" />
+        <MetricCard
+          label="Требуют действия"
+          value={String(orders?.needAction ?? 0)}
+          hint="оплатленные и в обработке"
+          tone={(orders?.needAction ?? 0) > 0 ? "danger" : "success"}
+        />
 
-      {intelligence?.topAction ? (
-        <InfoCard title="Главный AI совет" body={intelligence.topAction} />
-      ) : (
-        <InfoCard title="Совет дня" body="Проверьте остатки и обновите фото товаров — это повышает конверсию." />
-      )}
+        <SectionHeader title="AI рекомендации" />
+        {intelligence?.topAction ? (
+          <InfoCard title="Главная рекомендация" body={intelligence.topAction} />
+        ) : (
+          <InfoCard title="Совет" body="Обновите фото и описания товаров — это повышает конверсию в мобильном каталоге." />
+        )}
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Быстрые действия</Text>
+        <SectionHeader title="Продвижение" />
+        <MetricCard label="Активные кампании" value={String(promotion?.active ?? 0)} tone="neutral" />
+
+        <SectionHeader title="Продажи" />
+        <View style={styles.metricsGrid}>
+          <MetricCard label="Активные товары" value={String(products?.active ?? 0)} tone="neutral" />
+          <MetricCard label="Нужно внимания" value={String(products?.needAttention ?? 0)} tone={(products?.needAttention ?? 0) > 0 ? "warning" : "neutral"} />
+        </View>
+
+        <SectionHeader title="Кошелёк" />
+        <WalletCard balance={money?.available ?? 0} withdrawable={money?.available ?? 0} pending={money?.pending ?? 0} />
+        {(money?.pending ?? 0) > 0 ? (
+          <Text style={styles.pendingHint}>Ожидают выплаты: {formatPrice(money?.pending ?? 0)}</Text>
+        ) : null}
+
+        <SectionHeader title="Последние действия" />
+        <View style={styles.placeholderCard}>
+          <Text style={styles.placeholderText}>Откройте заказы или товары, чтобы увидеть свежую активность.</Text>
+        </View>
+
+        <SectionHeader title="Быстрые действия" />
         <View style={styles.actions}>
           <PrimaryButton label="Мои товары" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />
           <SecondaryButton label="Заказы" fullWidth onPress={() => router.push("/(tabs)/seller-sales")} />
           <SecondaryButton label="Кошелёк" fullWidth onPress={() => router.push("/(tabs)/wallet")} />
         </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Последние продажи</Text>
-        <View style={styles.placeholderCard}>
-          <Text style={styles.placeholderText}>История продаж скоро появится в мобильном кабинете.</Text>
-          <Pressable onPress={() => router.push("/(tabs)/seller-sales")}>
-            <Text style={styles.link}>Открыть заказы →</Text>
-          </Pressable>
-        </View>
-      </View>
+      </Animated.View>
     </PageScroll>
   );
 }
 
 const styles = StyleSheet.create({
   offline: { ...typography.caption, color: colors.gray500 },
+  todayCard: { backgroundColor: colors.orangeSoft, borderRadius: radii.lg, padding: spacing.lg, gap: spacing.sm },
+  todayItem: { ...typography.body, color: colors.gray900 },
   metricsGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
-  section: { gap: spacing.md },
-  sectionTitle: { ...typography.h2, color: colors.black },
-  actions: { gap: spacing.sm },
-  placeholderCard: { backgroundColor: colors.gray100, borderRadius: 16, padding: spacing.lg, gap: spacing.sm },
+  pendingHint: { ...typography.caption, color: colors.gray700 },
+  placeholderCard: { backgroundColor: colors.gray100, borderRadius: radii.lg, padding: spacing.lg },
   placeholderText: { ...typography.body, color: colors.gray700 },
-  link: { ...typography.caption, color: colors.orange, fontWeight: "600" },
+  actions: { gap: spacing.sm },
 });

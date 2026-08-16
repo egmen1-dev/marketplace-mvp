@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Image } from "expo-image";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { loadAppConfig } from "../../config/env";
-import { formatPrice, resolveImageUrl } from "../../utils/format";
-import { colors, radii, shadows, spacing, typography } from "../../theme/tokens";
+import { usePressScale } from "../../hooks/usePressScale";
+import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
+import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
 import { Badge } from "./primitives";
 
 export type MobileProductCardData = {
@@ -16,53 +18,99 @@ export type MobileProductCardData = {
   seller?: { storeName?: string };
   stock?: number;
   status?: string;
+  favoritesCount?: number;
+  views?: number;
 };
 
 export function ProductCard({
   product,
   onPress,
   onFavorite,
+  onAddToCart,
+  isFavorite,
   compact,
+  width,
 }: {
   product: MobileProductCardData;
   onPress?: () => void;
   onFavorite?: () => void;
+  onAddToCart?: () => void;
+  isFavorite?: boolean;
   compact?: boolean;
+  width?: number | `${number}%`;
 }) {
   const config = loadAppConfig();
+  const { scale, onPressIn, onPressOut } = usePressScale(0.97);
   const imageUrl = resolveImageUrl(product.primaryImage?.url ?? null, config.apiBaseUrl);
+  const discount = discountPercent(product.price, product.compareAt);
+  const cardWidth = width ?? (compact ? 156 : "48%");
+  const socialCount = product.favoritesCount ?? 0;
 
   return (
-    <Pressable style={[styles.card, compact ? styles.cardCompact : null]} onPress={onPress}>
-      <View style={[styles.imageWrap, compact ? styles.imageWrapCompact : null]}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" />
-        ) : (
-          <View style={styles.imageFallback}>
-            <Text style={styles.imageFallbackText}>ЛОТ</Text>
-          </View>
-        )}
-        {onFavorite ? (
-          <Pressable style={styles.favoriteBtn} onPress={onFavorite} hitSlop={8}>
-            <Text style={styles.favoriteIcon}>♡</Text>
-          </Pressable>
-        ) : null}
-        {product.stock === 0 ? <Badge label="Нет в наличии" tone="danger" style={styles.stockBadge} /> : null}
-      </View>
-      <View style={styles.body}>
-        <Text style={styles.price}>{formatPrice(product.price)}</Text>
-        {product.compareAt && product.compareAt > product.price ? (
-          <Text style={styles.compareAt}>{formatPrice(product.compareAt)}</Text>
-        ) : null}
-        <Text style={styles.title} numberOfLines={2}>
-          {product.title}
-        </Text>
-        {product.seller?.storeName ? <Text style={styles.seller}>{product.seller.storeName}</Text> : null}
-        <View style={styles.badges}>
-          <Badge label="Доставка" tone="neutral" />
+    <Animated.View style={[{ width: cardWidth }, { transform: [{ scale }] }]}>
+      <Pressable style={[styles.card, compact ? styles.cardCompact : null]} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+        <View style={[styles.imageWrap, compact ? styles.imageWrapCompact : null]}>
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" transition={200} />
+          ) : (
+            <View style={styles.imageFallback}>
+              <Text style={styles.imageFallbackText}>ЛОТ</Text>
+            </View>
+          )}
+
+          {discount ? <Badge label={`-${discount}%`} tone="brand" style={styles.discountBadge} /> : null}
+          <Badge label="Доставка" tone="neutral" style={styles.deliveryBadge} />
+
+          {onFavorite ? (
+            <Pressable
+              style={styles.favoriteBtn}
+              onPress={(e) => {
+                e.stopPropagation?.();
+                onFavorite();
+              }}
+              hitSlop={8}
+              accessibilityLabel="Избранное"
+            >
+              <MaterialCommunityIcons name={isFavorite ? "heart" : "heart-outline"} size={18} color={isFavorite ? colors.danger : colors.black} />
+            </Pressable>
+          ) : null}
         </View>
-      </View>
-    </Pressable>
+
+        <View style={styles.body}>
+          <View style={styles.priceRow}>
+            <Text style={styles.price}>{formatPrice(product.price)}</Text>
+            {product.compareAt && product.compareAt > product.price ? (
+              <Text style={styles.compareAt}>{formatPrice(product.compareAt)}</Text>
+            ) : null}
+          </View>
+
+          <Text style={styles.title} numberOfLines={2}>
+            {product.title}
+          </Text>
+
+          {product.seller?.storeName ? <Text style={styles.seller}>{product.seller.storeName}</Text> : null}
+
+          <View style={styles.metaRow}>
+            {socialCount > 0 ? <Text style={styles.social}>♥ {socialCount} в избранном</Text> : null}
+            {(product.views ?? 0) > 0 ? <Text style={styles.views}>{product.views} просм.</Text> : null}
+          </View>
+
+          {onAddToCart ? (
+            <Pressable
+              style={styles.cta}
+              onPress={(e) => {
+                e.stopPropagation?.();
+                onAddToCart();
+              }}
+              accessibilityLabel="В корзину"
+            >
+              <MaterialCommunityIcons name="cart-outline" size={16} color={colors.orange} />
+              <Text style={styles.ctaText}>В корзину</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -71,37 +119,53 @@ export function ProductCardGrid({ children }: { children: ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-  grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md, justifyContent: "space-between" },
   card: {
-    width: "48%",
     backgroundColor: colors.white,
     borderRadius: radii.lg,
     overflow: "hidden",
     ...shadows.card,
   },
-  cardCompact: { width: 140 },
-  imageWrap: { aspectRatio: 1, backgroundColor: colors.gray100, position: "relative" },
-  imageWrapCompact: { height: 140 },
+  cardCompact: {},
+  imageWrap: { aspectRatio: 0.92, backgroundColor: colors.gray100, position: "relative" },
+  imageWrapCompact: { height: 156 },
   image: { width: "100%", height: "100%" },
   imageFallback: { flex: 1, alignItems: "center", justifyContent: "center" },
   imageFallbackText: { ...typography.caption, color: colors.orange, fontWeight: "700" },
+  discountBadge: { position: "absolute", top: spacing.sm, left: spacing.sm },
+  deliveryBadge: { position: "absolute", bottom: spacing.sm, left: spacing.sm },
   favoriteBtn: {
     position: "absolute",
     top: spacing.sm,
     right: spacing.sm,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
+    ...shadows.card,
   },
-  favoriteIcon: { fontSize: 16, color: colors.black },
-  stockBadge: { position: "absolute", left: spacing.sm, bottom: spacing.sm },
   body: { padding: spacing.md, gap: spacing.xs },
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap" },
   price: { ...typography.h2, color: colors.black },
   compareAt: { ...typography.caption, color: colors.gray500, textDecorationLine: "line-through" },
-  title: { ...typography.caption, color: colors.gray900 },
+  title: { ...typography.caption, color: colors.gray900, minHeight: 36 },
   seller: { ...typography.caption, color: colors.gray500 },
-  badges: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs, marginTop: spacing.xs },
+  metaRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexWrap: "wrap", minHeight: 18 },
+  social: { ...typography.caption, color: colors.gray700, fontWeight: "600" },
+  views: { ...typography.caption, color: colors.gray500 },
+  cta: {
+    marginTop: spacing.xs,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
+    minHeight: layout.buttonHeightSm,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.orangeSoft,
+    backgroundColor: colors.orangeSoft,
+  },
+  ctaText: { ...typography.buttonSm, color: colors.orange },
 });

@@ -7,6 +7,11 @@ export function formatCompactNumber(value: number | null | undefined): string {
   return Number(value ?? 0).toLocaleString("ru-RU");
 }
 
+export function discountPercent(price: number, compareAt?: number | null): number | null {
+  if (!compareAt || compareAt <= price) return null;
+  return Math.round(((compareAt - price) / compareAt) * 100);
+}
+
 export function resolveImageUrl(url: string | null | undefined, baseUrl: string): string | null {
   if (!url) return null;
   if (url.startsWith("http://") || url.startsWith("https://")) return url;

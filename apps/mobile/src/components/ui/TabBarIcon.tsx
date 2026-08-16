@@ -1,5 +1,7 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import type { ColorValue } from "react-native";
+import { Animated, StyleSheet } from "react-native";
+import { useEffect, useRef } from "react";
 
 import { colors } from "../../theme/tokens";
 
@@ -39,13 +41,26 @@ export function TabBarIcon({
   focused?: boolean;
   disabled?: boolean;
 }) {
+  const scale = useRef(new Animated.Value(focused ? 1.08 : 1)).current;
   const icon = ICONS[name];
   const glyph = focused ? icon.active : icon.inactive;
+
+  useEffect(() => {
+    Animated.spring(scale, {
+      toValue: focused ? 1.08 : 1,
+      useNativeDriver: true,
+      speed: 24,
+      bounciness: focused ? 8 : 0,
+    }).start();
+  }, [focused, scale]);
+
   return (
-    <MaterialCommunityIcons
-      name={glyph}
-      size={size}
-      color={disabled ? colors.gray300 : color}
-    />
+    <Animated.View style={[styles.wrap, { transform: [{ scale }] }]}>
+      <MaterialCommunityIcons name={glyph} size={size} color={disabled ? colors.gray300 : color} />
+    </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrap: { alignItems: "center", justifyContent: "center" },
+});

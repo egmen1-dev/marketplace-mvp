@@ -26,6 +26,8 @@ export type CatalogParams = {
   cursor?: string | null;
   sort?: "popular" | "newest" | "price_asc" | "price_desc";
   sellerId?: string;
+  categoryId?: string;
+  inStock?: boolean;
 };
 
 export type MobileProductListItem = {
@@ -35,8 +37,11 @@ export type MobileProductListItem = {
   compareAt?: number | null;
   stock?: number;
   status?: string;
+  favoritesCount?: number;
+  views?: number;
   primaryImage?: { url: string } | null;
   seller?: { storeName?: string; id?: string };
+  category?: { id: string; name: string; slug?: string } | null;
   images?: Array<{ url: string }>;
   description?: string | null;
   city?: string | null;
@@ -104,6 +109,8 @@ export async function fetchCatalog(params?: CatalogParams) {
   if (params?.cursor) search.set("cursor", params.cursor);
   if (params?.sort) search.set("sort", params.sort);
   if (params?.sellerId) search.set("sellerId", params.sellerId);
+  if (params?.categoryId) search.set("categoryId", params.categoryId);
+  if (params?.inStock) search.set("inStock", "1");
   const qs = search.toString();
   return apiRequest<{ items: MobileProductListItem[]; nextCursor: string | null; hasMore: boolean }>(
     `/api/mobile/catalog/products${qs ? `?${qs}` : ""}`,
@@ -121,6 +128,13 @@ export async function fetchSellerProducts(params?: { cursor?: string | null }) {
 
 export async function fetchCategories() {
   return apiRequest<{ items: Array<{ id: string; name: string; slug: string; productCount?: number }> }>("/api/categories");
+}
+
+export async function fetchProductSuggest(q: string) {
+  const qs = new URLSearchParams({ q, limit: "8" });
+  return apiRequest<{ items: Array<{ type: string; id: string; title: string; slug: string }>; q: string }>(
+    `/api/products/suggest?${qs.toString()}`,
+  );
 }
 
 export async function fetchProduct(id: string) {

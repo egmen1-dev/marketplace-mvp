@@ -17,6 +17,7 @@ function RootShell() {
           headerStyle: { backgroundColor: colors.white },
           headerTintColor: colors.black,
           contentStyle: { backgroundColor: colors.white },
+          animation: "fade",
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />

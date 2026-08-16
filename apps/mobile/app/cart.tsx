@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
-import { addToCart, fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
+import { fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
+import { EmptyState, PrimaryButton, SkeletonGrid } from "../src/components/ui";
+import { useFadeIn } from "../src/hooks/useFadeIn";
 import { useAppStore } from "../src/store/app-store";
-import { colors, spacing, typography } from "../src/theme/tokens";
+import { formatPrice } from "../src/utils/format";
+import { colors, layout, radii, spacing, typography } from "../src/theme/tokens";
 
 type CartItem = {
   productId: string;
@@ -14,6 +17,7 @@ type CartItem = {
 };
 
 export default function CartScreen() {
+  const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
   const [items, setItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -45,19 +49,13 @@ export default function CartScreen() {
   }, [load]);
 
   async function onRemove(productId: string) {
-    if (offline) {
-      setError("Для этого действия требуется интернет");
-      return;
-    }
+    if (offline) return;
     await removeCartItem(productId);
     await load();
   }
 
   async function onQty(productId: string, quantity: number) {
-    if (offline) {
-      setError("Для этого действия требуется интернет");
-      return;
-    }
+    if (offline) return;
     await updateCartQuantity(productId, quantity);
     await load();
   }
@@ -65,60 +63,60 @@ export default function CartScreen() {
   if (loading && items.length === 0) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color={colors.orange} />
+        <SkeletonGrid count={2} />
       </View>
     );
   }
 
   return (
     <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />} contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Корзина</Text>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      {items.length === 0 ? <Text style={styles.empty}>Корзина пуста</Text> : null}
-      {items.map((item) => (
-        <View key={item.productId} style={styles.row}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.itemTitle}>{item.product?.title ?? "Товар"}</Text>
-            <Text style={styles.itemPrice}>{item.product?.price ?? 0} ₽</Text>
-          </View>
-          <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, Math.max(1, item.quantity - 1))}>
-            <Text>−</Text>
-          </Pressable>
-          <Text style={styles.qty}>{item.quantity}</Text>
-          <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, item.quantity + 1)}>
-            <Text>+</Text>
-          </Pressable>
-          <Pressable style={styles.remove} onPress={() => onRemove(item.productId)}>
-            <Text style={styles.removeText}>✕</Text>
-          </Pressable>
-        </View>
-      ))}
-      {items.length > 0 ? (
-        <>
-          <Text style={styles.total}>Итого: {total} ₽</Text>
-          <Pressable style={styles.checkout} onPress={() => router.push("/checkout")}>
-            <Text style={styles.checkoutText}>Оформить заказ</Text>
-          </Pressable>
-        </>
-      ) : null}
+      <Animated.View style={{ opacity: fade, gap: spacing.md }}>
+        <Text style={styles.title}>Корзина</Text>
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {items.length === 0 ? (
+          <EmptyState preset="cart" actionLabel="В каталог" onAction={() => router.push("/(tabs)/catalog")} />
+        ) : (
+          items.map((item) => (
+            <View key={item.productId} style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.itemTitle}>{item.product?.title ?? "Товар"}</Text>
+                <Text style={styles.itemPrice}>{formatPrice(item.product?.price ?? 0)}</Text>
+              </View>
+              <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, Math.max(1, item.quantity - 1))}>
+                <Text>−</Text>
+              </Pressable>
+              <Text style={styles.qty}>{item.quantity}</Text>
+              <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, item.quantity + 1)}>
+                <Text>+</Text>
+              </Pressable>
+              <Pressable style={styles.remove} onPress={() => onRemove(item.productId)}>
+                <Text style={styles.removeText}>✕</Text>
+              </Pressable>
+            </View>
+          ))
+        )}
+        {items.length > 0 ? (
+          <>
+            <Text style={styles.total}>Итого: {formatPrice(total)}</Text>
+            <PrimaryButton label="Оформить заказ" fullWidth onPress={() => router.push("/checkout")} />
+          </>
+        ) : null}
+      </Animated.View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.white },
+  center: { flex: 1, padding: spacing.lg, backgroundColor: colors.white },
   container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
-  title: { ...typography.title },
+  title: { ...typography.h1 },
   error: { color: colors.danger },
-  empty: { color: colors.gray500, textAlign: "center" },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
   itemTitle: { ...typography.subtitle },
   itemPrice: { ...typography.body, color: colors.orange },
-  qtyBtn: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", backgroundColor: colors.gray100, borderRadius: 8 },
+  qtyBtn: { minWidth: layout.inputHeight, minHeight: layout.inputHeight, alignItems: "center", justifyContent: "center", backgroundColor: colors.gray100, borderRadius: radii.sm },
   qty: { minWidth: 24, textAlign: "center" },
-  remove: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" },
+  remove: { minWidth: layout.inputHeight, minHeight: layout.inputHeight, alignItems: "center", justifyContent: "center" },
   removeText: { color: colors.danger, fontSize: 18 },
-  total: { ...typography.subtitle, marginTop: spacing.md },
-  checkout: { backgroundColor: colors.orange, minHeight: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  checkoutText: { color: colors.white, ...typography.subtitle },
+  total: { ...typography.h2, marginTop: spacing.md },
 });
