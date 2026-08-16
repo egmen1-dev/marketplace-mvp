@@ -1,19 +1,27 @@
 {
   "appName": "ЛОТ",
   "packageId": "ru.lot.marketplace.alpha",
-  "versionName": "0.1.0-alpha",
-  "versionCode": 1,
+  "versionName": "0.1.1-alpha",
+  "versionCode": 2,
   "releaseChannel": "alpha",
-  "commitSha": "750377f",
+  "commitSha": "757c6c7",
   "apiVersion": "mobile-v1",
   "schemaVersion": "1",
-  "artifactSha256": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585",
-  "artifactSizeBytes": 92668706,
-  "artifactFileName": "lot-android-0.1.0-alpha.apk",
+  "artifactSha256": "pending-build-run-sha256sum-after-apk",
+  "artifactSizeBytes": null,
+  "artifactFileName": "lot-android-0.1.1-alpha.apk",
   "buildDate": "2026-08-16",
-  "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk",
+  "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk",
   "updateRequired": false,
   "releaseHistory": [
+    {
+      "versionName": "0.1.1-alpha",
+      "versionCode": 2,
+      "commitSha": "757c6c7",
+      "artifactSha256": "pending-build-run-sha256sum-after-apk",
+      "acceptanceStatus": "PENDING_PHYSICAL",
+      "changelog": "EPIC 81 Wave 2 commerce UX + seamless updates"
+    },
     {
       "versionName": "0.1.0-alpha",
       "versionCode": 1,
@@ -25,20 +33,32 @@
   ],
   "alphaDistribution": {
     "ready": true,
-    "hostingUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk",
+    "hostingUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk",
     "recommendedHosting": "GitHub Release asset (immutable HTTPS)",
-    "releasePageUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.0"
+    "releasePageUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.1"
   },
   "launchGate": {
-    "epic": "EPIC-80",
+    "epic": "EPIC-82",
     "mobPa001": "OPEN",
     "mobPa002": "CLOSED",
     "physicalVerdict": "NOT_RUN",
     "closedAlphaVerdict": "WATCH",
     "appShell1Status": "BLOCKED",
-    "knownP0": 1,
-    "knownP1": 0
+    "knownP0": 0,
+    "knownP1": 2,
+    "seamlessUpdateVerdict": "PENDING_PHYSICAL"
+  },
+  "knownIssues": [
+    "Wallet full ledger requires future mobile API",
+    "Seller sales detail pending backend endpoint",
+    "Physical Android acceptance required before cohort"
+  ],
+  "acceptanceStatus": "PENDING_PHYSICAL",
+  "previousRelease": {
+    "versionName": "0.1.0-alpha",
+    "versionCode": 1,
+    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk"
   },
   "source": "mobile-release-platform",
-  "generatedAt": "2026-08-16T16:42:30.150Z"
+  "generatedAt": "2026-08-16T18:00:00.000Z"
 }

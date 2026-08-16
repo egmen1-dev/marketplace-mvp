@@ -9,6 +9,8 @@ import { Avatar, GhostButton, PrimaryButton, SecondaryButton, SectionHeader } fr
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
 import { buildErrorReport } from "../../src/telemetry/error-report";
+import { startApkDownload } from "../../src/update/download-apk";
+import { UPDATE_ANALYTICS } from "../../src/update/types";
 import { colors, spacing, typography } from "../../src/theme/tokens";
 import type { MobileUpdateInfo } from "../../src/api/endpoints";
 
@@ -34,14 +36,15 @@ export default function ProfileScreen() {
 
   const hasUpdate =
     updateInfo &&
+    updateInfo.updateState !== "NO_UPDATE" &&
     updateInfo.downloadUrl &&
     updateInfo.versionCode > Number(config.buildNumber) &&
     updateInfo.rollout.eligible;
 
   async function onUpdate() {
-    if (!updateInfo?.downloadUrl) return;
-    await postTelemetry({ screen: "profile", event: "update_requested", errorCode: updateInfo.versionName });
-    await Linking.openURL(updateInfo.downloadUrl);
+    if (!updateInfo) return;
+    await postTelemetry({ screen: "profile", event: UPDATE_ANALYTICS.started, errorCode: updateInfo.versionName });
+    await startApkDownload(updateInfo);
   }
 
   async function onLogout() {
@@ -106,7 +109,11 @@ export default function ProfileScreen() {
 
       {hasUpdate ? (
         <View style={styles.updateBanner}>
-          <Text style={styles.updateTitle}>Доступна версия {updateInfo.versionName}</Text>
+          <Text style={styles.updateTitle}>
+            {updateInfo?.updateState === "REQUIRED_UPDATE"
+              ? "Требуется обновление"
+              : `Доступна версия ${updateInfo?.versionName}`}
+          </Text>
           <PrimaryButton label="Обновить" onPress={onUpdate} size="sm" />
         </View>
       ) : null}

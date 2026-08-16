@@ -30,13 +30,12 @@ export function evaluateCompatibility(
 ): CompatibilityResult {
   const minAppVersion = release?.minAppVersion ?? "0.0.0-dev";
   const minBackendVersion = release?.minBackendVersion ?? "mobile-v1";
-  const minSupportedCode = release?.versionCode ?? 1;
   const reasons: string[] = [];
 
   let compatible = true;
-  let forceUpgrade = false;
+  let forceUpgrade = Boolean(release?.mandatory);
 
-  if (input.clientVersionCode < minSupportedCode) {
+  if (input.clientVersionCode < 1) {
     compatible = false;
     forceUpgrade = true;
     reasons.push("app_version_below_minimum");
@@ -47,9 +46,12 @@ export function evaluateCompatibility(
     reasons.push("api_version_mismatch");
   }
 
-  if (parseVersionCode(input.clientVersionName ?? "") < parseVersionCode(minAppVersion)) {
+  if (input.clientVersionName && parseVersionCode(input.clientVersionName) < parseVersionCode(minAppVersion)) {
     compatible = false;
-    reasons.push("app_version_name_below_minimum");
+    if (parseVersionCode(minAppVersion) > 0) {
+      forceUpgrade = true;
+      reasons.push("app_version_name_below_minimum");
+    }
   }
 
   return {
@@ -58,7 +60,7 @@ export function evaluateCompatibility(
     minApiVersion: MOBILE_API_VERSION,
     brainVersion: getActiveBrainVersion(),
     compatible,
-    forceUpgrade: forceUpgrade || Boolean(release?.mandatory),
+    forceUpgrade,
     reasons,
   };
 }

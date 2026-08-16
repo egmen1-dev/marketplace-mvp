@@ -1,0 +1,83 @@
+{
+  "epic": "EPIC-82",
+  "generatedAt": "2026-08-16T17:41:38.177Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "verdicts": {
+    "epic82": "NOT_ACCEPTED",
+    "physicalAndroid": "NOT_RUN",
+    "seamlessUpdates": "PENDING_PHYSICAL",
+    "alpha011Published": "NOT_PUBLISHED",
+    "closedAlpha": "WATCH",
+    "appShell1": "BLOCKED"
+  },
+  "rows": [
+    {
+      "id": "wave2_deployed_main_on_staging",
+      "ok": true,
+      "detail": "757c6c7 vs 757c6c7"
+    },
+    {
+      "id": "manifest_epic_82",
+      "ok": true,
+      "detail": "EPIC-82"
+    },
+    {
+      "id": "manifest_version_011",
+      "ok": true,
+      "detail": "0.1.1-alpha (2)"
+    },
+    {
+      "id": "mobile_env_011",
+      "ok": true,
+      "detail": "env.ts"
+    },
+    {
+      "id": "app_json_version_code_2",
+      "ok": true,
+      "detail": "app.json"
+    },
+    {
+      "id": "update_state_resolver",
+      "ok": true
+    },
+    {
+      "id": "no_downgrade_prompt_logic",
+      "ok": true
+    },
+    {
+      "id": "update_api_ok",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "update_state_field",
+      "ok": false
+    },
+    {
+      "id": "update_channel_closed_alpha",
+      "ok": true,
+      "detail": "CLOSED_ALPHA"
+    },
+    {
+      "id": "update_offers_011_to_010_client",
+      "ok": true,
+      "detail": "0.1.0-alpha (1) undefined"
+    },
+    {
+      "id": "no_update_on_current_code",
+      "ok": false
+    },
+    {
+      "id": "npm_build",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ],
+  "failed": [
+    "update_state_field",
+    "no_update_on_current_code"
+  ]
+}

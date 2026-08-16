@@ -57,6 +57,17 @@ export type ReleaseIntelligenceRow = {
   sessions: number;
   feedback: number;
   rollbackRisk: "low" | "medium" | "high";
+  eligibleDevices: number;
+  updateViewed: number;
+  updateStarted: number;
+  updateDeferred: number;
+  activeVersionDistribution: number;
+};
+
+export type VersionDistributionRow = {
+  versionName: string;
+  versionCode: number;
+  deviceCount: number;
 };
 
 export type ProductTimelineEntry = {
