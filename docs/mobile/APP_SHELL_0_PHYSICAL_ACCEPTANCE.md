@@ -12,9 +12,16 @@
 
 | Verdict | Result |
 |---|---|
+| **MOBILE STAGING BACKEND** | **READY** (@ `1e9e15e`, MOB-PA-002 **CLOSED**) |
 | **APP-SHELL-0 PHYSICAL DEVICE** | **NOT RUN** |
-| **ANDROID ALPHA** | **NOT READY** (device gate open) |
-| **CLOSED ALPHA DISTRIBUTION** | **NOT READY** |
+| **CLOSED ALPHA** | **NO-GO** |
+| **APP-SHELL-1** | **BLOCKED** |
+
+See `docs/mobile/MOBILE_RELEASE_GATE_003.md` and `docs/mobile/CLOSED_ALPHA_GO_NOGO.md`.
+
+---
+
+## Prior physical run (cloud agent)
 
 Physical Android acceptance **cannot be marked PASS** from cloud agent: no USB device attached; emulator boot failed (ADB offline in headless VM despite KVM).
 

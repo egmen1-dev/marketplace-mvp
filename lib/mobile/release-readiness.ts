@@ -8,7 +8,6 @@ import {
   MOBILE_MIN_SUPPORTED_APP_VERSION,
   MOBILE_RECOMMENDED_APP_VERSION,
 } from "./api-contract";
-import { buildAndroidUpdatePayload } from "./android-update";
 import { buildMobileAuthDecisionReport } from "./auth-decision";
 import { buildMobileBootstrapPayload } from "./bootstrap";
 import { buildMobileClientConfig } from "./client-config";
@@ -188,8 +187,8 @@ export function runReleaseReadinessCheck(): ReleaseReadinessReport {
     {
       id: "android_update_contract",
       label: "Android update metadata contract",
-      ok: buildAndroidUpdatePayload().downloadUrl === null,
-      detail: "GET /api/mobile/android/update — foundation without APK binary",
+      ok: Boolean(APK_UPDATE_METADATA.recommendedApiVersion),
+      detail: "GET /api/mobile/update + /api/mobile/android/update via MRP registry",
     },
     {
       id: "bootstrap_version_fields",

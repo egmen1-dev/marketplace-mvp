@@ -1,0 +1,170 @@
+{
+  "gate": "MOBILE-RELEASE-GATE-003",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "generatedAt": "2026-08-16T16:11:41.930Z",
+  "mainSha": "1e9e15e",
+  "stagingSha": "1e9e15e",
+  "mobPa002Closed": true,
+  "apk": {
+    "file": "lot-android-alpha-0.1.0.apk",
+    "sha256": "91adc3822f4e1cc898bb605f2afb78a47c62d701a6054b5e92603cd0a1628585",
+    "versionName": "0.1.0-alpha",
+    "versionCode": 1
+  },
+  "results": [
+    {
+      "name": "staging_sha_equals_main",
+      "ok": true,
+      "detail": "1e9e15e vs 1e9e15e"
+    },
+    {
+      "name": "health_ok",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "health_db",
+      "ok": true,
+      "detail": "database"
+    },
+    {
+      "name": "health_auth",
+      "ok": true,
+      "detail": "auth"
+    },
+    {
+      "name": "bootstrap",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "config",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "readiness",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "navigation",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "android_update",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "deep_link_resolve",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "auth_session",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "buyer_home",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "seller_home_buyer_token",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "catalog",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "cart_get",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "orders",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "favorites",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "wallet",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "catalog_payload",
+      "ok": true,
+      "detail": "items=1"
+    },
+    {
+      "name": "cart_add",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "name": "cart_update",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "cart_remove",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "auth_refresh",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "auth_refresh_replay_rejected",
+      "ok": true,
+      "detail": "401"
+    },
+    {
+      "name": "auth_logout_revokes",
+      "ok": true,
+      "detail": "401"
+    },
+    {
+      "name": "seller_auth",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "seller_home",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "name": "seller_home_real_data",
+      "ok": true,
+      "detail": "{\"products\":{\"active\":37,\"needAttention\":0},\"intelligence\":null}"
+    },
+    {
+      "name": "seller_cart_isolated",
+      "ok": true,
+      "detail": "seller has own cart session"
+    },
+    {
+      "name": "cart_requires_auth",
+      "ok": true,
+      "detail": "401"
+    }
+  ],
+  "verdicts": {
+    "mobileStagingBackend": "READY",
+    "mobPa002": "CLOSED"
+  }
+}
