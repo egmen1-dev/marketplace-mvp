@@ -1,95 +1,60 @@
-# EPIC 84 · Wave 0 — UX Product Audit
+# EPIC 84 · Wave 0 — UX Audit (screen matrix)
 
-**Goal:** пройти каждый экран приложения и зафиксировать product gaps до Wave 1–2.
+> **Superseded scoring model:** use `docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md` for Product Design Standard v1, Marketplace Score (0–10), CRUD detection, and Marketplace Quality Index.
 
-**Baseline:** `0.1.2-alpha` (versionCode 3) · staging only
+This file retains the **operator walkthrough checklist**. Automated scoring lives in:
 
----
-
-## Scoring dimensions (1–5 each)
-
-| Dimension | Question |
-|-----------|----------|
-| **Visual** | Выглядит ли экран как современный marketplace? |
-| **UX** | Понятен ли следующий шаг без инструкций? |
-| **Conversion** | Подталкивает ли экран к целевому действию? |
-| **Marketplace Feel** | Ощущается ли как реальный магазин, а не MVP? |
-| **Trust** | Есть ли сигналы надёжности (статусы, продавец, цена)? |
-| **Completeness** | Нет ли заглушек, dead ends, «TODO» в UI? |
-
-**Priority:** P0 (блокер) · P1 (до следующего релиза) · P2 (backlog)
+- `artifacts/epic-84-wave-0/marketplace-quality-audit.json`
+- `npm run product:epic-84:wave0`
 
 ---
 
-## Buyer screens
+## Quick reference — legacy dimensions → new criteria
 
-| Screen | Route | Visual | UX | Conv | Feel | Trust | Complete | P | Notes |
-|--------|-------|--------|----|----|------|-------|----------|---|-------|
-| Splash / Boot | boot | | | | | | | | |
-| Unsupported Client | unsupported | | | | | | | | |
-| Update prompt | update | | | | | | | | |
-| Login | login | | | | | | | | |
-| Buyer Home | `(tabs)/index` | | | | | | | | |
-| Catalog | `(tabs)/catalog` | | | | | | | | |
-| Search | catalog toolbar | | | | | | | | |
-| Product (PDP) | `product/[id]` | | | | | | | | |
-| Favorites | `(tabs)/favorites` | | | | | | | | |
-| Cart | `cart` | | | | | | | | |
-| Checkout | `checkout` | | | | | | | | |
-| Orders | `(tabs)/orders` | | | | | | | | |
-| Wallet | `(tabs)/wallet` | | | | | | | | |
-| Profile | `(tabs)/profile` | | | | | | | | |
-| Offline / reconnect | network banner | | | | | | | | |
+| Legacy (EPIC 84 v1) | New criterion |
+|---------------------|---------------|
+| Visual | visualQuality |
+| UX | consistency + accessibility |
+| Conversion | conversion |
+| Marketplace Feel | marketplaceFeel |
+| Trust | trust |
+| Completeness | premiumFeel + errorExperience |
 
 ---
 
-## Seller screens
+## Buyer screens — walkthrough
 
-| Screen | Route | Visual | UX | Conv | Feel | Trust | Complete | P | Notes |
-|--------|-------|--------|----|----|------|-------|----------|---|-------|
-| Seller Home | `(tabs)/seller-home` | | | | | | | | |
-| Seller Products | `(tabs)/seller-products` | | | | | | | | |
-| Seller Product tap | navigation → PDP/edit | | | | | | | | |
-| Seller Sales | `(tabs)/seller-sales` | | | | | | | | |
-| Mode switch | profile / header | | | | | | | | |
+| Screen | Route | Audited? | P0 | Notes |
+|--------|-------|----------|-----|-------|
+| Splash / Boot | boot | ⬜ | | |
+| Login | login | ⬜ | | |
+| Buyer Home | `(tabs)/index` | ⬜ | | |
+| Catalog | `(tabs)/catalog` | ⬜ | | |
+| Product (PDP) | `product/[id]` | ⬜ | | |
+| Favorites | `(tabs)/favorites` | ⬜ | | |
+| Cart | `cart` | ⬜ | | |
+| Checkout | `checkout` | ⬜ | | |
+| Orders | `(tabs)/orders` | ⬜ | | |
+| Wallet | `(tabs)/wallet` | ⬜ | | |
+| Profile | `(tabs)/profile` | ⬜ | | |
 
----
+## Seller screens — walkthrough
 
-## Cross-cutting checks
+| Screen | Route | Audited? | P0 | Notes |
+|--------|-------|----------|-----|-------|
+| Seller Home | `(tabs)/seller-home` | ⬜ | | |
+| Seller Products | `(tabs)/seller-products` | ⬜ | | |
+| Seller Sales | `(tabs)/seller-sales` | ⬜ | | |
 
-| Check | Pass? | Priority | Notes |
-|-------|-------|----------|-------|
-| Orange LOT launcher icon | | | |
-| Branded splash | | | |
-| Login proportions + eye icon | | | |
-| Real bottom-nav icons | | | |
-| Product images load | | | |
-| 2-column catalog | | | |
-| Buyer home sections | | | |
-| Seller dashboard | | | |
-| Seller product navigation (no dead end) | | | |
-| PDP hierarchy | | | |
-| Wallet layout | | | |
-| Russian statuses | | | |
-| Empty / loading states | | | |
-| Unsupported version screen (0.1.0/0.1.1) | | | |
+## Cross-cutting (physical device)
+
+See `docs/mobile/EPIC_81_PHYSICAL_ACCEPTANCE_CHECKLIST.md` + screenshot pack under `artifacts/epic-84-wave-0/screenshots/`.
 
 ---
 
-## Audit workflow
+## Workflow
 
-1. Install `0.1.2-alpha` from [GitHub Release](https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2)
-2. Walk buyer path → fill buyer table + screenshot pack
-3. Switch to seller mode → fill seller table
-4. Export P0/P1 list → `artifacts/epic-84-wave-0/ux-audit-report.json`
-5. Run `npm run product:epic-84:gate` for POP metrics baseline
-
----
-
-## Wave 0 exit criteria
-
-- [ ] Every screen row scored (no blanks)
-- [ ] All P0 issues filed with owner
-- [ ] P0 = 0 before Wave 1 start
-- [ ] Screenshot pack saved under `artifacts/epic-84-wave-0/screenshots/`
-- [ ] POP release verdict baseline captured (`GET /api/admin/product-ops/release-verdict`)
+1. Score screen in `marketplace-quality-audit.json` (10 criteria, 0–10)
+2. Run `npm run product:epic-84:wave0` → refreshes Marketplace Score + CRUD scan
+3. Capture before/after screenshots
+4. Wave 0 complete when index ≥ 8.0 and P0 = 0

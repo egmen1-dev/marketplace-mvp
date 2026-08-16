@@ -123,10 +123,14 @@ See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matri
 
 | Rule | Detail |
 |------|--------|
-| Forbidden | New Brain / Graph / Twin / infra EPICs until EPIC 84 completes |
+| Forbidden | Architecture for architecture's sake · new Brain/Graph/Twin · APP-SHELL-1 · Wave 1/2 before Wave 0 |
 | Required | ≥2 Product Deliverables + ≥2 Release Deliverables per wave |
+| Design | `apps/mobile/src/design-system/` — no random HEX, no manual font sizes, no arbitrary spacing |
+| Screen work | Full redesign only — no local cosmetic patches · no CRUD-level screens |
+| New screens | Must use Design System · have Marketplace Score · not lower Marketplace Feeling |
 | KPI | Register → understand → find → open → add → return |
-| Wave 0 | UX audit every screen — `docs/product/EPIC_84_WAVE_0_UX_AUDIT.md` |
-| Release verdict | POP auto GO/WATCH/NO-GO — `npm run product:epic-84:gate` |
+| Wave 0 | Product Design Audit — `docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md` |
+| Quality index | POP MQI — degrades release to WATCH/NO-GO if index drops |
+| Gates | `npm run product:epic-84:wave0` · `npm run product:epic-84:gate` |
 
 See `docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md`.

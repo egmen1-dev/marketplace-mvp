@@ -33,7 +33,8 @@ Documented in root `AGENTS.md`.
 
 ```bash
 npm run mobile:epic-83:gate          # minimum supported version
-npm run product:epic-84:gate         # POP release verdict + Wave 0 docs
+npm run product:epic-84:wave0        # design system + Marketplace Quality audit
+npm run product:epic-84:gate         # POP release verdict + MQI
 npm run mobile:release-gate
 npm run mobile:closed-alpha:gate
 ```

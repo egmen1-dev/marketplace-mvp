@@ -19,6 +19,9 @@ function baseMetrics(overrides: Partial<ProductReleaseMetrics> = {}): ProductRel
     sellerFunnel: SELLER_JOURNEY_SCREENS.map((screen) => ({ screen, count: 8, dropOffRate: 5 })),
     latestVersionName: "0.1.2-alpha",
     latestVersionCode: 3,
+    marketplaceQualityIndex: 8.5,
+    marketplaceQualityIndexPrevious: 8.4,
+    marketplaceQualityIndexDelta: 0.1,
     ...overrides,
   };
 }
@@ -35,8 +38,25 @@ describe("EPIC 84 product release verdict", () => {
     expect(result.verdict).toBe("NO-GO");
   });
 
+  it("returns NO-GO when marketplace quality index drops", () => {
+    const result = computeProductReleaseVerdict(
+      baseMetrics({
+        marketplaceQualityIndex: 7.5,
+        marketplaceQualityIndexPrevious: 8.2,
+        marketplaceQualityIndexDelta: -0.7,
+      }),
+      { physicalPass: true, crudScreenFailures: 0, designAuditP0: 0 },
+    );
+    expect(result.verdict).toBe("NO-GO");
+  });
+
   it("returns GO when all gates pass including physical", () => {
-    const result = computeProductReleaseVerdict(baseMetrics(), { physicalPass: true, p0Count: 0 });
+    const result = computeProductReleaseVerdict(baseMetrics(), {
+      physicalPass: true,
+      p0Count: 0,
+      crudScreenFailures: 0,
+      designAuditP0: 0,
+    });
     expect(result.verdict).toBe("GO");
     expect(result.gates.crashFreeAbove99).toBe(true);
     expect(result.gates.buyerFlowPass).toBe(true);

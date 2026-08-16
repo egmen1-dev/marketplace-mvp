@@ -117,9 +117,9 @@ Gate: `npm run product:epic-84:gate`
 
 | Wave | Focus | Status |
 |------|-------|--------|
-| **0** | UX Product Audit — каждый экран: Visual, UX, Conversion, Marketplace Feel, Trust, Completeness | **ACTIVE** |
-| 1 | Buyer Experience | Planned |
-| 2 | Seller Experience | Planned |
+| **0** | **Product Design System Audit & Mobile UX Redesign** — Design Standard v1, Marketplace Quality Score, CRUD detection, full screen rework (no local patches) | **ACTIVE** |
+| 1 | Buyer Experience | **BLOCKED** until Wave 0 complete |
+| 2 | Seller Experience | **BLOCKED** until Wave 0 complete |
 | 3 | Marketplace Feel (skeleton, pull-to-refresh, haptics, transitions) | Planned |
 | 4 | Trust (рейтинг, доставка, возврат, отзывы) | Planned |
 | 5 | Conversion (A/B через POP) | Planned |
@@ -127,7 +127,12 @@ Gate: `npm run product:epic-84:gate`
 | 7 | Closed Alpha Learning (feedback → backlog) | Planned |
 | 8 | Open Alpha Readiness | Planned |
 
-Wave 0 template: `docs/product/EPIC_84_WAVE_0_UX_AUDIT.md`
+Wave 0 docs:
+
+- `docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md` — Product Design Standard v1 + Marketplace Quality Index
+- `docs/product/EPIC_84_WAVE_0_UX_AUDIT.md` — operator walkthrough checklist
+- `apps/mobile/src/design-system/` — design tokens + component registry
+- `npm run product:epic-84:wave0` — automated audit gate
 
 ---
 

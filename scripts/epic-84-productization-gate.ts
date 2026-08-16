@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 /** EPIC-84 — Marketplace Productization gate (POP release verdict + Wave 0 docs) */
+import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -12,7 +13,9 @@ async function main() {
 
   const docs = [
     "docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md",
+    "docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md",
     "docs/product/EPIC_84_WAVE_0_UX_AUDIT.md",
+    "apps/mobile/src/design-system/index.ts",
   ];
   for (const doc of docs) {
     rows.push({ id: `doc_${doc.split("/").pop()}`, ok: existsSync(join(process.cwd(), doc)), detail: doc });
@@ -33,6 +36,23 @@ async function main() {
     ok: existsSync(join(process.cwd(), "lib/product-operations/sessions/index.ts")),
     detail: "getSellerJourneyFunnel",
   });
+
+  rows.push({
+    id: "marketplace_quality_module",
+    ok: existsSync(join(process.cwd(), "lib/product-operations/marketplace-quality/report.ts")),
+  });
+
+  rows.push({
+    id: "marketplace_quality_api",
+    ok: existsSync(join(process.cwd(), "app/api/admin/product-ops/marketplace-quality/route.ts")),
+  });
+
+  try {
+    execSync("npm run product:epic-84:wave0", { stdio: "pipe" });
+    rows.push({ id: "wave0_design_audit_gate", ok: true });
+  } catch {
+    rows.push({ id: "wave0_design_audit_gate", ok: false });
+  }
 
   const p0Count = Number(process.env.EPIC84_P0_COUNT ?? "0");
   const physicalPass = process.env.PHYSICAL_ANDROID_PASS === "true";

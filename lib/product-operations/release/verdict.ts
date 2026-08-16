@@ -1,4 +1,8 @@
 import { getProductAnalyticsOverview } from "../analytics";
+import {
+  buildMarketplaceQualityReport,
+  loadMarketplaceQualityAudit,
+} from "../marketplace-quality/report";
 import { getUserJourneyFunnel, getSellerJourneyFunnel } from "../sessions";
 import type { UserJourneyStep } from "../types";
 
@@ -18,6 +22,9 @@ export type ProductReleaseMetrics = {
   sellerFunnel: UserJourneyStep[];
   latestVersionName: string | null;
   latestVersionCode: number | null;
+  marketplaceQualityIndex: number | null;
+  marketplaceQualityIndexPrevious: number | null;
+  marketplaceQualityIndexDelta: number | null;
 };
 
 export type ProductReleaseVerdictReport = {
@@ -34,6 +41,8 @@ export type ProductReleaseVerdictReport = {
     updatePass: boolean;
     physicalPass: boolean;
     p0Clear: boolean;
+    marketplaceQualityStable: boolean;
+    noCrudFailures: boolean;
   };
 };
 
@@ -44,6 +53,10 @@ export type ProductReleaseVerdictOptions = {
   minDauForGo?: number;
   /** 7d retention % threshold for GO (default 15) */
   minRetentionForGo?: number;
+  marketplaceQualityIndex?: number | null;
+  marketplaceQualityIndexPrevious?: number | null;
+  crudScreenFailures?: number;
+  designAuditP0?: number;
 };
 
 const DEFAULT_MIN_DAU = 3;
@@ -58,6 +71,16 @@ export function computeProductReleaseVerdict(
   const physicalPass = options.physicalPass ?? false;
   const minDau = options.minDauForGo ?? DEFAULT_MIN_DAU;
   const minRetention = options.minRetentionForGo ?? DEFAULT_MIN_RETENTION;
+  const crudFailures = options.crudScreenFailures ?? 0;
+  const designP0 = options.designAuditP0 ?? 0;
+
+  const index = metrics.marketplaceQualityIndex;
+  const prev = metrics.marketplaceQualityIndexPrevious;
+  const indexDelta =
+    index !== null && prev !== null ? Math.round((index - prev) * 100) / 100 : metrics.marketplaceQualityIndexDelta;
+
+  const marketplaceQualityStable = indexDelta === null || indexDelta >= -0.3;
+  const noCrudFailures = crudFailures === 0 && designP0 === 0;
 
   const gates = {
     crashFreeAbove99: metrics.crashFreeRate >= 99,
@@ -67,6 +90,8 @@ export function computeProductReleaseVerdict(
     updatePass: metrics.updateRatePercent >= 40 || metrics.updateRatePercent === 0,
     physicalPass,
     p0Clear: p0Count === 0,
+    marketplaceQualityStable,
+    noCrudFailures,
   };
 
   const reasons: string[] = [];
@@ -76,8 +101,18 @@ export function computeProductReleaseVerdict(
     return { verdict: "NO-GO", reasons, gates };
   }
 
+  if (!gates.noCrudFailures) {
+    reasons.push(`CRUD/design P0: crudScreens=${crudFailures} auditP0=${designP0}`);
+    return { verdict: "NO-GO", reasons, gates };
+  }
+
   if (metrics.crashFreeRate < 90) {
     reasons.push(`crash-free ${metrics.crashFreeRate}% < 90%`);
+    return { verdict: "NO-GO", reasons, gates };
+  }
+
+  if (!gates.marketplaceQualityStable && indexDelta !== null) {
+    reasons.push(`Marketplace Quality Index dropped ${indexDelta} (threshold -0.3)`);
     return { verdict: "NO-GO", reasons, gates };
   }
 
@@ -93,7 +128,10 @@ export function computeProductReleaseVerdict(
     gates.sellerFlowPass &&
     gates.updatePass &&
     gates.physicalPass &&
-    metrics.dau >= minDau;
+    gates.marketplaceQualityStable &&
+    gates.noCrudFailures &&
+    metrics.dau >= minDau &&
+    (index === null || index >= 8);
 
   if (goReady) {
     reasons.push("all release gates pass");
@@ -106,6 +144,8 @@ export function computeProductReleaseVerdict(
   if (!gates.buyerFlowPass) reasons.push("buyer funnel incomplete or no telemetry");
   if (!gates.sellerFlowPass) reasons.push("seller funnel incomplete or no telemetry");
   if (!gates.retentionSufficient) reasons.push(`retention7d ${metrics.retention7d}% < ${minRetention}%`);
+  if (index !== null && index < 8) reasons.push(`Marketplace Quality Index ${index} < 8.0 (Wave 0 target)`);
+  if (!gates.marketplaceQualityStable && indexDelta !== null) reasons.push(`MQI delta ${indexDelta} (watch)`);
 
   return { verdict: "WATCH", reasons, gates };
 }
@@ -128,6 +168,9 @@ function isFunnelHealthy(steps: UserJourneyStep[]): boolean {
 export async function buildProductReleaseVerdictReport(
   options: ProductReleaseVerdictOptions = {},
 ): Promise<ProductReleaseVerdictReport> {
+  const audit = loadMarketplaceQualityAudit();
+  const qualityReport = buildMarketplaceQualityReport(audit, options.marketplaceQualityIndexPrevious ?? null);
+
   const [analytics, distribution, releaseRows, buyerFunnel, sellerFunnel] = await Promise.all([
     getProductAnalyticsOverview(),
     getVersionDistribution(),
@@ -161,9 +204,16 @@ export async function buildProductReleaseVerdictReport(
     sellerFunnel,
     latestVersionName: latest?.versionName ?? null,
     latestVersionCode: latest?.versionCode ?? null,
+    marketplaceQualityIndex: qualityReport.marketplaceQualityIndex,
+    marketplaceQualityIndexPrevious: qualityReport.marketplaceQualityIndexPrevious,
+    marketplaceQualityIndexDelta: qualityReport.indexDelta,
   };
 
-  const computed = computeProductReleaseVerdict(metrics, options);
+  const computed = computeProductReleaseVerdict(metrics, {
+    ...options,
+    crudScreenFailures: qualityReport.crudFailures.length,
+    designAuditP0: qualityReport.p0,
+  });
 
   return {
     epic: "EPIC-84",

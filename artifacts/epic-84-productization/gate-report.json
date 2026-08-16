@@ -1,7 +1,7 @@
 {
   "epic": "EPIC-84",
   "phase": "Marketplace Productization · Wave 0",
-  "generatedAt": "2026-08-16T19:20:14.316Z",
+  "generatedAt": "2026-08-16T19:28:10.659Z",
   "verdict": "PASS",
   "productReleaseVerdict": "WATCH",
   "rows": [
@@ -11,9 +11,19 @@
       "detail": "docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md"
     },
     {
+      "id": "doc_EPIC_84_WAVE_0_DESIGN_SYSTEM.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md"
+    },
+    {
       "id": "doc_EPIC_84_WAVE_0_UX_AUDIT.md",
       "ok": true,
       "detail": "docs/product/EPIC_84_WAVE_0_UX_AUDIT.md"
+    },
+    {
+      "id": "doc_index.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/index.ts"
     },
     {
       "id": "release_verdict_module",
@@ -27,6 +37,18 @@
       "id": "seller_journey_funnel",
       "ok": true,
       "detail": "getSellerJourneyFunnel"
+    },
+    {
+      "id": "marketplace_quality_module",
+      "ok": true
+    },
+    {
+      "id": "marketplace_quality_api",
+      "ok": true
+    },
+    {
+      "id": "wave0_design_audit_gate",
+      "ok": true
     },
     {
       "id": "pop_release_verdict",
@@ -133,14 +155,18 @@
         }
       ],
       "latestVersionName": "0.1.2-alpha",
-      "latestVersionCode": 3
+      "latestVersionCode": 3,
+      "marketplaceQualityIndex": 6.93,
+      "marketplaceQualityIndexPrevious": null,
+      "marketplaceQualityIndexDelta": null
     },
     "automaticVerdict": "WATCH",
     "reasons": [
       "DAU 1 < 3 (insufficient cohort)",
       "physical Android acceptance pending",
       "buyer funnel incomplete or no telemetry",
-      "seller funnel incomplete or no telemetry"
+      "seller funnel incomplete or no telemetry",
+      "Marketplace Quality Index 6.93 < 8.0 (Wave 0 target)"
     ]
   }
 }
