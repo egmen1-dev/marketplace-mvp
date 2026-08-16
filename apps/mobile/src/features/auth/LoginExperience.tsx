@@ -59,7 +59,7 @@ export function LoginExperience({
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Animated.View style={[styles.hero, { opacity: fades[0] }]}>
           <View style={styles.logoFrame}>
-            <Image source={require("../../assets/splash-icon.png")} style={styles.logo} accessibilityLabel="ЛОТ" />
+            <Image source={require("../../../assets/splash-icon.png")} style={styles.logo} accessibilityLabel="ЛОТ" />
           </View>
           <Text style={styles.title}>ЛОТ</Text>
           <Text style={styles.subtitle}>Маркетплейс, где покупают и продают каждый день</Text>

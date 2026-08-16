@@ -11,6 +11,7 @@ import { buildDiagnosticsReport } from "../../diagnostics/diagnostics-service";
 import { copyDiagnosticsText, exportDiagnosticsJson, shareProblemReport } from "../../diagnostics/diagnostics-actions";
 import { runConnectivityCheck } from "../../diagnostics/connectivity-check";
 import { BuildInfoPanel } from "./BuildInfoPanel";
+import { StartupBuildStamp } from "./StartupBuildStamp";
 import { colors, radii, spacing, typography } from "../../theme/tokens";
 
 type Props = {
@@ -159,6 +160,8 @@ export function StartupErrorScreen({ failure, bootId, retryCount, onRetry }: Pro
           />
         </View>
       ) : null}
+
+      <StartupBuildStamp />
     </View>
   );
 }

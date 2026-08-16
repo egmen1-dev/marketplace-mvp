@@ -47,20 +47,36 @@ export const CLOSED_ALPHA_RELEASE_012 = {
   supportStatus: "FIRST_SUPPORTED",
 } as const;
 
-/** Current active Closed Alpha release pointer — update after 0.1.2 APK build */
-export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_012;
+/** EPIC 84 — Closed Alpha 0.1.3-alpha (P0/P1 diagnostics + buyer funnel sprints) */
+export const CLOSED_ALPHA_RELEASE_013 = {
+  versionName: "0.1.3-alpha",
+  versionCode: 4,
+  sha256: "b2e7a07d811ab9e8561eac849e282adc9477fb75495302f488c8404f11166859",
+  artifactSizeBytes: 105632443,
+  artifactFileName: "lot-android-alpha-0.1.3.apk",
+  gitCommit: "8e04510",
+  releaseNotes:
+    "EPIC-84 Startup Diagnostics P0\nCrash & Diagnostics P1\nStartup ID / Stage / Error Code\nCopy & Export diagnostics\nConnectivity panel\nHidden diagnostics screen\nLogin Sprint 1\nBuyer Home Sprint 2\nCatalog Sprint 3\nPDP Sprint 4\nBuild metadata on startup error",
+  githubTag: "closed-alpha-0.1.3",
+  knownIssues: ["Physical Android acceptance required for 0.1.3 cohort", "Cart/Checkout sprints pending"],
+  acceptanceStatus: "PUBLISHED",
+  supportStatus: "FIRST_SUPPORTED",
+} as const;
 
-export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_011;
+/** Current active Closed Alpha release pointer — update after 0.1.3 APK build */
+export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_013;
+
+export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_012;
 
 export const CLOSED_ALPHA_APK_DOWNLOAD_URL =
   process.env.MOBILE_APK_DOWNLOAD_URL ??
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.3/lot-android-alpha-0.1.3.apk";
 
 export const CLOSED_ALPHA_APK_PREVIOUS_DOWNLOAD_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk";
 
 export const CLOSED_ALPHA_GITHUB_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.3";
 
 export const CLOSED_ALPHA_GITHUB_PREVIOUS_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.1";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2";
