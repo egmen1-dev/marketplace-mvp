@@ -35,6 +35,22 @@ export function CognitiveProductPreviewCard({
         <p className="mt-2 text-xs text-muted-foreground">{report.summary.contextLabel}</p>
       ) : null}
 
+      {report.productSummary ? (
+        <div className="mt-2 rounded-lg border border-border/50 bg-muted/10 p-2 text-xs">
+          <p>
+            <span className="text-muted-foreground">Что продаётся: </span>
+            {report.productSummary.whatIsSold}
+          </p>
+          <p className="mt-1">
+            <span className="text-muted-foreground">Потребность: </span>
+            {report.productSummary.needSolved}
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            Product confidence: {report.productSummary.confidenceLabel}
+          </p>
+        </div>
+      ) : null}
+
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div>
           <p className="text-xs text-muted-foreground">Сейчас</p>

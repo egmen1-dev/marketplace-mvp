@@ -14,3 +14,13 @@ export {
   type MarketplaceBrainContextInput,
   type GenomeProfile,
 } from "./queries";
+export {
+  buildMarketplaceProductUnderstanding,
+  buildProductUnderstandingFromScan,
+  toCameraScanResponse,
+  startGuidedCapture,
+  evaluateCaptureStep,
+  advanceCaptureStep,
+  collectProductUnderstandingActions,
+  productUnderstandingSummary,
+} from "./product";

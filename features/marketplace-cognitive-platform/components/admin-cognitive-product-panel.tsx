@@ -83,6 +83,63 @@ export function AdminCognitiveProductPanel({
         </section>
       ) : null}
 
+      {report.productUnderstanding ? (
+        <section className="rounded-xl border p-4" data-testid="admin-product-understanding">
+          <h2 className="font-medium">Product Understanding (Wave 3)</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Product Genome {report.productUnderstanding.genome.contractVersion} · advisory only
+          </p>
+          <div className="mt-3 grid gap-3 md:grid-cols-3 text-sm">
+            <div>
+              <p className="text-xs text-muted-foreground">Identity</p>
+              <p className="font-medium">
+                {[report.productUnderstanding.identity.productType, report.productUnderstanding.identity.subcategory]
+                  .filter(Boolean)
+                  .join(" · ") || "—"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                confidence {Math.round(report.productUnderstanding.identity.confidence * 100)}%
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Product Genome</p>
+              <p className="font-medium tabular-nums">
+                {report.productUnderstanding.genome.overall ?? "—"}/100
+              </p>
+              <p className="text-xs text-muted-foreground">
+                pack {report.productUnderstanding.categoryPack.id}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Need graph</p>
+              <p className="font-medium">{report.productUnderstanding.dna.primaryNeed}</p>
+              <p className="text-xs text-muted-foreground">
+                {report.productUnderstanding.needGraph.nodes.length} nodes
+              </p>
+            </div>
+          </div>
+          {report.productUnderstanding.identity.conflicts.length > 0 ? (
+            <ul className="mt-3 space-y-1 text-sm text-amber-700 dark:text-amber-300">
+              {report.productUnderstanding.identity.conflicts.map((c) => (
+                <li key={c.field}>{c.explanation}</li>
+              ))}
+            </ul>
+          ) : null}
+          <pre className="mt-3 overflow-x-auto rounded-lg bg-muted/30 p-3 text-xs">
+            {JSON.stringify(
+              {
+                dna: report.productUnderstanding.dna,
+                relationships: report.productUnderstanding.relationships.slice(0, 4),
+                daos: report.productUnderstanding.daos,
+                confidence: report.productUnderstanding.confidence,
+              },
+              null,
+              2,
+            )}
+          </pre>
+        </section>
+      ) : null}
+
       <section className="rounded-xl border p-4">
         <h2 className="font-medium">Contextual signals</h2>
         {report.signals.length === 0 ? (

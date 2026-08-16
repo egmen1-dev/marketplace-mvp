@@ -15,12 +15,12 @@ const REGISTRY: BrainVersionRegistryEntry[] = [
     notes: "Wave 1 advisory brain baseline",
   },
   {
-    brainVersion: "marketplace-brain-v2-knowledge",
+    brainVersion: "marketplace-brain-v3-product",
     knowledgePackVersion: "knowledge-pack-v2",
-    reasoningPackVersion: "reasoning-pack-v2",
-    experimentVersion: EXPERIMENT_REGISTRY_VERSION,
+    reasoningPackVersion: "reasoning-pack-v3-product",
+    experimentVersion: "experiment-registry-v1",
     releasedAt: new Date().toISOString(),
-    notes: "Wave 2 verified-knowledge reasoning",
+    notes: "Wave 3 Product Understanding integration",
   },
 ];
 
@@ -36,5 +36,8 @@ export function resolveBrainVersionEntry(brainVersion: string): BrainVersionRegi
 }
 
 export function currentMarketplaceBrainVersion(): string {
+  if (process.env.CCOS_PRODUCT_PLATFORM_ENABLED === "true") {
+    return "marketplace-brain-v3-product";
+  }
   return "marketplace-brain-v2-knowledge";
 }
