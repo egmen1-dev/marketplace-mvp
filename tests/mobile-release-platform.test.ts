@@ -4,6 +4,7 @@ import { evaluateCompatibility } from "@/lib/mobile-release-platform/compatibili
 import { channelLabel } from "@/lib/mobile-release-platform/channels";
 import { isDeviceEligibleForRollout } from "@/lib/mobile-release-platform/release-manager";
 import { buildMobileUpdatePayload } from "@/lib/mobile-release-platform/update-service";
+import { buildLegacyMobileUpdatePayload } from "@/lib/mobile-release-platform/update-service/legacy";
 import type { ReleaseVersion } from "@/lib/mobile-release-platform/types";
 
 const publishedRelease: ReleaseVersion = {
@@ -76,6 +77,20 @@ describe("mobile release platform wave 0", () => {
     expect(payload.releaseNotes).toEqual(["Closed Alpha build", "Bug fixes"]);
     expect(payload.compatibility.compatible).toBe(true);
     expect(payload.rollout.percent).toBe(100);
+  });
+
+  it("builds legacy update payload without EPIC 82 fields", async () => {
+    const payload = await buildMobileUpdatePayload({
+      clientVersionCode: 1,
+      deviceId: "lot-android-34",
+      channel: "CLOSED_ALPHA",
+    });
+    const legacy = buildLegacyMobileUpdatePayload(payload);
+    expect(legacy.downloadUrl).toBeTruthy();
+    expect(legacy).not.toHaveProperty("updateState");
+    expect(legacy).not.toHaveProperty("knownIssues");
+    expect(legacy).not.toHaveProperty("previousRelease");
+    expect(legacy).not.toHaveProperty("artifactSizeBytes");
   });
 
   it("documents unified update route", async () => {
