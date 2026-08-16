@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
 import { logout } from "../../src/api/client";
-import { fetchMobileUpdate, postTelemetry } from "../../src/api/endpoints";
+import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
 import { loadAppConfig } from "../../src/config/env";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
@@ -48,6 +48,10 @@ export default function ProfileScreen() {
   async function onReportError() {
     const report = buildErrorReport("profile");
     await postTelemetry({ screen: "profile", event: "error_report_requested" });
+    await submitProductFeedback({
+      content: JSON.stringify(report),
+      screen: "profile",
+    }).catch(() => null);
     await Share.share({
       message: JSON.stringify(report, null, 2),
       title: "ЛОТ Alpha — сообщить об ошибке",

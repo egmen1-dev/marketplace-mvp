@@ -20,11 +20,12 @@ import {
   ShieldCheck,
   ShieldAlert,
   Smartphone,
+  HeartPulse,
+  Users,
   Store,
   Ticket,
   Truck,
   Upload,
-  Users,
   Wallet,
 } from "lucide-react";
 
@@ -55,6 +56,18 @@ const NAV_ITEMS = [
     label: "Mobile Releases",
     icon: Smartphone,
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_MOBILE_RELEASES),
+  },
+  {
+    href: ROUTES.ADMIN_PRODUCT_HEALTH,
+    label: "Product Health",
+    icon: HeartPulse,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_PRODUCT_HEALTH),
+  },
+  {
+    href: ROUTES.ADMIN_CLOSED_ALPHA,
+    label: "Closed Alpha",
+    icon: Users,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_CLOSED_ALPHA),
   },
   {
     href: ROUTES.ADMIN_TRUST_CENTER,

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
+import { recordTelemetryEvent } from "@/lib/product-operations/telemetry";
+import { recordSessionStep } from "@/lib/product-operations/sessions";
 
 export type MobileTelemetryEvent = {
   appVersion: string;
@@ -9,6 +11,9 @@ export type MobileTelemetryEvent = {
   screen?: string;
   event: string;
   errorCode?: string;
+  sessionId?: string;
+  deviceId?: string;
+  versionCode?: number;
 };
 
 export async function POST(request: Request) {
@@ -20,13 +25,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "event, appVersion, platform required" }, { status: 400 });
   }
 
+  await recordTelemetryEvent({
+    eventType: body.event,
+    screen: body.screen,
+    sessionId: body.sessionId,
+    deviceId: body.deviceId,
+    versionCode: body.versionCode,
+    versionName: body.appVersion,
+    platform: body.platform,
+    metadata: body.errorCode ? { errorCode: body.errorCode } : undefined,
+  });
+
+  if (body.sessionId && body.screen) {
+    await recordSessionStep({
+      sessionId: body.sessionId,
+      screen: body.screen,
+      action: body.event,
+      deviceId: body.deviceId,
+      versionCode: body.versionCode,
+    }).catch(() => null);
+  }
+
   return NextResponse.json(
     withMobileApiContract(
       {
         accepted: true,
-        recorded: false,
-        contractVersion: "mobile-telemetry-v1",
-        note: "Telemetry contract accepted — persistence optional in MVP",
+        recorded: true,
+        contractVersion: "product-ops-telemetry-v1",
       },
       body.event,
     ),
