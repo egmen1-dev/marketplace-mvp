@@ -26,6 +26,7 @@
     "mobile:test": "npm test --prefix apps/mobile",
     "mobile:lint": "npm run typecheck --prefix apps/mobile",
     "mobile:validate": "npm run mobile:typecheck && npm run mobile:test",
+    "mobile:staging-smoke": "tsx scripts/mobile-staging-integration-smoke.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
     "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",
