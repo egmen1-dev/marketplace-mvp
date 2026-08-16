@@ -21,7 +21,7 @@ export function useTabBadges() {
           if (cancelled) return;
           const cartItems = (cart?.items as unknown[] | undefined) ?? [];
           setBadges({
-            cart: cartItems.length,
+            cart: Number(cart?.itemCount ?? cartItems.length),
             favorites: favorites?.items?.length ?? 0,
             orders: (home as { orders?: { active: number } } | null)?.orders?.active ?? 0,
           });

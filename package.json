@@ -44,6 +44,7 @@
     "product:epic-84:sprint2-buyer-home": "tsx scripts/epic-84-sprint-2-buyer-home-gate.ts",
     "product:epic-84:sprint3-catalog": "tsx scripts/epic-84-sprint-3-catalog-gate.ts",
     "product:epic-84:sprint4-pdp": "tsx scripts/epic-84-sprint-4-pdp-gate.ts",
+    "product:epic-84:sprint5-cart-checkout": "tsx scripts/epic-84-sprint-5-cart-checkout-gate.ts",
     "product:epic-84:p0-startup": "tsx scripts/epic-84-p0-startup-gate.ts",
     "product:epic-84:p1-diagnostics": "tsx scripts/epic-84-p1-diagnostics-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",

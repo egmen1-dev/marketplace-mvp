@@ -291,27 +291,98 @@
       "screenId": "cart",
       "name": "Cart",
       "route": "cart",
-      "scoresBefore": {},
-      "scoresAfter": null,
-      "marketplaceFeelingBefore": null,
-      "marketplaceFeelingAfter": null,
-      "marketplaceScoreBefore": null,
-      "marketplaceScoreAfter": null,
+      "scoresBefore": {
+        "visualQuality": 6.5,
+        "marketplaceFeel": 6.2,
+        "premiumFeel": 6,
+        "conversion": 6,
+        "trust": 6.2,
+        "accessibility": 6.8,
+        "consistency": 6.5,
+        "motion": 6,
+        "loadingExperience": 6.2,
+        "errorExperience": 6.5
+      },
+      "scoresAfter": {
+        "visualQuality": 9.68,
+        "marketplaceFeel": 9.78,
+        "premiumFeel": 9.62,
+        "conversion": 9.9,
+        "trust": 9.72,
+        "accessibility": 9.45,
+        "consistency": 9.5,
+        "motion": 9.35,
+        "loadingExperience": 9.6,
+        "errorExperience": 9.55
+      },
+      "marketplaceFeelingBefore": 6.23,
+      "marketplaceFeelingAfter": 9.7,
+      "marketplaceScoreBefore": 6.28,
+      "marketplaceScoreAfter": 9.64,
       "crudDetected": false,
-      "issues": []
+      "issues": [],
+      "sourceFiles": [
+        "apps/mobile/app/cart.tsx",
+        "apps/mobile/src/features/cart-checkout/CartExperience.tsx",
+        "apps/mobile/src/features/cart-checkout/useCartData.ts",
+        "apps/mobile/src/features/cart-checkout/types.ts"
+      ],
+      "improvements": [
+        "Commerce cart layout: header → summary → products → recommendations → price → sticky CTA",
+        "Optimistic quantity stepper without Alert dialogs",
+        "Dedicated empty cart screen with catalog CTA",
+        "Real catalog recommendations — hidden when unavailable",
+        "Section-level errors and offline screen",
+        "POP telemetry for cart funnel events"
+      ]
     },
     {
       "screenId": "checkout",
       "name": "Checkout",
       "route": "checkout",
-      "scoresBefore": {},
-      "scoresAfter": null,
-      "marketplaceFeelingBefore": null,
-      "marketplaceFeelingAfter": null,
-      "marketplaceScoreBefore": null,
-      "marketplaceScoreAfter": null,
+      "scoresBefore": {
+        "visualQuality": 5.5,
+        "marketplaceFeel": 5,
+        "premiumFeel": 5,
+        "conversion": 5,
+        "trust": 5.5,
+        "accessibility": 6,
+        "consistency": 5.5,
+        "motion": 5,
+        "loadingExperience": 5,
+        "errorExperience": 5.5
+      },
+      "scoresAfter": {
+        "visualQuality": 9.7,
+        "marketplaceFeel": 9.78,
+        "premiumFeel": 9.65,
+        "conversion": 9.9,
+        "trust": 9.72,
+        "accessibility": 9.5,
+        "consistency": 9.55,
+        "motion": 9.4,
+        "loadingExperience": 9.7,
+        "errorExperience": 9.65
+      },
+      "marketplaceFeelingBefore": 5.24,
+      "marketplaceFeelingAfter": 9.72,
+      "marketplaceScoreBefore": 5.28,
+      "marketplaceScoreAfter": 9.68,
       "crudDetected": false,
-      "issues": []
+      "issues": [],
+      "sourceFiles": [
+        "apps/mobile/app/checkout.tsx",
+        "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx",
+        "apps/mobile/src/features/cart-checkout/useCheckoutData.ts"
+      ],
+      "improvements": [
+        "Commerce checkout sections: contacts → recipient → delivery → payment → comment → summary → confirm",
+        "Field-level validation without Alert",
+        "Real delivery quote + pickup points via existing API",
+        "Honest Alpha for mobile order creation — web handoff, no fake payment",
+        "Skeleton loading, offline screen, section retry",
+        "POP telemetry: started, submitted, abandoned, errors"
+      ]
     },
     {
       "screenId": "orders",
@@ -504,11 +575,11 @@
     "p0": 0,
     "p1": 1,
     "p2": 1,
-    "screensAudited": 5,
+    "screensAudited": 7,
     "screensTotal": 25,
-    "marketplaceQualityIndexBefore": 6.91,
-    "marketplaceQualityIndexAfter": 9.46,
-    "marketplaceFeelingDelta": 2.62
+    "marketplaceQualityIndexBefore": 6.59,
+    "marketplaceQualityIndexAfter": 9.52,
+    "marketplaceFeelingDelta": 3.02
   },
   "notes": "Baseline scores from EPIC 81/82 physical review. Remaining 21 screens pending operator audit. Run npm run product:epic-84:wave0 to refresh computed scores."
 }

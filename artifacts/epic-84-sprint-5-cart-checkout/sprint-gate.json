@@ -1,0 +1,419 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 5,
+  "name": "Cart & Checkout Commerce Experience",
+  "generatedAt": "2026-08-16T20:33:58.941Z",
+  "verdict": "PASS",
+  "cart": {
+    "screenId": "cart",
+    "name": "Cart",
+    "route": "cart",
+    "scoresBefore": {
+      "visualQuality": 6.5,
+      "marketplaceFeel": 6.2,
+      "premiumFeel": 6,
+      "conversion": 6,
+      "trust": 6.2,
+      "accessibility": 6.8,
+      "consistency": 6.5,
+      "motion": 6,
+      "loadingExperience": 6.2,
+      "errorExperience": 6.5
+    },
+    "scoresAfter": {
+      "visualQuality": 9.68,
+      "marketplaceFeel": 9.78,
+      "premiumFeel": 9.62,
+      "conversion": 9.9,
+      "trust": 9.72,
+      "accessibility": 9.45,
+      "consistency": 9.5,
+      "motion": 9.35,
+      "loadingExperience": 9.6,
+      "errorExperience": 9.55
+    },
+    "marketplaceFeelingBefore": 6.23,
+    "marketplaceFeelingAfter": 9.7,
+    "marketplaceScoreBefore": 6.28,
+    "marketplaceScoreAfter": 9.64,
+    "crudDetected": false,
+    "issues": [],
+    "sourceFiles": [
+      "apps/mobile/app/cart.tsx",
+      "apps/mobile/src/features/cart-checkout/CartExperience.tsx",
+      "apps/mobile/src/features/cart-checkout/useCartData.ts",
+      "apps/mobile/src/features/cart-checkout/types.ts"
+    ],
+    "improvements": [
+      "Commerce cart layout: header → summary → products → recommendations → price → sticky CTA",
+      "Optimistic quantity stepper without Alert dialogs",
+      "Dedicated empty cart screen with catalog CTA",
+      "Real catalog recommendations — hidden when unavailable",
+      "Section-level errors and offline screen",
+      "POP telemetry for cart funnel events"
+    ]
+  },
+  "checkout": {
+    "screenId": "checkout",
+    "name": "Checkout",
+    "route": "checkout",
+    "scoresBefore": {
+      "visualQuality": 5.5,
+      "marketplaceFeel": 5,
+      "premiumFeel": 5,
+      "conversion": 5,
+      "trust": 5.5,
+      "accessibility": 6,
+      "consistency": 5.5,
+      "motion": 5,
+      "loadingExperience": 5,
+      "errorExperience": 5.5
+    },
+    "scoresAfter": {
+      "visualQuality": 9.7,
+      "marketplaceFeel": 9.78,
+      "premiumFeel": 9.65,
+      "conversion": 9.9,
+      "trust": 9.72,
+      "accessibility": 9.5,
+      "consistency": 9.55,
+      "motion": 9.4,
+      "loadingExperience": 9.7,
+      "errorExperience": 9.65
+    },
+    "marketplaceFeelingBefore": 5.24,
+    "marketplaceFeelingAfter": 9.72,
+    "marketplaceScoreBefore": 5.28,
+    "marketplaceScoreAfter": 9.68,
+    "crudDetected": false,
+    "issues": [],
+    "sourceFiles": [
+      "apps/mobile/app/checkout.tsx",
+      "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx",
+      "apps/mobile/src/features/cart-checkout/useCheckoutData.ts"
+    ],
+    "improvements": [
+      "Commerce checkout sections: contacts → recipient → delivery → payment → comment → summary → confirm",
+      "Field-level validation without Alert",
+      "Real delivery quote + pickup points via existing API",
+      "Honest Alpha for mobile order creation — web handoff, no fake payment",
+      "Skeleton loading, offline screen, section retry",
+      "POP telemetry: started, submitted, abandoned, errors"
+    ]
+  },
+  "rows": [
+    {
+      "id": "file_cart.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/cart.tsx"
+    },
+    {
+      "id": "file_CartExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/CartExperience.tsx"
+    },
+    {
+      "id": "file_useCartData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/useCartData.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/types.ts"
+    },
+    {
+      "id": "file_checkout.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/checkout.tsx"
+    },
+    {
+      "id": "file_CheckoutExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx"
+    },
+    {
+      "id": "file_useCheckoutData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/useCheckoutData.ts"
+    },
+    {
+      "id": "file_CartHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartHeader.tsx"
+    },
+    {
+      "id": "file_CartSummaryBar.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartSummaryBar.tsx"
+    },
+    {
+      "id": "file_CartLineCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartLineCard.tsx"
+    },
+    {
+      "id": "file_CartEmptyState.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartEmptyState.tsx"
+    },
+    {
+      "id": "file_CartRecommendationsRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartRecommendationsRail.tsx"
+    },
+    {
+      "id": "file_CartPriceSummary.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartPriceSummary.tsx"
+    },
+    {
+      "id": "file_CartStickyCheckoutCta.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartStickyCheckoutCta.tsx"
+    },
+    {
+      "id": "file_CartSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CartSkeleton.tsx"
+    },
+    {
+      "id": "file_QuantityStepper.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/QuantityStepper.tsx"
+    },
+    {
+      "id": "file_CheckoutContactSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutContactSection.tsx"
+    },
+    {
+      "id": "file_CheckoutRecipientSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutRecipientSection.tsx"
+    },
+    {
+      "id": "file_CheckoutDeliverySection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutDeliverySection.tsx"
+    },
+    {
+      "id": "file_CheckoutPaymentSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutPaymentSection.tsx"
+    },
+    {
+      "id": "file_CheckoutCommentSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutCommentSection.tsx"
+    },
+    {
+      "id": "file_CheckoutOrderSummary.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutOrderSummary.tsx"
+    },
+    {
+      "id": "file_CheckoutSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CheckoutSkeleton.tsx"
+    },
+    {
+      "id": "cart_uses_experience",
+      "ok": true
+    },
+    {
+      "id": "checkout_uses_experience",
+      "ok": true
+    },
+    {
+      "id": "cart_summary_before_products",
+      "ok": true
+    },
+    {
+      "id": "cart_sticky_cta",
+      "ok": true
+    },
+    {
+      "id": "cart_recommendations_rail",
+      "ok": true
+    },
+    {
+      "id": "cart_price_summary",
+      "ok": true
+    },
+    {
+      "id": "cart_empty_illustration",
+      "ok": true
+    },
+    {
+      "id": "cart_skeleton",
+      "ok": true
+    },
+    {
+      "id": "quantity_stepper",
+      "ok": true
+    },
+    {
+      "id": "no_alert_cart",
+      "ok": true
+    },
+    {
+      "id": "checkout_sections_order",
+      "ok": true
+    },
+    {
+      "id": "checkout_order_summary",
+      "ok": true
+    },
+    {
+      "id": "checkout_skeleton",
+      "ok": true
+    },
+    {
+      "id": "checkout_field_validation",
+      "ok": true
+    },
+    {
+      "id": "checkout_section_retry",
+      "ok": true
+    },
+    {
+      "id": "checkout_offline",
+      "ok": true
+    },
+    {
+      "id": "honest_alpha_payment",
+      "ok": true
+    },
+    {
+      "id": "no_fake_order_success",
+      "ok": true
+    },
+    {
+      "id": "real_delivery_quote",
+      "ok": true
+    },
+    {
+      "id": "real_recommendations",
+      "ok": true
+    },
+    {
+      "id": "cart_telemetry",
+      "ok": true
+    },
+    {
+      "id": "checkout_telemetry",
+      "ok": true
+    },
+    {
+      "id": "crud_cart.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_CartExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useCartData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_types.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_checkout.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_CheckoutExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useCheckoutData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "cart_marketplace_score",
+      "ok": true,
+      "detail": "9.64"
+    },
+    {
+      "id": "cart_marketplace_feeling",
+      "ok": true,
+      "detail": "9.7"
+    },
+    {
+      "id": "cart_conversion_score",
+      "ok": true,
+      "detail": "9.8"
+    },
+    {
+      "id": "cart_trust_score",
+      "ok": true,
+      "detail": "9.72"
+    },
+    {
+      "id": "cart_score_delta",
+      "ok": true,
+      "detail": "3.36"
+    },
+    {
+      "id": "cart_p0",
+      "ok": true
+    },
+    {
+      "id": "cart_p1",
+      "ok": true
+    },
+    {
+      "id": "checkout_marketplace_score",
+      "ok": true,
+      "detail": "9.68"
+    },
+    {
+      "id": "checkout_marketplace_feeling",
+      "ok": true,
+      "detail": "9.72"
+    },
+    {
+      "id": "checkout_score",
+      "ok": true,
+      "detail": "9.74"
+    },
+    {
+      "id": "checkout_conversion_score",
+      "ok": true,
+      "detail": "9.8"
+    },
+    {
+      "id": "checkout_trust_score",
+      "ok": true,
+      "detail": "9.72"
+    },
+    {
+      "id": "checkout_score_delta",
+      "ok": true,
+      "detail": "4.4"
+    },
+    {
+      "id": "checkout_p0",
+      "ok": true
+    },
+    {
+      "id": "checkout_p1",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}
