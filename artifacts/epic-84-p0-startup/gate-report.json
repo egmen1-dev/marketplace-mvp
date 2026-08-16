@@ -1,0 +1,152 @@
+{
+  "epic": "EPIC-84",
+  "phase": "P0 Startup Diagnostics & Recovery",
+  "generatedAt": "2026-08-16T19:55:10.941Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "lib/mobile/boot/types.ts"
+    },
+    {
+      "id": "file_errors.ts",
+      "ok": true,
+      "detail": "lib/mobile/boot/errors.ts"
+    },
+    {
+      "id": "file_boot-types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/boot-types.ts"
+    },
+    {
+      "id": "file_boot-logger.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/boot-logger.ts"
+    },
+    {
+      "id": "file_boot-errors.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/boot-errors.ts"
+    },
+    {
+      "id": "file_boot-storage.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/boot-storage.ts"
+    },
+    {
+      "id": "file_boot-timeouts.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/boot-timeouts.ts"
+    },
+    {
+      "id": "file_session-restore.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/session-restore.ts"
+    },
+    {
+      "id": "file_run-startup-pipeline.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/run-startup-pipeline.ts"
+    },
+    {
+      "id": "file_StartupErrorScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupErrorScreen.tsx"
+    },
+    {
+      "id": "file_StartupDiagnosticsScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupDiagnosticsScreen.tsx"
+    },
+    {
+      "id": "file_startup-diagnostics.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/startup-diagnostics.tsx"
+    },
+    {
+      "id": "file_EPIC_84_P0_STARTUP_DIAGNOSTICS.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_P0_STARTUP_DIAGNOSTICS.md"
+    },
+    {
+      "id": "file_physical-checklist.md",
+      "ok": true,
+      "detail": "artifacts/epic-84-p0-startup/physical-checklist.md"
+    },
+    {
+      "id": "no_generic_boot_error",
+      "ok": true
+    },
+    {
+      "id": "uses_startup_error_screen",
+      "ok": true
+    },
+    {
+      "id": "retry_increments_attempt",
+      "ok": true
+    },
+    {
+      "id": "long_press_diagnostics",
+      "ok": true
+    },
+    {
+      "id": "session_non_blocking",
+      "ok": true,
+      "detail": "session failure opens login"
+    },
+    {
+      "id": "remote_config_recovery",
+      "ok": true
+    },
+    {
+      "id": "update_non_blocking",
+      "ok": true
+    },
+    {
+      "id": "error_shows_stage",
+      "ok": true
+    },
+    {
+      "id": "error_shows_reason",
+      "ok": true
+    },
+    {
+      "id": "error_shows_http",
+      "ok": true
+    },
+    {
+      "id": "bootstrap_timeout_8s",
+      "ok": true
+    },
+    {
+      "id": "update_timeout_5s",
+      "ok": true
+    },
+    {
+      "id": "parse_timeout_failure",
+      "ok": true,
+      "detail": "bootstrap_timeout"
+    },
+    {
+      "id": "jwt_decode_helper",
+      "ok": true
+    },
+    {
+      "id": "hung_failure_retryable",
+      "ok": true
+    },
+    {
+      "id": "failure_code_bootstrap_network",
+      "ok": true
+    },
+    {
+      "id": "failure_message_session_expired",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}

@@ -23,11 +23,14 @@ function RootShell() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="build-info" options={{ title: "Build Info" }} />
+        <Stack.Screen name="startup-diagnostics" options={{ title: "Startup Diagnostics" }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="product/[id]" options={{ title: "Товар" }} />
         <Stack.Screen name="cart" options={{ title: "Корзина" }} />
         <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
+        <Stack.Screen name="order/[id]" options={{ title: "Заказ" }} />
       </Stack>
     </>
   );
