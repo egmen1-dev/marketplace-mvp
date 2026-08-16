@@ -23,12 +23,6 @@ function altContradictsProduct(name: string, alt: string): boolean {
   );
 }
 
-function identityToken(img: ProductImageInput): string {
-  const alt = (img.alt ?? "").toLowerCase();
-  if (alt.trim()) return alt.trim();
-  return (img.pathname ?? img.url).toLowerCase();
-}
-
 function imagesShowProductFamily(name: string, images: ProductImageInput[]): boolean {
   const nameTokens = tokenize(name);
   if (nameTokens.length === 0) return true;
