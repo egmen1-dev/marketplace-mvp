@@ -32,6 +32,10 @@ export const MOBILE_ENV_CONFIG = {
 /** Reserved deep-link scheme for future Android/iOS shell */
 export const MOBILE_DEEP_LINK_SCHEME = "marketplace-mvp";
 
+export const MOBILE_APP_VERSION = "0.0.0-dev";
+export const MOBILE_MIN_SUPPORTED_APP_VERSION = "0.0.0-dev";
+export const MOBILE_RECOMMENDED_APP_VERSION = "0.0.0-dev";
+
 export type ApkUpdateMetadata = {
   minSupportedApiVersion: string;
   minSupportedSchemaVersion: string;

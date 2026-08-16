@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
+import { classifyDependencyLayers } from "./dependency-layers";
 import type {
   AdapterBoundaryFinding,
   CcosModuleId,
@@ -35,6 +36,9 @@ const MODULE_ORDER: CcosModuleId[] = [
   "signals",
   "api",
   "rc",
+  "simulation",
+  "contracts",
+  "evolution",
 ];
 
 function listTsFiles(dir: string): string[] {
@@ -55,6 +59,9 @@ function resolveModuleId(filePath: string): CcosModuleId {
   if (rel === "flags.ts" || rel === "index.ts" || rel === "telemetry.ts" || rel === "types.ts") {
     return "core";
   }
+  if (rel.startsWith("contracts/")) return "contracts";
+  if (rel.startsWith("simulation/")) return "simulation";
+  if (rel.startsWith("evolution/")) return "evolution";
   return "core";
 }
 
@@ -170,7 +177,7 @@ export function runCcosDependencyAudit(): DependencyAuditReport {
 
   const uniqueEdges = [...new Map(edges.map((e) => [`${e.from}->${e.to}`, e])).values()];
 
-  return {
+  const draftReport = {
     generatedAt: new Date().toISOString(),
     rcVersion: RC_VERSION,
     modules: MODULE_ORDER,
@@ -185,6 +192,18 @@ export function runCcosDependencyAudit(): DependencyAuditReport {
       cycleCount: cycles.length,
       violationCount: violations.length,
       edgeCount: uniqueEdges.length,
+      forbiddenEdgeCount: 0,
+    },
+  } satisfies Omit<DependencyAuditReport, "layerAnalysis">;
+
+  const layerAnalysis = classifyDependencyLayers(draftReport as DependencyAuditReport);
+
+  return {
+    ...draftReport,
+    layerAnalysis,
+    summary: {
+      ...draftReport.summary,
+      forbiddenEdgeCount: layerAnalysis.forbiddenViolations.length,
     },
   };
 }

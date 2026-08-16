@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-08-16T13:47:54.541Z",
+  "stagingBase": "https://web-production-e56fb.up.railway.app",
+  "gates": [
+    {
+      "id": "ccos_cycles_zero",
+      "result": "PASS",
+      "detail": "cycles=0"
+    },
+    {
+      "id": "marketplace_imports_zero",
+      "result": "PASS",
+      "detail": "violations=0"
+    },
+    {
+      "id": "twin_combo_equivalent",
+      "result": "PASS",
+      "detail": "status=OK port=marketplace-ranking-simulation"
+    },
+    {
+      "id": "twin_confidence_capped_by_graph",
+      "result": "PASS",
+      "detail": "confidence=0.2520833333333333 graphCap=0.48"
+    },
+    {
+      "id": "evolution_readiness_api_foundation",
+      "result": "PASS",
+      "detail": "ready=false promotionDisabled=true"
+    },
+    {
+      "id": "mobile_readiness_score",
+      "result": "PARTIAL",
+      "detail": "17/26"
+    },
+    {
+      "id": "staging_equals_main",
+      "result": "PARTIAL",
+      "detail": "staging=8e61721 main=fddbeab"
+    },
+    {
+      "id": "staging_mobile_bootstrap",
+      "result": "PARTIAL",
+      "detail": "status=error"
+    }
+  ],
+  "verdicts": {
+    "ccosPreWave6Architecture": "ACCEPTED",
+    "wave4KnowledgeGraphStaging": "NOT ACCEPTED",
+    "wave5DigitalTwinStaging": "PARTIAL",
+    "ccosDependencyClean": "YES",
+    "evolutionEngineReadiness": "NOT READY",
+    "liveRanking": "UNCHANGED",
+    "autopilot": "DISABLED",
+    "appReleaseReadiness": "17/26"
+  }
+}

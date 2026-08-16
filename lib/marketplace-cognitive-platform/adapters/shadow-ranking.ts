@@ -1,14 +1,14 @@
 /**
- * Shadow Ranking — copy of ranking score algorithm for Twin only.
+ * Marketplace shadow ranking — lives outside lib/ccos (RankingSimulationPort binding).
  * Production resolveOrderBy() is never invoked from this module.
  */
 import { computeRankingScore } from "@/lib/marketplace-ranking-intelligence/ranking-score";
 import { estimatePosition } from "@/lib/marketplace-ranking-intelligence/ranking-simulator";
 import type { RankingProductInput, RankingWeightRow } from "@/lib/marketplace-ranking-intelligence/types";
 
-export const SHADOW_RANKING_VERSION = "shadow-ranking-v1";
+export const MARKETPLACE_SHADOW_RANKING_VERSION = "marketplace-shadow-ranking-v1";
 
-export function shadowRankingScore(
+export function marketplaceShadowRankingScore(
   input: RankingProductInput,
   weights: RankingWeightRow[],
 ): { overall: number; position: number | null } {
@@ -16,7 +16,7 @@ export function shadowRankingScore(
   return { overall: score.overall, position: null };
 }
 
-export function shadowRankingSimulate(input: {
+export function marketplaceShadowRankingSimulate(input: {
   baseline: RankingProductInput;
   simulated: RankingProductInput;
   peerScores: number[];
@@ -54,7 +54,7 @@ export function shadowRankingSimulate(input: {
   };
 }
 
-export function estimateBehaviourDeltas(input: {
+export function estimateMarketplaceBehaviourDeltas(input: {
   baseline: RankingProductInput;
   scoreDelta: number;
   positionDelta: number | null;

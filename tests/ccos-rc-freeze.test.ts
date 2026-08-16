@@ -16,11 +16,11 @@ describe("ccos rc-1 freeze", () => {
     expect(audit.passed).toBe(true);
   });
 
-  it("flags marketplace imports inside lib/ccos twin port (known debt)", () => {
+  it("reports zero marketplace imports inside lib/ccos after port extraction", () => {
     const audit = runCcosDependencyAudit();
-    const twinViolations = audit.marketplaceViolations.filter((v) => v.layer === "twin");
-    expect(twinViolations.length).toBeGreaterThan(0);
-    expect(audit.architectureClean).toBe(false);
+    expect(audit.summary.violationCount).toBe(0);
+    expect(audit.architectureClean).toBe(true);
+    expect(audit.passed).toBe(true);
   });
 
   it("builds readiness dashboard rows for core platform", () => {

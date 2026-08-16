@@ -2,8 +2,11 @@ import {
   MOBILE_API_VERSION,
   MOBILE_SCHEMA_VERSION,
   MOBILE_DEEP_LINK_SCHEME,
-  MOBILE_ENV_CONFIG,
   APK_UPDATE_METADATA,
+  MOBILE_APP_VERSION,
+  MOBILE_MIN_SUPPORTED_APP_VERSION,
+  MOBILE_RECOMMENDED_APP_VERSION,
+  MOBILE_ENV_CONFIG,
 } from "./api-contract";
 import { isCcosEnabled } from "@/lib/ccos/flags";
 import { isCcosGraphPlatformEnabled } from "@/lib/ccos/graph/flags";
@@ -44,6 +47,9 @@ export type MobileBootstrapPayload = {
   };
   supportedSchemaVersions: string[];
   recommendedSyncIntervalSec: number;
+  minimumSupportedAppVersion: string;
+  recommendedAppVersion: string;
+  forceUpgrade: boolean;
   endpoints: {
     dashboard: string;
     config: string;
@@ -97,6 +103,9 @@ export function buildMobileBootstrapPayload(): MobileBootstrapPayload {
     },
     supportedSchemaVersions: [MOBILE_SCHEMA_VERSION],
     recommendedSyncIntervalSec: 900,
+    minimumSupportedAppVersion: MOBILE_MIN_SUPPORTED_APP_VERSION,
+    recommendedAppVersion: MOBILE_RECOMMENDED_APP_VERSION,
+    forceUpgrade: false,
     endpoints: {
       dashboard: "/api/mobile/dashboard",
       config: "/api/mobile/config",

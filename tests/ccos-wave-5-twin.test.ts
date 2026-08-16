@@ -2,9 +2,9 @@ import { describe, expect, it, beforeEach } from "vitest";
 
 import { buildCausalKnowledgeGraph } from "@/lib/ccos/graph";
 import { buildProductUnderstanding } from "@/lib/ccos/product";
+import { resetSimulationPortRegistry } from "@/lib/ccos/simulation";
 import {
   DEFAULT_SCENARIOS,
-  applyScenarioToRankingInput,
   assertTwinGovernance,
   cacheTwinSimulation,
   computeTwinAccuracySummary,
@@ -17,10 +17,14 @@ import {
   resetTwinMemory,
   resetTwinSimulationCache,
   runMonteCarloSimulation,
-  runTwinSimulationWithRankingInput,
   saveTwinSimulationMemory,
-  shadowRankingSimulate,
 } from "@/lib/ccos/twin";
+import {
+  applyScenarioToMarketplaceRankingInput,
+  ensureMarketplaceRankingSimulationPortRegistered,
+  marketplaceShadowRankingSimulate,
+  runTwinSimulationWithRankingInput,
+} from "@/lib/marketplace-cognitive-platform/adapters/ranking-simulation.adapter";
 import { DEFAULT_RANKING_WEIGHTS_V1 } from "@/lib/marketplace-ranking-intelligence/ranking-weights";
 import type { RankingProductInput } from "@/lib/marketplace-ranking-intelligence/types";
 import { toMobileScenarioSimulatorResponse } from "@/lib/marketplace-cognitive-platform/twin";
@@ -67,6 +71,8 @@ describe("ccos wave 5 digital twin platform", () => {
   beforeEach(() => {
     resetTwinMemory();
     resetTwinSimulationCache();
+    resetSimulationPortRegistry();
+    ensureMarketplaceRankingSimulationPortRegistered();
   });
 
   it("blocks twin writes to production", () => {
@@ -150,9 +156,9 @@ describe("ccos wave 5 digital twin platform", () => {
     expect(source.includes("lib/ccos/twin")).toBe(false);
     expect(source.includes("shadowRanking")).toBe(false);
 
-    const shadow = shadowRankingSimulate({
+    const shadow = marketplaceShadowRankingSimulate({
       baseline: fanProduct,
-      simulated: applyScenarioToRankingInput(fanProduct, DEFAULT_SCENARIOS[0]),
+      simulated: applyScenarioToMarketplaceRankingInput(fanProduct, DEFAULT_SCENARIOS[0]),
       peerScores: [70, 65, 60],
       weights: DEFAULT_RANKING_WEIGHTS_V1,
     });
@@ -177,6 +183,7 @@ describe("ccos wave 5 digital twin platform", () => {
       result: {
         scenarioId: "scenario_photo",
         scenarioLabel: "Фото",
+        simulationStatus: "OK",
         predicted: { ctrDeltaPct: 12 },
         monteCarlo: { iterations: 10, probabilities: {}, median: {} },
         risk: { level: "low", score: 20, factors: [], summary: "Risk Low" },
@@ -206,6 +213,7 @@ describe("ccos wave 5 digital twin platform", () => {
       result: {
         scenarioId: "scenario_photo",
         scenarioLabel: "Фото",
+        simulationStatus: "OK",
         predicted: { ctrDeltaPct: 20 },
         monteCarlo: { iterations: 10, probabilities: {}, median: {} },
         risk: { level: "low", score: 10, factors: [], summary: "Risk Low" },

@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 export default async function AdminCcosReadinessPage() {
-  const { dashboard, dependencyAudit } = getCcosReadinessWithAudit();
+  const { dashboard, dependencyAudit, evolutionReadiness } = getCcosReadinessWithAudit();
 
   return (
     <div className="flex flex-col gap-6">
@@ -32,7 +32,11 @@ export default async function AdminCcosReadinessPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AdminCcosReadinessDashboard dashboard={dashboard} dependencyAudit={dependencyAudit} />
+          <AdminCcosReadinessDashboard
+            dashboard={dashboard}
+            dependencyAudit={dependencyAudit}
+            evolutionReadiness={evolutionReadiness}
+          />
         </CardContent>
       </Card>
     </div>

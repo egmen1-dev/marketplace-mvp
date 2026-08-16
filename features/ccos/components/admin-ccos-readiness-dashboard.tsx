@@ -15,10 +15,12 @@ import type {
   DependencyAuditReport,
   ReadinessStatus,
 } from "@/lib/ccos/rc/types";
+import type { EvolutionReadinessReport } from "@/lib/ccos/evolution/readiness";
 
 type AdminCcosReadinessDashboardProps = {
   dashboard: CcosReadinessDashboard;
   dependencyAudit: DependencyAuditReport;
+  evolutionReadiness: EvolutionReadinessReport;
 };
 
 function StatusIcon({ status }: { status: ReadinessStatus }) {
@@ -38,6 +40,7 @@ function statusLabel(status: ReadinessStatus): string {
 export function AdminCcosReadinessDashboard({
   dashboard,
   dependencyAudit,
+  evolutionReadiness,
 }: AdminCcosReadinessDashboardProps) {
   return (
     <div className="flex flex-col gap-6" data-testid="admin-ccos-readiness-dashboard">
@@ -129,6 +132,31 @@ export function AdminCcosReadinessDashboard({
               ))}
             </ul>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Evolution Readiness</CardTitle>
+          <CardDescription>
+            Prerequisites for Wave 6 — not the Evolution Engine itself
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Badge variant={evolutionReadiness.ready ? "default" : "secondary"} className="mb-4">
+            EVOLUTION ENGINE READINESS: {evolutionReadiness.ready ? "READY" : "NOT READY"}
+          </Badge>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {evolutionReadiness.checkList.map((check) => (
+              <li key={check.id} className="rounded-lg border border-border p-3 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">{check.label}</span>
+                  <Badge variant={check.ok ? "default" : "outline"}>{check.ok ? "OK" : "BLOCKED"}</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">{check.detail}</p>
+              </li>
+            ))}
+          </ul>
         </CardContent>
       </Card>
     </div>

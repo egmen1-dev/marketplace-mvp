@@ -24,7 +24,9 @@ export async function buildBrainSimulations(input: {
     if (!rankingInput) return [];
 
     const peerScores = await loadPeerScoresForProduct(input.productId);
-    const { runTwinSimulationWithRankingInput } = await import("@/lib/ccos/twin");
+    const { runTwinSimulationWithRankingInput } = await import(
+      "@/lib/marketplace-cognitive-platform/adapters/ranking-simulation.adapter"
+    );
     const twinReport = await runTwinSimulationWithRankingInput({
       productId: input.productId,
       rankingInput,
