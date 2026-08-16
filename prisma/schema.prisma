@@ -577,6 +577,8 @@ model Product {
   socialCollectionItems SocialCollectionItem[]
   rankingSnapshot      ProductRankingSnapshot?
   rankingHistory       ProductRankingHistory[]
+  qualitySnapshot      ProductQualitySnapshot?
+  qualityHistory       ProductQualityHistory[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -1775,6 +1777,52 @@ model ProductRankingHistory {
 
   @@index([productId, createdAt])
   @@map("product_ranking_history")
+}
+
+/// Latest content quality evaluation snapshot per product (Commercial Quality Score).
+model ProductQualitySnapshot {
+  productId           String   @id
+  overallScore        Int
+  confidence          Float
+  factorScores        Json
+  photoEvaluations    Json?
+  blockers            Json
+  warnings            Json
+  strengths           Json
+  recommendations     Json
+  failedGates         Json
+  topEligibility      String
+  provider            String
+  qualityModelVersion String
+  criticVersion       String
+  providerVersion     String
+  contentHash         String?
+  evaluation          Json
+  evaluatedAt         DateTime @updatedAt
+  createdAt           DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([overallScore])
+  @@index([topEligibility])
+  @@index([provider])
+  @@map("product_quality_snapshots")
+}
+
+/// Immutable content quality score history.
+model ProductQualityHistory {
+  id                  String   @id @default(cuid())
+  productId           String
+  overallScore        Int
+  factorScores        Json
+  provider            String
+  qualityModelVersion String
+  createdAt           DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, createdAt])
+  @@map("product_quality_history")
 }
 
 /// Ranking Lab experiment definition + report.
