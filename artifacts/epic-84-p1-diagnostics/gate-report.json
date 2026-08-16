@@ -1,0 +1,141 @@
+{
+  "epic": "EPIC-84",
+  "phase": "P1 Crash & Diagnostics Platform",
+  "generatedAt": "2026-08-16T20:03:44.429Z",
+  "verdict": "PASS",
+  "auditScores": {
+    "developerExperience": 9.85,
+    "supportExperience": 9.9,
+    "debugSpeed": 9.88
+  },
+  "rows": [
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "lib/mobile/diagnostics/types.ts"
+    },
+    {
+      "id": "file_boot-id.ts",
+      "ok": true,
+      "detail": "lib/mobile/diagnostics/boot-id.ts"
+    },
+    {
+      "id": "file_security.ts",
+      "ok": true,
+      "detail": "lib/mobile/diagnostics/security.ts"
+    },
+    {
+      "id": "file_format-report.ts",
+      "ok": true,
+      "detail": "lib/mobile/diagnostics/format-report.ts"
+    },
+    {
+      "id": "file_boot-session.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/boot/boot-session.ts"
+    },
+    {
+      "id": "file_device-info.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/diagnostics/device-info.ts"
+    },
+    {
+      "id": "file_connectivity-check.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/diagnostics/connectivity-check.ts"
+    },
+    {
+      "id": "file_diagnostics-service.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/diagnostics/diagnostics-service.ts"
+    },
+    {
+      "id": "file_diagnostics-actions.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/diagnostics/diagnostics-actions.ts"
+    },
+    {
+      "id": "file_EPIC_84_P1_CRASH_DIAGNOSTICS.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_P1_CRASH_DIAGNOSTICS.md"
+    },
+    {
+      "id": "file_physical-checklist.md",
+      "ok": true,
+      "detail": "artifacts/epic-84-p1-diagnostics/physical-checklist.md"
+    },
+    {
+      "id": "copy_diagnostics_button",
+      "ok": true
+    },
+    {
+      "id": "export_report_button",
+      "ok": true
+    },
+    {
+      "id": "user_report_button",
+      "ok": true
+    },
+    {
+      "id": "boot_id_display",
+      "ok": true
+    },
+    {
+      "id": "connectivity_panel",
+      "ok": true
+    },
+    {
+      "id": "offline_user_message",
+      "ok": true
+    },
+    {
+      "id": "diagnostics_timeline",
+      "ok": true
+    },
+    {
+      "id": "boot_history",
+      "ok": true
+    },
+    {
+      "id": "device_section",
+      "ok": true
+    },
+    {
+      "id": "telemetry_boot_id",
+      "ok": true
+    },
+    {
+      "id": "boot_failed_event",
+      "ok": true
+    },
+    {
+      "id": "boot_id_format",
+      "ok": true,
+      "detail": "BOOT-BF842E"
+    },
+    {
+      "id": "offline_copy",
+      "ok": true
+    },
+    {
+      "id": "server_copy",
+      "ok": true
+    },
+    {
+      "id": "diagnostics_text_export",
+      "ok": true
+    },
+    {
+      "id": "diagnostics_json_export",
+      "ok": true
+    },
+    {
+      "id": "security_redaction",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}
