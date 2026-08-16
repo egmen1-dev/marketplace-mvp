@@ -8,12 +8,19 @@ type AppState = {
   offline: boolean;
   pendingDeepLink: string | null;
   remoteConfig: Record<string, unknown>;
+  userRole: string | null;
+  sellerCapable: boolean;
   setMode: (mode: AppMode) => void;
   setBootstrapped: (value: boolean) => void;
   setOffline: (value: boolean) => void;
   setPendingDeepLink: (uri: string | null) => void;
   setRemoteConfig: (config: Record<string, unknown>) => void;
+  setUserRole: (role: string | null) => void;
 };
+
+function isSellerRole(role: string | null): boolean {
+  return role === "SELLER" || role === "ADMIN";
+}
 
 export const useAppStore = create<AppState>((set) => ({
   mode: "buyer",
@@ -21,9 +28,17 @@ export const useAppStore = create<AppState>((set) => ({
   offline: false,
   pendingDeepLink: null,
   remoteConfig: {},
+  userRole: null,
+  sellerCapable: false,
   setMode: (mode) => set({ mode }),
   setBootstrapped: (bootstrapped) => set({ bootstrapped }),
   setOffline: (offline) => set({ offline }),
   setPendingDeepLink: (pendingDeepLink) => set({ pendingDeepLink }),
   setRemoteConfig: (remoteConfig) => set({ remoteConfig }),
+  setUserRole: (role) =>
+    set({
+      userRole: role,
+      sellerCapable: isSellerRole(role),
+      mode: isSellerRole(role) ? "seller" : "buyer",
+    }),
 }));

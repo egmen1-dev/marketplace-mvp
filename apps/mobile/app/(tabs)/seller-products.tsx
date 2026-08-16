@@ -1,46 +1,86 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { Pressable, RefreshControl, View } from "react-native";
 
-import { fetchCatalog } from "../../src/api/endpoints";
-import { getSessionMeta } from "../../src/storage/secure-session";
-import { colors, spacing, typography } from "../../src/theme/tokens";
+import { fetchSellerProducts, type MobileProductListItem } from "../../src/api/endpoints";
+import { EmptyState, ErrorState, LoadingState, PageScroll, SearchBar, SellerProductRow } from "../../src/components/ui";
+import { loadAppConfig } from "../../src/config/env";
+import { resolveImageUrl } from "../../src/utils/format";
+import { useAppStore } from "../../src/store/app-store";
 
 export default function SellerProductsScreen() {
-  const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
+  const offline = useAppStore((s) => s.offline);
+  const sellerCapable = useAppStore((s) => s.sellerCapable);
+  const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const meta = await getSessionMeta();
-      if (!meta) return setLoading(false);
-      const res = await fetchCatalog({ q: "" });
-      setItems(res.items);
+  const load = useCallback(async () => {
+    if (offline) {
       setLoading(false);
-    })();
-  }, []);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetchSellerProducts();
+      setItems(res.items);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось загрузить товары");
+    } finally {
+      setLoading(false);
+    }
+  }, [offline]);
 
-  if (loading) return <ActivityIndicator style={{ marginTop: 40 }} color={colors.orange} />;
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load]),
+  );
+
+  const config = loadAppConfig();
+  const filtered = query
+    ? items.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
+    : items;
+
+  if (!sellerCapable) {
+    return (
+      <EmptyState
+        title="Нет доступа к товарам"
+        description="Войдите под аккаунтом продавца, чтобы управлять товарами."
+        actionLabel="В профиль"
+        onAction={() => router.push("/(tabs)/profile")}
+      />
+    );
+  }
+
+  if (loading && items.length === 0) return <LoadingState label="Загружаем товары…" />;
+  if (error && items.length === 0) return <ErrorState title="Ошибка загрузки" description={error} onRetry={load} />;
 
   return (
-    <FlatList
-      data={items.slice(0, 20)}
-      keyExtractor={(item, idx) => String(item.id ?? idx)}
-      contentContainerStyle={styles.container}
-      ListEmptyComponent={<Text style={styles.empty}>Нет товаров</Text>}
-      renderItem={({ item }) => (
-        <View style={styles.card}>
-          <Text style={styles.title}>{String(item.title ?? "Товар")}</Text>
-          <Text style={styles.caption}>{String(item.status ?? "ACTIVE")}</Text>
-        </View>
+    <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
+      <SearchBar placeholder="Поиск по вашим товарам" value={query} onChangeText={setQuery} />
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="Нет товаров"
+          description="Создайте первый товар в веб-кабинете продавца."
+          actionLabel="Обновить"
+          onAction={load}
+        />
+      ) : (
+        filtered.map((item) => (
+          <Pressable key={item.id} onPress={() => router.push(`/product/${item.id}`)}>
+            <SellerProductRow
+              title={item.title}
+              price={item.price}
+              stock={item.stock ?? 0}
+              status={item.status ?? "ACTIVE"}
+              imageUrl={resolveImageUrl(item.primaryImage?.url ?? null, config.apiBaseUrl)}
+            />
+          </Pressable>
+        ))
       )}
-    />
+    </PageScroll>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: spacing.md },
-  card: { paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
-  title: { ...typography.subtitle },
-  caption: { ...typography.caption, color: colors.gray500 },
-  empty: { textAlign: "center", color: colors.gray500, marginTop: spacing.lg },
-});

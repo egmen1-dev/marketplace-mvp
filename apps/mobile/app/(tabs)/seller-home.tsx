@@ -1,17 +1,41 @@
-import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 
 import { fetchSellerHome } from "../../src/api/endpoints";
+import {
+  AppHeader,
+  EmptyState,
+  ErrorState,
+  InfoCard,
+  LoadingState,
+  MetricCard,
+  PageScroll,
+  PrimaryButton,
+  SecondaryButton,
+  WalletCard,
+} from "../../src/components/ui";
 import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
+import { formatPrice } from "../../src/utils/format";
 import { useAppStore } from "../../src/store/app-store";
 import { colors, spacing, typography } from "../../src/theme/tokens";
 
+type SellerHomeData = {
+  money?: { available: number; pending: number };
+  orders?: { needAction: number };
+  products?: { active: number; needAttention: number };
+  promotion?: { active: number };
+  intelligence?: { topAction: string | null; productId: string | null; confidence?: number; reason?: string };
+};
+
 export default function SellerHomeScreen() {
   const offline = useAppStore((s) => s.offline);
-  const [data, setData] = useState<Record<string, unknown> | null>(
-    () => (readSnapshot<Record<string, unknown>>("seller-home")?.payload ?? null),
+  const sellerCapable = useAppStore((s) => s.sellerCapable);
+  const [data, setData] = useState<SellerHomeData | null>(
+    () => (readSnapshot<SellerHomeData>("seller-home")?.payload ?? null),
   );
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (offline) {
@@ -19,54 +43,94 @@ export default function SellerHomeScreen() {
       return;
     }
     setLoading(true);
+    setError(null);
     try {
       const res = await fetchSellerHome();
       saveSnapshot("seller-home", res);
       setData(res);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось загрузить данные");
     } finally {
       setLoading(false);
     }
   }, [offline]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load]),
+  );
 
-  const money = (data as { money?: { available: number; pending: number } })?.money;
-  const orders = (data as { orders?: { needAction: number } })?.orders;
-  const products = (data as { products?: { active: number; needAttention: number } })?.products;
-  const intelligence = (data as { intelligence?: { topAction: string | null; productId: string | null; confidence?: number; reason?: string } })?.intelligence;
+  if (!sellerCapable) {
+    return (
+      <EmptyState
+        title="Режим продавца недоступен"
+        description="Этот аккаунт не является продавцом. Переключитесь в режим покупателя или войдите под seller@demo.lot."
+        actionLabel="В профиль"
+        onAction={() => router.push("/(tabs)/profile")}
+      />
+    );
+  }
+
+  if (loading && !data) return <LoadingState label="Загружаем кабинет…" />;
+
+  const money = data?.money;
+  const orders = data?.orders;
+  const products = data?.products;
+  const promotion = data?.promotion;
+  const intelligence = data?.intelligence;
 
   return (
-    <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />} contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Продавец</Text>
-      <View style={styles.card}>
-        <Text style={styles.metric}>Доступно: {money?.available ?? 0} ₽</Text>
-        <Text style={styles.metric}>В ожидании: {money?.pending ?? 0} ₽</Text>
-        <Text style={styles.metric}>Заказы (действие): {orders?.needAction ?? 0}</Text>
-        <Text style={styles.metric}>Товары: {products?.active ?? 0} / внимание {products?.needAttention ?? 0}</Text>
+    <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
+      <AppHeader title="Кабинет продавца" subtitle="Сводка за сегодня" />
+
+      {offline ? <Text style={styles.offline}>Оффлайн — показаны сохранённые данные</Text> : null}
+      {error ? <ErrorState title="Ошибка" description={error} onRetry={load} /> : null}
+
+      <WalletCard balance={money?.available ?? 0} withdrawable={money?.available ?? 0} pending={money?.pending ?? 0} />
+
+      <View style={styles.metricsGrid}>
+        <MetricCard label="Товаров" value={String(products?.active ?? 0)} hint="активных" tone="neutral" />
+        <MetricCard label="Нужно внимания" value={String(products?.needAttention ?? 0)} tone={(products?.needAttention ?? 0) > 0 ? "warning" : "neutral"} />
+        <MetricCard label="Заказы" value={String(orders?.needAction ?? 0)} hint="требуют действия" tone={(orders?.needAction ?? 0) > 0 ? "danger" : "success"} />
+        <MetricCard label="Продвижение" value={String(promotion?.active ?? 0)} hint="активных кампаний" tone="neutral" />
       </View>
+
       {intelligence?.topAction ? (
-        <View style={styles.brainCard}>
-          <Text style={styles.brainLabel}>Главное действие</Text>
-          <Text style={styles.brainAction}>{intelligence.topAction}</Text>
-          {intelligence.reason ? <Text style={styles.brainReason}>{intelligence.reason}</Text> : null}
-          {typeof intelligence.confidence === "number" ? (
-            <Text style={styles.brainReason}>Уверенность: {Math.round(intelligence.confidence * 100)}%</Text>
-          ) : null}
+        <InfoCard title="Главный AI совет" body={intelligence.topAction} />
+      ) : (
+        <InfoCard title="Совет дня" body="Проверьте остатки и обновите фото товаров — это повышает конверсию." />
+      )}
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Быстрые действия</Text>
+        <View style={styles.actions}>
+          <PrimaryButton label="Мои товары" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />
+          <SecondaryButton label="Заказы" fullWidth onPress={() => router.push("/(tabs)/seller-sales")} />
+          <SecondaryButton label="Кошелёк" fullWidth onPress={() => router.push("/(tabs)/wallet")} />
         </View>
-      ) : null}
-    </ScrollView>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Последние продажи</Text>
+        <View style={styles.placeholderCard}>
+          <Text style={styles.placeholderText}>История продаж скоро появится в мобильном кабинете.</Text>
+          <Pressable onPress={() => router.push("/(tabs)/seller-sales")}>
+            <Text style={styles.link}>Открыть заказы →</Text>
+          </Pressable>
+        </View>
+      </View>
+    </PageScroll>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
-  title: { ...typography.title },
-  card: { backgroundColor: colors.gray100, borderRadius: 16, padding: spacing.lg, gap: spacing.sm },
-  metric: { ...typography.body },
-  brainCard: { backgroundColor: colors.orange, borderRadius: 16, padding: spacing.lg, gap: spacing.xs },
-  brainLabel: { ...typography.caption, color: colors.white, opacity: 0.9 },
-  brainAction: { ...typography.subtitle, color: colors.white },
-  brainReason: { ...typography.caption, color: colors.white, opacity: 0.85 },
+  offline: { ...typography.caption, color: colors.gray500 },
+  metricsGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
+  section: { gap: spacing.md },
+  sectionTitle: { ...typography.h2, color: colors.black },
+  actions: { gap: spacing.sm },
+  placeholderCard: { backgroundColor: colors.gray100, borderRadius: 16, padding: spacing.lg, gap: spacing.sm },
+  placeholderText: { ...typography.body, color: colors.gray700 },
+  link: { ...typography.caption, color: colors.orange, fontWeight: "600" },
 });

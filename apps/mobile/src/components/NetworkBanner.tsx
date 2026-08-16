@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Network from "expo-network";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { useAppStore } from "../store/app-store";
 import { colors, spacing, typography } from "../theme/tokens";
@@ -27,12 +28,21 @@ export function NetworkBanner() {
 
   return (
     <View style={styles.banner} accessibilityRole="alert">
-      <Text style={styles.text}>Нет сети — показаны сохранённые данные где возможно</Text>
+      <MaterialCommunityIcons name="wifi-off" size={16} color={colors.white} />
+      <Text style={styles.text}>Нет подключения к интернету</Text>
+      <Text style={styles.subtext}>Некоторые данные могут быть неактуальны</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  banner: { backgroundColor: colors.black, paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
-  text: { ...typography.caption, color: colors.white, textAlign: "center" },
+  banner: {
+    backgroundColor: colors.black,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  text: { ...typography.caption, color: colors.white, fontWeight: "600" },
+  subtext: { ...typography.caption, color: colors.gray300, fontSize: 11 },
 });

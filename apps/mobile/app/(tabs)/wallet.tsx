@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 import { fetchWallet } from "../../src/api/endpoints";
+import { EmptyState, LoadingState, PageScroll, SecondaryButton, SectionHeader, WalletCard } from "../../src/components/ui";
 import { colors, spacing, typography } from "../../src/theme/tokens";
 
 export default function WalletScreen() {
@@ -14,20 +15,31 @@ export default function WalletScreen() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <ActivityIndicator style={{ marginTop: 40 }} color={colors.orange} />;
+  if (loading) return <LoadingState label="Загружаем кошелёк…" />;
+
+  if (!data?.enabled) {
+    return <EmptyState title="Кошелёк недоступен" description="Функция временно отключена на staging." />;
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Кошелёк</Text>
-      <Text style={styles.metric}>Доступно: {data?.spendable ?? 0} ₽</Text>
-      <Text style={styles.metric}>К выводу: {data?.withdrawable ?? 0} ₽</Text>
-      <Text style={styles.metric}>Ожидание: {data?.pending ?? 0} ₽</Text>
-    </View>
+    <PageScroll>
+      <WalletCard balance={data.spendable} withdrawable={data.withdrawable} pending={data.pending} />
+
+      <View style={styles.actions}>
+        <SecondaryButton label="Пополнение" fullWidth onPress={() => {}} disabled />
+        <SecondaryButton label="Вывод" fullWidth onPress={() => {}} disabled />
+      </View>
+
+      <SectionHeader title="Последние операции" />
+      <View style={styles.placeholder}>
+        <Text style={styles.placeholderText}>История операций появится в следующем обновлении Alpha.</Text>
+      </View>
+    </PageScroll>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg, gap: spacing.sm, backgroundColor: colors.white },
-  title: { ...typography.title },
-  metric: { ...typography.body },
+  actions: { gap: spacing.sm },
+  placeholder: { backgroundColor: colors.gray100, borderRadius: 16, padding: spacing.lg },
+  placeholderText: { ...typography.body, color: colors.gray700 },
 });

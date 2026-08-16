@@ -10,6 +10,7 @@ import { colors, spacing, typography } from "../src/theme/tokens";
 export default function BootScreen() {
   const setBootstrapped = useAppStore((s) => s.setBootstrapped);
   const setRemoteConfig = useAppStore((s) => s.setRemoteConfig);
+  const setUserRole = useAppStore((s) => s.setUserRole);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState<"login" | "app" | null>(null);
 
@@ -24,6 +25,7 @@ export default function BootScreen() {
         const meta = await getSessionMeta();
         if (cancelled) return;
         if (remote?.config) setRemoteConfig(remote.config);
+        if (meta?.role) setUserRole(meta.role);
         setBootstrapped(true);
         setReady(token && meta ? "app" : "login");
       } catch (err) {
@@ -33,23 +35,28 @@ export default function BootScreen() {
     return () => {
       cancelled = true;
     };
-  }, [setBootstrapped, setRemoteConfig]);
+  }, [setBootstrapped, setRemoteConfig, setUserRole]);
 
   if (ready === "app") return <Redirect href="/(tabs)" />;
   if (ready === "login") return <Redirect href="/login" />;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>ЛОТ</Text>
+      <View style={styles.brand}>
+        <Image source={require("../assets/splash-icon.png")} style={styles.logo} />
+        <Text style={styles.title}>ЛОТ</Text>
+        <Text style={styles.tagline}>Маркетплейс, которому доверяют</Text>
+      </View>
       {error ? <Text style={styles.error}>{error}</Text> : <ActivityIndicator color={colors.orange} size="large" />}
-      <Text style={styles.caption}>Загрузка…</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.white, padding: spacing.lg },
-  logo: { ...typography.title, color: colors.orange, fontSize: 36, marginBottom: spacing.lg },
-  caption: { ...typography.caption, color: colors.gray500, marginTop: spacing.md },
-  error: { color: colors.danger, textAlign: "center", marginBottom: spacing.sm },
+  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.white, padding: spacing.xl },
+  brand: { alignItems: "center", gap: spacing.md, marginBottom: spacing.xxl },
+  logo: { width: 96, height: 96 },
+  title: { ...typography.display, color: colors.orange, fontSize: 36 },
+  tagline: { ...typography.body, color: colors.gray500 },
+  error: { color: colors.danger, textAlign: "center" },
 });

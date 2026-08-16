@@ -5,6 +5,7 @@ import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native"
 import { logout } from "../../src/api/client";
 import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
 import { loadAppConfig } from "../../src/config/env";
+import { Avatar, GhostButton, PrimaryButton, SecondaryButton, SectionHeader } from "../../src/components/ui";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
 import { buildErrorReport } from "../../src/telemetry/error-report";
@@ -13,13 +14,16 @@ import type { MobileUpdateInfo } from "../../src/api/endpoints";
 
 export default function ProfileScreen() {
   const mode = useAppStore((s) => s.mode);
+  const sellerCapable = useAppStore((s) => s.sellerCapable);
   const setMode = useAppStore((s) => s.setMode);
-  const [role, setRole] = useState<string>("—");
+  const [email, setEmail] = useState<string>("—");
   const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
   const config = loadAppConfig();
 
   useEffect(() => {
-    getSessionMeta().then((meta) => setRole(meta?.role ?? "—"));
+    getSessionMeta().then((meta) => {
+      if (meta?.userId) setEmail(meta.userId.slice(0, 8) + "…");
+    });
   }, []);
 
   useEffect(() => {
@@ -60,68 +64,77 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Профиль</Text>
-      <Text style={styles.caption}>Роль: {role}</Text>
-      <Text style={styles.caption}>v{config.appVersion} ({config.buildNumber}) · {config.releaseChannel}</Text>
-      <Text style={styles.caption}>API mobile-v1 · канал alpha</Text>
+      <View style={styles.header}>
+        <Avatar label={email} size={56} />
+        <View>
+          <Text style={styles.title}>Профиль</Text>
+          <Text style={styles.subtitle}>ID: {email}</Text>
+        </View>
+      </View>
+
+      <SectionHeader title="Режим" />
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>Сейчас: {mode === "seller" ? "Продавец" : "Покупатель"}</Text>
+        {sellerCapable ? (
+          <SecondaryButton
+            label={mode === "buyer" ? "Переключить на продавца" : "Переключить на покупателя"}
+            fullWidth
+            onPress={() => {
+              const next = mode === "buyer" ? "seller" : "buyer";
+              setMode(next);
+              router.replace(next === "seller" ? "/(tabs)/seller-home" : "/(tabs)");
+            }}
+          />
+        ) : (
+          <Text style={styles.hint}>Аккаунт покупателя — режим продавца недоступен.</Text>
+        )}
+      </View>
+
+      <SectionHeader title="Настройки" />
+      <Pressable style={styles.row} onPress={() => Linking.openURL(`${config.apiBaseUrl}/account/settings`)}>
+        <Text style={styles.rowText}>Личные данные</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </Pressable>
+      <Pressable style={styles.row} onPress={onReportError}>
+        <Text style={styles.rowText}>Поддержка</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </Pressable>
+      <Pressable style={styles.row} onPress={() => Linking.openURL(`${config.apiBaseUrl}/about`)}>
+        <Text style={styles.rowText}>О приложении</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </Pressable>
+
       {hasUpdate ? (
-        <View style={styles.updateBanner} accessibilityLabel="Доступно обновление">
+        <View style={styles.updateBanner}>
           <Text style={styles.updateTitle}>Доступна версия {updateInfo.versionName}</Text>
-          {updateInfo.releaseNotes.slice(0, 2).map((note) => (
-            <Text key={note} style={styles.updateNote}>
-              • {note}
-            </Text>
-          ))}
-          <Pressable style={styles.updateButton} onPress={onUpdate}>
-            <Text style={styles.updateButtonText}>Обновить</Text>
-          </Pressable>
+          <PrimaryButton label="Обновить" onPress={onUpdate} size="sm" />
         </View>
       ) : null}
-      <Pressable style={styles.report} onPress={onReportError} accessibilityLabel="Сообщить об ошибке">
-        <Text style={styles.reportText}>Сообщить об ошибке</Text>
-      </Pressable>
-      <Pressable
-        style={styles.switch}
-        onPress={() => {
-          setMode(mode === "buyer" ? "seller" : "buyer");
-          router.replace(mode === "buyer" ? "/(tabs)/seller-home" : "/(tabs)");
-        }}
-      >
-        <Text style={styles.switchText}>{mode === "buyer" ? "Переключить на Продавца" : "Переключить на Покупателя"}</Text>
-      </Pressable>
+
+      <GhostButton label="Сообщить об ошибке" onPress={onReportError} fullWidth />
       <Pressable style={styles.logout} onPress={onLogout}>
         <Text style={styles.logoutText}>Выйти</Text>
       </Pressable>
+
+      <Text style={styles.version}>Версия {config.appVersion} ({config.buildNumber}) · {config.releaseChannel}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
-  title: { ...typography.title },
-  caption: { ...typography.caption, color: colors.gray500 },
-  updateBanner: {
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: 12,
-    padding: spacing.md,
-    gap: spacing.sm,
-    backgroundColor: colors.gray100,
-  },
+  header: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.sm },
+  title: { ...typography.h1 },
+  subtitle: { ...typography.caption, color: colors.gray500 },
+  card: { backgroundColor: colors.gray100, borderRadius: 16, padding: spacing.lg, gap: spacing.sm },
+  cardLabel: { ...typography.body, color: colors.gray900 },
+  hint: { ...typography.caption, color: colors.gray500 },
+  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
+  rowText: { ...typography.body, color: colors.black },
+  rowChevron: { ...typography.h2, color: colors.gray500 },
+  updateBanner: { borderWidth: 1, borderColor: colors.gray200, borderRadius: 12, padding: spacing.md, gap: spacing.sm, backgroundColor: colors.gray100 },
   updateTitle: { ...typography.subtitle },
-  updateNote: { ...typography.caption, color: colors.gray900 },
-  updateButton: {
-    backgroundColor: colors.black,
-    minHeight: 44,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  updateButtonText: { color: colors.white, ...typography.subtitle },
-  switch: { backgroundColor: colors.gray100, minHeight: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  switchText: { ...typography.subtitle },
-  report: { borderWidth: 1, borderColor: colors.gray200, minHeight: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  reportText: { ...typography.subtitle, color: colors.gray900 },
   logout: { backgroundColor: colors.black, minHeight: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   logoutText: { color: colors.white, ...typography.subtitle },
+  version: { ...typography.caption, color: colors.gray500, textAlign: "center", marginTop: "auto" },
 });

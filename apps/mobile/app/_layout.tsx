@@ -20,7 +20,7 @@ function RootShell() {
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ title: "Вход" }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="product/[id]" options={{ title: "Товар" }} />
         <Stack.Screen name="cart" options={{ title: "Корзина" }} />

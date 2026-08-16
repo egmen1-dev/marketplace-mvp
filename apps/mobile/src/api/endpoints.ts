@@ -21,6 +21,28 @@ export type MobileUpdateInfo = {
   };
 };
 
+export type CatalogParams = {
+  q?: string;
+  cursor?: string | null;
+  sort?: "popular" | "newest" | "price_asc" | "price_desc";
+  sellerId?: string;
+};
+
+export type MobileProductListItem = {
+  id: string;
+  title: string;
+  price: number;
+  compareAt?: number | null;
+  stock?: number;
+  status?: string;
+  primaryImage?: { url: string } | null;
+  seller?: { storeName?: string; id?: string };
+  images?: Array<{ url: string }>;
+  description?: string | null;
+  city?: string | null;
+  condition?: string;
+};
+
 export async function fetchMobileUpdate(): Promise<MobileUpdateInfo> {
   const config = loadAppConfig();
   const versionCode = Number(config.buildNumber) || 1;
@@ -72,18 +94,33 @@ export async function fetchSellerHome() {
     orders: { needAction: number };
     products: { active: number; needAttention: number };
     promotion: { active: number };
-    intelligence: { topAction: string | null; productId: string | null };
+    intelligence: { topAction: string | null; productId: string | null; confidence?: number; reason?: string };
   }>("/api/mobile/seller/home");
 }
 
-export async function fetchCatalog(params?: { q?: string; cursor?: string | null }) {
+export async function fetchCatalog(params?: CatalogParams) {
   const search = new URLSearchParams();
   if (params?.q) search.set("q", params.q);
   if (params?.cursor) search.set("cursor", params.cursor);
+  if (params?.sort) search.set("sort", params.sort);
+  if (params?.sellerId) search.set("sellerId", params.sellerId);
   const qs = search.toString();
-  return apiRequest<{ items: Array<Record<string, unknown>>; nextCursor: string | null; hasMore: boolean }>(
+  return apiRequest<{ items: MobileProductListItem[]; nextCursor: string | null; hasMore: boolean }>(
     `/api/mobile/catalog/products${qs ? `?${qs}` : ""}`,
   );
+}
+
+export async function fetchSellerProducts(params?: { cursor?: string | null }) {
+  const search = new URLSearchParams();
+  if (params?.cursor) search.set("cursor", params.cursor);
+  const qs = search.toString();
+  return apiRequest<{ items: MobileProductListItem[]; nextCursor: string | null; hasMore: boolean }>(
+    `/api/mobile/seller/products${qs ? `?${qs}` : ""}`,
+  );
+}
+
+export async function fetchCategories() {
+  return apiRequest<{ items: Array<{ id: string; name: string; slug: string; productCount?: number }> }>("/api/categories");
 }
 
 export async function fetchProduct(id: string) {
@@ -123,7 +160,7 @@ export async function fetchWallet() {
 }
 
 export async function fetchFavorites() {
-  return apiRequest<{ items: Array<Record<string, unknown>> }>("/api/mobile/favorites");
+  return apiRequest<{ items: MobileProductListItem[] }>("/api/mobile/favorites");
 }
 
 export async function toggleFavorite(productId: string) {
