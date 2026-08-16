@@ -225,6 +225,7 @@ export async function postTelemetry(event: {
   screen: string;
   event: string;
   errorCode?: string;
+  bootId?: string;
 }) {
   const appConfig = loadAppConfig();
   try {
@@ -236,6 +237,7 @@ export async function postTelemetry(event: {
         sessionId: getSessionId(),
         deviceId: getDeviceId(),
         versionCode: Number(appConfig.buildNumber) || 1,
+        bootId: event.bootId,
         ...event,
       }),
     });
