@@ -11,23 +11,23 @@ export const CLOSED_ALPHA_RELEASE_010 = {
   githubTag: "closed-alpha-0.1.0",
 } as const;
 
-/** EPIC 82 — post Wave 2 UX hardening. SHA256 updated after APK build + `sha256sum`. */
+/** EPIC 82 — Closed Alpha 0.1.1 release artifact (built 2026-08-16) */
 export const CLOSED_ALPHA_RELEASE_011 = {
   versionName: "0.1.1-alpha",
   versionCode: 2,
-  sha256: "pending-build-run-sha256sum-after-apk",
-  artifactSizeBytes: null as number | null,
+  sha256: "bf17bebf67d06078b552a7fadac517fb8eccf8791f3724d543bfb41dfcfa1392",
+  artifactSizeBytes: 93599499,
   artifactFileName: "lot-android-alpha-0.1.1.apk",
-  gitCommit: "757c6c7",
+  gitCommit: "1e872b7",
   releaseNotes:
-    "EPIC 81 Wave 2 commerce UX\nИсправлены карточки товаров\nУлучшен каталог и buyer home\nИсправлен кабинет продавца\nSeamless update flow v1",
+    "Новый интерфейс каталога\nОбновлённые карточки товаров\nУлучшенный PDP\nИсправлен вход в товар продавца\nНовые иконки навигации\nОбновлён seller dashboard\nУлучшен кошелёк\nУлучшены loading / empty states\nДобавлена система обновлений",
   githubTag: "closed-alpha-0.1.1",
   knownIssues: [
     "Wallet full ledger requires future mobile API",
     "Seller sales detail pending backend endpoint",
-    "Physical Android acceptance required before cohort",
+    "Physical Android update E2E pending operator pass",
   ],
-  acceptanceStatus: "PENDING_PHYSICAL",
+  acceptanceStatus: "PUBLISHED",
 } as const;
 
 /** Current active Closed Alpha release pointer */

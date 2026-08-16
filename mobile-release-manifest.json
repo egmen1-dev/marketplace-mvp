@@ -4,12 +4,12 @@
   "versionName": "0.1.1-alpha",
   "versionCode": 2,
   "releaseChannel": "alpha",
-  "commitSha": "757c6c7",
+  "commitSha": "1e872b7",
   "apiVersion": "mobile-v1",
   "schemaVersion": "1",
-  "artifactSha256": "pending-build-run-sha256sum-after-apk",
-  "artifactSizeBytes": null,
-  "artifactFileName": "lot-android-0.1.1-alpha.apk",
+  "artifactSha256": "bf17bebf67d06078b552a7fadac517fb8eccf8791f3724d543bfb41dfcfa1392",
+  "artifactSizeBytes": 93599499,
+  "artifactFileName": "lot-android-alpha-0.1.1.apk",
   "buildDate": "2026-08-16",
   "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.1/lot-android-alpha-0.1.1.apk",
   "updateRequired": false,
@@ -17,10 +17,10 @@
     {
       "versionName": "0.1.1-alpha",
       "versionCode": 2,
-      "commitSha": "757c6c7",
-      "artifactSha256": "pending-build-run-sha256sum-after-apk",
-      "acceptanceStatus": "PENDING_PHYSICAL",
-      "changelog": "EPIC 81 Wave 2 commerce UX + seamless updates"
+      "commitSha": "1e872b7",
+      "artifactSha256": "bf17bebf67d06078b552a7fadac517fb8eccf8791f3724d543bfb41dfcfa1392",
+      "acceptanceStatus": "PUBLISHED",
+      "changelog": "Wave 1/2 UX + seamless updates"
     },
     {
       "versionName": "0.1.0-alpha",
@@ -51,14 +51,14 @@
   "knownIssues": [
     "Wallet full ledger requires future mobile API",
     "Seller sales detail pending backend endpoint",
-    "Physical Android acceptance required before cohort"
+    "Physical Android update E2E pending operator pass"
   ],
-  "acceptanceStatus": "PENDING_PHYSICAL",
+  "acceptanceStatus": "PUBLISHED",
   "previousRelease": {
     "versionName": "0.1.0-alpha",
     "versionCode": 1,
     "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.0/lot-android-alpha-0.1.0.apk"
   },
   "source": "mobile-release-platform",
-  "generatedAt": "2026-08-16T18:00:00.000Z"
+  "generatedAt": "2026-08-16T17:55:00.000Z"
 }
