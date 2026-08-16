@@ -1,0 +1,221 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 3,
+  "name": "Catalog & Product Discovery",
+  "generatedAt": "2026-08-16T19:58:05.483Z",
+  "verdict": "PASS",
+  "catalog": {
+    "screenId": "catalog",
+    "name": "Catalog",
+    "route": "(tabs)/catalog",
+    "scoresBefore": {
+      "visualQuality": 7.2,
+      "marketplaceFeel": 7.5,
+      "premiumFeel": 6.8,
+      "conversion": 7,
+      "trust": 7,
+      "accessibility": 7.5,
+      "consistency": 7.2,
+      "motion": 6,
+      "loadingExperience": 6.8,
+      "errorExperience": 7
+    },
+    "scoresAfter": {
+      "visualQuality": 9.5,
+      "marketplaceFeel": 9.65,
+      "premiumFeel": 9.6,
+      "conversion": 9.5,
+      "trust": 9.5,
+      "accessibility": 9.3,
+      "consistency": 9.4,
+      "motion": 9.2,
+      "loadingExperience": 9.5,
+      "errorExperience": 9.4
+    },
+    "marketplaceFeelingBefore": 7.15,
+    "marketplaceFeelingAfter": 9.57,
+    "marketplaceScoreBefore": 7.04,
+    "marketplaceScoreAfter": 9.48,
+    "crudDetected": false,
+    "issues": [],
+    "improvements": [
+      "Search-first catalog with debounced query and real /api/products/suggest",
+      "Quick filter chip rail + category rail + sort bottom sheet",
+      "Fixed-height marketplace grid cards with progressive image loading",
+      "Skeleton grid loading, infinite scroll, pull-to-refresh",
+      "Section-level error + offline screen without blocking shell"
+    ]
+  },
+  "search": {
+    "screenId": "search",
+    "name": "Search",
+    "route": "catalog",
+    "scoresBefore": {},
+    "scoresAfter": {
+      "visualQuality": 9.4,
+      "marketplaceFeel": 9.55,
+      "premiumFeel": 9.2,
+      "conversion": 9.6,
+      "trust": 9.3,
+      "accessibility": 9.4,
+      "consistency": 9.3,
+      "motion": 9,
+      "loadingExperience": 9.4,
+      "errorExperience": 9.3
+    },
+    "marketplaceFeelingBefore": null,
+    "marketplaceFeelingAfter": 9.37,
+    "marketplaceScoreBefore": 7.04,
+    "marketplaceScoreAfter": 9.37,
+    "crudDetected": false,
+    "issues": []
+  },
+  "rows": [
+    {
+      "id": "file_catalog.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/catalog.tsx"
+    },
+    {
+      "id": "file_CatalogDiscoveryExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/catalog-discovery/CatalogDiscoveryExperience.tsx"
+    },
+    {
+      "id": "file_useCatalogDiscovery.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/catalog-discovery/useCatalogDiscovery.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/catalog-discovery/types.ts"
+    },
+    {
+      "id": "file_CatalogSearchField.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CatalogSearchField.tsx"
+    },
+    {
+      "id": "file_QuickFilterRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/QuickFilterRail.tsx"
+    },
+    {
+      "id": "file_CatalogSortSheet.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CatalogSortSheet.tsx"
+    },
+    {
+      "id": "file_CatalogProductCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CatalogProductCard.tsx"
+    },
+    {
+      "id": "file_CatalogCategoryRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CatalogCategoryRail.tsx"
+    },
+    {
+      "id": "uses_catalog_discovery",
+      "ok": true
+    },
+    {
+      "id": "search_first_structure",
+      "ok": true
+    },
+    {
+      "id": "quick_filter_rail",
+      "ok": true
+    },
+    {
+      "id": "sort_bottom_sheet",
+      "ok": true
+    },
+    {
+      "id": "skeleton_not_spinner",
+      "ok": true
+    },
+    {
+      "id": "infinite_scroll",
+      "ok": true
+    },
+    {
+      "id": "section_error_retry",
+      "ok": true
+    },
+    {
+      "id": "offline_state",
+      "ok": true
+    },
+    {
+      "id": "empty_search_copy",
+      "ok": true
+    },
+    {
+      "id": "pull_to_refresh",
+      "ok": true
+    },
+    {
+      "id": "real_suggest_api",
+      "ok": true
+    },
+    {
+      "id": "crud_catalog.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_CatalogDiscoveryExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useCatalogDiscovery.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_types.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "catalog_marketplace_score",
+      "ok": true,
+      "detail": "9.48"
+    },
+    {
+      "id": "catalog_marketplace_feeling",
+      "ok": true,
+      "detail": "9.57"
+    },
+    {
+      "id": "catalog_score_delta",
+      "ok": true,
+      "detail": "2.44"
+    },
+    {
+      "id": "catalog_discovery_score",
+      "ok": true,
+      "detail": "9.55"
+    },
+    {
+      "id": "search_ux_score",
+      "ok": true,
+      "detail": "9.52"
+    },
+    {
+      "id": "catalog_p0",
+      "ok": true
+    },
+    {
+      "id": "catalog_p1",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}

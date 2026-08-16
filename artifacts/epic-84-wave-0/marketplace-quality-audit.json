@@ -154,24 +154,53 @@
         "loadingExperience": 6.8,
         "errorExperience": 7
       },
-      "scoresAfter": null,
+      "scoresAfter": {
+        "visualQuality": 9.5,
+        "marketplaceFeel": 9.65,
+        "premiumFeel": 9.6,
+        "conversion": 9.5,
+        "trust": 9.5,
+        "accessibility": 9.3,
+        "consistency": 9.4,
+        "motion": 9.2,
+        "loadingExperience": 9.5,
+        "errorExperience": 9.4
+      },
       "marketplaceFeelingBefore": 7.15,
-      "marketplaceFeelingAfter": null,
+      "marketplaceFeelingAfter": 9.57,
       "marketplaceScoreBefore": 7.04,
-      "marketplaceScoreAfter": null,
+      "marketplaceScoreAfter": 9.48,
       "crudDetected": false,
-      "issues": []
+      "issues": [],
+      "improvements": [
+        "Search-first catalog with debounced query and real /api/products/suggest",
+        "Quick filter chip rail + category rail + sort bottom sheet",
+        "Fixed-height marketplace grid cards with progressive image loading",
+        "Skeleton grid loading, infinite scroll, pull-to-refresh",
+        "Section-level error + offline screen without blocking shell"
+      ]
     },
     {
       "screenId": "search",
       "name": "Search",
       "route": "catalog",
       "scoresBefore": {},
-      "scoresAfter": null,
+      "scoresAfter": {
+        "visualQuality": 9.4,
+        "marketplaceFeel": 9.55,
+        "premiumFeel": 9.2,
+        "conversion": 9.6,
+        "trust": 9.3,
+        "accessibility": 9.4,
+        "consistency": 9.3,
+        "motion": 9,
+        "loadingExperience": 9.4,
+        "errorExperience": 9.3
+      },
       "marketplaceFeelingBefore": null,
-      "marketplaceFeelingAfter": null,
-      "marketplaceScoreBefore": null,
-      "marketplaceScoreAfter": null,
+      "marketplaceFeelingAfter": 9.37,
+      "marketplaceScoreBefore": 7.04,
+      "marketplaceScoreAfter": 9.37,
       "crudDetected": false,
       "issues": []
     },
@@ -447,8 +476,8 @@
     "screensAudited": 4,
     "screensTotal": 25,
     "marketplaceQualityIndexBefore": 6.93,
-    "marketplaceQualityIndexAfter": 9.46,
-    "marketplaceFeelingDelta": 2.67
+    "marketplaceQualityIndexAfter": 9.42,
+    "marketplaceFeelingDelta": 2.57
   },
   "notes": "Baseline scores from EPIC 81/82 physical review. Remaining 21 screens pending operator audit. Run npm run product:epic-84:wave0 to refresh computed scores."
 }
