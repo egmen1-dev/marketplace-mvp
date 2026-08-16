@@ -1,6 +1,6 @@
 # Mobile App Shell Readiness
 
-EPIC-77-STACKED-MERGE-AND-STAGING-ACCEPTANCE-001
+EPIC-77-PRE-WAVE-6-FINAL-GATE-002
 
 ## Definition
 
@@ -16,27 +16,34 @@ It means backend contracts are stable enough to start App Shell EPIC (Expo/RN/Ca
 | PARTIAL | Contracts exist; known blockers (refresh, deploy) |
 | NO | Missing critical contracts |
 
-## Required contracts
+## Required contracts (v1 freeze)
 
 - `GET /api/mobile/bootstrap` — startup flags + endpoints
 - `GET /api/mobile/config` — module versions
 - `GET /api/mobile/navigation` — server-driven nav
+- `GET /api/mobile/dashboard` — unified product view
 - `GET /api/mobile/deep-link/resolve` — URI → webPath
 - `GET /api/mobile/readiness` — release checklist
 - `GET /api/mobile/android/update` — APK metadata (no binary yet)
-- `POST /api/mobile/auth/session` — auth decision + session status
+- `POST /api/mobile/auth/session` — login + session status
+- `POST /api/mobile/auth/refresh` — access/refresh rotation
+- `POST /api/mobile/auth/logout` — session revoke
 
-## Current verdict
+## Current verdict (local, post final gate)
 
 ```text
-APP_SHELL_READY: PARTIAL
+APP_SHELL_READY: YES
 ```
 
-Blockers:
+All hard checks pass locally:
 
-- `mobile_refresh_not_implemented`
-- `native_token_bridge_not_built`
-- Full stack not deployed to staging (until merge + Railway deploy)
+- refresh + logout implemented
+- session registry (memory + Prisma)
+- navigation + deep links validated
+- android update contract frozen
+- offline cache foundation present
+
+Staging must confirm `GET /api/mobile/readiness` → `appShellReadiness: "YES"` after deploy.
 
 ## API surface
 
@@ -45,7 +52,7 @@ Blockers:
 - `appShellReadiness: "PARTIAL" | "YES" | "NO"`
 - `appShellBlockers: string[]`
 - `authDecision: "A"`
-- `authNativeReady: "PARTIAL"`
+- `authNativeReady: "YES"`
 
 ## Payload size baseline
 
@@ -58,3 +65,12 @@ Record sizes in `artifacts/ccos-full-stack-staging/acceptance-report.json` → `
 Record `mobileLatency.*.ms` from full-stack acceptance script.
 
 Startup-critical paths: bootstrap, config, navigation (< 500ms target on staging).
+
+## Roadmap after YES
+
+Parallel tracks:
+
+```text
+CCOS: Wave 6 → Wave 7 → Wave 8
+Mobile: App Shell 0 → Android Alpha → iOS Alpha → Beta
+```

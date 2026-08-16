@@ -1,62 +1,75 @@
 # Mobile Auth Decision
 
-EPIC-77-STACKED-MERGE-AND-STAGING-ACCEPTANCE-001
+EPIC-77-PRE-WAVE-6-FINAL-GATE-002
 
 ## Decision
 
-**Decision A: Existing JWT can safely power native app** (with explicit refresh blocker).
+**Decision A: Existing JWT extended with mobile access/refresh tokens** — web NextAuth unchanged.
 
 ## Rationale
 
 | Factor | Finding |
 |---|---|
-| Session strategy | Auth.js `session.strategy = "jwt"` |
-| Session lifetime | 14 days (`maxAge`) |
+| Session strategy | Auth.js `session.strategy = "jwt"` (web) |
+| Mobile extension | Short-lived access JWT + long-lived refresh token |
+| Session lifetime | Access 900s; refresh 30d (rotated) |
 | Web auth | Unchanged — cookie-based NextAuth remains primary |
-| Multi-device | Supported (stateless JWT per device/session) |
+| Multi-device | Independent sessions per device (`deviceId` hash) |
 | Token in URL | Forbidden — no token query params in mobile APIs |
 | Secure cookies | Enabled on HTTPS deployments |
 
-Native shell options (App Shell EPIC):
+## Implemented endpoints
 
-1. **Secure WebView cookie bridge** — reuse existing session cookie (fastest MVP)
-2. **Bearer token bridge** — expose JWT via authenticated mobile session endpoint (requires security review)
+| Route | Status |
+|---|---|
+| `POST /api/mobile/auth/session` | Login + status |
+| `POST /api/mobile/auth/refresh` | Token rotation |
+| `POST /api/mobile/auth/logout` | Session revoke |
 
-## Decision B status
+Refresh response shape:
 
-Dedicated **access-token + refresh-token extension** is **not required for MVP**, but:
+```json
+{
+  "accessToken": "...",
+  "refreshToken": "...",
+  "expiresIn": 900
+}
+```
 
-- `POST /api/mobile/auth/refresh` → **501 NOT IMPLEMENTED**
-- `POST /api/mobile/auth/logout` → **501 NOT IMPLEMENTED**
+Token values are never logged.
 
-These are **explicit app release blockers** for standalone APK without WebView cookie jar.
+## Session registry
 
-## API
+`MobileAuthSession` (Prisma) / in-memory store (tests):
 
-`POST /api/mobile/auth/session` with `{ "action": "status" }` returns:
+- `sessionId`, `userId`, `deviceIdHash`
+- `createdAt`, `lastUsedAt`, `expiresAt`, `revokedAt`
 
-- `decision: "A"`
-- `mode: "web_session_cookie_jwt"`
-- `authenticated` / `role` when session cookie present
-- `blockers: ["mobile_refresh_not_implemented", "native_token_bridge_not_built"]`
+Logout revokes **one** session; other devices remain active.
 
-## Acceptance checklist
+## Security checks
 
 | Check | Status |
 |---|---|
-| Login/session creation (web) | PASS — existing NextAuth |
-| Expiry handling | PASS — JWT maxAge documented |
-| Logout (web) | PASS — existing routes |
-| Unauthorized request | PASS — middleware + API guards |
-| Two devices | PASS — JWT model |
-| Token not in URLs/logs | PASS — contract enforced |
-| Web session continues | PASS — no breaking changes |
-| Mobile refresh | **BLOCKER** — not implemented |
+| Token not in URL | PASS |
+| Token not in logs | PASS |
+| Refresh replay blocked | PASS |
+| Expired token blocked | PASS |
+| Revoked token blocked | PASS |
+| Wrong session blocked | PASS |
+| Web session unchanged | PASS |
 
 ## Native app readiness
 
 ```text
-nativeAppReady: PARTIAL
+nativeAppReady: YES
+refreshImplemented: true
 ```
 
-Proceed with App Shell EPIC using Decision A + WebView bridge, or implement refresh foundation before standalone token auth.
+Standalone APK auth is unblocked at backend level. Native shell EPIC can proceed in parallel with Wave 6.
+
+## Related
+
+- `lib/mobile/auth/`
+- `docs/MOBILE_API_VERSIONING.md`
+- `docs/ANDROID_RELEASE_SIGNING.md`
