@@ -36,6 +36,7 @@
     "mobile:epic-83:gate": "tsx scripts/epic-83-minimum-supported-version-gate.ts",
     "product:epic-84:gate": "tsx scripts/epic-84-productization-gate.ts",
     "product:epic-84:wave0": "tsx scripts/epic-84-wave-0-design-audit.ts",
+    "product:epic-84:sprint1-login": "tsx scripts/epic-84-sprint-1-login-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
     "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",

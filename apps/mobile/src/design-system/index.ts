@@ -14,3 +14,8 @@ export { radii } from "./tokens/radius";
 export { shadows, elevation, blur } from "./tokens/elevation";
 
 export * from "./components/registry";
+export { TextField } from "./components/TextField";
+export { IconButton } from "./components/IconButton";
+export { AuthErrorCard } from "./components/AuthErrorCard";
+export { PrimaryCTA } from "./components/PrimaryCTA";
+export { TrustPill } from "./components/TrustPill";

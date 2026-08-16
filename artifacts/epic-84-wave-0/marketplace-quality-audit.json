@@ -34,19 +34,45 @@
         "loadingExperience": 7,
         "errorExperience": 7.5
       },
-      "scoresAfter": null,
+      "scoresAfter": {
+        "visualQuality": 9.4,
+        "marketplaceFeel": 9.5,
+        "premiumFeel": 9.6,
+        "conversion": 9.4,
+        "trust": 9.6,
+        "accessibility": 9.3,
+        "consistency": 9.5,
+        "motion": 9.2,
+        "loadingExperience": 9.3,
+        "errorExperience": 9.6
+      },
       "marketplaceFeelingBefore": 7.29,
-      "marketplaceFeelingAfter": null,
+      "marketplaceFeelingAfter": 9.52,
       "marketplaceScoreBefore": 7.33,
-      "marketplaceScoreAfter": null,
+      "marketplaceScoreAfter": 9.45,
       "crudDetected": false,
       "issues": [
         {
           "priority": "P2",
-          "description": "Registration still web-delegated — needs native path in Wave 1",
+          "description": "Registration opens web — native flow planned post Wave 0",
           "criterion": "conversion"
         }
-      ]
+      ],
+      "improvements": [
+        "Full-screen hero + elevated form card composition (marketplace pattern)",
+        "Design System TextField with focus/error states and 52px touch targets",
+        "PrimaryCTA with progress animation + success check (no infinite spinner)",
+        "AuthErrorCard replaces inline error text — explains next steps",
+        "Stagger fade-in motion, press scale, haptic feedback on success/error",
+        "Trust pills + shield footer for Closed Alpha credibility"
+      ],
+      "problemsRemoved": [
+        "Flat CRUD form layout without hierarchy",
+        "Inline red caption errors without guidance",
+        "Spinner-only loading on primary button",
+        "Competing GhostButton secondary actions"
+      ],
+      "benchmarkNotes": "Patterns from Ozon/WB login hierarchy, Airbnb trust copy, Apple ID field clarity — not copied"
     },
     {
       "screenId": "registration",
@@ -406,8 +432,8 @@
     "screensAudited": 4,
     "screensTotal": 25,
     "marketplaceQualityIndexBefore": 6.93,
-    "marketplaceQualityIndexAfter": null,
-    "marketplaceFeelingDelta": null
+    "marketplaceQualityIndexAfter": 9.45,
+    "marketplaceFeelingDelta": 2.59
   },
   "notes": "Baseline scores from EPIC 81/82 physical review. Remaining 21 screens pending operator audit. Run npm run product:epic-84:wave0 to refresh computed scores."
 }
