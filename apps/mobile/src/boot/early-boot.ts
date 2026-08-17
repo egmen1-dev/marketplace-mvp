@@ -1,7 +1,12 @@
-import { ErrorUtils } from "react-native";
-
 import { getMobileBuildInfo } from "../config/build-info";
 import { persistPreviousCrash } from "./previous-crash";
+
+type GlobalErrorUtils = {
+  getGlobalHandler: () => (error: unknown, isFatal?: boolean) => void;
+  setGlobalHandler: (handler: (error: unknown, isFatal?: boolean) => void) => void;
+};
+
+const ErrorUtils = (globalThis as typeof globalThis & { ErrorUtils?: GlobalErrorUtils }).ErrorUtils;
 
 const bootMarks: string[] = [];
 let fatalError: Error | null = null;
@@ -78,8 +83,13 @@ export function installStartupCrashHandlers(): void {
   if (handlersInstalled) return;
   handlersInstalled = true;
 
-  const previous = ErrorUtils.getGlobalHandler?.();
-  ErrorUtils.setGlobalHandler((error, isFatal) => {
+  if (!ErrorUtils || !ErrorUtils.getGlobalHandler || !ErrorUtils.setGlobalHandler) {
+    bootMark("ErrorUtils unavailable");
+    return;
+  }
+
+  const previous = ErrorUtils.getGlobalHandler();
+  ErrorUtils.setGlobalHandler((error: unknown, isFatal?: boolean) => {
     if (isFatal !== false) {
       recordFatalStartupError(error, "global");
       // Allow fatal UI to mount; still delegate so RN can report/crash correctly (PART 15).
