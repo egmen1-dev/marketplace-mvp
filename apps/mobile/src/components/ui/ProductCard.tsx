@@ -20,6 +20,7 @@ export type MobileProductCardData = {
   status?: string;
   favoritesCount?: number;
   views?: number;
+  city?: string | null;
 };
 
 export function ProductCard({
@@ -45,6 +46,7 @@ export function ProductCard({
   const discount = discountPercent(product.price, product.compareAt);
   const cardWidth = width ?? (compact ? 156 : "48%");
   const socialCount = product.favoritesCount ?? 0;
+  const showDeliveryHint = Boolean(product.city?.trim());
 
   return (
     <Animated.View style={[{ width: cardWidth }, { transform: [{ scale }] }]}>
@@ -54,12 +56,15 @@ export function ProductCard({
             <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" transition={200} />
           ) : (
             <View style={styles.imageFallback}>
+              <MaterialCommunityIcons name="shopping-outline" size={28} color={colors.orange} />
               <Text style={styles.imageFallbackText}>ЛОТ</Text>
             </View>
           )}
 
           {discount ? <Badge label={`-${discount}%`} tone="brand" style={styles.discountBadge} /> : null}
-          <Badge label="Доставка" tone="neutral" style={styles.deliveryBadge} />
+          {showDeliveryHint ? (
+            <Badge label={product.city ?? "Доставка"} tone="neutral" style={styles.deliveryBadge} />
+          ) : null}
 
           {onFavorite ? (
             <Pressable
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
   imageWrap: { aspectRatio: 0.92, backgroundColor: colors.gray100, position: "relative" },
   imageWrapCompact: { height: 156 },
   image: { width: "100%", height: "100%" },
-  imageFallback: { flex: 1, alignItems: "center", justifyContent: "center" },
+  imageFallback: { flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.xs, backgroundColor: colors.orangeSoft },
   imageFallbackText: { ...typography.caption, color: colors.orange, fontWeight: "700" },
   discountBadge: { position: "absolute", top: spacing.sm, left: spacing.sm },
   deliveryBadge: { position: "absolute", bottom: spacing.sm, left: spacing.sm },

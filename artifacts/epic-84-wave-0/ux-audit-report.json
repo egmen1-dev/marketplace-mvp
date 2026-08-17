@@ -1,0 +1,18 @@
+{
+  "epic": "EPIC-84",
+  "wave": 0,
+  "auditStatus": "NOT_STARTED",
+  "baselineVersion": "0.1.2-alpha",
+  "baselineVersionCode": 3,
+  "generatedAt": null,
+  "screens": [],
+  "crossCutting": [],
+  "summary": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "screensAudited": 0,
+    "screensTotal": 0
+  },
+  "notes": "Fill during Wave 0 physical walkthrough. See docs/product/EPIC_84_WAVE_0_UX_AUDIT.md"
+}

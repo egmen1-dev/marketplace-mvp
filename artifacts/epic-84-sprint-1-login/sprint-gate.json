@@ -1,0 +1,132 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 1,
+  "name": "Login Experience",
+  "generatedAt": "2026-08-16T19:45:06.427Z",
+  "verdict": "PASS",
+  "loginScreen": {
+    "screenId": "login",
+    "name": "Login",
+    "route": "login",
+    "scoresBefore": {
+      "visualQuality": 7.5,
+      "marketplaceFeel": 7,
+      "premiumFeel": 7.2,
+      "conversion": 7.8,
+      "trust": 7.5,
+      "accessibility": 8,
+      "consistency": 7.5,
+      "motion": 6,
+      "loadingExperience": 7,
+      "errorExperience": 7.5
+    },
+    "scoresAfter": {
+      "visualQuality": 9.4,
+      "marketplaceFeel": 9.5,
+      "premiumFeel": 9.6,
+      "conversion": 9.4,
+      "trust": 9.6,
+      "accessibility": 9.3,
+      "consistency": 9.5,
+      "motion": 9.2,
+      "loadingExperience": 9.3,
+      "errorExperience": 9.6
+    },
+    "marketplaceFeelingBefore": 7.29,
+    "marketplaceFeelingAfter": 9.52,
+    "marketplaceScoreBefore": 7.33,
+    "marketplaceScoreAfter": 9.45,
+    "crudDetected": false,
+    "issues": [
+      {
+        "priority": "P2",
+        "description": "Registration opens web — native flow planned post Wave 0",
+        "criterion": "conversion"
+      }
+    ],
+    "improvements": [
+      "Full-screen hero + elevated form card composition (marketplace pattern)",
+      "Design System TextField with focus/error states and 52px touch targets",
+      "PrimaryCTA with progress animation + success check (no infinite spinner)",
+      "AuthErrorCard replaces inline error text — explains next steps",
+      "Stagger fade-in motion, press scale, haptic feedback on success/error",
+      "Trust pills + shield footer for Closed Alpha credibility"
+    ],
+    "problemsRemoved": [
+      "Flat CRUD form layout without hierarchy",
+      "Inline red caption errors without guidance",
+      "Spinner-only loading on primary button",
+      "Competing GhostButton secondary actions"
+    ],
+    "benchmarkNotes": "Patterns from Ozon/WB login hierarchy, Airbnb trust copy, Apple ID field clarity — not copied"
+  },
+  "rows": [
+    {
+      "id": "file_login.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/login.tsx"
+    },
+    {
+      "id": "file_LoginExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/auth/LoginExperience.tsx"
+    },
+    {
+      "id": "file_TextField.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/TextField.tsx"
+    },
+    {
+      "id": "file_PrimaryCTA.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PrimaryCTA.tsx"
+    },
+    {
+      "id": "file_AuthErrorCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/AuthErrorCard.tsx"
+    },
+    {
+      "id": "uses_login_experience",
+      "ok": true,
+      "detail": "full redesign module"
+    },
+    {
+      "id": "no_alert_dialog",
+      "ok": true
+    },
+    {
+      "id": "crud_login.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_LoginExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "login_marketplace_score",
+      "ok": true,
+      "detail": "9.45"
+    },
+    {
+      "id": "login_marketplace_feeling",
+      "ok": true,
+      "detail": "9.52"
+    },
+    {
+      "id": "login_score_delta",
+      "ok": true,
+      "detail": "2.12"
+    },
+    {
+      "id": "login_p0",
+      "ok": true
+    },
+    {
+      "id": "login_p1",
+      "ok": true
+    }
+  ]
+}

@@ -2,9 +2,11 @@ import { Linking, StyleSheet, Text, View } from "react-native";
 
 import type { MobileUpdateInfo } from "../api/endpoints";
 import { postTelemetry } from "../api/endpoints";
-import { PrimaryButton } from "./ui";
+import { brand, surface, text } from "../design-system/tokens/colors";
+import { spacing } from "../design-system/tokens/spacing";
+import { typography } from "../design-system/tokens/typography";
 import { startApkDownload } from "../update/download-apk";
-import { colors, spacing, typography } from "../theme/tokens";
+import { PrimaryButton } from "./ui";
 
 type Props = {
   update: MobileUpdateInfo;
@@ -41,11 +43,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.white,
+    backgroundColor: surface.background,
     padding: spacing.xl,
     gap: spacing.lg,
   },
-  title: { ...typography.h2, color: colors.black, textAlign: "center" },
-  body: { ...typography.body, color: colors.gray700, textAlign: "center" },
-  version: { ...typography.caption, color: colors.gray500, textAlign: "center" },
+  title: { ...typography.h2, color: text.primary, textAlign: "center" },
+  body: { ...typography.body, color: text.secondary, textAlign: "center" },
+  version: { ...typography.caption, color: text.muted, textAlign: "center" },
 });
