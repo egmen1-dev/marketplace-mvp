@@ -1,0 +1,92 @@
+{
+  "epic": "EPIC-87",
+  "phase": "Design Review & Visual Quality System",
+  "generatedAt": "2026-08-17T07:16:55.683Z",
+  "release": "0.1.4-alpha",
+  "verdict": "FAIL",
+  "prDesignGate": "NOT READY",
+  "finalVerdicts": {
+    "designReviewCore": "READY",
+    "staticReview": "FAIL",
+    "screenshotReview": "PARTIAL",
+    "visualRegression": "PARTIAL",
+    "accessibilityGate": "FAIL",
+    "physicalBaselineCoverage": "0/9",
+    "prDesignGate": "NOT READY",
+    "sellerExperienceSprint1": "BLOCKED"
+  },
+  "summary": {
+    "pass": 0,
+    "watch": 8,
+    "fail": 5,
+    "p0": 6,
+    "p1": 32,
+    "p2": 22,
+    "regressions": 0,
+    "screenshotCoverage": 0,
+    "screenshotTotal": 9,
+    "physicalBaselineCoverage": {
+      "covered": 0,
+      "total": 9,
+      "missing": [
+        "login",
+        "buyer_home",
+        "catalog",
+        "pdp",
+        "cart",
+        "checkout",
+        "orders",
+        "favorites",
+        "profile"
+      ],
+      "approved": []
+    }
+  },
+  "hardBlockers": [
+    "P0 issues: 6",
+    "accessibility critical FAIL",
+    "missing critical CTA"
+  ],
+  "rows": [
+    {
+      "id": "core_module",
+      "ok": true
+    },
+    {
+      "id": "operator_guide",
+      "ok": true
+    },
+    {
+      "id": "epic_doc",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "pr_design_gate",
+      "ok": false,
+      "detail": "P0 issues: 6; accessibility critical FAIL; missing critical CTA"
+    },
+    {
+      "id": "score_policy_non_blocking",
+      "ok": true,
+      "detail": "9.42 vs 9.50 target does not auto-block"
+    },
+    {
+      "id": "design_review_core",
+      "ok": true
+    },
+    {
+      "id": "physical_baseline_coverage",
+      "ok": true,
+      "detail": "0/9"
+    },
+    {
+      "id": "seller_sprint1_gate",
+      "ok": true,
+      "detail": "BLOCKED"
+    }
+  ]
+}

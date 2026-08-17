@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DesignQualityPanel } from "@/features/product-design-review";
 import { AdminOperationsDashboard } from "@/features/marketplace-foundation-audit";
 import { getAdminOperationsOverview } from "@/lib/marketplace-foundation-audit";
 import { ROUTES } from "@/lib/constants";
@@ -184,6 +185,8 @@ export default async function AdminOperationsPage() {
           </ul>
         </CardContent>
       </Card>
+
+      <DesignQualityPanel />
 
       <Card>
         <CardHeader>

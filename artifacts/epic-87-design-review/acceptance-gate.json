@@ -1,0 +1,85 @@
+{
+  "epic": "EPIC-87",
+  "generatedAt": "2026-08-17T07:17:48.367Z",
+  "verdict": "FAIL",
+  "pilotScreen": "login",
+  "release": "0.1.4-alpha",
+  "sellerSprint1": "BLOCKED",
+  "rows": [
+    {
+      "id": "file_index.ts",
+      "ok": true,
+      "detail": "lib/product-design-review/index.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "lib/product-design-review/types.ts"
+    },
+    {
+      "id": "file_design-review-cli.ts",
+      "ok": true,
+      "detail": "scripts/design-review-cli.ts"
+    },
+    {
+      "id": "file_product-design-gate.ts",
+      "ok": true,
+      "detail": "scripts/product-design-gate.ts"
+    },
+    {
+      "id": "file_EPIC_87_DESIGN_REVIEW_SYSTEM.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_87_DESIGN_REVIEW_SYSTEM.md"
+    },
+    {
+      "id": "file_DESIGN_REVIEW_OPERATOR_GUIDE.md",
+      "ok": true,
+      "detail": "docs/product/DESIGN_REVIEW_OPERATOR_GUIDE.md"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/admin/product-ops/design-quality/route.ts"
+    },
+    {
+      "id": "design_review_cli",
+      "ok": true
+    },
+    {
+      "id": "product_design_gate",
+      "ok": true
+    },
+    {
+      "id": "epic_87_gate",
+      "ok": true
+    },
+    {
+      "id": "agents_epic_87_rule",
+      "ok": true
+    },
+    {
+      "id": "pilot_screen_review_runs",
+      "ok": true,
+      "detail": "login issues=2"
+    },
+    {
+      "id": "physical_screenshot_workflow",
+      "ok": false,
+      "detail": "MISSING_PHYSICAL_EVIDENCE"
+    },
+    {
+      "id": "human_baseline_approval",
+      "ok": false,
+      "detail": "pending operator approval"
+    },
+    {
+      "id": "epic_87_hard_gate_physical",
+      "ok": false,
+      "detail": "Screenshot → Review → Human approval → Approved baseline"
+    },
+    {
+      "id": "missing_screenshot_not_fake_pass",
+      "ok": true
+    }
+  ]
+}

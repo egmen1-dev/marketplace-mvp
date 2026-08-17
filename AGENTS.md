@@ -117,3 +117,25 @@ Physical Android acceptance cannot be fully automated in cloud — document `NOT
 | EPIC | EPIC 83 — Minimum Supported Version |
 
 See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matrix.
+
+## EPIC 87 — Design Review & Visual Quality System
+
+Any mobile Product/Seller Sprint after EPIC 87 must end with Design Review Gate:
+
+```bash
+npm run design:review
+npm run product:design-gate
+```
+
+Rules:
+
+- Automated scores are **advisory only** — not proof of quality without screenshot/runtime evidence.
+- Every P0 requires concrete evidence (screen, component, recommendation) and blocks release.
+- Missing physical screenshot ≠ fake PASS — use `MISSING_PHYSICAL_EVIDENCE`.
+- Human approval is required to change visual baseline (no auto-approve).
+- Seller screens use seller rubric — do not apply buyer conversion heuristics blindly.
+
+Gates: `npm run product:epic-87:design-review` · `npm run product:design-gate`
+
+See `docs/product/EPIC_87_DESIGN_REVIEW_SYSTEM.md` and `docs/product/DESIGN_REVIEW_OPERATOR_GUIDE.md`.
+

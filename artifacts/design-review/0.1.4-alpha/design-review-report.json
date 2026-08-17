@@ -1,0 +1,109 @@
+{
+  "epic": "EPIC-87",
+  "release": "0.1.4-alpha",
+  "generatedAt": "2026-08-17T07:17:48.367Z",
+  "reviewRulesVersion": "1.0.0",
+  "designSystemVersion": "1.0.0",
+  "screens": [
+    {
+      "screen": "login",
+      "verdict": "WATCH",
+      "confidence": "LOW",
+      "scores": {
+        "visual": 8.1,
+        "marketplaceFeel": 9.5,
+        "conversion": 9.5,
+        "trust": 9.5,
+        "accessibility": 9.5,
+        "consistency": 8.1,
+        "polish": 8.1
+      },
+      "issues": [
+        {
+          "screen": "login",
+          "category": "visual",
+          "severity": "P1",
+          "title": "MISSING_PHYSICAL_EVIDENCE — screenshot review skipped",
+          "evidence": [
+            "Expected artifacts/design-review/0.1.4-alpha/login/",
+            "screenshot PNG missing"
+          ],
+          "recommendation": "Capture physical Android screenshot and metadata before claiming visual PASS.",
+          "source": "screenshot",
+          "id": "960da65306cc"
+        },
+        {
+          "screen": "login",
+          "category": "visual",
+          "severity": "P2",
+          "title": "MISSING_PHYSICAL_EVIDENCE — no candidate screenshot",
+          "evidence": [
+            "artifacts/design-review/0.1.4-alpha/login/ has no PNG"
+          ],
+          "recommendation": "Follow operator checklist: install APK → capture screen → upload artifact.",
+          "source": "baseline",
+          "id": "92b7a6914707"
+        }
+      ],
+      "reviewedAt": "2026-08-17T07:17:48.366Z",
+      "reviewRulesVersion": "1.0.0",
+      "designSystemVersion": "1.0.0",
+      "baselineVersion": "0.1.4-alpha",
+      "providerVersion": null
+    }
+  ],
+  "summary": {
+    "pass": 0,
+    "watch": 1,
+    "fail": 0,
+    "p0": 0,
+    "p1": 1,
+    "p2": 1,
+    "regressions": 0,
+    "screenshotCoverage": 0,
+    "screenshotTotal": 9,
+    "physicalBaselineCoverage": {
+      "covered": 0,
+      "total": 9,
+      "missing": [
+        "login",
+        "buyer_home",
+        "catalog",
+        "pdp",
+        "cart",
+        "checkout",
+        "orders",
+        "favorites",
+        "profile"
+      ],
+      "approved": []
+    }
+  },
+  "physicalBaselineCoverage": {
+    "covered": 0,
+    "total": 9,
+    "missing": [
+      "login",
+      "buyer_home",
+      "catalog",
+      "pdp",
+      "cart",
+      "checkout",
+      "orders",
+      "favorites",
+      "profile"
+    ],
+    "approved": []
+  },
+  "sellerSprint1": "BLOCKED",
+  "finalVerdicts": {
+    "designReviewCore": "READY",
+    "staticReview": "PASS",
+    "screenshotReview": "PARTIAL",
+    "visualRegression": "PARTIAL",
+    "accessibilityGate": "PASS",
+    "physicalBaselineCoverage": "0/9",
+    "prDesignGate": "READY",
+    "sellerExperienceSprint1": "BLOCKED"
+  }
+}
