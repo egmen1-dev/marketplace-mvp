@@ -3,9 +3,9 @@ export const MOBILE_BUILD_INFO = {
   "version": "0.1.5",
   "versionName": "0.1.5-alpha",
   "versionCode": 6,
-  "commit": "dbb68ab",
-  "gitSha": "dbb68ab366943fe315381ca8375b7c14636574ef",
-  "buildTime": "2026-08-17T12:59:44.079Z",
+  "commit": "2db4297",
+  "gitSha": "2db42971e5c8fe94d95bf986a665c83bca5cacdb",
+  "buildTime": "2026-08-17T13:04:19.797Z",
   "environment": "alpha",
   "branch": "cursor/mobile-p0-physical-crash-forensics-d03e",
   "packageName": "ru.lot.marketplace.alpha"

@@ -1,64 +1,25 @@
 {
-  "phase": "P0 Release Gate 0.1.5-alpha",
-  "generatedAt": "2026-08-17T12:19:56.337Z",
+  "phase": "P0 Release Gate 0.1.5-alpha — Final Validation",
+  "generatedAt": "2026-08-17T13:19:30.000Z",
   "verdict": "FAIL",
   "publishAllowed": false,
   "ftlStatus": "NOT RUN",
   "apk": {
     "path": "/workspace/artifacts/epic-84-p0-startup/lot-android-alpha-0.1.5.apk",
-    "sha256": "0b2c02e6ab6a0f2c9652ae2318ee0c378f5a4b736d3382a9ccbf235921b38aef"
+    "sha256": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
+    "versionName": "0.1.5-alpha",
+    "versionCode": 6,
+    "package": "ru.lot.marketplace.alpha"
   },
   "rows": [
-    {
-      "id": "expo_dependency_gate",
-      "ok": true,
-      "detail": "PASS"
-    },
-    {
-      "id": "p0_startup_gate",
-      "ok": true,
-      "detail": "PASS"
-    },
-    {
-      "id": "write_build_info",
-      "ok": true,
-      "detail": "npm run mobile:write-build-info"
-    },
-    {
-      "id": "clean_build",
-      "ok": true,
-      "detail": "SKIP_CLEAN_BUILD=1"
-    },
-    {
-      "id": "release_apk_exists",
-      "ok": true,
-      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
-    },
-    {
-      "id": "artifact_apk_copied",
-      "ok": true,
-      "detail": "/workspace/artifacts/epic-84-p0-startup/lot-android-alpha-0.1.5.apk"
-    },
-    {
-      "id": "apk_metadata_gate",
-      "ok": true,
-      "detail": "PASS"
-    },
-    {
-      "id": "bytecode_guard",
-      "ok": true,
-      "detail": "PASS"
-    },
-    {
-      "id": "firebase_test_lab",
-      "ok": false,
-      "detail": "NOT RUN"
-    }
+    { "id": "clean_release_build", "ok": true, "detail": "BUILD SUCCESSFUL (4m 10s)" },
+    { "id": "apk_metadata_gate", "ok": true, "detail": "PASS" },
+    { "id": "bytecode_guard", "ok": true, "detail": "PASS" },
+    { "id": "expo_dependency_gate", "ok": true, "detail": "PASS" },
+    { "id": "firebase_test_lab", "ok": false, "detail": "NOT RUN — no gcloud credentials / FIREBASE_PROJECT_ID" }
   ],
-  "policy": {
-    "githubReleaseBlocked": true,
-    "mrpPublishBlocked": true,
-    "requiredDevice": "Pixel 5 / API 30 / en_US / portrait",
-    "requiredTest": "Robo"
-  }
+  "clipboardIssue": "RESOLVED",
+  "errorUtilsIssue": "RESOLVED_IN_CODE",
+  "p0Status": "OPEN",
+  "closedAlpha": "NO-GO"
 }
