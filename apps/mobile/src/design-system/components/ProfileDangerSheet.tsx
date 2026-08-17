@@ -1,7 +1,7 @@
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { semantic, surface, text } from "../tokens/colors";
+import { semantic, border, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.xs,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    borderColor: border.default,
     minHeight: 44,
   },
   actionDanger: { borderColor: semantic.dangerSoft, backgroundColor: semantic.dangerSoft },

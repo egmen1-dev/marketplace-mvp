@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { CommerceSectionHeader } from "./CommerceSectionHeader";
 import { border, text } from "../tokens/colors";
+import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
 import type { ProductCharacteristic } from "../../features/product-detail/types";
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   table: {
     borderWidth: 1,
     borderColor: border.default,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: "hidden",
   },
   row: {

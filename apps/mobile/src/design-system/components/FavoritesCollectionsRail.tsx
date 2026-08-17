@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import type { FavoriteCollection, FavoriteCollectionId } from "../../features/favorites/types";
-import { brand, surface, text } from "../tokens/colors";
+import { brand, border, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: surface.card,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    borderColor: border.default,
     justifyContent: "center",
     gap: 2,
   },

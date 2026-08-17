@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { getMobileBuildInfo } from "../../config/build-info";
-import { colors, spacing, typography } from "../../theme/tokens";
+import { border, text } from "../../design-system/tokens/colors";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 /** Always-visible build stamp on startup error — confirms installed APK version. */
 export function StartupBuildStamp() {
@@ -24,10 +26,10 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: colors.gray200,
+    borderTopColor: border.default,
     gap: spacing.xs,
     alignItems: "center",
   },
-  line: { ...typography.caption, color: colors.gray500 },
-  value: { color: colors.black, fontWeight: "700", fontFamily: "monospace" },
+  line: { ...typography.caption, color: text.muted },
+  value: { color: text.primary, fontWeight: "700", fontFamily: "monospace" },
 });

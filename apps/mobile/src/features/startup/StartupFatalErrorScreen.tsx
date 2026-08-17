@@ -9,7 +9,10 @@ import {
 import { getMobileBuildInfo } from "../../config/build-info";
 import { StartupBuildStamp } from "./StartupBuildStamp";
 import { PrimaryButton, SecondaryButton } from "../../components/ui";
-import { colors, radii, spacing, typography } from "../../theme/tokens";
+import { brand, semantic, surface, text } from "../../design-system/tokens/colors";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 type Props = {
   error: Error;
@@ -107,19 +110,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: spacing.lg,
     gap: spacing.md,
-    backgroundColor: colors.white,
+    backgroundColor: surface.background,
     justifyContent: "center",
   },
-  title: { ...typography.title, color: colors.danger, textAlign: "center" },
-  subtitle: { ...typography.body, color: colors.gray700, textAlign: "center" },
+  title: { ...typography.h2, color: semantic.danger, textAlign: "center" },
+  subtitle: { ...typography.body, color: text.secondary, textAlign: "center" },
   block: {
     gap: spacing.xs,
     padding: spacing.md,
     borderRadius: radii.lg,
-    backgroundColor: colors.gray100,
+    backgroundColor: surface.backgroundMuted,
   },
-  label: { ...typography.caption, color: colors.gray500, textTransform: "uppercase" },
-  value: { ...typography.body, color: colors.black },
-  mono: { ...typography.caption, color: colors.gray900, fontFamily: "monospace" },
-  bootLine: { ...typography.caption, color: colors.gray700, fontFamily: "monospace" },
+  label: { ...typography.caption, color: text.muted, textTransform: "uppercase" },
+  value: { ...typography.body, color: text.primary },
+  mono: { ...typography.caption, color: text.primary, fontFamily: "monospace" },
+  bootLine: { ...typography.caption, color: text.secondary, fontFamily: "monospace" },
 });

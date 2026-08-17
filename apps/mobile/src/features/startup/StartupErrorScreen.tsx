@@ -12,7 +12,10 @@ import { copyDiagnosticsText, exportDiagnosticsJson, shareProblemReport } from "
 import { runConnectivityCheck } from "../../diagnostics/connectivity-check";
 import { BuildInfoPanel } from "./BuildInfoPanel";
 import { StartupBuildStamp } from "./StartupBuildStamp";
-import { colors, radii, spacing, typography } from "../../theme/tokens";
+import { brand, border, semantic, surface, text } from "../../design-system/tokens/colors";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 type Props = {
   failure: BootFailure;
@@ -25,7 +28,7 @@ function ConnectivityPanel({ check }: { check: ConnectivityCheckResult | null })
   if (!check) {
     return (
       <View style={styles.connectivity}>
-        <ActivityIndicator size="small" color={colors.orange} />
+        <ActivityIndicator size="small" color={brand.primary} />
         <Text style={styles.connectivityHint}>Проверка соединения…</Text>
       </View>
     );
@@ -173,36 +176,36 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.lg,
     borderRadius: radii.lg,
-    backgroundColor: colors.gray100,
+    backgroundColor: surface.backgroundMuted,
   },
-  heading: { ...typography.title, color: colors.danger, textAlign: "center" },
-  subheading: { ...typography.body, color: colors.gray700, textAlign: "center" },
+  heading: { ...typography.h2, color: semantic.danger, textAlign: "center" },
+  subheading: { ...typography.body, color: text.secondary, textAlign: "center" },
   block: { gap: spacing.xs },
-  label: { ...typography.caption, color: colors.gray500, textTransform: "uppercase" },
-  value: { ...typography.body, color: colors.black },
-  mono: { ...typography.caption, color: colors.gray700, fontFamily: "monospace" },
+  label: { ...typography.caption, color: text.muted, textTransform: "uppercase" },
+  value: { ...typography.body, color: text.primary },
+  mono: { ...typography.caption, color: text.secondary, fontFamily: "monospace" },
   connectivity: {
     gap: spacing.xs,
     padding: spacing.md,
     borderRadius: radii.md,
-    backgroundColor: colors.white,
+    backgroundColor: surface.background,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: border.default,
   },
-  connectivityHint: { ...typography.caption, color: colors.gray500 },
+  connectivityHint: { ...typography.caption, color: text.muted },
   connectRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", minHeight: 28 },
-  connectLabel: { ...typography.body, color: colors.black },
+  connectLabel: { ...typography.body, color: text.primary },
   connectValue: { ...typography.body, fontWeight: "700" },
-  connectOk: { color: colors.success },
-  connectFail: { color: colors.danger },
+  connectOk: { color: semantic.success },
+  connectFail: { color: semantic.danger },
   reportForm: { gap: spacing.sm },
   reportInput: {
     minHeight: 88,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: border.default,
     borderRadius: radii.md,
     padding: spacing.md,
-    backgroundColor: colors.white,
+    backgroundColor: surface.background,
     ...typography.body,
     textAlignVertical: "top",
   },

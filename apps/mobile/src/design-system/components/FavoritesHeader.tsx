@@ -3,6 +3,7 @@ import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { brand, text } from "../tokens/colors";
+import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
 
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
   countBadge: {
     minWidth: 28,
     minHeight: 28,
-    borderRadius: 14,
+    borderRadius: radii.pill,
     backgroundColor: brand.primarySoft,
     alignItems: "center",
     justifyContent: "center",

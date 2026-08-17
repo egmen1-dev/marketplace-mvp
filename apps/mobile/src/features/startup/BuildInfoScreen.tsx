@@ -4,7 +4,10 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { BuildInfoPanel } from "./BuildInfoPanel";
 import { PrimaryButton, SecondaryButton } from "../../components/ui";
 import { getMobileBuildInfo } from "../../config/build-info";
-import { colors, spacing, typography } from "../../theme/tokens";
+import { brand, semantic, surface, text } from "../../design-system/tokens/colors";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 export function BuildInfoScreen() {
   const router = useRouter();
@@ -36,18 +39,18 @@ export function BuildInfoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.lg },
-  heading: { ...typography.title, color: colors.black },
-  subheading: { ...typography.body, color: colors.gray700 },
+  container: { padding: spacing.lg, gap: spacing.lg, backgroundColor: surface.background },
+  heading: { ...typography.h2, color: text.primary },
+  subheading: { ...typography.body, color: text.secondary },
   warning: {
     gap: spacing.xs,
     padding: spacing.md,
-    borderRadius: 12,
-    backgroundColor: colors.orangeSoft,
+    borderRadius: radii.lg,
+    backgroundColor: brand.primarySoft,
     borderWidth: 1,
-    borderColor: colors.warning,
+    borderColor: semantic.warning,
   },
-  warningTitle: { ...typography.body, color: colors.black, fontWeight: "700" },
-  warningBody: { ...typography.body, color: colors.gray700 },
+  warningTitle: { ...typography.body, color: text.primary, fontWeight: "700" },
+  warningBody: { ...typography.body, color: text.secondary },
   actions: { gap: spacing.sm, marginTop: spacing.md },
 });

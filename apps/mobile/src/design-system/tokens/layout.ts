@@ -8,6 +8,9 @@ export const layout = {
   buttonHeight: 44,
   buttonHeightSm: 36,
   buttonHeightLg: 48,
+  searchFieldMinHeight: 52,
+  overlayButtonSize: 44,
+  emptyIllustrationSize: 140,
   productCardWidth: "48%" as const,
   maxContentWidth: 480,
 } as const;

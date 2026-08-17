@@ -2,7 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { brand, surface, text } from "../tokens/colors";
+import { brand, border, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -69,9 +69,9 @@ const styles = StyleSheet.create({
   sectionTitle: { ...typography.caption, color: text.muted, textTransform: "uppercase", fontWeight: "700" },
   meta: { gap: 2, paddingHorizontal: spacing.xs },
   metaLine: { ...typography.caption, color: text.muted },
-  card: { backgroundColor: surface.card, borderRadius: radii.xl, overflow: "hidden", borderWidth: 1, borderColor: "rgba(0,0,0,0.06)" },
+  card: { backgroundColor: surface.card, borderRadius: radii.xl, overflow: "hidden", borderWidth: 1, borderColor: border.default },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 64, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: "rgba(0,0,0,0.06)" },
+  rowBorder: { borderBottomWidth: 1, borderBottomColor: border.default },
   iconWrap: {
     width: 40,
     height: 40,

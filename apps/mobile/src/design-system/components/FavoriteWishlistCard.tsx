@@ -7,7 +7,8 @@ import { loadAppConfig } from "../../config/env";
 import type { FavoriteProductView } from "../../features/favorites/types";
 import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
-import { brand, semantic, surface, text } from "../tokens/colors";
+import { brand, border, semantic, surface, text } from "../tokens/colors";
+import { layout } from "../tokens/layout";
 import { radii } from "../tokens/radius";
 import { shadows } from "../tokens/elevation";
 import { spacing } from "../tokens/spacing";
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: surface.card,
     borderRadius: radii.xl,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    borderColor: border.default,
     overflow: "hidden",
     ...shadows.card,
     position: "relative",
@@ -120,19 +121,19 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: spacing.sm,
     left: spacing.sm,
-    backgroundColor: semantic.danger,
-    borderRadius: radii.md,
+    backgroundColor: brand.primary,
+    borderRadius: radii.sm,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
   },
-  discountText: { ...typography.caption, color: "#fff", fontWeight: "700" },
+  discountText: { ...typography.caption, color: text.inverse, fontWeight: "700" },
   removeBtn: {
     position: "absolute",
     top: spacing.sm,
     right: spacing.sm,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: layout.overlayButtonSize,
+    height: layout.overlayButtonSize,
+    borderRadius: layout.overlayButtonSize / 2,
     backgroundColor: "rgba(255,255,255,0.95)",
     alignItems: "center",
     justifyContent: "center",

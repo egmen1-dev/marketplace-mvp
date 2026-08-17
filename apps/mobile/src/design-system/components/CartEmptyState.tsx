@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { PrimaryCTA } from "./PrimaryCTA";
 import { brand, surface, text } from "../tokens/colors";
+import { layout } from "../tokens/layout";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
 
@@ -35,9 +36,9 @@ const styles = StyleSheet.create({
     backgroundColor: surface.background,
   },
   illustration: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: layout.emptyIllustrationSize,
+    height: layout.emptyIllustrationSize,
+    borderRadius: layout.emptyIllustrationSize / 2,
     backgroundColor: brand.primarySoft,
     alignItems: "center",
     justifyContent: "center",

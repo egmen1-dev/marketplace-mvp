@@ -17,7 +17,9 @@ import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry"
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
 import { useAppStore } from "../src/store/app-store";
-import { colors, spacing, typography } from "../src/theme/tokens";
+import { brand, surface, text } from "../src/design-system/tokens/colors";
+import { spacing } from "../src/design-system/tokens/spacing";
+import { typography } from "../src/design-system/tokens/typography";
 
 const LazyStartupErrorScreen = lazy(() =>
   import("../src/features/startup/StartupErrorScreen").then((m) => ({ default: m.StartupErrorScreen })),
@@ -120,7 +122,7 @@ export default function BootScreen() {
         <Suspense
           fallback={
             <>
-              <ActivityIndicator color={colors.orange} size="large" />
+              <ActivityIndicator color={brand.primary} size="large" />
               <Text style={styles.caption}>Загрузка диагностики…</Text>
             </>
           }
@@ -134,7 +136,7 @@ export default function BootScreen() {
         </Suspense>
       ) : (
         <>
-          <ActivityIndicator color={colors.orange} size="large" />
+          <ActivityIndicator color={brand.primary} size="large" />
           <Text style={styles.caption}>Загрузка…</Text>
         </>
       )}
@@ -143,12 +145,12 @@ export default function BootScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.white, padding: spacing.xl },
+  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: surface.background, padding: spacing.xl },
   brand: { alignItems: "center", gap: spacing.md, marginBottom: spacing.xxl },
   logo: { width: 96, height: 96 },
-  title: { ...typography.display, color: colors.orange, fontSize: 36 },
-  tagline: { ...typography.body, color: colors.gray500 },
-  caption: { ...typography.caption, color: colors.gray500, marginTop: spacing.md },
+  title: { ...typography.display, color: brand.primary, fontSize: 36 },
+  tagline: { ...typography.body, color: text.muted },
+  caption: { ...typography.caption, color: text.muted, marginTop: spacing.md },
 });
 
 bootMark("app/index module evaluated");

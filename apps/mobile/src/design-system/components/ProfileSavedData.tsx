@@ -6,7 +6,7 @@ import { CatalogProductCard } from "./CatalogProductCard";
 import { CommerceSectionHeader } from "./CommerceSectionHeader";
 import type { MobileProductListItem } from "../../api/endpoints";
 import type { ProfileCategoryStat } from "../../features/profile/types";
-import { brand, surface, text } from "../tokens/colors";
+import { brand, border, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    borderColor: border.default,
   },
   chipText: { ...typography.bodySmall, color: text.primary, fontWeight: "600" },
   chipCount: { ...typography.caption, color: brand.primary, fontWeight: "700" },

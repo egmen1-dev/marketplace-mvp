@@ -3,6 +3,7 @@ import { memo } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { brand, surface, text } from "../tokens/colors";
+import { layout } from "../tokens/layout";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -43,12 +44,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: surface.card,
-    borderRadius: radii.xl,
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    backgroundColor: surface.backgroundMuted,
+    borderRadius: radii.lg,
+    borderWidth: 1.5,
+    borderColor: brand.primarySoft,
     paddingHorizontal: spacing.md,
-    minHeight: 48,
+    minHeight: layout.searchFieldMinHeight,
   },
   input: { flex: 1, ...typography.body, color: text.primary, paddingVertical: spacing.sm },
   clearBtn: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" },

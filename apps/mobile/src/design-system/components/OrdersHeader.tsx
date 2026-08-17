@@ -2,6 +2,7 @@ import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { brand, text } from "../tokens/colors";
+import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
 
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.lg,
     backgroundColor: brand.primarySoft,
-    borderRadius: 16,
+    borderRadius: radii.lg,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },

@@ -1,6 +1,11 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, type PressableProps, type TextStyle, type ViewStyle } from "react-native";
 
-import { colors, layout, radii, spacing, typography } from "../../theme/tokens";
+import { brand, border, semantic, text } from "../../design-system/tokens/colors";
+import { shadows } from "../../design-system/tokens/elevation";
+import { layout } from "../../design-system/tokens/layout";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 type ButtonSize = "sm" | "md" | "lg";
 
@@ -47,7 +52,7 @@ function ButtonBase({
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={textStyle.color ?? colors.white} size="small" />
+        <ActivityIndicator color={textStyle.color ?? text.inverse} size="small" />
       ) : (
         <Text style={[buttonTextStyle(size), textStyle]}>{label}</Text>
       )}
@@ -73,18 +78,18 @@ export function DangerButton(props: ButtonProps) {
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radii.md,
+    borderRadius: radii.lg,
     paddingHorizontal: spacing.lg,
     alignItems: "center",
     justifyContent: "center",
   },
   fullWidth: { alignSelf: "stretch" },
-  primary: { backgroundColor: colors.orange },
-  primaryText: { color: colors.white },
-  secondary: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.gray300 },
-  secondaryText: { color: colors.black },
+  primary: { backgroundColor: brand.primary, ...shadows.elevated },
+  primaryText: { color: text.inverse },
+  secondary: { backgroundColor: brand.paper, borderWidth: 1, borderColor: border.default },
+  secondaryText: { color: text.primary },
   ghost: { backgroundColor: "transparent" },
-  ghostText: { color: colors.orange },
-  danger: { backgroundColor: colors.danger },
-  dangerText: { color: colors.white },
+  ghostText: { color: brand.primary },
+  danger: { backgroundColor: semantic.danger },
+  dangerText: { color: text.inverse },
 });

@@ -12,7 +12,10 @@ import { getNetworkSummary, runConnectivityCheck } from "../../diagnostics/conne
 import { buildDiagnosticsReport } from "../../diagnostics/diagnostics-service";
 import { copyDiagnosticsText, exportDiagnosticsJson } from "../../diagnostics/diagnostics-actions";
 import { BOOT_STAGE_LABELS, BootStage } from "../../boot/boot-types";
-import { colors, spacing, typography } from "../../theme/tokens";
+import { brand, border, semantic, surface, text } from "../../design-system/tokens/colors";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -150,13 +153,13 @@ function stageLine(report: StartupReport | null, stage: BootStage): string {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.white },
-  title: { ...typography.title, color: colors.black },
+  container: { padding: spacing.lg, gap: spacing.lg, backgroundColor: surface.background },
+  title: { ...typography.h2, color: text.primary },
   section: { gap: spacing.sm },
-  sectionTitle: { ...typography.subtitle, color: colors.orange },
+  sectionTitle: { ...typography.h3, color: brand.primary },
   row: { gap: 2 },
-  rowLabel: { ...typography.caption, color: colors.gray500 },
-  rowValue: { ...typography.body, color: colors.black },
-  timeline: { ...typography.caption, color: colors.black, fontFamily: "monospace", lineHeight: 20 },
-  historyLine: { ...typography.caption, color: colors.gray700, marginBottom: spacing.xs },
+  rowLabel: { ...typography.caption, color: text.muted },
+  rowValue: { ...typography.body, color: text.primary },
+  timeline: { ...typography.caption, color: text.primary, fontFamily: "monospace", lineHeight: 20 },
+  historyLine: { ...typography.caption, color: text.secondary, marginBottom: spacing.xs },
 });

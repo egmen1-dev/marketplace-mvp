@@ -2,7 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { brand, semantic, surface, text } from "../tokens/colors";
+import { brand, border, semantic, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { shadows } from "../tokens/elevation";
 import { spacing } from "../tokens/spacing";
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.md,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    borderColor: border.default,
     ...shadows.card,
   },
   title: { ...typography.subtitle, color: text.primary, fontWeight: "700" },

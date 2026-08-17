@@ -3,7 +3,8 @@ import { memo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { PrimaryCTA } from "./PrimaryCTA";
-import { brand, text } from "../tokens/colors";
+import { brand, surface, text } from "../tokens/colors";
+import { layout } from "../tokens/layout";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
 
@@ -28,16 +29,18 @@ export const FavoritesEmptyState = memo(function FavoritesEmptyState({ onBrowseC
 
 const styles = StyleSheet.create({
   wrap: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing["2xl"],
     paddingVertical: spacing["3xl"],
     gap: spacing.lg,
+    backgroundColor: surface.background,
   },
   illustration: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: layout.emptyIllustrationSize,
+    height: layout.emptyIllustrationSize,
+    borderRadius: layout.emptyIllustrationSize / 2,
     backgroundColor: brand.primarySoft,
     alignItems: "center",
     justifyContent: "center",

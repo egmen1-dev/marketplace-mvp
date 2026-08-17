@@ -2,7 +2,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { surface, text } from "../tokens/colors";
+import { border, surface, text } from "../tokens/colors";
+import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
 
@@ -48,9 +49,9 @@ export const ProfileSettingsSection = memo(function ProfileSettingsSection({ onD
 const styles = StyleSheet.create({
   wrap: { gap: spacing.sm },
   sectionTitle: { ...typography.caption, color: text.muted, textTransform: "uppercase", fontWeight: "700" },
-  card: { backgroundColor: surface.card, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "rgba(0,0,0,0.06)" },
+  card: { backgroundColor: surface.card, borderRadius: radii.xl, overflow: "hidden", borderWidth: 1, borderColor: border.default },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 52, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  rowBorder: { borderBottomWidth: 1, borderBottomColor: "rgba(0,0,0,0.06)" },
+  rowBorder: { borderBottomWidth: 1, borderBottomColor: border.default },
   rowDisabled: { opacity: 0.65 },
   rowText: { ...typography.body, color: text.primary, flex: 1 },
   rowTextMuted: { color: text.muted },

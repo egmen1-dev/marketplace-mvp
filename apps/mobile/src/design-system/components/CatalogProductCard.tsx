@@ -3,10 +3,12 @@ import { Image } from "expo-image";
 import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { ShimmerBlock } from "../../components/ui/Shimmer";
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
 import { brand, surface, text } from "../tokens/colors";
+import { layout } from "../tokens/layout";
 import { radii } from "../tokens/radius";
 import { shadows } from "../tokens/elevation";
 import { spacing } from "../tokens/spacing";
@@ -101,11 +103,11 @@ export function CatalogGridSkeleton({ count = 6 }: { count?: number }) {
     <View style={styles.grid}>
       {Array.from({ length: count }).map((_, index) => (
         <View key={index} style={styles.skeletonCard}>
-          <View style={styles.skeletonImage} />
+          <ShimmerBlock height={CARD_IMAGE_HEIGHT} style={styles.skeletonImage} />
           <View style={styles.skeletonBody}>
-            <View style={styles.skeletonLineShort} />
-            <View style={styles.skeletonLine} />
-            <View style={styles.skeletonLineTiny} />
+            <ShimmerBlock height={14} width="45%" />
+            <ShimmerBlock height={14} />
+            <ShimmerBlock height={12} width="60%" />
           </View>
         </View>
       ))}
@@ -150,9 +152,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: spacing.sm,
     right: spacing.sm,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: layout.overlayButtonSize,
+    height: layout.overlayButtonSize,
+    borderRadius: layout.overlayButtonSize / 2,
     backgroundColor: surface.background,
     alignItems: "center",
     justifyContent: "center",
@@ -172,9 +174,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: surface.background,
   },
-  skeletonImage: { height: CARD_IMAGE_HEIGHT, backgroundColor: surface.backgroundMuted },
+  skeletonImage: { borderRadius: radii.lg },
   skeletonBody: { padding: spacing.md, gap: spacing.sm },
-  skeletonLineShort: { height: 14, width: "45%", borderRadius: radii.sm, backgroundColor: surface.backgroundMuted },
-  skeletonLine: { height: 14, borderRadius: radii.sm, backgroundColor: surface.backgroundMuted },
-  skeletonLineTiny: { height: 12, width: "60%", borderRadius: radii.sm, backgroundColor: surface.backgroundMuted },
 });

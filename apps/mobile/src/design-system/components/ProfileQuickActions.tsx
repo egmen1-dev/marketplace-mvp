@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { QuickAction } from "../../features/profile/types";
 import { usePressScale } from "../../hooks/usePressScale";
-import { brand, surface, text } from "../tokens/colors";
+import { brand, border, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { shadows } from "../tokens/elevation";
 import { spacing } from "../tokens/spacing";
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     minHeight: 96,
     borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
+    borderColor: border.default,
     ...shadows.card,
   },
   iconWrap: { position: "relative" },

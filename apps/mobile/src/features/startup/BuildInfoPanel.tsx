@@ -1,7 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { formatBuildDate, getMobileBuildInfo } from "../../config/build-info";
-import { colors, radii, spacing, typography } from "../../theme/tokens";
+import { border, surface, text } from "../../design-system/tokens/colors";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -39,16 +42,16 @@ const styles = StyleSheet.create({
   panel: {
     gap: spacing.sm,
     padding: spacing.md,
-    borderRadius: radii.md,
-    backgroundColor: colors.white,
+    borderRadius: radii.lg,
+    backgroundColor: surface.card,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: border.default,
   },
   panelCompact: {
-    backgroundColor: colors.gray100,
+    backgroundColor: surface.backgroundMuted,
   },
-  title: { ...typography.caption, color: colors.gray500, textTransform: "uppercase", fontWeight: "700" },
+  title: { ...typography.caption, color: text.muted, textTransform: "uppercase", fontWeight: "700" },
   row: { flexDirection: "row", justifyContent: "space-between", gap: spacing.md, minHeight: 28, alignItems: "center" },
-  rowLabel: { ...typography.caption, color: colors.gray500, flex: 1 },
-  rowValue: { ...typography.body, color: colors.black, fontWeight: "600", flex: 1.2, textAlign: "right" },
+  rowLabel: { ...typography.caption, color: text.muted, flex: 1 },
+  rowValue: { ...typography.body, color: text.primary, fontWeight: "600", flex: 1.2, textAlign: "right" },
 });

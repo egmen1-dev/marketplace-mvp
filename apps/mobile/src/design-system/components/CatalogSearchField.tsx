@@ -2,6 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
 
 import { brand, surface, text } from "../tokens/colors";
+import { layout } from "../tokens/layout";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: surface.backgroundMuted,
     borderRadius: radii.lg,
     paddingHorizontal: spacing.md,
-    minHeight: 52,
+    minHeight: layout.searchFieldMinHeight,
     gap: spacing.sm,
     borderWidth: 1.5,
     borderColor: brand.primarySoft,
