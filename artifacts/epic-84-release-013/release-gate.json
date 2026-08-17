@@ -1,0 +1,93 @@
+{
+  "release": "0.1.3-alpha",
+  "versionCode": 4,
+  "generatedAt": "2026-08-16T20:23:25.245Z",
+  "apkPath": "/workspace/artifacts/epic-84-release-013/lot-android-alpha-0.1.3.apk",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "version_name",
+      "ok": true,
+      "detail": "0.1.3-alpha"
+    },
+    {
+      "id": "version_code",
+      "ok": true,
+      "detail": "4"
+    },
+    {
+      "id": "sha256_real",
+      "ok": true,
+      "detail": "b2e7a07d811ab9e8"
+    },
+    {
+      "id": "startup_Startup ID",
+      "ok": true
+    },
+    {
+      "id": "startup_Этап",
+      "ok": true
+    },
+    {
+      "id": "startup_Код",
+      "ok": true
+    },
+    {
+      "id": "startup_Скопировать диагностику",
+      "ok": true
+    },
+    {
+      "id": "startup_Экспортировать отчёт",
+      "ok": true
+    },
+    {
+      "id": "startup_ConnectivityPanel",
+      "ok": true
+    },
+    {
+      "id": "startup_StartupBuildStamp",
+      "ok": true
+    },
+    {
+      "id": "env_version",
+      "ok": true
+    },
+    {
+      "id": "env_build_number",
+      "ok": true
+    },
+    {
+      "id": "apk_exists",
+      "ok": true,
+      "detail": "/workspace/artifacts/epic-84-release-013/lot-android-alpha-0.1.3.apk"
+    },
+    {
+      "id": "aapt_package",
+      "ok": true,
+      "detail": "ru.lot.marketplace.alpha"
+    },
+    {
+      "id": "aapt_version_name",
+      "ok": true,
+      "detail": "0.1.3-alpha"
+    },
+    {
+      "id": "aapt_version_code",
+      "ok": true,
+      "detail": "4"
+    },
+    {
+      "id": "sha256_matches_constants",
+      "ok": true,
+      "detail": "b2e7a07d811ab9e8561eac849e282adc9477fb75495302f488c8404f11166859"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "release_013_tests",
+      "ok": true
+    }
+  ]
+}

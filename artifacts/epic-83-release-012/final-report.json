@@ -1,0 +1,90 @@
+{
+  "epic": "EPIC-83-RELEASE-0.1.2-001",
+  "generatedAt": "2026-08-16T19:05:00.000Z",
+  "merge": {
+    "pr": 95,
+    "mergeSha": "feb4b8d7022dd55787918f542eb6bbc431f3fb65",
+    "currentMainSha": "feb4b8d7022dd55787918f542eb6bbc431f3fb65"
+  },
+  "deploy": {
+    "stagingUrl": "https://web-production-e56fb.up.railway.app",
+    "stagingSha": "feb4b8d",
+    "mainSha": "feb4b8d",
+    "shaMatch": true
+  },
+  "minimumVersionPolicy": {
+    "minimumSupportedVersionCode": 3,
+    "minimumSupportedVersionName": "0.1.2-alpha",
+    "versionCode1": {
+      "updateState": "UNSUPPORTED_CLIENT",
+      "minimumVersionCode": 3,
+      "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk",
+      "verdict": "PASS"
+    },
+    "versionCode2": {
+      "updateState": "UNSUPPORTED_CLIENT",
+      "minimumVersionCode": 3,
+      "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk",
+      "verdict": "PASS"
+    },
+    "versionCode3": {
+      "updateState": "NO_UPDATE",
+      "verdict": "PASS"
+    },
+    "verdict": "PASS"
+  },
+  "apk": {
+    "built": true,
+    "versionName": "0.1.2-alpha",
+    "versionCode": 3,
+    "packageId": "ru.lot.marketplace.alpha",
+    "artifactFileName": "lot-android-alpha-0.1.2.apk",
+    "artifactSizeBytes": 93609459,
+    "sha256": "8cf4217c183885ed307e03d6667e039d7e5934743fd7f72f638293d76021b407",
+    "buildCommit": "feb4b8d",
+    "buildDate": "2026-08-16",
+    "aaptVerified": true
+  },
+  "githubRelease": {
+    "tag": "closed-alpha-0.1.2",
+    "url": "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2",
+    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk"
+  },
+  "mrp": {
+    "published": true,
+    "firstSupportedRelease": true,
+    "versionName": "0.1.2-alpha",
+    "versionCode": 3,
+    "channel": "CLOSED_ALPHA",
+    "status": "PUBLISHED",
+    "mandatory": false,
+    "sha256": "8cf4217c183885ed307e03d6667e039d7e5934743fd7f72f638293d76021b407",
+    "artifactSizeBytes": 93609459,
+    "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk",
+    "history": ["0.1.0-alpha", "0.1.1-alpha", "0.1.2-alpha"]
+  },
+  "physicalAcceptance": {
+    "oldClientUnsupportedFlow": "NOT RUN",
+    "physical012Flows": "NOT RUN",
+    "epic81UiVerification": "NOT RUN",
+    "reason": "Cloud VM has no KVM / physical Android device unavailable"
+  },
+  "seamlessUpdate013Prep": {
+    "plannedVersionName": "0.1.3-alpha",
+    "plannedVersionCode": 4,
+    "purpose": "First valid seamless update E2E: 0.1.2 → OPTIONAL_UPDATE → 0.1.3 with session preserved",
+    "status": "PLANNED_AFTER_PHYSICAL_012_PASS"
+  },
+  "verdicts": {
+    "apkBuilt": "YES",
+    "published": "YES",
+    "minimumVersionPolicy": "PASS",
+    "oldClientUnsupportedFlow": "NOT RUN",
+    "physical012": "NOT RUN",
+    "p0": 0,
+    "p1": 0,
+    "firstSupportedClosedAlpha": "WATCH",
+    "seamlessUpdateBaseline": "READY"
+  },
+  "testerDownloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.2/lot-android-alpha-0.1.2.apk"
+}
