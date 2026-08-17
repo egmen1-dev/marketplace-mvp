@@ -1,8 +1,37 @@
 # EPIC 84 — P0 Fatal Startup Crash Resolution
 
-> **UPDATE (P0 forensics):** Previous root cause below is **NOT CONFIRMED / INCOMPLETE** — 0.1.4 still crashes on physical device. See `docs/product/EPIC_84_P0_PHYSICAL_CRASH_FORENSICS.md`.
+> **CONFIRMED (Firebase Test Lab):** Root cause is **`expo-clipboard@8.0.8`** prebuilt AAR referencing removed `AnyTypeProvider` on SDK 57. See `docs/product/EPIC_84_P0_EXPO_CLIPBOARD_CRASH_FORENSICS.md`.
 
-## ROOT CAUSE (0.1.4 hotfix — INCOMPLETE)
+## ROOT CAUSE (confirmed)
+
+```
+java.lang.NoClassDefFoundError: expo.modules.kotlin.types.AnyTypeProvider
+at expo.modules.clipboard.ClipboardModule.definition(...)
+```
+
+| Layer | Detail |
+|-------|--------|
+| Offending package | `expo-clipboard@8.0.8` (declared `~8.0.2`) |
+| Expected for SDK 57 | `expo-clipboard@~57.0.1` |
+| Runtime core | `expo-modules-core@57.0.11` (no `AnyTypeProvider` since SDK 56) |
+| Mechanism | Prebuilt AAR in npm package references removed class at module registration |
+
+## Prior hypotheses — REVOKED
+
+SecureStore, Expo Router sync imports, New Architecture disable, SplashScreen — **not supported by stack trace**.
+
+## FIX (0.1.5-alpha)
+
+```diff
+- "expo-clipboard": "~8.0.2"
++ "expo-clipboard": "~57.0.1"
+```
+
+Gate: `npx tsx scripts/mobile-p0-expo-deps-gate.ts`
+
+---
+
+## Historical note (0.1.4 hotfix — WRONG ROOT CAUSE)
 
 **Expo Router default `sync` import mode + New Architecture native module initialization during cold start.**
 

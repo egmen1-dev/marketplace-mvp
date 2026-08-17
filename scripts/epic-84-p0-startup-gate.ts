@@ -175,6 +175,31 @@ function main() {
     ok: bootFailureMessage(BootStage.SESSION, new Error("session_expired")) === "Session expired",
   });
 
+  const mobilePkg = JSON.parse(readFileSync(join(root, "apps/mobile/package.json"), "utf8")) as {
+    dependencies?: Record<string, string>;
+  };
+  const mobileLock = JSON.parse(readFileSync(join(root, "apps/mobile/package-lock.json"), "utf8")) as {
+    packages?: Record<string, { version?: string }>;
+  };
+  const clipDeclared = mobilePkg.dependencies?.["expo-clipboard"] ?? "";
+  const clipInstalled = mobileLock.packages?.["node_modules/expo-clipboard"]?.version ?? "";
+  rows.push({
+    id: "expo_clipboard_sdk57",
+    ok: clipDeclared.includes("57.") && clipInstalled.startsWith("57."),
+    detail: `declared=${clipDeclared} installed=${clipInstalled}`,
+  });
+  rows.push({
+    id: "expo_clipboard_forensics_doc",
+    ok: existsSync(join(root, "docs/product/EPIC_84_P0_EXPO_CLIPBOARD_CRASH_FORENSICS.md")),
+  });
+
+  try {
+    execSync("npx tsx scripts/mobile-p0-expo-deps-gate.ts", { stdio: "pipe", cwd: root });
+    rows.push({ id: "expo_deps_gate", ok: true });
+  } catch {
+    rows.push({ id: "expo_deps_gate", ok: false });
+  }
+
   try {
     execSync("npm run mobile:typecheck", { stdio: "pipe" });
     rows.push({ id: "mobile_typecheck", ok: true });

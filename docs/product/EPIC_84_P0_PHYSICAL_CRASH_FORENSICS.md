@@ -6,15 +6,19 @@ Do **not** start EPIC 87, Seller Sprint 1, or new product sprints until exact ph
 
 ---
 
-## Previous hypothesis — REVOKED
+## All prior hypotheses — REVOKED
 
-| Field | Value |
-|-------|-------|
-| **Previous hypothesis** | Expo Router sync imports + New Architecture |
-| **Status** | **NOT CONFIRMED / INCOMPLETE** |
-| **Reason** | 0.1.4-alpha with lazy router + `newArchEnabled: false` in app.config **still crashes identically** on physical device |
+| Hypothesis | Status |
+|------------|--------|
+| Expo Router sync imports + New Architecture | **REVOKED** |
+| SecureStore eager init | **REVOKED** |
+| SplashScreen | **REVOKED** |
 
-Do **not** treat the 0.1.4 hotfix root cause as proven until physical stack trace + post-fix cold launch PASS.
+**Confirmed root cause (Firebase Test Lab):** `expo-clipboard@8.0.8` prebuilt AAR references removed `AnyTypeProvider` — see `EPIC_84_P0_EXPO_CLIPBOARD_CRASH_FORENSICS.md`.
+
+---
+
+## Previous hypothesis — REVOKED (0.1.4 hotfix)
 
 ---
 
