@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from "node:fs";
 
 import { createIssue } from "../review/fix-loop";
-import type { VisualReviewInput, VisualReviewProvider, VisualReviewResult } from "../types";
+import type { DesignReviewIssue, VisualReviewInput, VisualReviewProvider, VisualReviewResult } from "../types";
 
 /** Provider-independent heuristic reviewer — no model lock-in. */
 export class HeuristicVisualReviewProvider implements VisualReviewProvider {
@@ -110,8 +110,8 @@ function buildScreenshotAttention(input: VisualReviewInput) {
   };
 }
 
-function reviewSellerHomeScreenshot(input: VisualReviewInput, width: number, height: number) {
-  const issues = [];
+function reviewSellerHomeScreenshot(input: VisualReviewInput, width: number, height: number): DesignReviewIssue[] {
+  const issues: DesignReviewIssue[] = [];
   if (input.screenKind !== "seller") return issues;
 
   issues.push(
