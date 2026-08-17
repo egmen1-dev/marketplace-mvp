@@ -110,7 +110,19 @@ Fieldref AnyTypeCache.INSTANCE
 
 Gate: `npx tsx scripts/mobile-p0-expo-deps-gate.ts`
 
-Clean rebuild required after fix (Phase 5).
+## P0 release gate (0.1.5-alpha)
+
+Mandatory pipeline before Test Lab upload / publish:
+
+```bash
+npm run mobile:p0:release-gate-015
+```
+
+Steps: expo deps → clean build → APK metadata (aapt) → bytecode guard → Firebase Test Lab.
+
+Publish blocked until **Pixel 5 / API 30 / Robo PASS**.
+
+Incident: `docs/incidents/MOBILE-P0-EXPO-CLIPBOARD-ANYTYPEPROVIDER.md`
 
 ---
 

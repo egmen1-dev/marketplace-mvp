@@ -25,7 +25,9 @@ function main() {
   rows.push({ id: "build_info_generated", ok: existsSync(join(MOBILE, "src/config/build-info.generated.ts")) });
 
   const generated = readFileSync(join(MOBILE, "src/config/build-info.generated.ts"), "utf8");
-  rows.push({ id: "build_info_version_014", ok: generated.includes('"0.1.4"') && generated.includes('"versionCode": 5') });
+  rows.push({ id: "build_info_version_015", ok: generated.includes('"0.1.5"') && generated.includes('"versionCode": 6') });
+
+  rows.push({ id: "expo_deps_gate", ok: run("npm run mobile:p0:expo-deps-gate") });
 
   const appConfig = readFileSync(join(MOBILE, "app.config.js"), "utf8");
   rows.push({ id: "lazy_router_import_mode", ok: appConfig.includes("EXPO_ROUTER_IMPORT_MODE") && appConfig.includes("lazy") });
@@ -53,6 +55,11 @@ function main() {
   rows.push({ id: "release_apk_exists", ok: existsSync(RELEASE_APK), detail: RELEASE_APK });
 
   let apkMeta: Record<string, unknown> | null = null;
+  if (existsSync(RELEASE_APK)) {
+    rows.push({ id: "apk_metadata_gate", ok: run("npm run mobile:p0:apk-metadata-gate") });
+    rows.push({ id: "bytecode_guard", ok: run("npm run mobile:p0:bytecode-guard") });
+  }
+
   if (existsSync(RELEASE_APK)) {
     const sha256 = sha256File(RELEASE_APK);
     const size = statSync(RELEASE_APK).size;

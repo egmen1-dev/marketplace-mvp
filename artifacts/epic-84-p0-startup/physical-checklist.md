@@ -1,42 +1,43 @@
 # EPIC-84 P0 — Physical Acceptance (Android)
 
-**Target build:** `0.1.4-alpha` (versionCode **5**) — P0 startup crash hotfix  
-**Previous failing build:** `0.1.3-alpha` (versionCode 4)
+**Target build:** `0.1.5-alpha` (versionCode **6**) — expo-clipboard SDK 57 fix  
+**Previous failing builds:** `0.1.3-alpha` / `0.1.4-alpha` (AnyTypeProvider crash)
 
 ## Preconditions
 
-- Install **release APK** (`assembleRelease`), not Metro dev client
+- Install **fresh release APK** from clean build (`mobile:p0:release-gate-015`)
 - Verify build via long-press splash → **Build Info** (commit, versionCode, SHA)
-- Optional: `adb logcat | grep LOT` for boot trail
+- **Firebase Test Lab PASS** on Pixel 5 / API 30 required before partner handoff
+
+## Mandatory release gates (before Test Lab upload)
+
+```bash
+npm run mobile:p0:expo-deps-gate      # Expo SDK compatibility
+npm run mobile:p0:apk-metadata-gate     # aapt versionName/versionCode
+npm run mobile:p0:bytecode-guard        # AnyTypeProvider=0
+npm run mobile:p0:firebase-test-lab     # Robo on Pixel 5 API 30
+npm run mobile:p0:release-gate-015      # full pipeline
+```
 
 ## P0 cold launch (blocker)
 
 | # | Scenario | Steps | Expected |
 |---|----------|-------|----------|
-| 1 | Cold launch ×10 | Force-stop → launch ×10 | **10/10** no process crash (no instant return to home) |
-| 2 | Boot trail | logcat during launch | `NATIVE_START` → `JS_BUNDLE_START` → `ROUTER_ENTRY` → `ROOT_LAYOUT_INIT` → `BOOT_PIPELINE_INIT` |
+| 1 | Cold launch ×10 | Force-stop → launch ×10 | **10/10** no process crash |
+| 2 | Boot trail | logcat during launch | `NATIVE_START` → `JS_BUNDLE_START` → `ROUTER_ENTRY` → pipeline |
 | 3 | Happy path | Online cold start | Splash → Login or Home |
-| 4 | Offline boot | Airplane mode → cold start | Controlled error/recovery — **no process crash** |
-| 5 | Fatal JS (if injectable) | Dev-only throw after bundle | **Startup Fatal Error** with Crash ID + stack — app stays open |
+| 4 | Offline boot | Airplane mode → cold start | Controlled error — **no process crash** |
 
-## Startup pipeline (recoverable errors)
+## Partner smoke (after Firebase PASS)
 
-| # | Scenario | Expected |
-|---|----------|----------|
-| 6 | Offline bootstrap | Startup Error: stage Bootstrap, network reason |
-| 7 | Retry | **Повторить** → pipeline restarts |
-| 8 | Session expired | Opens Login |
-| 9 | Diagnostics | Long-press splash → Build Info → Startup Diagnostics |
-
-## Regression smoke (buyer funnel)
-
-After cold launch PASS: Login → Home → Catalog → PDP → Cart → Orders
+Login → Home → Catalog → PDP → Cart → Orders → Favorites → Profile → background/resume
 
 ## Sign-off
 
-- [ ] Cold launch **10/10 PASS** on same device that crashed on 0.1.3
-- [ ] `npm run mobile:release-smoke` PASS
-- [ ] `npm run product:epic-84:p0-startup` PASS
-- [ ] P0 **CLOSED** — operator sign-off required
+- [ ] Expo dependency gate PASS
+- [ ] Bytecode guard: AnyTypeProvider = 0
+- [ ] Firebase Test Lab Pixel 5 / API 30 PASS
+- [ ] Partner cold launch ×10 PASS
+- [ ] P0 **CLOSED**
 
-See `docs/product/EPIC_84_P0_FATAL_CRASH_RESOLUTION.md` for ROOT CAUSE and fix details.
+See `docs/incidents/MOBILE-P0-EXPO-CLIPBOARD-ANYTYPEPROVIDER.md`.

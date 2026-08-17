@@ -1,0 +1,36 @@
+{
+  "phase": "P0 Firebase Test Lab Gate",
+  "generatedAt": "2026-08-17T12:19:56.323Z",
+  "verdict": "FAIL",
+  "rows": [
+    {
+      "id": "apk_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    {
+      "id": "apk_sha256",
+      "ok": true,
+      "detail": "0b2c02e6ab6a0f2c9652ae2318ee0c378f5a4b736d3382a9ccbf235921b38aef"
+    },
+    {
+      "id": "gcloud_available",
+      "ok": false,
+      "detail": "gcloud CLI not installed — operator must run Test Lab manually"
+    },
+    {
+      "id": "firebase_test_lab",
+      "ok": false,
+      "detail": "NOT RUN"
+    }
+  ],
+  "status": "NOT RUN",
+  "device": {
+    "model": "redfin",
+    "version": "30",
+    "locale": "en_US",
+    "orientation": "portrait"
+  },
+  "sha256": "0b2c02e6ab6a0f2c9652ae2318ee0c378f5a4b736d3382a9ccbf235921b38aef",
+  "instructions": "/workspace/artifacts/epic-84-p0-startup/firebase-test-lab-015/operator-instructions.md"
+}

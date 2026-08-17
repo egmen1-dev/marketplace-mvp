@@ -1,0 +1,87 @@
+{
+  "phase": "P0 Expo Dependency Compatibility Gate",
+  "generatedAt": "2026-08-17T12:19:49.160Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "expo_clipboard",
+      "ok": true,
+      "detail": "declared=~57.0.1 installed=57.0.1 expected=~57.0.1"
+    },
+    {
+      "id": "expo_secure_store",
+      "ok": true,
+      "detail": "declared=~57.0.1 installed=57.0.1 expected=~57.0.1"
+    },
+    {
+      "id": "expo_file_system",
+      "ok": true,
+      "detail": "declared=transitive installed=57.0.4 expected=~57.0.3"
+    },
+    {
+      "id": "expo_linking",
+      "ok": true,
+      "detail": "declared=~57.0.6 installed=57.0.6 expected=~57.0.6"
+    },
+    {
+      "id": "expo_font",
+      "ok": true,
+      "detail": "declared=transitive installed=57.0.1 expected=~57.0.1"
+    },
+    {
+      "id": "expo_constants",
+      "ok": true,
+      "detail": "declared=transitive installed=57.0.11 expected=~57.0.11"
+    },
+    {
+      "id": "expo_router",
+      "ok": true,
+      "detail": "declared=~57.0.13 installed=57.0.13 expected=~57.0.13"
+    },
+    {
+      "id": "expo_splash_screen",
+      "ok": true,
+      "detail": "declared=transitive installed=not-used expected=~57.0.6"
+    },
+    {
+      "id": "expo_device",
+      "ok": true,
+      "detail": "declared=~57.0.1 installed=57.0.1 expected=~57.0.1"
+    },
+    {
+      "id": "expo_network",
+      "ok": true,
+      "detail": "declared=~57.0.1 installed=57.0.1 expected=~57.0.1"
+    },
+    {
+      "id": "expo_clipboard_prebuilt_aar",
+      "ok": true,
+      "detail": "prebuilt=57.0.1"
+    },
+    {
+      "id": "expo_clipboard_regression_guard",
+      "ok": true,
+      "detail": "MOBILE-P0-EXPO-CLIPBOARD-ANYTYPEPROVIDER regression"
+    },
+    {
+      "id": "expo_sdk",
+      "ok": true,
+      "detail": "installed=57.0.13"
+    },
+    {
+      "id": "expo_modules_core",
+      "ok": true,
+      "detail": "installed=57.0.11"
+    },
+    {
+      "id": "react_native",
+      "ok": true,
+      "detail": "installed=0.86.2"
+    },
+    {
+      "id": "expo_clipboard_declared_sdk57",
+      "ok": true,
+      "detail": "~57.0.1"
+    }
+  ]
+}
