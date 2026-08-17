@@ -1,6 +1,8 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
+import { bootMark } from "../boot/early-boot";
+
 const REFRESH_KEY = "lot_refresh_token";
 const ACCESS_KEY = "lot_access_token";
 const SESSION_META_KEY = "lot_session_meta";
@@ -48,3 +50,5 @@ export async function clearSession(): Promise<void> {
 export function getDeviceId(): string {
   return `lot-${Platform.OS}-${Platform.Version}`;
 }
+
+bootMark("secure-session module evaluated");

@@ -93,3 +93,11 @@ export async function getReleaseIntelligenceSummary() {
 
   return { rows, feedbackByVersion, crashes24h, versionDistribution };
 }
+
+export {
+  buildProductReleaseVerdictReport,
+  computeProductReleaseVerdict,
+  type ProductReleaseMetrics,
+  type ProductReleaseVerdict,
+  type ProductReleaseVerdictReport,
+} from "./verdict";

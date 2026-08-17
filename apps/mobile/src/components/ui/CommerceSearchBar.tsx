@@ -1,7 +1,11 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
 
-import { colors, layout, radii, spacing, typography } from "../../theme/tokens";
+import { brand, border, surface, text } from "../../design-system/tokens/colors";
+import { layout } from "../../design-system/tokens/layout";
+import { radii } from "../../design-system/tokens/radius";
+import { spacing } from "../../design-system/tokens/spacing";
+import { typography } from "../../design-system/tokens/typography";
 
 type CommerceSearchBarProps = TextInputProps & {
   onClear?: () => void;
@@ -28,9 +32,9 @@ export function CommerceSearchBar({
   return (
     <View style={styles.wrap}>
       <View style={styles.inputWrap}>
-        <MaterialCommunityIcons name="magnify" size={20} color={colors.gray500} />
+        <MaterialCommunityIcons name="magnify" size={22} color={text.muted} accessibilityElementsHidden />
         <TextInput
-          placeholderTextColor={colors.gray500}
+          placeholderTextColor={text.muted}
           style={styles.input}
           value={value}
           returnKeyType="search"
@@ -38,7 +42,7 @@ export function CommerceSearchBar({
         />
         {hasValue ? (
           <Pressable accessibilityLabel="Очистить" onPress={onClear} hitSlop={8} style={styles.clearBtn}>
-            <MaterialCommunityIcons name="close-circle" size={18} color={colors.gray500} />
+            <MaterialCommunityIcons name="close-circle" size={20} color={text.muted} />
           </Pressable>
         ) : null}
       </View>
@@ -58,7 +62,7 @@ export function CommerceSearchBar({
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestRow}>
                 {history.map((item) => (
                   <Pressable key={item} style={styles.suggestChip} onPress={() => onSelectSuggestion?.(item)}>
-                    <MaterialCommunityIcons name="history" size={14} color={colors.gray500} />
+                    <MaterialCommunityIcons name="history" size={14} color={text.muted} />
                     <Text style={styles.suggestText}>{item}</Text>
                   </Pressable>
                 ))}
@@ -71,7 +75,7 @@ export function CommerceSearchBar({
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.suggestRow}>
                 {popular.map((item) => (
                   <Pressable key={item} style={styles.suggestChip} onPress={() => onSelectSuggestion?.(item)}>
-                    <MaterialCommunityIcons name="fire" size={14} color={colors.orange} />
+                    <MaterialCommunityIcons name="fire" size={14} color={brand.primary} />
                     <Text style={styles.suggestText}>{item}</Text>
                   </Pressable>
                 ))}
@@ -89,21 +93,28 @@ const styles = StyleSheet.create({
   inputWrap: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.gray100,
+    backgroundColor: surface.backgroundMuted,
     borderRadius: radii.lg,
     paddingHorizontal: spacing.md,
-    minHeight: layout.inputHeight,
+    minHeight: layout.searchFieldMinHeight,
     gap: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.gray200,
+    borderWidth: 1.5,
+    borderColor: brand.primarySoft,
   },
-  input: { flex: 1, ...typography.body, color: colors.black, paddingVertical: spacing.sm },
+  input: { flex: 1, ...typography.body, color: text.primary, paddingVertical: spacing.sm },
   clearBtn: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" },
-  panel: { gap: spacing.md },
+  panel: {
+    backgroundColor: surface.background,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: border.default,
+    padding: spacing.md,
+    gap: spacing.md,
+  },
   section: { gap: spacing.sm },
   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  sectionTitle: { ...typography.caption, color: colors.gray500, fontWeight: "600" },
-  sectionAction: { ...typography.caption, color: colors.orange, fontWeight: "600" },
+  sectionTitle: { ...typography.caption, color: text.muted, fontWeight: "600", textTransform: "uppercase" },
+  sectionAction: { ...typography.caption, color: brand.primary, fontWeight: "600" },
   suggestRow: { gap: spacing.sm },
   suggestChip: {
     flexDirection: "row",
@@ -112,10 +123,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radii.pill,
-    backgroundColor: colors.white,
+    backgroundColor: surface.background,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: border.default,
     minHeight: 36,
   },
-  suggestText: { ...typography.caption, color: colors.gray900 },
+  suggestText: { ...typography.caption, color: text.primary, fontWeight: "600" },
 });

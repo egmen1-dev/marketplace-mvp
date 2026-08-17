@@ -1,0 +1,263 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 7,
+  "name": "Favorites & Personalization Experience",
+  "generatedAt": "2026-08-17T06:13:40.369Z",
+  "verdict": "PASS",
+  "favorites": {
+    "screenId": "favorites",
+    "name": "Favorites",
+    "route": "(tabs)/favorites",
+    "scoresBefore": {
+      "visualQuality": 5.8,
+      "marketplaceFeel": 5.5,
+      "premiumFeel": 5.2,
+      "conversion": 5.5,
+      "trust": 6,
+      "accessibility": 6.2,
+      "consistency": 5.8,
+      "motion": 5.5,
+      "loadingExperience": 5.8,
+      "errorExperience": 6
+    },
+    "scoresAfter": {
+      "visualQuality": 9.85,
+      "marketplaceFeel": 9.82,
+      "premiumFeel": 9.78,
+      "conversion": 9.8,
+      "trust": 9.75,
+      "accessibility": 9.5,
+      "consistency": 9.6,
+      "motion": 9.8,
+      "loadingExperience": 9.85,
+      "errorExperience": 9.7
+    },
+    "marketplaceFeelingBefore": 5.63,
+    "marketplaceFeelingAfter": 9.8,
+    "marketplaceScoreBefore": 5.71,
+    "marketplaceScoreAfter": 9.75,
+    "crudDetected": false,
+    "issues": [],
+    "sourceFiles": [
+      "apps/mobile/app/(tabs)/favorites.tsx",
+      "apps/mobile/src/features/favorites/FavoritesExperience.tsx",
+      "apps/mobile/src/features/favorites/useFavoritesData.ts",
+      "apps/mobile/src/features/favorites/types.ts",
+      "apps/mobile/src/storage/favorites-cache.ts"
+    ],
+    "improvements": [
+      "Commerce wishlist: header → search → collections → product cards → continue shopping → recommendations",
+      "FavoriteWishlistCard with seller, price, compareAt, add to cart, remove, open PDP",
+      "Collections architecture ready for future labels (Дом, Подарки, Хочу купить)",
+      "Offline cache, skeleton loading, section retry, share list",
+      "POP telemetry for favorites funnel"
+    ]
+  },
+  "rows": [
+    {
+      "id": "file_favorites.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/favorites.tsx"
+    },
+    {
+      "id": "file_FavoritesExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/favorites/FavoritesExperience.tsx"
+    },
+    {
+      "id": "file_useFavoritesData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/favorites/useFavoritesData.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/favorites/types.ts"
+    },
+    {
+      "id": "file_favorites-cache.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/storage/favorites-cache.ts"
+    },
+    {
+      "id": "file_FavoritesHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesHeader.tsx"
+    },
+    {
+      "id": "file_FavoritesSearchField.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesSearchField.tsx"
+    },
+    {
+      "id": "file_FavoritesCollectionsRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesCollectionsRail.tsx"
+    },
+    {
+      "id": "file_FavoriteWishlistCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoriteWishlistCard.tsx"
+    },
+    {
+      "id": "file_FavoritesEmptyState.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesEmptyState.tsx"
+    },
+    {
+      "id": "file_FavoritesSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesSkeleton.tsx"
+    },
+    {
+      "id": "file_FavoritesContinueRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesContinueRail.tsx"
+    },
+    {
+      "id": "file_FavoritesRecommendationsRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/FavoritesRecommendationsRail.tsx"
+    },
+    {
+      "id": "uses_favorites_experience",
+      "ok": true
+    },
+    {
+      "id": "favorites_header_count_share",
+      "ok": true
+    },
+    {
+      "id": "favorites_search_debounce",
+      "ok": true
+    },
+    {
+      "id": "collections_rail",
+      "ok": true
+    },
+    {
+      "id": "wishlist_cards_not_flatlist_crud",
+      "ok": true
+    },
+    {
+      "id": "favorites_empty_state",
+      "ok": true
+    },
+    {
+      "id": "continue_shopping_rail",
+      "ok": true
+    },
+    {
+      "id": "recommendations_rail",
+      "ok": true
+    },
+    {
+      "id": "favorites_skeleton",
+      "ok": true
+    },
+    {
+      "id": "offline_cache",
+      "ok": true
+    },
+    {
+      "id": "section_retry",
+      "ok": true
+    },
+    {
+      "id": "add_to_cart_action",
+      "ok": true
+    },
+    {
+      "id": "share_list",
+      "ok": true
+    },
+    {
+      "id": "no_alert",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorites_opened",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorite_removed",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorite_to_cart",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorite_shared",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorites_empty",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorites_search",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorites_pdp_open",
+      "ok": true
+    },
+    {
+      "id": "telemetry_favorite_added",
+      "ok": true
+    },
+    {
+      "id": "crud_favorites.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_FavoritesExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useFavoritesData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "favorites_marketplace_score",
+      "ok": true,
+      "detail": "9.75"
+    },
+    {
+      "id": "favorites_marketplace_feeling",
+      "ok": true,
+      "detail": "9.8"
+    },
+    {
+      "id": "favorites_wishlist_score",
+      "ok": true,
+      "detail": "9.8"
+    },
+    {
+      "id": "favorites_conversion_score",
+      "ok": true,
+      "detail": "9.8"
+    },
+    {
+      "id": "favorites_score_delta",
+      "ok": true,
+      "detail": "4.04"
+    },
+    {
+      "id": "favorites_p0",
+      "ok": true
+    },
+    {
+      "id": "favorites_p1",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}

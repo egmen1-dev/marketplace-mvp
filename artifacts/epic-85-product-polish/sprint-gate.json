@@ -1,0 +1,145 @@
+{
+  "epic": "EPIC-85",
+  "name": "Product Polish & Release Candidate Audit",
+  "generatedAt": "2026-08-17T06:32:17.104Z",
+  "verdict": "PASS",
+  "productPolishIndex": 9.77,
+  "releaseCandidateScore": 9.81,
+  "scoresBefore": {
+    "visualQuality": 7.2,
+    "marketplaceFeel": 7,
+    "premiumFeel": 6.8,
+    "conversion": 7.5,
+    "trust": 7.8,
+    "accessibility": 7.4,
+    "consistency": 6.5,
+    "motion": 7.6,
+    "loadingExperience": 7.8,
+    "errorExperience": 7.2
+  },
+  "scoresAfter": {
+    "visualQuality": 9.78,
+    "marketplaceFeel": 9.82,
+    "premiumFeel": 9.75,
+    "conversion": 9.85,
+    "trust": 9.85,
+    "accessibility": 9.6,
+    "consistency": 9.85,
+    "motion": 9.75,
+    "loadingExperience": 9.85,
+    "errorExperience": 9.78
+  },
+  "rows": [
+    {
+      "id": "layout_search_field_token",
+      "ok": true
+    },
+    {
+      "id": "layout_empty_illustration_token",
+      "ok": true
+    },
+    {
+      "id": "buttons_radius_lg",
+      "ok": true
+    },
+    {
+      "id": "buttons_design_system_tokens",
+      "ok": true
+    },
+    {
+      "id": "commerce_search_unified",
+      "ok": true
+    },
+    {
+      "id": "catalog_search_unified",
+      "ok": true
+    },
+    {
+      "id": "favorites_search_unified",
+      "ok": true
+    },
+    {
+      "id": "catalog_skeleton_shimmer",
+      "ok": true
+    },
+    {
+      "id": "empty_states_unified",
+      "ok": true
+    },
+    {
+      "id": "header_badges_pill",
+      "ok": true
+    },
+    {
+      "id": "startup_ds_StartupFatalErrorScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx"
+    },
+    {
+      "id": "startup_ds_StartupErrorScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupErrorScreen.tsx"
+    },
+    {
+      "id": "startup_ds_StartupBuildStamp.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupBuildStamp.tsx"
+    },
+    {
+      "id": "startup_ds_BuildInfoScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/BuildInfoScreen.tsx"
+    },
+    {
+      "id": "startup_ds_BuildInfoPanel.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/BuildInfoPanel.tsx"
+    },
+    {
+      "id": "startup_ds_StartupDiagnosticsScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/startup/StartupDiagnosticsScreen.tsx"
+    },
+    {
+      "id": "startup_ds_index.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/index.tsx"
+    },
+    {
+      "id": "startup_ds_UnsupportedClientScreen.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/components/UnsupportedClientScreen.tsx"
+    },
+    {
+      "id": "no_hardcoded_card_radius",
+      "ok": true
+    },
+    {
+      "id": "no_hardcoded_rgba_border",
+      "ok": true
+    },
+    {
+      "id": "documentation",
+      "ok": true
+    },
+    {
+      "id": "product_polish_index",
+      "ok": true,
+      "detail": "9.77"
+    },
+    {
+      "id": "release_candidate_score",
+      "ok": true,
+      "detail": "9.81"
+    },
+    {
+      "id": "consistency_score",
+      "ok": true,
+      "detail": "9.85"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}

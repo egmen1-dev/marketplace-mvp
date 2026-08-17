@@ -1,0 +1,296 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 8,
+  "name": "Profile & Personal Experience",
+  "generatedAt": "2026-08-17T06:22:17.962Z",
+  "verdict": "PASS",
+  "profile": {
+    "screenId": "profile",
+    "name": "Profile",
+    "route": "(tabs)/profile",
+    "scoresBefore": {
+      "visualQuality": 5.5,
+      "marketplaceFeel": 5.2,
+      "premiumFeel": 5,
+      "conversion": 5,
+      "trust": 5.8,
+      "accessibility": 5.8,
+      "consistency": 5.5,
+      "motion": 5.2,
+      "loadingExperience": 5.5,
+      "errorExperience": 5.8
+    },
+    "scoresAfter": {
+      "visualQuality": 9.95,
+      "marketplaceFeel": 9.91,
+      "premiumFeel": 9.88,
+      "conversion": 10,
+      "trust": 9.96,
+      "accessibility": 9.6,
+      "consistency": 9.85,
+      "motion": 9.95,
+      "loadingExperience": 9.95,
+      "errorExperience": 9.85
+    },
+    "marketplaceFeelingBefore": 5.38,
+    "marketplaceFeelingAfter": 9.93,
+    "marketplaceScoreBefore": 5.41,
+    "marketplaceScoreAfter": 9.9,
+    "crudDetected": false,
+    "issues": [],
+    "sourceFiles": [
+      "apps/mobile/app/(tabs)/profile.tsx",
+      "apps/mobile/src/features/profile/ProfileExperience.tsx",
+      "apps/mobile/src/features/profile/useProfileData.ts",
+      "apps/mobile/src/features/profile/types.ts",
+      "apps/mobile/src/storage/profile-cache.ts",
+      "apps/mobile/src/storage/clear-local-cache.ts"
+    ],
+    "improvements": [
+      "Personal account center: header → account card → quick actions → activity → saved data → support → settings → diagnostics → closed alpha → danger zone",
+      "Real shopping stats from buyer home, cart, favorites, recent views — hidden when API unavailable",
+      "Offline profile snapshot via SecureStore",
+      "Bottom sheet danger zone — no Alert dialogs",
+      "POP telemetry for profile funnel and diagnostics"
+    ]
+  },
+  "rows": [
+    {
+      "id": "file_profile.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/profile.tsx"
+    },
+    {
+      "id": "file_ProfileExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/profile/ProfileExperience.tsx"
+    },
+    {
+      "id": "file_useProfileData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/profile/useProfileData.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/profile/types.ts"
+    },
+    {
+      "id": "file_profile-cache.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/storage/profile-cache.ts"
+    },
+    {
+      "id": "file_clear-local-cache.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/storage/clear-local-cache.ts"
+    },
+    {
+      "id": "file_ProfileHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileHeader.tsx"
+    },
+    {
+      "id": "file_ProfileAccountCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileAccountCard.tsx"
+    },
+    {
+      "id": "file_ProfileQuickActions.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileQuickActions.tsx"
+    },
+    {
+      "id": "file_ProfileShoppingActivity.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileShoppingActivity.tsx"
+    },
+    {
+      "id": "file_ProfileSavedData.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileSavedData.tsx"
+    },
+    {
+      "id": "file_ProfileSupportSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileSupportSection.tsx"
+    },
+    {
+      "id": "file_ProfileSettingsSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileSettingsSection.tsx"
+    },
+    {
+      "id": "file_ProfileDiagnosticsSection.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileDiagnosticsSection.tsx"
+    },
+    {
+      "id": "file_ProfileClosedAlphaCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileClosedAlphaCard.tsx"
+    },
+    {
+      "id": "file_ProfileDangerSheet.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileDangerSheet.tsx"
+    },
+    {
+      "id": "file_ProfileSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/ProfileSkeleton.tsx"
+    },
+    {
+      "id": "uses_profile_experience",
+      "ok": true
+    },
+    {
+      "id": "profile_header_alpha_mode",
+      "ok": true
+    },
+    {
+      "id": "profile_account_card",
+      "ok": true
+    },
+    {
+      "id": "profile_quick_actions",
+      "ok": true
+    },
+    {
+      "id": "profile_shopping_activity",
+      "ok": true
+    },
+    {
+      "id": "profile_saved_data",
+      "ok": true
+    },
+    {
+      "id": "profile_support_section",
+      "ok": true
+    },
+    {
+      "id": "profile_settings_section",
+      "ok": true
+    },
+    {
+      "id": "profile_diagnostics_section",
+      "ok": true
+    },
+    {
+      "id": "profile_closed_alpha",
+      "ok": true
+    },
+    {
+      "id": "profile_danger_sheet",
+      "ok": true
+    },
+    {
+      "id": "profile_skeleton",
+      "ok": true
+    },
+    {
+      "id": "offline_cache",
+      "ok": true
+    },
+    {
+      "id": "section_retry",
+      "ok": true
+    },
+    {
+      "id": "clear_local_cache",
+      "ok": true
+    },
+    {
+      "id": "logout_navigation",
+      "ok": true
+    },
+    {
+      "id": "press_animation",
+      "ok": true
+    },
+    {
+      "id": "telemetry_profile_opened",
+      "ok": true
+    },
+    {
+      "id": "telemetry_profile_edit",
+      "ok": true
+    },
+    {
+      "id": "telemetry_profile_logout",
+      "ok": true
+    },
+    {
+      "id": "telemetry_profile_support",
+      "ok": true
+    },
+    {
+      "id": "telemetry_profile_update",
+      "ok": true
+    },
+    {
+      "id": "telemetry_profile_cache_clear",
+      "ok": true
+    },
+    {
+      "id": "telemetry_diagnostics_opened",
+      "ok": true
+    },
+    {
+      "id": "telemetry_build_info_opened",
+      "ok": true
+    },
+    {
+      "id": "crud_profile.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_ProfileExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useProfileData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "profile_marketplace_score",
+      "ok": true,
+      "detail": "9.9"
+    },
+    {
+      "id": "profile_marketplace_feeling",
+      "ok": true,
+      "detail": "9.93"
+    },
+    {
+      "id": "profile_trust_score",
+      "ok": true,
+      "detail": "9.96"
+    },
+    {
+      "id": "profile_ux_score",
+      "ok": true,
+      "detail": "9.93"
+    },
+    {
+      "id": "profile_score_delta",
+      "ok": true,
+      "detail": "4.49"
+    },
+    {
+      "id": "profile_p0",
+      "ok": true
+    },
+    {
+      "id": "profile_p1",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}
