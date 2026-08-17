@@ -1,0 +1,173 @@
+{
+  "phase": "P0 Route Graph Gate",
+  "generatedAt": "2026-08-17T18:28:56.576Z",
+  "verdict": "FAIL",
+  "rows": [
+    {
+      "id": "route_file_count",
+      "ok": true,
+      "detail": "19"
+    },
+    {
+      "id": "route_default_app__tabs___layout_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/_layout.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__catalog_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/catalog.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__favorites_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/favorites.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__index_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/index.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__orders_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/orders.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__profile_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/profile.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__seller_home_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/seller-home.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__seller_products_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/seller-products.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__seller_sales_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/seller-sales.tsx"
+    },
+    {
+      "id": "route_default_app__tabs__wallet_tsx",
+      "ok": true,
+      "detail": "app/(tabs)/wallet.tsx"
+    },
+    {
+      "id": "route_default_app__layout_tsx",
+      "ok": true,
+      "detail": "app/_layout.tsx"
+    },
+    {
+      "id": "route_default_app_build_info_tsx",
+      "ok": true,
+      "detail": "app/build-info.tsx"
+    },
+    {
+      "id": "route_default_app_cart_tsx",
+      "ok": true,
+      "detail": "app/cart.tsx"
+    },
+    {
+      "id": "route_default_app_checkout_tsx",
+      "ok": true,
+      "detail": "app/checkout.tsx"
+    },
+    {
+      "id": "route_default_app_index_tsx",
+      "ok": true,
+      "detail": "app/index.tsx"
+    },
+    {
+      "id": "route_default_app_login_tsx",
+      "ok": true,
+      "detail": "app/login.tsx"
+    },
+    {
+      "id": "route_default_app_order__id__tsx",
+      "ok": true,
+      "detail": "app/order/[id].tsx"
+    },
+    {
+      "id": "route_default_app_product__id__tsx",
+      "ok": true,
+      "detail": "app/product/[id].tsx"
+    },
+    {
+      "id": "route_default_app_startup_diagnostics_tsx",
+      "ok": true,
+      "detail": "app/startup-diagnostics.tsx"
+    },
+    {
+      "id": "tokens_no_component_barrel",
+      "ok": true,
+      "detail": "theme/tokens must not import design-system/index barrel"
+    },
+    {
+      "id": "tokens_colors_defined",
+      "ok": true,
+      "detail": "colors from token module"
+    },
+    {
+      "id": "metro_probe_resolves",
+      "ok": true,
+      "detail": "12 modules"
+    },
+    {
+      "id": "tokens_probe_no_component_deps",
+      "ok": true,
+      "detail": "none"
+    },
+    {
+      "id": "route_probe_metro_graph",
+      "ok": false,
+      "detail": "Command failed: npx metro get-dependencies \"/workspace/apps/mobile/p0-route-graph-probe.js\"\nError: Unable to resolve module ./TabsHost from /workspace/apps/mobile/node_modules/react-native-screens/src/components/tabs/host/index.ts: \n\nNone o"
+    },
+    {
+      "id": "release_bundle_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/intermediates/assets/release/mergeReleaseAssets/index.android.bundle"
+    },
+    {
+      "id": "release_sourcemap_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/generated/sourcemaps/react/release/index.android.bundle.map"
+    },
+    {
+      "id": "sourcemap_buttons_82_mapped",
+      "ok": true,
+      "detail": "col=335107"
+    },
+    {
+      "id": "sourcemap_tokens_not_barrel",
+      "ok": true,
+      "detail": "/src/theme/tokens.ts:9"
+    }
+  ],
+  "routes": [
+    "app/(tabs)/_layout.tsx",
+    "app/(tabs)/catalog.tsx",
+    "app/(tabs)/favorites.tsx",
+    "app/(tabs)/index.tsx",
+    "app/(tabs)/orders.tsx",
+    "app/(tabs)/profile.tsx",
+    "app/(tabs)/seller-home.tsx",
+    "app/(tabs)/seller-products.tsx",
+    "app/(tabs)/seller-sales.tsx",
+    "app/(tabs)/wallet.tsx",
+    "app/_layout.tsx",
+    "app/build-info.tsx",
+    "app/cart.tsx",
+    "app/checkout.tsx",
+    "app/index.tsx",
+    "app/login.tsx",
+    "app/order/[id].tsx",
+    "app/product/[id].tsx",
+    "app/startup-diagnostics.tsx"
+  ]
+}
