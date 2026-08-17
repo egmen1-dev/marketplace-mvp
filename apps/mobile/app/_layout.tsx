@@ -5,7 +5,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { bootMark, bootStage } from "../src/boot/early-boot";
 import { isBootModuleEnabled } from "../src/boot/boot-isolation";
-import { loadPreviousCrash, type PreviousCrashRecord } from "../src/boot/previous-crash";
+import type { PreviousCrashRecord } from "../src/boot/previous-crash";
 import { RootErrorBoundary } from "../src/components/RootErrorBoundary";
 import { StartupFatalGate } from "../src/components/StartupFatalGate";
 import { PreviousCrashNotice } from "../src/components/PreviousCrashNotice";
@@ -45,12 +45,13 @@ function DeferredProviders() {
 }
 
 function RootShell() {
-  useDeepLinkHandler();
+  const bootstrapped = useAppStore((s) => s.bootstrapped);
+  useDeepLinkHandler(bootstrapped);
   const [previousCrash, setPreviousCrash] = useState<PreviousCrashRecord | null>(null);
 
   useEffect(() => {
     if (!isBootModuleEnabled("diagnostics")) return;
-    void loadPreviousCrash().then(setPreviousCrash);
+    void import("../src/boot/previous-crash").then(({ loadPreviousCrash }) => loadPreviousCrash().then(setPreviousCrash));
   }, []);
 
   return (

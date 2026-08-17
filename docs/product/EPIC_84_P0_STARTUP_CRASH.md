@@ -1,5 +1,9 @@
 # EPIC 84 — P0 Startup Crash Investigation
 
+## Previous hypothesis — REVOKED
+
+See `docs/product/EPIC_84_P0_PHYSICAL_CRASH_FORENSICS.md` — 0.1.4 lazy router + app.config `newArchEnabled: false` **did not fix physical crash**. Native `BuildConfig.IS_NEW_ARCHITECTURE_ENABLED` was still `true` in shipped APK.
+
 ## Problem
 
 On physical Android the splash appears, then the app closes immediately and returns to the home screen. Startup Diagnostics never shows — the crash happens **before** the startup pipeline runs.

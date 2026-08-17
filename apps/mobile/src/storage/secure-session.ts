@@ -1,7 +1,7 @@
-import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 import { bootMark } from "../boot/early-boot";
+import { secureStoreDelete, secureStoreGet, secureStoreSet } from "./lazy-secure-store";
 
 const REFRESH_KEY = "lot_refresh_token";
 const ACCESS_KEY = "lot_access_token";
@@ -18,21 +18,21 @@ export async function saveTokens(input: {
   refreshToken: string;
   meta: StoredSessionMeta;
 }): Promise<void> {
-  await SecureStore.setItemAsync(REFRESH_KEY, input.refreshToken);
-  await SecureStore.setItemAsync(ACCESS_KEY, input.accessToken);
-  await SecureStore.setItemAsync(SESSION_META_KEY, JSON.stringify(input.meta));
+  await secureStoreSet(REFRESH_KEY, input.refreshToken);
+  await secureStoreSet(ACCESS_KEY, input.accessToken);
+  await secureStoreSet(SESSION_META_KEY, JSON.stringify(input.meta));
 }
 
 export async function getRefreshToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(REFRESH_KEY);
+  return secureStoreGet(REFRESH_KEY);
 }
 
 export async function getAccessToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(ACCESS_KEY);
+  return secureStoreGet(ACCESS_KEY);
 }
 
 export async function getSessionMeta(): Promise<StoredSessionMeta | null> {
-  const raw = await SecureStore.getItemAsync(SESSION_META_KEY);
+  const raw = await secureStoreGet(SESSION_META_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as StoredSessionMeta;
@@ -42,9 +42,9 @@ export async function getSessionMeta(): Promise<StoredSessionMeta | null> {
 }
 
 export async function clearSession(): Promise<void> {
-  await SecureStore.deleteItemAsync(REFRESH_KEY);
-  await SecureStore.deleteItemAsync(ACCESS_KEY);
-  await SecureStore.deleteItemAsync(SESSION_META_KEY);
+  await secureStoreDelete(REFRESH_KEY);
+  await secureStoreDelete(ACCESS_KEY);
+  await secureStoreDelete(SESSION_META_KEY);
 }
 
 export function getDeviceId(): string {

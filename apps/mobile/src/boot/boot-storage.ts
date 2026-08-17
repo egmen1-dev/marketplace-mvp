@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { secureStoreDelete, secureStoreGet, secureStoreSet } from "../storage/lazy-secure-store";
 
 import { bootMark } from "./early-boot";
 import type { BootFailure, StartupReport } from "./boot-types";
@@ -13,11 +13,11 @@ const MAX_HISTORY = 10;
 
 export async function saveStartupReport(report: StartupReport): Promise<void> {
   try {
-    await SecureStore.setItemAsync(LAST_BOOT_REPORT_KEY, JSON.stringify(report));
+    await secureStoreSet(LAST_BOOT_REPORT_KEY, JSON.stringify(report));
     if (report.failure) {
-      await SecureStore.setItemAsync(LAST_BOOT_ERROR_KEY, JSON.stringify(report.failure));
+      await secureStoreSet(LAST_BOOT_ERROR_KEY, JSON.stringify(report.failure));
     } else {
-      await SecureStore.deleteItemAsync(LAST_BOOT_ERROR_KEY);
+      await secureStoreDelete(LAST_BOOT_ERROR_KEY);
     }
     await appendBootHistory(report);
   } catch {
@@ -39,12 +39,12 @@ async function appendBootHistory(report: StartupReport): Promise<void> {
 
   const history = await loadBootHistory();
   const next = [entry, ...history.filter((h) => h.bootId !== entry.bootId)].slice(0, MAX_HISTORY);
-  await SecureStore.setItemAsync(BOOT_HISTORY_KEY, JSON.stringify(next));
+  await secureStoreSet(BOOT_HISTORY_KEY, JSON.stringify(next));
 }
 
 export async function loadLastStartupReport(): Promise<StartupReport | null> {
   try {
-    const raw = await SecureStore.getItemAsync(LAST_BOOT_REPORT_KEY);
+    const raw = await secureStoreGet(LAST_BOOT_REPORT_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as StartupReport;
   } catch {
@@ -54,7 +54,7 @@ export async function loadLastStartupReport(): Promise<StartupReport | null> {
 
 export async function loadLastBootFailure(): Promise<BootFailure | null> {
   try {
-    const raw = await SecureStore.getItemAsync(LAST_BOOT_ERROR_KEY);
+    const raw = await secureStoreGet(LAST_BOOT_ERROR_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as BootFailure;
   } catch {
@@ -64,7 +64,7 @@ export async function loadLastBootFailure(): Promise<BootFailure | null> {
 
 export async function loadBootHistory(): Promise<BootHistoryEntry[]> {
   try {
-    const raw = await SecureStore.getItemAsync(BOOT_HISTORY_KEY);
+    const raw = await secureStoreGet(BOOT_HISTORY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as BootHistoryEntry[];
     return Array.isArray(parsed) ? parsed.slice(0, MAX_HISTORY) : [];
@@ -75,7 +75,7 @@ export async function loadBootHistory(): Promise<BootHistoryEntry[]> {
 
 export async function saveRemoteConfigCache(config: Record<string, unknown>): Promise<void> {
   try {
-    await SecureStore.setItemAsync(REMOTE_CONFIG_CACHE_KEY, JSON.stringify(config));
+    await secureStoreSet(REMOTE_CONFIG_CACHE_KEY, JSON.stringify(config));
   } catch {
     // ignore
   }
@@ -83,7 +83,7 @@ export async function saveRemoteConfigCache(config: Record<string, unknown>): Pr
 
 export async function loadRemoteConfigCache(): Promise<Record<string, unknown> | null> {
   try {
-    const raw = await SecureStore.getItemAsync(REMOTE_CONFIG_CACHE_KEY);
+    const raw = await secureStoreGet(REMOTE_CONFIG_CACHE_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as Record<string, unknown>;
   } catch {

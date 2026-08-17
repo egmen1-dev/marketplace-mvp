@@ -1,6 +1,8 @@
 # EPIC 84 — P0 Fatal Startup Crash Resolution
 
-## ROOT CAUSE
+> **UPDATE (P0 forensics):** Previous root cause below is **NOT CONFIRMED / INCOMPLETE** — 0.1.4 still crashes on physical device. See `docs/product/EPIC_84_P0_PHYSICAL_CRASH_FORENSICS.md`.
+
+## ROOT CAUSE (0.1.4 hotfix — INCOMPLETE)
 
 **Expo Router default `sync` import mode + New Architecture native module initialization during cold start.**
 
@@ -37,6 +39,7 @@ With **`newArchEnabled: true`** (0.1.3-alpha), physical release Hermes builds in
 |--------|------|
 | `EXPO_ROUTER_IMPORT_MODE=lazy` | `apps/mobile/app.config.js` |
 | `newArchEnabled: false` (0.1.4 hotfix) | `app.config.js` / `app.json` |
+| **`withNativeArchSync` plugin (0.1.5)** | **`plugins/withNativeArchSync.js` — syncs gradle.properties** |
 | Defer NetworkBanner + UpdateHost until post-bootstrap | `app/_layout.tsx` |
 | Lazy-load `StartupErrorScreen` on boot route | `app/index.tsx` |
 | Fix `OrderCard` Animated.Value on Pressable | `OrderCard.tsx` |

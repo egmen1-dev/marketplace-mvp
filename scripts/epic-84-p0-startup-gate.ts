@@ -39,6 +39,7 @@ const REQUIRED_FILES = [
   "apps/mobile/app/startup-diagnostics.tsx",
   "docs/product/EPIC_84_P0_STARTUP_DIAGNOSTICS.md",
   "docs/product/EPIC_84_P0_STARTUP_CRASH.md",
+  "docs/product/EPIC_84_P0_PHYSICAL_CRASH_FORENSICS.md",
   "artifacts/epic-84-p0-startup/physical-checklist.md",
 ];
 
@@ -77,6 +78,15 @@ function main() {
   rows.push({ id: "lazy_router_import_mode", ok: appConfig.includes("EXPO_ROUTER_IMPORT_MODE") && appConfig.includes("lazy") });
   rows.push({ id: "new_arch_disabled_release", ok: appConfig.includes("newArchEnabled: false") });
   rows.push({ id: "native_boot_marker_plugin", ok: existsSync(join(root, "apps/mobile/plugins/withLotBootMarkers.js")) });
+  rows.push({ id: "native_arch_sync_plugin", ok: existsSync(join(root, "apps/mobile/plugins/withNativeArchSync.js")) });
+  const gradleProps = existsSync(join(root, "apps/mobile/android/gradle.properties"))
+    ? readFileSync(join(root, "apps/mobile/android/gradle.properties"), "utf8")
+    : "";
+  rows.push({
+    id: "gradle_new_arch_disabled",
+    ok: gradleProps.includes("newArchEnabled=false"),
+    detail: gradleProps.match(/newArchEnabled=.+/m)?.[0],
+  });
   rows.push({ id: "previous_crash_module", ok: existsSync(join(root, "apps/mobile/src/boot/previous-crash.ts")) });
   rows.push({ id: "boot_isolation_module", ok: existsSync(join(root, "apps/mobile/src/boot/boot-isolation.ts")) });
   rows.push({ id: "deferred_root_providers", ok: layoutSource.includes("LazyNetworkBanner") && layoutSource.includes("LazyUpdateHost") });

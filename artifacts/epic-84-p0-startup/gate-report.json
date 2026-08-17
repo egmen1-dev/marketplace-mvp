@@ -1,7 +1,7 @@
 {
   "epic": "EPIC-84",
   "phase": "P0 Startup Diagnostics, Recovery & Crash Guard",
-  "generatedAt": "2026-08-16T20:57:08.232Z",
+  "generatedAt": "2026-08-17T07:43:32.503Z",
   "verdict": "PASS",
   "rows": [
     {
@@ -18,6 +18,11 @@
       "id": "file_index.js",
       "ok": true,
       "detail": "apps/mobile/index.js"
+    },
+    {
+      "id": "file_app.config.js",
+      "ok": true,
+      "detail": "apps/mobile/app.config.js"
     },
     {
       "id": "file_early-boot.ts",
@@ -105,6 +110,11 @@
       "detail": "docs/product/EPIC_84_P0_STARTUP_CRASH.md"
     },
     {
+      "id": "file_EPIC_84_P0_PHYSICAL_CRASH_FORENSICS.md",
+      "ok": true,
+      "detail": "docs/product/EPIC_84_P0_PHYSICAL_CRASH_FORENSICS.md"
+    },
+    {
       "id": "file_physical-checklist.md",
       "ok": true,
       "detail": "artifacts/epic-84-p0-startup/physical-checklist.md"
@@ -148,6 +158,15 @@
     {
       "id": "native_boot_marker_plugin",
       "ok": true
+    },
+    {
+      "id": "native_arch_sync_plugin",
+      "ok": true
+    },
+    {
+      "id": "gradle_new_arch_disabled",
+      "ok": true,
+      "detail": "newArchEnabled=false"
     },
     {
       "id": "previous_crash_module",

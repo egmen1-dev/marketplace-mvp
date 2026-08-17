@@ -13,11 +13,11 @@ const appJson = require("./app.json");
 module.exports = {
   expo: {
     ...appJson.expo,
-    version: "0.1.4",
+    version: "0.1.5-alpha",
     newArchEnabled: false,
     android: {
       ...appJson.expo.android,
-      versionCode: 5,
+      versionCode: 6,
     },
   },
 };

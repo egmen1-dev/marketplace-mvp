@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { secureStoreDelete, secureStoreGet, secureStoreSet } from "../storage/lazy-secure-store";
 
 const PREVIOUS_CRASH_KEY = "lot_previous_crash_v1";
 
@@ -14,7 +14,7 @@ export type PreviousCrashRecord = {
 
 export async function persistPreviousCrash(record: PreviousCrashRecord): Promise<void> {
   try {
-    await SecureStore.setItemAsync(PREVIOUS_CRASH_KEY, JSON.stringify(record));
+    await secureStoreSet(PREVIOUS_CRASH_KEY, JSON.stringify(record));
   } catch {
     // Best-effort — never block startup
   }
@@ -22,7 +22,7 @@ export async function persistPreviousCrash(record: PreviousCrashRecord): Promise
 
 export async function loadPreviousCrash(): Promise<PreviousCrashRecord | null> {
   try {
-    const raw = await SecureStore.getItemAsync(PREVIOUS_CRASH_KEY);
+    const raw = await secureStoreGet(PREVIOUS_CRASH_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as PreviousCrashRecord;
   } catch {
@@ -32,7 +32,7 @@ export async function loadPreviousCrash(): Promise<PreviousCrashRecord | null> {
 
 export async function clearPreviousCrash(): Promise<void> {
   try {
-    await SecureStore.deleteItemAsync(PREVIOUS_CRASH_KEY);
+    await secureStoreDelete(PREVIOUS_CRASH_KEY);
   } catch {
     // ignore
   }

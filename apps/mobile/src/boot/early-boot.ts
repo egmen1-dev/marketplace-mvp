@@ -82,7 +82,10 @@ export function installStartupCrashHandlers(): void {
   ErrorUtils.setGlobalHandler((error, isFatal) => {
     if (isFatal !== false) {
       recordFatalStartupError(error, "global");
-      // Do not delegate fatal errors — keep the app alive and show Startup Fatal Error UI.
+      // Allow fatal UI to mount; still delegate so RN can report/crash correctly (PART 15).
+      queueMicrotask(() => {
+        previous?.(error, isFatal);
+      });
       return;
     }
     previous?.(error, isFatal);
