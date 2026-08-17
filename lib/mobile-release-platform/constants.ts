@@ -79,20 +79,36 @@ export const CLOSED_ALPHA_RELEASE_014 = {
   supportStatus: "FIRST_SUPPORTED",
 } as const;
 
-/** Current active Closed Alpha release pointer — update after 0.1.4 physical PASS */
-export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_014;
+/** EPIC 84 P0 — Closed Alpha 0.1.5-alpha (expo-clipboard SDK 57 + ErrorUtils global fix) */
+export const CLOSED_ALPHA_RELEASE_015 = {
+  versionName: "0.1.5-alpha",
+  versionCode: 6,
+  sha256: "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
+  artifactSizeBytes: 93898559,
+  artifactFileName: "lot-android-alpha-0.1.5.apk",
+  gitCommit: "2db4297",
+  releaseNotes:
+    "P0 expo-clipboard SDK 57 fix (AnyTypeProvider crash)\nP0 ErrorUtils global fix for RN 0.86 startup\nBytecode guard PASS (AnyTypeProvider=0)\nClean release build versionCode 6\nOperator FTL verification pending",
+  githubTag: "closed-alpha-0.1.5",
+  knownIssues: ["Firebase Test Lab not run in cloud gate; physical boot trail pending"],
+  acceptanceStatus: "PUBLISHED",
+  supportStatus: "FIRST_SUPPORTED",
+} as const;
 
-export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_013;
+/** Current active Closed Alpha release pointer */
+export const CLOSED_ALPHA_APK = CLOSED_ALPHA_RELEASE_015;
+
+export const CLOSED_ALPHA_APK_PREVIOUS = CLOSED_ALPHA_RELEASE_014;
 
 export const CLOSED_ALPHA_APK_DOWNLOAD_URL =
   process.env.MOBILE_APK_DOWNLOAD_URL ??
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.4/lot-android-alpha-0.1.4.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.5/lot-android-alpha-0.1.5.apk";
 
 export const CLOSED_ALPHA_APK_PREVIOUS_DOWNLOAD_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.3/lot-android-alpha-0.1.3.apk";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.4/lot-android-alpha-0.1.4.apk";
 
 export const CLOSED_ALPHA_GITHUB_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.4";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.5";
 
 export const CLOSED_ALPHA_GITHUB_PREVIOUS_RELEASE_URL =
-  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.3";
+  "https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.4";
