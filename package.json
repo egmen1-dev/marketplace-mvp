@@ -58,6 +58,7 @@
     "mobile:p0:token-cycle-gate": "tsx scripts/mobile-p0-token-cycle-gate.ts",
     "mobile:p0:token-architecture-guard": "tsx scripts/mobile-p0-token-architecture-guard.ts",
     "mobile:p0:route-graph-gate": "tsx scripts/mobile-p0-route-graph-gate.ts",
+    "mobile:epic-88:gate": "tsx scripts/epic-88-release-checklist-gate.ts",
     "product:epic-84:p1-diagnostics": "tsx scripts/epic-84-p1-diagnostics-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
