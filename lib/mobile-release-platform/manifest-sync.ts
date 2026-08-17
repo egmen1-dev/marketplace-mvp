@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { MobileReleaseChannelId } from "@prisma/client";
 
 import {
+  CLOSED_ALPHA_APK,
   CLOSED_ALPHA_APK_DOWNLOAD_URL,
   CLOSED_ALPHA_GITHUB_RELEASE_URL,
   CLOSED_ALPHA_RELEASE_012,
@@ -122,8 +123,8 @@ export async function buildReleaseManifestFromRegistry(): Promise<MobileReleaseM
       knownP1: 2,
       seamlessUpdateVerdict: "PENDING_PHYSICAL",
     },
-    knownIssues: [...CLOSED_ALPHA_RELEASE_012.knownIssues],
-    acceptanceStatus: CLOSED_ALPHA_RELEASE_012.acceptanceStatus,
+    knownIssues: [...CLOSED_ALPHA_APK.knownIssues],
+    acceptanceStatus: CLOSED_ALPHA_APK.acceptanceStatus,
     minimumSupportedVersionCode: CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_CODE,
     minimumSupportedVersionName: CLOSED_ALPHA_RELEASE_012.versionName,
     previousRelease: previous

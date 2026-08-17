@@ -178,8 +178,67 @@ export async function fetchProduct(id: string) {
   return apiRequest<Record<string, unknown>>(`/api/products/${id}`);
 }
 
+export type CartApiView = {
+  items: Array<{
+    productId: string;
+    quantity: number;
+    lineTotal: number;
+    product?: {
+      id?: string;
+      title?: string;
+      price?: number;
+      stock?: number;
+      primaryImage?: { url?: string } | null;
+    };
+  }>;
+  itemCount: number;
+  subtotal: number;
+  currency: string;
+};
+
+export type DeliveryQuoteResponse = {
+  quote: {
+    cost: number;
+    currency: string;
+    estimatedMinDays: number;
+    estimatedMaxDays: number;
+  };
+  etaLabel: string;
+  source: string;
+};
+
+export type DeliveryPointsResponse = {
+  points: Array<{
+    code: string;
+    name: string;
+    address: string;
+    city: string;
+    workTime?: string;
+  }>;
+};
+
 export async function fetchCart() {
-  return apiRequest<Record<string, unknown>>("/api/cart");
+  return apiRequest<CartApiView>("/api/cart");
+}
+
+export async function fetchDeliveryQuote(body: {
+  method: "PICKUP" | "COURIER";
+  city: string;
+  pickupPointCode?: string;
+  weightGrams?: number;
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
+}) {
+  return apiRequest<DeliveryQuoteResponse>("/api/delivery/quote", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function fetchDeliveryPoints(city: string) {
+  const qs = new URLSearchParams({ city });
+  return apiRequest<DeliveryPointsResponse>(`/api/delivery/points?${qs.toString()}`);
 }
 
 export async function addToCart(productId: string, quantity = 1) {
@@ -206,6 +265,10 @@ export async function fetchOrders() {
   return apiRequest<{ items: Array<Record<string, unknown>> }>("/api/orders");
 }
 
+export async function fetchOrderDetail(orderId: string) {
+  return apiRequest<Record<string, unknown>>(`/api/orders/${encodeURIComponent(orderId)}`);
+}
+
 export async function fetchWallet() {
   return apiRequest<{ spendable: number; withdrawable: number; pending: number; enabled: boolean }>("/api/mobile/wallet");
 }
@@ -225,6 +288,7 @@ export async function postTelemetry(event: {
   screen: string;
   event: string;
   errorCode?: string;
+  bootId?: string;
 }) {
   const appConfig = loadAppConfig();
   try {
@@ -236,6 +300,7 @@ export async function postTelemetry(event: {
         sessionId: getSessionId(),
         deviceId: getDeviceId(),
         versionCode: Number(appConfig.buildNumber) || 1,
+        bootId: event.bootId,
         ...event,
       }),
     });

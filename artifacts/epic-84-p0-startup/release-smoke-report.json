@@ -1,0 +1,104 @@
+{
+  "epic": "EPIC-84",
+  "phase": "P0 Release Smoke",
+  "generatedAt": "2026-08-16T20:57:36.843Z",
+  "verdict": "PASS",
+  "apk": {
+    "sha256": "b50a3c44be0094461b3ce1ee17241901b122d0d3ce425708959b0b48da09940c",
+    "sizeBytes": 105750351,
+    "path": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+  },
+  "rows": [
+    {
+      "id": "write_build_info",
+      "ok": true
+    },
+    {
+      "id": "build_info_generated",
+      "ok": true
+    },
+    {
+      "id": "build_info_version_014",
+      "ok": true
+    },
+    {
+      "id": "lazy_router_import_mode",
+      "ok": true
+    },
+    {
+      "id": "new_arch_disabled",
+      "ok": true
+    },
+    {
+      "id": "custom_entry",
+      "ok": true
+    },
+    {
+      "id": "root_error_boundary",
+      "ok": true
+    },
+    {
+      "id": "deferred_providers",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "p0_startup_gate",
+      "ok": true
+    },
+    {
+      "id": "android_bundle_export",
+      "ok": true
+    },
+    {
+      "id": "expo_prebuild",
+      "ok": true,
+      "detail": "android/ exists"
+    },
+    {
+      "id": "assemble_release",
+      "ok": true
+    },
+    {
+      "id": "release_apk_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    {
+      "id": "release_apk_sha256",
+      "ok": true,
+      "detail": "b50a3c44be0094461b3ce1ee17241901b122d0d3ce425708959b0b48da09940c"
+    },
+    {
+      "id": "release_apk_size",
+      "ok": true,
+      "detail": "105750351"
+    },
+    {
+      "id": "asset_icon.png",
+      "ok": true,
+      "detail": "assets/icon.png"
+    },
+    {
+      "id": "asset_splash-icon.png",
+      "ok": true,
+      "detail": "assets/splash-icon.png"
+    },
+    {
+      "id": "asset_android-icon-foreground.png",
+      "ok": true,
+      "detail": "assets/android-icon-foreground.png"
+    },
+    {
+      "id": "no_localhost_default",
+      "ok": true
+    },
+    {
+      "id": "staging_api_default",
+      "ok": true
+    }
+  ]
+}

@@ -5,7 +5,7 @@ import type { MobileProductListItem } from "../api/endpoints";
 const KEY = "lot_recent_views_v1";
 const MAX = 12;
 
-type StoredView = Pick<MobileProductListItem, "id" | "title" | "price" | "compareAt" | "primaryImage" | "seller" | "stock" | "favoritesCount" | "views">;
+export type StoredView = Pick<MobileProductListItem, "id" | "title" | "price" | "compareAt" | "primaryImage" | "seller" | "stock" | "favoritesCount" | "views">;
 
 export async function loadRecentViews(): Promise<StoredView[]> {
   const raw = await SecureStore.getItemAsync(KEY);
