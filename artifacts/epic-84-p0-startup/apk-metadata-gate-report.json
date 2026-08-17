@@ -1,6 +1,6 @@
 {
   "phase": "P0 APK Metadata Gate",
-  "generatedAt": "2026-08-17T13:19:05.526Z",
+  "generatedAt": "2026-08-17T18:26:54.634Z",
   "verdict": "PASS",
   "rows": [
     {
@@ -11,7 +11,7 @@
     {
       "id": "sha256_present",
       "ok": true,
-      "detail": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed"
+      "detail": "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961"
     },
     {
       "id": "package_name",
@@ -36,17 +36,17 @@
     {
       "id": "build_commit_embedded",
       "ok": true,
-      "detail": "2db4297"
+      "detail": "bcd542f"
     },
     {
       "id": "build_git_sha_embedded",
       "ok": true,
-      "detail": "2db42971e5c8"
+      "detail": "bcd542f64468"
     }
   ],
   "apk": {
     "path": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
-    "sha256": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
+    "sha256": "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961",
     "expected": {
       "package": "ru.lot.marketplace.alpha",
       "versionName": "0.1.5-alpha",
