@@ -79,18 +79,18 @@ export const CLOSED_ALPHA_RELEASE_014 = {
   supportStatus: "FIRST_SUPPORTED",
 } as const;
 
-/** EPIC 84 P0 — Closed Alpha 0.1.5-alpha (expo-clipboard SDK 57 + ErrorUtils global fix) */
+/** EPIC 84 P0 — Closed Alpha 0.1.5-alpha (clipboard + ErrorUtils + route-graph token fix) */
 export const CLOSED_ALPHA_RELEASE_015 = {
   versionName: "0.1.5-alpha",
   versionCode: 6,
-  sha256: "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
-  artifactSizeBytes: 93898559,
+  sha256: "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961",
+  artifactSizeBytes: 93890987,
   artifactFileName: "lot-android-alpha-0.1.5.apk",
-  gitCommit: "2db4297",
+  gitCommit: "cadbf50",
   releaseNotes:
-    "P0 expo-clipboard SDK 57 fix (AnyTypeProvider crash)\nP0 ErrorUtils global fix for RN 0.86 startup\nBytecode guard PASS (AnyTypeProvider=0)\nClean release build versionCode 6\nOperator FTL verification pending",
+    "P0 expo-clipboard SDK 57 fix (AnyTypeProvider crash)\nP0 ErrorUtils global fix for RN 0.86 startup\nP0 route-graph token circular dependency fix\nFirebase Test Lab PASS — ROOT_LAYOUT_INIT / BOOT_PIPELINE_INIT / UI\nBytecode guard PASS (AnyTypeProvider=0)\n0.1.5-alpha versionCode 6",
   githubTag: "closed-alpha-0.1.5",
-  knownIssues: ["Firebase Test Lab not run in cloud gate; physical boot trail pending"],
+  knownIssues: ["Pipeline redirect to tabs/login pending extended Robo coverage"],
   acceptanceStatus: "PUBLISHED",
   supportStatus: "FIRST_SUPPORTED",
 } as const;

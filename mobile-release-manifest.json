@@ -4,11 +4,11 @@
   "versionName": "0.1.5-alpha",
   "versionCode": 6,
   "releaseChannel": "alpha",
-  "commitSha": "7a619d7",
+  "commitSha": "cadbf50",
   "apiVersion": "mobile-v1",
   "schemaVersion": "1",
-  "artifactSha256": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
-  "artifactSizeBytes": 93898559,
+  "artifactSha256": "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961",
+  "artifactSizeBytes": 93890987,
   "artifactFileName": "lot-android-0.1.5-alpha.apk",
   "buildDate": "2026-08-17",
   "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.5/lot-android-alpha-0.1.5.apk",
@@ -17,8 +17,8 @@
     {
       "versionName": "0.1.5-alpha",
       "versionCode": 6,
-      "commitSha": "7a619d7",
-      "artifactSha256": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
+      "commitSha": "cadbf50",
+      "artifactSha256": "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961",
       "acceptanceStatus": "PUBLISHED",
       "changelog": "P0 expo-clipboard SDK 57 fix (AnyTypeProvider crash)"
     },
@@ -81,7 +81,7 @@
     "seamlessUpdateVerdict": "PENDING_PHYSICAL"
   },
   "knownIssues": [
-    "Firebase Test Lab not run in cloud gate; physical boot trail pending"
+    "Pipeline redirect to tabs/login pending extended Robo coverage"
   ],
   "acceptanceStatus": "PUBLISHED",
   "minimumSupportedVersionCode": 3,
@@ -92,5 +92,5 @@
     "downloadUrl": "https://github.com/egmen1-dev/marketplace-mvp/releases/download/closed-alpha-0.1.4/lot-android-alpha-0.1.4.apk"
   },
   "source": "mobile-release-platform",
-  "generatedAt": "2026-08-17T17:59:36.473Z"
+  "generatedAt": "2026-08-17T18:36:13.432Z"
 }
