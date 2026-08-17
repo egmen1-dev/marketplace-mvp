@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { bootMark } from "../boot/early-boot";
 import type { MobileUpdateInfo } from "../api/endpoints";
 
 export type AppMode = "buyer" | "seller";
@@ -58,3 +59,5 @@ export const useAppStore = create<AppState>((set) => ({
   setPendingUpdate: (pendingUpdate) => set({ pendingUpdate }),
   setBadges: (badges) => set((state) => ({ badges: { ...state.badges, ...badges } })),
 }));
+
+bootMark("app-store module evaluated");

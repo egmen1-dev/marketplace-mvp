@@ -112,8 +112,27 @@ Physical Android acceptance cannot be fully automated in cloud — document `NOT
 | Version | `0.1.2-alpha` |
 | versionCode | `3` |
 | Minimum supported | `0.1.2-alpha` (code 3) |
-| Prototype (unsupported) | `0.1.0-alpha` (code 1) |
-| Transitional | `0.1.1-alpha` (code 2) |
-| EPIC | EPIC 83 — Minimum Supported Version |
+| Download | [GitHub Release](https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2) |
+| EPIC | EPIC 83 — Minimum Supported Version (published) |
 
 See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matrix.
+
+## EPIC 84 — Marketplace Productization (active)
+
+**Philosophy shift:** stop building platforms; start building product value users feel every day.
+
+| Rule | Detail |
+|------|--------|
+| Forbidden | Architecture for architecture's sake · new Brain/Graph/Twin · APP-SHELL-1 · Wave 1/2 before Wave 0 |
+| Required | ≥2 Product Deliverables + ≥2 Release Deliverables per wave |
+| Design | `apps/mobile/src/design-system/` — no random HEX, no manual font sizes, no arbitrary spacing |
+| Screen work | Full redesign only — no local cosmetic patches · no CRUD-level screens |
+| New screens | Must use Design System · have Marketplace Score · not lower Marketplace Feeling |
+| KPI | Register → understand → find → open → add → return |
+| Wave 0 | Product Design Audit — `docs/product/EPIC_84_WAVE_0_DESIGN_SYSTEM.md` |
+| Quality index | POP MQI — degrades release to WATCH/NO-GO if index drops |
+| Gates | `npm run product:epic-84:wave0` · `npm run product:epic-84:gate` · sprint gates |
+
+**Product Sprint completion rule:** a sprint is done only after (1) code gate PASS, (2) Marketplace Score gate PASS, (3) physical screenshot acceptance on Android.
+
+See `docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md`.
