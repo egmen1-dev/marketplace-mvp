@@ -1,0 +1,386 @@
+{
+  "phase": "P0 Token Architecture Guard",
+  "generatedAt": "2026-08-18T06:06:13.842Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "token_files_discovered",
+      "ok": true,
+      "detail": "12"
+    },
+    {
+      "id": "apps_mobile_src_theme_tokens_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/tokens.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_tokens_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/tokens.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_tokens_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/tokens.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_tokens_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/tokens.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_tokens_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/tokens.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_tokens_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/tokens.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_status_labels_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/status-labels.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_status_labels_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/status-labels.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_status_labels_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/status-labels.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_status_labels_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/status-labels.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_status_labels_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/status-labels.ts"
+    },
+    {
+      "id": "apps_mobile_src_theme_status_labels_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/theme/status-labels.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_borders_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_borders_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_borders_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_borders_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_borders_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_borders_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_colors_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_colors_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_colors_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_colors_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_colors_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_colors_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_elevation_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_elevation_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_elevation_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_elevation_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_elevation_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_elevation_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_gradients_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_gradients_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_gradients_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_gradients_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_gradients_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_gradients_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_layout_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_layout_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_layout_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_layout_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_layout_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_layout_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_opacity_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_opacity_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_opacity_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_opacity_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_opacity_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_opacity_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_radius_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_radius_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_radius_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_radius_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_radius_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_radius_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_spacing_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_spacing_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_spacing_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_spacing_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_spacing_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_spacing_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_typography_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/typography.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_typography_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/typography.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_typography_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/typography.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_typography_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/typography.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_typography_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/typography.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_typography_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/typography.ts"
+    }
+  ],
+  "files": [
+    "apps/mobile/src/theme/tokens.ts",
+    "apps/mobile/src/theme/status-labels.ts",
+    "apps/mobile/src/design-system/tokens/borders.ts",
+    "apps/mobile/src/design-system/tokens/colors.ts",
+    "apps/mobile/src/design-system/tokens/elevation.ts",
+    "apps/mobile/src/design-system/tokens/gradients.ts",
+    "apps/mobile/src/design-system/tokens/index.ts",
+    "apps/mobile/src/design-system/tokens/layout.ts",
+    "apps/mobile/src/design-system/tokens/opacity.ts",
+    "apps/mobile/src/design-system/tokens/radius.ts",
+    "apps/mobile/src/design-system/tokens/spacing.ts",
+    "apps/mobile/src/design-system/tokens/typography.ts"
+  ]
+}

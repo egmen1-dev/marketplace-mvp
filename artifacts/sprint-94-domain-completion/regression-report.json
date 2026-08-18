@@ -1,0 +1,5 @@
+{
+  "typecheck": true,
+  "tests": true,
+  "p0TokenCycle": true
+}

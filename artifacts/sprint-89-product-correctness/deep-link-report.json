@@ -1,0 +1,73 @@
+{
+  "sprint": "SPRINT-89",
+  "generatedAt": "2026-08-18T05:52:18.763Z",
+  "verdict": "PASS",
+  "automatedTests": "PASS",
+  "rows": [
+    {
+      "uri": "lot://product/p-1",
+      "expectRoute": "product",
+      "expectHref": "/product/p-1",
+      "screen": "product",
+      "href": "/product/p-1",
+      "ok": true
+    },
+    {
+      "uri": "lot://order/ord-1",
+      "expectRoute": "order",
+      "expectHref": "/order/ord-1",
+      "screen": "order",
+      "href": "/order/ord-1",
+      "ok": true
+    },
+    {
+      "uri": "lot://seller/s-1",
+      "expectRoute": "seller",
+      "expectHref": "/seller/s-1",
+      "screen": "seller",
+      "href": "/seller/s-1",
+      "ok": true
+    },
+    {
+      "uri": "lot://catalog",
+      "expectRoute": "catalog",
+      "expectHref": "/(tabs)/catalog",
+      "screen": "catalog",
+      "href": "/(tabs)/catalog",
+      "ok": true
+    },
+    {
+      "uri": "lot://favorites",
+      "expectRoute": "favorites",
+      "expectHref": "/(tabs)/favorites",
+      "screen": "favorites",
+      "href": "/(tabs)/favorites",
+      "ok": true
+    },
+    {
+      "uri": "lot://profile",
+      "expectRoute": "profile",
+      "expectHref": "/(tabs)/profile",
+      "screen": "profile",
+      "href": "/(tabs)/profile",
+      "ok": true
+    },
+    {
+      "uri": "lot://seller/sales",
+      "expectRoute": "sellerSales",
+      "expectHref": "/(tabs)/seller-sales",
+      "screen": "sellerSales",
+      "href": "/(tabs)/seller-sales",
+      "ok": true
+    },
+    {
+      "uri": "lot://unknown",
+      "expectRoute": null,
+      "expectHref": null,
+      "screen": null,
+      "href": null,
+      "ok": true
+    }
+  ],
+  "failed": []
+}

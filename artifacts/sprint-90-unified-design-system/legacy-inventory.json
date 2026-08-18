@@ -1,0 +1,787 @@
+{
+  "version": "1.0.0",
+  "sprint": 90,
+  "scope": "apps/mobile/src/components/ui",
+  "generatedAt": "2026-08-18T05:58:00.000Z",
+  "summary": {
+    "files": 13,
+    "exports": 39,
+    "byAction": {
+      "KEEP": 11,
+      "MERGE": 6,
+      "DELETE": 13,
+      "REPLACE": 9
+    },
+    "externalImportSites": 29,
+    "dsImportSites": 8,
+    "deadExports": 13,
+    "notes": "DS components importing legacy ui create circular-dep risk (documented in MOBILE-P0-EXPO-ROUTER-ROUTE-GRAPH-CRASH-FORENSICS). ShimmerBlock + GhostButton are highest-priority MERGE/REPLACE targets."
+  },
+  "files": [
+    {
+      "path": "apps/mobile/src/components/ui/index.ts",
+      "role": "barrel",
+      "action": "MERGE",
+      "dsReplacement": "design-system/components/index.ts (split tokens vs components)",
+      "notes": "Re-exports all legacy ui modules; shrink as symbols migrate."
+    },
+    {
+      "path": "apps/mobile/src/components/ui/buttons.tsx",
+      "exports": 4,
+      "actions": { "KEEP": 0, "MERGE": 0, "DELETE": 1, "REPLACE": 3 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/layout.tsx",
+      "exports": 4,
+      "actions": { "KEEP": 2, "MERGE": 0, "DELETE": 0, "REPLACE": 2 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/cards.tsx",
+      "exports": 5,
+      "actions": { "KEEP": 3, "MERGE": 0, "DELETE": 2, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/primitives.tsx",
+      "exports": 5,
+      "actions": { "KEEP": 2, "MERGE": 1, "DELETE": 3, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/feedback.tsx",
+      "exports": 8,
+      "actions": { "KEEP": 1, "MERGE": 3, "DELETE": 1, "REPLACE": 3 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/ProductCard.tsx",
+      "exports": 3,
+      "actions": { "KEEP": 1, "MERGE": 1, "DELETE": 1, "REPLACE": 1 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/SellerProductCard.tsx",
+      "exports": 1,
+      "actions": { "KEEP": 1, "MERGE": 0, "DELETE": 0, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/TabBarIcon.tsx",
+      "exports": 2,
+      "actions": { "KEEP": 2, "MERGE": 0, "DELETE": 0, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/TabBarBadge.tsx",
+      "exports": 1,
+      "actions": { "KEEP": 1, "MERGE": 0, "DELETE": 0, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/Shimmer.tsx",
+      "exports": 1,
+      "actions": { "KEEP": 0, "MERGE": 1, "DELETE": 0, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/CommerceSearchBar.tsx",
+      "exports": 1,
+      "actions": { "KEEP": 1, "MERGE": 0, "DELETE": 0, "REPLACE": 0 }
+    },
+    {
+      "path": "apps/mobile/src/components/ui/CatalogToolbar.tsx",
+      "exports": 4,
+      "actions": { "KEEP": 0, "MERGE": 0, "DELETE": 4, "REPLACE": 0 }
+    }
+  ],
+  "symbols": [
+    {
+      "name": "PrimaryButton",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/buttons.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/PrimaryCTA",
+      "consumerCount": 16,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/app/seller/[id].tsx",
+        "apps/mobile/app/(tabs)/profile.tsx",
+        "apps/mobile/src/features/product-detail/ProductDetailExperience.tsx",
+        "apps/mobile/src/features/startup/StartupDiagnosticsScreen.tsx",
+        "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx",
+        "apps/mobile/src/features/startup/StartupErrorScreen.tsx",
+        "apps/mobile/src/features/startup/BuildInfoScreen.tsx",
+        "apps/mobile/src/features/catalog-discovery/CatalogDiscoveryExperience.tsx",
+        "apps/mobile/src/features/orders/OrdersExperience.tsx",
+        "apps/mobile/src/features/orders/OrderDetailExperience.tsx",
+        "apps/mobile/src/features/cart-checkout/CartExperience.tsx",
+        "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx",
+        "apps/mobile/src/components/UpdateGate.tsx",
+        "apps/mobile/src/components/UnsupportedClientScreen.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": ["apps/mobile/src/components/ui/feedback.tsx"],
+      "notes": "PrimaryCTA adds press-scale + success animation; API differs (no size prop). Needs DS Secondary/Ghost siblings before full cutover."
+    },
+    {
+      "name": "SecondaryButton",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/buttons.tsx",
+      "action": "REPLACE",
+      "dsReplacement": null,
+      "consumerCount": 8,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/app/(tabs)/profile.tsx",
+        "apps/mobile/src/features/startup/StartupDiagnosticsScreen.tsx",
+        "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx",
+        "apps/mobile/src/features/startup/StartupErrorScreen.tsx",
+        "apps/mobile/src/features/startup/BuildInfoScreen.tsx",
+        "apps/mobile/src/components/UpdateGate.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": ["apps/mobile/src/components/ui/feedback.tsx"],
+      "notes": "No DS equivalent yet. Blocked REPLACE until design-system/components/SecondaryButton ships."
+    },
+    {
+      "name": "GhostButton",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/buttons.tsx",
+      "action": "REPLACE",
+      "dsReplacement": null,
+      "consumerCount": 5,
+      "consumers": [
+        "apps/mobile/app/(tabs)/profile.tsx",
+        "apps/mobile/src/features/orders/OrderDetailExperience.tsx",
+        "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx",
+        "apps/mobile/src/design-system/components/SectionErrorCard.tsx",
+        "apps/mobile/src/design-system/components/AuthErrorCard.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "DS cards import legacy GhostButton — circular-dep smell. Needs design-system/components/GhostButton or TextButton."
+    },
+    {
+      "name": "DangerButton",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/buttons.tsx",
+      "action": "DELETE",
+      "dsReplacement": null,
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Exported but never imported outside buttons.tsx."
+    },
+    {
+      "name": "PageContainer",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/layout.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 3,
+      "consumers": [
+        "apps/mobile/src/features/seller-sales/SellerSalesExperience.tsx",
+        "apps/mobile/app/(tabs)/favorites.tsx",
+        "apps/mobile/app/(tabs)/seller-products.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Simple flex:1 screen wrapper. No DS ScreenContainer yet."
+    },
+    {
+      "name": "PageScroll",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/layout.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 3,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Safe-area padded ScrollView. Seller-home and wallet depend on it."
+    },
+    {
+      "name": "AppHeader",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/layout.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/CommerceSectionHeader",
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/seller-home.tsx"],
+      "internalConsumers": [],
+      "notes": "Seller home title block; CommerceSectionHeader is close but adds action affordance."
+    },
+    {
+      "name": "SectionHeader",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/layout.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/CommerceSectionHeader",
+      "consumerCount": 2,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/app/(tabs)/profile.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Title + optional text action. DS CommerceSectionHeader is the migration target."
+    },
+    {
+      "name": "MetricCard",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/cards.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/seller-home.tsx"],
+      "internalConsumers": [],
+      "notes": "Registry status needs_redesign. Seller KPI tiles — no DS MetricCard yet."
+    },
+    {
+      "name": "WalletCard",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/cards.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 2,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Registry status needs_redesign. Wallet + seller-home balance hero."
+    },
+    {
+      "name": "InfoCard",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/cards.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/seller-home.tsx"],
+      "internalConsumers": [],
+      "notes": "Seller intelligence tip card. No DS replacement."
+    },
+    {
+      "name": "SellerCard",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/cards.tsx",
+      "action": "DELETE",
+      "dsReplacement": "design-system/components/PdpSellerCard",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Dead export. PdpSellerCard used on seller profile + PDP instead."
+    },
+    {
+      "name": "SellerProductRow",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/cards.tsx",
+      "action": "DELETE",
+      "dsReplacement": "apps/mobile/src/components/ui/SellerProductCard",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Superseded by SellerProductCard in seller-products tab."
+    },
+    {
+      "name": "Badge",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/primitives.tsx",
+      "action": "MERGE",
+      "dsReplacement": null,
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [
+        "apps/mobile/src/components/ui/ProductCard.tsx",
+        "apps/mobile/src/components/ui/SellerProductCard.tsx",
+        "apps/mobile/src/components/ui/cards.tsx"
+      ],
+      "notes": "Internal-only. Move to design-system/components/Badge when DS chip/badge ships (registry lists DiscountBadge as missing)."
+    },
+    {
+      "name": "Avatar",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/primitives.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/profile.tsx"],
+      "internalConsumers": [],
+      "notes": "Initial-letter avatar on profile screen."
+    },
+    {
+      "name": "Price",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/primitives.tsx",
+      "action": "DELETE",
+      "dsReplacement": "design-system/components/PdpHeroPrice",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Dead export. Pricing inlined in CatalogProductCard / PdpHeroPrice."
+    },
+    {
+      "name": "Rating",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/primitives.tsx",
+      "action": "DELETE",
+      "dsReplacement": null,
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Dead export. No rating UI in current screens."
+    },
+    {
+      "name": "SearchBar",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/primitives.tsx",
+      "action": "DELETE",
+      "dsReplacement": "design-system/components/CatalogSearchField",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Registry: needs_redesign → superseded by CommerceSearchBar (home) and CatalogSearchField (catalog)."
+    },
+    {
+      "name": "EmptyState",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/{CartEmptyState,OrdersEmptyState} + future DSEmptyState",
+      "consumerCount": 5,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/src/features/seller-sales/SellerSalesExperience.tsx",
+        "apps/mobile/app/(tabs)/favorites.tsx",
+        "apps/mobile/app/(tabs)/seller-products.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Preset-based emoji empty states. DS has screen-specific empty states for cart/orders only."
+    },
+    {
+      "name": "EmptyPreset",
+      "kind": "type",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "DELETE",
+      "dsReplacement": null,
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": ["apps/mobile/src/components/ui/feedback.tsx"],
+      "notes": "Type alias for EmptyState presets. Delete with EmptyState migration."
+    },
+    {
+      "name": "ErrorState",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/SectionErrorCard",
+      "consumerCount": 2,
+      "consumers": [
+        "apps/mobile/app/(tabs)/seller-products.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Full-screen error with retry. SectionErrorCard is inline variant."
+    },
+    {
+      "name": "LoadingState",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "DELETE",
+      "dsReplacement": null,
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Dead export. Screens use skeletons or inline ActivityIndicator."
+    },
+    {
+      "name": "SkeletonBlock",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "MERGE",
+      "dsReplacement": "design-system/components/ShimmerBlock",
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx"],
+      "internalConsumers": [
+        "apps/mobile/src/components/ui/feedback.tsx"
+      ],
+      "notes": "Thin wrapper over ShimmerBlock. Collapse into DS shimmer primitive."
+    },
+    {
+      "name": "ProductCardSkeleton",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "MERGE",
+      "dsReplacement": "design-system/components/CatalogProductCard (CatalogGridSkeleton)",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [
+        "apps/mobile/src/components/ui/feedback.tsx"
+      ],
+      "notes": "Used only by SkeletonGrid. Catalog uses CatalogGridSkeleton."
+    },
+    {
+      "name": "SkeletonGrid",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/CatalogProductCard (CatalogGridSkeleton)",
+      "consumerCount": 5,
+      "consumers": [
+        "apps/mobile/app/(tabs)/wallet.tsx",
+        "apps/mobile/src/features/seller-sales/SellerSalesExperience.tsx",
+        "apps/mobile/app/(tabs)/favorites.tsx",
+        "apps/mobile/app/(tabs)/seller-products.tsx",
+        "apps/mobile/app/(tabs)/seller-home.tsx"
+      ],
+      "internalConsumers": [
+        "apps/mobile/src/components/ui/feedback.tsx"
+      ],
+      "notes": "2-column product skeleton grid. Catalog already on CatalogGridSkeleton."
+    },
+    {
+      "name": "HomeSectionSkeleton",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/feedback.tsx",
+      "action": "MERGE",
+      "dsReplacement": "design-system/components/CategoryRail (CategoryRailSkeleton) + CatalogGridSkeleton",
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx"],
+      "internalConsumers": [],
+      "notes": "Buyer home section loading placeholder."
+    },
+    {
+      "name": "MobileProductCardData",
+      "kind": "type",
+      "sourceFile": "apps/mobile/src/components/ui/ProductCard.tsx",
+      "action": "MERGE",
+      "dsReplacement": "api/endpoints MobileProductListItem + CatalogProductCard props",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": ["apps/mobile/src/components/ui/ProductCard.tsx"],
+      "notes": "Parallel type to MobileProductListItem. Unify during ProductCard migration."
+    },
+    {
+      "name": "ProductCard",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/ProductCard.tsx",
+      "action": "REPLACE",
+      "dsReplacement": "design-system/components/CatalogProductCard",
+      "consumerCount": 2,
+      "consumers": [
+        "apps/mobile/app/(tabs)/favorites.tsx",
+        "apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Registry: keep for home rails short-term; catalog grid already on CatalogProductCard."
+    },
+    {
+      "name": "ProductCardGrid",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/ProductCard.tsx",
+      "action": "DELETE",
+      "dsReplacement": null,
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Dead export. Grids use FlatList or inline flexWrap."
+    },
+    {
+      "name": "SellerProductCard",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/SellerProductCard.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/seller-products.tsx"],
+      "internalConsumers": [],
+      "notes": "Seller inventory list row. No DS seller product card."
+    },
+    {
+      "name": "TabBarIcon",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/TabBarIcon.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/_layout.tsx"],
+      "internalConsumers": [],
+      "notes": "Expo Router tab icon with spring animation. Navigation infra — defer DS."
+    },
+    {
+      "name": "TabIconName",
+      "kind": "type",
+      "sourceFile": "apps/mobile/src/components/ui/TabBarIcon.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/app/(tabs)/_layout.tsx"],
+      "internalConsumers": ["apps/mobile/src/components/ui/TabBarIcon.tsx"],
+      "notes": "Union of tab route icon keys."
+    },
+    {
+      "name": "TabBarBadge",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/TabBarBadge.tsx",
+      "action": "KEEP",
+      "dsReplacement": null,
+      "consumerCount": 2,
+      "consumers": [
+        "apps/mobile/app/(tabs)/_layout.tsx",
+        "apps/mobile/src/design-system/components/BuyerHomeHeader.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Cart/order count badge on tab icons + buyer header cart icon."
+    },
+    {
+      "name": "ShimmerBlock",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/Shimmer.tsx",
+      "action": "MERGE",
+      "dsReplacement": "design-system/components/ShimmerBlock",
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx"],
+      "internalConsumers": [
+        "apps/mobile/src/components/ui/feedback.tsx",
+        "apps/mobile/src/design-system/components/CheckoutSkeleton.tsx",
+        "apps/mobile/src/design-system/components/PdpSkeleton.tsx",
+        "apps/mobile/src/design-system/components/OrderDetailSkeleton.tsx",
+        "apps/mobile/src/design-system/components/OrdersSkeleton.tsx",
+        "apps/mobile/src/design-system/components/CartSkeleton.tsx"
+      ],
+      "notes": "6 DS skeleton files import legacy Shimmer — highest circular-dep risk. Move to design-system/primitives/Shimmer.tsx."
+    },
+    {
+      "name": "CommerceSearchBar",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/CommerceSearchBar.tsx",
+      "action": "KEEP",
+      "dsReplacement": "design-system/components/CatalogSearchField",
+      "consumerCount": 2,
+      "consumers": [
+        "apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx",
+        "apps/mobile/app/(tabs)/seller-products.tsx"
+      ],
+      "internalConsumers": [],
+      "notes": "Home search with history/popular chips. Catalog uses CatalogSearchField. Not interchangeable yet."
+    },
+    {
+      "name": "CatalogToolbar",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/CatalogToolbar.tsx",
+      "action": "DELETE",
+      "dsReplacement": "design-system/components/QuickFilterRail + CatalogSortSheet",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Dead export. CatalogDiscoveryExperience uses QuickFilterRail + CatalogSortSheet."
+    },
+    {
+      "name": "CategoryRail",
+      "kind": "component",
+      "sourceFile": "apps/mobile/src/components/ui/CatalogToolbar.tsx",
+      "action": "DELETE",
+      "dsReplacement": "design-system/components/CategoryRail (home) + CatalogCategoryRail (catalog)",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": [],
+      "notes": "Legacy duplicate. BuyerHome uses DS CategoryRail; catalog uses CatalogCategoryRail."
+    },
+    {
+      "name": "CatalogSort",
+      "kind": "type",
+      "sourceFile": "apps/mobile/src/components/ui/CatalogToolbar.tsx",
+      "action": "DELETE",
+      "dsReplacement": "apps/mobile/src/features/catalog-discovery/types.ts",
+      "consumerCount": 0,
+      "consumers": [],
+      "internalConsumers": ["apps/mobile/src/components/ui/CatalogToolbar.tsx"],
+      "notes": "Duplicate type. Canonical CatalogSort lives in features/catalog-discovery/types.ts."
+    },
+    {
+      "name": "POPULAR_SEARCHES",
+      "kind": "constant",
+      "sourceFile": "apps/mobile/src/components/ui/CatalogToolbar.tsx",
+      "action": "DELETE",
+      "dsReplacement": "apps/mobile/src/storage/search-history.ts",
+      "consumerCount": 1,
+      "consumers": ["apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx"],
+      "internalConsumers": [],
+      "notes": "Re-export from storage. BuyerHomeExperience should import from storage/search-history directly (useCatalogDiscovery already does)."
+    }
+  ],
+  "importSites": [
+    {
+      "file": "apps/mobile/app/(tabs)/_layout.tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["TabBarBadge", "TabBarIcon", "TabIconName"]
+    },
+    {
+      "file": "apps/mobile/app/(tabs)/wallet.tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["EmptyState", "PageScroll", "PrimaryButton", "SecondaryButton", "SectionHeader", "SkeletonGrid", "WalletCard"]
+    },
+    {
+      "file": "apps/mobile/app/(tabs)/profile.tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["Avatar", "GhostButton", "PrimaryButton", "SecondaryButton", "SectionHeader"]
+    },
+    {
+      "file": "apps/mobile/app/(tabs)/favorites.tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["EmptyState", "PageContainer", "ProductCard", "SkeletonGrid"]
+    },
+    {
+      "file": "apps/mobile/app/(tabs)/seller-home.tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["AppHeader", "EmptyState", "ErrorState", "InfoCard", "MetricCard", "PageScroll", "PrimaryButton", "SecondaryButton", "SectionHeader", "SkeletonGrid", "WalletCard"]
+    },
+    {
+      "file": "apps/mobile/app/(tabs)/seller-products.tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["CommerceSearchBar", "EmptyState", "ErrorState", "PageContainer", "SellerProductCard", "SkeletonGrid"]
+    },
+    {
+      "file": "apps/mobile/app/seller/[id].tsx",
+      "importPath": "../../src/components/ui",
+      "symbols": ["PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["CommerceSearchBar", "HomeSectionSkeleton", "PageScroll", "POPULAR_SEARCHES", "ProductCard", "ShimmerBlock"]
+    },
+    {
+      "file": "apps/mobile/src/features/catalog-discovery/CatalogDiscoveryExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/product-detail/ProductDetailExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/seller-sales/SellerSalesExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["EmptyState", "PageContainer", "SkeletonGrid"]
+    },
+    {
+      "file": "apps/mobile/src/features/orders/OrdersExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/orders/OrderDetailExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["GhostButton", "PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/cart-checkout/CartExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/cart-checkout/CheckoutExperience.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["GhostButton", "PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/startup/StartupDiagnosticsScreen.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton", "SecondaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/startup/StartupFatalErrorScreen.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton", "SecondaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/startup/StartupErrorScreen.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton", "SecondaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/features/startup/BuildInfoScreen.tsx",
+      "importPath": "../../components/ui",
+      "symbols": ["PrimaryButton", "SecondaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/components/UpdateGate.tsx",
+      "importPath": "../components/ui",
+      "symbols": ["PrimaryButton", "SecondaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/components/UnsupportedClientScreen.tsx",
+      "importPath": "./ui",
+      "symbols": ["PrimaryButton"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/AuthErrorCard.tsx",
+      "importPath": "../../components/ui/buttons",
+      "symbols": ["GhostButton"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/SectionErrorCard.tsx",
+      "importPath": "../../components/ui/buttons",
+      "symbols": ["GhostButton"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/BuyerHomeHeader.tsx",
+      "importPath": "../../components/ui/TabBarBadge",
+      "symbols": ["TabBarBadge"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/CheckoutSkeleton.tsx",
+      "importPath": "../../components/ui/Shimmer",
+      "symbols": ["ShimmerBlock"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/PdpSkeleton.tsx",
+      "importPath": "../../components/ui/Shimmer",
+      "symbols": ["ShimmerBlock"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/OrderDetailSkeleton.tsx",
+      "importPath": "../../components/ui/Shimmer",
+      "symbols": ["ShimmerBlock"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/OrdersSkeleton.tsx",
+      "importPath": "../../components/ui/Shimmer",
+      "symbols": ["ShimmerBlock"]
+    },
+    {
+      "file": "apps/mobile/src/design-system/components/CartSkeleton.tsx",
+      "importPath": "../../components/ui/Shimmer",
+      "symbols": ["ShimmerBlock"]
+    }
+  ],
+  "migrationWaves": [
+    {
+      "priority": "P0",
+      "title": "Break DS → legacy circular imports",
+      "symbols": ["ShimmerBlock", "GhostButton"],
+      "action": "MERGE into design-system/primitives/"
+    },
+    {
+      "priority": "P1",
+      "title": "Delete dead exports",
+      "symbols": ["CatalogToolbar", "CategoryRail", "CatalogSort", "POPULAR_SEARCHES", "SellerCard", "SellerProductRow", "ProductCardGrid", "DangerButton", "Price", "Rating", "SearchBar", "LoadingState"],
+      "action": "DELETE"
+    },
+    {
+      "priority": "P2",
+      "title": "Button family DS parity",
+      "symbols": ["PrimaryButton", "SecondaryButton", "GhostButton"],
+      "action": "REPLACE after DS SecondaryButton + GhostButton ship"
+    },
+    {
+      "priority": "P3",
+      "title": "Screen-specific empty/skeleton migration",
+      "symbols": ["EmptyState", "SkeletonGrid", "ErrorState", "HomeSectionSkeleton"],
+      "action": "REPLACE with DS screen components"
+    },
+    {
+      "priority": "P4",
+      "title": "Seller + wallet card redesign",
+      "symbols": ["MetricCard", "WalletCard", "InfoCard", "SellerProductCard"],
+      "action": "KEEP until DS seller/wallet modules exist"
+    }
+  ]
+}

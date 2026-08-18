@@ -1,0 +1,23 @@
+{
+  "phase": "P0 Firebase Test Lab Gate",
+  "generatedAt": "2026-08-17T13:19:29.577Z",
+  "verdict": "FAIL",
+  "rows": [
+    {
+      "id": "apk_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    {
+      "id": "apk_sha256",
+      "ok": true,
+      "detail": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed"
+    },
+    {
+      "id": "firebase_project",
+      "ok": false,
+      "detail": "Set FIREBASE_PROJECT_ID or GCLOUD_PROJECT"
+    }
+  ],
+  "status": "NOT RUN"
+}

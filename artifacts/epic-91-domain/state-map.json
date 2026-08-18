@@ -1,0 +1,114 @@
+{
+  "epic": "EPIC-91",
+  "title": "State Architecture Map",
+  "generatedAt": "2026-08-18T06:20:00.000Z",
+  "principles": [
+    "Every entity has exactly one owner",
+    "UI state never duplicates domain state",
+    "Derived state computed, not stored",
+    "Persistent state behind repositories"
+  ],
+  "classifications": {
+    "uiState": {
+      "description": "Ephemeral presentation state — scroll position, sheet open, pressed, fade animations",
+      "owner": "Experience components / screen-local useState",
+      "examples": [
+        { "state": "favBusy / adding / success flags", "location": "ProductDetailExperience, CartExperience", "problem": "OK — UI-only" },
+        { "state": "fade animation", "location": "useFadeIn hook", "problem": "OK" },
+        { "state": "checkout field focus", "location": "CheckoutExperience", "problem": "OK" }
+      ]
+    },
+    "domainState": {
+      "description": "Business entities — cart lines, orders, catalog pages, product detail",
+      "owner": "Should be repository-backed domain store (target); currently use*Data hooks",
+      "examples": [
+        { "state": "CartCommerceView", "currentOwner": "useCartData", "targetOwner": "CartRepository + CartStore slice", "duplicated": false },
+        { "state": "OrderDetail", "currentOwner": "useOrderDetailData", "targetOwner": "OrderRepository", "duplicated": false },
+        { "state": "Catalog page items", "currentOwner": "useCatalogDiscovery", "targetOwner": "CatalogRepository", "duplicated": true, "note": "Also fetched in buyer-home sections" },
+        { "state": "Favorites list", "currentOwner": "favorites.tsx useState", "targetOwner": "FavoritesRepository", "duplicated": true, "note": "Also useTabBadges + useCartData" },
+        { "state": "SellerHomeData", "currentOwner": "seller-home.tsx useState", "targetOwner": "SellerRepository", "duplicated": false },
+        { "state": "Wallet balance", "currentOwner": "wallet.tsx useState", "targetOwner": "WalletRepository", "duplicated": false }
+      ]
+    },
+    "persistentState": {
+      "description": "Survives process restart — SecureStore, deferred update prefs",
+      "owner": "storage/* (target: CacheRepository)",
+      "examples": [
+        { "key": "auth tokens", "store": "secure-session.ts", "entity": "Session" },
+        { "key": "order list + details", "store": "order-cache.ts", "entity": "OrderSummary[], OrderDetail" },
+        { "key": "product detail", "store": "product-detail-cache.ts", "entity": "ProductDetail" },
+        { "key": "search history", "store": "search-history.ts", "entity": "string[]" },
+        { "key": "recent views", "store": "recent-views.ts", "entity": "ProductId[]" },
+        { "key": "remote config cache", "store": "boot/boot-storage.ts", "entity": "RemoteConfig" },
+        { "key": "update defer", "store": "update/update-defer-storage.ts", "entity": "versionCode" }
+      ]
+    },
+    "sessionState": {
+      "description": "App session flags — boot, mode, connectivity, pending deep link",
+      "owner": "useAppStore (target: SessionStore + ConnectivityStore)",
+      "examples": [
+        { "field": "mode", "owner": "useAppStore", "writers": ["setMode", "setUserRole"], "consumers": 22 },
+        { "field": "offline", "owner": "useAppStore", "writers": ["NetworkBanner"], "consumers": "all data hooks" },
+        { "field": "bootstrapped", "owner": "useAppStore", "writers": ["app/index.tsx"], "consumers": ["deep link handler"] },
+        { "field": "pendingDeepLink", "owner": "useAppStore", "writers": ["login", "deep link handler"], "consumers": ["login"] },
+        { "field": "userRole / sellerCapable", "owner": "useAppStore", "writers": ["boot", "login"], "consumers": ["seller tabs", "profile"] },
+        { "field": "remoteConfig", "owner": "useAppStore", "writers": ["boot pipeline"], "consumers": "sparse" },
+        { "field": "pendingUpdate", "owner": "useAppStore", "writers": ["boot", "UpdateHost"], "consumers": ["UpdateGate"] }
+      ]
+    },
+    "derivedState": {
+      "description": "Computed from domain state — badges, totals, discount percent",
+      "owner": "Selectors / useMemo (target: domain selectors)",
+      "examples": [
+        { "state": "badges.cart/favorites/orders", "derivedFrom": ["Cart.itemCount", "Favorites.length", "Orders.unread"], "problem": "DUPLICATE OWNERSHIP — useTabBadges AND useCartData both write badges.cart" },
+        { "state": "cart subtotal/savings", "derivedFrom": ["Cart.lines"], "location": "parseCartCommerceView", "problem": "OK when single cart owner" },
+        { "state": "sellerCapable", "derivedFrom": ["Session.role"], "problem": "Stored redundantly with userRole" },
+        { "state": "isFavorite per product", "derivedFrom": ["Favorites set"], "problem": "Not centralized — each card assumes API state" }
+      ]
+    }
+  },
+  "ownershipViolations": [
+    {
+      "entity": "TabBadges.cart",
+      "owners": ["hooks/useTabBadges.ts", "features/cart-checkout/useCartData.ts"],
+      "severity": "P1",
+      "fix": "Single BadgeProjection derived from CartRepository observe()"
+    },
+    {
+      "entity": "Favorites list",
+      "owners": ["app/(tabs)/favorites.tsx", "hooks/useTabBadges.ts"],
+      "severity": "P1",
+      "fix": "FavoritesRepository as sole owner"
+    },
+    {
+      "entity": "Catalog products (same query)",
+      "owners": ["useCatalogDiscovery", "useBuyerHomeData", "useTabBadges"],
+      "severity": "P2",
+      "fix": "CatalogRepository shared cache keyed by query"
+    },
+    {
+      "entity": "Seller orders preview",
+      "owners": ["wallet.tsx fetchSellerOrders", "useSellerSalesData"],
+      "severity": "P2",
+      "fix": "SellerRepository.loadSellerOrders shared"
+    }
+  ],
+  "targetStateArchitecture": {
+    "globalStores": [
+      { "name": "SessionStore", "fields": ["mode", "role", "bootstrapped", "pendingDeepLink"] },
+      { "name": "ConnectivityStore", "fields": ["offline", "lastOnlineAt"] },
+      { "name": "ConfigStore", "fields": ["remoteConfig", "flags"] },
+      { "name": "UpdateStore", "fields": ["pendingUpdate"] }
+    ],
+    "domainStores": [
+      { "name": "CartStore", "source": "CartRepository.observe()" },
+      { "name": "FavoritesStore", "source": "FavoritesRepository.observe()" },
+      { "name": "BadgeStore", "source": "derived selector — no direct writes from UI" }
+    ],
+    "hookPattern": "useCaseHook → calls UseCase → reads repository/store → returns ViewModel for Experience"
+  },
+  "duplicationRemoved": {
+    "currentDuplicateOwners": 4,
+    "targetDuplicateOwners": 0
+  }
+}
