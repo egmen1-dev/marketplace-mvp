@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getSessionUser } from "@/features/auth";
+import { resolveRequestUser } from "@/features/auth/resolve-request-user";
 import { getOrderForUser } from "@/features/orders";
 
 type RouteContext = {
@@ -8,9 +8,9 @@ type RouteContext = {
 };
 
 /** GET /api/orders/[id] — order detail (owner only). */
-export async function GET(_request: Request, context: RouteContext) {
+export async function GET(request: Request, context: RouteContext) {
   try {
-    const user = await getSessionUser();
+    const user = await resolveRequestUser(request);
     if (!user) {
       return NextResponse.json({ error: "Требуется вход" }, { status: 401 });
     }

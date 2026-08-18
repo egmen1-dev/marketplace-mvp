@@ -1,0 +1,51 @@
+{
+  "epic": "EPIC-92",
+  "version": "1.0.0",
+  "frozen": true,
+  "root": "apps/mobile/src",
+  "structure": {
+    "domain": {
+      "contracts": "Frozen interfaces only (EPIC 92). No implementations.",
+      "use-cases": "Pure TS use case implementations (Sprint 93+)",
+      "entities": "Re-exports or internal entity helpers if needed",
+      "errors": "Error factories (optional)",
+      "events": "Event type guards (optional)"
+    },
+    "infrastructure": {
+      "transport": "RestCommerceTransport — sole api/endpoints importer",
+      "repositories": "Repository implementations",
+      "cache": "CacheRepository impl, SecureStore adapters",
+      "events": "DomainEventBus impl",
+      "telemetry": "TelemetryRepository impl"
+    },
+    "features": {
+      "{feature}": "Experience.tsx + use{Feature}Data.ts hook adapters only"
+    },
+    "app": "Route shells — no api imports",
+    "design-system": "Presentation only — no api/domain/use-cases",
+    "store": "SessionStore, ConnectivityStore, ConfigStore slices",
+    "hooks": "Cross-cutting UI hooks only — no api for domain data",
+    "boot": "Startup pipeline — migrates to BootstrapRepository",
+    "deep-links": "Pure routing — wraps DeepLinkRepository",
+    "storage": "Low-level SecureStore helpers — consumed by infrastructure only",
+    "api": "Legacy transport — infrastructure/transport wraps this until removal"
+  },
+  "importRules": [
+    "app/* → features/*, store/*, domain/contracts/*",
+    "features/* → domain/contracts/*, design-system/*, store/*",
+    "domain/use-cases/* → domain/contracts/* only",
+    "infrastructure/* → domain/contracts/*, api/*, storage/*",
+    "design-system/* → design-system/*, domain/contracts/* (types discouraged — prefer view-models in features)",
+    "domain/contracts/* → domain/contracts/* only"
+  ],
+  "forbidden": [
+    "app/* → api/*",
+    "features/*/Experience.tsx → api/*",
+    "design-system/* → api/*",
+    "domain/contracts/* → api/*",
+    "domain/contracts/* → react",
+    "domain/* → app/*",
+    "domain/* → features/*",
+    "domain/* → design-system/*"
+  ]
+}

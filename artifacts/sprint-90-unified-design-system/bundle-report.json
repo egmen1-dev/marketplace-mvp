@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-08-18T06:06:13.858Z",
+  "before": {
+    "legacyUiFiles": 13,
+    "legacyUiBytesEstimate": 52000,
+    "importSites": 29
+  },
+  "after": {
+    "designSystemFiles": 79,
+    "legacyUiFiles": 0,
+    "commerceLegacyImportSites": 0,
+    "bundleBytes": 2699364
+  },
+  "delta": {
+    "legacyFilesRemoved": 13,
+    "estimatedBytesRemoved": 52000,
+    "importSitesMigrated": 29
+  }
+}

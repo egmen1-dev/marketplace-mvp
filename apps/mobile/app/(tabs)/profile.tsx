@@ -5,7 +5,9 @@ import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native"
 import { logout } from "../../src/api/client";
 import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
 import { loadAppConfig } from "../../src/config/env";
-import { Avatar, GhostButton, PrimaryButton, SecondaryButton, SectionHeader } from "../../src/components/ui";
+import { Avatar } from "../../src/design-system/primitives/Badge";
+import { GhostButton, PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
+import { SectionHeader } from "../../src/design-system/layout/ScreenLayout";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
 import { buildErrorReport } from "../../src/telemetry/error-report";

@@ -1,0 +1,182 @@
+{
+  "sprint": "SPRINT-90",
+  "phase": "Unified Design System Migration",
+  "generatedAt": "2026-08-18T06:06:13.860Z",
+  "verdict": "PASS",
+  "readyForEpic86SellerExperience": true,
+  "rows": [
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_buyer_home_BuyerHomeExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_buyer_home_BuyerHomeExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_catalog_discovery_CatalogDiscoveryExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_catalog_discovery_CatalogDiscoveryExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_product_detail_ProductDetailExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_product_detail_ProductDetailExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_cart_checkout_CartExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_cart_checkout_CartExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_cart_checkout_CheckoutExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_cart_checkout_CheckoutExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_orders_OrdersExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_orders_OrdersExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_orders_OrderDetailExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_orders_OrderDetailExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_app__tabs__favorites_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_app__tabs__favorites_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_app__tabs__profile_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_app__tabs__profile_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_app__tabs__wallet_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_app__tabs__wallet_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_app__tabs__seller_home_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_app__tabs__seller_home_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_app__tabs__seller_products_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_app__tabs__seller_products_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_src_features_seller_sales_SellerSalesExperience_tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_src_features_seller_sales_SellerSalesExperience_tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "commerce_no_legacy_apps_mobile_app_seller__id__tsx",
+      "ok": true,
+      "detail": "design-system only"
+    },
+    {
+      "id": "commerce_uses_ds_apps_mobile_app_seller__id__tsx",
+      "ok": true,
+      "detail": "has design-system import"
+    },
+    {
+      "id": "legacy_ui_dir_removed",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/src/components/ui"
+    },
+    {
+      "id": "npm run mobile:typecheck",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "npm run mobile:test",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "token_cycle_gate",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "token_architecture_guard",
+      "ok": true,
+      "detail": "PASS"
+    }
+  ],
+  "finalReport": {
+    "legacyComponentsRemoved": 13,
+    "commerceScreensMigrated": 14,
+    "remainingLegacy": 0,
+    "bundleChange": "13 legacy files / ~52000B → 79 DS files",
+    "marketplaceScore": 9.2,
+    "readyForSellerExperience": "YES"
+  }
+}
