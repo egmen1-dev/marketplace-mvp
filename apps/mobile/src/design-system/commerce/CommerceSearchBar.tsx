@@ -1,7 +1,10 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
 
-import { colors, layout, radii, spacing, typography } from "../../theme/tokens";
+import { colors } from "../tokens/colors";
+import { radii } from "../tokens/radius";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 type CommerceSearchBarProps = TextInputProps & {
   onClear?: () => void;

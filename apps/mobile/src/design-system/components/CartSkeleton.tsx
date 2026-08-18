@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { ShimmerBlock } from "../../components/ui/Shimmer";
+import { ShimmerBlock } from "../primitives/Shimmer";
 import { surface } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";

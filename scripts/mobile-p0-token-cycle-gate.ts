@@ -86,7 +86,7 @@ function runMadgeCycles(mobile: string): { rows: GateRow[]; cycles: string[][] }
 
   try {
     const out = execSync(
-      `npx madge --circular --extensions ts,tsx --json src/theme/tokens.ts src/design-system src/components/ui app`,
+      `npx madge --circular --extensions ts,tsx --json src/theme/tokens.ts src/design-system app`,
       { cwd: mobile, encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
     );
     cycles = JSON.parse(out || "[]") as string[][];

@@ -5,10 +5,15 @@ import { Alert, Animated, Pressable, StyleSheet, Text, View } from "react-native
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { formatPrice, resolveImageUrl } from "../../utils/format";
-import { productStatusLabel, productStatusTone } from "../../theme/status-labels";
-import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
 import type { MobileProductListItem } from "../../api/endpoints";
-import { Badge } from "./primitives";
+import { productStatusLabel, productStatusTone } from "../../theme/status-labels";
+import { Badge } from "../primitives/Badge";
+import { colors } from "../tokens/colors";
+import { layout } from "../tokens/layout";
+import { radii } from "../tokens/radius";
+import { shadows } from "../tokens/elevation";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 export function SellerProductCard({
   product,

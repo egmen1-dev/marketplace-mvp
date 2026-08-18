@@ -3,7 +3,8 @@ import { Animated, FlatList, Pressable, RefreshControl, StyleSheet, Text, View }
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { EmptyState, PageContainer, SkeletonGrid } from "../../components/ui";
+import { PageContainer } from "../../design-system/layout/ScreenLayout";
+import { EmptyState, SkeletonGrid } from "../../design-system/feedback/States";
 import { SectionErrorCard } from "../../design-system/components/SectionErrorCard";
 import { surface, text } from "../../design-system/tokens/colors";
 import { spacing } from "../../design-system/tokens/spacing";

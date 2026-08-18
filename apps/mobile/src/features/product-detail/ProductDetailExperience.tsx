@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { PrimaryButton } from "../../components/ui";
+import { PrimaryButton } from "../../design-system/forms/buttons";
 import { PdpDeliveryBlock } from "../../design-system/components/PdpDeliveryBlock";
 import { PdpDescription } from "../../design-system/components/PdpDescription";
 import { PdpGallery } from "../../design-system/components/PdpGallery";

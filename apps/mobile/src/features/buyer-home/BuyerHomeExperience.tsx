@@ -4,14 +4,12 @@ import { Animated, RefreshControl, ScrollView, StyleSheet, Text, View } from "re
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { addToCart, toggleFavorite, type MobileProductListItem } from "../../api/endpoints";
-import {
-  CommerceSearchBar,
-  HomeSectionSkeleton,
-  PageScroll,
-  POPULAR_SEARCHES,
-  ProductCard,
-  ShimmerBlock,
-} from "../../components/ui";
+import { CommerceSearchBar } from "../../design-system/commerce/CommerceSearchBar";
+import { ProductCard } from "../../design-system/commerce/ProductCard";
+import { HomeSectionSkeleton } from "../../design-system/feedback/States";
+import { PageScroll } from "../../design-system/layout/ScreenLayout";
+import { ShimmerBlock } from "../../design-system/primitives/Shimmer";
+import { POPULAR_SEARCHES } from "../../storage/search-history";
 import { BuyerHomeHeader } from "../../design-system/components/BuyerHomeHeader";
 import { CategoryRail, CategoryRailSkeleton } from "../../design-system/components/CategoryRail";
 import { CommerceSectionHeader } from "../../design-system/components/CommerceSectionHeader";

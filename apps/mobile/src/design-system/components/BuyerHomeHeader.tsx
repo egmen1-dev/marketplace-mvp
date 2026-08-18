@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { TabBarBadge } from "../../components/ui/TabBarBadge";
+import { TabBarBadge } from "../navigation/TabBarBadge";
 import { brand, surface, text } from "../tokens/colors";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";

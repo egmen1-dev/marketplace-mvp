@@ -6,7 +6,7 @@ import { loadBootHistory, loadLastBootFailure, loadLastStartupReport } from "../
 import type { BootFailure, StartupReport } from "../../boot/boot-types";
 import { formatBootTimeline, formatHistoryEntry } from "../../../../../lib/mobile/diagnostics/format-report";
 import type { BootHistoryEntry, DiagnosticsReport } from "../../../../../lib/mobile/diagnostics/types";
-import { PrimaryButton, SecondaryButton } from "../../components/ui";
+import { PrimaryButton, SecondaryButton } from "../../design-system/forms/buttons";
 import { collectAppInfo, collectDeviceInfo } from "../../diagnostics/device-info";
 import { getNetworkSummary, runConnectivityCheck } from "../../diagnostics/connectivity-check";
 import { buildDiagnosticsReport } from "../../diagnostics/diagnostics-service";

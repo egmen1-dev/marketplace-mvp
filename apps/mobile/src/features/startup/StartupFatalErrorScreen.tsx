@@ -8,7 +8,7 @@ import {
 } from "../../boot/early-boot";
 import { getMobileBuildInfo } from "../../config/build-info";
 import { StartupBuildStamp } from "./StartupBuildStamp";
-import { PrimaryButton, SecondaryButton } from "../../components/ui";
+import { PrimaryButton, SecondaryButton } from "../../design-system/forms/buttons";
 import { colors, radii, spacing, typography } from "../../theme/tokens";
 
 type Props = {

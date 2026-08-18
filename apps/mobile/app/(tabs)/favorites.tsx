@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet } from "react-native";
 
 import { fetchFavorites } from "../../src/api/endpoints";
-import { EmptyState, PageContainer, ProductCard, SkeletonGrid } from "../../src/components/ui";
+import { ProductCard } from "../../src/design-system/commerce/ProductCard";
+import { PageContainer } from "../../src/design-system/layout/ScreenLayout";
+import { EmptyState, SkeletonGrid } from "../../src/design-system/feedback/States";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import type { MobileProductListItem } from "../../src/api/endpoints";
 import { spacing } from "../../src/theme/tokens";

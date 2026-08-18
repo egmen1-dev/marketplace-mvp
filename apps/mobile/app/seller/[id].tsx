@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { PrimaryButton } from "../../src/components/ui";
+import { PrimaryButton } from "../../src/design-system/forms/buttons";
 import { PdpSellerCard } from "../../src/design-system/components/PdpSellerCard";
 import { CatalogDiscoveryExperience } from "../../src/features/catalog-discovery/CatalogDiscoveryExperience";
 import { useCatalogDiscovery } from "../../src/features/catalog-discovery/useCatalogDiscovery";

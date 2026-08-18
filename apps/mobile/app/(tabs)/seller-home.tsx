@@ -3,19 +3,10 @@ import { useCallback, useState } from "react";
 import { Animated, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 
 import { fetchSellerHome } from "../../src/api/endpoints";
-import {
-  AppHeader,
-  EmptyState,
-  ErrorState,
-  InfoCard,
-  MetricCard,
-  PageScroll,
-  PrimaryButton,
-  SecondaryButton,
-  SectionHeader,
-  SkeletonGrid,
-  WalletCard,
-} from "../../src/components/ui";
+import { MetricCard, WalletCard, InfoCard } from "../../src/design-system/cards/CommerceCards";
+import { PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
+import { AppHeader, PageScroll, SectionHeader } from "../../src/design-system/layout/ScreenLayout";
+import { EmptyState, ErrorState, SkeletonGrid } from "../../src/design-system/feedback/States";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
 import { formatPrice } from "../../src/utils/format";

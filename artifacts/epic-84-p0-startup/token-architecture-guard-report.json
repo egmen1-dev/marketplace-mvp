@@ -1,12 +1,12 @@
 {
   "phase": "P0 Token Architecture Guard",
-  "generatedAt": "2026-08-18T05:52:14.609Z",
+  "generatedAt": "2026-08-18T06:06:13.842Z",
   "verdict": "PASS",
   "rows": [
     {
       "id": "token_files_discovered",
       "ok": true,
-      "detail": "11"
+      "detail": "12"
     },
     {
       "id": "apps_mobile_src_theme_tokens_ts_tsx_import",
@@ -189,6 +189,36 @@
       "detail": "apps/mobile/src/design-system/tokens/gradients.ts"
     },
     {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_tsx_import",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_design_system_index",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_design_system_barrel",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_components_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_features_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "apps_mobile_src_design_system_tokens_index_ts_app_dir",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/tokens/index.ts"
+    },
+    {
       "id": "apps_mobile_src_design_system_tokens_layout_ts_tsx_import",
       "ok": true,
       "detail": "apps/mobile/src/design-system/tokens/layout.ts"
@@ -346,6 +376,7 @@
     "apps/mobile/src/design-system/tokens/colors.ts",
     "apps/mobile/src/design-system/tokens/elevation.ts",
     "apps/mobile/src/design-system/tokens/gradients.ts",
+    "apps/mobile/src/design-system/tokens/index.ts",
     "apps/mobile/src/design-system/tokens/layout.ts",
     "apps/mobile/src/design-system/tokens/opacity.ts",
     "apps/mobile/src/design-system/tokens/radius.ts",

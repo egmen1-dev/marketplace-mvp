@@ -1,6 +1,6 @@
 {
   "phase": "P0 Token Dependency Cycle Gate",
-  "generatedAt": "2026-08-18T05:51:44.556Z",
+  "generatedAt": "2026-08-18T06:06:13.597Z",
   "verdict": "PASS",
   "rows": [
     {
@@ -162,6 +162,11 @@
       "id": "token_file_opacity_ts",
       "ok": true,
       "detail": "src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "token_file_index_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/index.ts"
     },
     {
       "id": "token_file_spacing_ts",

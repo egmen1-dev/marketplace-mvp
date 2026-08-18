@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
-import { brand, surface, text } from "../tokens/colors";
+import { brand, semantic, surface, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { shadows } from "../tokens/elevation";
 import { spacing } from "../tokens/spacing";
@@ -70,7 +70,7 @@ export const CatalogProductCard = memo(function CatalogProductCard({
             <MaterialCommunityIcons
               name={isFavorite ? "heart" : "heart-outline"}
               size={18}
-              color={isFavorite ? "#DC2626" : text.primary}
+              color={isFavorite ? semantic.danger : text.primary}
             />
           </Pressable>
         ) : null}

@@ -3,7 +3,7 @@ import type { ColorValue } from "react-native";
 import { Animated, StyleSheet } from "react-native";
 import { useEffect, useRef } from "react";
 
-import { colors } from "../../theme/tokens";
+import { colors } from "../tokens/colors";
 
 export type TabIconName =
   | "home"

@@ -25,7 +25,7 @@ export const OrderTimeline = memo(function OrderTimeline({ steps }: Props) {
             <View style={styles.rail}>
               <View style={[styles.dot, step.isCurrent ? styles.dotActive : null]}>
                 {step.isCurrent ? (
-                  <MaterialCommunityIcons name="check" size={12} color="#FFFFFF" />
+                  <MaterialCommunityIcons name="check" size={12} color={text.inverse} />
                 ) : (
                   <View style={styles.dotInner} />
                 )}

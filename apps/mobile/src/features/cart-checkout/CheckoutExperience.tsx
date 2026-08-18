@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { GhostButton, PrimaryButton } from "../../components/ui";
+import { GhostButton, PrimaryButton } from "../../design-system/forms/buttons";
 import { CheckoutCommentSection } from "../../design-system/components/CheckoutCommentSection";
 import { CheckoutContactSection } from "../../design-system/components/CheckoutContactSection";
 import { CheckoutDeliverySection } from "../../design-system/components/CheckoutDeliverySection";

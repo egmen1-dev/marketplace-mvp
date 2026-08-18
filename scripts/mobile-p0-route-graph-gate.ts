@@ -99,8 +99,7 @@ function metroDependencyAudit(mobile: string): GateRow[] {
   const forbidden = deps.filter(
     (d) =>
       d.includes("design-system/index") ||
-      d.includes("design-system/components/") ||
-      d.includes("components/ui/"),
+      d.includes("design-system/components/"),
   );
 
   rows.push({

@@ -1,6 +1,5 @@
 /**
- * Component library registry — every base component must use Design System tokens.
- * EPIC 84 Wave 0 Deliverable 4.
+ * Design System component registry — Sprint 90 unified paths.
  */
 
 export type ComponentStatus = "ready" | "needs_redesign" | "missing";
@@ -13,13 +12,11 @@ export type DesignSystemComponent = {
 };
 
 export const DESIGN_SYSTEM_COMPONENTS: DesignSystemComponent[] = [
-  { name: "PrimaryButton", module: "components/ui/buttons", status: "ready" },
-  { name: "SecondaryButton", module: "components/ui/buttons", status: "ready" },
-  { name: "GhostButton", module: "components/ui/buttons", status: "ready" },
-  { name: "DangerButton", module: "components/ui/buttons", status: "ready" },
+  { name: "PrimaryButton", module: "design-system/forms/buttons", status: "ready" },
+  { name: "SecondaryButton", module: "design-system/forms/buttons", status: "ready" },
+  { name: "GhostButton", module: "design-system/forms/buttons", status: "ready" },
   { name: "Input", module: "design-system/components/TextField", status: "ready" },
-  { name: "SearchBar", module: "components/ui/primitives", status: "needs_redesign", notes: "Upgrade to CommerceSearchBar everywhere" },
-  { name: "CommerceSearchBar", module: "components/ui/CommerceSearchBar", status: "ready", notes: "Home search; catalog uses CatalogSearchField" },
+  { name: "CommerceSearchBar", module: "design-system/commerce/CommerceSearchBar", status: "ready", notes: "Home search; catalog uses CatalogSearchField" },
   { name: "CatalogSearchField", module: "design-system/components/CatalogSearchField", status: "ready" },
   { name: "QuickFilterRail", module: "design-system/components/QuickFilterRail", status: "ready" },
   { name: "CatalogSortSheet", module: "design-system/components/CatalogSortSheet", status: "ready" },
@@ -56,32 +53,32 @@ export const DESIGN_SYSTEM_COMPONENTS: DesignSystemComponent[] = [
   { name: "OrderTimeline", module: "design-system/components/OrderTimeline", status: "ready" },
   { name: "OrderDetailSections", module: "design-system/components/OrderDetailSections", status: "ready" },
   { name: "OrdersRecommendationsRail", module: "design-system/components/OrdersRecommendationsRail", status: "ready" },
-  { name: "Search", module: "design-system/components/CatalogSearchField", status: "ready" },
   { name: "Primary CTA (Login)", module: "design-system/components/PrimaryCTA", status: "ready" },
-  { name: "Card", module: "components/ui/cards", status: "ready" },
-  { name: "ProductCard", module: "components/ui/ProductCard", status: "ready", notes: "Home rails; catalog grid uses CatalogProductCard" },
-  { name: "SellerCard", module: "components/ui/cards", status: "needs_redesign" },
-  { name: "MetricCard", module: "components/ui/cards", status: "needs_redesign" },
-  { name: "WalletCard", module: "components/ui/cards", status: "needs_redesign" },
-  { name: "Price", module: "components/ui/primitives", status: "ready" },
-  { name: "Badge", module: "components/ui/primitives", status: "ready" },
-  { name: "StatusBadge", module: "components/ui/primitives", status: "ready" },
-  { name: "DiscountBadge", module: "components/ui/primitives", status: "missing" },
-  { name: "Modal", module: "components/ui/feedback", status: "missing" },
-  { name: "BottomSheet", module: "design-system/components/CatalogSortSheet", status: "ready", notes: "Catalog sort sheet" },
-  { name: "Toast", module: "components/ui/feedback", status: "missing" },
-  { name: "Snackbar", module: "components/ui/feedback", status: "missing" },
-  { name: "Dialog", module: "components/ui/feedback", status: "missing" },
-  { name: "Chip", module: "components/ui/primitives", status: "missing" },
-  { name: "Tab", module: "expo-router Tabs", status: "ready" },
-  { name: "Navigation", module: "app/(tabs)/_layout", status: "needs_redesign" },
-  { name: "Avatar", module: "components/ui/primitives", status: "ready" },
+  { name: "ProductCard", module: "design-system/commerce/ProductCard", status: "ready", notes: "Home rails; catalog grid uses CatalogProductCard" },
+  { name: "MetricCard", module: "design-system/cards/CommerceCards", status: "ready" },
+  { name: "WalletCard", module: "design-system/cards/CommerceCards", status: "ready" },
+  { name: "Badge", module: "design-system/primitives/Badge", status: "ready" },
+  { name: "Avatar", module: "design-system/primitives/Badge", status: "ready" },
+  { name: "TabBarIcon", module: "design-system/navigation/TabBarIcon", status: "ready" },
+  { name: "TabBarBadge", module: "design-system/navigation/TabBarBadge", status: "ready" },
+  { name: "EmptyState", module: "design-system/feedback/States", status: "ready" },
+  { name: "ErrorState", module: "design-system/feedback/States", status: "ready" },
+  { name: "Skeleton", module: "design-system/primitives/Shimmer", status: "ready" },
+  { name: "ShimmerBlock", module: "design-system/primitives/Shimmer", status: "ready" },
+  { name: "PageContainer", module: "design-system/layout/ScreenLayout", status: "ready" },
+  { name: "PageScroll", module: "design-system/layout/ScreenLayout", status: "ready" },
+  { name: "SellerProductCard", module: "design-system/cards/SellerProductCard", status: "ready" },
   { name: "IconButton", module: "design-system/components/IconButton", status: "ready" },
-  { name: "FAB", module: "components/ui/primitives", status: "missing" },
-  { name: "EmptyState", module: "components/ui/feedback", status: "needs_redesign" },
-  { name: "ErrorState", module: "components/ui/feedback", status: "ready" },
-  { name: "LoadingState", module: "components/ui/feedback", status: "needs_redesign" },
-  { name: "Skeleton", module: "components/ui/Shimmer", status: "ready" },
+  { name: "BottomSheet", module: "design-system/components/CatalogSortSheet", status: "ready", notes: "Catalog sort sheet" },
+  { name: "Tab", module: "expo-router Tabs", status: "ready" },
+  { name: "Navigation", module: "app/(tabs)/_layout", status: "ready" },
+  { name: "Modal", module: "design-system/components/CatalogSortSheet", status: "missing" },
+  { name: "Toast", module: "design-system/feedback/States", status: "missing" },
+  { name: "Snackbar", module: "design-system/feedback/States", status: "missing" },
+  { name: "Dialog", module: "design-system/feedback/States", status: "missing" },
+  { name: "Chip", module: "design-system/primitives/Badge", status: "missing" },
+  { name: "FAB", module: "design-system/forms/buttons", status: "missing" },
+  { name: "DiscountBadge", module: "design-system/primitives/Badge", status: "missing" },
 ];
 
 export function getComponentCoverage() {

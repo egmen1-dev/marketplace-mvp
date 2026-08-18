@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors, typography } from "../../theme/tokens";
+import { colors } from "../tokens/colors";
+import { typography } from "../tokens/typography";
 
 export function TabBarBadge({ count, children }: { count?: number; children: ReactNode }) {
   const show = typeof count === "number" && count > 0;

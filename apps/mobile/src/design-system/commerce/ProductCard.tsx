@@ -6,8 +6,13 @@ import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
-import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
-import { Badge } from "./primitives";
+import { Badge } from "../primitives/Badge";
+import { colors } from "../tokens/colors";
+import { layout } from "../tokens/layout";
+import { radii } from "../tokens/radius";
+import { shadows } from "../tokens/elevation";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 export type MobileProductCardData = {
   id: string;

@@ -2,9 +2,13 @@ import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 
 import { formatPrice } from "../../utils/format";
-import { colors, radii, shadows, spacing, typography } from "../../theme/tokens";
 import { productStatusLabel, productStatusTone } from "../../theme/status-labels";
-import { Badge } from "./primitives";
+import { Badge } from "../primitives/Badge";
+import { colors } from "../tokens/colors";
+import { radii } from "../tokens/radius";
+import { shadows } from "../tokens/elevation";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 export function MetricCard({
   label,

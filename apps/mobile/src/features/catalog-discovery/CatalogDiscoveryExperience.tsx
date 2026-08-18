@@ -12,7 +12,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { toggleFavorite, type MobileProductListItem } from "../../api/endpoints";
-import { PrimaryButton } from "../../components/ui";
+import { PrimaryButton } from "../../design-system/forms/buttons";
 import { CatalogCategoryRail } from "../../design-system/components/CatalogCategoryRail";
 import { CatalogGridSkeleton, CatalogProductCard } from "../../design-system/components/CatalogProductCard";
 import { CatalogSearchField } from "../../design-system/components/CatalogSearchField";

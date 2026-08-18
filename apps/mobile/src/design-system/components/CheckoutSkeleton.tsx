@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { ShimmerBlock } from "../../components/ui/Shimmer";
-import { surface } from "../tokens/colors";
+import { ShimmerBlock } from "../primitives/Shimmer";
+import { border, surface } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";
 
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.md,
     borderWidth: 1,
-    borderColor: "#EAEAEA",
+    borderColor: border.default,
   },
   summary: { borderRadius: radii.xl },
 });

@@ -2,15 +2,10 @@ import { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 
 import { fetchSellerOrders, fetchWallet } from "../../src/api/endpoints";
-import {
-  EmptyState,
-  PageScroll,
-  PrimaryButton,
-  SecondaryButton,
-  SectionHeader,
-  SkeletonGrid,
-  WalletCard,
-} from "../../src/components/ui";
+import { WalletCard } from "../../src/design-system/cards/CommerceCards";
+import { PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
+import { PageScroll, SectionHeader } from "../../src/design-system/layout/ScreenLayout";
+import { EmptyState, SkeletonGrid } from "../../src/design-system/feedback/States";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useAppStore } from "../../src/store/app-store";
 import { formatPrice } from "../../src/utils/format";

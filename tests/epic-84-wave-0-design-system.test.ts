@@ -73,7 +73,7 @@ describe("EPIC 84 Wave 0 design system", () => {
   });
 
   it("flags CRUD patterns in forbidden strings", () => {
-    const result = detectCrudInSource("apps/mobile/src/components/ui/feedback.tsx");
+    const result = detectCrudInSource("apps/mobile/src/design-system/feedback/States.tsx");
     expect(result.signals.every((s) => s.pattern !== "no_data_ru")).toBe(true);
   });
 

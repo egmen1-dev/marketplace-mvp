@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { BuildInfoPanel } from "./BuildInfoPanel";
-import { PrimaryButton, SecondaryButton } from "../../components/ui";
+import { PrimaryButton, SecondaryButton } from "../../design-system/forms/buttons";
 import { getMobileBuildInfo } from "../../config/build-info";
 import { colors, spacing, typography } from "../../theme/tokens";
 

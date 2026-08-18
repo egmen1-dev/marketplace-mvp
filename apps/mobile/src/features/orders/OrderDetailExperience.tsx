@@ -2,7 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { GhostButton, PrimaryButton } from "../../components/ui";
+import { GhostButton, PrimaryButton } from "../../design-system/forms/buttons";
 import { IconButton } from "../../design-system/components/IconButton";
 import { OrderDetailSections } from "../../design-system/components/OrderDetailSections";
 import { OrderDetailSkeleton } from "../../design-system/components/OrderDetailSkeleton";

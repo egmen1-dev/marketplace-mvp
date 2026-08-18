@@ -1,8 +1,11 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
-import { colors, radii, spacing, typography } from "../../theme/tokens";
-import { ShimmerBlock } from "./Shimmer";
-import { PrimaryButton, SecondaryButton } from "./buttons";
+import { PrimaryButton, SecondaryButton } from "../forms/buttons";
+import { ShimmerBlock } from "../primitives/Shimmer";
+import { colors } from "../tokens/colors";
+import { radii } from "../tokens/radius";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 const EMPTY_PRESETS = {
   favorites: { emoji: "♡", title: "Избранное пусто", description: "Сохраняйте товары сердечком — они появятся здесь." },

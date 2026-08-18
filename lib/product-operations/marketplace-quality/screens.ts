@@ -57,10 +57,10 @@ export const MARKETPLACE_SCREENS: MarketplaceScreenDefinition[] = [
   { id: "statistics", name: "Statistics", route: "(tabs)/seller-sales", sourceFiles: ["apps/mobile/app/(tabs)/seller-sales.tsx"], journey: "seller" },
   { id: "settings", name: "Settings", route: "(tabs)/profile", sourceFiles: ["apps/mobile/app/(tabs)/profile.tsx"], journey: "shared" },
   { id: "notifications", name: "Notifications", route: "profile", sourceFiles: ["apps/mobile/app/(tabs)/profile.tsx"], journey: "shared" },
-  { id: "error", name: "Error Screens", route: "error", sourceFiles: ["apps/mobile/src/components/ui/feedback.tsx", "apps/mobile/src/components/ErrorBoundary.tsx"], journey: "system" },
+  { id: "error", name: "Error Screens", route: "error", sourceFiles: ["apps/mobile/src/design-system/feedback/States.tsx", "apps/mobile/src/components/ErrorBoundary.tsx"], journey: "system" },
   { id: "offline", name: "Offline Screens", route: "offline", sourceFiles: ["apps/mobile/src/components/NetworkBanner.tsx"], journey: "system" },
-  { id: "loading", name: "Loading", route: "loading", sourceFiles: ["apps/mobile/src/components/ui/feedback.tsx", "apps/mobile/src/components/ui/Shimmer.tsx"], journey: "system" },
-  { id: "empty_state", name: "Empty State", route: "empty", sourceFiles: ["apps/mobile/src/components/ui/feedback.tsx"], journey: "system" },
+  { id: "loading", name: "Loading", route: "loading", sourceFiles: ["apps/mobile/src/design-system/feedback/States.tsx", "apps/mobile/src/design-system/primitives/Shimmer.tsx"], journey: "system" },
+  { id: "empty_state", name: "Empty State", route: "empty", sourceFiles: ["apps/mobile/src/design-system/feedback/States.tsx"], journey: "system" },
 ];
 
 export const MARKETPLACE_BENCHMARKS = [

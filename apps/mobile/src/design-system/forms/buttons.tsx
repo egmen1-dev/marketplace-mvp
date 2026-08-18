@@ -1,6 +1,10 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, type PressableProps, type TextStyle, type ViewStyle } from "react-native";
 
-import { colors, layout, radii, spacing, typography } from "../../theme/tokens";
+import { colors } from "../tokens/colors";
+import { layout } from "../tokens/layout";
+import { radii } from "../tokens/radius";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 type ButtonSize = "sm" | "md" | "lg";
 
@@ -67,10 +71,6 @@ export function GhostButton(props: ButtonProps) {
   return <ButtonBase {...props} variantStyle={styles.ghost} textStyle={styles.ghostText} />;
 }
 
-export function DangerButton(props: ButtonProps) {
-  return <ButtonBase {...props} variantStyle={styles.danger} textStyle={styles.dangerText} />;
-}
-
 const styles = StyleSheet.create({
   base: {
     borderRadius: radii.md,
@@ -85,6 +85,4 @@ const styles = StyleSheet.create({
   secondaryText: { color: colors.black },
   ghost: { backgroundColor: "transparent" },
   ghostText: { color: colors.orange },
-  danger: { backgroundColor: colors.danger },
-  dangerText: { color: colors.white },
 });

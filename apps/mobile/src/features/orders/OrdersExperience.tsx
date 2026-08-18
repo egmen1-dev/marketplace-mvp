@@ -3,7 +3,7 @@ import { Animated, RefreshControl, ScrollView, StyleSheet, Text, View } from "re
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { PrimaryButton } from "../../components/ui";
+import { PrimaryButton } from "../../design-system/forms/buttons";
 import { CommerceSectionHeader } from "../../design-system/components/CommerceSectionHeader";
 import { OrderCard } from "../../design-system/components/OrderCard";
 import { OrdersEmptyState } from "../../design-system/components/OrdersEmptyState";

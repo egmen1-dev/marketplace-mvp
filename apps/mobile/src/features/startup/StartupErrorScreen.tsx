@@ -6,7 +6,7 @@ import { BOOT_STAGE_LABELS } from "../../boot/boot-types";
 import { loadLastStartupReport } from "../../boot/boot-storage";
 import { getBootFailurePresentation } from "../../../../../lib/mobile/diagnostics/types";
 import type { ConnectivityCheckResult, DiagnosticsReport } from "../../../../../lib/mobile/diagnostics/types";
-import { PrimaryButton, SecondaryButton } from "../../components/ui";
+import { PrimaryButton, SecondaryButton } from "../../design-system/forms/buttons";
 import { buildDiagnosticsReport } from "../../diagnostics/diagnostics-service";
 import { copyDiagnosticsText, exportDiagnosticsJson, shareProblemReport } from "../../diagnostics/diagnostics-actions";
 import { runConnectivityCheck } from "../../diagnostics/connectivity-check";

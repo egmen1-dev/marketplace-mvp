@@ -3,7 +3,7 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { PrimaryButton } from "../../components/ui";
+import { PrimaryButton } from "../../design-system/forms/buttons";
 import { CartEmptyState } from "../../design-system/components/CartEmptyState";
 import { CartHeader } from "../../design-system/components/CartHeader";
 import { CartLineCard } from "../../design-system/components/CartLineCard";

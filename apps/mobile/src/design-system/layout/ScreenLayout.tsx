@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 import { ScrollView, StyleSheet, Text, View, type ScrollViewProps, type ViewProps } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { colors, spacing, typography } from "../../theme/tokens";
+import { colors } from "../tokens/colors";
+import { spacing } from "../tokens/spacing";
+import { typography } from "../tokens/typography";
 
 export function PageContainer({ children, style, ...rest }: ViewProps) {
   return (

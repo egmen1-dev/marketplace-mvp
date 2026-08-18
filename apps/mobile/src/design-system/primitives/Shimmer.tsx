@@ -1,9 +1,18 @@
 import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View, type ViewStyle } from "react-native";
+import { Animated, StyleSheet, type ViewStyle } from "react-native";
 
-import { colors, radii } from "../../theme/tokens";
+import { colors } from "../tokens/colors";
+import { radii } from "../tokens/radius";
 
-export function ShimmerBlock({ height = 16, width = "100%", style }: { height?: number; width?: number | `${number}%`; style?: ViewStyle }) {
+export function ShimmerBlock({
+  height = 16,
+  width = "100%",
+  style,
+}: {
+  height?: number;
+  width?: number | `${number}%`;
+  style?: ViewStyle;
+}) {
   const opacity = useRef(new Animated.Value(0.45)).current;
 
   useEffect(() => {

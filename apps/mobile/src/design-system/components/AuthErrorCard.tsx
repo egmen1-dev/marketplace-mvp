@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { GhostButton } from "../../components/ui/buttons";
+import { GhostButton } from "../forms/buttons";
 import { semantic, text } from "../tokens/colors";
 import { radii } from "../tokens/radius";
 import { spacing } from "../tokens/spacing";

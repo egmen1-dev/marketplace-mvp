@@ -49,7 +49,7 @@ export function detectCrudInSource(relativePath: string, root = process.cwd()): 
     });
   }
 
-  if (relativePath.startsWith("apps/mobile/app/") || relativePath.includes("/components/ui/")) {
+  if (relativePath.startsWith("apps/mobile/app/") || relativePath.includes("/design-system/")) {
     lines.forEach((line, index) => {
       if (line.includes("typography.") || line.includes("...typography")) return;
       let match: RegExpExecArray | null;

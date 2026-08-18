@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { PrimaryCTA } from "./PrimaryCTA";
 import { IconButton } from "./IconButton";
-import { border, text } from "../tokens/colors";
+import { border, semantic, surface, text } from "../tokens/colors";
 import { layout } from "../tokens/layout";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -48,7 +48,7 @@ export const PdpStickyCta = memo(function PdpStickyCta({
           disabled={favoriteBusy}
           onPress={onToggleFavorite}
         >
-          <MaterialCommunityIcons name={isFavorite ? "heart" : "heart-outline"} size={22} color={isFavorite ? "#DC2626" : text.primary} />
+          <MaterialCommunityIcons name={isFavorite ? "heart" : "heart-outline"} size={22} color={isFavorite ? semantic.danger : text.primary} />
         </IconButton>
         <IconButton accessibilityLabel="Поделиться товаром" variant="muted" onPress={onShare}>
           <MaterialCommunityIcons name="share-variant-outline" size={22} color={text.primary} />
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: surface.background,
     borderTopWidth: 1,
     borderTopColor: border.default,
     paddingHorizontal: spacing.lg,

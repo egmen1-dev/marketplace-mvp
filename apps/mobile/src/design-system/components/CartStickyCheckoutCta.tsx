@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { PrimaryCTA } from "./PrimaryCTA";
 import { formatPrice } from "../../utils/format";
-import { border, text } from "../tokens/colors";
+import { border, surface, text } from "../tokens/colors";
 import { layout } from "../tokens/layout";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: surface.background,
     borderTopWidth: 1,
     borderTopColor: border.default,
     paddingHorizontal: spacing.lg,
