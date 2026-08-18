@@ -303,6 +303,8 @@ model SellerProfile {
   trustScoreHistory   TrustScoreHistory[]
   moderationQueue     ModerationQueueItem[]
   returnRequests      ReturnRequest[]
+  promotionCampaigns  PromotionCampaign[]
+  promotionOrders     PromotionOrder[]
 
   @@index([slug])
   @@index([kind])
@@ -580,6 +582,11 @@ model Product {
   rankingHistory       ProductRankingHistory[]
   qualitySnapshot      ProductQualitySnapshot?
   qualityHistory       ProductQualityHistory[]
+  promotionCampaign    PromotionCampaign?
+  promotionPlacements  PromotionPlacement[]
+  promotionMetrics     PromotionMetric[]
+  promotionAttributions PromotionAttribution[]
+  promotionOrders      PromotionOrder[]
 
   @@unique([sellerId, slug])
   @@index([sellerId])
@@ -2150,4 +2157,157 @@ model ProductOpsAuditEvent {
 
   @@index([entityKey, createdAt])
   @@map("product_ops_audit_events")
+}
+
+// ─── Seller Promotion Center (EPIC 88) ───────────────────────────────────────
+
+enum PromotionCampaignStatus {
+  STARTED
+  PAUSED
+  ENDED
+}
+
+enum PromotionSurfaceType {
+  HOME_FEATURED
+  CATALOG_TOP
+  CATEGORY_TOP
+  SEARCH_BOOST
+}
+
+enum PromotionOrderStatus {
+  CREATED
+  PAYMENT_PENDING
+  PAID
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+model PromotionPlan {
+  id           String   @id
+  name         String   @unique
+  durationDays Int
+  price        Decimal  @db.Decimal(12, 2)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders PromotionOrder[]
+
+  @@map("promotion_plans")
+}
+
+model PromotionCampaign {
+  id        String                  @id @default(cuid())
+  productId String                  @unique
+  sellerId  String
+  status    PromotionCampaignStatus @default(STARTED)
+  budget    Decimal?                @db.Decimal(12, 2)
+  startedAt DateTime?
+  endedAt   DateTime?
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
+
+  product      Product                @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller       SellerProfile          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  placements   PromotionPlacement[]
+  metrics      PromotionMetric[]
+  attributions PromotionAttribution[]
+  orders       PromotionOrder[]
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([status, startedAt])
+  @@map("promotion_campaigns")
+}
+
+model PromotionPlacement {
+  id         String               @id @default(cuid())
+  campaignId String
+  productId  String
+  surface    PromotionSurfaceType
+  position   Int                  @default(0)
+  priority   Int                  @default(0)
+  active     Boolean              @default(true)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  campaign PromotionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, surface])
+  @@index([productId])
+  @@index([surface, active, priority])
+  @@map("promotion_placements")
+}
+
+model PromotionMetric {
+  id              String   @id @default(cuid())
+  campaignId      String
+  productId       String
+  date            DateTime @db.Date
+  impressions     Int      @default(0)
+  clicks          Int      @default(0)
+  productViews    Int      @default(0)
+  addToCart       Int      @default(0)
+  checkoutStarted Int      @default(0)
+  orders          Int      @default(0)
+  revenue         Decimal  @default(0) @db.Decimal(14, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  campaign PromotionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, date])
+  @@index([campaignId, date])
+  @@index([productId])
+  @@map("promotion_metrics")
+}
+
+model PromotionAttribution {
+  id           String   @id @default(cuid())
+  campaignId   String
+  productId    String
+  visitorId    String
+  firstTouchAt DateTime
+  lastTouchAt  DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  campaign PromotionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  product  Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, visitorId])
+  @@index([visitorId, productId])
+  @@index([lastTouchAt])
+  @@map("promotion_attributions")
+}
+
+model PromotionOrder {
+  id              String               @id @default(cuid())
+  sellerId        String
+  productId       String
+  planId          String
+  campaignId      String?
+  status          PromotionOrderStatus @default(CREATED)
+  amount          Decimal              @db.Decimal(12, 2)
+  stripeSessionId String?              @unique
+  createdAt       DateTime             @default(now())
+  startedAt       DateTime?
+  endedAt         DateTime?
+  updatedAt       DateTime             @updatedAt
+
+  seller   SellerProfile      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  product  Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  plan     PromotionPlan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+  campaign PromotionCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  @@index([sellerId])
+  @@index([productId])
+  @@index([planId])
+  @@index([campaignId])
+  @@index([status])
+  @@index([status, endedAt])
+  @@map("promotion_orders")
 }

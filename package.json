@@ -35,6 +35,7 @@
     "mobile:epic-83:gate": "tsx scripts/epic-83-minimum-supported-version-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
+    "product:epic-88:promotion-center": "tsx scripts/epic-88-promotion-center-gate.ts",
     "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",
     "postinstall": "prisma generate"
   },

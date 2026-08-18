@@ -1,0 +1,215 @@
+{
+  "epic": "EPIC-88",
+  "name": "Seller Promotion Center",
+  "generatedAt": "2026-08-18T08:49:52.753Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/types.ts"
+    },
+    {
+      "id": "file_sections.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/sections.ts"
+    },
+    {
+      "id": "file_campaigns.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/campaigns.ts"
+    },
+    {
+      "id": "file_discounts.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/discounts.ts"
+    },
+    {
+      "id": "file_history.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/history.ts"
+    },
+    {
+      "id": "file_performance.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/performance.ts"
+    },
+    {
+      "id": "file_featured.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/featured.ts"
+    },
+    {
+      "id": "file_eligibility.ts",
+      "ok": true,
+      "detail": "lib/seller-promotion-center/eligibility.ts"
+    },
+    {
+      "id": "file_seller-promotion-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-promotion-data.ts"
+    },
+    {
+      "id": "file_seller-promotion-types.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-promotion-types.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/campaigns/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/campaigns/[id]/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/discounts/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/history/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/performance/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/promotion/eligibility/route.ts"
+    },
+    {
+      "id": "prisma_campaign_model",
+      "ok": true
+    },
+    {
+      "id": "prisma_order_model",
+      "ok": true
+    },
+    {
+      "id": "hide_unsupported",
+      "ok": true
+    },
+    {
+      "id": "no_fake_marketing",
+      "ok": true
+    },
+    {
+      "id": "campaign_lifecycle",
+      "ok": true
+    },
+    {
+      "id": "offline_cache_contract",
+      "ok": true
+    },
+    {
+      "id": "publish_api",
+      "ok": true
+    },
+    {
+      "id": "detail_api",
+      "ok": true
+    },
+    {
+      "id": "section_discounts",
+      "ok": true,
+      "detail": "discounts"
+    },
+    {
+      "id": "section_campaigns",
+      "ok": true,
+      "detail": "campaigns"
+    },
+    {
+      "id": "section_featured",
+      "ok": true,
+      "detail": "featured"
+    },
+    {
+      "id": "section_history",
+      "ok": true,
+      "detail": "history"
+    },
+    {
+      "id": "section_performance",
+      "ok": true,
+      "detail": "performance"
+    },
+    {
+      "id": "section_eligibility",
+      "ok": true,
+      "detail": "eligibility"
+    },
+    {
+      "id": "hidden_coupons",
+      "ok": true,
+      "detail": "coupons"
+    },
+    {
+      "id": "hidden_bundles",
+      "ok": true,
+      "detail": "bundles"
+    },
+    {
+      "id": "telemetry_promotion_opened",
+      "ok": true,
+      "detail": "promotion_opened"
+    },
+    {
+      "id": "telemetry_promotion_created",
+      "ok": true,
+      "detail": "promotion_created"
+    },
+    {
+      "id": "telemetry_promotion_updated",
+      "ok": true,
+      "detail": "promotion_updated"
+    },
+    {
+      "id": "telemetry_promotion_deleted",
+      "ok": true,
+      "detail": "promotion_deleted"
+    },
+    {
+      "id": "telemetry_promotion_published",
+      "ok": true,
+      "detail": "promotion_published"
+    },
+    {
+      "id": "telemetry_promotion_finished",
+      "ok": true,
+      "detail": "promotion_finished"
+    },
+    {
+      "id": "promotion_tests",
+      "ok": true
+    },
+    {
+      "id": "promotion_wallet_regression",
+      "ok": true
+    },
+    {
+      "id": "build",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "promotionCenter": "PASS",
+    "campaigns": 1,
+    "discountTypes": 1,
+    "backendSupport": "PASS",
+    "regression": "PASS",
+    "ready": "YES"
+  }
+}

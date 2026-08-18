@@ -191,6 +191,12 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_CENTER_VIEW: "promotion_center_view",
   PROMOTION_PRODUCT_SELECTED: "promotion_product_selected",
   PROMOTION_WALLET_PAYMENT_SELECTED: "promotion_wallet_payment_selected",
+  PROMOTION_OPENED: "promotion_opened",
+  PROMOTION_CREATED: "promotion_created",
+  PROMOTION_UPDATED: "promotion_updated",
+  PROMOTION_DELETED: "promotion_deleted",
+  PROMOTION_PUBLISHED: "promotion_published",
+  PROMOTION_FINISHED: "promotion_finished",
   /** MARKETPLACE-RANKING-INTELLIGENCE-001 — advisory ranking layer (no PII) */
   RANKING_VIEW: "ranking_view",
   RANKING_SIMULATION: "ranking_simulation",
