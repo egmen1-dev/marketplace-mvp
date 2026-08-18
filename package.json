@@ -37,6 +37,7 @@
     "product:epic-103:beta-rc": "tsx scripts/epic-103-closed-beta-rc-gate.ts",
     "product:epic-104:closed-beta-readiness": "tsx scripts/epic-104-closed-beta-readiness-gate.ts",
     "product:epic-105:closed-beta-launch-validation": "tsx scripts/epic-105-closed-beta-launch-validation-gate.ts",
+    "product:epic-108:release-candidate-final": "tsx scripts/epic-108-release-candidate-final-verification-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
     "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",

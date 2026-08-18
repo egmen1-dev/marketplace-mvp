@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-08-18T13:17:57.833Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "routes": [
+    {
+      "name": "dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "httpStatus": 404,
+      "latencyMs": 261,
+      "schemaOk": false,
+      "responsePreview": "{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesh"
+    },
+    {
+      "name": "journey",
+      "path": "/api/product-ops/beta/journey",
+      "httpStatus": 404,
+      "latencyMs": 212,
+      "schemaOk": false,
+      "responsePreview": "{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesh"
+    },
+    {
+      "name": "performance",
+      "path": "/api/product-ops/beta/performance",
+      "httpStatus": 404,
+      "latencyMs": 182,
+      "schemaOk": false,
+      "responsePreview": "{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesh"
+    },
+    {
+      "name": "crashes",
+      "path": "/api/product-ops/beta/crashes",
+      "httpStatus": 404,
+      "latencyMs": 185,
+      "schemaOk": false,
+      "responsePreview": "{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesh"
+    },
+    {
+      "name": "readiness",
+      "path": "/api/product-ops/beta/readiness",
+      "httpStatus": 404,
+      "latencyMs": 233,
+      "schemaOk": false,
+      "responsePreview": "{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesh"
+    },
+    {
+      "name": "exit_report",
+      "path": "/api/product-ops/beta/exit-report",
+      "httpStatus": 404,
+      "latencyMs": 198,
+      "schemaOk": false,
+      "responsePreview": "{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesh"
+    }
+  ],
+  "verdict": "FAIL"
+}
