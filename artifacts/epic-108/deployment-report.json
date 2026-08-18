@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-08-18T13:17:56.561Z",
+  "preconditions": {
+    "generatedAt": "2026-08-18T13:17:56.354Z",
+    "localMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "originMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "head": "772d037552b2b17616b3c0842d9ec2cf3bfb7558",
+    "mainMatchesOriginMain": true,
+    "allPrsMerged": false,
+    "prMergeStatus": [
+      {
+        "pr": 124,
+        "commit": "5303e56",
+        "mergedToMain": false
+      },
+      {
+        "pr": 125,
+        "commit": "81082c4",
+        "mergedToMain": false
+      },
+      {
+        "pr": 126,
+        "commit": "b028271",
+        "mergedToMain": false
+      },
+      {
+        "pr": 127,
+        "commit": "134f035",
+        "mergedToMain": false
+      },
+      {
+        "pr": 128,
+        "commit": "3fd23bc",
+        "mergedToMain": false
+      }
+    ],
+    "betaRoutesOnMain": false,
+    "checkoutRouteOnMain": false,
+    "verdict": "FAIL",
+    "failReasons": [
+      "PR #124–#128 not merged into main",
+      "beta/readiness route missing on origin/main"
+    ]
+  },
+  "github": {
+    "mainSha": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "shortSha": "feb4b8d"
+  },
+  "railway": {
+    "url": "https://web-production-e56fb.up.railway.app",
+    "commit": "feb4b8d",
+    "buildTime": "2026-08-16T18:57:44.101Z",
+    "version": "0.1.0",
+    "environment": "staging",
+    "httpStatus": 200
+  },
+  "chain": "GitHub main → Railway → /api/version",
+  "shaMatch": true,
+  "verdict": "FAIL",
+  "evidence": "SHAs match"
+}

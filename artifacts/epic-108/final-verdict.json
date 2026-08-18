@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-08-18T13:18:01.814Z",
+  "verdict": "NOT_READY_FOR_CLOSED_BETA",
+  "summaryTable": {
+    "Deployment": "FAIL",
+    "Buyer Journey": "FAIL",
+    "Seller Journey": "PASS",
+    "Beta API": "FAIL",
+    "Checkout": "FAIL",
+    "Dashboard": "FAIL",
+    "Telemetry": "PASS",
+    "Crash Observatory": "FAIL",
+    "Performance": "FAIL",
+    "Final Verdict": "NOT_READY_FOR_CLOSED_BETA"
+  },
+  "failedCriteria": [
+    {
+      "criterion": "Deployment SHA parity",
+      "evidence": "SHAs match",
+      "rootCause": "PR #124–#128 not merged; staging at feb4b8d",
+      "severity": "P0",
+      "recommendedFix": "Merge PR stack into main and redeploy Railway"
+    },
+    {
+      "criterion": "Beta API HTTP 200",
+      "evidence": "[{\"path\":\"/api/product-ops/beta/dashboard\",\"status\":404},{\"path\":\"/api/product-ops/beta/journey\",\"status\":404},{\"path\":\"/api/product-ops/beta/performance\",\"status\":404},{\"path\":\"/api/product-ops/beta/crashes\",\"status\":404},{\"path\":\"/api/product-ops/beta/readiness\",\"status\":404},{\"path\":\"/api/product-ops/beta/exit-report\",\"status\":404}]",
+      "rootCause": "Beta route files absent from deployed main commit",
+      "severity": "P0",
+      "recommendedFix": "Merge EPIC 102–106 PRs and redeploy"
+    },
+    {
+      "criterion": "Checkout handoff",
+      "evidence": "{\"verdict\":\"FAIL\",\"strategy\":\"web_redirect\",\"webUrlHttpStatus\":404,\"webUrlLatencyMs\":171,\"handoffUrlPresent\":false,\"enterRedirectStatus\":0,\"sessionCookieSet\":false,\"ordersHttpStatus\":200,\"responseOn404\":{\"raw\":\"<!DOCTYPE html><html lang=\\\"ru\\\"><head><meta charSet=\\\"utf-8\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/b65482887b1ee20a.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"stylesheet\\\" href=\\\"/_next/static/css/c18c1c83bc1a127d.css\\\" data-precedence=\\\"next\\\"/><link rel=\\\"preload\\\" as=\\\"script\\\" fetchPriority=\\\"low\\\" href=\\\"/_next/static/chunks/webpack-bd70def892b2cfff.js\\\"/><script src=\\\"/_next/static/chunks/4bd1b\"}}",
+      "rootCause": "checkout/web-url not deployed",
+      "severity": "P0",
+      "recommendedFix": "Merge EPIC 104 and redeploy"
+    },
+    {
+      "criterion": "Buyer journey",
+      "evidence": "[{\"step\":\"checkout\",\"status\":\"FAIL\",\"durationMs\":0,\"error\":\"404\"}]",
+      "rootCause": "Checkout step fails when web-url 404",
+      "severity": "P1",
+      "recommendedFix": "Fix deployment parity first"
+    }
+  ],
+  "preconditions": {
+    "generatedAt": "2026-08-18T13:17:56.354Z",
+    "localMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "originMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "head": "772d037552b2b17616b3c0842d9ec2cf3bfb7558",
+    "mainMatchesOriginMain": true,
+    "allPrsMerged": false,
+    "prMergeStatus": [
+      {
+        "pr": 124,
+        "commit": "5303e56",
+        "mergedToMain": false
+      },
+      {
+        "pr": 125,
+        "commit": "81082c4",
+        "mergedToMain": false
+      },
+      {
+        "pr": 126,
+        "commit": "b028271",
+        "mergedToMain": false
+      },
+      {
+        "pr": 127,
+        "commit": "134f035",
+        "mergedToMain": false
+      },
+      {
+        "pr": 128,
+        "commit": "3fd23bc",
+        "mergedToMain": false
+      }
+    ],
+    "betaRoutesOnMain": false,
+    "checkoutRouteOnMain": false,
+    "verdict": "FAIL",
+    "failReasons": [
+      "PR #124–#128 not merged into main",
+      "beta/readiness route missing on origin/main"
+    ]
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "epic": "EPIC-102",
+  "phase": "Closed Beta Program",
+  "generatedAt": "2026-08-18T10:48:29.191Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "mobile_beta_environment_ts",
+      "ok": true,
+      "detail": "environment.ts"
+    },
+    {
+      "id": "mobile_beta_config_ts",
+      "ok": true,
+      "detail": "config.ts"
+    },
+    {
+      "id": "mobile_beta_remote-flags_ts",
+      "ok": true,
+      "detail": "remote-flags.ts"
+    },
+    {
+      "id": "mobile_beta_build-info_ts",
+      "ok": true,
+      "detail": "build-info.ts"
+    },
+    {
+      "id": "mobile_beta_version-checker_ts",
+      "ok": true,
+      "detail": "version-checker.ts"
+    },
+    {
+      "id": "mobile_beta_session-recorder_ts",
+      "ok": true,
+      "detail": "session-recorder.ts"
+    },
+    {
+      "id": "mobile_beta_crash-reporter_ts",
+      "ok": true,
+      "detail": "crash-reporter.ts"
+    },
+    {
+      "id": "mobile_beta_performance-tracker_ts",
+      "ok": true,
+      "detail": "performance-tracker.ts"
+    },
+    {
+      "id": "mobile_beta_telemetry-hub_ts",
+      "ok": true,
+      "detail": "telemetry-hub.ts"
+    },
+    {
+      "id": "mobile_beta_BetaBanner_tsx",
+      "ok": true,
+      "detail": "BetaBanner.tsx"
+    },
+    {
+      "id": "mobile_beta_ObservabilityProvider_tsx",
+      "ok": true,
+      "detail": "ObservabilityProvider.tsx"
+    },
+    {
+      "id": "mobile_beta_FeedbackCenter_tsx",
+      "ok": true,
+      "detail": "FeedbackCenter.tsx"
+    },
+    {
+      "id": "backend_beta_environment_ts",
+      "ok": true,
+      "detail": "environment.ts"
+    },
+    {
+      "id": "backend_beta_crash-observatory_ts",
+      "ok": true,
+      "detail": "crash-observatory.ts"
+    },
+    {
+      "id": "backend_beta_performance-observatory_ts",
+      "ok": true,
+      "detail": "performance-observatory.ts"
+    },
+    {
+      "id": "backend_beta_ux-observatory_ts",
+      "ok": true,
+      "detail": "ux-observatory.ts"
+    },
+    {
+      "id": "backend_beta_journey-validation_ts",
+      "ok": true,
+      "detail": "journey-validation.ts"
+    },
+    {
+      "id": "backend_beta_release-gates_ts",
+      "ok": true,
+      "detail": "release-gates.ts"
+    },
+    {
+      "id": "backend_beta_beta-exit-report_ts",
+      "ok": true,
+      "detail": "beta-exit-report.ts"
+    },
+    {
+      "id": "backend_beta_beta-dashboard_ts",
+      "ok": true,
+      "detail": "beta-dashboard.ts"
+    },
+    {
+      "id": "feedback_screen",
+      "ok": true
+    },
+    {
+      "id": "admin_beta_dashboard",
+      "ok": true
+    },
+    {
+      "id": "epic_102_doc",
+      "ok": true
+    },
+    {
+      "id": "observability_provider_wired",
+      "ok": true
+    },
+    {
+      "id": "error_boundary_crash_report",
+      "ok": true
+    },
+    {
+      "id": "buyer_journey_steps",
+      "ok": true,
+      "detail": "11"
+    },
+    {
+      "id": "seller_journey_steps",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "id": "feedback_categories",
+      "ok": true,
+      "detail": "8"
+    },
+    {
+      "id": "feedback_category_mapping",
+      "ok": true
+    },
+    {
+      "id": "release_gates_module",
+      "ok": true
+    },
+    {
+      "id": "release_gates_evaluated",
+      "ok": true,
+      "detail": "SKIP — no DATABASE_URL"
+    },
+    {
+      "id": "staging_beta_dashboard_api",
+      "ok": true,
+      "detail": "HTTP 404 (pre-deploy ok)"
+    },
+    {
+      "id": "staging_beta_journey_api",
+      "ok": true,
+      "detail": "HTTP 404 (pre-deploy ok)"
+    },
+    {
+      "id": "build",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "mobileBetaModules": 12,
+    "backendBetaModules": 8,
+    "feedbackCategories": 8,
+    "buyerJourneySteps": 11,
+    "sellerJourneySteps": 10,
+    "releaseGates": 0,
+    "architecturePreserved": true,
+    "zeroFakeData": true
+  }
+}

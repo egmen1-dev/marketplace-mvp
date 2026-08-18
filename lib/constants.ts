@@ -148,6 +148,7 @@ export const ROUTES = {
   ADMIN_MOBILE_RELEASES: "/admin/mobile/releases",
   ADMIN_PRODUCT_HEALTH: "/admin/product-health",
   ADMIN_CLOSED_ALPHA: "/admin/closed-alpha",
+  ADMIN_BETA_DASHBOARD: "/admin/beta-dashboard",
 } as const;
 
 export function discoveryCollectionPath(slug: string) {

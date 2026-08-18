@@ -98,6 +98,10 @@ export default function ProfileScreen() {
         <Text style={styles.rowText}>Личные данные</Text>
         <Text style={styles.rowChevron}>›</Text>
       </Pressable>
+      <Pressable style={styles.row} onPress={() => router.push("/feedback")}>
+        <Text style={styles.rowText}>Центр обратной связи</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </Pressable>
       <Pressable style={styles.row} onPress={onReportError}>
         <Text style={styles.rowText}>Поддержка</Text>
         <Text style={styles.rowChevron}>›</Text>

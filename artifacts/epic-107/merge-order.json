@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-08-18T13:12:29.606Z",
+  "mainSha": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+  "linearStack": true,
+  "recommendedSequentialOrder": [
+    {
+      "pr": 124,
+      "epic": 102,
+      "sha": "5303e56"
+    },
+    {
+      "pr": 125,
+      "epic": 103,
+      "sha": "81082c4"
+    },
+    {
+      "pr": 126,
+      "epic": 104,
+      "sha": "b028271"
+    },
+    {
+      "pr": 127,
+      "epic": 105,
+      "sha": "134f035"
+    },
+    {
+      "pr": 128,
+      "epic": 106,
+      "sha": "3fd23bc"
+    }
+  ],
+  "minimalAppMerge": {
+    "pr": 127,
+    "note": "Includes EPIC 102-105 commits (4 ahead of main)"
+  },
+  "minimalFullMerge": {
+    "pr": 128,
+    "note": "Includes EPIC 102-106 (5 ahead of main, adds investigation docs)"
+  },
+  "ancestry": [
+    {
+      "pr": 124,
+      "epic": 102,
+      "branch": "cursor/epic-102-closed-beta-program-d03e",
+      "headSha": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+      "parentSha": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+      "mergeBaseWithMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+      "aheadOfMain": 1,
+      "behindMain": 0,
+      "githubMergeable": "MERGEABLE",
+      "githubMergeState": "CLEAN"
+    },
+    {
+      "pr": 125,
+      "epic": 103,
+      "branch": "cursor/epic-103-closed-beta-rc-validation-d03e",
+      "headSha": "81082c4d17d678f59d903510fc2ffb0b4872baa7",
+      "parentSha": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+      "mergeBaseWithMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+      "aheadOfMain": 2,
+      "behindMain": 0,
+      "githubMergeable": "MERGEABLE",
+      "githubMergeState": "CLEAN"
+    },
+    {
+      "pr": 126,
+      "epic": 104,
+      "branch": "cursor/epic-104-closed-beta-readiness-d03e",
+      "headSha": "b028271b4db527bb189b04f26fc8d43117355977",
+      "parentSha": "81082c4d17d678f59d903510fc2ffb0b4872baa7",
+      "mergeBaseWithMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+      "aheadOfMain": 3,
+      "behindMain": 0,
+      "githubMergeable": "MERGEABLE",
+      "githubMergeState": "CLEAN"
+    },
+    {
+      "pr": 127,
+      "epic": 105,
+      "branch": "cursor/epic-105-closed-beta-launch-validation-d03e",
+      "headSha": "134f035bd8ee27d6a055d0a3dd491ee2462ad119",
+      "parentSha": "b028271b4db527bb189b04f26fc8d43117355977",
+      "mergeBaseWithMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+      "aheadOfMain": 4,
+      "behindMain": 0,
+      "githubMergeable": "MERGEABLE",
+      "githubMergeState": "CLEAN"
+    },
+    {
+      "pr": 128,
+      "epic": 106,
+      "branch": "cursor/epic-106-staging-deployment-investigation-7513",
+      "headSha": "3fd23bcff42baa8f45063c84ebb2570a187751a9",
+      "parentSha": "134f035bd8ee27d6a055d0a3dd491ee2462ad119",
+      "mergeBaseWithMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+      "aheadOfMain": 5,
+      "behindMain": 0,
+      "githubMergeable": "MERGEABLE",
+      "githubMergeState": "CLEAN"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "status": "PASS",
+  "detail": "{\"sellerHome\":200,\"sellerProducts\":200,\"catalog\":200,\"cartAdd\":201,\"buyerOrders\":200,\"note\":\"Full purchase/checkout NOT_SUPPORTED on mobile alpha checkout screen\"}"
+}

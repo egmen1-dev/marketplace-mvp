@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-08-18T11:12:56.042Z",
+  "scannedFiles": 14,
+  "findings": [],
+  "verdict": "PASS",
+  "forbiddenFieldsChecked": [
+    "password",
+    "auth_token",
+    "payment_secret",
+    "private_message",
+    "full_form_content",
+    "personal_address",
+    "image_content"
+  ],
+  "allowedBehaviorFields": [
+    "screen",
+    "navigationPath",
+    "buttonId",
+    "durationMs",
+    "metric",
+    "depthPercent",
+    "userRole",
+    "deviceModel",
+    "buildNumber",
+    "channel",
+    "commitSha",
+    "errorMessage",
+    "errorStack",
+    "stepsBeforeCrash",
+    "network",
+    "category",
+    "flow",
+    "target"
+  ]
+}

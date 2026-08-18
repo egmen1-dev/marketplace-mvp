@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "name": "dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "httpStatus": 404,
+      "latencyMs": 170,
+      "schemaOk": false,
+      "error": "not_found"
+    },
+    {
+      "name": "journey",
+      "path": "/api/product-ops/beta/journey",
+      "httpStatus": 404,
+      "latencyMs": 172,
+      "schemaOk": false,
+      "error": "not_found"
+    },
+    {
+      "name": "exit_report",
+      "path": "/api/product-ops/beta/exit-report",
+      "httpStatus": 404,
+      "latencyMs": 184,
+      "schemaOk": false,
+      "error": "not_found"
+    },
+    {
+      "name": "performance",
+      "path": "/api/product-ops/beta/performance",
+      "httpStatus": 404,
+      "latencyMs": 159,
+      "schemaOk": false,
+      "error": "not_found"
+    },
+    {
+      "name": "crashes",
+      "path": "/api/product-ops/beta/crashes",
+      "httpStatus": 404,
+      "latencyMs": 178,
+      "schemaOk": false,
+      "error": "not_found"
+    },
+    {
+      "name": "readiness",
+      "path": "/api/product-ops/beta/readiness",
+      "httpStatus": 404,
+      "latencyMs": 168,
+      "schemaOk": false,
+      "error": "not_found"
+    }
+  ]
+}

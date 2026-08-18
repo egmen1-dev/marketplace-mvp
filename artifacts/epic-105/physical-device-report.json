@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-08-18T12:28:28.182Z",
+  "verdict": "NOT_RUN",
+  "reason": "Physical Android validation requires operator device — cloud agent cannot produce screenshots, recordings, or logcat",
+  "requiredEvidence": [
+    "Buyer: login → search → PDP → favorite → cart → checkout redirect → web checkout → return → orders → logout",
+    "Seller: login → workspace → products → editor → inventory → orders → promotion → intelligence → wallet → logout"
+  ],
+  "artifactsExpected": [
+    "screenshots/",
+    "screen_recordings/",
+    "logcat.txt",
+    "timing.json"
+  ],
+  "operatorChecklist": "docs/mobile/EPIC_81_PHYSICAL_ACCEPTANCE_CHECKLIST.md"
+}

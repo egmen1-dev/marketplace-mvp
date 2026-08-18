@@ -5,13 +5,16 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NetworkBanner } from "../src/components/NetworkBanner";
 import { UpdateHost } from "../src/components/UpdateHost";
+import { BetaBanner, ObservabilityProvider } from "../src/beta";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
 import { colors } from "../src/theme/tokens";
 
 function RootShell() {
   useDeepLinkHandler();
   return (
+  <ObservabilityProvider>
     <>
+      <BetaBanner />
       <NetworkBanner />
       <UpdateHost />
       <Stack
@@ -28,8 +31,10 @@ function RootShell() {
         <Stack.Screen name="product/[id]" options={{ title: "Товар" }} />
         <Stack.Screen name="cart" options={{ title: "Корзина" }} />
         <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
+        <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />
       </Stack>
     </>
+  </ObservabilityProvider>
   );
 }
 

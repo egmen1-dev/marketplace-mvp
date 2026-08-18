@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-08-18T13:12:29.609Z",
+  "edges": [
+    {
+      "from": "main:feb4b8d",
+      "to": "PR124/EPIC102:5303e56"
+    },
+    {
+      "from": "PR124",
+      "to": "PR125/EPIC103:81082c4"
+    },
+    {
+      "from": "PR125",
+      "to": "PR126/EPIC104:b028271"
+    },
+    {
+      "from": "PR126",
+      "to": "PR127/EPIC105:134f035"
+    },
+    {
+      "from": "PR127",
+      "to": "PR128/EPIC106:3fd23bc"
+    }
+  ],
+  "dependencies": {
+    "PR125 depends on PR124": "YES",
+    "PR126 depends on PR125": "YES",
+    "PR127 depends on PR126": "YES",
+    "PR128 depends on PR127": "YES"
+  },
+  "independentMerge": false,
+  "asciiGraph": "main (feb4b8d)\n  └─ PR124 EPIC102 (5303e56)\n      └─ PR125 EPIC103 (81082c4)\n          └─ PR126 EPIC104 (b028271)\n              └─ PR127 EPIC105 (134f035)\n                  └─ PR128 EPIC106 (3fd23bc)",
+  "fileOverlapMatrix": [
+    {
+      "pair": [
+        "PR124",
+        "PR125"
+      ],
+      "sharedFiles": 46,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR124",
+        "PR126"
+      ],
+      "sharedFiles": 46,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR124",
+        "PR127"
+      ],
+      "sharedFiles": 46,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR124",
+        "PR128"
+      ],
+      "sharedFiles": 46,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR125",
+        "PR126"
+      ],
+      "sharedFiles": 60,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR125",
+        "PR127"
+      ],
+      "sharedFiles": 60,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR125",
+        "PR128"
+      ],
+      "sharedFiles": 60,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR126",
+        "PR127"
+      ],
+      "sharedFiles": 79,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR126",
+        "PR128"
+      ],
+      "sharedFiles": 79,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    },
+    {
+      "pair": [
+        "PR127",
+        "PR128"
+      ],
+      "sharedFiles": 89,
+      "stackedRelationship": true,
+      "conflictingEditsAtMerge": "N/A — ancestor/descendant; dry-merge to main: 0 conflicts each",
+      "safeToMergeIndependently": false
+    }
+  ]
+}

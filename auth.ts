@@ -76,7 +76,7 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
           },
         });
         if (dbUser?.isBlocked) {
-          return {};
+          return null;
         }
         if (dbUser) {
           token.role = dbUser.role as UserRole;

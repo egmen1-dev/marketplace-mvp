@@ -117,3 +117,23 @@ Physical Android acceptance cannot be fully automated in cloud — document `NOT
 | EPIC | EPIC 83 — Minimum Supported Version |
 
 See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matrix.
+
+## Release pipeline (EPIC 109)
+
+Before marking a release or Closed Beta gate as PASS:
+
+```bash
+npm run build
+npm run mobile:typecheck
+npm run release:pipeline:verify
+```
+
+### Pull Request policy
+
+When creating PRs via **`ManagePullRequest`**:
+
+- **Always set `draft: false`** unless the user explicitly requests a draft PR.
+- Cursor Cloud Agent defaults to `draft: true` — this caused EPIC 102–108 to remain undeployed.
+- After creating a PR, confirm it is **Ready for review** before merge.
+
+See `docs/RELEASE_PIPELINE.md` for the full pipeline and verification steps.

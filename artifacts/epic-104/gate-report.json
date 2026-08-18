@@ -1,0 +1,44 @@
+{
+  "epic": "EPIC-104",
+  "generatedAt": "2026-08-18T11:30:21.218Z",
+  "exitCriteria": {
+    "deploymentParity": "FAIL",
+    "betaApi": "FAIL",
+    "buyerJourney": "FAIL",
+    "sellerJourney": "PASS",
+    "checkoutSupported": "PASS",
+    "crashFree": "BLOCKED",
+    "criticalBugs": "INSUFFICIENT_DATA",
+    "performance": "BLOCKED",
+    "physicalDevice": "NOT_RUN"
+  },
+  "regression": [
+    {
+      "id": "mobile_typecheck",
+      "ok": true,
+      "detail": "cd apps/mobile && npm run typecheck"
+    },
+    {
+      "id": "epic_104_tests",
+      "ok": true,
+      "detail": "npm test -- tests/epic-104-closed-beta-readiness.test.ts"
+    },
+    {
+      "id": "mobile_staging_smoke",
+      "ok": true,
+      "detail": "npm run mobile:staging-smoke"
+    },
+    {
+      "id": "epic_102_gate",
+      "ok": false,
+      "detail": "Command failed: npm run mobile:epic-102:gate"
+    },
+    {
+      "id": "epic_103_gate",
+      "ok": false,
+      "detail": "Command failed: npm run product:epic-103:beta-rc"
+    }
+  ],
+  "recommendation": "NOT_READY",
+  "checkoutStrategy": "web_redirect"
+}

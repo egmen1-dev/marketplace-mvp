@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-08-18T13:36:40.036Z",
+  "deploymentComplete": false,
+  "currentGitSha": "feb4b8d",
+  "railwaySha": "feb4b8d",
+  "shaMatch": true,
+  "deploymentAgeHours": 42.6,
+  "version": "0.1.0",
+  "environment": "staging",
+  "health": "ok",
+  "criticalRoutes": [
+    {
+      "id": "health",
+      "verdict": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "id": "version",
+      "verdict": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "id": "product_ops_config",
+      "verdict": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "id": "beta_dashboard",
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_readiness",
+      "verdict": "SKIP"
+    },
+    {
+      "id": "checkout_web_url",
+      "verdict": "SKIP"
+    }
+  ],
+  "openDraftPrCount": 44,
+  "blockers": [
+    {
+      "id": "draft_pr",
+      "severity": "P0",
+      "detail": "27 mergeable Draft PR(s) on main: #130, #129, #128, #127, #126, #125, #124, #123, #122, #108, #107, #106, #105, #104, #103, #102, #101, #100, #99, #98, #97, #96, #67, #19, #15, #12, #10"
+    }
+  ]
+}

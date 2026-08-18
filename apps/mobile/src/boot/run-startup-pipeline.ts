@@ -1,5 +1,8 @@
 import type { MobileUpdateInfo } from "../api/endpoints";
 import { fetchBootstrap, fetchMobileUpdate, fetchRemoteConfig, postTelemetry } from "../api/endpoints";
+import { applyBetaConfig } from "../beta/config";
+import { setRemoteFlags } from "../beta/remote-flags";
+import { trackBootTiming } from "../beta/performance-tracker";
 import { emitStartupEvent, STARTUP_EVENTS } from "./startup-telemetry";
 import { withTimeout } from "./with-timeout";
 import { getAccessToken, getSessionMeta } from "../storage/secure-session";
@@ -25,6 +28,7 @@ function isUnsupportedUpdate(update: MobileUpdateInfo): boolean {
 }
 
 export async function runStartupPipeline(): Promise<StartupPipelineResult> {
+  const bootStart = Date.now();
   emitStartupEvent(STARTUP_EVENTS.appStart);
 
   try {
@@ -42,6 +46,9 @@ export async function runStartupPipeline(): Promise<StartupPipelineResult> {
   try {
     const remote = await withTimeout("remote_config", fetchRemoteConfig(), BOOT_STEP_TIMEOUT_MS);
     remoteConfig = remote.config ?? null;
+    const flagsRecord = Object.fromEntries((remote.flags ?? []).map((f) => [f.key, f.enabled]));
+    applyBetaConfig(remoteConfig, flagsRecord);
+    setRemoteFlags(flagsRecord);
     emitStartupEvent(STARTUP_EVENTS.configOk);
   } catch (err) {
     const message = err instanceof Error ? err.name : "config_error";
@@ -96,6 +103,7 @@ export async function runStartupPipeline(): Promise<StartupPipelineResult> {
 
   const destination: StartupDestination = token && meta ? "app" : "login";
   emitStartupEvent(STARTUP_EVENTS.navigationReady, destination);
+  trackBootTiming("total", Date.now() - bootStart);
 
   return {
     status: "ready",

@@ -8,8 +8,9 @@ import { ROUTES } from "@/lib/constants";
 
 import { getPromotionPlan } from "./plans";
 import type { PromotionPlanId } from "./plans";
+import { activatePromotionPurchase } from "./campaigns";
 
-export type PurchasePromotionState = { ok: boolean; error?: string };
+export type PurchasePromotionState = { ok: boolean; error?: string; campaignId?: string; orderId?: string };
 
 export async function purchasePromotionAction(input: {
   productId: string;
@@ -39,8 +40,21 @@ export async function purchasePromotionAction(input: {
 
   if (!result.ok) return result;
 
-  revalidatePath(ROUTES.ACCOUNT_PROMOTION_CENTER);
-  revalidatePath(ROUTES.ACCOUNT_WALLET);
-  revalidatePath(ROUTES.ACCOUNT_BUSINESS);
-  return { ok: true };
+  try {
+    const activated = await activatePromotionPurchase({
+      sellerProfileId: seller.sellerProfileId,
+      productId: input.productId,
+      planId: input.planId,
+      amount: plan.price,
+    });
+    revalidatePath(ROUTES.ACCOUNT_PROMOTION_CENTER);
+    revalidatePath(ROUTES.ACCOUNT_WALLET);
+    revalidatePath(ROUTES.ACCOUNT_BUSINESS);
+    return { ok: true, campaignId: activated.campaignId, orderId: activated.orderId };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Не удалось активировать кампанию",
+    };
+  }
 }

@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-18T13:18:01.590Z",
+  "verdict": "PASS",
+  "steps": [
+    {
+      "step": "login",
+      "status": "PASS",
+      "durationMs": 0
+    },
+    {
+      "step": "workspace",
+      "status": "PASS",
+      "durationMs": 181
+    },
+    {
+      "step": "products",
+      "status": "PASS",
+      "durationMs": 160
+    },
+    {
+      "step": "editor",
+      "status": "PASS",
+      "durationMs": 156
+    },
+    {
+      "step": "inventory",
+      "status": "PASS",
+      "durationMs": 182
+    },
+    {
+      "step": "orders",
+      "status": "PASS",
+      "durationMs": 151
+    },
+    {
+      "step": "promotion",
+      "status": "PASS",
+      "durationMs": 136
+    },
+    {
+      "step": "intelligence",
+      "status": "PASS",
+      "durationMs": 119
+    },
+    {
+      "step": "wallet",
+      "status": "PASS",
+      "durationMs": 118
+    },
+    {
+      "step": "logout",
+      "status": "PASS",
+      "durationMs": 116
+    }
+  ],
+  "totalDurationMs": 1319
+}

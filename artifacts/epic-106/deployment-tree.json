@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.009Z",
+  "staging": {
+    "url": "https://web-production-e56fb.up.railway.app",
+    "reportedCommit": "feb4b8d",
+    "reportedBuildTime": "2026-08-16T18:57:44.101Z",
+    "source": "GET /api/version live probe"
+  },
+  "mainBranch": {
+    "sha": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "productOpsApiFiles": [
+      "app/api/product-ops/config/route.ts",
+      "app/api/product-ops/feedback/route.ts",
+      "app/api/product-ops/session/route.ts"
+    ],
+    "betaRouteFilesPresent": []
+  },
+  "headBranch": {
+    "sha": "134f035bd8ee27d6a055d0a3dd491ee2462ad119",
+    "branch": "cursor/epic-106-staging-deployment-investigation-7513",
+    "productOpsApiFiles": [
+      "app/api/product-ops/beta/crashes/route.ts",
+      "app/api/product-ops/beta/dashboard/route.ts",
+      "app/api/product-ops/beta/exit-report/route.ts",
+      "app/api/product-ops/beta/journey/route.ts",
+      "app/api/product-ops/beta/performance/route.ts",
+      "app/api/product-ops/beta/readiness/route.ts",
+      "app/api/product-ops/config/route.ts",
+      "app/api/product-ops/feedback/route.ts",
+      "app/api/product-ops/session/route.ts"
+    ],
+    "betaRouteFilesPresent": [
+      "app/api/product-ops/beta/crashes/route.ts",
+      "app/api/product-ops/beta/dashboard/route.ts",
+      "app/api/product-ops/beta/exit-report/route.ts",
+      "app/api/product-ops/beta/journey/route.ts",
+      "app/api/product-ops/beta/performance/route.ts",
+      "app/api/product-ops/beta/readiness/route.ts"
+    ]
+  }
+}

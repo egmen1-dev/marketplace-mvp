@@ -1,0 +1,119 @@
+{
+  "generatedAt": "2026-08-18T13:12:29.756Z",
+  "simulatedState": "origin/cursor/epic-106-staging-deployment-investigation-7513 (3fd23bc)",
+  "npmInstall": "not re-run (workspace node_modules from prior install)",
+  "npmRunBuild": {
+    "exitCode": 0,
+    "note": "completed on 3fd23bc HEAD"
+  },
+  "npmRunTypecheck": {
+    "script": "npm run mobile:typecheck",
+    "exitCode": 0
+  },
+  "npmTest": {
+    "fullSuite": {
+      "exitCode": 1,
+      "reason": "DATABASE_URL missing — 18 failures in DB-dependent tests (pre-existing env, not merge-specific)"
+    },
+    "epicTests": {
+      "files": [
+        "epic-102",
+        "epic-103",
+        "epic-104"
+      ],
+      "exitCode": 0,
+      "testsPassed": 9
+    }
+  },
+  "routesInAppPathsManifest": {
+    "/api/product-ops/beta/dashboard/route": true,
+    "/api/product-ops/beta/journey/route": true,
+    "/api/product-ops/beta/readiness/route": true,
+    "/api/product-ops/beta/performance/route": true,
+    "/api/product-ops/beta/crashes/route": true,
+    "/api/product-ops/beta/exit-report/route": true,
+    "/api/mobile/checkout/web-url/route": true
+  },
+  "perPrImpact": [
+    {
+      "pr": 124,
+      "epic": 102,
+      "filesChanged": 46,
+      "newApiRoutes": [
+        "app/api/mobile/telemetry/route.ts",
+        "app/api/product-ops/beta/dashboard/route.ts",
+        "app/api/product-ops/beta/exit-report/route.ts",
+        "app/api/product-ops/beta/journey/route.ts",
+        "app/api/product-ops/feedback/route.ts"
+      ],
+      "deletedRoutes": [],
+      "prismaChanges": [],
+      "envExampleChanges": [],
+      "testsAdded": [
+        "tests/epic-102-closed-beta-program.test.ts"
+      ],
+      "docsArtifactsOnly": false
+    },
+    {
+      "pr": 125,
+      "epic": 103,
+      "filesChanged": 18,
+      "newApiRoutes": [],
+      "deletedRoutes": [],
+      "prismaChanges": [],
+      "envExampleChanges": [],
+      "testsAdded": [
+        "tests/epic-103-closed-beta-rc.test.ts"
+      ],
+      "docsArtifactsOnly": true
+    },
+    {
+      "pr": 126,
+      "epic": 104,
+      "filesChanged": 22,
+      "newApiRoutes": [
+        "app/api/mobile/checkout/enter/route.ts",
+        "app/api/mobile/checkout/web-url/route.ts",
+        "app/api/product-ops/beta/crashes/route.ts",
+        "app/api/product-ops/beta/performance/route.ts",
+        "app/api/product-ops/beta/readiness/route.ts"
+      ],
+      "deletedRoutes": [],
+      "prismaChanges": [],
+      "envExampleChanges": [],
+      "testsAdded": [
+        "tests/epic-104-closed-beta-readiness.test.ts"
+      ],
+      "docsArtifactsOnly": false
+    },
+    {
+      "pr": 127,
+      "epic": 105,
+      "filesChanged": 11,
+      "newApiRoutes": [],
+      "deletedRoutes": [],
+      "prismaChanges": [],
+      "envExampleChanges": [],
+      "testsAdded": [],
+      "docsArtifactsOnly": true
+    },
+    {
+      "pr": 128,
+      "epic": 106,
+      "filesChanged": 8,
+      "newApiRoutes": [],
+      "deletedRoutes": [],
+      "prismaChanges": [],
+      "envExampleChanges": [],
+      "testsAdded": [],
+      "docsArtifactsOnly": true
+    }
+  ],
+  "migrationSafety": {
+    "newPrismaMigrations": [],
+    "schemaChanges": false,
+    "routeCollisions": false,
+    "apiEndpointCollisions": false,
+    "note": "Beta routes are new paths; checkout web-url is new"
+  }
+}
