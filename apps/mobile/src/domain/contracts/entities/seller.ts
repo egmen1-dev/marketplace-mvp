@@ -66,6 +66,45 @@ export type SellerHomeActivity = {
   readonly createdAt: string;
 };
 
+export type SellerWorkspacePriority = "urgent" | "important" | "routine" | "completed";
+
+export type SellerWorkspaceSource = "orders" | "products" | "wallet" | "notifications" | "promotion";
+
+export type SellerWorkspaceSection =
+  | "urgent"
+  | "todays_work"
+  | "quick_resume"
+  | "recent_drafts"
+  | "pending_publications"
+  | "low_stock"
+  | "awaiting_shipment"
+  | "customer_replies"
+  | "financial_actions"
+  | "completed_today";
+
+export type SellerWorkspaceItem = {
+  readonly id: string;
+  readonly title: string;
+  readonly subtitle: string | null;
+  readonly priority: SellerWorkspacePriority;
+  readonly source: SellerWorkspaceSource;
+  readonly section: SellerWorkspaceSection;
+  readonly action: "orders" | "products" | "wallet" | "profile";
+  readonly entityId: string | null;
+  readonly resumeKey: string | null;
+  readonly completedAt: string | null;
+};
+
+export type SellerWorkspace = {
+  readonly items: ReadonlyArray<SellerWorkspaceItem>;
+  readonly counts: {
+    readonly urgent: number;
+    readonly important: number;
+    readonly routine: number;
+    readonly completed: number;
+  };
+};
+
 export type SellerHomeDashboard = {
   readonly header: SellerHomeHeader | null;
   readonly todaySummary: SellerHomeTodaySummary | null;
@@ -76,6 +115,7 @@ export type SellerHomeDashboard = {
   readonly notifications: ReadonlyArray<SellerHomeNotification>;
   readonly insights: SellerHomeInsight | null;
   readonly recentActivity: ReadonlyArray<SellerHomeActivity>;
+  readonly workspace: SellerWorkspace;
   readonly money: { readonly available: Money; readonly pending: Money };
   readonly orders: { readonly needAction: number };
   readonly products: { readonly active: number; readonly needAttention: number };

@@ -14,6 +14,8 @@ import type {
   SellerProduct,
   SellerProductPage,
   SellerPublicProfile,
+  SellerWorkspace,
+  SellerWorkspaceItem,
 } from "../../domain/contracts/entities/seller";
 import { orderId, productId, sellerId } from "../../domain/contracts/value-objects/ids";
 import { money } from "../../domain/contracts/value-objects/money";
@@ -67,6 +69,21 @@ export type SellerHomeDto = {
     subtitle: string;
     createdAt: string;
   }>;
+  workspace: {
+    items: Array<{
+      id: string;
+      title: string;
+      subtitle: string | null;
+      priority: SellerWorkspaceItem["priority"];
+      source: SellerWorkspaceItem["source"];
+      section: SellerWorkspaceItem["section"];
+      action: SellerWorkspaceItem["action"];
+      entityId: string | null;
+      resumeKey: string | null;
+      completedAt: string | null;
+    }>;
+    counts: SellerWorkspace["counts"];
+  };
   money: { available: number; pending: number };
   orders: { needAction: number };
   products: { active: number; needAttention: number };
@@ -145,6 +162,10 @@ export function mapSellerHomeDto(dto: SellerHomeDto): SellerHomeDashboard {
     notifications: dto.notifications.map((n) => ({ ...n })),
     insights: dto.insights ? { ...dto.insights } : null,
     recentActivity: dto.recentActivity.map((a) => ({ ...a })),
+    workspace: {
+      items: dto.workspace.items.map((item) => ({ ...item })),
+      counts: { ...dto.workspace.counts },
+    },
     money: {
       available: money(dto.money.available, "RUB"),
       pending: money(dto.money.pending, "RUB"),
@@ -227,6 +248,7 @@ export function sellerHomeDashboardToSnapshot(dashboard: SellerHomeDashboard) {
     notifications: dashboard.notifications,
     insights: dashboard.insights,
     recentActivity: dashboard.recentActivity,
+    workspace: dashboard.workspace,
     money: { available: dashboard.money.available.amount, pending: dashboard.money.pending.amount },
     orders: dashboard.orders,
     products: dashboard.products,

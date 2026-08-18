@@ -27,7 +27,7 @@ export type SellerHomeDataState = {
   retryDashboard: () => Promise<void>;
 };
 
-const SNAPSHOT_KEY = "seller-home";
+const SNAPSHOT_KEY = "seller-workspace";
 
 export function useSellerHomeData(): SellerHomeDataState {
   const commerce = getCommerceUseCases();
@@ -87,6 +87,7 @@ export function useSellerHomeData(): SellerHomeDataState {
     useCallback(() => {
       if (!openedRef.current) {
         openedRef.current = true;
+        commerce.trackScreenEvent({ screen: "seller_home", event: "seller_workspace_opened" });
         commerce.trackScreenEvent({ screen: "seller_home", event: "seller_home_opened" });
       }
       void loadDashboard();

@@ -6,6 +6,8 @@ import type {
   SellerOrderSummary,
   SellerProduct,
   SellerPublicProfile,
+  SellerWorkspaceItem,
+  SellerWorkspaceSection,
 } from "../../domain/contracts/entities/seller";
 import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 
@@ -78,8 +80,36 @@ export type SellerHomeInsightView = {
   returningCustomersPct: number | null;
 };
 
+export type { SellerWorkspaceSection } from "../../domain/contracts/entities/seller";
+export type SellerWorkspaceItemView = SellerWorkspaceItem;
+
+export type SellerWorkspaceView = {
+  items: SellerWorkspaceItemView[];
+  counts: {
+    urgent: number;
+    important: number;
+    routine: number;
+    completed: number;
+  };
+  sections: Record<SellerWorkspaceSection, SellerWorkspaceItemView[]>;
+};
+
+export const SELLER_WORKSPACE_SECTION_LABELS: Record<SellerWorkspaceSection, string> = {
+  urgent: "Срочно",
+  todays_work: "Работа на сегодня",
+  quick_resume: "Быстрый возврат",
+  recent_drafts: "Черновики",
+  pending_publications: "Ожидают публикации",
+  low_stock: "Низкий остаток",
+  awaiting_shipment: "Ожидают отправки",
+  customer_replies: "Ответы покупателям",
+  financial_actions: "Финансы",
+  completed_today: "Завершено сегодня",
+};
+
 export type SellerHomeView = {
   header: SellerHomeHeaderView | null;
+  workspace: SellerWorkspaceView;
   todayCards: SellerHomeTodayCardView[];
   revenue: SellerHomeRevenueView | null;
   orderBuckets: SellerHomeOrderBucketsView | null;
@@ -110,6 +140,8 @@ function formatMoney(value: number): string {
 }
 
 export function sellerHomeToView(dashboard: SellerHomeDashboard, offline = false): SellerHomeView {
+  const sections = groupWorkspaceSections(dashboard.workspace.items);
+
   const todayCards: SellerHomeTodayCardView[] = [];
   const summary = dashboard.todaySummary;
 
@@ -164,6 +196,11 @@ export function sellerHomeToView(dashboard: SellerHomeDashboard, offline = false
           offline,
         }
       : null,
+    workspace: {
+      items: [...dashboard.workspace.items],
+      counts: { ...dashboard.workspace.counts },
+      sections,
+    },
     todayCards,
     revenue: dashboard.revenue
       ? {
@@ -259,4 +296,28 @@ export function formatActivityTime(createdAt: string): string {
   const date = new Date(createdAt);
   if (Number.isNaN(date.getTime())) return createdAt;
   return date.toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+const WORKSPACE_SECTIONS: SellerWorkspaceSection[] = [
+  "urgent",
+  "todays_work",
+  "quick_resume",
+  "recent_drafts",
+  "pending_publications",
+  "low_stock",
+  "awaiting_shipment",
+  "customer_replies",
+  "financial_actions",
+  "completed_today",
+];
+
+function groupWorkspaceSections(items: ReadonlyArray<SellerWorkspaceItem>): Record<SellerWorkspaceSection, SellerWorkspaceItemView[]> {
+  const grouped = Object.fromEntries(WORKSPACE_SECTIONS.map((section) => [section, [] as SellerWorkspaceItemView[]])) as Record<
+    SellerWorkspaceSection,
+    SellerWorkspaceItemView[]
+  >;
+  for (const item of items) {
+    grouped[item.section].push({ ...item });
+  }
+  return grouped;
 }

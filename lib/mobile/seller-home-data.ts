@@ -19,6 +19,7 @@ import {
   type MobileSellerHomePayload,
   type MobileSellerHomeTask,
 } from "./seller-home";
+import { buildSellerWorkspace } from "./seller-workspace-data";
 
 const COMPLETED_STATUSES: OrderStatus[] = [
   OrderStatus.COMPLETED,
@@ -345,6 +346,18 @@ export async function buildMobileSellerHomeForUser(
 
   const revenueTodayAvailable = revenue.today > 0 || ordersToday > 0;
 
+  const workspace = await buildSellerWorkspace({
+    userId,
+    sellerProfileId,
+    recentOrders: recentOrdersResult.items,
+    orderCounters,
+    wallet: wallet
+      ? { spendableAmount: wallet.buckets.spendableAmount, pendingFromSales: wallet.buckets.pendingFromSales }
+      : null,
+    productBuckets,
+    now,
+  });
+
   return buildMobileSellerHomePayload({
     header: settings
       ? {
@@ -383,6 +396,7 @@ export async function buildMobileSellerHomeForUser(
         ? insights
         : null,
     recentActivity,
+    workspace,
     money: {
       available: wallet?.buckets.spendableAmount ?? 0,
       pending: wallet?.buckets.pendingFromSales ?? 0,
