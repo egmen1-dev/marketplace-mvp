@@ -11,7 +11,7 @@ function sessionCookieName(secure: boolean): string {
   return secure ? "__Secure-authjs.session-token" : "authjs.session-token";
 }
 
-function useSecureCookies(): boolean {
+function shouldUseSecureCookies(): boolean {
   const override = process.env.AUTH_COOKIE_SECURE?.trim().toLowerCase();
   if (override === "true") return true;
   if (override === "false") return false;
@@ -61,6 +61,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "AUTH_SECRET missing" }, { status: 500 });
   }
 
+  const secure = shouldUseSecureCookies();
   const sessionToken = await encode({
     token: {
       sub: user.id,
@@ -74,9 +75,9 @@ export async function GET(request: Request) {
     },
     secret,
     maxAge: 60 * 60 * 24 * 14,
+    salt: sessionCookieName(secure),
   });
 
-  const secure = useSecureCookies();
   const checkoutUrl = new URL(ROUTES.CHECKOUT, getCanonicalAppUrl());
   checkoutUrl.searchParams.set("mobileReturn", returnDeepLink);
   checkoutUrl.searchParams.set("handoff", hashHandoffForLog(token));
