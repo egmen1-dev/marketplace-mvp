@@ -1,0 +1,48 @@
+{
+  "phase": "P0 APK Bytecode Guard",
+  "generatedAt": "2026-08-17T18:27:08.385Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "apk_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    {
+      "id": "any_type_provider_zero",
+      "ok": true,
+      "detail": "0 occurrences"
+    },
+    {
+      "id": "any_type_cache_present",
+      "ok": true,
+      "detail": "155 occurrences"
+    },
+    {
+      "id": "expo_clipboard_571_present",
+      "ok": true,
+      "detail": "57.0.1 refs=2"
+    },
+    {
+      "id": "expo_clipboard_88_absent",
+      "ok": true,
+      "detail": "8.0.8 refs=0"
+    },
+    {
+      "id": "node_clipboard_prebuilt_571",
+      "ok": true,
+      "detail": "57.0.1"
+    },
+    {
+      "id": "gradle_expo_clipboard_571",
+      "ok": true,
+      "detail": "- \u001b[33m[📦]\u001b[0m \u001b[32mexpo-clipboard\u001b[0m (57.0.1)"
+    }
+  ],
+  "bytecode": {
+    "anyTypeProviderCount": 0,
+    "anyTypeCacheCount": 155,
+    "clip571Count": 2,
+    "clip88Count": 0
+  }
+}

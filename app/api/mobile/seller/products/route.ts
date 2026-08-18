@@ -9,6 +9,20 @@ export async function GET(request: Request) {
   if (blocked) return blocked;
 
   const { searchParams } = new URL(request.url);
-  const page = await buildMobileSellerProductsFromRequest(request, searchParams.get("cursor"));
-  return NextResponse.json(withMobileApiContract(page, `seller-products-p${searchParams.get("cursor") ?? "1"}`));
+  const page = await buildMobileSellerProductsFromRequest(request, {
+    cursor: searchParams.get("cursor"),
+    query: searchParams.get("q"),
+    filter: searchParams.get("filter"),
+    sort: searchParams.get("sort"),
+  });
+
+  const cacheKey = [
+    "seller-products",
+    searchParams.get("cursor") ?? "1",
+    searchParams.get("filter") ?? "all",
+    searchParams.get("sort") ?? "updated_desc",
+    searchParams.get("q") ?? "",
+  ].join("-");
+
+  return NextResponse.json(withMobileApiContract(page, cacheKey));
 }

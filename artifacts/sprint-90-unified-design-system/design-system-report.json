@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-08-18T06:06:13.860Z",
+  "subBarrels": [
+    "tokens",
+    "forms",
+    "layout",
+    "primitives",
+    "navigation",
+    "cards",
+    "feedback",
+    "commerce",
+    "components"
+  ],
+  "hardcodedViolations": [],
+  "hardcodedViolationCount": 0,
+  "tokenOnlyThemeShim": true
+}

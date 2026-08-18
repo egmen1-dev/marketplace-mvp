@@ -1,34 +1,17 @@
-import { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 
-import { fetchOrders, fetchWallet } from "../../src/api/endpoints";
-import {
-  EmptyState,
-  PageScroll,
-  PrimaryButton,
-  SecondaryButton,
-  SectionHeader,
-  SkeletonGrid,
-  WalletCard,
-} from "../../src/components/ui";
+import { WalletCard } from "../../src/design-system/cards/CommerceCards";
+import { PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
+import { PageScroll, SectionHeader } from "../../src/design-system/layout/ScreenLayout";
+import { EmptyState, SkeletonGrid } from "../../src/design-system/feedback/States";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
+import { useWalletData } from "../../src/features/wallet/useWalletData";
 import { formatPrice } from "../../src/utils/format";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 export default function WalletScreen() {
   const fade = useFadeIn();
-  const [data, setData] = useState<{ spendable: number; withdrawable: number; pending: number; enabled: boolean } | null>(null);
-  const [recentOrders, setRecentOrders] = useState<Array<Record<string, unknown>>>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([fetchWallet(), fetchOrders().catch(() => ({ items: [] }))])
-      .then(([wallet, orders]) => {
-        setData(wallet);
-        setRecentOrders(orders.items.slice(0, 3));
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const { isSeller, loading, data, recentSales, refreshSales } = useWalletData();
 
   if (loading) {
     return (
@@ -63,22 +46,23 @@ export default function WalletScreen() {
           <EmptyState preset="history" title="Нет ожидающих выплат" description="Все начисления уже доступны." />
         )}
 
-        <SectionHeader title="Последние переводы" />
-        {recentOrders.length > 0 ? (
-          recentOrders.map((order, idx) => (
-            <View key={String(order.id ?? idx)} style={styles.transferRow}>
-              <Text style={styles.transferTitle}>Заказ #{String(order.number ?? order.id ?? "—")}</Text>
-              <Text style={styles.transferMeta}>{String(order.status ?? "NEW")}</Text>
+        <SectionHeader title={isSeller ? "Последние продажи" : "Последние переводы"} />
+        {recentSales.length > 0 ? (
+          recentSales.map((sale) => (
+            <View key={sale.id} style={styles.transferRow}>
+              <Text style={styles.transferTitle}>Заказ № {sale.orderNumber}</Text>
+              <Text style={styles.transferMeta}>{sale.status}</Text>
             </View>
           ))
         ) : (
-          <EmptyState preset="history" actionLabel="Обновить" onAction={() => fetchOrders().then((r) => setRecentOrders(r.items.slice(0, 3)))} />
+          <EmptyState preset="history" actionLabel="Обновить" onAction={() => void refreshSales()} />
         )}
 
         <SectionHeader title="История операций" />
         <View style={styles.placeholder}>
           <Text style={styles.placeholderText}>
-            Полная история операций кошелька будет доступна в следующем релизе Alpha. Сейчас отображаются баланс и последние заказы.
+            Полная история операций кошелька будет доступна в следующем релизе Alpha. Сейчас отображаются баланс и
+            последние заказы.
           </Text>
         </View>
       </Animated.View>

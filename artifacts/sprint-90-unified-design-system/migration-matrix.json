@@ -1,0 +1,134 @@
+{
+  "sprint": 90,
+  "generatedAt": "2026-08-18T06:06:13.860Z",
+  "migrations": [
+    {
+      "legacy": "PrimaryButton",
+      "replacement": "design-system/forms/buttons",
+      "status": "complete",
+      "consumers": 16,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "SecondaryButton",
+      "replacement": "design-system/forms/buttons",
+      "status": "complete",
+      "consumers": 8,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "GhostButton",
+      "replacement": "design-system/forms/buttons",
+      "status": "complete",
+      "consumers": 5,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "ShimmerBlock",
+      "replacement": "design-system/primitives/Shimmer",
+      "status": "complete",
+      "consumers": 7,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "PageContainer",
+      "replacement": "design-system/layout/ScreenLayout",
+      "status": "complete",
+      "consumers": 3,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "PageScroll",
+      "replacement": "design-system/layout/ScreenLayout",
+      "status": "complete",
+      "consumers": 3,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "EmptyState",
+      "replacement": "design-system/feedback/States",
+      "status": "complete",
+      "consumers": 5,
+      "complexity": "medium",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "SkeletonGrid",
+      "replacement": "design-system/feedback/States",
+      "status": "complete",
+      "consumers": 5,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "ProductCard",
+      "replacement": "design-system/commerce/ProductCard",
+      "status": "complete",
+      "consumers": 2,
+      "complexity": "medium",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "CommerceSearchBar",
+      "replacement": "design-system/commerce/CommerceSearchBar",
+      "status": "complete",
+      "consumers": 2,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "TabBarIcon",
+      "replacement": "design-system/navigation/TabBarIcon",
+      "status": "complete",
+      "consumers": 1,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "TabBarBadge",
+      "replacement": "design-system/navigation/TabBarBadge",
+      "status": "complete",
+      "consumers": 2,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "WalletCard",
+      "replacement": "design-system/cards/CommerceCards",
+      "status": "complete",
+      "consumers": 2,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "MetricCard",
+      "replacement": "design-system/cards/CommerceCards",
+      "status": "complete",
+      "consumers": 1,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "SellerProductCard",
+      "replacement": "design-system/cards/SellerProductCard",
+      "status": "complete",
+      "consumers": 1,
+      "complexity": "low",
+      "deleteAfter": true
+    },
+    {
+      "legacy": "CatalogToolbar",
+      "replacement": "deleted (dead)",
+      "status": "complete",
+      "consumers": 0,
+      "complexity": "none",
+      "deleteAfter": true
+    }
+  ]
+}

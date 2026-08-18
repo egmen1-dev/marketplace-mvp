@@ -1,0 +1,203 @@
+{
+  "epic": "EPIC-86",
+  "sprint": 3,
+  "name": "Seller Action Center",
+  "generatedAt": "2026-08-18T07:17:13.048Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_UniversalActionCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/UniversalActionCard.tsx"
+    },
+    {
+      "id": "file_UniversalBottomSheet.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/UniversalBottomSheet.tsx"
+    },
+    {
+      "id": "file_action-router.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/action-center/action-router.ts"
+    },
+    {
+      "id": "file_useSellerActionCenter.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/action-center/useSellerActionCenter.ts"
+    },
+    {
+      "id": "file_ActionResultBanner.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/action-center/ActionResultBanner.tsx"
+    },
+    {
+      "id": "file_SellerActionSheet.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/action-center/SellerActionSheet.tsx"
+    },
+    {
+      "id": "file_SellerWorkspaceExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/SellerWorkspaceExperience.tsx"
+    },
+    {
+      "id": "file_execute-seller-action.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/domain/use-cases/seller/execute-seller-action.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/actions/route.ts"
+    },
+    {
+      "id": "file_seller-actions-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-actions-data.ts"
+    },
+    {
+      "id": "uses_action_center",
+      "ok": true
+    },
+    {
+      "id": "uses_action_card",
+      "ok": true
+    },
+    {
+      "id": "uses_bottom_sheet",
+      "ok": true
+    },
+    {
+      "id": "uses_result_banner",
+      "ok": true
+    },
+    {
+      "id": "execute_use_case",
+      "ok": true
+    },
+    {
+      "id": "optimistic_hide",
+      "ok": true
+    },
+    {
+      "id": "workspace_refresh",
+      "ok": true
+    },
+    {
+      "id": "undo_support",
+      "ok": true
+    },
+    {
+      "id": "rollback_on_failure",
+      "ok": true
+    },
+    {
+      "id": "no_task_navigation",
+      "ok": true
+    },
+    {
+      "id": "backend_only_actions",
+      "ok": true
+    },
+    {
+      "id": "no_fake_ai",
+      "ok": true
+    },
+    {
+      "id": "action_update_stock",
+      "ok": true,
+      "detail": "update_stock"
+    },
+    {
+      "id": "action_publish_product",
+      "ok": true,
+      "detail": "publish_product"
+    },
+    {
+      "id": "action_fix_moderation",
+      "ok": true,
+      "detail": "fix_moderation"
+    },
+    {
+      "id": "action_ship_order",
+      "ok": true,
+      "detail": "ship_order"
+    },
+    {
+      "id": "action_confirm_order",
+      "ok": true,
+      "detail": "confirm_order"
+    },
+    {
+      "id": "action_reply_buyer",
+      "ok": true,
+      "detail": "reply_buyer"
+    },
+    {
+      "id": "action_withdraw_funds",
+      "ok": true,
+      "detail": "withdraw_funds"
+    },
+    {
+      "id": "action_complete_profile",
+      "ok": true,
+      "detail": "complete_profile"
+    },
+    {
+      "id": "action_resume_draft",
+      "ok": true,
+      "detail": "resume_draft"
+    },
+    {
+      "id": "telemetry_seller_action_open",
+      "ok": true,
+      "detail": "seller_action_open"
+    },
+    {
+      "id": "telemetry_seller_action_execute",
+      "ok": true,
+      "detail": "seller_action_execute"
+    },
+    {
+      "id": "telemetry_seller_action_success",
+      "ok": true,
+      "detail": "seller_action_success"
+    },
+    {
+      "id": "telemetry_seller_action_failure",
+      "ok": true,
+      "detail": "seller_action_failure"
+    },
+    {
+      "id": "telemetry_seller_action_undo",
+      "ok": true,
+      "detail": "seller_action_undo"
+    },
+    {
+      "id": "telemetry_seller_task_completed",
+      "ok": true,
+      "detail": "seller_task_completed"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "mobile_test",
+      "ok": true
+    },
+    {
+      "id": "sprint96_gate",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "supportedActions": 9,
+    "fakeActions": 0,
+    "inAppNavigationOnTaskTap": 0,
+    "optimisticUpdates": true,
+    "undoWhereSupported": true,
+    "architectureGates": "PASS",
+    "readyForSprint4": "YES"
+  }
+}

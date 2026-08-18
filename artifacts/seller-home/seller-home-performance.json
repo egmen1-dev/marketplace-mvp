@@ -1,0 +1,6 @@
+{
+  "memoizedKpiCards": true,
+  "virtualizedHistory": true,
+  "lazyHistoryDelayMs": 120,
+  "independentSections": true
+}

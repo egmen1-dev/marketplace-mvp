@@ -1,6 +1,6 @@
 import { Linking, Platform } from "react-native";
 
-import type { MobileUpdateInfo } from "../api/endpoints";
+import type { MobileUpdateInfo } from "./types";
 import { postTelemetry } from "../api/endpoints";
 import { UPDATE_ANALYTICS, UPDATE_ERROR_MESSAGES, type UpdateFlowError } from "./types";
 

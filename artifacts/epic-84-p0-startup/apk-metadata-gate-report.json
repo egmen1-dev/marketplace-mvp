@@ -1,0 +1,61 @@
+{
+  "phase": "P0 APK Metadata Gate",
+  "generatedAt": "2026-08-17T18:26:54.634Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "apk_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    {
+      "id": "sha256_present",
+      "ok": true,
+      "detail": "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961"
+    },
+    {
+      "id": "package_name",
+      "ok": true,
+      "detail": "ru.lot.marketplace.alpha"
+    },
+    {
+      "id": "version_name",
+      "ok": true,
+      "detail": "0.1.5-alpha"
+    },
+    {
+      "id": "version_code",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "id": "apkanalyzer_manifest",
+      "ok": true,
+      "detail": "manifest print ok"
+    },
+    {
+      "id": "build_commit_embedded",
+      "ok": true,
+      "detail": "bcd542f"
+    },
+    {
+      "id": "build_git_sha_embedded",
+      "ok": true,
+      "detail": "bcd542f64468"
+    }
+  ],
+  "apk": {
+    "path": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
+    "sha256": "174295aae57a346012821d38b167fa0f6a96df7817ec2756e8ce9b1d85348961",
+    "expected": {
+      "package": "ru.lot.marketplace.alpha",
+      "versionName": "0.1.5-alpha",
+      "versionCode": 6
+    },
+    "badging": {
+      "package": "ru.lot.marketplace.alpha",
+      "versionCode": 6,
+      "versionName": "0.1.5-alpha"
+    }
+  }
+}
