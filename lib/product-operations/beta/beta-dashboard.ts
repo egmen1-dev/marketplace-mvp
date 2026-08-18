@@ -107,8 +107,8 @@ export async function buildBetaDashboardSnapshot(): Promise<BetaDashboardSnapsho
     successRate: Math.min(100, analytics.crashFreeRate),
     averageSessionMinutes,
     activeBetaUsers: analytics.dau,
-    buyerCompletionRate: journeys.buyer.completionRate,
-    sellerCompletionRate: journeys.seller.completionRate,
+    buyerCompletionRate: journeys.buyer.completionRate ?? 0,
+    sellerCompletionRate: journeys.seller.completionRate ?? 0,
     mostCommonErrors: [...errorCounts.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
