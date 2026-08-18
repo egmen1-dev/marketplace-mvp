@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-08-18T06:20:34.672Z",
+  "baseline": "Closed Alpha 0.1.5-alpha / Sprint 90",
+  "metrics": {
+    "totalTsFiles": 189,
+    "apiImportSites": 40,
+    "screenDirectApi": 7,
+    "featureDirectApi": 16,
+    "designSystemDirectApi": 5,
+    "hooksDirectApi": 1,
+    "dtoLeaksToUi": 26
+  },
+  "violations": {
+    "screensImportApiDirectly": [
+      "app/(tabs)/favorites.tsx",
+      "app/(tabs)/profile.tsx",
+      "app/(tabs)/seller-home.tsx",
+      "app/(tabs)/seller-products.tsx",
+      "app/(tabs)/wallet.tsx",
+      "app/index.tsx",
+      "app/login.tsx"
+    ],
+    "featuresImportApiDirectly": [
+      "src/features/buyer-home/BuyerHomeExperience.tsx",
+      "src/features/buyer-home/useBuyerHomeData.ts",
+      "src/features/cart-checkout/types.ts",
+      "src/features/cart-checkout/useCartData.ts",
+      "src/features/cart-checkout/useCheckoutData.ts",
+      "src/features/catalog-discovery/CatalogDiscoveryExperience.tsx",
+      "src/features/catalog-discovery/useCatalogDiscovery.ts",
+      "src/features/orders/types.ts",
+      "src/features/orders/useOrderDetailData.ts",
+      "src/features/orders/useOrdersData.ts",
+      "src/features/product-detail/types.ts",
+      "src/features/product-detail/useProductDetailData.ts",
+      "src/features/seller-catalog/useSellerCatalogProfile.ts",
+      "src/features/seller-sales/SellerSalesExperience.tsx",
+      "src/features/seller-sales/types.ts",
+      "src/features/seller-sales/useSellerSalesData.ts"
+    ],
+    "designSystemImportsApi": [
+      "src/design-system/cards/SellerProductCard.tsx",
+      "src/design-system/components/CartRecommendationsRail.tsx",
+      "src/design-system/components/CatalogProductCard.tsx",
+      "src/design-system/components/OrdersRecommendationsRail.tsx",
+      "src/design-system/components/PdpRelatedRail.tsx"
+    ],
+    "hooksImportApi": [
+      "src/hooks/useTabBadges.ts"
+    ],
+    "restDtoImportedOutsideTransport": [
+      "app/(tabs)/favorites.tsx",
+      "app/(tabs)/profile.tsx",
+      "app/(tabs)/seller-products.tsx",
+      "app/index.tsx",
+      "src/boot/run-startup-pipeline.ts",
+      "src/components/UnsupportedClientScreen.tsx",
+      "src/components/UpdateGate.tsx",
+      "src/design-system/cards/SellerProductCard.tsx",
+      "src/design-system/components/CartRecommendationsRail.tsx",
+      "src/design-system/components/CatalogProductCard.tsx",
+      "src/design-system/components/OrdersRecommendationsRail.tsx",
+      "src/features/buyer-home/BuyerHomeExperience.tsx",
+      "src/features/buyer-home/useBuyerHomeData.ts",
+      "src/features/cart-checkout/types.ts",
+      "src/features/cart-checkout/useCartData.ts",
+      "src/features/catalog-discovery/CatalogDiscoveryExperience.tsx",
+      "src/features/catalog-discovery/useCatalogDiscovery.ts",
+      "src/features/orders/types.ts",
+      "src/features/orders/useOrdersData.ts",
+      "src/features/product-detail/types.ts",
+      "src/features/product-detail/useProductDetailData.ts",
+      "src/storage/recent-views.ts",
+      "src/store/app-store.ts",
+      "src/update/download-apk.ts",
+      "src/update/update-defer-storage.ts",
+      "src/update/use-update-check.ts"
+    ]
+  },
+  "cycles": {
+    "domainCycles": 0,
+    "repositoryCycles": 0,
+    "note": "No domain/repository layer exists yet; feature-layer madge scan reports 0 cycles in features/api/store/storage/boot"
+  },
+  "acceptance": {
+    "noScreenRestDto": false,
+    "noScreenApiClient": false,
+    "noCrossFeatureStateOwnership": false,
+    "noDomainCycles": true,
+    "noRepositoryCycles": true
+  }
+}

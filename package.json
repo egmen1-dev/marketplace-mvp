@@ -62,6 +62,7 @@
     "mobile:sprint-89:deep-links": "tsx scripts/sprint-89-deep-link-report.ts",
     "mobile:sprint-89:seller-routes": "tsx scripts/sprint-89-seller-route-audit.ts",
     "mobile:sprint-90:gate": "tsx scripts/sprint-90-unified-design-system-gate.ts",
+    "mobile:epic-91:validate": "tsx scripts/epic-91-commerce-domain-gate.ts",
     "product:epic-84:p1-diagnostics": "tsx scripts/epic-84-p1-diagnostics-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
