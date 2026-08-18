@@ -1,0 +1,207 @@
+{
+  "epic": "EPIC-86",
+  "sprint": 7,
+  "name": "Seller Intelligence",
+  "generatedAt": "2026-08-18T08:31:54.539Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_intelligence.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/seller/intelligence.tsx"
+    },
+    {
+      "id": "file_SellerIntelligenceExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/SellerIntelligenceExperience.tsx"
+    },
+    {
+      "id": "file_useSellerIntelligenceData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/intelligence/useSellerIntelligenceData.ts"
+    },
+    {
+      "id": "file_seller-intelligence-view.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/intelligence/seller-intelligence-view.ts"
+    },
+    {
+      "id": "file_SellerInsightCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/intelligence/SellerInsightCard.tsx"
+    },
+    {
+      "id": "file_seller-intelligence-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-intelligence-data.ts"
+    },
+    {
+      "id": "file_seller-intelligence-types.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-intelligence-types.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/intelligence/route.ts"
+    },
+    {
+      "id": "file_seller-intelligence-use-cases.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/domain/use-cases/seller/seller-intelligence-use-cases.ts"
+    },
+    {
+      "id": "insight_card_shape",
+      "ok": true
+    },
+    {
+      "id": "evidence_only",
+      "ok": true
+    },
+    {
+      "id": "hide_empty_sections",
+      "ok": true
+    },
+    {
+      "id": "no_fake_ai",
+      "ok": true
+    },
+    {
+      "id": "no_hallucinated_analytics",
+      "ok": true
+    },
+    {
+      "id": "action_center",
+      "ok": true
+    },
+    {
+      "id": "offline_snapshot",
+      "ok": true
+    },
+    {
+      "id": "domain_use_case",
+      "ok": true
+    },
+    {
+      "id": "intelligence_api",
+      "ok": true
+    },
+    {
+      "id": "workspace_link",
+      "ok": true
+    },
+    {
+      "id": "zero_api_imports",
+      "ok": true
+    },
+    {
+      "id": "no_alert_dialogs",
+      "ok": true
+    },
+    {
+      "id": "section_todays_risks",
+      "ok": true,
+      "detail": "todays_risks"
+    },
+    {
+      "id": "section_todays_opportunities",
+      "ok": true,
+      "detail": "todays_opportunities"
+    },
+    {
+      "id": "section_products_losing_sales",
+      "ok": true,
+      "detail": "products_losing_sales"
+    },
+    {
+      "id": "section_products_gaining_sales",
+      "ok": true,
+      "detail": "products_gaining_sales"
+    },
+    {
+      "id": "section_low_stock_forecast",
+      "ok": true,
+      "detail": "low_stock_forecast"
+    },
+    {
+      "id": "section_revenue_trend",
+      "ok": true,
+      "detail": "revenue_trend"
+    },
+    {
+      "id": "section_top_products",
+      "ok": true,
+      "detail": "top_products"
+    },
+    {
+      "id": "section_slow_products",
+      "ok": true,
+      "detail": "slow_products"
+    },
+    {
+      "id": "section_pending_actions",
+      "ok": true,
+      "detail": "pending_actions"
+    },
+    {
+      "id": "section_completed_actions",
+      "ok": true,
+      "detail": "completed_actions"
+    },
+    {
+      "id": "telemetry_seller_intelligence_opened",
+      "ok": true,
+      "detail": "seller_intelligence_opened"
+    },
+    {
+      "id": "telemetry_seller_intelligence_refreshed",
+      "ok": true,
+      "detail": "seller_intelligence_refreshed"
+    },
+    {
+      "id": "telemetry_seller_intelligence_cta_clicked",
+      "ok": true,
+      "detail": "seller_intelligence_cta_clicked"
+    },
+    {
+      "id": "telemetry_seller_intelligence_retry",
+      "ok": true,
+      "detail": "seller_intelligence_retry"
+    },
+    {
+      "id": "telemetry_seller_intelligence_link_clicked",
+      "ok": true,
+      "detail": "seller_intelligence_link_clicked"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "mobile_test",
+      "ok": true
+    },
+    {
+      "id": "sprint100_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint99_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint94_gate",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "intelligenceCenter": "PASS",
+    "evidenceOnlyInsights": "FAIL",
+    "noFakeAi": "PASS",
+    "actionCenterIntegration": "PASS",
+    "offlineSnapshot": "PASS",
+    "screenToApi": 0,
+    "dtoLeaks": 0,
+    "readyForProduction": "YES"
+  }
+}

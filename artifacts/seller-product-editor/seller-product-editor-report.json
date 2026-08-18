@@ -1,0 +1,188 @@
+{
+  "epic": "EPIC-86",
+  "sprint": 6,
+  "name": "Seller Product Editor",
+  "generatedAt": "2026-08-18T08:15:27.045Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_SellerProductEditorExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/SellerProductEditorExperience.tsx"
+    },
+    {
+      "id": "file_useSellerProductEditor.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/editor/useSellerProductEditor.ts"
+    },
+    {
+      "id": "file_seller-product-editor-view.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/editor/seller-product-editor-view.ts"
+    },
+    {
+      "id": "file_ProductEditorGallery.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/editor/ProductEditorGallery.tsx"
+    },
+    {
+      "id": "file_new.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/seller/product/new.tsx"
+    },
+    {
+      "id": "file_edit.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/seller/product/[id]/edit.tsx"
+    },
+    {
+      "id": "file_seller-product-editor-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-product-editor-data.ts"
+    },
+    {
+      "id": "file_seller-product-editor-types.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-product-editor-types.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/products/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/products/[id]/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/categories/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/taxonomy/browse/route.ts"
+    },
+    {
+      "id": "gallery",
+      "ok": true
+    },
+    {
+      "id": "field_validation",
+      "ok": true
+    },
+    {
+      "id": "autosave",
+      "ok": true
+    },
+    {
+      "id": "offline_draft",
+      "ok": true
+    },
+    {
+      "id": "undo",
+      "ok": true
+    },
+    {
+      "id": "action_center",
+      "ok": true
+    },
+    {
+      "id": "create_update_api",
+      "ok": true
+    },
+    {
+      "id": "categories_api",
+      "ok": true
+    },
+    {
+      "id": "taxonomy_api",
+      "ok": true
+    },
+    {
+      "id": "moderation_feedback",
+      "ok": true
+    },
+    {
+      "id": "preview_real_only",
+      "ok": true
+    },
+    {
+      "id": "discount_not_editable",
+      "ok": true
+    },
+    {
+      "id": "no_alert_dialogs",
+      "ok": true
+    },
+    {
+      "id": "zero_api_imports",
+      "ok": true
+    },
+    {
+      "id": "telemetry_seller_product_editor",
+      "ok": true,
+      "detail": "seller_product_editor"
+    },
+    {
+      "id": "telemetry_seller_product_saved",
+      "ok": true,
+      "detail": "seller_product_saved"
+    },
+    {
+      "id": "telemetry_seller_product_autosaved",
+      "ok": true,
+      "detail": "seller_product_autosaved"
+    },
+    {
+      "id": "telemetry_seller_product_undo",
+      "ok": true,
+      "detail": "seller_product_undo"
+    },
+    {
+      "id": "telemetry_seller_product_image_uploaded",
+      "ok": true,
+      "detail": "seller_product_image_uploaded"
+    },
+    {
+      "id": "telemetry_seller_product_save_error",
+      "ok": true,
+      "detail": "seller_product_save_error"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "mobile_test",
+      "ok": true
+    },
+    {
+      "id": "sprint99_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint98_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint94_gate",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "editorScreen": "PASS",
+    "draftWorkflow": "PASS",
+    "publishWorkflow": "PASS",
+    "discountField": "NOT_SUPPORTED",
+    "actionCenterIntegration": "PASS",
+    "autosave": "PASS",
+    "offlineDraft": "PASS",
+    "screenToApi": 0,
+    "dtoLeaks": 0,
+    "firebase": "NOT_RUN",
+    "readyForProduction": "YES"
+  }
+}

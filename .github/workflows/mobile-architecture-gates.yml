@@ -1,0 +1,33 @@
+name: Mobile Architecture Gates
+
+on:
+  pull_request:
+    paths:
+      - "apps/mobile/**"
+      - "docs/architecture/**"
+      - "docs/product/EPIC_92*"
+      - "docs/product/COMMERCE_*"
+      - "scripts/epic-92-*.ts"
+      - "artifacts/epic-92-contracts/**"
+      - ".github/workflows/mobile-architecture-gates.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/mobile/src/domain/**"
+      - "scripts/epic-92-*.ts"
+
+jobs:
+  epic-92-contracts:
+    name: EPIC 92 architecture contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: EPIC 92 contracts gate
+        run: npm run mobile:epic-92:validate

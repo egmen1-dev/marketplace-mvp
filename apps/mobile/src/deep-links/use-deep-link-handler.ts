@@ -3,15 +3,18 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 
 import { routeDeepLink } from "../deep-links/route-deep-link";
-import { getAccessToken } from "../storage/secure-session";
 import { useAppStore } from "../store/app-store";
 
-export function useDeepLinkHandler() {
+/** Deferred until post-bootstrap to avoid SecureStore TurboModule at layout mount. */
+export function useDeepLinkHandler(enabled: boolean) {
   const setPendingDeepLink = useAppStore((s) => s.setPendingDeepLink);
 
   useEffect(() => {
+    if (!enabled) return;
+
     async function handle(url: string | null) {
       if (!url) return;
+      const { getAccessToken } = await import("../storage/secure-session");
       const token = await getAccessToken();
       if (!token) {
         setPendingDeepLink(url);
@@ -24,5 +27,5 @@ export function useDeepLinkHandler() {
     Linking.getInitialURL().then(handle);
     const sub = Linking.addEventListener("url", (event) => handle(event.url));
     return () => sub.remove();
-  }, [setPendingDeepLink]);
+  }, [enabled, setPendingDeepLink]);
 }

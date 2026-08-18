@@ -1,9 +1,9 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 
-import type { MobileUpdateInfo } from "../api/endpoints";
+import type { MobileUpdateInfo } from "../update/types";
 import { postTelemetry } from "../api/endpoints";
-import { PrimaryButton, SecondaryButton } from "../components/ui";
+import { PrimaryButton, SecondaryButton } from "../design-system/forms/buttons";
 import { colors, radii, spacing, typography } from "../theme/tokens";
 import { getUpdateErrorMessage, startApkDownload } from "../update/download-apk";
 import { saveUpdateDefer } from "../update/update-defer-storage";

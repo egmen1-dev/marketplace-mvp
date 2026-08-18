@@ -1,0 +1,7 @@
+{
+  "touchTargetMinDp": 44,
+  "cardAccessibilityLabel": true,
+  "menuAccessibilityLabel": true,
+  "filterAccessibilityState": true,
+  "verdict": "PASS"
+}

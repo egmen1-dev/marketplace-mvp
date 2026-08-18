@@ -1,0 +1,7 @@
+{
+  "verdict": "FAIL",
+  "architectureCompliancePercent": 97,
+  "transportIsolated": true,
+  "repositoriesReturnDomainModels": true,
+  "readyForSellerPlatform": true
+}

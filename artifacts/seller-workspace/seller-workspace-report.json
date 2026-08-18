@@ -1,0 +1,165 @@
+{
+  "epic": "EPIC-86",
+  "sprint": 2,
+  "name": "Seller Workspace",
+  "generatedAt": "2026-08-18T08:15:13.190Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_seller-home.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/seller-home.tsx"
+    },
+    {
+      "id": "file_SellerWorkspaceExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/SellerWorkspaceExperience.tsx"
+    },
+    {
+      "id": "file_useSellerHomeData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/useSellerHomeData.ts"
+    },
+    {
+      "id": "file_seller-view.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/seller-view.ts"
+    },
+    {
+      "id": "file_seller-workspace-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-workspace-data.ts"
+    },
+    {
+      "id": "uses_workspace_experience",
+      "ok": true
+    },
+    {
+      "id": "domain_use_case",
+      "ok": true
+    },
+    {
+      "id": "zero_api_imports",
+      "ok": true
+    },
+    {
+      "id": "offline_snapshot",
+      "ok": true
+    },
+    {
+      "id": "section_retry",
+      "ok": true
+    },
+    {
+      "id": "backend_workspace_builder",
+      "ok": true
+    },
+    {
+      "id": "workspace_payload",
+      "ok": true
+    },
+    {
+      "id": "priority_lanes",
+      "ok": true
+    },
+    {
+      "id": "no_fake_ai",
+      "ok": true
+    },
+    {
+      "id": "no_generated_advice",
+      "ok": true
+    },
+    {
+      "id": "section_urgent",
+      "ok": true,
+      "detail": "urgent"
+    },
+    {
+      "id": "section_todays_work",
+      "ok": true,
+      "detail": "todays_work"
+    },
+    {
+      "id": "section_quick_resume",
+      "ok": true,
+      "detail": "quick_resume"
+    },
+    {
+      "id": "section_recent_drafts",
+      "ok": true,
+      "detail": "recent_drafts"
+    },
+    {
+      "id": "section_pending_publications",
+      "ok": true,
+      "detail": "pending_publications"
+    },
+    {
+      "id": "section_low_stock",
+      "ok": true,
+      "detail": "low_stock"
+    },
+    {
+      "id": "section_awaiting_shipment",
+      "ok": true,
+      "detail": "awaiting_shipment"
+    },
+    {
+      "id": "section_customer_replies",
+      "ok": true,
+      "detail": "customer_replies"
+    },
+    {
+      "id": "section_financial_actions",
+      "ok": true,
+      "detail": "financial_actions"
+    },
+    {
+      "id": "section_completed_today",
+      "ok": true,
+      "detail": "completed_today"
+    },
+    {
+      "id": "telemetry_seller_workspace_opened",
+      "ok": true,
+      "detail": "seller_workspace_opened"
+    },
+    {
+      "id": "telemetry_seller_task_completed",
+      "ok": true,
+      "detail": "seller_task_completed"
+    },
+    {
+      "id": "telemetry_seller_resume_clicked",
+      "ok": true,
+      "detail": "seller_resume_clicked"
+    },
+    {
+      "id": "telemetry_seller_priority_changed",
+      "ok": true,
+      "detail": "seller_priority_changed"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "mobile_test",
+      "ok": true
+    },
+    {
+      "id": "sprint94_gate",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "workspaceSections": 10,
+    "backendTaskSources": 5,
+    "fakeTasks": 0,
+    "screenApiImports": 0,
+    "dtoLeaks": 0,
+    "architectureGates": "PASS",
+    "readyForSprint3": "YES"
+  }
+}

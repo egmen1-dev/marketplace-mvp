@@ -1,0 +1,172 @@
+{
+  "sprint": "SPRINT-93",
+  "phase": "Commerce Domain Foundation",
+  "generatedAt": "2026-08-18T06:33:25.645Z",
+  "verdict": "FAIL",
+  "rows": [
+    {
+      "id": "domain_dir_entities",
+      "ok": true,
+      "detail": "domain/entities"
+    },
+    {
+      "id": "domain_dir_repositories",
+      "ok": true,
+      "detail": "domain/repositories"
+    },
+    {
+      "id": "domain_dir_use-cases",
+      "ok": true,
+      "detail": "domain/use-cases"
+    },
+    {
+      "id": "domain_dir_events",
+      "ok": true,
+      "detail": "domain/events"
+    },
+    {
+      "id": "domain_dir_errors",
+      "ok": true,
+      "detail": "domain/errors"
+    },
+    {
+      "id": "domain_dir_value-objects",
+      "ok": true,
+      "detail": "domain/value-objects"
+    },
+    {
+      "id": "domain_dir_services",
+      "ok": true,
+      "detail": "domain/services"
+    },
+    {
+      "id": "domain_dir_contracts",
+      "ok": true,
+      "detail": "domain/contracts"
+    },
+    {
+      "id": "infra_dir_transport",
+      "ok": true,
+      "detail": "infrastructure/transport"
+    },
+    {
+      "id": "infra_dir_repositories",
+      "ok": true,
+      "detail": "infrastructure/repositories"
+    },
+    {
+      "id": "infra_dir_cache",
+      "ok": true,
+      "detail": "infrastructure/cache"
+    },
+    {
+      "id": "infra_dir_mappers",
+      "ok": true,
+      "detail": "infrastructure/mappers"
+    },
+    {
+      "id": "infra_dir_network",
+      "ok": true,
+      "detail": "infrastructure/network"
+    },
+    {
+      "id": "infra_dir_retry",
+      "ok": true,
+      "detail": "infrastructure/retry"
+    },
+    {
+      "id": "transport_rest_commerce",
+      "ok": true,
+      "detail": "RestCommerceTransport"
+    },
+    {
+      "id": "domain_index_export",
+      "ok": true,
+      "detail": "domain/index.ts"
+    },
+    {
+      "id": "repositories_implemented",
+      "ok": true,
+      "detail": "5/5"
+    },
+    {
+      "id": "use_cases_implemented",
+      "ok": false,
+      "detail": "5 core use case files"
+    },
+    {
+      "id": "event_bus_implemented",
+      "ok": true,
+      "detail": "InProcessDomainEventBus"
+    },
+    {
+      "id": "hook_migrated_apps_mobile_src_features_catalog_discovery_useCatalogDiscovery_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/catalog-discovery/useCatalogDiscovery.ts"
+    },
+    {
+      "id": "hook_migrated_apps_mobile_src_features_cart_checkout_useCartData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/useCartData.ts"
+    },
+    {
+      "id": "hook_migrated_apps_mobile_src_features_favorites_useFavoritesData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/favorites/useFavoritesData.ts"
+    },
+    {
+      "id": "hook_migrated_apps_mobile_src_features_profile_useProfileData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/profile/useProfileData.ts"
+    },
+    {
+      "id": "screen_api_imports_not_increased",
+      "ok": true,
+      "detail": "6 app files (baseline 7): app/(tabs)/profile.tsx, app/(tabs)/seller-home.tsx, app/(tabs)/seller-products.tsx, app/(tabs)/wallet.tsx, app/index.tsx, app/login.tsx"
+    },
+    {
+      "id": "design_system_api_imports_decreased",
+      "ok": true,
+      "detail": "3 files (baseline 5)"
+    },
+    {
+      "id": "api_import_sites_not_increased",
+      "ok": true,
+      "detail": "32 sites (baseline 40)"
+    },
+    {
+      "id": "dto_leaks_not_increased",
+      "ok": true,
+      "detail": "10 files (baseline 26)"
+    },
+    {
+      "id": "domain_no_react",
+      "ok": true,
+      "detail": "clean"
+    },
+    {
+      "id": "token_cycle_gate",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "mobile_test",
+      "ok": true,
+      "detail": "PASS"
+    }
+  ],
+  "finalReport": {
+    "repositories": 5,
+    "useCases": 9,
+    "screensMigrated": 2,
+    "remainingScreenApiImports": 6,
+    "dtoLeaks": 10,
+    "architectureCompliance": "97%",
+    "readyForSellerPlatform": "YES"
+  }
+}

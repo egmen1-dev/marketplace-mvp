@@ -1,14 +1,16 @@
 # Mobile Roadmap — Alpha Track
 
-> Stabilize → Polish → Update → Observe → Closed Alpha
+> Platform built (EPIC 77–83) → **Product built (EPIC 84)**
 
 ## Active EPIC
 
-**EPIC 82 — Closed Alpha Stabilization & Seamless Updates**
+**EPIC 84 — Marketplace Productization Platform (MPP) · Phase 0**
 
-Focus: stability, UX polish, physical Android acceptance, seamless APK updates (`0.1.0 → 0.1.1`), cohort prep (5–10 testers).
+Focus: user value, buyer/seller journeys, marketplace feel, trust, conversion, retention — **no new platforms**.
 
-**Not in scope:** Push, Camera Product Creation, Biometrics, APP-SHELL-1, new CCOS Waves.
+**Wave 0 (active):** UX Product Audit — score every screen, file P0/P1/P2.
+
+**Not in scope:** Brain, Graph, Twin, APP-SHELL-1, new infra EPICs.
 
 ## Hard product rule (post-first-APK)
 
@@ -22,26 +24,29 @@ Documented in root `AGENTS.md`.
 
 | Version | versionCode | Status | Notes |
 |---------|-------------|--------|-------|
-| 0.1.0-alpha | 1 | Published | APP-SHELL-0 foundation |
-| 0.1.1-alpha | 2 | Target (EPIC 82) | Wave 2 UX + seamless updates |
+| 0.1.0-alpha | 1 | Unsupported | Prototype |
+| 0.1.1-alpha | 2 | Unsupported | Transitional |
+| **0.1.2-alpha** | **3** | **Published — first supported** | EPIC 83 baseline |
+| 0.1.3-alpha | 4 | Planned | First seamless update E2E |
 
 ## Gate scripts
 
 ```bash
+npm run mobile:epic-83:gate          # minimum supported version
+npm run product:epic-84:wave0        # design system + Marketplace Quality audit
+npm run product:epic-84:gate         # POP release verdict + MQI
 npm run mobile:release-gate
 npm run mobile:closed-alpha:gate
-npm run mobile:closed-alpha:publish-011
-npm run mobile:epic-82:gate
 ```
 
 ## Physical acceptance
 
 - `docs/mobile/EPIC_81_PHYSICAL_ACCEPTANCE_CHECKLIST.md` — B1–R4
-- `docs/mobile/EPIC_82_CLOSED_ALPHA_STABILIZATION.md` — EPIC 82 matrix + update E2E
+- `docs/product/EPIC_84_WAVE_0_UX_AUDIT.md` — screen audit matrix (Wave 0)
 
 ## APP-SHELL-1
 
-**BLOCKED** until EPIC 82 hard gate passes (physical PASS, P0=0, seamless update PASS, cohort WATCH+).
+**BLOCKED** until EPIC 84 Wave 8 (Open Alpha readiness): physical PASS, P0=0, seamless update PASS, POP verdict GO.
 
 ## Completed EPICs
 
@@ -49,3 +54,10 @@ npm run mobile:epic-82:gate
 - EPIC 79 — Product Operations Platform (POP)
 - EPIC 80 — Closed Alpha Launch Gate
 - EPIC 81 — APP-SHELL-0.5 Mobile UX (Wave 1 + 2)
+- EPIC 82 — Closed Alpha Stabilization & Seamless Updates
+- EPIC 83 — Minimum Supported Version + Alpha Baseline (`0.1.2-alpha`)
+
+## Productization docs
+
+- `docs/product/EPIC_84_MARKETPLACE_PRODUCTIZATION.md` — mission, waves, deliverables
+- `docs/product/EPIC_84_WAVE_0_UX_AUDIT.md` — screen scoring template
