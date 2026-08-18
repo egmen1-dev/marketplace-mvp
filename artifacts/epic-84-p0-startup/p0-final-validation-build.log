@@ -1,0 +1,195 @@
+
+> marketplace-mvp@0.1.0 mobile:write-build-info
+> node scripts/write-mobile-build-info.mjs
+
+mobile-build-info: {
+  version: '0.1.5',
+  versionName: '0.1.5-alpha',
+  versionCode: 6,
+  commit: '2db4297',
+  gitSha: '2db42971e5c8fe94d95bf986a665c83bca5cacdb',
+  buildTime: '2026-08-17T13:04:19.797Z',
+  environment: 'alpha',
+  branch: 'cursor/mobile-p0-physical-crash-forensics-d03e',
+  packageName: 'ru.lot.marketplace.alpha'
+}
+- Creating native directory (./android)
+✔ Created native directory
+- Updating package.json
+✔ Updated package.json | no changes
+- Running prebuild
+» android: userInterfaceStyle: Install expo-system-ui in your project to enable this feature.
+- Running prebuild
+✔ Finished prebuild
+Starting a Gradle Daemon, 1 incompatible Daemon could not be reused, use --status for details
+> Task :gradle-plugin:settings-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:settings-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:shared:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:shared:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileJava NO-SOURCE
+> Task :gradle-plugin:shared:processResources NO-SOURCE
+> Task :gradle-plugin:shared:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:processResources NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:jar UP-TO-DATE
+> Task :gradle-plugin:shared:jar UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:compileJava NO-SOURCE
+> Task :gradle-plugin:settings-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:settings-plugin:jar UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:jar UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-module-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-module-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-module-gradle-plugin:processResources UP-TO-DATE
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:processResources UP-TO-DATE
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:compileKotlin UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-gradle-plugin:expo-max-sdk-override-plugin:jar UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:processResources UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin:jar UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:compileJava NO-SOURCE
+> Task :gradle-plugin:react-native-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:jar UP-TO-DATE
+> Task :expo-module-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-module-gradle-plugin:compileJava NO-SOURCE
+> Task :expo-module-gradle-plugin:classes UP-TO-DATE
+> Task :expo-module-gradle-plugin:jar UP-TO-DATE
+
+> Configure project :
+[32m[ExpoRootProject][0m Using the following versions:
+  - buildTools:  [32m36.0.0[0m
+  - minSdk:      [32m24[0m
+  - compileSdk:  [32m36[0m
+  - targetSdk:   [32m36[0m
+  - ndk:         [32m27.1.12297006[0m
+  - kotlin:      [32m2.1.20[0m
+  - ksp:         [32m2.1.20-2.0.1[0m
+********************************************************************************
+
+WARNING: Setting `newArchEnabled=false` in your `gradle.properties` file is not
+supported anymore since React Native 0.82.
+
+You can remove the line from your `gradle.properties` file.
+
+The application will run with the New Architecture enabled by default.
+
+********************************************************************************
+
+
+> Configure project :app
+ ℹ️  [33mApplying gradle plugin[0m '[32mexpo-max-sdk-override-plugin[0m'
+  [expo-max-sdk-override-plugin] This plugin will find all permissions declared with `android:maxSdkVersion`. If there exists a declaration with the `android:maxSdkVersion` annotation and another one without, the plugin will remove the annotation from the final merged manifest. In order to see a log with the changes run a clean build of the app.
+
+[Incubating] Problems report is available at: file:///workspace/apps/mobile/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/workspace/apps/mobile/android/build.gradle' line: 24
+
+* What went wrong:
+A problem occurred evaluating root project 'ЛОТ'.
+> Failed to apply plugin 'com.facebook.react.rootproject'.
+   > A problem occurred configuring project ':app'.
+      > SDK location not found. Define a valid SDK location with an ANDROID_HOME environment variable or by setting the sdk.dir path in your project's local properties file at '/workspace/apps/mobile/android/local.properties'.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 10s
+28 actionable tasks: 28 up-to-date
+{
+  "phase": "P0 Release Gate 0.1.5-alpha",
+  "generatedAt": "2026-08-17T13:04:32.539Z",
+  "verdict": "FAIL",
+  "publishAllowed": false,
+  "ftlStatus": "NOT RUN",
+  "apk": {
+    "path": "/workspace/artifacts/epic-84-p0-startup/lot-android-alpha-0.1.5.apk",
+    "sha256": "ea55c6fab2ad56fbff0bae489f8991b8c5488810592a3449fb543a89eecce480"
+  },
+  "rows": [
+    {
+      "id": "expo_dependency_gate",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "p0_startup_gate",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "write_build_info",
+      "ok": true,
+      "detail": "npm run mobile:write-build-info"
+    },
+    {
+      "id": "clean_prebuild",
+      "ok": true,
+      "detail": "npx expo prebuild --clean --platform android --no-install"
+    },
+    {
+      "id": "assemble_release_clean",
+      "ok": false,
+      "detail": "Command failed: ./gradlew clean assembleRelease --no-build-cache"
+    },
+    {
+      "id": "release_apk_exists",
+      "ok": false,
+      "detail": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk"
+    },
+    {
+      "id": "apk_metadata_gate",
+      "ok": false,
+      "detail": "FAIL"
+    },
+    {
+      "id": "bytecode_guard",
+      "ok": false,
+      "detail": "FAIL"
+    },
+    {
+      "id": "firebase_test_lab",
+      "ok": false,
+      "detail": "NOT RUN"
+    }
+  ],
+  "policy": {
+    "githubReleaseBlocked": true,
+    "mrpPublishBlocked": true,
+    "requiredDevice": "Pixel 5 / API 30 / en_US / portrait",
+    "requiredTest": "Robo"
+  }
+}

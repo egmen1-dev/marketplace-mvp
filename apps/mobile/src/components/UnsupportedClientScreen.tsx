@@ -2,7 +2,7 @@ import { Linking, StyleSheet, Text, View } from "react-native";
 
 import type { MobileUpdateInfo } from "../api/endpoints";
 import { postTelemetry } from "../api/endpoints";
-import { PrimaryButton } from "./ui";
+import { PrimaryButton } from "../design-system/forms/buttons";
 import { startApkDownload } from "../update/download-apk";
 import { colors, spacing, typography } from "../theme/tokens";
 

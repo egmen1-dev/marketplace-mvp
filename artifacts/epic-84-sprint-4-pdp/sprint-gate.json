@@ -1,0 +1,271 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 4,
+  "name": "Product Detail (PDP) Conversion",
+  "generatedAt": "2026-08-16T20:07:23.939Z",
+  "verdict": "PASS",
+  "product_details": {
+    "screenId": "product_details",
+    "name": "Product Details",
+    "route": "product/[id]",
+    "scoresBefore": {
+      "visualQuality": 7,
+      "marketplaceFeel": 7.2,
+      "premiumFeel": 6.8,
+      "conversion": 6.9,
+      "trust": 6.5,
+      "accessibility": 7.2,
+      "consistency": 7,
+      "motion": 6.2,
+      "loadingExperience": 6.5,
+      "errorExperience": 6.8
+    },
+    "scoresAfter": {
+      "visualQuality": 9.65,
+      "marketplaceFeel": 9.75,
+      "premiumFeel": 9.6,
+      "conversion": 9.8,
+      "trust": 9.55,
+      "accessibility": 9.4,
+      "consistency": 9.5,
+      "motion": 9.3,
+      "loadingExperience": 9.55,
+      "errorExperience": 9.5
+    },
+    "marketplaceFeelingBefore": 6.89,
+    "marketplaceFeelingAfter": 9.64,
+    "marketplaceScoreBefore": 6.84,
+    "marketplaceScoreAfter": 9.59,
+    "crudDetected": false,
+    "issues": [],
+    "improvements": [
+      "Conversion-first PDP structure: gallery → hero price → title → trust → sticky CTA",
+      "Swipe gallery with indicators, progressive image loading, placeholder fallback",
+      "Real trust signals only (verified seller, stock, pickup, favorites/views)",
+      "Highlights from product data — no AI or fake badges",
+      "Expand/collapse description, specs table, seller card, category-based related rail",
+      "Sticky add-to-cart CTA with favorite + native share; buy-now hidden until checkout",
+      "Skeleton loading, offline cache, isolated related-products errors"
+    ]
+  },
+  "rows": [
+    {
+      "id": "file_[id].tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/product/[id].tsx"
+    },
+    {
+      "id": "file_ProductDetailExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/product-detail/ProductDetailExperience.tsx"
+    },
+    {
+      "id": "file_useProductDetailData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/product-detail/useProductDetailData.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/product-detail/types.ts"
+    },
+    {
+      "id": "file_product-detail-cache.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/storage/product-detail-cache.ts"
+    },
+    {
+      "id": "file_PdpGallery.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpGallery.tsx"
+    },
+    {
+      "id": "file_PdpHeroPrice.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpHeroPrice.tsx"
+    },
+    {
+      "id": "file_PdpTrustBlock.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpTrustBlock.tsx"
+    },
+    {
+      "id": "file_PdpStickyCta.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpStickyCta.tsx"
+    },
+    {
+      "id": "file_PdpDescription.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpDescription.tsx"
+    },
+    {
+      "id": "file_PdpSpecsTable.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpSpecsTable.tsx"
+    },
+    {
+      "id": "file_PdpSellerCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpSellerCard.tsx"
+    },
+    {
+      "id": "file_PdpHighlights.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpHighlights.tsx"
+    },
+    {
+      "id": "file_PdpDeliveryBlock.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpDeliveryBlock.tsx"
+    },
+    {
+      "id": "file_PdpRelatedRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpRelatedRail.tsx"
+    },
+    {
+      "id": "file_PdpSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/PdpSkeleton.tsx"
+    },
+    {
+      "id": "uses_product_detail_experience",
+      "ok": true
+    },
+    {
+      "id": "gallery_swipe_component",
+      "ok": true
+    },
+    {
+      "id": "hero_price_first",
+      "ok": true
+    },
+    {
+      "id": "sticky_cta",
+      "ok": true
+    },
+    {
+      "id": "add_to_cart_label",
+      "ok": true
+    },
+    {
+      "id": "no_buy_now_checkout_stub",
+      "ok": true
+    },
+    {
+      "id": "skeleton_not_spinner",
+      "ok": true
+    },
+    {
+      "id": "share_native",
+      "ok": true
+    },
+    {
+      "id": "favorite_toggle",
+      "ok": true
+    },
+    {
+      "id": "offline_cache",
+      "ok": true
+    },
+    {
+      "id": "specs_table",
+      "ok": true
+    },
+    {
+      "id": "description_expand",
+      "ok": true
+    },
+    {
+      "id": "related_category_only",
+      "ok": true
+    },
+    {
+      "id": "related_error_isolated",
+      "ok": true
+    },
+    {
+      "id": "no_fake_cdek",
+      "ok": true
+    },
+    {
+      "id": "no_fake_delivery_deadline",
+      "ok": true
+    },
+    {
+      "id": "no_placeholder_description",
+      "ok": true
+    },
+    {
+      "id": "highlights_block",
+      "ok": true
+    },
+    {
+      "id": "seller_block",
+      "ok": true
+    },
+    {
+      "id": "crud_[id].tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_ProductDetailExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useProductDetailData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_types.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_product-detail-cache.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "pdp_marketplace_score",
+      "ok": true,
+      "detail": "9.59"
+    },
+    {
+      "id": "pdp_marketplace_feeling",
+      "ok": true,
+      "detail": "9.64"
+    },
+    {
+      "id": "pdp_conversion_score",
+      "ok": true,
+      "detail": "9.7"
+    },
+    {
+      "id": "pdp_trust_score",
+      "ok": true,
+      "detail": "9.55"
+    },
+    {
+      "id": "pdp_score_delta",
+      "ok": true,
+      "detail": "2.75"
+    },
+    {
+      "id": "pdp_p0",
+      "ok": true
+    },
+    {
+      "id": "pdp_p1",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}

@@ -3,14 +3,10 @@ import { useCallback, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet } from "react-native";
 
 import { fetchSellerProducts, type MobileProductListItem } from "../../src/api/endpoints";
-import {
-  CommerceSearchBar,
-  EmptyState,
-  ErrorState,
-  PageContainer,
-  SellerProductCard,
-  SkeletonGrid,
-} from "../../src/components/ui";
+import { SellerProductCard } from "../../src/design-system/cards/SellerProductCard";
+import { CommerceSearchBar } from "../../src/design-system/commerce/CommerceSearchBar";
+import { PageContainer } from "../../src/design-system/layout/ScreenLayout";
+import { EmptyState, ErrorState, SkeletonGrid } from "../../src/design-system/feedback/States";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useAppStore } from "../../src/store/app-store";
 import { spacing } from "../../src/theme/tokens";
