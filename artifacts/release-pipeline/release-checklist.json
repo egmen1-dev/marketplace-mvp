@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-08-18T13:36:40.036Z",
+  "steps": [
+    {
+      "id": "development",
+      "label": "Development complete",
+      "automated": false
+    },
+    {
+      "id": "local_build",
+      "label": "npm run build",
+      "automated": true,
+      "command": "npm run build"
+    },
+    {
+      "id": "typecheck",
+      "label": "npm run mobile:typecheck",
+      "automated": true,
+      "command": "npm run mobile:typecheck"
+    },
+    {
+      "id": "tests",
+      "label": "npm test (or EPIC gate)",
+      "automated": true,
+      "command": "npm test"
+    },
+    {
+      "id": "create_pr",
+      "label": "Create PR (draft=false)",
+      "automated": false,
+      "policy": "ManagePullRequest draft=false"
+    },
+    {
+      "id": "ready_for_review",
+      "label": "Mark PR Ready for review",
+      "automated": false,
+      "blocker": "Draft PRs block release completion"
+    },
+    {
+      "id": "merge",
+      "label": "Merge to main",
+      "automated": false
+    },
+    {
+      "id": "railway_deploy",
+      "label": "Railway deploy from main",
+      "automated": false
+    },
+    {
+      "id": "verify_version",
+      "label": "npm run release:pipeline:verify",
+      "automated": true,
+      "command": "npm run release:pipeline:verify"
+    },
+    {
+      "id": "verify_staging",
+      "label": "SHA parity + critical routes",
+      "automated": true
+    },
+    {
+      "id": "release_gate",
+      "label": "npm run product:epic-108:release-candidate-final",
+      "automated": true
+    },
+    {
+      "id": "closed_beta",
+      "label": "Closed Beta invite",
+      "automated": false
+    }
+  ],
+  "mandatoryBeforeComplete": [
+    "No mergeable Draft PR blocking release train",
+    "origin/main SHA === Railway /api/version commit",
+    "Critical routes PASS for files present on origin/main",
+    "/api/health and /api/version return 200"
+  ]
+}

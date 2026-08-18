@@ -1,0 +1,182 @@
+{
+  "epic": "EPIC-109",
+  "generatedAt": "2026-08-18T13:36:40.036Z",
+  "verdict": "BLOCKED",
+  "deploymentVerification": "PASS",
+  "healthCheck": "PASS",
+  "routeVerification": "PASS",
+  "prPolicyAudit": {
+    "generatedAt": "2026-08-18T13:36:40.036Z",
+    "creationPaths": {
+      "cursorCloudAgentManagePullRequest": {
+        "createsDraftByDefault": true,
+        "evidence": "Cloud agent ManagePullRequest create_pr uses draft=true unless draft=false passed",
+        "recommendation": "Always pass draft: false when creating PRs; see docs/RELEASE_PIPELINE.md"
+      },
+      "githubUi": {
+        "createsDraftByDefault": false,
+        "note": "Operator chooses Draft PR checkbox manually"
+      },
+      "githubCli": {
+        "createsDraftByDefault": false,
+        "flag": "--draft optional; not used in this repository scripts",
+        "evidence": "No gh pr create in repo"
+      }
+    },
+    "openDraftPrCount": 44,
+    "mergeableCleanDraftPrs": [
+      {
+        "number": 130,
+        "title": "EPIC 108 — Release candidate final verification",
+        "headRefName": "cursor/epic-108-release-candidate-final-7513"
+      },
+      {
+        "number": 129,
+        "title": "EPIC 107 — Merge readiness audit (PRs 124–128)",
+        "headRefName": "cursor/epic-107-merge-readiness-audit-7513"
+      },
+      {
+        "number": 128,
+        "title": "EPIC 106 — Staging deployment investigation (beta 404 root cause)",
+        "headRefName": "cursor/epic-106-staging-deployment-investigation-7513"
+      },
+      {
+        "number": 127,
+        "title": "EPIC 105 — Closed Beta Launch Validation",
+        "headRefName": "cursor/epic-105-closed-beta-launch-validation-d03e"
+      },
+      {
+        "number": 126,
+        "title": "EPIC 104 — Closed Beta Readiness",
+        "headRefName": "cursor/epic-104-closed-beta-readiness-d03e"
+      },
+      {
+        "number": 125,
+        "title": "EPIC 103 — Closed Beta RC Validation",
+        "headRefName": "cursor/epic-103-closed-beta-rc-validation-d03e"
+      },
+      {
+        "number": 124,
+        "title": "EPIC 102 — Closed Beta Program",
+        "headRefName": "cursor/epic-102-closed-beta-program-d03e"
+      },
+      {
+        "number": 123,
+        "title": "EPIC 89 — Inventory Management Platform (backend)",
+        "headRefName": "cursor/epic-89-inventory-management-d03e"
+      },
+      {
+        "number": 122,
+        "title": "EPIC 88 — Seller Promotion Center (backend)",
+        "headRefName": "cursor/epic-88-promotion-center-d03e"
+      },
+      {
+        "number": 108,
+        "title": "EPIC 88 — Commerce Foundation Hardening (Audit Report)",
+        "headRefName": "cursor/epic-88-commerce-foundation-d03e"
+      },
+      {
+        "number": 107,
+        "title": "P0: ErrorUtils runtime verification + global.ErrorUtils fix (0.1.5-alpha)",
+        "headRefName": "cursor/mobile-p0-physical-crash-forensics-d03e"
+      },
+      {
+        "number": 106,
+        "title": "EPIC 86: Seller Experience Platform — Architecture & Design Language",
+        "headRefName": "cursor/epic-86-seller-experience-d03e"
+      },
+      {
+        "number": 105,
+        "title": "EPIC 85: Product Polish & Release Candidate Audit",
+        "headRefName": "cursor/epic-85-product-polish-d03e"
+      },
+      {
+        "number": 104,
+        "title": "EPIC 84 Sprint 8: Profile & Personal Experience",
+        "headRefName": "cursor/epic-84-sprint-8-profile-d03e"
+      },
+      {
+        "number": 103,
+        "title": "EPIC 84 Sprint 7: Favorites & Personalization Experience",
+        "headRefName": "cursor/epic-84-sprint-7-favorites-d03e"
+      },
+      {
+        "number": 102,
+        "title": "P0: Startup crash guard — fatal error boundary + BOOT trail",
+        "headRefName": "cursor/mobile-p0-startup-crash-d03e"
+      },
+      {
+        "number": 101,
+        "title": "EPIC-84 Sprint 6: Orders & Post-Purchase Experience",
+        "headRefName": "cursor/epic-84-sprint-6-orders-d03e"
+      },
+      {
+        "number": 100,
+        "title": "EPIC-84 Sprint 5: Cart & Checkout Commerce Experience",
+        "headRefName": "cursor/epic-84-sprint-5-cart-checkout-d03e"
+      },
+      {
+        "number": 99,
+        "title": "release(mobile): Closed Alpha 0.1.3-alpha — EPIC-84 diagnostics + buyer funnel",
+        "headRefName": "cursor/release-013-alpha-d03e"
+      },
+      {
+        "number": 98,
+        "title": "fix(mobile): P0 verify installed build metadata",
+        "headRefName": "cursor/mobile-verify-build-p0-d03e"
+      },
+      {
+        "number": 97,
+        "title": "docs(product): EPIC 84 Marketplace Productization — Phase 0 framework",
+        "headRefName": "cursor/epic-84-marketplace-productization-d03e"
+      },
+      {
+        "number": 96,
+        "title": "release(mobile): EPIC-83 Closed Alpha 0.1.2 — first supported release metadata",
+        "headRefName": "cursor/epic-83-release-012-d03e"
+      },
+      {
+        "number": 67,
+        "title": "Stripe staging setup: webhook audit, health check, setup docs",
+        "headRefName": "cursor/stripe-staging-setup-001-d03e"
+      },
+      {
+        "number": 19,
+        "title": "docs(audit): MVP-AUDIT-001 staging reality audit report",
+        "headRefName": "cursor/mvp-audit-001-d03e"
+      },
+      {
+        "number": 15,
+        "title": "docs(devops): DEVOPS-001.3 Railway deployment trigger verification report",
+        "headRefName": "cursor/devops-001-3-d03e"
+      },
+      {
+        "number": 12,
+        "title": "DEVOPS-001.1: Document successful Railway verification cycle",
+        "headRefName": "cursor/devops-001-1-d03e"
+      },
+      {
+        "number": 10,
+        "title": "HOTFIX-UX-005.1: Railway analytics acceptance script",
+        "headRefName": "cursor/hotfix-ux-005-1-d03e"
+      }
+    ],
+    "limitation": "Cursor cannot change global ManagePullRequest default; agents must set draft=false per AGENTS.md"
+  },
+  "acceptanceCriteria": {
+    "noProductionReadyDraftPr": false,
+    "deploymentVerifiedAgainstGitSha": true,
+    "criticalRoutesAutomated": true,
+    "railwayVerificationExists": true,
+    "releaseDocumentationUpdated": true,
+    "futureReleasesCannotSkipVerification": true
+  },
+  "blockers": [
+    {
+      "id": "draft_pr",
+      "severity": "P0",
+      "detail": "27 mergeable Draft PR(s) on main: #130, #129, #128, #127, #126, #125, #124, #123, #122, #108, #107, #106, #105, #104, #103, #102, #101, #100, #99, #98, #97, #96, #67, #19, #15, #12, #10"
+    }
+  ],
+  "releaseStatusPath": "artifacts/release-pipeline/release-status.json"
+}

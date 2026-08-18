@@ -1,0 +1,1472 @@
+{
+  "generatedAt": "2026-08-18T13:35:40.488Z",
+  "auditedPaths": [
+    {
+      "path": "Cursor Cloud Agent → ManagePullRequest (create_pr)",
+      "createsDraft": true,
+      "configurable": "Per-invocation draft=false; no repo-level override",
+      "evidence": "All open agent PRs isDraft=true; cloud agent default draft=true"
+    },
+    {
+      "path": "GitHub UI",
+      "createsDraft": false,
+      "configurable": "Operator selects Draft PR checkbox",
+      "evidence": "Merged PRs #95 #93 #90 isDraft=false"
+    },
+    {
+      "path": "GitHub CLI (gh pr create)",
+      "createsDraft": false,
+      "configurable": "--draft flag optional",
+      "evidence": "No gh pr create usage in repository"
+    }
+  ],
+  "openPrSummary": {
+    "total": 98,
+    "draft": 90,
+    "ready": 8
+  },
+  "openDraftPrs": [
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T13:18:54Z",
+      "headRefName": "cursor/epic-108-release-candidate-final-7513",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 130,
+      "title": "EPIC 108 — Release candidate final verification"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T13:13:37Z",
+      "headRefName": "cursor/epic-107-merge-readiness-audit-7513",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 129,
+      "title": "EPIC 107 — Merge readiness audit (PRs 124–128)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T13:04:14Z",
+      "headRefName": "cursor/epic-106-staging-deployment-investigation-7513",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 128,
+      "title": "EPIC 106 — Staging deployment investigation (beta 404 root cause)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T12:28:58Z",
+      "headRefName": "cursor/epic-105-closed-beta-launch-validation-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 127,
+      "title": "EPIC 105 — Closed Beta Launch Validation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T11:30:45Z",
+      "headRefName": "cursor/epic-104-closed-beta-readiness-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 126,
+      "title": "EPIC 104 — Closed Beta Readiness"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T11:14:24Z",
+      "headRefName": "cursor/epic-103-closed-beta-rc-validation-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 125,
+      "title": "EPIC 103 — Closed Beta RC Validation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T10:49:12Z",
+      "headRefName": "cursor/epic-102-closed-beta-program-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 124,
+      "title": "EPIC 102 — Closed Beta Program"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T08:59:02Z",
+      "headRefName": "cursor/epic-89-inventory-management-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 123,
+      "title": "EPIC 89 — Inventory Management Platform (backend)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T08:50:20Z",
+      "headRefName": "cursor/epic-88-promotion-center-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 122,
+      "title": "EPIC 88 — Seller Promotion Center (backend)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T08:32:28Z",
+      "headRefName": "cursor/epic-86-sprint-7-seller-intelligence-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 121,
+      "title": "EPIC 86 Sprint 7 — Seller Intelligence Center"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T08:15:57Z",
+      "headRefName": "cursor/epic-86-sprint-6-seller-product-editor-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 120,
+      "title": "EPIC 86 Sprint 6 — Seller Product Editor"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T07:54:24Z",
+      "headRefName": "cursor/epic-86-sprint-5-seller-orders-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 119,
+      "title": "EPIC 86 Sprint 5 — Seller Order Operations"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T07:37:55Z",
+      "headRefName": "cursor/epic-86-sprint-4-seller-products-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 118,
+      "title": "EPIC 86 Sprint 4: Seller Product Operations"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T07:17:40Z",
+      "headRefName": "cursor/epic-86-sprint-3-seller-action-center-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 117,
+      "title": "EPIC 86 Sprint 3: Seller Action Center"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T07:08:33Z",
+      "headRefName": "cursor/epic-86-sprint-2-seller-workspace-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 116,
+      "title": "EPIC 86 Sprint 2 — Seller Workspace Operating System"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T07:02:11Z",
+      "headRefName": "cursor/epic-86-sprint-1-seller-home-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 115,
+      "title": "EPIC 86 Sprint 1 — Seller Home Operating Center"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T06:50:17Z",
+      "headRefName": "cursor/sprint-94-domain-completion-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 114,
+      "title": "Sprint 94: Domain Completion & Seller Foundation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T06:34:18Z",
+      "headRefName": "cursor/sprint-93-domain-foundation-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 113,
+      "title": "Sprint 93: Commerce Domain Foundation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T06:26:46Z",
+      "headRefName": "cursor/epic-92-commerce-architecture-contracts-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 112,
+      "title": "EPIC 92: Commerce Architecture Contracts"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T06:22:11Z",
+      "headRefName": "cursor/epic-91-commerce-domain-platform-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 111,
+      "title": "EPIC 91: Commerce Domain Platform Architecture"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T06:06:38Z",
+      "headRefName": "cursor/sprint-90-unified-design-system-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 110,
+      "title": "Sprint 90: Unified Design System Migration"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-18T05:52:46Z",
+      "headRefName": "cursor/sprint-89-product-correctness-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 109,
+      "title": "Sprint 89 — Product Correctness (deep links + seller sales + CI gates)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-17T18:54:11Z",
+      "headRefName": "cursor/epic-88-commerce-foundation-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 108,
+      "title": "EPIC 88 — Commerce Foundation Hardening (Audit Report)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-17T07:46:55Z",
+      "headRefName": "cursor/mobile-p0-physical-crash-forensics-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 107,
+      "title": "P0: ErrorUtils runtime verification + global.ErrorUtils fix (0.1.5-alpha)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-17T06:53:33Z",
+      "headRefName": "cursor/epic-86-seller-experience-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 106,
+      "title": "EPIC 86: Seller Experience Platform — Architecture & Design Language"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-17T06:32:31Z",
+      "headRefName": "cursor/epic-85-product-polish-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 105,
+      "title": "EPIC 85: Product Polish & Release Candidate Audit"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-17T06:22:32Z",
+      "headRefName": "cursor/epic-84-sprint-8-profile-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 104,
+      "title": "EPIC 84 Sprint 8: Profile & Personal Experience"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-17T06:13:50Z",
+      "headRefName": "cursor/epic-84-sprint-7-favorites-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 103,
+      "title": "EPIC 84 Sprint 7: Favorites & Personalization Experience"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T20:51:23Z",
+      "headRefName": "cursor/mobile-p0-startup-crash-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 102,
+      "title": "P0: Startup crash guard — fatal error boundary + BOOT trail"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T20:40:33Z",
+      "headRefName": "cursor/epic-84-sprint-6-orders-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 101,
+      "title": "EPIC-84 Sprint 6: Orders & Post-Purchase Experience"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T20:34:38Z",
+      "headRefName": "cursor/epic-84-sprint-5-cart-checkout-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 100,
+      "title": "EPIC-84 Sprint 5: Cart & Checkout Commerce Experience"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T20:24:04Z",
+      "headRefName": "cursor/release-013-alpha-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 99,
+      "title": "release(mobile): Closed Alpha 0.1.3-alpha — EPIC-84 diagnostics + buyer funnel"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T20:12:56Z",
+      "headRefName": "cursor/mobile-verify-build-p0-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 98,
+      "title": "fix(mobile): P0 verify installed build metadata"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T19:20:33Z",
+      "headRefName": "cursor/epic-84-marketplace-productization-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 97,
+      "title": "docs(product): EPIC 84 Marketplace Productization — Phase 0 framework"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-16T19:06:14Z",
+      "headRefName": "cursor/epic-83-release-012-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 96,
+      "title": "release(mobile): EPIC-83 Closed Alpha 0.1.2 — first supported release metadata"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/app-shell-0-lot-native-d03e",
+      "createdAt": "2026-08-16T15:32:14Z",
+      "headRefName": "cursor/app-shell-0-physical-acceptance-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 85,
+      "title": "docs(mobile): APP-SHELL-0 physical device acceptance gate (NOT RUN)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-77-rc-freeze-d03e",
+      "createdAt": "2026-08-16T13:51:04Z",
+      "headRefName": "cursor/epic-77-pre-wave-6-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 82,
+      "title": "feat(ccos): EPIC-77 PRE-WAVE-6 — Architecture Clean & Evolution Readiness Gate"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-77-wave-4-knowledge-graph-d03e",
+      "createdAt": "2026-08-16T13:35:33Z",
+      "headRefName": "cursor/epic-77-rc-freeze-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 81,
+      "title": "feat(ccos): EPIC 77 RC-1 Release Candidate Freeze"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-77-wave-5-digital-twin-d03e",
+      "createdAt": "2026-08-16T13:02:29Z",
+      "headRefName": "cursor/epic-77-wave-4-knowledge-graph-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 80,
+      "title": "feat(ccos): EPIC 77 Wave 4 Cognitive Knowledge Graph + Staging Acceptance"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-77-wave-3-product-genome-d03e",
+      "createdAt": "2026-08-16T12:49:26Z",
+      "headRefName": "cursor/epic-77-wave-5-digital-twin-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 79,
+      "title": "EPIC 77 Wave 5 — Cognitive Digital Twin & Decision Simulation Platform"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-77-wave-2-knowledge-experiment-d03e",
+      "createdAt": "2026-08-16T12:39:03Z",
+      "headRefName": "cursor/epic-77-wave-3-product-genome-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 78,
+      "title": "EPIC 77 Wave 3 — Product Understanding & Product Genome Platform"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-77-wave-1-marketplace-brain-context-d03e",
+      "createdAt": "2026-08-16T12:26:00Z",
+      "headRefName": "cursor/epic-77-wave-2-knowledge-experiment-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 77,
+      "title": "EPIC-77 Wave 2 — CCOS Knowledge & Experiment Platform"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-15T13:25:48Z",
+      "headRefName": "cursor/marketplace-financial-e2e-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 68,
+      "title": "fix(finance): atomic wallet checkout + financial acceptance E2E"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-15T12:26:28Z",
+      "headRefName": "cursor/stripe-staging-setup-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 67,
+      "title": "Stripe staging setup: webhook audit, health check, setup docs"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-15T12:24:32Z",
+      "headRefName": "cursor/marketplace-financial-e2e-002-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 66,
+      "title": "Financial E2E: staging fixture seed + partial UI acceptance"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-trust-conversion-001-d03e",
+      "createdAt": "2026-08-14T10:22:05Z",
+      "headRefName": "cursor/marketplace-deploy-visibility-audit-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 59,
+      "title": "feat(ops): deploy visibility audit and system flags dashboard (MARKETPLACE-DEPLOY-VISIBILITY-AUDIT-001)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-new-seller-trust-001-d03e",
+      "createdAt": "2026-08-14T10:17:41Z",
+      "headRefName": "cursor/marketplace-trust-conversion-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 58,
+      "title": "feat(trust): trust-to-conversion analytics layer (MARKETPLACE-TRUST-CONVERSION-001)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-trust-experience-001-d03e",
+      "createdAt": "2026-08-14T08:40:10Z",
+      "headRefName": "cursor/marketplace-new-seller-trust-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 57,
+      "title": "feat(trust): transparent new seller trust system (MARKETPLACE-NEW-SELLER-TRUST-001)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-trust-score-model-001-d03e",
+      "createdAt": "2026-08-14T08:32:18Z",
+      "headRefName": "cursor/marketplace-trust-experience-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 56,
+      "title": "feat(trust-experience): full seller and buyer trust score UX"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-design-spec-001-d03e",
+      "createdAt": "2026-08-14T08:21:24Z",
+      "headRefName": "cursor/marketplace-trust-score-model-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 55,
+      "title": "feat(trust-score): transparent seller and product trust score model"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-conversion-audit-001-d03e",
+      "createdAt": "2026-08-14T08:12:10Z",
+      "headRefName": "cursor/marketplace-design-spec-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 54,
+      "title": "Design spec alignment — 8-point marketplace UX checklist"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-ux-completion-001-d03e",
+      "createdAt": "2026-08-14T05:12:25Z",
+      "headRefName": "cursor/marketplace-conversion-audit-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 53,
+      "title": "MARKETPLACE-CONVERSION-AUDIT-001 — Conversion Intelligence Layer"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-social-growth-001-d03e",
+      "createdAt": "2026-08-14T05:07:32Z",
+      "headRefName": "cursor/marketplace-ux-completion-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 52,
+      "title": "MARKETPLACE-UX-COMPLETION-001 — User Experience Completion Layer"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-discovery-001-d03e",
+      "createdAt": "2026-08-14T05:02:05Z",
+      "headRefName": "cursor/marketplace-social-growth-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 51,
+      "title": "MARKETPLACE-SOCIAL-GROWTH-001 — Viral Commerce Engine"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-launch-readiness-001-d03e",
+      "createdAt": "2026-08-13T20:09:58Z",
+      "headRefName": "cursor/marketplace-discovery-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 50,
+      "title": "MARKETPLACE-DISCOVERY-001 — Consumer Discovery Experience"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-delivery-001-d03e",
+      "createdAt": "2026-08-13T19:54:26Z",
+      "headRefName": "cursor/marketplace-launch-readiness-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 49,
+      "title": "MARKETPLACE-LAUNCH-READINESS-001 — Production Readiness & Launch Audit"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-trust-loop-001-d03e",
+      "createdAt": "2026-08-13T19:46:44Z",
+      "headRefName": "cursor/marketplace-delivery-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 48,
+      "title": "MARKETPLACE-DELIVERY-001 — Real Delivery & Order Fulfillment Layer"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-foundation-audit-001-d03e",
+      "createdAt": "2026-08-13T19:33:38Z",
+      "headRefName": "cursor/marketplace-trust-loop-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 47,
+      "title": "MARKETPLACE-TRUST-LOOP-001 — Reviews + Reputation + Moderation Foundation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-business-intelligence-001-d03e",
+      "createdAt": "2026-08-13T19:04:18Z",
+      "headRefName": "cursor/marketplace-foundation-audit-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 46,
+      "title": "MARKETPLACE-FOUNDATION-AUDIT-001 — Marketplace Core Readiness Audit"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-operations-workspace-001-d03e",
+      "createdAt": "2026-08-13T17:35:15Z",
+      "headRefName": "cursor/seller-business-intelligence-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 45,
+      "title": "SELLER-BUSINESS-INTELLIGENCE-001 — AI Business Assistant for Sellers"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-operating-desk-001-d03e",
+      "createdAt": "2026-08-13T17:09:55Z",
+      "headRefName": "cursor/seller-operations-workspace-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 44,
+      "title": "SELLER-OPERATIONS-WORKSPACE-001 — Seller Daily Operations"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-journey-ux-002-d03e",
+      "createdAt": "2026-08-13T17:02:26Z",
+      "headRefName": "cursor/seller-operating-desk-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 43,
+      "title": "SELLER-OPERATING-DESK-001 — Seller Business Workspace («Мой бизнес»)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-first-entry-001-d03e",
+      "createdAt": "2026-08-13T16:55:33Z",
+      "headRefName": "cursor/seller-journey-ux-002-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 42,
+      "title": "SELLER-JOURNEY-UX-002 — Seller Experience Completion (Unified Journey UX)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-lifecycle-001-d03e",
+      "createdAt": "2026-08-13T16:43:22Z",
+      "headRefName": "cursor/seller-first-entry-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 41,
+      "title": "SELLER-FIRST-ENTRY-001 — First Seller Experience («Старт продавца»)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-payout-001-d03e",
+      "createdAt": "2026-08-13T16:37:53Z",
+      "headRefName": "cursor/seller-lifecycle-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 40,
+      "title": "SELLER-LIFECYCLE-001: Seller Journey Integration"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-finance-001-d03e",
+      "createdAt": "2026-08-13T16:17:21Z",
+      "headRefName": "cursor/seller-payout-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 39,
+      "title": "SELLER-PAYOUT-001: Seller Withdrawal & Manual Payout System"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-command-center-001-d03e",
+      "createdAt": "2026-08-13T15:55:30Z",
+      "headRefName": "cursor/seller-promotion-center-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 38,
+      "title": "SELLER-PROMOTION-CENTER-001: Intelligent Seller Advertising Dashboard"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-learning-001-d03e",
+      "createdAt": "2026-08-13T15:49:53Z",
+      "headRefName": "cursor/marketplace-command-center-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 37,
+      "title": "MARKETPLACE-CONTROL-CENTER-001 — Unified Marketplace AI OS Command Center"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/trust-safety-001-d03e",
+      "createdAt": "2026-08-13T15:43:13Z",
+      "headRefName": "cursor/marketplace-learning-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 36,
+      "title": "MARKETPLACE-LEARNING-LOOP-001 — Marketplace Self Learning System"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ai-experience-001-d03e",
+      "createdAt": "2026-08-13T15:35:29Z",
+      "headRefName": "cursor/trust-safety-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 35,
+      "title": "TRUST-SAFETY-001 — Marketplace Trust & Safety Layer"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ux-education-001-d03e",
+      "createdAt": "2026-08-13T15:23:10Z",
+      "headRefName": "cursor/ai-experience-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 34,
+      "title": "MARKETPLACE-AI-EXPERIENCE-001 — Unified AI Experience Layer"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-communication-001-d03e",
+      "createdAt": "2026-08-13T14:55:30Z",
+      "headRefName": "cursor/ux-education-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 33,
+      "title": "UX-EDUCATION-001 — Marketplace Guidance & Education Layer"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-execution-001-d03e",
+      "createdAt": "2026-08-13T14:46:40Z",
+      "headRefName": "cursor/marketplace-communication-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 32,
+      "title": "MARKETPLACE-COMMUNICATION-001 — Growth Communication Engine"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-operator-001-d03e",
+      "createdAt": "2026-08-13T14:36:28Z",
+      "headRefName": "cursor/marketplace-execution-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 31,
+      "title": "MARKETPLACE-EXECUTION-001: AI Growth Execution Engine (human-in-the-loop)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/marketplace-intelligence-001-d03e",
+      "createdAt": "2026-08-13T14:25:23Z",
+      "headRefName": "cursor/marketplace-operator-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 30,
+      "title": "MARKETPLACE-OPERATOR-001: AI Marketplace Operator (strategic action plans)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/buyer-intelligence-001-d03e",
+      "createdAt": "2026-08-13T14:20:57Z",
+      "headRefName": "cursor/marketplace-intelligence-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 29,
+      "title": "MARKETPLACE-INTELLIGENCE-001: AI Marketplace Brain (central advisory layer)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/seller-growth-001-d03e",
+      "createdAt": "2026-08-13T14:15:58Z",
+      "headRefName": "cursor/buyer-intelligence-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 28,
+      "title": "BUYER-INTELLIGENCE-001: AI Buyer Intelligence Engine (advisory layer)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ads-marketplace-005-d03e",
+      "createdAt": "2026-08-13T14:06:21Z",
+      "headRefName": "cursor/seller-growth-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 27,
+      "title": "SELLER-GROWTH-001 — AI Seller Growth Engine"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ads-marketplace-004-d03e",
+      "createdAt": "2026-08-13T13:53:57Z",
+      "headRefName": "cursor/ads-marketplace-005-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 26,
+      "title": "ADS-MARKETPLACE-005 — AI Promotion Intelligence"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ads-marketplace-003-d03e",
+      "createdAt": "2026-08-13T13:48:40Z",
+      "headRefName": "cursor/ads-marketplace-004-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 25,
+      "title": "ADS-MARKETPLACE-004 — Promotion Billing Foundation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ads-marketplace-002-d03e",
+      "createdAt": "2026-08-13T13:38:16Z",
+      "headRefName": "cursor/ads-marketplace-003-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 24,
+      "title": "feat(promotion): ADS-MARKETPLACE-003 Promotion Analytics & ROI Engine"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/epic-finance-001-d03e",
+      "createdAt": "2026-08-13T13:32:58Z",
+      "headRefName": "cursor/epic-trust-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 23,
+      "title": "feat(trust): EPIC-TRUST-001 Buyer Protection & Dispute Foundation"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/ads-marketplace-001-d03e",
+      "createdAt": "2026-08-13T13:22:05Z",
+      "headRefName": "cursor/ads-marketplace-002-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 22,
+      "title": "feat(promotion): ADS-MARKETPLACE-002 Promotion Distribution Engine"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-13T13:02:45Z",
+      "headRefName": "cursor/ads-marketplace-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 20,
+      "title": "feat(promotion): ADS-MARKETPLACE-001 marketplace promotion MVP"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-13T12:36:16Z",
+      "headRefName": "cursor/mvp-audit-001-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 19,
+      "title": "docs(audit): MVP-AUDIT-001 staging reality audit report"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-13T07:22:31Z",
+      "headRefName": "cursor/devops-001-3-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 15,
+      "title": "docs(devops): DEVOPS-001.3 Railway deployment trigger verification report"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-12T20:18:36Z",
+      "headRefName": "cursor/devops-001-1-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 12,
+      "title": "DEVOPS-001.1: Document successful Railway verification cycle"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-12T19:50:43Z",
+      "headRefName": "cursor/hotfix-ux-005-1-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 10,
+      "title": "HOTFIX-UX-005.1: Railway analytics acceptance script"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "main",
+      "createdAt": "2026-08-12T17:42:31Z",
+      "headRefName": "cursor/hotfix-admin-chat-d03e",
+      "isDraft": true,
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 9,
+      "title": "fix(admin): resolve /admin/messages HTTP 500 (HOTFIX-UX-001.2)"
+    },
+    {
+      "author": {
+        "id": "U_kgDOEPc3bg",
+        "is_bot": false,
+        "login": "egmen1-dev",
+        "name": ""
+      },
+      "baseRefName": "cursor/agent-020-search-intelligence-87f6",
+      "createdAt": "2026-08-12T16:00:22Z",
+      "headRefName": "cursor/hotfix-ux-001-87f6",
+      "isDraft": true,
+      "mergeStateStatus": "CLEAN",
+      "mergeable": "MERGEABLE",
+      "number": 8,
+      "title": "HOTFIX-UX-001 — Marketplace usability fixes (stock, badges, color, admin chat, mobile)"
+    }
+  ],
+  "recommendation": "Cloud agents must call ManagePullRequest with draft: false. Operators mark Ready for review before merge.",
+  "documentation": true
+}
