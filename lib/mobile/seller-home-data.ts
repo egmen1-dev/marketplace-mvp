@@ -26,7 +26,15 @@ export async function buildMobileSellerHomeForUser(userId: string, sellerProfile
         items: { some: { product: { sellerId: sellerProfileId } } },
       },
     }),
-    Promise.resolve(0),
+    Promise.resolve(0).then(async () => {
+      try {
+        return await prisma.promotionCampaign.count({
+          where: { sellerId: sellerProfileId, status: "STARTED" },
+        });
+      } catch {
+        return 0;
+      }
+    }),
     isLotWalletEnabled()
       ? getWalletOverview({ userId, sellerProfileId }).catch(() => null)
       : Promise.resolve(null),

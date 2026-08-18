@@ -51,7 +51,7 @@ export async function getPromotionCenterDashboard(
 
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const [products, ledgerSpend, orderAgg] = await Promise.all([
+  const [products, ledgerSpend, orderAgg, activeCampaigns] = await Promise.all([
     prisma.product.findMany({
       where: { sellerId: sellerProfileId, status: ProductStatus.ACTIVE },
       orderBy: { updatedAt: "desc" },
@@ -83,6 +83,9 @@ export async function getPromotionCenterDashboard(
       _count: { _all: true },
       _sum: { total: true },
     }),
+    prisma.promotionCampaign.count({
+      where: { sellerId: sellerProfileId, status: "STARTED" },
+    }),
   ]);
 
   const productRows: PromotionProductRow[] = products.map((p) => {
@@ -113,7 +116,7 @@ export async function getPromotionCenterDashboard(
 
   return {
     enabled: true,
-    activeCampaigns: 0,
+    activeCampaigns,
     spent30d: Number(ledgerSpend._sum.amount ?? 0),
     orders30d: orderAgg._count._all,
     revenue30d: Number(orderAgg._sum.total ?? 0),
