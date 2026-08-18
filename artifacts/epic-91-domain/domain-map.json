@@ -1,0 +1,236 @@
+{
+  "epic": "EPIC-91",
+  "title": "Commerce Domain Platform — Domain Inventory",
+  "baseline": "Closed Alpha 0.1.5-alpha · Sprint 90 COMPLETE",
+  "generatedAt": "2026-08-18T06:20:00.000Z",
+  "summary": {
+    "domainCount": 22,
+    "matureDomains": 6,
+    "partialDomains": 10,
+    "missingDomains": 6,
+    "apiMonolithLines": 362,
+    "directApiImportSites": 40
+  },
+  "domains": [
+    {
+      "id": "authentication",
+      "name": "Authentication",
+      "purpose": "Session lifecycle: login, logout, token refresh, role resolution.",
+      "currentImplementation": ["apps/mobile/src/api/client.ts", "apps/mobile/src/storage/secure-session.ts", "apps/mobile/src/boot/session-restore.ts", "apps/mobile/app/login.tsx"],
+      "problems": ["No AuthRepository or LoginUseCase", "Login screen calls API directly", "Session meta scattered across SecureStore + memory token cache"],
+      "dependencies": ["configuration", "telemetry", "startup"],
+      "consumers": ["app/index.tsx", "app/login.tsx", "app/(tabs)/profile.tsx", "deep-links/use-deep-link-handler.ts"],
+      "ownership": "platform"
+    },
+    {
+      "id": "buyer",
+      "name": "Buyer",
+      "purpose": "Buyer-mode home feed, category rails, personalized sections.",
+      "currentImplementation": ["apps/mobile/src/features/buyer-home/", "fetchBuyerHome in endpoints.ts"],
+      "problems": ["Mutations (addToCart, toggleFavorite) leak into BuyerHomeExperience", "Section loading duplicated with catalog", "No BuyerRepository"],
+      "dependencies": ["catalog", "product", "favorites", "cart", "search", "offline"],
+      "consumers": ["app/(tabs)/index.tsx", "hooks/useTabBadges.ts"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "seller",
+      "name": "Seller",
+      "purpose": "Seller workspace: home KPIs, product inventory, sales orders, public profile.",
+      "currentImplementation": ["app/(tabs)/seller-home.tsx", "app/(tabs)/seller-products.tsx", "features/seller-sales/", "features/seller-catalog/", "fetchSellerHome/Products/Orders/PublicProfile"],
+      "problems": ["3 of 4 seller surfaces are fat screens with direct API", "Seller orders fetched in wallet AND seller-sales", "In-memory offline cache only (not persisted)"],
+      "dependencies": ["orders", "catalog", "product", "wallet", "offline", "telemetry"],
+      "consumers": ["seller-home", "seller-products", "seller-sales", "seller/[id]", "wallet (seller mode)"],
+      "ownership": "seller"
+    },
+    {
+      "id": "catalog",
+      "name": "Catalog",
+      "purpose": "Product discovery grid, filters, pagination, category browsing.",
+      "currentImplementation": ["features/catalog-discovery/", "fetchCatalog", "fetchCategories"],
+      "problems": ["fetchCatalog called from 6 independent sites", "CatalogParams DTO leaks to UI", "No shared catalog cache"],
+      "dependencies": ["search", "product", "favorites", "offline"],
+      "consumers": ["catalog tab", "buyer-home sections", "seller/[id] catalog overlay"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "search",
+      "name": "Search",
+      "purpose": "Query input, suggestions, search history, popular queries.",
+      "currentImplementation": ["features/catalog-discovery/useCatalogDiscovery.ts", "design-system/commerce/CommerceSearchBar.tsx", "storage/search-history.ts", "fetchProductSuggest"],
+      "problems": ["Search history is storage-only with no domain API", "Suggest endpoint coupled to catalog hook", "No SearchRepository"],
+      "dependencies": ["catalog", "caching"],
+      "consumers": ["buyer-home", "catalog-discovery", "seller-products search filter"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "product",
+      "name": "Product",
+      "purpose": "Product detail page, related products, recent views, share.",
+      "currentImplementation": ["features/product-detail/", "storage/product-detail-cache.ts", "storage/recent-views.ts", "fetchProduct"],
+      "problems": ["parseProductDetail ad-hoc mapper in feature types", "Related rail calls toggleFavorite directly", "Share logic in Experience not use case"],
+      "dependencies": ["catalog", "favorites", "cart", "caching", "offline"],
+      "consumers": ["product/[id]", "buyer-home rails", "favorites", "recommendation rails"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "favorites",
+      "name": "Favorites",
+      "purpose": "Saved products list and favorite toggle mutations.",
+      "currentImplementation": ["app/(tabs)/favorites.tsx", "toggleFavorite/fetchFavorites in endpoints.ts"],
+      "problems": ["No feature module — screen owns all state", "toggleFavorite called from 8 sites", "Badge count duplicated with useTabBadges and useCartData"],
+      "dependencies": ["product", "catalog"],
+      "consumers": ["favorites tab", "PDP", "catalog, home rails", "recommendation rails", "useTabBadges"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "cart",
+      "name": "Cart",
+      "purpose": "Cart lines, quantity changes, subtotal, recommendations.",
+      "currentImplementation": ["features/cart-checkout/useCartData.ts", "features/cart-checkout/CartExperience.tsx", "fetchCart/addToCart/remove/update"],
+      "problems": ["CartRecommendationsRail mutates cart in design-system", "Badge writer race between useCartData and useTabBadges", "No CartRepository abstraction"],
+      "dependencies": ["product", "checkout", "telemetry"],
+      "consumers": ["cart.tsx", "PDP sticky CTA", "home/catalog rails", "useTabBadges"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "checkout",
+      "name": "Checkout",
+      "purpose": "Delivery quote, pickup points, contact/recipient forms, payment selection.",
+      "currentImplementation": ["features/cart-checkout/useCheckoutData.ts", "fetchDeliveryQuote", "fetchDeliveryPoints", "fetchWallet"],
+      "problems": ["Alpha redirects payment to web — domain incomplete", "Form validation in hook not reusable use case", "Blocked offline with no queue policy"],
+      "dependencies": ["cart", "orders", "wallet", "offline"],
+      "consumers": ["checkout.tsx"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "orders",
+      "name": "Orders",
+      "purpose": "Buyer order list, order detail, timeline, share order deep link.",
+      "currentImplementation": ["features/orders/", "storage/order-cache.ts", "fetchOrders/fetchOrderDetail"],
+      "problems": ["Order enrichment parsing in feature types", "Seller orders reuse buyer order DTO shape loosely", "Share order in Experience not use case"],
+      "dependencies": ["product", "caching", "offline", "deep-links"],
+      "consumers": ["orders tab", "order/[id]", "wallet recent orders", "seller-sales"],
+      "ownership": "buyer"
+    },
+    {
+      "id": "wallet",
+      "name": "Wallet",
+      "purpose": "Buyer spendable balance; seller withdrawable/pending balances.",
+      "currentImplementation": ["app/(tabs)/wallet.tsx", "fetchWallet", "fetchSellerOrders in seller mode"],
+      "problems": ["No feature module", "Mixes buyer wallet + seller sales preview", "No WalletRepository"],
+      "dependencies": ["orders", "seller"],
+      "consumers": ["wallet tab", "checkout payment section"],
+      "ownership": "shared"
+    },
+    {
+      "id": "notifications",
+      "name": "Notifications",
+      "purpose": "Push/in-app notification preferences and inbox (future).",
+      "currentImplementation": [],
+      "problems": ["Not implemented", "Profile screen has placeholder only", "No notification domain contract"],
+      "dependencies": ["profile", "telemetry"],
+      "consumers": [],
+      "ownership": "platform"
+    },
+    {
+      "id": "profile",
+      "name": "Profile",
+      "purpose": "Account settings, mode switch, feedback, update info, logout.",
+      "currentImplementation": ["app/(tabs)/profile.tsx"],
+      "problems": ["Fat screen — 5 API calls inline", "submitProductFeedback not isolated", "Mode switch logic in screen + store"],
+      "dependencies": ["authentication", "configuration", "telemetry", "startup"],
+      "consumers": ["profile tab"],
+      "ownership": "shared"
+    },
+    {
+      "id": "telemetry",
+      "name": "Telemetry",
+      "purpose": "Session events, boot telemetry, commerce funnel signals.",
+      "currentImplementation": ["postTelemetry in endpoints.ts", "boot/startup-telemetry.ts", "telemetry/session.ts", "telemetry/error-report.ts"],
+      "problems": ["17 direct postTelemetry call sites", "No event catalog or domain-scoped analytics", "Fire-and-forget with no offline queue"],
+      "dependencies": ["startup", "configuration"],
+      "consumers": ["All commerce flows", "boot pipeline", "profile feedback"],
+      "ownership": "platform"
+    },
+    {
+      "id": "startup",
+      "name": "Startup",
+      "purpose": "Boot pipeline, crash recovery, destination routing, update gate.",
+      "currentImplementation": ["boot/run-startup-pipeline.ts", "app/index.tsx", "features/startup/"],
+      "problems": ["Pipeline directly imports endpoints", "Boot types coupled to MobileUpdateInfo DTO", "Well-structured but not domain-isolated"],
+      "dependencies": ["authentication", "configuration", "telemetry"],
+      "consumers": ["app entry"],
+      "ownership": "platform"
+    },
+    {
+      "id": "configuration",
+      "name": "Configuration",
+      "purpose": "Remote config, build env, API base URL, feature flags.",
+      "currentImplementation": ["config/env.ts", "fetchRemoteConfig", "fetchBootstrap", "store.remoteConfig", "boot/boot-storage.ts"],
+      "problems": ["Dead endpoints fetchMobileConfig/fetchNavigation", "Remote config shape untyped at store boundary", "Flags read ad-hoc"],
+      "dependencies": [],
+      "consumers": ["startup", "all features", "update module"],
+      "ownership": "platform"
+    },
+    {
+      "id": "deep-links",
+      "name": "Deep Links",
+      "purpose": "Parse lot:// URIs, resolve routes, queue pre-auth links.",
+      "currentImplementation": ["deep-links/parse-lot-link.ts", "resolve-deep-link-target.ts", "use-deep-link-handler.ts"],
+      "problems": ["Well-isolated pure functions — best current domain boundary", "Pending link in global store not domain event", "No DeepLinkUseCase wrapper"],
+      "dependencies": ["authentication", "startup"],
+      "consumers": ["app/_layout.tsx", "login flow"],
+      "ownership": "platform"
+    },
+    {
+      "id": "offline",
+      "name": "Offline",
+      "purpose": "Connectivity detection, offline policies, snapshot reads.",
+      "currentImplementation": ["components/NetworkBanner.tsx", "store.offline", "storage/offline-cache.ts (in-memory)", "SecureStore caches in orders/product-detail"],
+      "problems": ["Inconsistent per-screen policies", "Seller snapshots not persisted", "No OfflinePolicy service"],
+      "dependencies": ["caching"],
+      "consumers": ["All data hooks", "cart/checkout blockers"],
+      "ownership": "platform"
+    },
+    {
+      "id": "caching",
+      "name": "Caching",
+      "purpose": "Memory + persistent cache, TTL, invalidation orchestration.",
+      "currentImplementation": ["storage/order-cache.ts", "storage/product-detail-cache.ts", "storage/offline-cache.ts", "boot/boot-storage.ts"],
+      "problems": ["No unified cache layer", "Each hook owns invalidation", "No TTL standard"],
+      "dependencies": [],
+      "consumers": ["orders", "product-detail", "seller-home", "seller-sales", "startup"],
+      "ownership": "platform"
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "purpose": "Product analytics, funnel metrics, marketplace quality signals.",
+      "currentImplementation": ["postTelemetry (subset)", "lib/product-operations/marketplace-quality/ (server-side audit)"],
+      "problems": ["Client analytics = raw telemetry only", "No typed analytics events", "No correlation with domain actions"],
+      "dependencies": ["telemetry"],
+      "consumers": ["Commerce screens via postTelemetry"],
+      "ownership": "platform"
+    },
+    {
+      "id": "permissions",
+      "name": "Permissions",
+      "purpose": "Device permissions (camera, notifications).",
+      "currentImplementation": ["features/camera/media-permissions.ts"],
+      "problems": ["Only camera helper exists", "No PermissionsRepository"],
+      "dependencies": [],
+      "consumers": ["Future seller product photo flow"],
+      "ownership": "platform"
+    },
+    {
+      "id": "feature-flags",
+      "name": "Feature Flags",
+      "purpose": "Remote experiments and staged rollouts.",
+      "currentImplementation": ["RemoteConfigPayload.flags in fetchRemoteConfig", "store.remoteConfig"],
+      "problems": ["Flags stored as untyped blob", "No FeatureFlagService", "No domain-level gating API"],
+      "dependencies": ["configuration"],
+      "consumers": ["Future EPIC gates"],
+      "ownership": "platform"
+    }
+  ]
+}

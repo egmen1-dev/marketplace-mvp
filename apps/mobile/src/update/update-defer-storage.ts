@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
-import type { MobileUpdateInfo } from "../api/endpoints";
+import type { MobileUpdateInfo } from "./types";
 import { UPDATE_DEFER_COOLDOWN_MS } from "./types";
 
 const KEY = "lot_update_defer_v1";

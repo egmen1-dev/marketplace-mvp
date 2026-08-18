@@ -67,3 +67,4 @@ next-env.d.ts
 # prisma generated (if custom output is used)
 /app/generated/prisma
 artifacts/*.apk
+artifacts/epic-84-release-013/*.apk

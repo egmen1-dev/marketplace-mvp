@@ -4,6 +4,7 @@ import * as Network from "expo-network";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { useAppStore } from "../store/app-store";
+import { bootMark } from "../boot/early-boot";
 import { colors, spacing, typography } from "../theme/tokens";
 
 export function NetworkBanner() {
@@ -46,3 +47,5 @@ const styles = StyleSheet.create({
   text: { ...typography.caption, color: colors.white, fontWeight: "600" },
   subtext: { ...typography.caption, color: colors.gray300, fontSize: 11 },
 });
+
+bootMark("NetworkBanner module evaluated");

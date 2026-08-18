@@ -1,4 +1,5 @@
 import { UpdateGate } from "./UpdateGate";
+import { bootMark } from "../boot/early-boot";
 import { useAppStore } from "../store/app-store";
 import { useUpdateCheck } from "../update/use-update-check";
 
@@ -23,3 +24,5 @@ export function UpdateHost() {
     />
   );
 }
+
+bootMark("UpdateHost module evaluated");
