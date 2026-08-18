@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchSellerOrders, postTelemetry } from "../../api/endpoints";
+import type { SellerOrderSummary } from "../../domain/contracts/entities/seller";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
 import { readSnapshot, saveSnapshot } from "../../storage/offline-cache";
 import { useAppStore } from "../../store/app-store";
 import { formatPrice } from "../../utils/format";
-import { mapSellerOrderItem, type SellerSaleCardView } from "./types";
+import { sellerOrderToSaleCard, type SellerSaleCardView } from "../seller/seller-view";
 
 export type SellerSalesState = {
   offline: boolean;
@@ -15,14 +17,19 @@ export type SellerSalesState = {
   fromCache: boolean;
   orders: SellerSaleCardView[];
   refresh: () => Promise<void>;
-  onSaleOpened?: (orderId: string) => void;
+  onSaleOpened: (orderId: string) => void;
 };
 
+type SellerSalesSnapshot = { items: SellerOrderSummary[] };
+
 export function useSellerSalesData(): SellerSalesState {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
   const sellerCapable = useAppStore((s) => s.sellerCapable);
+
   const [orders, setOrders] = useState<SellerSaleCardView[]>(
-    () => readSnapshot<{ items: Parameters<typeof mapSellerOrderItem>[0][] }>("seller-sales")?.payload.items.map(mapSellerOrderItem) ?? [],
+    () =>
+      readSnapshot<SellerSalesSnapshot>("seller-sales")?.payload.items.map(sellerOrderToSaleCard) ?? [],
   );
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,56 +37,72 @@ export function useSellerSalesData(): SellerSalesState {
   const [fromCache, setFromCache] = useState(false);
   const openedRef = useRef(false);
 
-  const load = useCallback(async (mode: "initial" | "refresh" = "initial") => {
-    if (!sellerCapable) {
-      setLoading(false);
-      setRefreshing(false);
-      return;
-    }
-
-    if (offline) {
-      setFromCache(true);
-      setLoading(false);
-      setRefreshing(false);
-      return;
-    }
-
-    if (mode === "initial") setLoading(true);
-    else setRefreshing(true);
-    setError(null);
-    setFromCache(false);
-
-    try {
-      const res = await fetchSellerOrders();
-      saveSnapshot("seller-sales", res);
-      setOrders(res.items.map(mapSellerOrderItem));
-      if (!openedRef.current) {
-        openedRef.current = true;
-        void postTelemetry({ screen: "seller_sales", event: "seller_sales_opened" });
+  const load = useCallback(
+    async (mode: "initial" | "refresh" = "initial") => {
+      if (!sellerCapable) {
+        setLoading(false);
+        setRefreshing(false);
+        return;
       }
-    } catch (err) {
-      const cached = readSnapshot<{ items: Parameters<typeof mapSellerOrderItem>[0][] }>("seller-sales");
-      if (cached?.payload.items.length) {
-        setOrders(cached.payload.items.map(mapSellerOrderItem));
+
+      if (offline) {
         setFromCache(true);
-      } else {
-        setOrders([]);
-        setError(err instanceof Error ? err.message : "Не удалось загрузить продажи");
-        void postTelemetry({ screen: "seller_sales", event: "seller_sales_error", errorCode: "load_failed" });
+        setLoading(false);
+        setRefreshing(false);
+        return;
       }
-    } finally {
+
+      if (mode === "initial") setLoading(true);
+      else setRefreshing(true);
+      setError(null);
+      setFromCache(false);
+
+      const result = await commerce.loadSellerOrders.execute({});
+      if (result.ok) {
+        saveSnapshot("seller-sales", { items: result.value.items });
+        setOrders(result.value.items.map(sellerOrderToSaleCard));
+        if (!openedRef.current) {
+          openedRef.current = true;
+          commerce.trackScreenEvent({ screen: "seller_sales", event: "seller_sales_opened" });
+        }
+      } else {
+        const cached = readSnapshot<SellerSalesSnapshot>("seller-sales");
+        if (cached?.payload.items.length) {
+          setOrders(cached.payload.items.map(sellerOrderToSaleCard));
+          setFromCache(true);
+        } else {
+          setOrders([]);
+          setError(domainErrorMessage(result.error));
+          commerce.trackScreenEvent({
+            screen: "seller_sales",
+            event: "seller_sales_error",
+            errorCode: "load_failed",
+          });
+        }
+      }
+
       setLoading(false);
       setRefreshing(false);
-    }
-  }, [offline, sellerCapable, openedRef]);
+    },
+    [commerce.loadSellerOrders, commerce.trackScreenEvent, offline, sellerCapable],
+  );
 
   useEffect(() => {
     void load("initial");
   }, [load]);
 
-  const onSaleOpened = useCallback((orderId: string) => {
-    void postTelemetry({ screen: "seller_sales", event: "seller_sale_opened", errorCode: orderId });
-  }, []);
+  useEffect(() => {
+    return commerce.events.subscribe("SellerOrderChanged", () => {
+      void load("refresh");
+    });
+  }, [commerce.events, load]);
+
+  const onSaleOpened = useCallback(
+    (orderId: string) => {
+      commerce.trackScreenEvent({ screen: "seller_sales", event: "seller_sale_opened", errorCode: orderId });
+    },
+    [commerce.trackScreenEvent],
+  );
 
   return {
     offline,

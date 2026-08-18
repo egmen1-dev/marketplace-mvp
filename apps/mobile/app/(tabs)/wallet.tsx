@@ -1,42 +1,17 @@
-import { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 
-import { fetchSellerOrders, fetchWallet } from "../../src/api/endpoints";
 import { WalletCard } from "../../src/design-system/cards/CommerceCards";
 import { PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
 import { PageScroll, SectionHeader } from "../../src/design-system/layout/ScreenLayout";
 import { EmptyState, SkeletonGrid } from "../../src/design-system/feedback/States";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
-import { useAppStore } from "../../src/store/app-store";
+import { useWalletData } from "../../src/features/wallet/useWalletData";
 import { formatPrice } from "../../src/utils/format";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 export default function WalletScreen() {
   const fade = useFadeIn();
-  const mode = useAppStore((s) => s.mode);
-  const isSeller = mode === "seller";
-  const [data, setData] = useState<{ spendable: number; withdrawable: number; pending: number; enabled: boolean } | null>(null);
-  const [recentSales, setRecentSales] = useState<Array<{ id: string; orderNumber: string; status: string }>>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const salesPromise = isSeller
-      ? fetchSellerOrders().catch(() => ({ items: [] }))
-      : Promise.resolve({ items: [] });
-
-    Promise.all([fetchWallet(), salesPromise])
-      .then(([wallet, sales]) => {
-        setData(wallet);
-        setRecentSales(
-          sales.items.slice(0, 3).map((item) => ({
-            id: item.id,
-            orderNumber: item.orderNumber,
-            status: item.status,
-          })),
-        );
-      })
-      .finally(() => setLoading(false));
-  }, [isSeller]);
+  const { isSeller, loading, data, recentSales, refreshSales } = useWalletData();
 
   if (loading) {
     return (
@@ -80,29 +55,14 @@ export default function WalletScreen() {
             </View>
           ))
         ) : (
-          <EmptyState
-            preset="history"
-            actionLabel="Обновить"
-            onAction={() =>
-              fetchSellerOrders()
-                .then((r) =>
-                  setRecentSales(
-                    r.items.slice(0, 3).map((item) => ({
-                      id: item.id,
-                      orderNumber: item.orderNumber,
-                      status: item.status,
-                    })),
-                  ),
-                )
-                .catch(() => setRecentSales([]))
-            }
-          />
+          <EmptyState preset="history" actionLabel="Обновить" onAction={() => void refreshSales()} />
         )}
 
         <SectionHeader title="История операций" />
         <View style={styles.placeholder}>
           <Text style={styles.placeholderText}>
-            Полная история операций кошелька будет доступна в следующем релизе Alpha. Сейчас отображаются баланс и последние заказы.
+            Полная история операций кошелька будет доступна в следующем релизе Alpha. Сейчас отображаются баланс и
+            последние заказы.
           </Text>
         </View>
       </Animated.View>

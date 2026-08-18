@@ -13,7 +13,11 @@ export class RestAuthRepository implements AuthRepository {
 
   async login(credentials: LoginCredentials): Promise<Result<Session>> {
     try {
-      const data = await apiLogin({ email: credentials.email, password: credentials.password });
+      const data = await apiLogin({
+        email: credentials.email,
+        password: credentials.password,
+        pendingDeepLink: credentials.pendingDeepLink,
+      });
       return ok(mapSessionFromLogin(data));
     } catch (error) {
       return err(mapApiErrorToDomain(error));
