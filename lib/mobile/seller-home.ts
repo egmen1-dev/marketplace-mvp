@@ -56,6 +56,17 @@ export type SellerWorkspaceSection =
   | "financial_actions"
   | "completed_today";
 
+export type SellerActionKind =
+  | "update_stock"
+  | "publish_product"
+  | "fix_moderation"
+  | "ship_order"
+  | "confirm_order"
+  | "reply_buyer"
+  | "withdraw_funds"
+  | "complete_profile"
+  | "resume_draft";
+
 export type MobileSellerWorkspaceItem = {
   id: string;
   title: string;
@@ -67,6 +78,9 @@ export type MobileSellerWorkspaceItem = {
   entityId: string | null;
   resumeKey: string | null;
   completedAt: string | null;
+  actionKind: SellerActionKind | null;
+  actionPayload: Record<string, string | number | boolean | null> | null;
+  supportsUndo: boolean;
 };
 
 export type MobileSellerWorkspace = {

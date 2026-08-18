@@ -6,7 +6,7 @@ import type { SellerOrderListItem } from "@/features/seller/queries";
 import { getPromotionCenterDashboard } from "@/lib/seller-promotion-center/queries";
 import { prisma } from "@/lib/prisma";
 
-import type { MobileSellerWorkspace, MobileSellerWorkspaceItem } from "./seller-home";
+import type { MobileSellerWorkspace, MobileSellerWorkspaceItem, SellerActionKind } from "./seller-home";
 
 const COMPLETED_STATUSES: OrderStatus[] = [
   OrderStatus.COMPLETED,
@@ -34,9 +34,15 @@ function startOfDay(date: Date): Date {
 
 function pushItem(
   items: MobileSellerWorkspaceItem[],
-  item: MobileSellerWorkspaceItem,
+  item: Omit<MobileSellerWorkspaceItem, "actionKind" | "actionPayload" | "supportsUndo"> &
+    Partial<Pick<MobileSellerWorkspaceItem, "actionKind" | "actionPayload" | "supportsUndo">>,
 ): void {
-  items.push(item);
+  items.push({
+    actionKind: null,
+    actionPayload: null,
+    supportsUndo: false,
+    ...item,
+  });
 }
 
 function countPriorities(items: MobileSellerWorkspaceItem[]) {
@@ -65,6 +71,7 @@ export async function buildSellerWorkspace(input: {
     lowStock: number | null;
     outOfStock: number;
   };
+  sellerSettings?: { storeName: string; phone: string | null; description: string | null } | null;
   now?: Date;
 }): Promise<MobileSellerWorkspace> {
   const now = input.now ?? new Date();
@@ -117,6 +124,36 @@ export async function buildSellerWorkspace(input: {
 
   const sellerConversations = conversations.filter((c) => c.counterpart.kind === "buyer");
 
+  const settings = input.sellerSettings;
+  const profileIncomplete =
+    settings &&
+    (!settings.storeName?.trim() || !settings.phone?.trim() || !settings.description?.trim());
+  if (profileIncomplete && settings) {
+    pushItem(items, {
+      id: "complete-profile",
+      title: "Заполните профиль продавца",
+      subtitle: !settings.phone?.trim()
+        ? "Добавьте телефон для связи с покупателями"
+        : !settings.description?.trim()
+          ? "Добавьте описание магазина"
+          : "Укажите название магазина",
+      priority: "important",
+      source: "notifications",
+      section: "todays_work",
+      action: "profile",
+      entityId: null,
+      resumeKey: null,
+      completedAt: null,
+      actionKind: "complete_profile",
+      actionPayload: {
+        storeName: settings.storeName,
+        phone: settings.phone,
+        description: settings.description,
+      },
+      supportsUndo: true,
+    });
+  }
+
   for (const order of input.recentOrders) {
     if (order.isOverdue) {
       pushItem(items, {
@@ -130,6 +167,9 @@ export async function buildSellerWorkspace(input: {
         entityId: order.id,
         resumeKey: `order:${order.id}`,
         completedAt: null,
+        actionKind: "confirm_order",
+        actionPayload: { orderId: order.id },
+        supportsUndo: true,
       });
     }
   }
@@ -161,6 +201,9 @@ export async function buildSellerWorkspace(input: {
       entityId: order.id,
       resumeKey: `order:${order.id}`,
       completedAt: null,
+      actionKind: "confirm_order",
+      actionPayload: { orderId: order.id },
+      supportsUndo: true,
     });
   }
 
@@ -177,6 +220,9 @@ export async function buildSellerWorkspace(input: {
       entityId: resumeOrder.id,
       resumeKey: `order:${resumeOrder.id}`,
       completedAt: null,
+      actionKind: resumeOrder.status === OrderStatus.READY_FOR_SHIPMENT ? "ship_order" : "confirm_order",
+      actionPayload: { orderId: resumeOrder.id },
+      supportsUndo: true,
     });
   }
 
@@ -193,6 +239,9 @@ export async function buildSellerWorkspace(input: {
       entityId: resumeDraft.id,
       resumeKey: `draft:${resumeDraft.id}`,
       completedAt: null,
+      actionKind: "resume_draft",
+      actionPayload: { productId: resumeDraft.id },
+      supportsUndo: false,
     });
   }
 
@@ -208,6 +257,9 @@ export async function buildSellerWorkspace(input: {
       entityId: draft.id,
       resumeKey: `draft:${draft.id}`,
       completedAt: null,
+      actionKind: "publish_product",
+      actionPayload: { productId: draft.id },
+      supportsUndo: true,
     });
   }
 
@@ -223,6 +275,9 @@ export async function buildSellerWorkspace(input: {
       entityId: row.productId,
       resumeKey: `product:${row.productId}`,
       completedAt: null,
+      actionKind: "fix_moderation",
+      actionPayload: { productId: row.productId },
+      supportsUndo: false,
     });
   }
 
@@ -238,6 +293,9 @@ export async function buildSellerWorkspace(input: {
       entityId: row.product.id,
       resumeKey: `product:${row.product.id}`,
       completedAt: null,
+      actionKind: "update_stock",
+      actionPayload: { productId: row.product.id, quantity: LOW_STOCK_THRESHOLD + 5, previousQuantity: row.quantity },
+      supportsUndo: true,
     });
   }
 
@@ -283,6 +341,9 @@ export async function buildSellerWorkspace(input: {
       entityId: order.id,
       resumeKey: `order:${order.id}`,
       completedAt: null,
+      actionKind: "ship_order",
+      actionPayload: { orderId: order.id },
+      supportsUndo: true,
     });
   }
 
@@ -298,6 +359,9 @@ export async function buildSellerWorkspace(input: {
       entityId: conversation.id,
       resumeKey: `chat:${conversation.id}`,
       completedAt: null,
+      actionKind: "reply_buyer",
+      actionPayload: { conversationId: conversation.id },
+      supportsUndo: false,
     });
   }
 
@@ -327,6 +391,9 @@ export async function buildSellerWorkspace(input: {
       entityId: null,
       resumeKey: null,
       completedAt: null,
+      actionKind: "withdraw_funds",
+      actionPayload: { amount: input.wallet.spendableAmount },
+      supportsUndo: false,
     });
   }
 
@@ -343,6 +410,9 @@ export async function buildSellerWorkspace(input: {
         entityId: product.id,
         resumeKey: `product:${product.id}`,
         completedAt: null,
+        actionKind: "fix_moderation",
+        actionPayload: { productId: product.id },
+        supportsUndo: false,
       });
     }
   }

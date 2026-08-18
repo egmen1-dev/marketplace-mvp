@@ -355,6 +355,13 @@ export async function buildMobileSellerHomeForUser(
       ? { spendableAmount: wallet.buckets.spendableAmount, pendingFromSales: wallet.buckets.pendingFromSales }
       : null,
     productBuckets,
+    sellerSettings: settings
+      ? {
+          storeName: settings.storeName,
+          phone: settings.phone,
+          description: settings.description,
+        }
+      : null,
     now,
   });
 
