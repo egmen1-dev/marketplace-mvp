@@ -1,0 +1,39 @@
+{
+  "gates": [
+    {
+      "id": "crash_free_sessions",
+      "dataSource": "productTelemetryEvent",
+      "minSample": 100,
+      "currentSample": "INSUFFICIENT_DATA",
+      "verdict": "INSUFFICIENT_DATA"
+    },
+    {
+      "id": "critical_bugs",
+      "dataSource": "productFeedbackItem",
+      "minSample": 1,
+      "currentSample": "INSUFFICIENT_DATA",
+      "verdict": "INSUFFICIENT_DATA"
+    },
+    {
+      "id": "checkout_failures",
+      "dataSource": "telemetry checkout errors",
+      "minSample": 10,
+      "currentSample": 0,
+      "verdict": "INSUFFICIENT_DATA"
+    },
+    {
+      "id": "product_creation_success",
+      "dataSource": "product + telemetry",
+      "minSample": 20,
+      "currentSample": "INSUFFICIENT_DATA",
+      "verdict": "INSUFFICIENT_DATA"
+    },
+    {
+      "id": "order_completion",
+      "dataSource": "orders table",
+      "minSample": 20,
+      "currentSample": "INSUFFICIENT_DATA",
+      "verdict": "INSUFFICIENT_DATA"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-08-18T13:12:29.756Z",
+  "afterMergeToMain": {
+    "expectedApiVersionCommit": "will match merged HEAD (not feb4b8d)",
+    "betaRoutesExpected": [
+      "/api/product-ops/beta/dashboard",
+      "/api/product-ops/beta/journey",
+      "/api/product-ops/beta/readiness",
+      "/api/product-ops/beta/performance",
+      "/api/product-ops/beta/crashes",
+      "/api/product-ops/beta/exit-report",
+      "/api/mobile/checkout/web-url"
+    ],
+    "railwayRedeployRequired": true,
+    "prismaMigrateDeployRequired": false
+  },
+  "closedBetaBlockersRemaining": [
+    "Merge PRs into main",
+    "Railway redeploy from main",
+    "Physical Android validation (EPIC 105 NOT_RUN)",
+    "Re-run product:epic-105:closed-beta-launch-validation after deploy",
+    "DATABASE_URL on staging for beta dashboard data (routes return 200; data needs DB)"
+  ]
+}

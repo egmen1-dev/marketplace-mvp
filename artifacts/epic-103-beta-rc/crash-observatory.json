@@ -1,0 +1,9 @@
+{
+  "transport": {
+    "status": 200,
+    "accepted": true
+  },
+  "observatoryApiBlocked": true,
+  "nativeCrash": "NOT_RUN",
+  "sensitiveContentExcluded": true
+}

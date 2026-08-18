@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.126Z",
+  "headBuild": {
+    "commit": "134f035bd8ee27d6a055d0a3dd491ee2462ad119",
+    "manifestPath": ".next/server/app-paths-manifest.json",
+    "productOpsRoutes": [
+      "/api/product-ops/beta/crashes/route",
+      "/api/product-ops/beta/dashboard/route",
+      "/api/product-ops/beta/exit-report/route",
+      "/api/product-ops/beta/journey/route",
+      "/api/product-ops/beta/readiness/route",
+      "/api/product-ops/config/route",
+      "/api/product-ops/feedback/route",
+      "/api/product-ops/session/route",
+      "/api/product-ops/beta/performance/route"
+    ],
+    "betaRoutesCompiled": [
+      "/api/product-ops/beta/crashes/route",
+      "/api/product-ops/beta/dashboard/route",
+      "/api/product-ops/beta/exit-report/route",
+      "/api/product-ops/beta/journey/route",
+      "/api/product-ops/beta/readiness/route",
+      "/api/product-ops/beta/performance/route"
+    ],
+    "standaloneDirExists": false,
+    "note": "standalone dir missing in workspace build (partial/incomplete local build); server manifest confirms route compilation"
+  },
+  "mainBuild": {
+    "commit": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "sourceTreeBetaFiles": [],
+    "localBuildAttempt": "npm ci + npm run build in git worktree failed (webpack module-not-found unrelated to beta routes)",
+    "expectedBetaRoutesInManifest": [],
+    "evidence": "main branch tree has zero files under app/api/product-ops/beta/"
+  }
+}

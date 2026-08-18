@@ -1,0 +1,35 @@
+{
+  "bugs": [
+    {
+      "id": "EP103-001",
+      "severity": "P1",
+      "screen": "infrastructure",
+      "role": "system",
+      "steps": [
+        "Deploy candidate branch to staging",
+        "GET /api/product-ops/beta/dashboard"
+      ],
+      "expected": "HTTP 200 with dashboard JSON",
+      "actual": "Staging at feb4b8d, candidate 5303e56; beta APIs 404",
+      "evidence": "GET https://web-production-e56fb.up.railway.app/api/product-ops/beta/dashboard → 404",
+      "suspectedCause": "EPIC 102 not deployed to staging Railway",
+      "fixRecommendation": "Merge and deploy cursor/epic-102-closed-beta-program-d03e to staging",
+      "regressionTest": "staging_beta_dashboard_api in epic-103 gate"
+    },
+    {
+      "id": "EP103-003",
+      "severity": "P1",
+      "screen": "checkout",
+      "role": "buyer",
+      "steps": [
+        "Navigate to checkout on mobile"
+      ],
+      "expected": "Buyer can complete checkout flow",
+      "actual": "Checkout screen is informational placeholder only",
+      "evidence": "apps/mobile/app/checkout.tsx",
+      "suspectedCause": "Alpha checkout not implemented on mobile — by design until APP-SHELL-1",
+      "fixRecommendation": "Document as NOT_SUPPORTED for mobile native checkout OR implement alpha web redirect",
+      "regressionTest": "buyer_golden_journey physical"
+    }
+  ]
+}

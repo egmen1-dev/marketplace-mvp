@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-08-18T11:29:05.253Z",
+  "candidate": {
+    "commit": "81082c4d17d678f59d903510fc2ffb0b4872baa7",
+    "branch": "cursor/epic-104-closed-beta-readiness-d03e",
+    "appVersion": "0.1.2-alpha",
+    "versionCode": 3,
+    "apiVersion": "mobile-api-v1"
+  },
+  "staging": {
+    "url": "https://web-production-e56fb.up.railway.app",
+    "commit": "feb4b8d",
+    "buildTime": "2026-08-16T18:57:44.101Z"
+  },
+  "parity": {
+    "commitShaMatch": false,
+    "buildVersion": "0.1.2-alpha",
+    "apiVersion": "mobile-api-v1",
+    "featureFlagsLoaded": true
+  },
+  "apk": {
+    "path": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
+    "sha256": "1c4096065bdfa47f02f14db284c8223691aa977a7177ae6ed77122ebcd567ce0"
+  },
+  "checkoutStrategy": "web_redirect",
+  "verdict": "FAIL"
+}

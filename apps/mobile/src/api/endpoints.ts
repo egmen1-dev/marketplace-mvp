@@ -225,6 +225,7 @@ export async function postTelemetry(event: {
   screen: string;
   event: string;
   errorCode?: string;
+  metadata?: Record<string, unknown>;
 }) {
   const appConfig = loadAppConfig();
   try {
@@ -244,15 +245,34 @@ export async function postTelemetry(event: {
   }
 }
 
-export async function submitProductFeedback(input: { content: string; screen?: string }) {
+export async function submitProductFeedback(input: {
+  content: string;
+  screen?: string;
+  category?: string;
+  metadata?: Record<string, unknown>;
+}) {
   const appConfig = loadAppConfig();
   return apiRequest<{ classification: string; recorded: boolean }>("/api/product-ops/feedback", {
     method: "POST",
     body: JSON.stringify({
       content: input.content,
       screen: input.screen,
+      category: input.category,
+      metadata: input.metadata,
       deviceId: getDeviceId(),
       versionCode: Number(appConfig.buildNumber) || 1,
     }),
   });
+}
+
+export type CheckoutWebUrlPayload = {
+  strategy: string;
+  checkoutUrl: string;
+  handoffUrl: string;
+  returnDeepLink: string;
+  expiresInSec: number;
+};
+
+export async function fetchCheckoutWebUrl(): Promise<CheckoutWebUrlPayload> {
+  return apiRequest<CheckoutWebUrlPayload>("/api/mobile/checkout/web-url");
 }

@@ -1,0 +1,192 @@
+{
+  "epic": "EPIC-105",
+  "generatedAt": "2026-08-18T12:28:28.325Z",
+  "verdict": "NOT_READY",
+  "exitCriteria": {
+    "deploymentParity": "FAIL",
+    "betaApi": "FAIL",
+    "buyerJourneyApi": "FAIL",
+    "sellerJourneyApi": "PASS",
+    "checkoutRedirect": "FAIL",
+    "crashFree": "BLOCKED",
+    "criticalBugs": "INSUFFICIENT_DATA",
+    "dashboardAccuracy": "BLOCKED",
+    "physicalValidation": "NOT_RUN"
+  },
+  "reasons": [
+    "Staging commit feb4b8d does not match candidate b028271 — deploy required",
+    "Beta API routes not HTTP 200 on staging",
+    "Buyer API journey steps failed",
+    "Checkout web redirect chain failed",
+    "Physical Android validation NOT_RUN",
+    "Crash-free: BLOCKED",
+    "Critical bugs: INSUFFICIENT_DATA",
+    "Dashboard accuracy: BLOCKED"
+  ],
+  "betaInfrastructure": {
+    "verdict": "FAIL",
+    "routes": [
+      {
+        "name": "dashboard",
+        "path": "/api/product-ops/beta/dashboard",
+        "httpStatus": 404,
+        "latencyMs": 189,
+        "schemaOk": false,
+        "authBehavior": 404,
+        "emptyStateOk": false
+      },
+      {
+        "name": "journey",
+        "path": "/api/product-ops/beta/journey",
+        "httpStatus": 404,
+        "latencyMs": 146,
+        "schemaOk": false,
+        "authBehavior": 404,
+        "emptyStateOk": false
+      },
+      {
+        "name": "performance",
+        "path": "/api/product-ops/beta/performance",
+        "httpStatus": 404,
+        "latencyMs": 160,
+        "schemaOk": false,
+        "authBehavior": 404,
+        "emptyStateOk": false
+      },
+      {
+        "name": "crashes",
+        "path": "/api/product-ops/beta/crashes",
+        "httpStatus": 404,
+        "latencyMs": 190,
+        "schemaOk": false,
+        "authBehavior": 404,
+        "emptyStateOk": false
+      },
+      {
+        "name": "readiness",
+        "path": "/api/product-ops/beta/readiness",
+        "httpStatus": 404,
+        "latencyMs": 173,
+        "schemaOk": false,
+        "authBehavior": 404,
+        "emptyStateOk": false
+      },
+      {
+        "name": "exit_report",
+        "path": "/api/product-ops/beta/exit-report",
+        "httpStatus": 404,
+        "latencyMs": 165,
+        "schemaOk": false,
+        "authBehavior": 404,
+        "emptyStateOk": false
+      }
+    ]
+  },
+  "buyerJourneyApi": {
+    "status": "FAIL",
+    "steps": [
+      {
+        "step": "login",
+        "status": "PASS",
+        "durationMs": 0
+      },
+      {
+        "step": "search_catalog",
+        "status": "PASS",
+        "durationMs": 700
+      },
+      {
+        "step": "pdp_catalog",
+        "status": "PASS",
+        "durationMs": 133
+      },
+      {
+        "step": "pdp_detail",
+        "status": "PASS",
+        "durationMs": 170
+      },
+      {
+        "step": "favorite",
+        "status": "PASS",
+        "durationMs": 158
+      },
+      {
+        "step": "cart",
+        "status": "PASS",
+        "durationMs": 219
+      },
+      {
+        "step": "checkout_redirect_api",
+        "status": "FAIL",
+        "durationMs": 182,
+        "error": "404"
+      },
+      {
+        "step": "orders",
+        "status": "PASS",
+        "durationMs": 164
+      },
+      {
+        "step": "logout",
+        "status": "PASS",
+        "durationMs": 121
+      }
+    ]
+  },
+  "sellerJourneyApi": {
+    "status": "PASS",
+    "steps": [
+      {
+        "step": "login",
+        "status": "PASS",
+        "durationMs": 0
+      },
+      {
+        "step": "workspace",
+        "status": "PASS",
+        "durationMs": 188
+      },
+      {
+        "step": "products",
+        "status": "PASS",
+        "durationMs": 160
+      },
+      {
+        "step": "product_editor",
+        "status": "PASS",
+        "durationMs": 148
+      },
+      {
+        "step": "inventory",
+        "status": "PASS",
+        "durationMs": 139
+      },
+      {
+        "step": "orders",
+        "status": "PASS",
+        "durationMs": 111
+      },
+      {
+        "step": "promotion",
+        "status": "PASS",
+        "durationMs": 121
+      },
+      {
+        "step": "intelligence",
+        "status": "PASS",
+        "durationMs": 129
+      },
+      {
+        "step": "wallet",
+        "status": "PASS",
+        "durationMs": 145
+      },
+      {
+        "step": "logout",
+        "status": "PASS",
+        "durationMs": 123
+      }
+    ]
+  },
+  "evidencePrinciple": "Evidence only — never upgrade UNKNOWN/NOT_RUN to PASS"
+}

@@ -1,0 +1,211 @@
+{
+  "epic": "EPIC-103",
+  "generatedAt": "2026-08-18T11:13:51.399Z",
+  "candidate": {
+    "commit": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+    "branch": "cursor/epic-103-closed-beta-rc-validation-d03e",
+    "appVersion": "0.1.2-alpha",
+    "buildNumber": "3",
+    "stagingSha": "feb4b8d"
+  },
+  "scorecard": {
+    "BUILD": "PASS",
+    "STAGING": "FAIL",
+    "BETA_API": "FAIL",
+    "TELEMETRY_E2E": "PASS",
+    "FEEDBACK_E2E": "PASS",
+    "CRASH_OBSERVATORY": "PASS",
+    "PERFORMANCE": "BLOCKED",
+    "BUYER_JOURNEY": "NOT_RUN",
+    "SELLER_JOURNEY": "NOT_RUN",
+    "CROSS_ROLE_TRANSACTION": "PASS",
+    "OFFLINE": "NOT_RUN",
+    "RESTART": "NOT_RUN",
+    "DUPLICATE_MUTATIONS": "NOT_RUN",
+    "AUTHORIZATION": "PASS",
+    "PRIVACY": "PASS",
+    "DASHBOARD_ACCURACY": "BLOCKED",
+    "P0_BUGS": 0,
+    "P1_BUGS": 2,
+    "P2_BUGS": 0,
+    "P3_BUGS": 0
+  },
+  "finalVerdict": "NOT_READY_FOR_CLOSED_BETA",
+  "rows": [
+    {
+      "id": "canonical_baseline_recorded",
+      "status": "PASS",
+      "evidence": "5303e565f9b441d87b002f791aad7f835c2d90ac"
+    },
+    {
+      "id": "canonical_apk_validated",
+      "status": "PASS",
+      "detail": "1c4096065bdfa47f02f14db284c8223691aa977a7177ae6ed77122ebcd567ce0"
+    },
+    {
+      "id": "staging_deploy_matches_candidate",
+      "status": "FAIL",
+      "detail": "staging=feb4b8d candidate=5303e56",
+      "evidence": "EPIC 102 beta routes not on staging until deploy"
+    },
+    {
+      "id": "beta_api_deployed",
+      "status": "FAIL",
+      "detail": "Beta dashboard/journey/exit-report return 404 on staging",
+      "evidence": "[{\"name\":\"beta_dashboard\",\"path\":\"/api/product-ops/beta/dashboard\",\"httpStatus\":404,\"latencyMs\":258,\"ok\":false,\"schemaKeys\":[]},{\"name\":\"beta_journey\",\"path\":\"/api/product-ops/beta/journey\",\"httpStatus\":404,\"latencyMs\":188,\"ok\":false,\"schemaKeys\":[]},{\"name\":\"beta_exit_report\",\"path\":\"/api/product-ops/beta/exit-report\",\"httpStatus\":404,\"latencyMs\":151,\"ok\":false,\"schemaKeys\":[]}]"
+    },
+    {
+      "id": "telemetry_feedback_transport",
+      "status": "PASS",
+      "detail": "200"
+    },
+    {
+      "id": "telemetry_e2e_transport",
+      "status": "PASS",
+      "evidence": "[{\"event\":\"screen_view\",\"accepted\":true,\"status\":200},{\"event\":\"button_press\",\"accepted\":true,\"status\":200},{\"event\":\"scroll_depth\",\"accepted\":true,\"status\":200},{\"event\":\"back_press\",\"accepted\":true,\"status\":200},{\"event\":\"rage_tap\",\"accepted\":true,\"status\":200},{\"event\":\"abandoned_flow\",\"accepted\":true,\"status\":200}]"
+    },
+    {
+      "id": "telemetry_dashboard_aggregation",
+      "status": "BLOCKED",
+      "detail": "Cannot verify dashboard without deployed beta API + DB access"
+    },
+    {
+      "id": "feedback_e2e_submission",
+      "status": "PASS",
+      "evidence": "[{\"category\":\"bug_report\",\"status\":200},{\"category\":\"confusing_ui\",\"status\":200},{\"category\":\"performance_issue\",\"status\":200},{\"category\":\"seller_issue\",\"status\":200},{\"category\":\"buyer_issue\",\"status\":200},{\"category\":\"feature_request\",\"status\":200}]"
+    },
+    {
+      "id": "crash_observatory_transport",
+      "status": "PASS",
+      "detail": "200"
+    },
+    {
+      "id": "crash_observatory_dashboard",
+      "status": "BLOCKED",
+      "detail": "Beta dashboard not deployed"
+    },
+    {
+      "id": "native_crash_reporting",
+      "status": "NOT_RUN",
+      "detail": "Requires physical Android device"
+    },
+    {
+      "id": "performance_observatory",
+      "status": "BLOCKED",
+      "detail": "P50/P95/P99 require deployed beta API + sufficient sample"
+    },
+    {
+      "id": "buyer_golden_journey",
+      "status": "NOT_RUN",
+      "detail": "Requires physical Android device + APK"
+    },
+    {
+      "id": "seller_golden_journey",
+      "status": "NOT_RUN",
+      "detail": "Requires physical Android device + APK"
+    },
+    {
+      "id": "cross_role_transaction_api",
+      "status": "PASS",
+      "detail": "{\"sellerHome\":200,\"sellerProducts\":200,\"catalog\":200,\"cartAdd\":201,\"buyerOrders\":200,\"note\":\"Full purchase/checkout NOT_SUPPORTED on mobile alpha checkout screen\"}"
+    },
+    {
+      "id": "cross_role_full_purchase",
+      "status": "NOT_SUPPORTED",
+      "detail": "Mobile checkout is alpha placeholder — web checkout path not validated in this harness"
+    },
+    {
+      "id": "buyer_checkout_mobile",
+      "status": "NOT_SUPPORTED",
+      "detail": "Placeholder checkout screen"
+    },
+    {
+      "id": "offline_restart",
+      "status": "NOT_RUN",
+      "detail": "Requires physical device"
+    },
+    {
+      "id": "restart_persistence",
+      "status": "NOT_RUN",
+      "detail": "Requires physical device"
+    },
+    {
+      "id": "destructive_interaction_audit",
+      "status": "NOT_RUN",
+      "detail": "Requires physical device"
+    },
+    {
+      "id": "authorization_audit",
+      "status": "PASS",
+      "detail": "Buyer seller_products returns empty or denied"
+    },
+    {
+      "id": "privacy_audit",
+      "status": "PASS",
+      "detail": "0 findings"
+    },
+    {
+      "id": "dashboard_accuracy",
+      "status": "BLOCKED",
+      "detail": "Cannot compare dashboard vs events without deployed beta API"
+    },
+    {
+      "id": "release_gates_calibration",
+      "status": "INSUFFICIENT_DATA",
+      "detail": "No local DATABASE_URL — gates documented not computed"
+    },
+    {
+      "id": "regression_mobile_typecheck",
+      "status": "PASS",
+      "detail": "cd apps/mobile && npm run typecheck"
+    },
+    {
+      "id": "regression_mobile_epic_102_gate",
+      "status": "FAIL",
+      "detail": "Command failed: npm run mobile:epic-102:gate"
+    },
+    {
+      "id": "regression_mobile_epic_83_gate",
+      "status": "FAIL",
+      "detail": "Command failed: npm run mobile:epic-83:gate\nPrismaClientInitializationError: \nInvalid `prisma.mobileReleaseVersion.count"
+    },
+    {
+      "id": "regression_mobile_staging_smoke",
+      "status": "PASS",
+      "detail": "npm run mobile:staging-smoke"
+    },
+    {
+      "id": "regression_epic_103_unit_tests",
+      "status": "PASS",
+      "detail": "npm test -- tests/epic-103-closed-beta-rc.test.ts"
+    }
+  ],
+  "regression": [
+    {
+      "id": "mobile_typecheck",
+      "status": "PASS",
+      "detail": "cd apps/mobile && npm run typecheck"
+    },
+    {
+      "id": "mobile_epic_102_gate",
+      "status": "FAIL",
+      "detail": "Command failed: npm run mobile:epic-102:gate"
+    },
+    {
+      "id": "mobile_epic_83_gate",
+      "status": "FAIL",
+      "detail": "Command failed: npm run mobile:epic-83:gate\nPrismaClientInitializationError: \nInvalid `prisma.mobileReleaseVersion.count"
+    },
+    {
+      "id": "mobile_staging_smoke",
+      "status": "PASS",
+      "detail": "npm run mobile:staging-smoke"
+    },
+    {
+      "id": "epic_103_unit_tests",
+      "status": "PASS",
+      "detail": "npm test -- tests/epic-103-closed-beta-rc.test.ts"
+    }
+  ],
+  "evidencePrinciple": "Evidence > assumptions — statuses reflect observed staging/API/device constraints"
+}

@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-08-18T13:18:00.271Z",
+  "verdict": "FAIL",
+  "steps": [
+    {
+      "step": "login",
+      "status": "PASS",
+      "durationMs": 0
+    },
+    {
+      "step": "home",
+      "status": "PASS",
+      "durationMs": 160
+    },
+    {
+      "step": "catalog",
+      "status": "PASS",
+      "durationMs": 138
+    },
+    {
+      "step": "pdp",
+      "status": "PASS",
+      "durationMs": 120
+    },
+    {
+      "step": "favorite",
+      "status": "PASS",
+      "durationMs": 141
+    },
+    {
+      "step": "cart",
+      "status": "PASS",
+      "durationMs": 174
+    },
+    {
+      "step": "checkout",
+      "status": "FAIL",
+      "durationMs": 0,
+      "error": "404"
+    },
+    {
+      "step": "orders",
+      "status": "PASS",
+      "durationMs": 120
+    },
+    {
+      "step": "wallet",
+      "status": "PASS",
+      "durationMs": 127
+    }
+  ],
+  "totalDurationMs": 980
+}

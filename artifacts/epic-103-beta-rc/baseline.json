@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-08-18T11:12:51.182Z",
+  "gitCommit": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+  "gitBranch": "cursor/epic-103-closed-beta-rc-validation-d03e",
+  "applicationVersion": "0.1.2-alpha",
+  "versionCode": 3,
+  "environment": "staging",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "buildTimestamp": "2026-08-18T11:11:23.440Z",
+  "apkPath": "/workspace/apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
+  "apkSha256": "1c4096065bdfa47f02f14db284c8223691aa977a7177ae6ed77122ebcd567ce0",
+  "backendDeployment": {
+    "stagingCommit": "feb4b8d",
+    "matchesCandidate": false,
+    "httpStatus": 200
+  },
+  "databaseEnvironment": "not_available_locally",
+  "remoteConfigVersion": "product-ops-config-v1",
+  "canonicalCandidateNote": "ONE candidate — EPIC 102 branch commit validated against staging"
+}

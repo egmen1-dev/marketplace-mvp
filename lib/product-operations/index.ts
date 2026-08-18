@@ -11,3 +11,4 @@ export * from "./release";
 export * from "./experiments";
 export * from "./timeline";
 export * from "./closed-alpha";
+export * from "./beta";

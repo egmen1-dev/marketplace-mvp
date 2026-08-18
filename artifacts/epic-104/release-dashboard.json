@@ -1,0 +1,9 @@
+{
+  "recommendation": "NOT_READY",
+  "deploymentParity": "FAIL",
+  "betaApi": "FAIL",
+  "buyerJourney": "FAIL",
+  "sellerJourney": "PASS",
+  "checkoutSupported": "PASS",
+  "note": "Beta readiness API blocked until staging deploy"
+}

@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.109Z",
+  "routes": [
+    {
+      "name": "dashboard",
+      "filesystemPath": "app/api/product-ops/beta/dashboard/route.ts",
+      "expectedUrl": "/api/product-ops/beta/dashboard",
+      "introCommit": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+      "appRouterMapping": "/api/product-ops/beta/dashboard",
+      "exports": [
+        "GET"
+      ],
+      "runtime": "default (nodejs for route handlers)",
+      "dynamic": "default",
+      "existsOnMain": false,
+      "existsOnHEAD": true,
+      "guardBehavior": "ccosApiGuard returns 503 if CCOS disabled; live staging returns 404 (route not registered)"
+    },
+    {
+      "name": "journey",
+      "filesystemPath": "app/api/product-ops/beta/journey/route.ts",
+      "expectedUrl": "/api/product-ops/beta/journey",
+      "introCommit": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+      "appRouterMapping": "/api/product-ops/beta/journey",
+      "exports": [
+        "GET"
+      ],
+      "runtime": "default (nodejs for route handlers)",
+      "dynamic": "default",
+      "existsOnMain": false,
+      "existsOnHEAD": true,
+      "guardBehavior": "ccosApiGuard returns 503 if CCOS disabled; live staging returns 404 (route not registered)"
+    },
+    {
+      "name": "performance",
+      "filesystemPath": "app/api/product-ops/beta/performance/route.ts",
+      "expectedUrl": "/api/product-ops/beta/performance",
+      "introCommit": "b028271b4db527bb189b04f26fc8d43117355977",
+      "appRouterMapping": "/api/product-ops/beta/performance",
+      "exports": [
+        "GET"
+      ],
+      "runtime": "default (nodejs for route handlers)",
+      "dynamic": "default",
+      "existsOnMain": false,
+      "existsOnHEAD": true,
+      "guardBehavior": "ccosApiGuard returns 503 if CCOS disabled; live staging returns 404 (route not registered)"
+    },
+    {
+      "name": "crashes",
+      "filesystemPath": "app/api/product-ops/beta/crashes/route.ts",
+      "expectedUrl": "/api/product-ops/beta/crashes",
+      "introCommit": "b028271b4db527bb189b04f26fc8d43117355977",
+      "appRouterMapping": "/api/product-ops/beta/crashes",
+      "exports": [
+        "GET"
+      ],
+      "runtime": "default (nodejs for route handlers)",
+      "dynamic": "default",
+      "existsOnMain": false,
+      "existsOnHEAD": true,
+      "guardBehavior": "ccosApiGuard returns 503 if CCOS disabled; live staging returns 404 (route not registered)"
+    },
+    {
+      "name": "readiness",
+      "filesystemPath": "app/api/product-ops/beta/readiness/route.ts",
+      "expectedUrl": "/api/product-ops/beta/readiness",
+      "introCommit": "b028271b4db527bb189b04f26fc8d43117355977",
+      "appRouterMapping": "/api/product-ops/beta/readiness",
+      "exports": [
+        "GET"
+      ],
+      "runtime": "default (nodejs for route handlers)",
+      "dynamic": "default",
+      "existsOnMain": false,
+      "existsOnHEAD": true,
+      "guardBehavior": "ccosApiGuard returns 503 if CCOS disabled; live staging returns 404 (route not registered)"
+    },
+    {
+      "name": "exit-report",
+      "filesystemPath": "app/api/product-ops/beta/exit-report/route.ts",
+      "expectedUrl": "/api/product-ops/beta/exit-report",
+      "introCommit": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+      "appRouterMapping": "/api/product-ops/beta/exit-report",
+      "exports": [
+        "GET"
+      ],
+      "runtime": "default (nodejs for route handlers)",
+      "dynamic": "default",
+      "existsOnMain": false,
+      "existsOnHEAD": true,
+      "guardBehavior": "ccosApiGuard returns 503 if CCOS disabled; live staging returns 404 (route not registered)"
+    }
+  ]
+}
