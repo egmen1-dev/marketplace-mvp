@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchCatalog, fetchCategories, fetchProductSuggest, type MobileProductListItem } from "../../api/endpoints";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { categoryId, productId, sellerId as toSellerId } from "../../domain/contracts/value-objects/ids";
+import { productSummariesToCardViews } from "../commerce/product-view";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { POPULAR_SEARCHES } from "../../storage/search-history";
 import { discountPercent } from "../../utils/format";
@@ -20,7 +24,9 @@ export function useCatalogDiscovery(
   initialCategoryId?: string | null,
   sellerId?: string | null,
 ) {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
+  const setBadges = useAppStore((s) => s.setBadges);
   const [query, setQuery] = useState(initialQuery);
   const debouncedQuery = useDebouncedValue(query.trim(), 350);
   const [sort, setSort] = useState<CatalogSort>("popular");
@@ -31,7 +37,7 @@ export function useCatalogDiscovery(
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
-  const [items, setItems] = useState<MobileProductListItem[]>([]);
+  const [items, setItems] = useState<MobileProductCardData[]>([]);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,11 +52,25 @@ export function useCatalogDiscovery(
 
   const resolved = resolveCatalogQuery({ quickFilter, sort });
 
+  useEffect(() => {
+    return commerce.events.subscribe("FavoriteChanged", (event) => {
+      setBadges({ favorites: event.favoritesCount ?? undefined });
+    });
+  }, [commerce.events, setBadges]);
+
   const loadCategories = useCallback(async () => {
     setCategoriesLoading(true);
     try {
-      const res = await fetchCategories();
-      const list = res.items.slice(0, 16);
+      const result = await commerce.loadCategories.execute({});
+      if (!result.ok) {
+        setCategories([]);
+        return;
+      }
+      const list = result.value.slice(0, 16).map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug ?? undefined,
+      }));
       setCategories(list);
       if (initialCategoryId) {
         const match = list.find((c) => c.id === initialCategoryId);
@@ -61,7 +81,7 @@ export function useCatalogDiscovery(
     } finally {
       setCategoriesLoading(false);
     }
-  }, [initialCategoryId]);
+  }, [commerce.loadCategories, initialCategoryId]);
 
   const loadPage = useCallback(
     async (reset: boolean) => {
@@ -83,23 +103,27 @@ export function useCatalogDiscovery(
       }
 
       try {
-        const res = await fetchCatalog({
+        const result = await commerce.loadCatalog.execute({
           q: debouncedQuery || undefined,
           cursor: reset ? null : cursorRef.current,
           sort: resolved.sort,
-          categoryId: category?.id,
-          sellerId: sellerId ?? undefined,
+          categoryId: category?.id ? categoryId(category.id) : undefined,
+          sellerId: sellerId ? toSellerId(sellerId) : undefined,
           inStock: resolved.inStock,
         });
 
-        let nextItems = res.items;
+        if (!result.ok) {
+          throw new Error(domainErrorMessage(result.error));
+        }
+
+        let nextItems = productSummariesToCardViews(result.value.items);
         if (resolved.dealsOnly) {
           nextItems = nextItems.filter((item) => (discountPercent(item.price, item.compareAt) ?? 0) > 0);
         }
 
         setItems((prev) => (reset ? nextItems : [...prev, ...nextItems]));
-        cursorRef.current = res.nextCursor;
-        setHasMore(res.hasMore);
+        cursorRef.current = result.value.nextCursor;
+        setHasMore(Boolean(result.value.nextCursor));
         setError(null);
       } catch (err) {
         const message = err instanceof Error ? err.message : "Ошибка загрузки каталога";
@@ -114,7 +138,7 @@ export function useCatalogDiscovery(
         setRefreshing(false);
       }
     },
-    [offline, debouncedQuery, resolved.sort, resolved.inStock, resolved.dealsOnly, category?.id, sellerId],
+    [offline, debouncedQuery, resolved.sort, resolved.inStock, resolved.dealsOnly, category?.id, sellerId, commerce.loadCatalog],
   );
 
   const refresh = useCallback(async () => {
@@ -138,6 +162,19 @@ export function useCatalogDiscovery(
     setCategory(null);
   }, []);
 
+  const onToggleFavorite = useCallback(
+    async (id: string) => {
+      const result = await commerce.toggleFavorite.execute({ productId: productId(id) });
+      if (!result.ok) return;
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, favoritesCount: result.value.favoritesCount ?? item.favoritesCount } : item,
+        ),
+      );
+    },
+    [commerce.toggleFavorite],
+  );
+
   useEffect(() => {
     loadCategories();
   }, [loadCategories]);
@@ -155,9 +192,21 @@ export function useCatalogDiscovery(
 
     let cancelled = false;
     setSuggestLoading(true);
-    void fetchProductSuggest(debouncedQuery)
-      .then((res) => {
-        if (!cancelled) setSuggestions(res.items.slice(0, 8));
+    void commerce.searchProducts
+      .execute({ query: debouncedQuery })
+      .then((result) => {
+        if (cancelled || !result.ok) {
+          if (!cancelled) setSuggestions([]);
+          return;
+        }
+        setSuggestions(
+          result.value.slice(0, 8).map((item, index) => ({
+            type: "product",
+            id: String(index),
+            title: item.text,
+            slug: "",
+          })),
+        );
       })
       .catch(() => {
         if (!cancelled) setSuggestions([]);
@@ -169,7 +218,7 @@ export function useCatalogDiscovery(
     return () => {
       cancelled = true;
     };
-  }, [debouncedQuery, offline]);
+  }, [debouncedQuery, offline, commerce.searchProducts]);
 
   return {
     offline,
@@ -198,6 +247,7 @@ export function useCatalogDiscovery(
     refresh,
     retry,
     resetFilters,
+    onToggleFavorite,
   };
 }
 

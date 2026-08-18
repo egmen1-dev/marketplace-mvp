@@ -11,12 +11,12 @@ import { radii } from "../tokens/radius";
 import { shadows } from "../tokens/elevation";
 import { spacing } from "../tokens/spacing";
 import { typography } from "../tokens/typography";
-import type { MobileProductListItem } from "../../api/endpoints";
+import type { MobileProductCardData } from "../commerce/ProductCard";
 
 const CARD_IMAGE_HEIGHT = 168;
 
 export type CatalogProductCardProps = {
-  product: MobileProductListItem;
+  product: MobileProductCardData;
   onPress?: () => void;
   onFavorite?: () => void;
   isFavorite?: boolean;

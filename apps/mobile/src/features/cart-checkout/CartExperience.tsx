@@ -107,6 +107,7 @@ export function CartExperience({ state }: Props) {
           items={state.recommendations}
           failed={state.recommendationsFailed}
           onRetry={() => void state.retryRecommendations()}
+          onToggleFavorite={(id) => void state.onToggleFavorite(id)}
         />
 
         <CartPriceSummary subtotal={cart.subtotal} savings={cart.savings} currency={currency} />

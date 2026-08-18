@@ -11,7 +11,6 @@ import {
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { toggleFavorite, type MobileProductListItem } from "../../api/endpoints";
 import { PrimaryButton } from "../../design-system/forms/buttons";
 import { CatalogCategoryRail } from "../../design-system/components/CatalogCategoryRail";
 import { CatalogGridSkeleton, CatalogProductCard } from "../../design-system/components/CatalogProductCard";
@@ -19,6 +18,7 @@ import { CatalogSearchField } from "../../design-system/components/CatalogSearch
 import { CatalogSortSheet } from "../../design-system/components/CatalogSortSheet";
 import { QuickFilterRail } from "../../design-system/components/QuickFilterRail";
 import { SectionErrorCard } from "../../design-system/components/SectionErrorCard";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { brand, surface, text } from "../../design-system/tokens/colors";
 import { spacing } from "../../design-system/tokens/spacing";
 import { typography } from "../../design-system/tokens/typography";
@@ -105,14 +105,14 @@ export function CatalogDiscoveryExperience({ state }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: MobileProductListItem }) => (
+    ({ item }: { item: MobileProductCardData }) => (
       <CatalogProductCard
         product={item}
         onPress={() => router.push(`/product/${item.id}`)}
-        onFavorite={() => toggleFavorite(item.id)}
+        onFavorite={() => void state.onToggleFavorite(item.id)}
       />
     ),
-    [],
+    [state],
   );
 
   if (state.offline && state.items.length === 0 && !state.initialLoading) {

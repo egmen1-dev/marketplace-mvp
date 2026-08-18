@@ -64,6 +64,7 @@
     "mobile:sprint-90:gate": "tsx scripts/sprint-90-unified-design-system-gate.ts",
     "mobile:epic-91:validate": "tsx scripts/epic-91-commerce-domain-gate.ts",
     "mobile:epic-92:validate": "tsx scripts/epic-92-architecture-contracts-gate.ts",
+    "mobile:sprint-93:gate": "tsx scripts/sprint-93-domain-foundation-gate.ts",
     "product:epic-84:p1-diagnostics": "tsx scripts/epic-84-p1-diagnostics-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",

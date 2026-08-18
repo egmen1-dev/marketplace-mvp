@@ -1,22 +1,26 @@
 import { router } from "expo-router";
-import { memo, useCallback } from "react";
+import { memo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 
+import type { MobileProductCardData } from "../commerce/ProductCard";
 import { CatalogProductCard } from "./CatalogProductCard";
 import { CommerceSectionHeader } from "./CommerceSectionHeader";
 import { SectionErrorCard } from "./SectionErrorCard";
-import { addToCart, toggleFavorite, type MobileProductListItem } from "../../api/endpoints";
 import { spacing } from "../tokens/spacing";
 
 type Props = {
-  items: MobileProductListItem[];
+  items: MobileProductCardData[];
   failed: boolean;
   onRetry?: () => void;
+  onToggleFavorite?: (productId: string) => void;
 };
 
-export const CartRecommendationsRail = memo(function CartRecommendationsRail({ items, failed, onRetry }: Props) {
-  const onFavorite = useCallback((id: string) => toggleFavorite(id), []);
-
+export const CartRecommendationsRail = memo(function CartRecommendationsRail({
+  items,
+  failed,
+  onRetry,
+  onToggleFavorite,
+}: Props) {
   if (failed) {
     return (
       <View style={styles.wrap}>
@@ -37,7 +41,7 @@ export const CartRecommendationsRail = memo(function CartRecommendationsRail({ i
             <CatalogProductCard
               product={item}
               onPress={() => router.push(`/product/${item.id}`)}
-              onFavorite={() => onFavorite(item.id)}
+              onFavorite={onToggleFavorite ? () => onToggleFavorite(item.id) : undefined}
             />
           </View>
         ))}
@@ -47,7 +51,7 @@ export const CartRecommendationsRail = memo(function CartRecommendationsRail({ i
 });
 
 const styles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
-  rail: { gap: spacing.md, paddingVertical: spacing.xs },
+  wrap: { gap: spacing.md },
+  rail: { gap: spacing.md, paddingRight: spacing.lg },
   cardWrap: { width: 168 },
 });
