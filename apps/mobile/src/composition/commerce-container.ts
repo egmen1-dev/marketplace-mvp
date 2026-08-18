@@ -34,6 +34,13 @@ import {
   LoadSellerProductsSummary,
   LoadSellerPublicProfile,
 } from "../domain/use-cases/seller/seller-use-cases";
+import {
+  LoadSellerCategories,
+  LoadSellerProductEditor,
+  LoadSellerTaxonomyBrowse,
+  SaveSellerProduct,
+  UploadSellerProductImage,
+} from "../domain/use-cases/seller/seller-product-editor-use-cases";
 import { ExecuteSellerAction } from "../domain/use-cases/seller/execute-seller-action";
 import { MemoryCacheRepository } from "../infrastructure/cache/memory-cache-repository";
 import { RestAuthRepository } from "../infrastructure/repositories/rest-auth-repository";
@@ -80,6 +87,11 @@ export type CommerceUseCases = {
   readonly loadSellerProducts: LoadSellerProducts;
   readonly loadSellerProductsSummary: LoadSellerProductsSummary;
   readonly loadSellerProductDetail: LoadSellerProductDetail;
+  readonly loadSellerProductEditor: LoadSellerProductEditor;
+  readonly saveSellerProduct: SaveSellerProduct;
+  readonly loadSellerCategories: LoadSellerCategories;
+  readonly loadSellerTaxonomyBrowse: LoadSellerTaxonomyBrowse;
+  readonly uploadSellerProductImage: UploadSellerProductImage;
   readonly loadSellerOrders: LoadSellerOrders;
   readonly loadSellerOrdersSummary: LoadSellerOrdersSummary;
   readonly loadSellerOrderDetail: LoadSellerOrderDetail;
@@ -142,6 +154,11 @@ export function getCommerceUseCases(): CommerceUseCases {
     loadSellerProducts: new LoadSellerProducts(seller),
     loadSellerProductsSummary: new LoadSellerProductsSummary(seller),
     loadSellerProductDetail: new LoadSellerProductDetail(seller),
+    loadSellerProductEditor: new LoadSellerProductEditor(seller),
+    saveSellerProduct: new SaveSellerProduct(seller, events),
+    loadSellerCategories: new LoadSellerCategories(seller),
+    loadSellerTaxonomyBrowse: new LoadSellerTaxonomyBrowse(seller),
+    uploadSellerProductImage: new UploadSellerProductImage(seller),
     loadSellerOrders: new LoadSellerOrders(seller),
     loadSellerOrdersSummary: new LoadSellerOrdersSummary(seller),
     loadSellerOrderDetail: new LoadSellerOrderDetail(seller),

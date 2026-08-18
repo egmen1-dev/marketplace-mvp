@@ -14,8 +14,14 @@ import type {
   SellerOrderSummary,
   SellerOrdersSummary,
   SellerProduct,
+  SellerProductEditor,
+  SellerProductEditorInput,
+  SellerProductEditorSaveResult,
   SellerProductPage,
+  SellerCategoryOption,
+  SellerProductImageUploadResult,
   SellerPublicProfile,
+  SellerTaxonomyBrowse,
   SellerWorkspace,
   SellerWorkspaceItem,
 } from "../../domain/contracts/entities/seller";
@@ -136,6 +142,16 @@ export type SellerOrdersSummaryDto = {
   readyForPickup: number;
   overdue: number;
 };
+
+export type SellerProductEditorDto = import("../../domain/contracts/entities/seller").SellerProductEditor;
+export type SellerProductEditorSaveResultDto = {
+  id: string;
+  status: string;
+  updatedAt: string;
+  moderationPending?: boolean;
+};
+export type SellerCategoryOptionDto = import("../../domain/contracts/entities/seller").SellerCategoryOption;
+export type SellerTaxonomyBrowseDto = import("../../domain/contracts/entities/seller").SellerTaxonomyBrowse;
 
 export type SellerPublicProfileDto = {
   id: string;
@@ -296,6 +312,43 @@ export function mapSellerOrderDetailDto(dto: SellerOrderDetailDto): SellerOrderD
       sku: item.sku,
     })),
   };
+}
+
+export function mapSellerProductEditorDto(dto: SellerProductEditorDto): SellerProductEditor {
+  return {
+    ...dto,
+    id: dto.id ? productId(dto.id) : null,
+    previewProductId: dto.previewProductId ? productId(dto.previewProductId) : null,
+  };
+}
+
+export function mapSellerProductEditorSaveResultDto(dto: SellerProductEditorSaveResultDto): SellerProductEditorSaveResult {
+  return {
+    id: productId(dto.id),
+    status: dto.status,
+    updatedAt: dto.updatedAt,
+    moderationPending: dto.moderationPending,
+  };
+}
+
+export function mapSellerProductEditorInputToDto(input: SellerProductEditorInput) {
+  return input;
+}
+
+export function mapSellerCategoriesDto(dto: { items: SellerCategoryOptionDto[] }): ReadonlyArray<SellerCategoryOption> {
+  return dto.items.map((item) => ({ ...item }));
+}
+
+export function mapSellerTaxonomyBrowseDto(dto: SellerTaxonomyBrowseDto): SellerTaxonomyBrowse {
+  return {
+    children: dto.children.map((item) => ({ ...item })),
+    productTypes: dto.productTypes.map((item) => ({ ...item, breadcrumb: [...item.breadcrumb] })),
+    characteristics: dto.characteristics?.map((item) => ({ ...item, options: item.options ? [...item.options] : null })),
+  };
+}
+
+export function mapSellerProductImageUploadResult(dto: SellerProductImageUploadResult): SellerProductImageUploadResult {
+  return { ...dto };
 }
 
 export function mapSellerPublicProfileDto(dto: SellerPublicProfileDto): SellerPublicProfile {

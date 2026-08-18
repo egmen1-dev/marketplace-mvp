@@ -68,6 +68,7 @@ export function SellerProductDetailExperience({ state, onActionPress }: Props) {
           {detail.description ? <Text style={styles.description}>{detail.description}</Text> : null}
         </View>
 
+        <SecondaryButton label="Редактировать" onPress={() => router.push(`/seller/product/${detail.id}/edit`)} />
         <SecondaryButton label="Действия с товаром" onPress={onActionPress} />
       </ScrollView>
     </PageContainer>

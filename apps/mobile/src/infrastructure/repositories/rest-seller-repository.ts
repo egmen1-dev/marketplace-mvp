@@ -19,6 +19,12 @@ import {
   mapSellerOrderDetailDto,
   mapSellerOrderPageDto,
   mapSellerOrdersSummaryDto,
+  mapSellerProductEditorDto,
+  mapSellerProductEditorInputToDto,
+  mapSellerProductEditorSaveResultDto,
+  mapSellerCategoriesDto,
+  mapSellerTaxonomyBrowseDto,
+  mapSellerProductImageUploadResult,
   mapSellerProductDto,
   mapSellerProductPageDto,
   mapSellerPublicProfileDto,
@@ -26,8 +32,13 @@ import {
   type SellerOrderDetailDto,
   type SellerOrderDto,
   type SellerOrdersSummaryDto,
+  type SellerProductEditorDto,
+  type SellerProductEditorSaveResultDto,
+  type SellerCategoryOptionDto,
+  type SellerTaxonomyBrowseDto,
   type SellerPublicProfileDto,
 } from "../mappers/seller-mapper";
+import { uploadProductImageFromUri } from "../upload/product-image-upload";
 import type { MobileProductListDto } from "../mappers/commerce-mapper";
 
 export class RestSellerRepository implements SellerRepository {
@@ -100,6 +111,109 @@ export class RestSellerRepository implements SellerRepository {
           isPrimary: "isPrimary" in img ? Boolean(img.isPrimary) : false,
         })) ?? [],
       });
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerProductEditor(productId: ProductId | null): Promise<Result<import("../../domain/contracts/entities/seller").SellerProductEditor>> {
+    try {
+      if (!productId) {
+        return ok(
+          mapSellerProductEditorDto({
+            id: null,
+            title: "",
+            description: null,
+            price: 0,
+            compareAt: null,
+            currency: "RUB",
+            stock: 0,
+            sku: null,
+            status: "DRAFT",
+            categoryId: null,
+            categoryName: null,
+            productTypeId: null,
+            productTypeName: null,
+            images: [],
+            characteristics: [],
+            moderation: null,
+            previewAvailable: false,
+            previewProductId: null,
+            updatedAt: null,
+            createdAt: null,
+          }),
+        );
+      }
+      const dto = await this.transport.request<SellerProductEditorDto>({
+        path: `/api/mobile/seller/products/${encodeURIComponent(productId)}?editor=1`,
+      });
+      return ok(mapSellerProductEditorDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async saveSellerProduct(
+    productId: ProductId | null,
+    input: import("../../domain/contracts/entities/seller").SellerProductEditorInput,
+  ): Promise<Result<import("../../domain/contracts/entities/seller").SellerProductEditorSaveResult>> {
+    try {
+      const body = mapSellerProductEditorInputToDto(input);
+      if (productId) {
+        const dto = await this.transport.request<SellerProductEditorSaveResultDto>({
+          path: `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
+          method: "PATCH",
+          body,
+        });
+        return ok(mapSellerProductEditorSaveResultDto(dto));
+      }
+      const dto = await this.transport.request<SellerProductEditorSaveResultDto>({
+        path: "/api/mobile/seller/products",
+        method: "POST",
+        body,
+      });
+      return ok(mapSellerProductEditorSaveResultDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerCategories(): Promise<Result<ReadonlyArray<import("../../domain/contracts/entities/seller").SellerCategoryOption>>> {
+    try {
+      const dto = await this.transport.request<{ items: SellerCategoryOptionDto[] }>({
+        path: "/api/mobile/seller/categories",
+      });
+      return ok(mapSellerCategoriesDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerTaxonomyBrowse(params: {
+    categoryId?: string | null;
+    productTypeId?: string | null;
+  }): Promise<Result<import("../../domain/contracts/entities/seller").SellerTaxonomyBrowse>> {
+    try {
+      const search = new URLSearchParams();
+      if (params.categoryId) search.set("categoryId", params.categoryId);
+      if (params.productTypeId) search.set("productTypeId", params.productTypeId);
+      const qs = search.toString();
+      const dto = await this.transport.request<SellerTaxonomyBrowseDto>({
+        path: `/api/mobile/seller/taxonomy/browse${qs ? `?${qs}` : ""}`,
+      });
+      return ok(mapSellerTaxonomyBrowseDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async uploadSellerProductImage(
+    localUri: string,
+    fileName: string | null,
+  ): Promise<Result<import("../../domain/contracts/entities/seller").SellerProductImageUploadResult>> {
+    try {
+      const uploaded = await uploadProductImageFromUri(localUri, fileName ?? "product.jpg");
+      return ok(mapSellerProductImageUploadResult(uploaded));
     } catch (error) {
       return err(mapApiErrorToDomain(error));
     }

@@ -209,6 +209,7 @@ export function SellerProductsExperience({ state }: Props) {
             <View style={styles.headerBlock}>
               <Text style={styles.screenTitle}>Товары</Text>
               <Text style={styles.screenSubtitle}>Операционный каталог — статус, остатки, модерация</Text>
+              <SecondaryButton label="Создать товар" onPress={() => router.push("/seller/product/new")} />
 
               <ActionResultBanner
                 result={actionCenter.result}

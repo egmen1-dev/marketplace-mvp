@@ -227,6 +227,110 @@ export type SellerProductDetail = SellerProduct & {
   readonly images: ReadonlyArray<{ readonly url: string; readonly isPrimary: boolean }>;
 };
 
+export type SellerProductEditorImage = {
+  readonly url: string;
+  readonly alt?: string | null;
+  readonly pathname?: string | null;
+  readonly isPrimary: boolean;
+};
+
+export type SellerProductEditorCharacteristic = {
+  readonly definitionId: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly type: string;
+  readonly required: boolean;
+  readonly unit: string | null;
+  readonly options: ReadonlyArray<string> | null;
+  readonly valueText?: string | null;
+  readonly valueNumber?: number | null;
+  readonly valueBoolean?: boolean | null;
+  readonly displayValue?: string | null;
+};
+
+export type SellerProductEditorModeration = {
+  readonly status: string;
+  readonly reason: string | null;
+  readonly issues: ReadonlyArray<string>;
+  readonly qualityScore: number | null;
+  readonly updatedAt: string;
+};
+
+export type SellerProductEditor = {
+  readonly id: ProductId | null;
+  readonly title: string;
+  readonly description: string | null;
+  readonly price: number;
+  readonly compareAt: number | null;
+  readonly currency: string;
+  readonly stock: number;
+  readonly sku: string | null;
+  readonly status: string;
+  readonly categoryId: string | null;
+  readonly categoryName: string | null;
+  readonly productTypeId: string | null;
+  readonly productTypeName: string | null;
+  readonly images: ReadonlyArray<SellerProductEditorImage>;
+  readonly characteristics: ReadonlyArray<SellerProductEditorCharacteristic>;
+  readonly moderation: SellerProductEditorModeration | null;
+  readonly previewAvailable: boolean;
+  readonly previewProductId: ProductId | null;
+  readonly updatedAt: string | null;
+  readonly createdAt: string | null;
+};
+
+export type SellerProductEditorInput = {
+  readonly title: string;
+  readonly description?: string | null;
+  readonly price: number;
+  readonly stock: number;
+  readonly sku?: string | null;
+  readonly categoryId?: string | null;
+  readonly productTypeId?: string | null;
+  readonly status?: string;
+  readonly images?: ReadonlyArray<SellerProductEditorImage>;
+  readonly characteristics?: ReadonlyArray<{
+    readonly definitionId: string;
+    readonly valueText?: string | null;
+    readonly valueNumber?: number | null;
+    readonly valueBoolean?: boolean | null;
+    readonly valueJson?: unknown;
+  }>;
+};
+
+export type SellerProductEditorSaveResult = {
+  readonly id: ProductId;
+  readonly status: string;
+  readonly updatedAt: string;
+  readonly moderationPending?: boolean;
+};
+
+export type SellerCategoryOption = {
+  readonly id: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly parentId: string | null;
+  readonly productCount: number;
+  readonly pathLabel?: string | null;
+};
+
+export type SellerTaxonomyBrowse = {
+  readonly children: ReadonlyArray<SellerCategoryOption>;
+  readonly productTypes: ReadonlyArray<{
+    readonly id: string;
+    readonly name: string;
+    readonly slug: string;
+    readonly categoryId: string;
+    readonly breadcrumb: ReadonlyArray<string>;
+  }>;
+  readonly characteristics?: ReadonlyArray<SellerProductEditorCharacteristic>;
+};
+
+export type SellerProductImageUploadResult = {
+  readonly url: string;
+  readonly pathname: string;
+};
+
 export type SellerOrderFilter =
   | "all"
   | "new"

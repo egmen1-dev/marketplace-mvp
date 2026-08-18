@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 
+import { ProductServiceError } from "@/features/products/queries";
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
 import { buildMobileSellerProductsFromRequest } from "@/lib/mobile/seller-products-data";
+import {
+  saveMobileSellerProductFromRequest,
+  wrapMobileEditorContract,
+} from "@/lib/mobile/seller-product-editor-data";
+import type { MobileSellerProductEditorInput } from "@/lib/mobile/seller-product-editor-types";
 
 export async function GET(request: Request) {
   const blocked = ccosApiGuard();
@@ -25,4 +31,28 @@ export async function GET(request: Request) {
   ].join("-");
 
   return NextResponse.json(withMobileApiContract(page, cacheKey));
+}
+
+export async function POST(request: Request) {
+  const blocked = ccosApiGuard();
+  if (blocked) return blocked;
+
+  let body: MobileSellerProductEditorInput;
+  try {
+    body = (await request.json()) as MobileSellerProductEditorInput;
+  } catch {
+    return NextResponse.json({ error: "Ожидается JSON-тело запроса" }, { status: 400 });
+  }
+
+  try {
+    const saved = await saveMobileSellerProductFromRequest(request, null, body);
+    return NextResponse.json(wrapMobileEditorContract(saved, `seller-product-create-${saved.id}`), {
+      status: 201,
+    });
+  } catch (err) {
+    if (err instanceof ProductServiceError) {
+      return NextResponse.json({ error: err.message, code: err.code }, { status: err.status });
+    }
+    throw err;
+  }
 }

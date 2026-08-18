@@ -81,6 +81,20 @@ export interface SellerRepository {
   }): Promise<Result<SellerProductPage>>;
   loadSellerProductsSummary(): Promise<Result<import("../entities/seller").SellerProductsSummary>>;
   loadSellerProductDetail(productId: ProductId): Promise<Result<import("../entities/seller").SellerProductDetail>>;
+  loadSellerProductEditor(productId: ProductId | null): Promise<Result<import("../entities/seller").SellerProductEditor>>;
+  saveSellerProduct(
+    productId: ProductId | null,
+    input: import("../entities/seller").SellerProductEditorInput,
+  ): Promise<Result<import("../entities/seller").SellerProductEditorSaveResult>>;
+  loadSellerCategories(): Promise<Result<ReadonlyArray<import("../entities/seller").SellerCategoryOption>>>;
+  loadSellerTaxonomyBrowse(params: {
+    categoryId?: string | null;
+    productTypeId?: string | null;
+  }): Promise<Result<import("../entities/seller").SellerTaxonomyBrowse>>;
+  uploadSellerProductImage(
+    localUri: string,
+    fileName: string | null,
+  ): Promise<Result<import("../entities/seller").SellerProductImageUploadResult>>;
   loadSellerOrders(params: {
     cursor?: string | null;
     query?: string | null;
