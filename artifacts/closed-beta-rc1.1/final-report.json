@@ -1,0 +1,36 @@
+{
+  "candidate": "RC1.1",
+  "buildResult": "SUCCESS",
+  "verificationResult": "PASS",
+  "apkPath": "artifacts/closed-beta-rc1.1/lot_android_closed_beta_0.1.6_beta.2.apk",
+  "apkSizeBytes": 93651235,
+  "sha256": "fb20d58c1d268afec27d5d614455ccda7eae8b38606cb4ef6d8df03c3a46cf0b",
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.6-beta.2",
+  "versionCode": 5,
+  "minSdk": 24,
+  "targetSdk": 36,
+  "commitSha": "6bf5a2a12b4d0d75845d212bd0f2144ae58fe546",
+  "railwaySha": "d9f0eca635c777fa64cb204280dbd241c2c6ce1f",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "buildTime": "2026-08-18T19:50:23Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "signedWith": "debug.keystore (internal testing only)",
+  "p0FixesIncluded": [
+    "bootstrap-diagnostics",
+    "post-login-native-navigation"
+  ],
+  "artifacts": {
+    "apk": "artifacts/closed-beta-rc1.1/lot_android_closed_beta_0.1.6_beta.2.apk",
+    "sha256": "artifacts/closed-beta-rc1.1/sha256.txt",
+    "buildManifest": "artifacts/closed-beta-rc1.1/build-manifest.json",
+    "aaptBadging": "artifacts/closed-beta-rc1.1/aapt-badging.txt",
+    "apkanalyzerManifest": "artifacts/closed-beta-rc1.1/apkanalyzer-manifest.xml",
+    "releaseGates": "artifacts/closed-beta-rc1.1/release-gates.json",
+    "finalReport": "artifacts/closed-beta-rc1.1/final-report.json"
+  },
+  "final": "READY_FOR_PHYSICAL_VALIDATION",
+  "physicalAndroid": "NOT_RUN"
+}

@@ -1,0 +1,51 @@
+{
+  "recordedAt": "2026-08-18T19:56:00Z",
+  "candidateVersion": "0.1.6-beta.2",
+  "candidateVersionCode": 5,
+  "summary": {
+    "typecheck": "PASS",
+    "tests": "PASS",
+    "p0BootstrapDiagnosticsTests": "PASS",
+    "p0PostAuthNavigationTests": "PASS",
+    "mobileReleaseGate": "PASS",
+    "apkVerification": "PASS",
+    "physicalAndroid": "NOT_RUN"
+  },
+  "gates": [
+    {
+      "id": "mobile:typecheck",
+      "command": "npm run mobile:typecheck",
+      "verdict": "PASS"
+    },
+    {
+      "id": "mobile:p0-bootstrap-diagnostics-tests",
+      "command": "npm test -- tests/mobile-bootstrap-diagnostics.test.ts",
+      "verdict": "PASS",
+      "detail": "2 tests, 0 failures"
+    },
+    {
+      "id": "mobile:p0-post-auth-navigation-tests",
+      "command": "npm test -- tests/mobile-post-auth-navigation.test.ts",
+      "verdict": "PASS",
+      "detail": "6 tests, 0 failures"
+    },
+    {
+      "id": "mobile:release-gate",
+      "command": "npm run mobile:release-gate",
+      "verdict": "PASS",
+      "detail": "mobileStagingBackend READY"
+    },
+    {
+      "id": "apk:verify-android-apk",
+      "command": "node scripts/verify-android-apk.mjs",
+      "verdict": "PASS",
+      "detail": "package ru.lot.marketplace.alpha versionCode 5 versionName 0.1.6-beta.2 minSdk 24 targetSdk 36 size 93651235"
+    },
+    {
+      "id": "physical-android",
+      "command": null,
+      "verdict": "NOT_RUN",
+      "detail": "RC1.1 built for operator physical validation"
+    }
+  ]
+}
