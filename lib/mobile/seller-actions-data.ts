@@ -237,6 +237,160 @@ async function handleConfirmOrder(
   });
 }
 
+async function handleReadyForShipment(
+  sellerProfileId: string,
+  userId: string,
+  role: import("@prisma/client").UserRole,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const orderId = String(payload.orderId ?? "");
+  if (!orderId) return fail("ready_for_shipment", "Заказ не указан");
+
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: { some: { product: { sellerId: sellerProfileId } } },
+    },
+    select: { id: true, status: true, fulfillmentType: true },
+  });
+  if (!order) return fail("ready_for_shipment", "Заказ не найден", "NOT_FOUND");
+  if (order.fulfillmentType !== "DELIVERY") {
+    return fail("ready_for_shipment", "Заказ не предполагает доставку");
+  }
+
+  const previousStatus = order.status;
+  try {
+    await updateSellerOrderStatus({
+      orderId,
+      toStatus: OrderStatus.READY_FOR_SHIPMENT,
+      actorUserId: userId,
+      actorRole: role,
+      sellerProfileId,
+    });
+  } catch (err) {
+    const message = err instanceof SellerServiceError ? err.message : "Не удалось отметить готовность";
+    return fail("ready_for_shipment", message);
+  }
+
+  return okResult("ready_for_shipment", "Заказ готов к отправке", {
+    undo: { action: "ready_for_shipment", payload: { orderId, revertStatus: previousStatus } },
+  });
+}
+
+async function handleReadyForPickup(
+  sellerProfileId: string,
+  userId: string,
+  role: import("@prisma/client").UserRole,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const orderId = String(payload.orderId ?? "");
+  if (!orderId) return fail("ready_for_pickup", "Заказ не указан");
+
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: { some: { product: { sellerId: sellerProfileId } } },
+    },
+    select: { id: true, status: true, fulfillmentType: true },
+  });
+  if (!order) return fail("ready_for_pickup", "Заказ не найден", "NOT_FOUND");
+  if (order.fulfillmentType !== "SELLER_PICKUP") {
+    return fail("ready_for_pickup", "Заказ не предполагает самовывоз");
+  }
+
+  const previousStatus = order.status;
+  try {
+    await updateSellerOrderStatus({
+      orderId,
+      toStatus: OrderStatus.READY_FOR_PICKUP,
+      actorUserId: userId,
+      actorRole: role,
+      sellerProfileId,
+    });
+  } catch (err) {
+    const message = err instanceof SellerServiceError ? err.message : "Не удалось отметить готовность";
+    return fail("ready_for_pickup", message);
+  }
+
+  return okResult("ready_for_pickup", "Заказ готов к выдаче", {
+    undo: { action: "ready_for_pickup", payload: { orderId, revertStatus: previousStatus } },
+  });
+}
+
+async function handleMarkPickedUp(
+  sellerProfileId: string,
+  userId: string,
+  role: import("@prisma/client").UserRole,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const orderId = String(payload.orderId ?? "");
+  if (!orderId) return fail("mark_picked_up", "Заказ не указан");
+
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: { some: { product: { sellerId: sellerProfileId } } },
+    },
+    select: { id: true, status: true },
+  });
+  if (!order) return fail("mark_picked_up", "Заказ не найден", "NOT_FOUND");
+
+  const previousStatus = order.status;
+  try {
+    await updateSellerOrderStatus({
+      orderId,
+      toStatus: OrderStatus.PICKED_UP,
+      actorUserId: userId,
+      actorRole: role,
+      sellerProfileId,
+    });
+  } catch (err) {
+    const message = err instanceof SellerServiceError ? err.message : "Не удалось отметить выдачу";
+    return fail("mark_picked_up", message);
+  }
+
+  return okResult("mark_picked_up", "Заказ выдан покупателю", {
+    undo: { action: "mark_picked_up", payload: { orderId, revertStatus: previousStatus } },
+  });
+}
+
+async function handleCancelOrder(
+  sellerProfileId: string,
+  userId: string,
+  role: import("@prisma/client").UserRole,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const orderId = String(payload.orderId ?? "");
+  if (!orderId) return fail("cancel_order", "Заказ не указан");
+
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: { some: { product: { sellerId: sellerProfileId } } },
+    },
+    select: { id: true, status: true },
+  });
+  if (!order) return fail("cancel_order", "Заказ не найден", "NOT_FOUND");
+
+  const previousStatus = order.status;
+  try {
+    await updateSellerOrderStatus({
+      orderId,
+      toStatus: OrderStatus.CANCELLED,
+      actorUserId: userId,
+      actorRole: role,
+      sellerProfileId,
+    });
+  } catch (err) {
+    const message = err instanceof SellerServiceError ? err.message : "Не удалось отменить заказ";
+    return fail("cancel_order", message);
+  }
+
+  return okResult("cancel_order", "Заказ отменён", {
+    undo: { action: "cancel_order", payload: { orderId, revertStatus: previousStatus } },
+  });
+}
+
 async function handleReplyBuyer(payload: MobileSellerActionPayload): Promise<MobileSellerActionResult> {
   const conversationId = String(payload.conversationId ?? "");
   if (!conversationId) return fail("reply_buyer", "Диалог не указан");
@@ -324,7 +478,13 @@ async function handleUndoOrderStatus(
   sellerProfileId: string,
   userId: string,
   role: import("@prisma/client").UserRole,
-  action: "ship_order" | "confirm_order",
+  action:
+    | "ship_order"
+    | "confirm_order"
+    | "ready_for_shipment"
+    | "ready_for_pickup"
+    | "mark_picked_up"
+    | "cancel_order",
   payload: MobileSellerActionPayload,
 ): Promise<MobileSellerActionResult> {
   const orderId = String(payload.orderId ?? "");
@@ -472,6 +632,18 @@ export async function executeMobileSellerAction(
   if (payload.revertStatus && input.action === "confirm_order") {
     return handleUndoOrderStatus(sellerProfileId, user.id, user.role, "confirm_order", payload);
   }
+  if (payload.revertStatus && input.action === "ready_for_shipment") {
+    return handleUndoOrderStatus(sellerProfileId, user.id, user.role, "ready_for_shipment", payload);
+  }
+  if (payload.revertStatus && input.action === "ready_for_pickup") {
+    return handleUndoOrderStatus(sellerProfileId, user.id, user.role, "ready_for_pickup", payload);
+  }
+  if (payload.revertStatus && input.action === "mark_picked_up") {
+    return handleUndoOrderStatus(sellerProfileId, user.id, user.role, "mark_picked_up", payload);
+  }
+  if (payload.revertStatus && input.action === "cancel_order") {
+    return handleUndoOrderStatus(sellerProfileId, user.id, user.role, "cancel_order", payload);
+  }
   if (payload.revertStatus === "DRAFT" && input.action === "publish_product") {
     return handleUndoPublish(sellerProfileId, payload);
   }
@@ -492,6 +664,14 @@ export async function executeMobileSellerAction(
       return handleShipOrder(sellerProfileId, user.id, user.role, payload);
     case "confirm_order":
       return handleConfirmOrder(sellerProfileId, user.id, user.role, payload);
+    case "ready_for_shipment":
+      return handleReadyForShipment(sellerProfileId, user.id, user.role, payload);
+    case "ready_for_pickup":
+      return handleReadyForPickup(sellerProfileId, user.id, user.role, payload);
+    case "mark_picked_up":
+      return handleMarkPickedUp(sellerProfileId, user.id, user.role, payload);
+    case "cancel_order":
+      return handleCancelOrder(sellerProfileId, user.id, user.role, payload);
     case "reply_buyer":
       return handleReplyBuyer(payload);
     case "withdraw_funds":

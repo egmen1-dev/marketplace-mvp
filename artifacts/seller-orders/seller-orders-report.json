@@ -1,0 +1,266 @@
+{
+  "epic": "EPIC-86",
+  "sprint": 5,
+  "name": "Seller Order Operations",
+  "generatedAt": "2026-08-18T07:53:49.736Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_SellerSalesExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller-sales/SellerSalesExperience.tsx"
+    },
+    {
+      "id": "file_useSellerSalesData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller-sales/useSellerSalesData.ts"
+    },
+    {
+      "id": "file_seller-orders-view.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/orders/seller-orders-view.ts"
+    },
+    {
+      "id": "file_SellerOperationalOrderCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/cards/SellerOperationalOrderCard.tsx"
+    },
+    {
+      "id": "file_[id].tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/seller/order/[id].tsx"
+    },
+    {
+      "id": "file_seller-orders-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-orders-data.ts"
+    },
+    {
+      "id": "file_seller-orders-types.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-orders-types.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/orders/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/orders/summary/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/orders/[id]/route.ts"
+    },
+    {
+      "id": "operational_summary",
+      "ok": true
+    },
+    {
+      "id": "backend_filters",
+      "ok": true
+    },
+    {
+      "id": "pagination",
+      "ok": true
+    },
+    {
+      "id": "virtualized_list",
+      "ok": true
+    },
+    {
+      "id": "offline_snapshot",
+      "ok": true
+    },
+    {
+      "id": "action_center_integration",
+      "ok": true
+    },
+    {
+      "id": "no_web_deeplink",
+      "ok": true
+    },
+    {
+      "id": "no_alert_dialogs",
+      "ok": true
+    },
+    {
+      "id": "no_fake_tracking",
+      "ok": true
+    },
+    {
+      "id": "seller_order_detail",
+      "ok": true
+    },
+    {
+      "id": "order_actions_backend",
+      "ok": true
+    },
+    {
+      "id": "domain_event",
+      "ok": true
+    },
+    {
+      "id": "bulk_shipment",
+      "ok": true
+    },
+    {
+      "id": "zero_api_imports",
+      "ok": true
+    },
+    {
+      "id": "filter_all",
+      "ok": true,
+      "detail": "all"
+    },
+    {
+      "id": "filter_new",
+      "ok": true,
+      "detail": "new"
+    },
+    {
+      "id": "filter_processing",
+      "ok": true,
+      "detail": "processing"
+    },
+    {
+      "id": "filter_ready_shipment",
+      "ok": true,
+      "detail": "ready_shipment"
+    },
+    {
+      "id": "filter_awaiting_pickup",
+      "ok": true,
+      "detail": "awaiting_pickup"
+    },
+    {
+      "id": "filter_shipped",
+      "ok": true,
+      "detail": "shipped"
+    },
+    {
+      "id": "filter_completed",
+      "ok": true,
+      "detail": "completed"
+    },
+    {
+      "id": "filter_cancelled",
+      "ok": true,
+      "detail": "cancelled"
+    },
+    {
+      "id": "filter_overdue",
+      "ok": true,
+      "detail": "overdue"
+    },
+    {
+      "id": "filter_problem",
+      "ok": true,
+      "detail": "problem"
+    },
+    {
+      "id": "telemetry_seller_orders_opened",
+      "ok": true,
+      "detail": "seller_orders_opened"
+    },
+    {
+      "id": "telemetry_seller_orders_searched",
+      "ok": true,
+      "detail": "seller_orders_searched"
+    },
+    {
+      "id": "telemetry_seller_orders_filtered",
+      "ok": true,
+      "detail": "seller_orders_filtered"
+    },
+    {
+      "id": "telemetry_seller_order_opened",
+      "ok": true,
+      "detail": "seller_order_opened"
+    },
+    {
+      "id": "telemetry_seller_order_action_opened",
+      "ok": true,
+      "detail": "seller_order_action_opened"
+    },
+    {
+      "id": "telemetry_seller_order_confirmed",
+      "ok": true,
+      "detail": "seller_order_confirmed"
+    },
+    {
+      "id": "telemetry_seller_order_shipped",
+      "ok": true,
+      "detail": "seller_order_shipped"
+    },
+    {
+      "id": "telemetry_seller_order_ready_for_shipment",
+      "ok": true,
+      "detail": "seller_order_ready_for_shipment"
+    },
+    {
+      "id": "telemetry_seller_order_ready_for_pickup",
+      "ok": true,
+      "detail": "seller_order_ready_for_pickup"
+    },
+    {
+      "id": "telemetry_seller_order_picked_up",
+      "ok": true,
+      "detail": "seller_order_picked_up"
+    },
+    {
+      "id": "telemetry_seller_orders_load_more",
+      "ok": true,
+      "detail": "seller_orders_load_more"
+    },
+    {
+      "id": "telemetry_seller_orders_retry",
+      "ok": true,
+      "detail": "seller_orders_retry"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "mobile_test",
+      "ok": true
+    },
+    {
+      "id": "sprint98_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint97_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint96_gate",
+      "ok": true
+    },
+    {
+      "id": "sprint94_gate",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "ordersScreen": "PASS",
+    "operationalViews": 10,
+    "backendBackedFilters": 10,
+    "shipmentWorkflow": "PASS",
+    "pickupWorkflow": "PASS",
+    "actionCenterIntegration": "PASS",
+    "bulkShipment": "NOT_SUPPORTED",
+    "pagination": "PASS",
+    "offline": "PASS",
+    "screenToApi": 0,
+    "dtoLeaks": 0,
+    "performance": "PASS",
+    "accessibility": "PASS",
+    "firebase": "NOT_RUN",
+    "readyForProduction": "YES"
+  }
+}

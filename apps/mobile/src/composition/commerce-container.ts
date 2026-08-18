@@ -26,7 +26,9 @@ import { LoadOrderDetail, LoadOrders, ReorderItems, ShareOrder } from "../domain
 import { LoadPickupPoints, QuoteCheckoutDelivery, LoadWallet } from "../domain/use-cases/wallet/wallet-use-cases";
 import {
   LoadSellerHome,
+  LoadSellerOrderDetail,
   LoadSellerOrders,
+  LoadSellerOrdersSummary,
   LoadSellerProductDetail,
   LoadSellerProducts,
   LoadSellerProductsSummary,
@@ -79,6 +81,8 @@ export type CommerceUseCases = {
   readonly loadSellerProductsSummary: LoadSellerProductsSummary;
   readonly loadSellerProductDetail: LoadSellerProductDetail;
   readonly loadSellerOrders: LoadSellerOrders;
+  readonly loadSellerOrdersSummary: LoadSellerOrdersSummary;
+  readonly loadSellerOrderDetail: LoadSellerOrderDetail;
   readonly loadSellerPublicProfile: LoadSellerPublicProfile;
   readonly executeSellerAction: ExecuteSellerAction;
   readonly trackScreenEvent: (input: { screen: string; event: string; errorCode?: string }) => void;
@@ -138,7 +142,9 @@ export function getCommerceUseCases(): CommerceUseCases {
     loadSellerProducts: new LoadSellerProducts(seller),
     loadSellerProductsSummary: new LoadSellerProductsSummary(seller),
     loadSellerProductDetail: new LoadSellerProductDetail(seller),
-    loadSellerOrders: new LoadSellerOrders(seller, events),
+    loadSellerOrders: new LoadSellerOrders(seller),
+    loadSellerOrdersSummary: new LoadSellerOrdersSummary(seller),
+    loadSellerOrderDetail: new LoadSellerOrderDetail(seller),
     loadSellerPublicProfile: new LoadSellerPublicProfile(seller),
     executeSellerAction: new ExecuteSellerAction(seller, events),
     trackScreenEvent: (input) => trackScreenEvent(telemetryRepo!, input),

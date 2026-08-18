@@ -4,7 +4,16 @@ import type { SellerRepository } from "../../contracts/repositories/index";
 import type { DomainEventBus } from "../../contracts/events";
 import type { Result } from "../../contracts/result";
 import type { CommandUseCase } from "../../contracts/use-cases/index";
-import { extractProductIdFromActionPayload } from "./seller-use-cases";
+import { extractOrderIdFromActionPayload, extractProductIdFromActionPayload } from "./seller-use-cases";
+
+const ORDER_ACTIONS = new Set([
+  "confirm_order",
+  "ship_order",
+  "ready_for_shipment",
+  "ready_for_pickup",
+  "mark_picked_up",
+  "cancel_order",
+]);
 
 export class ExecuteSellerAction implements CommandUseCase<SellerActionInput, SellerActionResult> {
   constructor(
@@ -29,6 +38,27 @@ export class ExecuteSellerAction implements CommandUseCase<SellerActionInput, Se
           type: "SellerProductChanged",
           productId: productIdValue,
           change,
+        });
+      }
+
+      const orderIdValue = extractOrderIdFromActionPayload(input.payload);
+      if (orderIdValue && ORDER_ACTIONS.has(input.action)) {
+        this.events.publish({
+          type: "SellerOrderChanged",
+          order: {
+            id: orderIdValue,
+            orderNumber: String(input.payload.orderNumber ?? orderIdValue),
+            status: String(input.payload.nextStatus ?? "updated"),
+            fulfillmentType: "DELIVERY",
+            isOverdue: false,
+            total: { amount: 0, currency: "RUB" },
+            sellerSubtotal: { amount: 0, currency: "RUB" },
+            buyerLabel: null,
+            createdAt: new Date().toISOString(),
+            itemCount: 0,
+            previewTitle: null,
+          },
+          change: input.action === "cancel_order" ? "status_changed" : "updated",
         });
       }
     }

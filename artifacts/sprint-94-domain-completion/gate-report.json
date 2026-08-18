@@ -1,7 +1,7 @@
 {
   "sprint": "SPRINT-94",
   "phase": "Domain Completion & Seller Foundation",
-  "generatedAt": "2026-08-18T06:49:59.632Z",
+  "generatedAt": "2026-08-18T07:53:49.722Z",
   "verdict": "PASS",
   "rows": [
     {
@@ -187,7 +187,7 @@
   ],
   "finalReport": {
     "repositories": 10,
-    "useCases": 13,
+    "useCases": 14,
     "buyerScreensOnDomain": 12,
     "sellerScreensOnDomain": 3,
     "screenApiImports": "6 → 0",

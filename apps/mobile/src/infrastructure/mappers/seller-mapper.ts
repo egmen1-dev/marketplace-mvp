@@ -9,8 +9,10 @@ import type {
   SellerHomeRevenue,
   SellerHomeTask,
   SellerHomeTodaySummary,
+  SellerOrderDetail,
   SellerOrderPage,
   SellerOrderSummary,
+  SellerOrdersSummary,
   SellerProduct,
   SellerProductPage,
   SellerPublicProfile,
@@ -103,11 +105,36 @@ export type SellerOrderDto = {
   id: string;
   orderNumber: string;
   status: string;
+  fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
+  isOverdue: boolean;
+  overdueReason?: string | null;
   total: number;
   sellerSubtotal: number;
   currency: string;
   createdAt: string;
   buyerName: string | null;
+  buyerEmail?: string | null;
+  itemCount: number;
+  sellerItemNames: string[];
+};
+
+export type SellerOrderDetailDto = SellerOrderDto & {
+  updatedAt: string;
+  items: Array<{
+    id: string;
+    productName: string;
+    quantity: number;
+    totalPrice: number;
+    sku: string | null;
+  }>;
+};
+
+export type SellerOrdersSummaryDto = {
+  newCount: number;
+  inProgress: number;
+  awaitingShipment: number;
+  readyForPickup: number;
+  overdue: number;
 };
 
 export type SellerPublicProfileDto = {
@@ -220,21 +247,54 @@ export function mapSellerProductPageDto(dto: {
 }
 
 export function mapSellerOrderSummaryDto(dto: SellerOrderDto): SellerOrderSummary {
+  const currency = dto.currency || "RUB";
   return {
     id: orderId(dto.id),
     orderNumber: dto.orderNumber,
     status: dto.status,
-    total: money(dto.sellerSubtotal || dto.total, dto.currency || "RUB"),
+    fulfillmentType: dto.fulfillmentType,
+    isOverdue: dto.isOverdue,
+    total: money(dto.total, currency),
+    sellerSubtotal: money(dto.sellerSubtotal || dto.total, currency),
     buyerLabel: dto.buyerName,
     createdAt: dto.createdAt,
+    itemCount: dto.itemCount,
+    previewTitle: dto.sellerItemNames[0] ?? null,
   };
 }
 
-export function mapSellerOrderPageDto(dto: { items: SellerOrderDto[]; nextCursor: string | null }): SellerOrderPage {
+export function mapSellerOrderPageDto(dto: {
+  items: SellerOrderDto[];
+  nextCursor: string | null;
+  total?: number;
+}): SellerOrderPage {
   return {
     items: dto.items.map(mapSellerOrderSummaryDto),
     nextCursor: dto.nextCursor,
     fromCache: false,
+    total: dto.total ?? dto.items.length,
+  };
+}
+
+export function mapSellerOrdersSummaryDto(dto: SellerOrdersSummaryDto): SellerOrdersSummary {
+  return { ...dto };
+}
+
+export function mapSellerOrderDetailDto(dto: SellerOrderDetailDto): SellerOrderDetail {
+  const base = mapSellerOrderSummaryDto(dto);
+  const currency = dto.currency || "RUB";
+  return {
+    ...base,
+    buyerEmail: dto.buyerEmail ?? null,
+    updatedAt: dto.updatedAt,
+    sellerItemNames: dto.sellerItemNames,
+    items: dto.items.map((item) => ({
+      id: item.id,
+      productName: item.productName,
+      quantity: item.quantity,
+      totalPrice: money(item.totalPrice, currency),
+      sku: item.sku,
+    })),
   };
 }
 
@@ -285,13 +345,13 @@ export function sellerOrderSummaryToSaleCard(order: SellerOrderSummary) {
     id: order.id,
     orderNumber: order.orderNumber,
     status: order.status,
-    sellerSubtotal: order.total.amount,
-    currency: order.total.currency,
+    sellerSubtotal: order.sellerSubtotal.amount,
+    currency: order.sellerSubtotal.currency,
     createdAt: order.createdAt,
     buyerName: order.buyerLabel,
-    itemCount: 1,
-    sellerItemNames: [] as string[],
-    isOverdue: false,
-    fulfillmentType: "DELIVERY" as const,
+    itemCount: order.itemCount,
+    sellerItemNames: order.previewTitle ? [order.previewTitle] : ([] as string[]),
+    isOverdue: order.isOverdue,
+    fulfillmentType: order.fulfillmentType,
   };
 }

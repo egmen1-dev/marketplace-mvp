@@ -1,6 +1,9 @@
 import type {
   SellerHomeDashboard,
+  SellerOrderDetail,
+  SellerOrderFilter,
   SellerOrderPage,
+  SellerOrdersSummary,
   SellerProductDetail,
   SellerProductFilter,
   SellerProductPage,
@@ -8,13 +11,12 @@ import type {
   SellerProductsSummary,
   SellerPublicProfile,
 } from "../../contracts/entities/seller";
-import type { ProductId, SellerId } from "../../contracts/value-objects/ids";
+import type { OrderId, ProductId, SellerId } from "../../contracts/value-objects/ids";
 import type { DomainError } from "../../contracts/errors";
 import type { SellerRepository } from "../../contracts/repositories/index";
-import type { DomainEventBus } from "../../contracts/events";
 import type { Result } from "../../contracts/result";
 import type { QueryUseCase } from "../../contracts/use-cases/index";
-import { productId } from "../../contracts/value-objects/ids";
+import { orderId, productId } from "../../contracts/value-objects/ids";
 
 export class LoadSellerHome implements QueryUseCase<Record<string, never>, SellerHomeDashboard> {
   constructor(private readonly sellerRepository: SellerRepository) {}
@@ -55,22 +57,33 @@ export class LoadSellerProductDetail implements QueryUseCase<{ productId: Produc
   }
 }
 
-export class LoadSellerOrders implements QueryUseCase<{ cursor?: string | null }, SellerOrderPage> {
-  constructor(
-    private readonly sellerRepository: SellerRepository,
-    private readonly events: DomainEventBus,
-  ) {}
+export type LoadSellerOrdersInput = {
+  cursor?: string | null;
+  query?: string | null;
+  filter?: SellerOrderFilter;
+};
 
-  async execute(input: { cursor?: string | null }): Promise<Result<SellerOrderPage, DomainError>> {
-    const result = await this.sellerRepository.loadSellerOrders(input);
-    if (result.ok && result.value.items[0]) {
-      this.events.publish({
-        type: "SellerOrderChanged",
-        order: result.value.items[0],
-        change: "updated",
-      });
-    }
-    return result;
+export class LoadSellerOrders implements QueryUseCase<LoadSellerOrdersInput, SellerOrderPage> {
+  constructor(private readonly sellerRepository: SellerRepository) {}
+
+  execute(input: LoadSellerOrdersInput): Promise<Result<SellerOrderPage, DomainError>> {
+    return this.sellerRepository.loadSellerOrders(input);
+  }
+}
+
+export class LoadSellerOrdersSummary implements QueryUseCase<Record<string, never>, SellerOrdersSummary> {
+  constructor(private readonly sellerRepository: SellerRepository) {}
+
+  execute(_input: Record<string, never>): Promise<Result<SellerOrdersSummary, DomainError>> {
+    return this.sellerRepository.loadSellerOrdersSummary();
+  }
+}
+
+export class LoadSellerOrderDetail implements QueryUseCase<{ orderId: OrderId }, SellerOrderDetail> {
+  constructor(private readonly sellerRepository: SellerRepository) {}
+
+  execute(input: { orderId: OrderId }): Promise<Result<SellerOrderDetail, DomainError>> {
+    return this.sellerRepository.loadSellerOrderDetail(input.orderId);
   }
 }
 
@@ -88,4 +101,12 @@ export function extractProductIdFromActionPayload(
   const raw = payload.productId;
   if (typeof raw !== "string" || !raw.trim()) return null;
   return productId(raw);
+}
+
+export function extractOrderIdFromActionPayload(
+  payload: Readonly<Record<string, string | number | boolean | null>>,
+): OrderId | null {
+  const raw = payload.orderId;
+  if (typeof raw !== "string" || !raw.trim()) return null;
+  return orderId(raw);
 }

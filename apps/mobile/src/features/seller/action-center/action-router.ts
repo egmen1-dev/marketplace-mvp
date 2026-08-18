@@ -27,6 +27,10 @@ export const SELLER_ACTION_LABELS: Record<SellerActionKind, string> = {
   fix_moderation: "Исправить",
   ship_order: "Отметить отправку",
   confirm_order: "Подтвердить",
+  ready_for_shipment: "Готов к отправке",
+  ready_for_pickup: "Готов к выдаче",
+  mark_picked_up: "Выдан покупателю",
+  cancel_order: "Отменить заказ",
   reply_buyer: "Ответить",
   withdraw_funds: "Вывести",
   complete_profile: "Заполнить профиль",
@@ -80,6 +84,34 @@ export function resolveActionSheet(task: SellerWorkspaceItemView): ActionSheetCo
         title: "Подтвердить заказ",
         subtitle: task.subtitle ?? task.title,
         primaryLabel: "Подтвердить",
+      };
+    case "ready_for_shipment":
+      return {
+        mode: "confirm",
+        title: "Готов к отправке",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "Отметить готовность",
+      };
+    case "ready_for_pickup":
+      return {
+        mode: "confirm",
+        title: "Готов к выдаче",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "Отметить готовность",
+      };
+    case "mark_picked_up":
+      return {
+        mode: "confirm",
+        title: "Выдан покупателю",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "Подтвердить выдачу",
+      };
+    case "cancel_order":
+      return {
+        mode: "confirm",
+        title: "Отменить заказ",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "Отменить",
       };
     case "reply_buyer":
       return {

@@ -104,6 +104,10 @@ export type SellerActionKind =
   | "fix_moderation"
   | "ship_order"
   | "confirm_order"
+  | "ready_for_shipment"
+  | "ready_for_pickup"
+  | "mark_picked_up"
+  | "cancel_order"
   | "reply_buyer"
   | "withdraw_funds"
   | "complete_profile"
@@ -223,19 +227,60 @@ export type SellerProductDetail = SellerProduct & {
   readonly images: ReadonlyArray<{ readonly url: string; readonly isPrimary: boolean }>;
 };
 
+export type SellerOrderFilter =
+  | "all"
+  | "new"
+  | "processing"
+  | "ready_shipment"
+  | "awaiting_pickup"
+  | "shipped"
+  | "completed"
+  | "cancelled"
+  | "overdue"
+  | "problem";
+
 export type SellerOrderSummary = {
   readonly id: OrderId;
   readonly orderNumber: string;
   readonly status: string;
+  readonly fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
+  readonly isOverdue: boolean;
   readonly total: Money;
+  readonly sellerSubtotal: Money;
   readonly buyerLabel: string | null;
   readonly createdAt: string;
+  readonly itemCount: number;
+  readonly previewTitle: string | null;
 };
 
 export type SellerOrderPage = {
   readonly items: ReadonlyArray<SellerOrderSummary>;
   readonly nextCursor: string | null;
   readonly fromCache: boolean;
+  readonly total: number;
+};
+
+export type SellerOrdersSummary = {
+  readonly newCount: number;
+  readonly inProgress: number;
+  readonly awaitingShipment: number;
+  readonly readyForPickup: number;
+  readonly overdue: number;
+};
+
+export type SellerOrderLineItem = {
+  readonly id: string;
+  readonly productName: string;
+  readonly quantity: number;
+  readonly totalPrice: Money;
+  readonly sku: string | null;
+};
+
+export type SellerOrderDetail = SellerOrderSummary & {
+  readonly buyerEmail: string | null;
+  readonly updatedAt: string;
+  readonly sellerItemNames: ReadonlyArray<string>;
+  readonly items: ReadonlyArray<SellerOrderLineItem>;
 };
 
 export type SellerPublicProfile = {

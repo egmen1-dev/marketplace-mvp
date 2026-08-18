@@ -263,12 +263,12 @@ export function sellerOrderToSaleCard(order: SellerOrderSummary): SellerSaleCard
     status: order.status,
     statusLabel: SELLER_ORDER_STATUS_LABELS[order.status] ?? order.status,
     buyerName: order.buyerLabel?.trim() || "Покупатель",
-    sellerSubtotal: order.total.amount,
-    currency: order.total.currency,
-    itemCount: 1,
-    previewTitle: null,
+    sellerSubtotal: order.sellerSubtotal.amount,
+    currency: order.sellerSubtotal.currency,
+    itemCount: order.itemCount,
+    previewTitle: order.previewTitle,
     createdAtLabel: formatSellerSaleDate(order.createdAt),
-    isOverdue: false,
+    isOverdue: order.isOverdue,
   };
 }
 

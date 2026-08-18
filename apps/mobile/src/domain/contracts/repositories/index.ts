@@ -81,7 +81,13 @@ export interface SellerRepository {
   }): Promise<Result<SellerProductPage>>;
   loadSellerProductsSummary(): Promise<Result<import("../entities/seller").SellerProductsSummary>>;
   loadSellerProductDetail(productId: ProductId): Promise<Result<import("../entities/seller").SellerProductDetail>>;
-  loadSellerOrders(params: { cursor?: string | null }): Promise<Result<SellerOrderPage>>;
+  loadSellerOrders(params: {
+    cursor?: string | null;
+    query?: string | null;
+    filter?: import("../entities/seller").SellerOrderFilter;
+  }): Promise<Result<SellerOrderPage>>;
+  loadSellerOrdersSummary(): Promise<Result<import("../entities/seller").SellerOrdersSummary>>;
+  loadSellerOrderDetail(orderId: OrderId): Promise<Result<import("../entities/seller").SellerOrderDetail>>;
   loadPublicProfile(sellerId: SellerId): Promise<Result<SellerPublicProfile>>;
   executeAction(input: import("../entities/seller").SellerActionInput): Promise<Result<import("../entities/seller").SellerActionResult>>;
 }

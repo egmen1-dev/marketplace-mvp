@@ -9,19 +9,23 @@ import type {
   SellerProductsSummary,
   SellerPublicProfile,
 } from "../../domain/contracts/entities/seller";
-import type { ProductId, SellerId } from "../../domain/contracts/value-objects/ids";
+import type { OrderId, ProductId, SellerId } from "../../domain/contracts/value-objects/ids";
 import type { Result } from "../../domain/contracts/result";
 import { err, ok } from "../../domain/contracts/result";
 import { mapApiErrorToDomain } from "../network/map-api-error";
 import type { CommerceTransport } from "../transport/types";
 import {
   mapSellerHomeDto,
+  mapSellerOrderDetailDto,
   mapSellerOrderPageDto,
+  mapSellerOrdersSummaryDto,
   mapSellerProductDto,
   mapSellerProductPageDto,
   mapSellerPublicProfileDto,
   type SellerHomeDto,
+  type SellerOrderDetailDto,
   type SellerOrderDto,
+  type SellerOrdersSummaryDto,
   type SellerPublicProfileDto,
 } from "../mappers/seller-mapper";
 import type { MobileProductListDto } from "../mappers/commerce-mapper";
@@ -101,15 +105,47 @@ export class RestSellerRepository implements SellerRepository {
     }
   }
 
-  async loadSellerOrders(params: { cursor?: string | null }): Promise<Result<SellerOrderPage>> {
+  async loadSellerOrders(params: {
+    cursor?: string | null;
+    query?: string | null;
+    filter?: import("../../domain/contracts/entities/seller").SellerOrderFilter;
+  }): Promise<Result<SellerOrderPage>> {
     try {
       const search = new URLSearchParams();
       if (params.cursor) search.set("cursor", params.cursor);
+      if (params.query?.trim()) search.set("q", params.query.trim());
+      if (params.filter && params.filter !== "all") search.set("filter", params.filter);
       const qs = search.toString();
-      const dto = await this.transport.request<{ items: SellerOrderDto[]; nextCursor: string | null }>({
+      const dto = await this.transport.request<{
+        items: SellerOrderDto[];
+        nextCursor: string | null;
+        total?: number;
+      }>({
         path: `/api/mobile/seller/orders${qs ? `?${qs}` : ""}`,
       });
       return ok(mapSellerOrderPageDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerOrdersSummary(): Promise<Result<import("../../domain/contracts/entities/seller").SellerOrdersSummary>> {
+    try {
+      const dto = await this.transport.request<SellerOrdersSummaryDto>({
+        path: "/api/mobile/seller/orders/summary",
+      });
+      return ok(mapSellerOrdersSummaryDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerOrderDetail(orderId: OrderId): Promise<Result<import("../../domain/contracts/entities/seller").SellerOrderDetail>> {
+    try {
+      const dto = await this.transport.request<SellerOrderDetailDto>({
+        path: `/api/mobile/seller/orders/${encodeURIComponent(orderId)}`,
+      });
+      return ok(mapSellerOrderDetailDto(dto));
     } catch (error) {
       return err(mapApiErrorToDomain(error));
     }
