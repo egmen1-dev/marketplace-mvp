@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 
-import { fetchOrders, fetchWallet } from "../../src/api/endpoints";
+import { fetchSellerOrders, fetchWallet } from "../../src/api/endpoints";
 import {
   EmptyState,
   PageScroll,
@@ -12,23 +12,36 @@ import {
   WalletCard,
 } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
+import { useAppStore } from "../../src/store/app-store";
 import { formatPrice } from "../../src/utils/format";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 export default function WalletScreen() {
   const fade = useFadeIn();
+  const mode = useAppStore((s) => s.mode);
+  const isSeller = mode === "seller";
   const [data, setData] = useState<{ spendable: number; withdrawable: number; pending: number; enabled: boolean } | null>(null);
-  const [recentOrders, setRecentOrders] = useState<Array<Record<string, unknown>>>([]);
+  const [recentSales, setRecentSales] = useState<Array<{ id: string; orderNumber: string; status: string }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([fetchWallet(), fetchOrders().catch(() => ({ items: [] }))])
-      .then(([wallet, orders]) => {
+    const salesPromise = isSeller
+      ? fetchSellerOrders().catch(() => ({ items: [] }))
+      : Promise.resolve({ items: [] });
+
+    Promise.all([fetchWallet(), salesPromise])
+      .then(([wallet, sales]) => {
         setData(wallet);
-        setRecentOrders(orders.items.slice(0, 3));
+        setRecentSales(
+          sales.items.slice(0, 3).map((item) => ({
+            id: item.id,
+            orderNumber: item.orderNumber,
+            status: item.status,
+          })),
+        );
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [isSeller]);
 
   if (loading) {
     return (
@@ -63,16 +76,32 @@ export default function WalletScreen() {
           <EmptyState preset="history" title="Нет ожидающих выплат" description="Все начисления уже доступны." />
         )}
 
-        <SectionHeader title="Последние переводы" />
-        {recentOrders.length > 0 ? (
-          recentOrders.map((order, idx) => (
-            <View key={String(order.id ?? idx)} style={styles.transferRow}>
-              <Text style={styles.transferTitle}>Заказ #{String(order.number ?? order.id ?? "—")}</Text>
-              <Text style={styles.transferMeta}>{String(order.status ?? "NEW")}</Text>
+        <SectionHeader title={isSeller ? "Последние продажи" : "Последние переводы"} />
+        {recentSales.length > 0 ? (
+          recentSales.map((sale) => (
+            <View key={sale.id} style={styles.transferRow}>
+              <Text style={styles.transferTitle}>Заказ № {sale.orderNumber}</Text>
+              <Text style={styles.transferMeta}>{sale.status}</Text>
             </View>
           ))
         ) : (
-          <EmptyState preset="history" actionLabel="Обновить" onAction={() => fetchOrders().then((r) => setRecentOrders(r.items.slice(0, 3)))} />
+          <EmptyState
+            preset="history"
+            actionLabel="Обновить"
+            onAction={() =>
+              fetchSellerOrders()
+                .then((r) =>
+                  setRecentSales(
+                    r.items.slice(0, 3).map((item) => ({
+                      id: item.id,
+                      orderNumber: item.orderNumber,
+                      status: item.status,
+                    })),
+                  ),
+                )
+                .catch(() => setRecentSales([]))
+            }
+          />
         )}
 
         <SectionHeader title="История операций" />
