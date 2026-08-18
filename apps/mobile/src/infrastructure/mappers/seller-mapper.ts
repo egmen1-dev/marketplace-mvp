@@ -186,21 +186,36 @@ export function mapSellerHomeDto(dto: SellerHomeDto): SellerHomeDashboard {
 }
 
 export function mapSellerProductDto(dto: MobileProductListDto): SellerProduct {
+  const base = mapProductSummaryDto(dto);
+  const extended = dto as MobileProductListDto & {
+    sku?: string | null;
+    ordersCount?: number;
+    updatedAt?: string;
+    createdAt?: string;
+    moderation?: { status: string; reason: string | null; updatedAt: string } | null;
+  };
   return {
-    ...mapProductSummaryDto(dto),
+    ...base,
     status: dto.status ?? "ACTIVE",
     views: dto.views ?? 0,
+    sku: extended.sku ?? null,
+    ordersCount: extended.ordersCount ?? 0,
+    updatedAt: extended.updatedAt ?? new Date(0).toISOString(),
+    createdAt: extended.createdAt ?? new Date(0).toISOString(),
+    moderation: extended.moderation ?? null,
   };
 }
 
 export function mapSellerProductPageDto(dto: {
   items: MobileProductListDto[];
   nextCursor: string | null;
+  total?: number;
 }): SellerProductPage {
   return {
     items: dto.items.map(mapSellerProductDto),
     nextCursor: dto.nextCursor,
     fromCache: false,
+    total: dto.total ?? dto.items.length,
   };
 }
 

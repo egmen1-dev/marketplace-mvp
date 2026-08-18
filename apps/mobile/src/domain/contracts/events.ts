@@ -72,11 +72,19 @@ export type CatalogInvalidatedEvent = {
   readonly queryHash?: string;
 };
 
+/** Emitted when seller-facing product list changes. */
+export type SellerProductChangedEvent = {
+  readonly type: "SellerProductChanged";
+  readonly productId: ProductId;
+  readonly change: "created" | "updated" | "deleted" | "status_changed";
+};
+
 export type DomainEvent =
   | CartUpdatedEvent
   | OrderCreatedEvent
   | FavoriteChangedEvent
   | SellerOrderChangedEvent
+  | SellerProductChangedEvent
   | WalletChangedEvent
   | SessionExpiredEvent
   | ProfileUpdatedEvent

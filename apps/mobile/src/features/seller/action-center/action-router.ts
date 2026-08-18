@@ -31,6 +31,10 @@ export const SELLER_ACTION_LABELS: Record<SellerActionKind, string> = {
   withdraw_funds: "Вывести",
   complete_profile: "Заполнить профиль",
   resume_draft: "Продолжить",
+  hide_product: "Скрыть",
+  move_to_draft: "В черновики",
+  duplicate_product: "Дублировать",
+  delete_product: "Удалить",
 };
 
 export function resolveActionSheet(task: SellerWorkspaceItemView): ActionSheetConfig | null {
@@ -119,6 +123,34 @@ export function resolveActionSheet(task: SellerWorkspaceItemView): ActionSheetCo
         title: kind === "fix_moderation" ? "Исправить модерацию" : "Продолжить черновик",
         subtitle: task.subtitle ?? task.title,
         primaryLabel: "Открыть редактор",
+      };
+    case "hide_product":
+      return {
+        mode: "confirm",
+        title: "Скрыть товар",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "Скрыть",
+      };
+    case "move_to_draft":
+      return {
+        mode: "confirm",
+        title: "Перевести в черновики",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "В черновики",
+      };
+    case "duplicate_product":
+      return {
+        mode: "confirm",
+        title: "Дублировать товар",
+        subtitle: task.subtitle ?? task.title,
+        primaryLabel: "Создать копию",
+      };
+    case "delete_product":
+      return {
+        mode: "confirm",
+        title: "Удалить товар",
+        subtitle: "Действие необратимо, если товар не использовался в заказах",
+        primaryLabel: "Удалить",
       };
     default:
       return null;

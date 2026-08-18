@@ -100,6 +100,12 @@ export function useSellerHomeData(): SellerHomeDataState {
     }
   }, [cached, dashboard.data]);
 
+  useEffect(() => {
+    return commerce.events.subscribe("SellerProductChanged", () => {
+      void loadDashboard();
+    });
+  }, [commerce.events, loadDashboard]);
+
   return {
     offline,
     sellerCapable,

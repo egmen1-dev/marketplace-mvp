@@ -27,7 +27,9 @@ import { LoadPickupPoints, QuoteCheckoutDelivery, LoadWallet } from "../domain/u
 import {
   LoadSellerHome,
   LoadSellerOrders,
+  LoadSellerProductDetail,
   LoadSellerProducts,
+  LoadSellerProductsSummary,
   LoadSellerPublicProfile,
 } from "../domain/use-cases/seller/seller-use-cases";
 import { ExecuteSellerAction } from "../domain/use-cases/seller/execute-seller-action";
@@ -74,6 +76,8 @@ export type CommerceUseCases = {
   readonly loadWallet: LoadWallet;
   readonly loadSellerHome: LoadSellerHome;
   readonly loadSellerProducts: LoadSellerProducts;
+  readonly loadSellerProductsSummary: LoadSellerProductsSummary;
+  readonly loadSellerProductDetail: LoadSellerProductDetail;
   readonly loadSellerOrders: LoadSellerOrders;
   readonly loadSellerPublicProfile: LoadSellerPublicProfile;
   readonly executeSellerAction: ExecuteSellerAction;
@@ -132,9 +136,11 @@ export function getCommerceUseCases(): CommerceUseCases {
     loadWallet: new LoadWallet(wallet, events),
     loadSellerHome: new LoadSellerHome(seller),
     loadSellerProducts: new LoadSellerProducts(seller),
+    loadSellerProductsSummary: new LoadSellerProductsSummary(seller),
+    loadSellerProductDetail: new LoadSellerProductDetail(seller),
     loadSellerOrders: new LoadSellerOrders(seller, events),
     loadSellerPublicProfile: new LoadSellerPublicProfile(seller),
-    executeSellerAction: new ExecuteSellerAction(seller),
+    executeSellerAction: new ExecuteSellerAction(seller, events),
     trackScreenEvent: (input) => trackScreenEvent(telemetryRepo!, input),
     events,
   };

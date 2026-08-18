@@ -16,6 +16,11 @@ export type MobileProductListDto = {
   status?: string;
   favoritesCount?: number;
   views?: number;
+  sku?: string | null;
+  ordersCount?: number;
+  updatedAt?: string;
+  createdAt?: string;
+  moderation?: { status: string; reason: string | null; updatedAt: string } | null;
   primaryImage?: { url: string } | null;
   seller?: { storeName?: string; id?: string };
   category?: { id: string; name: string; slug?: string } | null;

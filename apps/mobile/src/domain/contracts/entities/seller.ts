@@ -107,7 +107,11 @@ export type SellerActionKind =
   | "reply_buyer"
   | "withdraw_funds"
   | "complete_profile"
-  | "resume_draft";
+  | "resume_draft"
+  | "hide_product"
+  | "move_to_draft"
+  | "duplicate_product"
+  | "delete_product";
 
 export type SellerActionInput = {
   readonly action: SellerActionKind;
@@ -161,15 +165,62 @@ export type SellerHomeDashboard = {
   };
 };
 
+export type SellerProductModeration = {
+  readonly status: string;
+  readonly reason: string | null;
+  readonly updatedAt: string;
+};
+
+export type SellerProductFilter =
+  | "all"
+  | "active"
+  | "drafts"
+  | "moderation"
+  | "needs_fix"
+  | "low_stock"
+  | "out_of_stock"
+  | "hidden";
+
+export type SellerProductSort =
+  | "updated_desc"
+  | "newest"
+  | "oldest"
+  | "stock_asc"
+  | "stock_desc"
+  | "price_asc"
+  | "price_desc";
+
 export type SellerProduct = ProductSummary & {
   readonly status: string;
   readonly views: number;
+  readonly sku: string | null;
+  readonly ordersCount: number;
+  readonly updatedAt: string;
+  readonly createdAt: string;
+  readonly moderation: SellerProductModeration | null;
 };
 
 export type SellerProductPage = {
   readonly items: ReadonlyArray<SellerProduct>;
   readonly nextCursor: string | null;
   readonly fromCache: boolean;
+  readonly total: number;
+};
+
+export type SellerProductsSummary = {
+  readonly active: number;
+  readonly drafts: number;
+  readonly moderation: number;
+  readonly needsFix: number;
+  readonly outOfStock: number;
+  readonly lowStock: number;
+  readonly hidden: number;
+};
+
+export type SellerProductDetail = SellerProduct & {
+  readonly description: string | null;
+  readonly categoryName: string | null;
+  readonly images: ReadonlyArray<{ readonly url: string; readonly isPrimary: boolean }>;
 };
 
 export type SellerOrderSummary = {

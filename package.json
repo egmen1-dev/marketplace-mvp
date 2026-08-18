@@ -69,6 +69,7 @@
     "mobile:sprint-95:seller-home": "tsx scripts/sprint-95-seller-home-gate.ts",
     "mobile:sprint-96:seller-workspace": "tsx scripts/sprint-96-seller-workspace-gate.ts",
     "mobile:sprint-97:seller-action-center": "tsx scripts/sprint-97-seller-action-center-gate.ts",
+    "mobile:sprint-98:seller-products": "tsx scripts/sprint-98-seller-products-gate.ts",
     "product:epic-84:p1-diagnostics": "tsx scripts/epic-84-p1-diagnostics-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",

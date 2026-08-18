@@ -2,10 +2,14 @@ import type { SellerRepository } from "../../domain/contracts/repositories/index
 import type {
   SellerHomeDashboard,
   SellerOrderPage,
+  SellerProductDetail,
+  SellerProductFilter,
   SellerProductPage,
+  SellerProductSort,
+  SellerProductsSummary,
   SellerPublicProfile,
 } from "../../domain/contracts/entities/seller";
-import type { SellerId } from "../../domain/contracts/value-objects/ids";
+import type { ProductId, SellerId } from "../../domain/contracts/value-objects/ids";
 import type { Result } from "../../domain/contracts/result";
 import { err, ok } from "../../domain/contracts/result";
 import { mapApiErrorToDomain } from "../network/map-api-error";
@@ -13,13 +17,14 @@ import type { CommerceTransport } from "../transport/types";
 import {
   mapSellerHomeDto,
   mapSellerOrderPageDto,
+  mapSellerProductDto,
   mapSellerProductPageDto,
   mapSellerPublicProfileDto,
   type SellerHomeDto,
   type SellerOrderDto,
   type SellerPublicProfileDto,
 } from "../mappers/seller-mapper";
-import type { CatalogPageDto } from "../mappers/commerce-mapper";
+import type { MobileProductListDto } from "../mappers/commerce-mapper";
 
 export class RestSellerRepository implements SellerRepository {
   constructor(private readonly transport: CommerceTransport) {}
@@ -33,15 +38,64 @@ export class RestSellerRepository implements SellerRepository {
     }
   }
 
-  async loadSellerProducts(params: { cursor?: string | null; query?: string }): Promise<Result<SellerProductPage>> {
+  async loadSellerProducts(params: {
+    cursor?: string | null;
+    query?: string | null;
+    filter?: SellerProductFilter;
+    sort?: SellerProductSort;
+  }): Promise<Result<SellerProductPage>> {
     try {
       const search = new URLSearchParams();
       if (params.cursor) search.set("cursor", params.cursor);
+      if (params.query?.trim()) search.set("q", params.query.trim());
+      if (params.filter && params.filter !== "all") search.set("filter", params.filter);
+      if (params.sort) search.set("sort", params.sort);
       const qs = search.toString();
-      const dto = await this.transport.request<CatalogPageDto>({
+      const dto = await this.transport.request<{
+        items: MobileProductListDto[];
+        nextCursor: string | null;
+        total?: number;
+      }>({
         path: `/api/mobile/seller/products${qs ? `?${qs}` : ""}`,
       });
       return ok(mapSellerProductPageDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerProductsSummary(): Promise<Result<SellerProductsSummary>> {
+    try {
+      const dto = await this.transport.request<SellerProductsSummary>({
+        path: "/api/mobile/seller/products/summary",
+      });
+      return ok(dto);
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerProductDetail(productId: ProductId): Promise<Result<SellerProductDetail>> {
+    try {
+      const dto = await this.transport.request<
+        MobileProductListDto & {
+          description?: string | null;
+          categoryName?: string | null;
+          images?: Array<{ url: string; isPrimary: boolean }>;
+        }
+      >({
+        path: `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
+      });
+      const product = mapSellerProductDto(dto);
+      return ok({
+        ...product,
+        description: dto.description ?? null,
+        categoryName: dto.categoryName ?? dto.category?.name ?? null,
+        images: dto.images?.map((img) => ({
+          url: img.url,
+          isPrimary: "isPrimary" in img ? Boolean(img.isPrimary) : false,
+        })) ?? [],
+      });
     } catch (error) {
       return err(mapApiErrorToDomain(error));
     }
