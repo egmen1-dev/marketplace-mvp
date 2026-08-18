@@ -1,0 +1,37 @@
+name: Mobile P0 Gates
+
+on:
+  pull_request:
+    paths:
+      - "apps/mobile/**"
+      - "scripts/mobile-p0-*.ts"
+      - "lib/mobile/**"
+      - "app/api/mobile/**"
+      - ".github/workflows/mobile-p0-gates.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/mobile/**"
+      - "scripts/mobile-p0-*.ts"
+
+jobs:
+  mobile-p0-gates:
+    name: Token cycle + Route graph
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Mobile typecheck
+        run: npm run mobile:typecheck
+      - name: Deep link tests
+        run: npm run mobile:test
+      - name: Token cycle gate
+        run: npm run mobile:p0:token-cycle-gate
+      - name: Route graph gate
+        run: npm run mobile:p0:route-graph-gate

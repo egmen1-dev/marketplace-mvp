@@ -1,0 +1,17 @@
+{
+  "implemented": 9,
+  "names": [
+    "LoadCatalog",
+    "LoadCategories",
+    "SearchProducts",
+    "LoadProduct",
+    "LoadProfile",
+    "SubmitProductFeedback",
+    "LoadCart",
+    "AddToCart",
+    "RemoveFromCart",
+    "UpdateCartQuantity",
+    "LoadFavorites",
+    "ToggleFavorite"
+  ]
+}

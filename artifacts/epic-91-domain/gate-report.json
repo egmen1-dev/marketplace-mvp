@@ -1,0 +1,28 @@
+{
+  "epic": "EPIC-91",
+  "phase": "Commerce Domain Platform",
+  "generatedAt": "2026-08-18T06:20:00.000Z",
+  "verdict": "PASS",
+  "scope": "architecture-only",
+  "applicationCodeModified": false,
+  "finalReport": {
+    "domains": 22,
+    "repositories": 16,
+    "useCases": 42,
+    "domainCycles": 0,
+    "repositoryCycles": 0,
+    "architectureReady": "YES",
+    "sellerReady": "NO",
+    "recommendedNextSprint": "Sprint 92 — Domain Foundation Implementation"
+  },
+  "deliverables": [
+    "docs/product/EPIC_91_COMMERCE_DOMAIN_PLATFORM.md",
+    "docs/product/COMMERCE_DOMAIN_GUIDELINES.md",
+    "artifacts/epic-91-domain/domain-map.json",
+    "artifacts/epic-91-domain/repository-map.json",
+    "artifacts/epic-91-domain/usecase-map.json",
+    "artifacts/epic-91-domain/state-map.json",
+    "artifacts/epic-91-domain/dependency-report.json",
+    "artifacts/epic-91-domain/seller-readiness.json"
+  ]
+}

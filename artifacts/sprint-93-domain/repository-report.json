@@ -1,0 +1,11 @@
+{
+  "implemented": 5,
+  "required": 5,
+  "names": [
+    "rest-auth-repository",
+    "rest-catalog-repository",
+    "rest-cart-repository",
+    "rest-product-repository",
+    "rest-profile-repository"
+  ]
+}
