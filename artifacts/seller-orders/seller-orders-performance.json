@@ -1,0 +1,8 @@
+{
+  "listImplementation": "FlatList",
+  "virtualization": true,
+  "pagination": "cursor",
+  "memoizedCards": true,
+  "measuredAt": "2026-08-18T07:53:49.736Z",
+  "verdict": "PASS"
+}

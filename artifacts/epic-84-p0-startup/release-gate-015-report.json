@@ -1,0 +1,25 @@
+{
+  "phase": "P0 Release Gate 0.1.5-alpha — Final Validation",
+  "generatedAt": "2026-08-17T13:19:30.000Z",
+  "verdict": "FAIL",
+  "publishAllowed": false,
+  "ftlStatus": "NOT RUN",
+  "apk": {
+    "path": "/workspace/artifacts/epic-84-p0-startup/lot-android-alpha-0.1.5.apk",
+    "sha256": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
+    "versionName": "0.1.5-alpha",
+    "versionCode": 6,
+    "package": "ru.lot.marketplace.alpha"
+  },
+  "rows": [
+    { "id": "clean_release_build", "ok": true, "detail": "BUILD SUCCESSFUL (4m 10s)" },
+    { "id": "apk_metadata_gate", "ok": true, "detail": "PASS" },
+    { "id": "bytecode_guard", "ok": true, "detail": "PASS" },
+    { "id": "expo_dependency_gate", "ok": true, "detail": "PASS" },
+    { "id": "firebase_test_lab", "ok": false, "detail": "NOT RUN — no gcloud credentials / FIREBASE_PROJECT_ID" }
+  ],
+  "clipboardIssue": "RESOLVED",
+  "errorUtilsIssue": "RESOLVED_IN_CODE",
+  "p0Status": "OPEN",
+  "closedAlpha": "NO-GO"
+}

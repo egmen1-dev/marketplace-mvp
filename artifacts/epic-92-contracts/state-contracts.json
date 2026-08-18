@@ -1,0 +1,170 @@
+{
+  "epic": "EPIC-92",
+  "version": "1.0.0",
+  "generatedAt": "2026-08-18T06:25:00.000Z",
+  "principle": "Every entity has exactly one owner (ADR-005)",
+  "contracts": [
+    {
+      "domain": "authentication",
+      "entity": "Session",
+      "owner": "AuthRepository",
+      "persistence": "secure",
+      "ttlMs": null,
+      "offlinePolicy": "cache-first",
+      "recovery": "restoreSession from SecureStore tokens"
+    },
+    {
+      "domain": "catalog",
+      "entity": "CatalogPage",
+      "owner": "CatalogRepository",
+      "persistence": "memory",
+      "ttlMs": 300000,
+      "offlinePolicy": "cache-first",
+      "recovery": "Return LRU page by query hash"
+    },
+    {
+      "domain": "search",
+      "entity": "SearchHistory",
+      "owner": "SearchRepository",
+      "persistence": "secure",
+      "ttlMs": null,
+      "offlinePolicy": "local-only",
+      "recovery": "SecureStore read/write"
+    },
+    {
+      "domain": "product",
+      "entity": "ProductDetail",
+      "owner": "ProductRepository",
+      "persistence": "secure",
+      "ttlMs": 86400000,
+      "offlinePolicy": "cache-first",
+      "recovery": "SecureStore product-detail-cache max 24"
+    },
+    {
+      "domain": "favorites",
+      "entity": "FavoritesSnapshot",
+      "owner": "FavoritesRepository",
+      "persistence": "memory",
+      "ttlMs": 300000,
+      "offlinePolicy": "cache-first",
+      "recovery": "Memory snapshot; toggle queue when offline"
+    },
+    {
+      "domain": "cart",
+      "entity": "Cart",
+      "owner": "CartRepository",
+      "persistence": "memory",
+      "ttlMs": 120000,
+      "offlinePolicy": "network-only",
+      "recovery": "Last snapshot read-only offline"
+    },
+    {
+      "domain": "checkout",
+      "entity": "DeliveryQuote",
+      "owner": "CheckoutRepository",
+      "persistence": "memory",
+      "ttlMs": 120000,
+      "offlinePolicy": "network-only",
+      "recovery": "None — blocked offline"
+    },
+    {
+      "domain": "orders",
+      "entity": "OrderList",
+      "owner": "OrderRepository",
+      "persistence": "secure",
+      "ttlMs": 86400000,
+      "offlinePolicy": "cache-first",
+      "recovery": "order-cache.ts list max N"
+    },
+    {
+      "domain": "orders",
+      "entity": "OrderDetail",
+      "owner": "OrderRepository",
+      "persistence": "secure",
+      "ttlMs": 86400000,
+      "offlinePolicy": "cache-first",
+      "recovery": "order-cache.ts detail max 12"
+    },
+    {
+      "domain": "seller",
+      "entity": "SellerHomeDashboard",
+      "owner": "SellerRepository",
+      "persistence": "snapshot",
+      "ttlMs": 3600000,
+      "offlinePolicy": "cache-first",
+      "recovery": "Migrate from in-memory Map to SecureStore (Sprint 93)"
+    },
+    {
+      "domain": "seller",
+      "entity": "SellerProductPage",
+      "owner": "SellerRepository",
+      "persistence": "snapshot",
+      "ttlMs": 300000,
+      "offlinePolicy": "cache-first",
+      "recovery": "Persistent snapshot Sprint 93"
+    },
+    {
+      "domain": "seller",
+      "entity": "SellerOrderPage",
+      "owner": "SellerRepository",
+      "persistence": "snapshot",
+      "ttlMs": 300000,
+      "offlinePolicy": "cache-first",
+      "recovery": "Shared with wallet preview — single owner SellerRepository"
+    },
+    {
+      "domain": "wallet",
+      "entity": "WalletBalance",
+      "owner": "WalletRepository",
+      "persistence": "memory",
+      "ttlMs": 60000,
+      "offlinePolicy": "cache-first",
+      "recovery": "Last balance snapshot"
+    },
+    {
+      "domain": "profile",
+      "entity": "UserProfile",
+      "owner": "ProfileRepository",
+      "persistence": "none",
+      "ttlMs": null,
+      "offlinePolicy": "cache-first",
+      "recovery": "Derived from Session"
+    },
+    {
+      "domain": "configuration",
+      "entity": "RemoteConfig",
+      "owner": "ConfigRepository",
+      "persistence": "secure",
+      "ttlMs": 86400000,
+      "offlinePolicy": "cache-first",
+      "recovery": "boot-storage DEFAULT_REMOTE_CONFIG fallback"
+    },
+    {
+      "domain": "session",
+      "entity": "AppMode",
+      "owner": "SessionStore",
+      "persistence": "none",
+      "ttlMs": null,
+      "offlinePolicy": "local-only",
+      "recovery": "Zustand in-memory for process lifetime"
+    },
+    {
+      "domain": "connectivity",
+      "entity": "OfflineFlag",
+      "owner": "ConnectivityStore",
+      "persistence": "none",
+      "ttlMs": null,
+      "offlinePolicy": "local-only",
+      "recovery": "NetworkBanner poll → setOffline"
+    },
+    {
+      "domain": "badges",
+      "entity": "TabBadges",
+      "owner": "BadgeProjection (derived)",
+      "persistence": "none",
+      "ttlMs": null,
+      "offlinePolicy": "cache-first",
+      "recovery": "Recompute from Cart/Favorites/Orders on domain events — never dual-written"
+    }
+  ]
+}

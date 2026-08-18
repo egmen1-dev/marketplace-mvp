@@ -1,25 +1,33 @@
 import * as SecureStore from "expo-secure-store";
 
-import type { MobileProductListItem } from "../api/endpoints";
-
 const KEY = "lot_recent_views_v1";
 const MAX = 12;
 
-type StoredView = Pick<MobileProductListItem, "id" | "title" | "price" | "compareAt" | "primaryImage" | "seller" | "stock" | "favoritesCount" | "views">;
+export type RecentViewItem = {
+  id: string;
+  title: string;
+  price: number;
+  compareAt?: number | null;
+  primaryImage?: { url: string } | null;
+  seller?: { storeName?: string };
+  stock?: number;
+  favoritesCount?: number;
+  views?: number;
+};
 
-export async function loadRecentViews(): Promise<StoredView[]> {
+export async function loadRecentViews(): Promise<RecentViewItem[]> {
   const raw = await SecureStore.getItemAsync(KEY);
   if (!raw) return [];
   try {
-    const parsed = JSON.parse(raw) as StoredView[];
+    const parsed = JSON.parse(raw) as RecentViewItem[];
     return Array.isArray(parsed) ? parsed.slice(0, MAX) : [];
   } catch {
     return [];
   }
 }
 
-export async function trackRecentView(product: MobileProductListItem): Promise<void> {
-  const entry: StoredView = {
+export async function trackRecentView(product: RecentViewItem): Promise<void> {
+  const entry: RecentViewItem = {
     id: product.id,
     title: product.title,
     price: product.price,

@@ -10,6 +10,10 @@
 ## Local build (developer machine)
 
 ```bash
+# Bake commit + build date into JS bundle (required for Build Info on device)
+npm run mobile:write-build-info
+npm run mobile:verify-build
+
 cd apps/mobile
 npm install --legacy-peer-deps
 npx expo prebuild --platform android

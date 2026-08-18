@@ -1,0 +1,204 @@
+{
+  "phase": "P0 Token Dependency Cycle Gate",
+  "generatedAt": "2026-08-18T07:53:46.094Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "theme_tokens_no_barrel_import",
+      "ok": true,
+      "detail": "must not import design-system/index barrel"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________design_",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*design-system\\/index[\"']"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________design_",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*design-system[\"']"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________design_",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*design-system\\/components"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________compone",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*components\\/ui"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________compone",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*components\\/"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________feature",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*features\\/"
+    },
+    {
+      "id": "theme_tokens_forbidden_from_s___________app__",
+      "ok": true,
+      "detail": "from\\s+[\"'][^\"']*app\\/"
+    },
+    {
+      "id": "theme_tokens_token_only_imports",
+      "ok": true,
+      "detail": "imports only from design-system/tokens/*"
+    },
+    {
+      "id": "public_export_brand",
+      "ok": true,
+      "detail": "brand"
+    },
+    {
+      "id": "public_export_accent",
+      "ok": true,
+      "detail": "accent"
+    },
+    {
+      "id": "public_export_semantic",
+      "ok": true,
+      "detail": "semantic"
+    },
+    {
+      "id": "public_export_surface",
+      "ok": true,
+      "detail": "surface"
+    },
+    {
+      "id": "public_export_text",
+      "ok": true,
+      "detail": "text"
+    },
+    {
+      "id": "public_export_border",
+      "ok": true,
+      "detail": "border"
+    },
+    {
+      "id": "public_export_colors",
+      "ok": true,
+      "detail": "colors"
+    },
+    {
+      "id": "public_export_typography",
+      "ok": true,
+      "detail": "typography"
+    },
+    {
+      "id": "public_export_spacing",
+      "ok": true,
+      "detail": "spacing"
+    },
+    {
+      "id": "public_export_radii",
+      "ok": true,
+      "detail": "radii"
+    },
+    {
+      "id": "public_export_shadows",
+      "ok": true,
+      "detail": "shadows"
+    },
+    {
+      "id": "public_export_elevation",
+      "ok": true,
+      "detail": "elevation"
+    },
+    {
+      "id": "public_export_blur",
+      "ok": true,
+      "detail": "blur"
+    },
+    {
+      "id": "public_export_opacity",
+      "ok": true,
+      "detail": "opacity"
+    },
+    {
+      "id": "public_export_borders",
+      "ok": true,
+      "detail": "borders"
+    },
+    {
+      "id": "public_export_gradients",
+      "ok": true,
+      "detail": "gradients"
+    },
+    {
+      "id": "public_export_layout",
+      "ok": true,
+      "detail": "layout"
+    },
+    {
+      "id": "public_export_DESIGN_SYSTEM_VERSION",
+      "ok": true,
+      "detail": "DESIGN_SYSTEM_VERSION"
+    },
+    {
+      "id": "token_file_colors_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/colors.ts"
+    },
+    {
+      "id": "token_file_layout_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/layout.ts"
+    },
+    {
+      "id": "token_file_typography_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/typography.ts"
+    },
+    {
+      "id": "token_file_gradients_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/gradients.ts"
+    },
+    {
+      "id": "token_file_opacity_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/opacity.ts"
+    },
+    {
+      "id": "token_file_index_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/index.ts"
+    },
+    {
+      "id": "token_file_spacing_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/spacing.ts"
+    },
+    {
+      "id": "token_file_radius_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/radius.ts"
+    },
+    {
+      "id": "token_file_elevation_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/elevation.ts"
+    },
+    {
+      "id": "token_file_borders_ts",
+      "ok": true,
+      "detail": "src/design-system/tokens/borders.ts"
+    },
+    {
+      "id": "theme_tokens_cycle_count",
+      "ok": true,
+      "detail": "0 cycles"
+    },
+    {
+      "id": "no_theme_to_design_system_index",
+      "ok": true,
+      "detail": "total_cycles=0"
+    }
+  ],
+  "themeTokenCycles": [],
+  "allCycles": []
+}

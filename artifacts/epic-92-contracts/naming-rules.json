@@ -1,0 +1,88 @@
+{
+  "epic": "EPIC-92",
+  "version": "1.0.0",
+  "generatedAt": "2026-08-18T06:25:00.000Z",
+  "rules": {
+    "entity": {
+      "pattern": "PascalCase noun",
+      "examples": ["ProductDetail", "Cart", "OrderSummary", "SellerHomeDashboard"],
+      "location": "domain/contracts/entities/{domain}.ts",
+      "suffix": "None — never suffix Entity"
+    },
+    "valueObject": {
+      "pattern": "PascalCase or branded type",
+      "examples": ["ProductId", "Money", "CatalogQuery"],
+      "location": "domain/contracts/value-objects/",
+      "factory": "lowerCamelCase factory: productId(), money()"
+    },
+    "dto": {
+      "pattern": "Mobile{Name} or {Name}Payload",
+      "examples": ["MobileProductListItem", "BootstrapPayload"],
+      "location": "infrastructure/transport/dtos/ ONLY",
+      "rule": "Never import DTO in features/, app/, or design-system/"
+    },
+    "repository": {
+      "interface": "{Domain}Repository",
+      "implementation": "Rest{Domain}Repository",
+      "location_interface": "domain/contracts/repositories/",
+      "location_impl": "infrastructure/repositories/",
+      "method": "verb + noun camelCase: loadCart, toggleFavorite"
+    },
+    "useCase": {
+      "pattern": "Verb + Noun PascalCase",
+      "examples": ["LoadCatalog", "AddToCart", "ToggleFavorite"],
+      "location": "domain/use-cases/{domain}/{UseCaseName}.ts",
+      "interface": "implements UseCase<TInput, TOutput>",
+      "hook": "use{Feature}Data — calls use cases, not repositories directly"
+    },
+    "event": {
+      "pattern": "PascalCase + Event suffix in type, past tense verb in type name",
+      "examples": ["CartUpdatedEvent", "FavoriteChangedEvent"],
+      "typeField": "string literal matching name without Event suffix: CartUpdated",
+      "location": "domain/contracts/events.ts"
+    },
+    "command": {
+      "definition": "Use case with mutation side effects",
+      "examples": ["AddToCart", "CreateOrder", "ToggleFavorite"],
+      "suffix": "None — use verb naming"
+    },
+    "query": {
+      "definition": "Use case read-only",
+      "examples": ["LoadCatalog", "LoadOrders", "LoadWallet"],
+      "suffix": "None — Load/Search/Get prefix"
+    },
+    "store": {
+      "pattern": "{Scope}Store",
+      "examples": ["SessionStore", "ConnectivityStore"],
+      "location": "store/{scope}-store.ts",
+      "rule": "Session/connectivity only — not entity stores"
+    },
+    "cache": {
+      "key": "{domain}:{entity}:{hash}",
+      "examples": ["catalog:page:abc123", "product:detail:prod_1"],
+      "location": "CacheRepository only"
+    },
+    "viewModel": {
+      "pattern": "{Feature}ViewModel or {Screen}State",
+      "location": "features/{feature}/view-models.ts",
+      "rule": "Maps domain entities to presentation — Experiences consume ViewModels"
+    },
+    "hook": {
+      "pattern": "use{Feature}Data",
+      "location": "features/{feature}/",
+      "rule": "Only place React meets use cases"
+    },
+    "error": {
+      "pattern": "DomainError with code literal",
+      "factory": "err({ code: 'network', message, retryable })",
+      "location": "domain/contracts/errors.ts + infrastructure mappers"
+    }
+  },
+  "prohibitedAmbiguity": [
+    "Do not name types MobileProductListItem outside transport",
+    "Do not use Service suffix — use Repository or UseCase",
+    "Do not use Manager suffix — use Repository",
+    "Do not mix Experience and Screen suffix for same component",
+    "Do not create utils/formatPrice in domain — use Money value object"
+  ]
+}

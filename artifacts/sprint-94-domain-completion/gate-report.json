@@ -1,0 +1,205 @@
+{
+  "sprint": "SPRINT-94",
+  "phase": "Domain Completion & Seller Foundation",
+  "generatedAt": "2026-08-18T07:53:49.722Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "screen_api_imports_zero",
+      "ok": true,
+      "detail": "0 commerce app files (target 0): none"
+    },
+    {
+      "id": "design_system_api_imports_zero",
+      "ok": true,
+      "detail": "0 files (baseline sprint93 3)"
+    },
+    {
+      "id": "dto_leaks_zero",
+      "ok": true,
+      "detail": "0 files (baseline sprint93 10)"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app_login_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/login.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app__tabs__catalog_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/catalog.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app__tabs__favorites_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/favorites.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app__tabs__profile_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/profile.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app__tabs__wallet_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/wallet.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app__tabs__seller_home_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/seller-home.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app__tabs__seller_products_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/seller-products.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app_cart_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/cart.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app_checkout_tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/checkout.tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app_product__id__tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/product/[id].tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app_order__id__tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/order/[id].tsx"
+    },
+    {
+      "id": "commerce_screen_shell_apps_mobile_app_seller__id__tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/seller/[id].tsx"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_catalog_discovery_useCatalogDiscovery_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/catalog-discovery/useCatalogDiscovery.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_cart_checkout_useCartData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/useCartData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_cart_checkout_useCheckoutData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/cart-checkout/useCheckoutData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_product_detail_useProductDetailData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/product-detail/useProductDetailData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_orders_useOrdersData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/useOrdersData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_orders_useOrderDetailData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/useOrderDetailData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_buyer_home_useBuyerHomeData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/buyer-home/useBuyerHomeData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_favorites_useFavoritesData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/favorites/useFavoritesData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_profile_useProfileData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/profile/useProfileData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_auth_useAuth_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/auth/useAuth.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_wallet_useWalletData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/wallet/useWalletData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_seller_useSellerHomeData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/useSellerHomeData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_seller_useSellerProductsData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/useSellerProductsData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_seller_sales_useSellerSalesData_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller-sales/useSellerSalesData.ts"
+    },
+    {
+      "id": "hook_domain_apps_mobile_src_features_seller_catalog_useSellerCatalogProfile_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller-catalog/useSellerCatalogProfile.ts"
+    },
+    {
+      "id": "domain_no_cycles",
+      "ok": true,
+      "detail": "0 cycles"
+    },
+    {
+      "id": "repository_no_cycles",
+      "ok": true,
+      "detail": "0 cycles"
+    },
+    {
+      "id": "domain_no_react_or_infra",
+      "ok": true,
+      "detail": "clean"
+    },
+    {
+      "id": "token_cycle_gate",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "mobile_test",
+      "ok": true,
+      "detail": "PASS"
+    }
+  ],
+  "finalReport": {
+    "repositories": 10,
+    "useCases": 14,
+    "buyerScreensOnDomain": 12,
+    "sellerScreensOnDomain": 3,
+    "screenApiImports": "6 → 0",
+    "designSystemApiImports": "3 → 0",
+    "dtoLeaks": "10 → 0",
+    "domainCycles": 0,
+    "repositoryCycles": 0,
+    "architectureGates": "PASS",
+    "buyerRegression": "PASS",
+    "sellerRegression": "PASS",
+    "sellerFoundation": "READY",
+    "readyForPerformanceSprint": "YES",
+    "readyForEpic86SellerExperience": "YES"
+  }
+}

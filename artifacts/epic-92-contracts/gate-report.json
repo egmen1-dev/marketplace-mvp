@@ -1,0 +1,127 @@
+{
+  "epic": "EPIC-92",
+  "phase": "Commerce Architecture Contracts",
+  "generatedAt": "2026-08-18T06:26:27.261Z",
+  "verdict": "PASS",
+  "baseline": {
+    "screenDirectApi": 7,
+    "designSystemDirectApi": 5,
+    "dtoLeaksToUi": 26,
+    "apiImportSites": 40
+  },
+  "contractsVersion": "1.0.0",
+  "adrCount": 10,
+  "rows": [
+    {
+      "id": "deliverable_docs_product_EPIC_92_COMMERCE_ARCHITECTURE_CONTRACTS_md",
+      "ok": true,
+      "detail": "docs/product/EPIC_92_COMMERCE_ARCHITECTURE_CONTRACTS.md"
+    },
+    {
+      "id": "deliverable_docs_product_COMMERCE_IMPLEMENTATION_GUIDELINES_md",
+      "ok": true,
+      "detail": "docs/product/COMMERCE_IMPLEMENTATION_GUIDELINES.md"
+    },
+    {
+      "id": "deliverable_docs_product_COMMERCE_MIGRATION_CHECKLIST_md",
+      "ok": true,
+      "detail": "docs/product/COMMERCE_MIGRATION_CHECKLIST.md"
+    },
+    {
+      "id": "deliverable_docs_architecture_adr_ADR_001_domain_layer_md",
+      "ok": true,
+      "detail": "docs/architecture/adr/ADR-001-domain-layer.md"
+    },
+    {
+      "id": "deliverable_docs_architecture_adr_ADR_010_design_system_contracts_md",
+      "ok": true,
+      "detail": "docs/architecture/adr/ADR-010-design-system-contracts.md"
+    },
+    {
+      "id": "deliverable_artifacts_epic_92_contracts_event_contracts_json",
+      "ok": true,
+      "detail": "artifacts/epic-92-contracts/event-contracts.json"
+    },
+    {
+      "id": "deliverable_artifacts_epic_92_contracts_state_contracts_json",
+      "ok": true,
+      "detail": "artifacts/epic-92-contracts/state-contracts.json"
+    },
+    {
+      "id": "deliverable_artifacts_epic_92_contracts_folder_contract_json",
+      "ok": true,
+      "detail": "artifacts/epic-92-contracts/folder-contract.json"
+    },
+    {
+      "id": "deliverable_artifacts_epic_92_contracts_naming_rules_json",
+      "ok": true,
+      "detail": "artifacts/epic-92-contracts/naming-rules.json"
+    },
+    {
+      "id": "deliverable_apps_mobile_src_domain_contracts_index_ts",
+      "ok": true,
+      "detail": "apps/mobile/src/domain/contracts/index.ts"
+    },
+    {
+      "id": "contracts_folder_exists",
+      "ok": true,
+      "detail": "/workspace/apps/mobile/src/domain/contracts"
+    },
+    {
+      "id": "domain_implementation_not_started",
+      "ok": true,
+      "detail": "subdirs: contracts"
+    },
+    {
+      "id": "contracts_no_transport_or_react",
+      "ok": true,
+      "detail": "clean"
+    },
+    {
+      "id": "contracts_version_exported",
+      "ok": true,
+      "detail": "DOMAIN_CONTRACTS_VERSION"
+    },
+    {
+      "id": "screen_api_imports_within_baseline",
+      "ok": true,
+      "detail": "7 app files (baseline 7)"
+    },
+    {
+      "id": "design_system_api_imports_within_baseline",
+      "ok": true,
+      "detail": "5 files (baseline 5)"
+    },
+    {
+      "id": "api_import_sites_not_increased",
+      "ok": true,
+      "detail": "33 sites (baseline 40)"
+    },
+    {
+      "id": "dto_leaks_not_increased",
+      "ok": true,
+      "detail": "15 files (baseline 26)"
+    },
+    {
+      "id": "domain_contracts_no_cycles",
+      "ok": true,
+      "detail": "0 cycles"
+    },
+    {
+      "id": "token_cycle_gate",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true,
+      "detail": "PASS"
+    }
+  ],
+  "finalReport": {
+    "contractsFrozen": true,
+    "implementationStarted": false,
+    "ciEnforcesImportBoundaries": true,
+    "readyForSprint93": true
+  }
+}

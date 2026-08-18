@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { fetchMobileUpdate, postTelemetry, type MobileUpdateInfo } from "../api/endpoints";
+import { fetchMobileUpdate, postTelemetry } from "../api/endpoints";
+import type { MobileUpdateInfo } from "./types";
 import { emitStartupEvent, STARTUP_EVENTS } from "../boot/startup-telemetry";
 import { shouldShowUpdatePrompt } from "./update-defer-storage";
 import { UPDATE_ANALYTICS } from "./types";

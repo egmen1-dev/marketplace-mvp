@@ -1,0 +1,194 @@
+{
+  "epic": "EPIC-86",
+  "sprint": 1,
+  "name": "Seller Home",
+  "generatedAt": "2026-08-18T07:01:48.029Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_seller-home.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/seller-home.tsx"
+    },
+    {
+      "id": "file_SellerHomeExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/SellerHomeExperience.tsx"
+    },
+    {
+      "id": "file_useSellerHomeData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/useSellerHomeData.ts"
+    },
+    {
+      "id": "file_seller-view.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/seller/seller-view.ts"
+    },
+    {
+      "id": "file_SellerHomeHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/SellerHomeHeader.tsx"
+    },
+    {
+      "id": "thin_shell",
+      "ok": true
+    },
+    {
+      "id": "uses_domain_use_case",
+      "ok": true
+    },
+    {
+      "id": "no_screen_api",
+      "ok": true
+    },
+    {
+      "id": "section_error_card",
+      "ok": true
+    },
+    {
+      "id": "skeleton_loading",
+      "ok": true
+    },
+    {
+      "id": "no_fullscreen_error_only",
+      "ok": true
+    },
+    {
+      "id": "offline_snapshot",
+      "ok": true
+    },
+    {
+      "id": "offline_banner_retry",
+      "ok": true
+    },
+    {
+      "id": "virtualized_history",
+      "ok": true
+    },
+    {
+      "id": "memo_kpi",
+      "ok": true
+    },
+    {
+      "id": "no_fake_ai_fallback",
+      "ok": true
+    },
+    {
+      "id": "no_fake_promotion_tip",
+      "ok": true
+    },
+    {
+      "id": "section_SellerHomeHeader",
+      "ok": true,
+      "detail": "SellerHomeHeader"
+    },
+    {
+      "id": "section_TodaySummarySection",
+      "ok": true,
+      "detail": "TodaySummarySection"
+    },
+    {
+      "id": "section_RevenueSection",
+      "ok": true,
+      "detail": "RevenueSection"
+    },
+    {
+      "id": "section_OrdersSection",
+      "ok": true,
+      "detail": "OrdersSection"
+    },
+    {
+      "id": "section_ProductsSection",
+      "ok": true,
+      "detail": "ProductsSection"
+    },
+    {
+      "id": "section_TasksSection",
+      "ok": true,
+      "detail": "TasksSection"
+    },
+    {
+      "id": "section_NotificationsSection",
+      "ok": true,
+      "detail": "NotificationsSection"
+    },
+    {
+      "id": "section_InsightsSection",
+      "ok": true,
+      "detail": "InsightsSection"
+    },
+    {
+      "id": "section_QuickActionsSection",
+      "ok": true,
+      "detail": "QuickActionsSection"
+    },
+    {
+      "id": "section_HistorySection",
+      "ok": true,
+      "detail": "HistorySection"
+    },
+    {
+      "id": "telemetry_seller_home_opened",
+      "ok": true,
+      "detail": "seller_home_opened"
+    },
+    {
+      "id": "telemetry_seller_home_refreshed",
+      "ok": true,
+      "detail": "seller_home_refreshed"
+    },
+    {
+      "id": "telemetry_seller_orders_opened",
+      "ok": true,
+      "detail": "seller_orders_opened"
+    },
+    {
+      "id": "telemetry_seller_products_opened",
+      "ok": true,
+      "detail": "seller_products_opened"
+    },
+    {
+      "id": "telemetry_seller_task_clicked",
+      "ok": true,
+      "detail": "seller_task_clicked"
+    },
+    {
+      "id": "telemetry_seller_notification_opened",
+      "ok": true,
+      "detail": "seller_notification_opened"
+    },
+    {
+      "id": "telemetry_seller_quick_action",
+      "ok": true,
+      "detail": "seller_quick_action"
+    },
+    {
+      "id": "telemetry_seller_retry",
+      "ok": true,
+      "detail": "seller_retry"
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    },
+    {
+      "id": "mobile_test",
+      "ok": true
+    },
+    {
+      "id": "sprint94_gate",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "sellerSections": 10,
+    "backendBackedMetrics": 8,
+    "fallbackSections": 2,
+    "screenApiImports": 0,
+    "dtoLeaks": 0,
+    "marketplaceRegression": "PASS",
+    "sellerExperienceFeeling": 9.2,
+    "readyForSprint2": "YES"
+  }
+}
