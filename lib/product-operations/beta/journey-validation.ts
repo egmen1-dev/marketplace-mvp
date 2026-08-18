@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/prisma";
 
+import { isEligibleReleaseMetric } from "./evidence-eligibility";
 import { BUYER_JOURNEY_STEPS, SELLER_JOURNEY_STEPS } from "./types";
 import type { JourneyStepResult, JourneyValidationResult } from "./types";
+
+const MIN_JOURNEY_SAMPLE = 3;
 
 async function validateJourney(
   journey: "buyer" | "seller",
@@ -11,15 +14,24 @@ async function validateJourney(
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   const sessionSteps = await prisma.productSessionStep.findMany({
     where: { createdAt: { gte: since } },
-    select: { sessionId: true, screen: true, action: true, metadata: true },
+    select: { sessionId: true, screen: true, action: true, metadata: true, createdAt: true },
     take: 10000,
   });
+
+  const eligibleSteps = sessionSteps.filter((step) =>
+    isEligibleReleaseMetric({
+      createdAt: step.createdAt,
+      screen: step.screen,
+      sessionId: step.sessionId,
+      metadata: step.metadata,
+    }),
+  );
 
   const sessionsById = new Map<string, Set<string>>();
   const errorSessions = new Map<string, number>();
   const timingByScreen = new Map<string, number[]>();
 
-  for (const step of sessionSteps) {
+  for (const step of eligibleSteps) {
     const screens = sessionsById.get(step.sessionId) ?? new Set();
     screens.add(step.screen);
     sessionsById.set(step.sessionId, screens);
@@ -36,7 +48,25 @@ async function validateJourney(
     }
   }
 
-  const totalSessions = sessionsById.size || 1;
+  const totalSessions = sessionsById.size;
+  if (totalSessions < MIN_JOURNEY_SAMPLE) {
+    return {
+      journey,
+      status: "INSUFFICIENT_DATA",
+      steps: steps.map((step) => ({
+        step,
+        status: "PASS",
+        sessions: 0,
+        errors: 0,
+        dropPoint: false,
+        avgTimeMs: null,
+      })),
+      totalSessions,
+      completedSessions: 0,
+      completionRate: null,
+    };
+  }
+
   const stepResults: JourneyStepResult[] = steps.map((step, index) => {
     const sessionsWithStep = [...sessionsById.entries()].filter(([, screens]) => screens.has(step));
     const sessions = sessionsWithStep.length;
@@ -67,6 +97,7 @@ async function validateJourney(
     status: failedSteps === 0 && completionRate >= 10 ? "PASS" : completionRate < 5 ? "FAIL" : "PASS",
     steps: stepResults,
     totalSessions,
+    completedSessions,
     completionRate,
   };
 }

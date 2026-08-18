@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
+import { isEligibleReleaseMetric } from "./evidence-eligibility";
 import type { CrashObservatoryRow } from "./types";
 
 const CRASH_EVENT_TYPES = [
@@ -27,11 +28,20 @@ export async function getCrashObservatory(days = 7, limit = 30): Promise<CrashOb
       eventType: { in: CRASH_EVENT_TYPES },
     },
     orderBy: { createdAt: "desc" },
-    take: 1000,
+    take: 2000,
   });
 
-  const grouped = new Map<string, typeof events>();
-  for (const event of events) {
+  const eligible = events.filter((event) =>
+    isEligibleReleaseMetric({
+      createdAt: event.createdAt,
+      screen: event.screen,
+      sessionId: event.sessionId,
+      metadata: event.metadata,
+    }),
+  );
+
+  const grouped = new Map<string, typeof eligible>();
+  for (const event of eligible) {
     const key = `${event.eventType}:${event.screen ?? "unknown"}`;
     const bucket = grouped.get(key) ?? [];
     bucket.push(event);
@@ -69,10 +79,55 @@ export async function getCrashObservatory(days = 7, limit = 30): Promise<CrashOb
 
 export async function countCrashesSince(hours: number): Promise<number> {
   const since = new Date(Date.now() - hours * 60 * 60 * 1000);
-  return prisma.productTelemetryEvent.count({
+  const events = await prisma.productTelemetryEvent.findMany({
     where: {
       createdAt: { gte: since },
       eventType: { in: ["crash", "js_crash", "native_crash", "unhandled_promise"] },
     },
+    select: { createdAt: true, screen: true, sessionId: true, metadata: true },
+    take: 5000,
+  });
+  return events.filter((event) =>
+    isEligibleReleaseMetric({
+      createdAt: event.createdAt,
+      screen: event.screen,
+      sessionId: event.sessionId,
+      metadata: event.metadata,
+    }),
+  ).length;
+}
+
+/** Trace helper for release investigations — includes validation events. */
+export async function traceCrashEvidence(limit = 20) {
+  const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+  const events = await prisma.productTelemetryEvent.findMany({
+    where: {
+      createdAt: { gte: since },
+      eventType: { in: CRASH_EVENT_TYPES },
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+  return events.map((event) => {
+    const meta = (event.metadata as Record<string, unknown>) ?? {};
+    return {
+      id: event.id,
+      createdAt: event.createdAt.toISOString(),
+      eventType: event.eventType,
+      screen: event.screen,
+      sessionId: event.sessionId,
+      versionCode: event.versionCode,
+      versionName: event.versionName,
+      platform: event.platform,
+      exception: meta.errorMessage ?? meta.errorCode,
+      stack: meta.errorStack,
+      source: meta.evidenceSource ?? "inferred",
+      eligibleForReleaseMetrics: isEligibleReleaseMetric({
+        createdAt: event.createdAt,
+        screen: event.screen,
+        sessionId: event.sessionId,
+        metadata: event.metadata,
+      }),
+    };
   });
 }

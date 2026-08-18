@@ -42,6 +42,7 @@
     "release:pipeline:pr-audit": "tsx scripts/release-pipeline-pr-policy-audit.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
+    "product:epic-89:inventory-management": "tsx scripts/epic-89-inventory-management-gate.ts",
     "product:epic-88:promotion-center": "tsx scripts/epic-88-promotion-center-gate.ts",
     "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",
     "postinstall": "prisma generate"

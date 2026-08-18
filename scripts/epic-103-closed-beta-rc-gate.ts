@@ -223,7 +223,7 @@ async function main() {
         sessionId,
         deviceId,
         versionCode: Number(buildNumber),
-        metadata: { metric: "screen_render", durationMs: 50, navigationPath: ["boot", "home"] },
+        metadata: { metric: "screen_render", durationMs: 50, navigationPath: ["boot", "home"], evidenceSource: "VALIDATION", validationMarker: "epic103" },
       }),
     });
     telemetryResults.push({
@@ -284,7 +284,7 @@ async function main() {
         deviceId,
         versionCode: Number(buildNumber),
         category,
-        metadata: { navigationPath: ["boot", "catalog"], build: buildNumber, screen: "epic103_feedback" },
+        metadata: { navigationPath: ["boot", "catalog"], build: buildNumber, screen: "epic103_feedback", evidenceSource: "VALIDATION", validationMarker: "epic103" },
       }),
     });
     feedbackResults.push({
@@ -329,6 +329,8 @@ async function main() {
         model: "epic103-test-device",
         stepsBeforeCrash: "boot → home → epic103_crash_test",
         buildNumber: Number(buildNumber),
+        evidenceSource: "VALIDATION",
+        validationMarker: "epic103_crash_test",
       },
     }),
   });

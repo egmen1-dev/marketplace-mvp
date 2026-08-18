@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
+import { isEligibleReleaseMetric } from "./evidence-eligibility";
 import type { UxConfusionRow } from "./types";
 
 const UX_SIGNALS = [
@@ -21,12 +22,22 @@ export async function getUxObservatory(days = 7): Promise<UxConfusionRow[]> {
       createdAt: { gte: since },
       eventType: { in: [...UX_SIGNALS, "screen_view", "button_press"] },
     },
-    select: { eventType: true, screen: true, metadata: true },
+    select: { eventType: true, screen: true, metadata: true, createdAt: true, sessionId: true },
     take: 5000,
   });
 
   const grouped = new Map<string, number>();
   for (const event of events) {
+    if (
+      !isEligibleReleaseMetric({
+        createdAt: event.createdAt,
+        screen: event.screen,
+        sessionId: event.sessionId,
+        metadata: event.metadata,
+      })
+    ) {
+      continue;
+    }
     const screen = event.screen ?? "unknown";
     const key = `${event.eventType}:${screen}`;
     grouped.set(key, (grouped.get(key) ?? 0) + 1);

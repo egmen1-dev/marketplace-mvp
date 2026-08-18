@@ -39,14 +39,22 @@ export async function reportCrash(context: CrashContext): Promise<void> {
     screen: context.screen,
     event: context.kind === "js_crash" ? "crash" : context.kind,
     errorCode: context.errorMessage.slice(0, 80),
-    metadata,
+    metadata: {
+      ...metadata,
+      evidenceSource:
+        context.errorMessage === "BETA_VALIDATION_CONTROLLED_CRASH" ? "VALIDATION" : "REAL_USER",
+    },
   }).catch(() => null);
 
   void submitProductFeedback({
     content: JSON.stringify(metadata),
     screen: context.screen,
     category: "bug_report",
-    metadata,
+    metadata: {
+      ...metadata,
+      evidenceSource:
+        context.errorMessage === "BETA_VALIDATION_CONTROLLED_CRASH" ? "VALIDATION" : "REAL_USER",
+    },
   }).catch(() => null);
 }
 

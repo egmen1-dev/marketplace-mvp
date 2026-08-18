@@ -69,10 +69,11 @@ export type JourneyStepResult = {
 
 export type JourneyValidationResult = {
   journey: "buyer" | "seller";
-  status: "PASS" | "FAIL";
+  status: "PASS" | "FAIL" | "INSUFFICIENT_DATA";
   steps: JourneyStepResult[];
   totalSessions: number;
-  completionRate: number;
+  completedSessions: number;
+  completionRate: number | null;
 };
 
 export type ReleaseGateRow = {

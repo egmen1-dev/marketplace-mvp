@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
+import { isEligibleReleaseMetric } from "./evidence-eligibility";
 import { getCrashObservatory } from "./crash-observatory";
 import { getPerformanceObservatory } from "./performance-observatory";
 import { getUxObservatory } from "./ux-observatory";
@@ -27,17 +28,39 @@ function toItem(
 }
 
 export async function generateBetaExitReport(): Promise<BetaExitReport> {
-  const [crashes, perf, ux, feedback, gates] = await Promise.all([
+  const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+  const [crashes, perf, ux, feedbackRows, gates] = await Promise.all([
     getCrashObservatory(14, 10),
     getPerformanceObservatory(14),
     getUxObservatory(14),
-    prisma.productFeedbackItem.groupBy({
-      by: ["classification"],
-      _count: { _all: true },
-      orderBy: { _count: { classification: "desc" } },
+    prisma.productFeedbackItem.findMany({
+      where: { createdAt: { gte: since } },
+      select: {
+        classification: true,
+        content: true,
+        screen: true,
+        metadata: true,
+        createdAt: true,
+      },
     }),
     evaluateReleaseQualityGates(),
   ]);
+
+  const eligibleFeedback = feedbackRows.filter((row) =>
+    isEligibleReleaseMetric({
+      createdAt: row.createdAt,
+      screen: row.screen,
+      content: row.content,
+      metadata: row.metadata,
+    }),
+  );
+
+  const feedbackCounts = new Map<string, number>();
+  for (const row of eligibleFeedback) {
+    if (row.classification === "error" || row.classification === "crash") {
+      feedbackCounts.set(row.classification, (feedbackCounts.get(row.classification) ?? 0) + 1);
+    }
+  }
 
   const topCrashes = crashes.slice(0, 5).map((c) =>
     toItem(
@@ -62,20 +85,26 @@ export async function generateBetaExitReport(): Promise<BetaExitReport> {
     toItem("ux", `${u.detail} (${u.screen})`, u.count, "medium", 4, "S", "medium"),
   );
 
-  const topBugs = feedback
-    .filter((f) => f.classification === "error" || f.classification === "crash")
-    .slice(0, 5)
-    .map((f) =>
-      toItem("bug", f.classification, f._count._all, "high", 2, "M", "high"),
-    );
+  const topBugs = [...feedbackCounts.entries()].slice(0, 5).map(([classification, count]) =>
+    toItem("bug", classification, count, "high", 2, "M", "high"),
+  );
 
-  const topFeatureRequests = feedback
-    .filter((f) => f.classification === "feature_request")
-    .slice(0, 5)
-    .map((f) => toItem("feature_request", f.classification, f._count._all, "low", 6, "L", "medium"));
+  const featureCounts = new Map<string, number>();
+  const improvementCounts = new Map<string, number>();
+  for (const row of eligibleFeedback) {
+    if (row.classification === "feature_request") {
+      featureCounts.set(row.classification, (featureCounts.get(row.classification) ?? 0) + 1);
+    } else {
+      improvementCounts.set(row.classification, (improvementCounts.get(row.classification) ?? 0) + 1);
+    }
+  }
 
-  const mostRequested = feedback.slice(0, 5).map((f) =>
-    toItem("improvement", f.classification, f._count._all, "low", 5, "M", "medium"),
+  const topFeatureRequests = [...featureCounts.entries()].slice(0, 5).map(([classification, count]) =>
+    toItem("feature_request", classification, count, "low", 6, "L", "medium"),
+  );
+
+  const mostRequested = [...improvementCounts.entries()].slice(0, 5).map(([classification, count]) =>
+    toItem("improvement", classification, count, "low", 5, "M", "medium"),
   );
 
   const verdict = gates.verdict === "PASS" && topCrashes.filter((c) => c.severity === "critical").length === 0

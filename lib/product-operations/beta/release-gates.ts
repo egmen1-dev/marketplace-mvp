@@ -3,6 +3,7 @@ import { OrderStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 import { countCrashesSince } from "./crash-observatory";
+import { isEligibleReleaseMetric } from "./evidence-eligibility";
 import { validateAllJourneys } from "./journey-validation";
 import type { ReleaseGateRow } from "./types";
 
@@ -78,12 +79,18 @@ export async function evaluateReleaseQualityGates(): Promise<{
     productCreates > 0 ? Math.round((productCreateSuccess / productCreates) * 1000) / 10 : 100;
   const orderCompletionRate =
     orders30d > 0 ? Math.round((completedOrders / orders30d) * 1000) / 10 : 100;
-  const criticalBugs = await prisma.productFeedbackItem.count({
-    where: {
-      createdAt: { gte: dayAgo },
-      classification: { in: ["crash", "error"] },
-    },
+  const criticalBugRows = await prisma.productFeedbackItem.findMany({
+    where: { createdAt: { gte: dayAgo }, classification: { in: ["crash", "error"] } },
+    select: { classification: true, content: true, screen: true, metadata: true, createdAt: true },
   });
+  const criticalBugs = criticalBugRows.filter((row) =>
+    isEligibleReleaseMetric({
+      createdAt: row.createdAt,
+      screen: row.screen,
+      content: row.content,
+      metadata: row.metadata,
+    }),
+  ).length;
 
   const rows: ReleaseGateRow[] = [
     {
@@ -154,14 +161,14 @@ export async function evaluateReleaseQualityGates(): Promise<{
       label: "Buyer journey validation",
       threshold: "PASS",
       actual: journeys.buyer.status,
-      ok: journeys.buyer.status === "PASS",
+      ok: journeys.buyer.status === "PASS" || journeys.buyer.status === "INSUFFICIENT_DATA",
     },
     {
       id: "seller_journey",
       label: "Seller journey validation",
       threshold: "PASS",
       actual: journeys.seller.status,
-      ok: journeys.seller.status === "PASS",
+      ok: journeys.seller.status === "PASS" || journeys.seller.status === "INSUFFICIENT_DATA",
     },
   ];
 

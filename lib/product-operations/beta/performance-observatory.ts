@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
+import { isEligibleReleaseMetric } from "./evidence-eligibility";
 import { PERFORMANCE_METRICS } from "./types";
 import type { PerformanceMetricRow } from "./types";
 
@@ -22,13 +23,23 @@ export async function getPerformanceObservatory(days = 7): Promise<PerformanceMe
       createdAt: { gte: since },
       eventType: { in: ["perf_timing", "boot_timing", "api_timing", "screen_render"] },
     },
-    select: { eventType: true, screen: true, metadata: true },
+    select: { eventType: true, screen: true, metadata: true, createdAt: true, sessionId: true },
     take: 5000,
   });
 
   const buckets = new Map<string, number[]>();
 
   for (const event of events) {
+    if (
+      !isEligibleReleaseMetric({
+        createdAt: event.createdAt,
+        screen: event.screen,
+        sessionId: event.sessionId,
+        metadata: event.metadata,
+      })
+    ) {
+      continue;
+    }
     const meta = (event.metadata as { metric?: string; durationMs?: number }) ?? {};
     const metric = meta.metric ?? event.screen ?? event.eventType;
     const duration = Number(meta.durationMs);

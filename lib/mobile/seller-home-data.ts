@@ -1,6 +1,7 @@
 import { OrderStatus, ProductStatus } from "@prisma/client";
 
 import { resolveRequestUser, isSellerCapable } from "@/features/auth/resolve-request-user";
+import { LOW_STOCK_THRESHOLD } from "@/features/orders/lib/inventory-sync";
 import { getWalletOverview, isLotWalletEnabled } from "@/lib/lot-wallet";
 import { prisma } from "@/lib/prisma";
 
@@ -11,13 +12,19 @@ export async function buildMobileSellerHomeForUser(userId: string, sellerProfile
     return buildMobileSellerHomePayload();
   }
 
-  const [activeProducts, needAttention, needActionOrders, promotionActive, wallet] = await Promise.all([
+  const [activeProducts, outOfStockCount, lowStockCount, needActionOrders, promotionActive, wallet] = await Promise.all([
     prisma.product.count({ where: { sellerId: sellerProfileId, status: ProductStatus.ACTIVE } }),
     prisma.product.count({
       where: {
         sellerId: sellerProfileId,
         status: ProductStatus.ACTIVE,
         stock: { lte: 0 },
+      },
+    }),
+    prisma.productInventory.count({
+      where: {
+        quantity: { gt: 0, lte: LOW_STOCK_THRESHOLD },
+        product: { sellerId: sellerProfileId, status: ProductStatus.ACTIVE },
       },
     }),
     prisma.order.count({
@@ -46,7 +53,7 @@ export async function buildMobileSellerHomeForUser(userId: string, sellerProfile
       pending: wallet?.buckets.pendingFromSales ?? 0,
     },
     orders: { needAction: needActionOrders },
-    products: { active: activeProducts, needAttention },
+    products: { active: activeProducts, needAttention: outOfStockCount + lowStockCount },
     promotion: { active: promotionActive },
     intelligence: { topAction: null, productId: null },
   });
