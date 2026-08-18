@@ -14,6 +14,7 @@ export type MobileTelemetryEvent = {
   sessionId?: string;
   deviceId?: string;
   versionCode?: number;
+  metadata?: Record<string, unknown>;
 };
 
 export async function POST(request: Request) {
@@ -25,6 +26,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "event, appVersion, platform required" }, { status: 400 });
   }
 
+  const metadata: Record<string, unknown> = { ...(body.metadata ?? {}) };
+  if (body.errorCode) metadata.errorCode = body.errorCode;
+
   await recordTelemetryEvent({
     eventType: body.event,
     screen: body.screen,
@@ -33,7 +37,7 @@ export async function POST(request: Request) {
     versionCode: body.versionCode,
     versionName: body.appVersion,
     platform: body.platform,
-    metadata: body.errorCode ? { errorCode: body.errorCode } : undefined,
+    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
   });
 
   if (body.sessionId && body.screen) {
@@ -43,6 +47,7 @@ export async function POST(request: Request) {
       action: body.event,
       deviceId: body.deviceId,
       versionCode: body.versionCode,
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
     }).catch(() => null);
   }
 

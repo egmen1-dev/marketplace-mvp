@@ -1,16 +1,26 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { reportCrash } from "../beta/crash-reporter";
 import { colors, spacing, typography } from "../theme/tokens";
 
 type Props = { children: React.ReactNode };
-type State = { error: Error | null };
+type State = { error: Error | null; screen: string };
 
 export class ErrorBoundary extends React.Component<Props, State> {
-  state: State = { error: null };
+  state: State = { error: null, screen: "unknown" };
 
   static getDerivedStateFromError(error: Error): State {
-    return { error };
+    return { error, screen: "error_boundary" };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    void reportCrash({
+      screen: this.state.screen,
+      errorMessage: error.message,
+      errorStack: info.componentStack ?? error.stack,
+      kind: "js_crash",
+    });
   }
 
   render() {

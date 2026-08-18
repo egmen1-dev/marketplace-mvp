@@ -14,6 +14,8 @@ export async function POST(request: Request) {
     deviceId?: string;
     versionCode?: number;
     userId?: string;
+    category?: string;
+    metadata?: Record<string, unknown>;
   };
 
   if (!body.content?.trim()) {
@@ -27,6 +29,8 @@ export async function POST(request: Request) {
     versionCode: body.versionCode,
     userId: body.userId,
     source: "mobile",
+    category: body.category as import("@/lib/product-operations/beta/types").BetaFeedbackCategory | undefined,
+    metadata: body.metadata,
   });
 
   return NextResponse.json(

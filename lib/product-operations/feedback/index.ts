@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 import { hashDeviceId } from "../telemetry";
+import type { BetaFeedbackCategory } from "../beta/types";
 import type { FeedbackClassification } from "../types";
 
 const CLASSIFIER_RULES: Array<{ type: FeedbackClassification; patterns: RegExp[] }> = [
@@ -24,6 +25,21 @@ export function classifyFeedback(content: string): { classification: FeedbackCla
   return { classification: "ux", confidence: 0.4 };
 }
 
+const CATEGORY_TO_CLASSIFICATION: Record<BetaFeedbackCategory, FeedbackClassification> = {
+  bug_report: "error",
+  idea: "feature_request",
+  confusing_ui: "ux",
+  performance_issue: "error",
+  payment_issue: "error",
+  seller_issue: "error",
+  buyer_issue: "error",
+  feature_request: "feature_request",
+};
+
+export function mapFeedbackCategory(category: BetaFeedbackCategory): FeedbackClassification {
+  return CATEGORY_TO_CLASSIFICATION[category] ?? "ux";
+}
+
 export async function recordFeedback(input: {
   content: string;
   source?: string;
@@ -31,9 +47,13 @@ export async function recordFeedback(input: {
   deviceId?: string;
   versionCode?: number;
   screen?: string;
+  category?: BetaFeedbackCategory;
   metadata?: Record<string, unknown>;
 }) {
-  const { classification, confidence } = classifyFeedback(input.content);
+  const classification = input.category
+    ? mapFeedbackCategory(input.category)
+    : classifyFeedback(input.content).classification;
+  const confidence = input.category ? 0.95 : classifyFeedback(input.content).confidence;
   return prisma.productFeedbackItem.create({
     data: {
       content: input.content,
@@ -44,7 +64,10 @@ export async function recordFeedback(input: {
       deviceIdHash: input.deviceId ? hashDeviceId(input.deviceId) : undefined,
       versionCode: input.versionCode,
       screen: input.screen,
-      metadata: input.metadata as Prisma.InputJsonValue | undefined,
+      metadata: {
+        ...(input.metadata ?? {}),
+        ...(input.category ? { category: input.category } : {}),
+      } as Prisma.InputJsonValue,
     },
   });
 }
