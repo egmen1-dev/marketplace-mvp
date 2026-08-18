@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2026-08-18T12:28:21.975Z",
+  "candidate": {
+    "commit": "b028271b4db527bb189b04f26fc8d43117355977",
+    "branch": "cursor/epic-105-closed-beta-launch-validation-d03e",
+    "appVersion": "0.1.2-alpha",
+    "versionCode": 3,
+    "apiVersion": "mobile-api-v1"
+  },
+  "staging": {
+    "url": "https://web-production-e56fb.up.railway.app",
+    "commit": "feb4b8d",
+    "httpStatus": 200
+  },
+  "checks": {
+    "commitShaParity": false,
+    "buildVersion": "0.1.2-alpha",
+    "apiVersion": "mobile-api-v1",
+    "featureFlagsLoaded": true,
+    "betaModulesPresent": true
+  },
+  "betaModules": [
+    {
+      "path": "lib/product-operations/beta/index.ts",
+      "exists": true
+    },
+    {
+      "path": "lib/mobile/checkout-handoff.ts",
+      "exists": true
+    },
+    {
+      "path": "app/api/product-ops/beta/dashboard/route.ts",
+      "exists": true
+    },
+    {
+      "path": "app/api/product-ops/beta/performance/route.ts",
+      "exists": true
+    },
+    {
+      "path": "app/api/product-ops/beta/crashes/route.ts",
+      "exists": true
+    },
+    {
+      "path": "app/api/product-ops/beta/readiness/route.ts",
+      "exists": true
+    },
+    {
+      "path": "app/api/mobile/checkout/web-url/route.ts",
+      "exists": true
+    }
+  ],
+  "verdict": "FAIL",
+  "failReason": "Staging commit feb4b8d does not match candidate b028271 — deploy required"
+}

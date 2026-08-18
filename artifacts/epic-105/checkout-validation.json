@@ -1,0 +1,11 @@
+{
+  "verdict": "FAIL",
+  "strategy": "web_redirect",
+  "redirectLatencyMs": 143,
+  "webUrlHttpStatus": 404,
+  "handoffUrlPresent": false,
+  "enterRedirectStatus": 0,
+  "sessionCookieSet": false,
+  "returnDeepLink": "lot://orders",
+  "note": "No simulated payment — validates redirect chain only"
+}
