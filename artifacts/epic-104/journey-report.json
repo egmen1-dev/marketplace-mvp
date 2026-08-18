@@ -1,0 +1,78 @@
+{
+  "buyer": {
+    "status": "FAIL",
+    "steps": [
+      {
+        "step": "login",
+        "status": "PASS",
+        "durationMs": 0
+      },
+      {
+        "step": "home",
+        "status": "PASS",
+        "durationMs": 126
+      },
+      {
+        "step": "catalog",
+        "status": "PASS",
+        "durationMs": 115
+      },
+      {
+        "step": "pdp",
+        "status": "PASS",
+        "durationMs": 126
+      },
+      {
+        "step": "favorite",
+        "status": "PASS",
+        "durationMs": 136
+      },
+      {
+        "step": "cart",
+        "status": "PASS",
+        "durationMs": 176
+      },
+      {
+        "step": "checkout_entry",
+        "status": "FAIL",
+        "durationMs": 165,
+        "error": "404"
+      },
+      {
+        "step": "orders",
+        "status": "PASS",
+        "durationMs": 110
+      },
+      {
+        "step": "profile_wallet",
+        "status": "PASS",
+        "durationMs": 117
+      }
+    ]
+  },
+  "seller": {
+    "status": "PASS",
+    "steps": [
+      {
+        "step": "login",
+        "status": "PASS",
+        "durationMs": 0
+      },
+      {
+        "step": "workspace",
+        "status": "PASS",
+        "durationMs": 188
+      },
+      {
+        "step": "products",
+        "status": "PASS",
+        "durationMs": 115
+      },
+      {
+        "step": "wallet",
+        "status": "PASS",
+        "durationMs": 124
+      }
+    ]
+  }
+}

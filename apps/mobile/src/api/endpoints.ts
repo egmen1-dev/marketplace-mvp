@@ -264,3 +264,15 @@ export async function submitProductFeedback(input: {
     }),
   });
 }
+
+export type CheckoutWebUrlPayload = {
+  strategy: string;
+  checkoutUrl: string;
+  handoffUrl: string;
+  returnDeepLink: string;
+  expiresInSec: number;
+};
+
+export async function fetchCheckoutWebUrl(): Promise<CheckoutWebUrlPayload> {
+  return apiRequest<CheckoutWebUrlPayload>("/api/mobile/checkout/web-url");
+}

@@ -8,3 +8,4 @@ export * from "./release-gates";
 export * from "./beta-exit-report";
 export * from "./beta-dashboard";
 export * from "./privacy-audit";
+export * from "./readiness-dashboard";
