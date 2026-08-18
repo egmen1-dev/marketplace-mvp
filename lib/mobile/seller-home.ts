@@ -65,7 +65,11 @@ export type SellerActionKind =
   | "reply_buyer"
   | "withdraw_funds"
   | "complete_profile"
-  | "resume_draft";
+  | "resume_draft"
+  | "hide_product"
+  | "move_to_draft"
+  | "duplicate_product"
+  | "delete_product";
 
 export type MobileSellerWorkspaceItem = {
   id: string;

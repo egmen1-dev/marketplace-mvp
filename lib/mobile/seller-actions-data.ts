@@ -2,7 +2,7 @@ import { OrderStatus, ProductStatus } from "@prisma/client";
 
 import { resolveRequestUser, isSellerCapable } from "@/features/auth/resolve-request-user";
 import { setInventoryQuantity } from "@/features/orders/lib/inventory-sync";
-import { ProductServiceError, updateProduct } from "@/features/products/queries";
+import { ProductServiceError, archiveProduct, deleteProduct, duplicateProduct, updateProduct } from "@/features/products/queries";
 import { SellerServiceError, updateSellerOrderStatus, updateSellerSettings } from "@/features/seller/queries";
 import { conversationPath, ROUTES } from "@/lib/constants";
 import { listSellerPaymentMethods } from "@/lib/seller-payout/methods";
@@ -345,6 +345,115 @@ async function handleUndoOrderStatus(
   return okResult(action, "Действие отменено");
 }
 
+async function handleHideProduct(
+  sellerProfileId: string,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const productId = String(payload.productId ?? "");
+  if (!productId) return fail("hide_product", "Товар не указан");
+
+  const existing = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { id: true, sellerId: true, status: true },
+  });
+  if (!existing || existing.sellerId !== sellerProfileId) {
+    return fail("hide_product", "Товар не найден", "NOT_FOUND");
+  }
+
+  try {
+    await archiveProduct(productId, sellerProfileId);
+  } catch (err) {
+    const message = err instanceof ProductServiceError ? err.message : "Не удалось скрыть товар";
+    return fail("hide_product", message);
+  }
+
+  return okResult("hide_product", "Товар скрыт", {
+    undo: { action: "publish_product", payload: { productId, revertStatus: existing.status } },
+  });
+}
+
+async function handleMoveToDraft(
+  sellerProfileId: string,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const productId = String(payload.productId ?? "");
+  if (!productId) return fail("move_to_draft", "Товар не указан");
+
+  const existing = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { id: true, sellerId: true, status: true },
+  });
+  if (!existing || existing.sellerId !== sellerProfileId) {
+    return fail("move_to_draft", "Товар не найден", "NOT_FOUND");
+  }
+  if (existing.status === ProductStatus.DRAFT) {
+    return fail("move_to_draft", "Товар уже в черновиках");
+  }
+
+  try {
+    await updateProduct(productId, sellerProfileId, { status: ProductStatus.DRAFT });
+  } catch (err) {
+    const message = err instanceof ProductServiceError ? err.message : "Не удалось перевести в черновик";
+    return fail("move_to_draft", message);
+  }
+
+  return okResult("move_to_draft", "Товар переведён в черновик", {
+    undo: { action: "publish_product", payload: { productId, revertStatus: existing.status } },
+  });
+}
+
+async function handleDuplicateProduct(
+  sellerProfileId: string,
+  userId: string,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const productId = String(payload.productId ?? "");
+  if (!productId) return fail("duplicate_product", "Товар не указан");
+
+  try {
+    const copy = await duplicateProduct(productId, sellerProfileId, { actorUserId: userId });
+    return okResult("duplicate_product", `Создан черновик «${copy.title}»`, {
+      openUrl: `${ROUTES.SELLER_PRODUCTS}/${copy.id}/edit`,
+    });
+  } catch (err) {
+    const message = err instanceof ProductServiceError ? err.message : "Не удалось дублировать товар";
+    return fail("duplicate_product", message);
+  }
+}
+
+async function handleDeleteProduct(
+  sellerProfileId: string,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const productId = String(payload.productId ?? "");
+  if (!productId) return fail("delete_product", "Товар не указан");
+
+  try {
+    await deleteProduct(productId, sellerProfileId);
+  } catch (err) {
+    const message = err instanceof ProductServiceError ? err.message : "Не удалось удалить товар";
+    return fail("delete_product", message, err instanceof ProductServiceError ? err.code : undefined);
+  }
+
+  return okResult("delete_product", "Товар удалён");
+}
+
+async function handleRestoreProductStatus(
+  sellerProfileId: string,
+  payload: MobileSellerActionPayload,
+): Promise<MobileSellerActionResult> {
+  const productId = String(payload.productId ?? "");
+  const revertStatus = String(payload.revertStatus ?? "") as ProductStatus;
+  if (!productId || !revertStatus) return fail("hide_product", "Отмена недоступна");
+  try {
+    await updateProduct(productId, sellerProfileId, { status: revertStatus });
+  } catch (err) {
+    const message = err instanceof ProductServiceError ? err.message : "Не удалось восстановить статус";
+    return fail("hide_product", message);
+  }
+  return okResult("hide_product", "Статус восстановлен");
+}
+
 export async function executeMobileSellerAction(
   request: Request,
   input: MobileSellerActionRequest,
@@ -366,6 +475,9 @@ export async function executeMobileSellerAction(
   if (payload.revertStatus === "DRAFT" && input.action === "publish_product") {
     return handleUndoPublish(sellerProfileId, payload);
   }
+  if (payload.revertStatus && (input.action === "hide_product" || input.action === "move_to_draft")) {
+    return handleRestoreProductStatus(sellerProfileId, payload);
+  }
 
   switch (input.action) {
     case "update_stock":
@@ -386,6 +498,14 @@ export async function executeMobileSellerAction(
       return handleWithdrawFunds(sellerProfileId, payload);
     case "complete_profile":
       return handleCompleteProfile(sellerProfileId, payload);
+    case "hide_product":
+      return handleHideProduct(sellerProfileId, payload);
+    case "move_to_draft":
+      return handleMoveToDraft(sellerProfileId, payload);
+    case "duplicate_product":
+      return handleDuplicateProduct(sellerProfileId, user.id, payload);
+    case "delete_product":
+      return handleDeleteProduct(sellerProfileId, payload);
     default:
       return fail(input.action, "Действие не поддерживается", "NOT_SUPPORTED");
   }
