@@ -112,9 +112,8 @@ Physical Android acceptance cannot be fully automated in cloud — document `NOT
 | Version | `0.1.2-alpha` |
 | versionCode | `3` |
 | Minimum supported | `0.1.2-alpha` (code 3) |
-| Prototype (unsupported) | `0.1.0-alpha` (code 1) |
-| Transitional | `0.1.1-alpha` (code 2) |
-| EPIC | EPIC 83 — Minimum Supported Version |
+| Download | [GitHub Release](https://github.com/egmen1-dev/marketplace-mvp/releases/tag/closed-alpha-0.1.2) |
+| EPIC | EPIC 83 — Minimum Supported Version (published) |
 
 See `docs/mobile/EPIC_83_MINIMUM_SUPPORTED_VERSION.md` for the active gate matrix.
 
