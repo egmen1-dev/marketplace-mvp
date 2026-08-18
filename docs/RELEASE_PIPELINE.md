@@ -25,6 +25,8 @@ Verify SHA           npm run release:pipeline:verify
   ↓
 Verify staging       critical routes + health
   ↓
+Production gate      npm run product:epic-110:production-release (EPIC 110)
+  ↓
 Release gate         npm run product:epic-108:release-candidate-final
   ↓
 Closed Beta
