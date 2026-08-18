@@ -1,3 +1,5 @@
+import { getCurrentBootStage, resetBootStage, setCurrentBootStage } from "./boot-stage";
+
 export class BootTimeoutError extends Error {
   constructor(label: string, timeoutMs: number) {
     super(`${label} timed out after ${timeoutMs}ms`);
@@ -6,6 +8,7 @@ export class BootTimeoutError extends Error {
 }
 
 export async function withTimeout<T>(label: string, promise: Promise<T>, timeoutMs: number): Promise<T> {
+  setCurrentBootStage(label);
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     return await Promise.race([
@@ -18,3 +21,5 @@ export async function withTimeout<T>(label: string, promise: Promise<T>, timeout
     if (timer) clearTimeout(timer);
   }
 }
+
+export { getCurrentBootStage, resetBootStage, setCurrentBootStage };

@@ -26,7 +26,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       }
     },
-    "plugins": ["expo-router", "expo-secure-store"],
+    "plugins": ["expo-router", "expo-secure-store", "./plugins/withAndroidNetworkSecurity.js"],
     "experiments": {
       "typedRoutes": true
     },
