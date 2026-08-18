@@ -4,6 +4,7 @@ import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native"
 
 import { logout } from "../../src/api/client";
 import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
+import { getBuildInfo } from "../../src/beta/build-info";
 import { loadAppConfig } from "../../src/config/env";
 import { Avatar, GhostButton, PrimaryButton, SecondaryButton, SectionHeader } from "../../src/components/ui";
 import { getSessionMeta } from "../../src/storage/secure-session";
@@ -21,6 +22,7 @@ export default function ProfileScreen() {
   const [email, setEmail] = useState<string>("—");
   const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
   const config = loadAppConfig();
+  const buildInfo = getBuildInfo();
 
   useEffect(() => {
     getSessionMeta().then((meta) => {
@@ -127,7 +129,11 @@ export default function ProfileScreen() {
         <Text style={styles.logoutText}>Выйти</Text>
       </Pressable>
 
-      <Text style={styles.version}>Версия {config.appVersion} ({config.buildNumber}) · {config.releaseChannel}</Text>
+      <Text style={styles.version}>
+        Версия {buildInfo.appVersion} ({buildInfo.buildNumber}) · {buildInfo.releaseChannel}
+        {"\n"}Канал: {buildInfo.channel} · API: {buildInfo.apiBaseUrl}
+        {"\n"}Commit: {buildInfo.commitSha} · Сборка: {buildInfo.buildTime}
+      </Text>
     </View>
   );
 }
