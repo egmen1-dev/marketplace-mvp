@@ -2,8 +2,25 @@ import { OrderStatus } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-import { countTelemetrySince } from "../telemetry";
+import { isEligibleReleaseMetric } from "../beta/evidence-eligibility";
 import type { ProductAnalyticsOverview } from "../types";
+
+async function countEligibleTelemetry(hours: number, eventTypes: string[]): Promise<number> {
+  const since = new Date(Date.now() - hours * 60 * 60 * 1000);
+  const events = await prisma.productTelemetryEvent.findMany({
+    where: { createdAt: { gte: since }, eventType: { in: eventTypes } },
+    select: { createdAt: true, screen: true, sessionId: true, metadata: true },
+    take: 10000,
+  });
+  return events.filter((event) =>
+    isEligibleReleaseMetric({
+      createdAt: event.createdAt,
+      screen: event.screen,
+      sessionId: event.sessionId,
+      metadata: event.metadata,
+    }),
+  ).length;
+}
 
 export async function getProductAnalyticsOverview(): Promise<ProductAnalyticsOverview> {
   const now = new Date();
@@ -23,8 +40,8 @@ export async function getProductAnalyticsOverview(): Promise<ProductAnalyticsOve
         distinct: ["deviceIdHash"],
         select: { deviceIdHash: true },
       }),
-      countTelemetrySince(24, ["session_start", "screen_view"]),
-      countTelemetrySince(24, ["crash", "error"]),
+      countEligibleTelemetry(24, ["session_start", "screen_view"]),
+      countEligibleTelemetry(24, ["crash", "error"]),
       prisma.order.count({ where: { createdAt: { gte: monthAgo } } }),
       prisma.order.findMany({
         where: {
@@ -57,8 +74,11 @@ export async function getProductAnalyticsOverview(): Promise<ProductAnalyticsOve
   const retention7d =
     mauDevices.length > 0 ? Math.round((retained / mauDevices.length) * 1000) / 10 : 0;
 
-  const totalSessions = sessions24h || 1;
-  const crashFreeRate = Math.round((1 - crashes24h / totalSessions) * 1000) / 10;
+  const totalSessions = sessions24h;
+  const crashFreeRate =
+    totalSessions > 0
+      ? Math.round((1 - crashes24h / totalSessions) * 1000) / 10
+      : 100;
 
   return {
     dau: dauDevices.length,
