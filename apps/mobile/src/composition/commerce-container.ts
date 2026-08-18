@@ -30,6 +30,7 @@ import {
   LoadSellerProducts,
   LoadSellerPublicProfile,
 } from "../domain/use-cases/seller/seller-use-cases";
+import { ExecuteSellerAction } from "../domain/use-cases/seller/execute-seller-action";
 import { MemoryCacheRepository } from "../infrastructure/cache/memory-cache-repository";
 import { RestAuthRepository } from "../infrastructure/repositories/rest-auth-repository";
 import { RestCatalogRepository } from "../infrastructure/repositories/rest-catalog-repository";
@@ -75,6 +76,7 @@ export type CommerceUseCases = {
   readonly loadSellerProducts: LoadSellerProducts;
   readonly loadSellerOrders: LoadSellerOrders;
   readonly loadSellerPublicProfile: LoadSellerPublicProfile;
+  readonly executeSellerAction: ExecuteSellerAction;
   readonly trackScreenEvent: (input: { screen: string; event: string; errorCode?: string }) => void;
   readonly events: ReturnType<typeof getDomainEventBus>;
 };
@@ -132,6 +134,7 @@ export function getCommerceUseCases(): CommerceUseCases {
     loadSellerProducts: new LoadSellerProducts(seller),
     loadSellerOrders: new LoadSellerOrders(seller, events),
     loadSellerPublicProfile: new LoadSellerPublicProfile(seller),
+    executeSellerAction: new ExecuteSellerAction(seller),
     trackScreenEvent: (input) => trackScreenEvent(telemetryRepo!, input),
     events,
   };

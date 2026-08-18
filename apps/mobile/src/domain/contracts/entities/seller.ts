@@ -93,6 +93,39 @@ export type SellerWorkspaceItem = {
   readonly entityId: string | null;
   readonly resumeKey: string | null;
   readonly completedAt: string | null;
+  readonly actionKind: SellerActionKind | null;
+  readonly actionPayload: Readonly<Record<string, string | number | boolean | null>> | null;
+  readonly supportsUndo: boolean;
+};
+
+export type SellerActionKind =
+  | "update_stock"
+  | "publish_product"
+  | "fix_moderation"
+  | "ship_order"
+  | "confirm_order"
+  | "reply_buyer"
+  | "withdraw_funds"
+  | "complete_profile"
+  | "resume_draft";
+
+export type SellerActionInput = {
+  readonly action: SellerActionKind;
+  readonly payload: Readonly<Record<string, string | number | boolean | null>>;
+};
+
+export type SellerActionUndo = {
+  readonly action: SellerActionKind;
+  readonly payload: Readonly<Record<string, string | number | boolean | null>>;
+};
+
+export type SellerActionResult = {
+  readonly ok: boolean;
+  readonly action: SellerActionKind;
+  readonly message: string;
+  readonly errorCode?: string;
+  readonly openUrl?: string | null;
+  readonly undo?: SellerActionUndo | null;
 };
 
 export type SellerWorkspace = {

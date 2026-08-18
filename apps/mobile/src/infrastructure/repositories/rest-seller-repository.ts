@@ -71,4 +71,39 @@ export class RestSellerRepository implements SellerRepository {
       return err(mapApiErrorToDomain(error));
     }
   }
+
+  async executeAction(input: {
+    action: import("../../domain/contracts/entities/seller").SellerActionKind;
+    payload: Readonly<Record<string, string | number | boolean | null>>;
+  }): Promise<Result<import("../../domain/contracts/entities/seller").SellerActionResult>> {
+    try {
+      const dto = await this.transport.request<{
+        ok: boolean;
+        action: string;
+        message: string;
+        errorCode?: string;
+        openUrl?: string | null;
+        undo?: { action: string; payload: Record<string, string | number | boolean | null> } | null;
+      }>({
+        path: "/api/mobile/seller/actions",
+        method: "POST",
+        body: input,
+      });
+      return ok({
+        ok: dto.ok,
+        action: dto.action as import("../../domain/contracts/entities/seller").SellerActionKind,
+        message: dto.message,
+        errorCode: dto.errorCode,
+        openUrl: dto.openUrl ?? null,
+        undo: dto.undo
+          ? {
+              action: dto.undo.action as import("../../domain/contracts/entities/seller").SellerActionKind,
+              payload: dto.undo.payload,
+            }
+          : null,
+      });
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
 }

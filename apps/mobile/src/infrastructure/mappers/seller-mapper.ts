@@ -81,6 +81,9 @@ export type SellerHomeDto = {
       entityId: string | null;
       resumeKey: string | null;
       completedAt: string | null;
+      actionKind: SellerWorkspaceItem["actionKind"];
+      actionPayload: SellerWorkspaceItem["actionPayload"];
+      supportsUndo: boolean;
     }>;
     counts: SellerWorkspace["counts"];
   };

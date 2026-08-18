@@ -76,6 +76,7 @@ export interface SellerRepository {
   loadSellerProducts(params: { cursor?: string | null; query?: string }): Promise<Result<SellerProductPage>>;
   loadSellerOrders(params: { cursor?: string | null }): Promise<Result<SellerOrderPage>>;
   loadPublicProfile(sellerId: SellerId): Promise<Result<SellerPublicProfile>>;
+  executeAction(input: import("../entities/seller").SellerActionInput): Promise<Result<import("../entities/seller").SellerActionResult>>;
 }
 
 export interface WalletRepository {
