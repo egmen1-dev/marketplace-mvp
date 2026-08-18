@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Animated, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { addToCart, toggleFavorite, type MobileProductListItem } from "../../api/endpoints";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { CommerceSearchBar } from "../../design-system/commerce/CommerceSearchBar";
 import { ProductCard } from "../../design-system/commerce/ProductCard";
 import { HomeSectionSkeleton } from "../../design-system/feedback/States";
@@ -26,12 +26,14 @@ import type { BuyerHomeData, CategoryItem, SectionLoadState } from "./useBuyerHo
 type ProductSectionProps = {
   title: string;
   subtitle?: string;
-  section: SectionLoadState<MobileProductListItem[]>;
+  section: SectionLoadState<MobileProductCardData[]>;
   horizontal?: boolean;
   onMore?: () => void;
   onRetry?: () => void;
   hideWhenEmpty?: boolean;
   fade: Animated.Value;
+  onAddToCart: (productId: string) => void;
+  onToggleFavorite: (productId: string) => void;
 };
 
 function ProductRailSection({
@@ -43,6 +45,8 @@ function ProductRailSection({
   onRetry,
   hideWhenEmpty,
   fade,
+  onAddToCart,
+  onToggleFavorite,
 }: ProductSectionProps) {
   if (hideWhenEmpty && !section.loading && section.data.length === 0 && !section.error) {
     return null;
@@ -64,8 +68,8 @@ function ProductRailSection({
                 compact
                 width={168}
                 onPress={() => router.push(`/product/${item.id}`)}
-                onFavorite={() => toggleFavorite(item.id)}
-                onAddToCart={() => addToCart(item.id, 1)}
+                onFavorite={() => void onToggleFavorite(item.id)}
+                onAddToCart={() => void onAddToCart(item.id)}
               />
             ))}
           </ScrollView>
@@ -76,8 +80,8 @@ function ProductRailSection({
                 key={`${title}-${item.id}`}
                 product={item}
                 onPress={() => router.push(`/product/${item.id}`)}
-                onFavorite={() => toggleFavorite(item.id)}
-                onAddToCart={() => addToCart(item.id, 1)}
+                onFavorite={() => void onToggleFavorite(item.id)}
+                onAddToCart={() => void onAddToCart(item.id)}
               />
             ))}
           </View>
@@ -190,6 +194,8 @@ export function BuyerHomeExperience(props: BuyerHomeData) {
           onMore={() => openCatalog()}
           onRetry={props.retryPopular}
           fade={fade}
+          onAddToCart={(id) => void props.onAddToCart(id)}
+          onToggleFavorite={(id) => void props.onToggleFavorite(id)}
         />
 
         <ProductRailSection
@@ -200,6 +206,8 @@ export function BuyerHomeExperience(props: BuyerHomeData) {
           onMore={() => openCatalog({ sort: "popular" })}
           onRetry={props.retryPopular}
           fade={fade}
+          onAddToCart={(id) => void props.onAddToCart(id)}
+          onToggleFavorite={(id) => void props.onToggleFavorite(id)}
         />
 
         <ProductRailSection
@@ -209,6 +217,8 @@ export function BuyerHomeExperience(props: BuyerHomeData) {
           onMore={() => openCatalog({ sort: "newest" })}
           onRetry={props.retryNewest}
           fade={fade}
+          onAddToCart={(id) => void props.onAddToCart(id)}
+          onToggleFavorite={(id) => void props.onToggleFavorite(id)}
         />
 
         <ProductRailSection
@@ -218,6 +228,8 @@ export function BuyerHomeExperience(props: BuyerHomeData) {
           onMore={() => openCatalog()}
           onRetry={props.retryRecent}
           fade={fade}
+          onAddToCart={(id) => void props.onAddToCart(id)}
+          onToggleFavorite={(id) => void props.onToggleFavorite(id)}
         />
 
         <ProductRailSection
@@ -228,6 +240,8 @@ export function BuyerHomeExperience(props: BuyerHomeData) {
           onMore={() => openCatalog()}
           onRetry={props.retryPopular}
           fade={fade}
+          onAddToCart={(id) => void props.onAddToCart(id)}
+          onToggleFavorite={(id) => void props.onToggleFavorite(id)}
         />
 
         {coldStartFallback ? (

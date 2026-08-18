@@ -12,7 +12,7 @@ import { buildErrorReport } from "../../src/telemetry/error-report";
 import { startApkDownload } from "../../src/update/download-apk";
 import { UPDATE_ANALYTICS } from "../../src/update/types";
 import { colors, spacing, typography } from "../../src/theme/tokens";
-import type { MobileUpdateInfo } from "../../src/api/endpoints";
+import type { MobileUpdateInfo } from "../../src/update/types";
 
 export default function ProfileScreen() {
   const profile = useProfileData();

@@ -15,6 +15,7 @@ export type SellerSalesState = {
   fromCache: boolean;
   orders: SellerSaleCardView[];
   refresh: () => Promise<void>;
+  onSaleOpened?: (orderId: string) => void;
 };
 
 export function useSellerSalesData(): SellerSalesState {
@@ -76,6 +77,10 @@ export function useSellerSalesData(): SellerSalesState {
     void load("initial");
   }, [load]);
 
+  const onSaleOpened = useCallback((orderId: string) => {
+    void postTelemetry({ screen: "seller_sales", event: "seller_sale_opened", errorCode: orderId });
+  }, []);
+
   return {
     offline,
     sellerCapable,
@@ -85,6 +90,7 @@ export function useSellerSalesData(): SellerSalesState {
     fromCache,
     orders,
     refresh: () => load("refresh"),
+    onSaleOpened,
   };
 }
 

@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { addToCart, fetchCatalog, fetchProduct, postTelemetry, toggleFavorite, type MobileProductListItem } from "../../api/endpoints";
+import type { ProductDetail } from "../../domain/contracts/entities/catalog";
+import { categoryId, productId, sellerId } from "../../domain/contracts/value-objects/ids";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
 import { cacheProductDetail, loadCachedProductDetail } from "../../storage/product-detail-cache";
 import { trackRecentView } from "../../storage/recent-views";
 import { useAppStore } from "../../store/app-store";
-import { mergeSellerProductCount, parseProductDetail, type ProductDetailView, type RelatedProduct } from "./types";
+import {
+  mergeSellerProductCountInView,
+  productDetailToView,
+  relatedProductsToViews,
+} from "./product-view";
+import { parseProductDetail, type ProductDetailView, type RelatedProduct } from "./types";
 
 export type ProductDetailState = {
   product: ProductDetailView | null;
@@ -21,11 +29,35 @@ export type ProductDetailState = {
   cartSuccess: boolean;
   onAddToCart: () => Promise<void>;
   onToggleFavorite: () => Promise<void>;
+  onToggleFavoriteRelated: (relatedProductId: string) => Promise<void>;
   onShare: () => Promise<void>;
   refresh: () => Promise<void>;
 };
 
-export function useProductDetailData(productId: string | undefined): ProductDetailState {
+function productDetailToCacheRaw(entity: ProductDetail): Record<string, unknown> {
+  return {
+    id: entity.id,
+    title: entity.title,
+    price: entity.price.amount,
+    compareAt: entity.compareAt?.amount ?? null,
+    stock: entity.stock,
+    favoritesCount: entity.favoritesCount,
+    views: 0,
+    city: entity.city,
+    description: entity.description,
+    images: entity.gallery.map((url) => ({ url })),
+    primaryImage: entity.imageUrl ? { url: entity.imageUrl } : null,
+    seller: entity.sellerId
+      ? { id: entity.sellerId, storeName: entity.sellerName ?? "Продавец", isVerified: false }
+      : undefined,
+    characteristics: entity.specs.map((row) => ({ name: row.label, displayValue: row.value })),
+    pickupEnabled: false,
+    pickupPoints: [],
+  };
+}
+
+export function useProductDetailData(productIdParam: string | undefined): ProductDetailState {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
   const [product, setProduct] = useState<ProductDetailView | null>(null);
   const [related, setRelated] = useState<RelatedProduct[]>([]);
@@ -40,36 +72,41 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
   const [addingToCart, setAddingToCart] = useState(false);
   const [cartSuccess, setCartSuccess] = useState(false);
 
-  const loadRelated = useCallback(async (view: ProductDetailView) => {
-    if (!view.categoryId) {
-      setRelated([]);
-      setRelatedFailed(false);
-      return;
-    }
-    try {
-      const res = await fetchCatalog({ sort: "popular", categoryId: view.categoryId });
-      const items = res.items.filter((item) => item.id !== view.id).slice(0, 8);
-      setRelated(items);
-      setRelatedFailed(false);
-    } catch {
-      setRelated([]);
-      setRelatedFailed(true);
-    }
-  }, []);
+  const loadRelated = useCallback(
+    async (view: ProductDetailView) => {
+      try {
+        const result = await commerce.loadRelatedProducts.execute({
+          productId: productId(view.id),
+          categoryId: view.categoryId ? categoryId(view.categoryId) : undefined,
+        });
+        if (!result.ok) throw new Error(domainErrorMessage(result.error));
+        setRelated(relatedProductsToViews(result.value));
+        setRelatedFailed(false);
+      } catch {
+        setRelated([]);
+        setRelatedFailed(true);
+      }
+    },
+    [commerce.loadRelatedProducts],
+  );
 
-  const loadSellerCount = useCallback(async (view: ProductDetailView) => {
-    if (!view.seller?.id) return view;
-    try {
-      const res = await fetchCatalog({ sellerId: view.seller.id, sort: "popular" });
-      const count = res.items.length + (res.hasMore ? 1 : 0);
-      return mergeSellerProductCount(view, count > 0 ? count : null);
-    } catch {
-      return view;
-    }
-  }, []);
+  const loadSellerCount = useCallback(
+    async (view: ProductDetailView) => {
+      if (!view.seller?.id) return view;
+      try {
+        const result = await commerce.loadSellerCatalogCount.execute({ sellerId: sellerId(view.seller.id) });
+        if (!result.ok) return view;
+        const count = result.value;
+        return mergeSellerProductCountInView(view, count > 0 ? count : null);
+      } catch {
+        return view;
+      }
+    },
+    [commerce.loadSellerCatalogCount],
+  );
 
   const loadProduct = useCallback(async () => {
-    if (!productId) {
+    if (!productIdParam) {
       setLoading(false);
       setProduct(null);
       return;
@@ -81,7 +118,7 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
     setFromCache(false);
 
     if (offline) {
-      const cached = await loadCachedProductDetail(productId);
+      const cached = await loadCachedProductDetail(productIdParam);
       if (cached) {
         const parsed = parseProductDetail(cached);
         setProduct(parsed);
@@ -96,16 +133,31 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
     }
 
     try {
-      const raw = await fetchProduct(productId);
-      let parsed = parseProductDetail(raw);
-      parsed = await loadSellerCount(parsed);
-      setProduct(parsed);
-      await cacheProductDetail(productId, raw);
-      await trackRecentView(raw as MobileProductListItem);
-      void postTelemetry({ screen: "product", event: "product_opened" });
-      void loadRelated(parsed);
+      const result = await commerce.loadProductDetail.execute({ productId: productId(productIdParam) });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+
+      const entity = result.value;
+      let view = productDetailToView(entity);
+      view = await loadSellerCount(view);
+      setProduct(view);
+      setIsFavorite(entity.isFavorite);
+
+      const cacheRaw = productDetailToCacheRaw(entity);
+      await cacheProductDetail(productIdParam, cacheRaw);
+      await trackRecentView({
+        id: entity.id,
+        title: entity.title,
+        price: entity.price.amount,
+        compareAt: entity.compareAt?.amount ?? null,
+        primaryImage: entity.imageUrl ? { url: entity.imageUrl } : null,
+        seller: entity.sellerName ? { storeName: entity.sellerName } : undefined,
+        stock: entity.stock,
+        favoritesCount: entity.favoritesCount,
+      });
+      commerce.trackScreenEvent({ screen: "product", event: "product_opened" });
+      void loadRelated(view);
     } catch (err) {
-      const cached = await loadCachedProductDetail(productId);
+      const cached = await loadCachedProductDetail(productIdParam);
       if (cached) {
         setProduct(parseProductDetail(cached));
         setFromCache(true);
@@ -116,14 +168,14 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
     } finally {
       setLoading(false);
     }
-  }, [loadRelated, loadSellerCount, offline, productId]);
+  }, [commerce.loadProductDetail, commerce.trackScreenEvent, loadRelated, loadSellerCount, offline, productIdParam]);
 
   useEffect(() => {
     void loadProduct();
   }, [loadProduct]);
 
   const onAddToCart = useCallback(async () => {
-    if (!productId || !product) return;
+    if (!productIdParam || !product) return;
     if (offline) {
       setCartMessage("Для добавления в корзину нужен интернет");
       return;
@@ -136,8 +188,9 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
     setCartMessage(null);
     setCartSuccess(false);
     try {
-      await addToCart(productId, 1);
-      await postTelemetry({ screen: "product", event: "add_to_cart" });
+      const result = await commerce.addToCart.execute({ productId: productId(productIdParam), quantity: 1 });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      commerce.trackScreenEvent({ screen: "product", event: "add_to_cart" });
       setCartSuccess(true);
       setCartMessage("Добавлено в корзину");
       setTimeout(() => setCartSuccess(false), 1800);
@@ -146,32 +199,44 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
     } finally {
       setAddingToCart(false);
     }
-  }, [offline, product, productId]);
+  }, [commerce.addToCart, commerce.trackScreenEvent, offline, product, productIdParam]);
 
   const onToggleFavorite = useCallback(async () => {
-    if (!productId || favoriteBusy) return;
+    if (!productIdParam || favoriteBusy) return;
     if (offline) {
       setCartMessage("Для избранного нужен интернет");
       return;
     }
     setFavoriteBusy(true);
     try {
-      const res = await toggleFavorite(productId);
-      setIsFavorite(res.isFavorite);
+      const result = await commerce.toggleFavorite.execute({ productId: productId(productIdParam) });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      setIsFavorite(result.value.isFavorite);
     } catch {
       setCartMessage("Не удалось обновить избранное");
     } finally {
       setFavoriteBusy(false);
     }
-  }, [favoriteBusy, offline, productId]);
+  }, [commerce.toggleFavorite, favoriteBusy, offline, productIdParam]);
+
+  const onToggleFavoriteRelated = useCallback(
+    async (relatedProductId: string) => {
+      if (offline) return;
+      const result = await commerce.toggleFavorite.execute({ productId: productId(relatedProductId) });
+      if (!result.ok) {
+        setCartMessage(domainErrorMessage(result.error));
+      }
+    },
+    [commerce.toggleFavorite, offline],
+  );
 
   const onShare = useCallback(async () => {
-    if (!productId) return;
+    if (!productIdParam) return;
     const { Share } = await import("react-native");
-    const link = `lot://product/${productId}`;
+    const link = `lot://product/${productIdParam}`;
     await Share.share({ message: product?.title ? `${product.title}\n${link}` : link, url: link });
-    void postTelemetry({ screen: "product", event: "product_shared" });
-  }, [product?.title, productId]);
+    commerce.trackScreenEvent({ screen: "product", event: "product_shared" });
+  }, [commerce.trackScreenEvent, product?.title, productIdParam]);
 
   return {
     product,
@@ -188,6 +253,7 @@ export function useProductDetailData(productId: string | undefined): ProductDeta
     cartSuccess,
     onAddToCart,
     onToggleFavorite,
+    onToggleFavoriteRelated,
     onShare,
     refresh: loadProduct,
   };

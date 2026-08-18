@@ -1,6 +1,6 @@
 import { Linking, StyleSheet, Text, View } from "react-native";
 
-import type { MobileUpdateInfo } from "../api/endpoints";
+import type { MobileUpdateInfo } from "../update/types";
 import { postTelemetry } from "../api/endpoints";
 import { PrimaryButton } from "../design-system/forms/buttons";
 import { startApkDownload } from "../update/download-apk";

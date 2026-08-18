@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchCatalog, fetchOrderDetail, fetchOrders, fetchProduct, postTelemetry, type MobileProductListItem } from "../../api/endpoints";
+import { fetchCatalog, fetchOrderDetail, fetchOrders, fetchProduct, postTelemetry, toggleFavorite } from "../../api/endpoints";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { cacheOrdersList, loadCachedOrdersList } from "../../storage/order-cache";
 import { useAppStore } from "../../store/app-store";
 import {
@@ -16,7 +17,7 @@ export type OrdersDataState = {
   completedOrders: OrderListCardView[];
   activeCount: number;
   completedCount: number;
-  recommendations: MobileProductListItem[];
+  recommendations: MobileProductCardData[];
   recommendationsFailed: boolean;
   loading: boolean;
   refreshing: boolean;
@@ -25,6 +26,7 @@ export type OrdersDataState = {
   error: string | null;
   refresh: () => Promise<void>;
   retryRecommendations: () => Promise<void>;
+  onToggleFavorite: (productId: string) => Promise<void>;
 };
 
 async function enrichSeller(detail: ReturnType<typeof parseOrderDetail>): Promise<ReturnType<typeof parseOrderDetail>> {
@@ -44,7 +46,7 @@ export function useOrdersData(): OrdersDataState {
   const offline = useAppStore((s) => s.offline);
   const [activeOrders, setActiveOrders] = useState<OrderListCardView[]>([]);
   const [completedOrders, setCompletedOrders] = useState<OrderListCardView[]>([]);
-  const [recommendations, setRecommendations] = useState<MobileProductListItem[]>([]);
+  const [recommendations, setRecommendations] = useState<MobileProductCardData[]>([]);
   const [recommendationsFailed, setRecommendationsFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -149,6 +151,10 @@ export function useOrdersData(): OrdersDataState {
     void loadOrders();
   }, [loadOrders]);
 
+  const onToggleFavorite = useCallback(async (productId: string) => {
+    await toggleFavorite(productId);
+  }, []);
+
   return {
     activeOrders,
     completedOrders,
@@ -163,5 +169,6 @@ export function useOrdersData(): OrdersDataState {
     error,
     refresh: () => loadOrders(true),
     retryRecommendations: loadRecommendations,
+    onToggleFavorite,
   };
 }

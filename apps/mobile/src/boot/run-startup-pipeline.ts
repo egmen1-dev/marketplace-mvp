@@ -12,7 +12,7 @@ import {
 } from "./startup-telemetry";
 import { withTimeout } from "./with-timeout";
 import { bootMark } from "./early-boot";
-import type { MobileUpdateInfo } from "../api/endpoints";
+import type { MobileUpdateInfo } from "../update/types";
 import { fetchBootstrap, fetchMobileUpdate, fetchRemoteConfig, postTelemetry } from "../api/endpoints";
 
 export { BOOT_HARD_TIMEOUT_MS, BOOT_STAGE_TIMEOUT_MS } from "./boot-timeouts";

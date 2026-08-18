@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../api/endpoints";
+import { fetchCatalog, fetchCategories, addToCart, toggleFavorite } from "../../api/endpoints";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { loadRecentViews } from "../../storage/recent-views";
 import { discountPercent } from "../../utils/format";
 import { useAppStore } from "../../store/app-store";
@@ -24,11 +25,11 @@ export function useBuyerHomeData() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [categories, setCategories] = useState<SectionLoadState<CategoryItem[]>>(emptySection([]));
-  const [recommended, setRecommended] = useState<SectionLoadState<MobileProductListItem[]>>(emptySection([]));
-  const [popular, setPopular] = useState<SectionLoadState<MobileProductListItem[]>>(emptySection([]));
-  const [newest, setNewest] = useState<SectionLoadState<MobileProductListItem[]>>(emptySection([]));
-  const [deals, setDeals] = useState<SectionLoadState<MobileProductListItem[]>>(emptySection([]));
-  const [recent, setRecent] = useState<SectionLoadState<MobileProductListItem[]>>(emptySection([]));
+  const [recommended, setRecommended] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
+  const [popular, setPopular] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
+  const [newest, setNewest] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
+  const [deals, setDeals] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
+  const [recent, setRecent] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
 
   const loadCategories = useCallback(async () => {
     if (offline) {
@@ -63,7 +64,7 @@ export function useBuyerHomeData() {
       const items = res.items;
       setPopular({ data: items.slice(0, 8), loading: false, error: null });
       setRecommended({ data: items.slice(0, 6), loading: false, error: null });
-      const promo = items.filter((p: MobileProductListItem) => (discountPercent(p.price, p.compareAt) ?? 0) > 0).slice(0, 6);
+      const promo = items.filter((p: MobileProductCardData) => (discountPercent(p.price, p.compareAt) ?? 0) > 0).slice(0, 6);
       setDeals({ data: promo, loading: false, error: null });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка загрузки";
@@ -95,7 +96,7 @@ export function useBuyerHomeData() {
     setRecent((s) => ({ ...s, loading: true, error: null }));
     try {
       const views = await loadRecentViews();
-      setRecent({ data: views as MobileProductListItem[], loading: false, error: null });
+      setRecent({ data: views, loading: false, error: null });
     } catch {
       setRecent({ data: [], loading: false, error: null });
     }
@@ -116,6 +117,14 @@ export function useBuyerHomeData() {
     setRefreshing(false);
   }, [loadAll, refreshing]);
 
+  const onAddToCart = useCallback(async (productId: string) => {
+    await addToCart(productId, 1);
+  }, []);
+
+  const onToggleFavorite = useCallback(async (productId: string) => {
+    await toggleFavorite(productId);
+  }, []);
+
   useEffect(() => {
     loadAll();
   }, [loadAll]);
@@ -135,6 +144,8 @@ export function useBuyerHomeData() {
     retryPopular: loadPopular,
     retryNewest: loadNewest,
     retryRecent: loadRecent,
+    onAddToCart,
+    onToggleFavorite,
   };
 }
 

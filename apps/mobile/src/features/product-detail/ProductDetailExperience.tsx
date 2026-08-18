@@ -84,7 +84,12 @@ export function ProductDetailExperience({ state }: Props) {
               onPress={() => router.push({ pathname: "/seller/[id]", params: { id: product.seller!.id } })}
             />
           ) : null}
-          <PdpRelatedRail items={state.related} failed={state.relatedFailed} onRetry={() => void state.refresh()} />
+          <PdpRelatedRail
+            items={state.related}
+            failed={state.relatedFailed}
+            onRetry={() => void state.refresh()}
+            onToggleFavorite={(id) => void state.onToggleFavorite(id)}
+          />
         </View>
       </ScrollView>
 

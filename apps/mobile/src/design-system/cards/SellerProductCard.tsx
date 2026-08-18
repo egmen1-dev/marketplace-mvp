@@ -5,7 +5,7 @@ import { Alert, Animated, Pressable, StyleSheet, Text, View } from "react-native
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { formatPrice, resolveImageUrl } from "../../utils/format";
-import type { MobileProductListItem } from "../../api/endpoints";
+import type { MobileProductCardData } from "../commerce/ProductCard";
 import { productStatusLabel, productStatusTone } from "../../theme/status-labels";
 import { Badge } from "../primitives/Badge";
 import { colors } from "../tokens/colors";
@@ -20,7 +20,7 @@ export function SellerProductCard({
   onPress,
   onRefresh,
 }: {
-  product: MobileProductListItem;
+  product: MobileProductCardData & { status?: string };
   onPress?: () => void;
   onRefresh?: () => void;
 }) {

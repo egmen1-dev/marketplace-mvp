@@ -12,7 +12,6 @@ import { typography } from "../../design-system/tokens/typography";
 import { useFadeIn } from "../../hooks/useFadeIn";
 import { loadAppConfig } from "../../config/env";
 import * as Linking from "expo-linking";
-import { postTelemetry } from "../../api/endpoints";
 import { formatSellerSaleAmount, type SellerSalesState } from "./useSellerSalesData";
 import type { SellerSaleCardView } from "./types";
 
@@ -90,7 +89,7 @@ export function SellerSalesExperience({ state }: Props) {
             <SellerSaleCard
               order={item}
               onPress={() => {
-                void postTelemetry({ screen: "seller_sales", event: "seller_sale_opened", errorCode: item.id });
+                state.onSaleOpened?.(item.id);
                 const config = loadAppConfig();
                 void Linking.openURL(`${config.apiBaseUrl}/account/sales?order=${encodeURIComponent(item.id)}`);
               }}

@@ -15,7 +15,7 @@ import { saveStartupReport } from "../src/boot/boot-storage";
 import { bootMark, bootStage } from "../src/boot/early-boot";
 import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
-import type { MobileUpdateInfo } from "../src/api/endpoints";
+import type { MobileUpdateInfo } from "../src/update/types";
 import { useAppStore } from "../src/store/app-store";
 import { colors, spacing, typography } from "../src/theme/tokens";
 

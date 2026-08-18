@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { bootMark } from "../boot/early-boot";
-import type { MobileUpdateInfo } from "../api/endpoints";
+import type { MobileUpdateInfo } from "../update/types";
 
 export type AppMode = "buyer" | "seller";
 

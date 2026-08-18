@@ -3,37 +3,9 @@ import type { BootstrapPayload } from "../types/api";
 import { getDeviceId } from "../storage/secure-session";
 import { loadAppConfig } from "../config/env";
 import { getSessionId } from "../telemetry/session";
+import type { MobileUpdateInfo, MobileUpdateState } from "../update/types";
 
-export type MobileUpdateState =
-  | "NO_UPDATE"
-  | "OPTIONAL_UPDATE"
-  | "RECOMMENDED_UPDATE"
-  | "REQUIRED_UPDATE"
-  | "UNSUPPORTED_CLIENT";
-
-export type MobileUpdateInfo = {
-  latestVersion: string;
-  versionCode: number;
-  versionName: string;
-  minimumVersionName?: string;
-  minimumVersionCode?: number;
-  reason?: "CLIENT_TOO_OLD";
-  updateRequired: boolean;
-  updateState: MobileUpdateState;
-  mandatory: boolean;
-  downloadUrl: string | null;
-  sha256: string | null;
-  artifactSizeBytes?: number | null;
-  releaseNotes: string[];
-  channel: string;
-  rollout: { percent: number; eligible: boolean };
-  compatibility: {
-    compatible: boolean;
-    forceUpgrade: boolean;
-  };
-  previousRelease?: { versionName: string; versionCode: number; downloadUrl: string | null } | null;
-  knownIssues?: string[];
-};
+export type { MobileUpdateInfo, MobileUpdateState };
 
 export type CatalogParams = {
   q?: string;
