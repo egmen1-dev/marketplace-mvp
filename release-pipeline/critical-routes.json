@@ -1,0 +1,27 @@
+{
+  "description": "Critical staging routes verified after every Railway deploy. Missing route on deployed main = FAIL.",
+  "routes": [
+    { "id": "health", "path": "/api/health", "expectStatus": 200 },
+    { "id": "version", "path": "/api/version", "expectStatus": 200 },
+    { "id": "product_ops_config", "path": "/api/product-ops/config?surface=mobile&deviceId=release-pipeline", "expectStatus": 200 },
+    {
+      "id": "beta_dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "expectStatus": 200,
+      "sourcePath": "app/api/product-ops/beta/dashboard/route.ts"
+    },
+    {
+      "id": "beta_readiness",
+      "path": "/api/product-ops/beta/readiness",
+      "expectStatus": 200,
+      "sourcePath": "app/api/product-ops/beta/readiness/route.ts"
+    },
+    {
+      "id": "checkout_web_url",
+      "path": "/api/mobile/checkout/web-url",
+      "expectStatus": [401, 403],
+      "sourcePath": "app/api/mobile/checkout/web-url/route.ts",
+      "note": "401/403 without auth proves route registered; 404 = not deployed"
+    }
+  ]
+}

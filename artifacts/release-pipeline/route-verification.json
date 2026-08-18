@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-08-18T13:36:33.924Z",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "routes": [
+    {
+      "id": "health",
+      "path": "/api/health",
+      "onOriginMain": true,
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 103,
+      "verdict": "PASS"
+    },
+    {
+      "id": "version",
+      "path": "/api/version",
+      "onOriginMain": true,
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 96,
+      "verdict": "PASS"
+    },
+    {
+      "id": "product_ops_config",
+      "path": "/api/product-ops/config?surface=mobile&deviceId=release-pipeline",
+      "onOriginMain": true,
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 124,
+      "verdict": "PASS"
+    },
+    {
+      "id": "beta_dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "onOriginMain": false,
+      "verdict": "SKIP",
+      "reason": "Source app/api/product-ops/beta/dashboard/route.ts not on origin/main — route not required until merged"
+    },
+    {
+      "id": "beta_readiness",
+      "path": "/api/product-ops/beta/readiness",
+      "onOriginMain": false,
+      "verdict": "SKIP",
+      "reason": "Source app/api/product-ops/beta/readiness/route.ts not on origin/main — route not required until merged"
+    },
+    {
+      "id": "checkout_web_url",
+      "path": "/api/mobile/checkout/web-url",
+      "onOriginMain": false,
+      "verdict": "SKIP",
+      "reason": "Source app/api/mobile/checkout/web-url/route.ts not on origin/main — route not required until merged"
+    }
+  ],
+  "verdict": "PASS"
+}
