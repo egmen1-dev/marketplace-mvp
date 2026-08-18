@@ -1,0 +1,96 @@
+{
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "endpoints": [
+    {
+      "name": "beta_dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "httpStatus": 404,
+      "latencyMs": 258,
+      "ok": false,
+      "schemaKeys": []
+    },
+    {
+      "name": "beta_journey",
+      "path": "/api/product-ops/beta/journey",
+      "httpStatus": 404,
+      "latencyMs": 188,
+      "ok": false,
+      "schemaKeys": []
+    },
+    {
+      "name": "beta_exit_report",
+      "path": "/api/product-ops/beta/exit-report",
+      "httpStatus": 404,
+      "latencyMs": 151,
+      "ok": false,
+      "schemaKeys": []
+    },
+    {
+      "name": "telemetry_post",
+      "path": "/api/mobile/telemetry",
+      "httpStatus": 200,
+      "latencyMs": 108,
+      "ok": true,
+      "schemaKeys": [
+        "accepted",
+        "recorded",
+        "contractVersion",
+        "apiVersion",
+        "schemaVersion",
+        "syncVersion",
+        "advisoryOnly"
+      ]
+    },
+    {
+      "name": "feedback_post",
+      "path": "/api/product-ops/feedback",
+      "httpStatus": 200,
+      "latencyMs": 103,
+      "ok": true,
+      "schemaKeys": [
+        "id",
+        "classification",
+        "confidence",
+        "recorded",
+        "apiVersion",
+        "schemaVersion",
+        "syncVersion",
+        "advisoryOnly"
+      ]
+    },
+    {
+      "name": "remote_config",
+      "path": "/api/product-ops/config?surface=mobile&deviceId=epic103",
+      "httpStatus": 200,
+      "latencyMs": 102,
+      "ok": true,
+      "schemaKeys": [
+        "surface",
+        "config",
+        "flags",
+        "experiments",
+        "apiVersion",
+        "schemaVersion",
+        "syncVersion",
+        "advisoryOnly"
+      ]
+    },
+    {
+      "name": "bootstrap",
+      "path": "/api/mobile/bootstrap",
+      "httpStatus": 200,
+      "latencyMs": 100,
+      "ok": true,
+      "schemaKeys": [
+        "apiVersion",
+        "schemaVersion",
+        "minSupportedApiVersion",
+        "minSupportedSchemaVersion",
+        "deepLinkScheme",
+        "releaseChannel",
+        "baseUrl",
+        "featureFlags"
+      ]
+    }
+  ]
+}

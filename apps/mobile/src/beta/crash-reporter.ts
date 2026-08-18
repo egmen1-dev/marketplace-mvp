@@ -1,6 +1,7 @@
 import { postTelemetry, submitProductFeedback } from "../api/endpoints";
 import { useAppStore } from "../store/app-store";
 import { buildErrorReport } from "../telemetry/error-report";
+import { isFlagEnabled } from "./remote-flags";
 import { getBetaConfig } from "./config";
 import { getBetaEnvironment } from "./environment";
 import { getBuildInfo } from "./build-info";
@@ -62,5 +63,19 @@ export function reportUnhandledPromise(screen: string, reason: string): void {
     screen,
     errorMessage: reason,
     kind: "unhandled_promise",
+  });
+}
+
+/**
+ * SAFE beta-only controlled crash for RC validation.
+ * Requires remote flag `beta_validation_crash_test` — never enabled in production.
+ */
+export function triggerBetaValidationCrash(screen: string): void {
+  if (!isFlagEnabled("beta_validation_crash_test")) return;
+  void reportCrash({
+    screen,
+    errorMessage: "BETA_VALIDATION_CONTROLLED_CRASH",
+    errorStack: "Epic103ValidationHarness",
+    kind: "js_crash",
   });
 }

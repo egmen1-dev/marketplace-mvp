@@ -1,0 +1,42 @@
+{
+  "sessionId": "epic103-e2e-1787051572351",
+  "telemetryResults": [
+    {
+      "event": "screen_view",
+      "accepted": true,
+      "status": 200
+    },
+    {
+      "event": "button_press",
+      "accepted": true,
+      "status": 200
+    },
+    {
+      "event": "scroll_depth",
+      "accepted": true,
+      "status": 200
+    },
+    {
+      "event": "back_press",
+      "accepted": true,
+      "status": 200
+    },
+    {
+      "event": "rage_tap",
+      "accepted": true,
+      "status": 200
+    },
+    {
+      "event": "abandoned_flow",
+      "accepted": true,
+      "status": 200
+    }
+  ],
+  "duplicatePostStatuses": [
+    200,
+    200,
+    200
+  ],
+  "dashboardVerified": false,
+  "note": "Dashboard aggregation BLOCKED — beta API 404 on staging"
+}

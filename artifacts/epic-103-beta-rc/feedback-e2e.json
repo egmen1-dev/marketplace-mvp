@@ -1,0 +1,41 @@
+{
+  "feedbackResults": [
+    {
+      "category": "bug_report",
+      "id": "cmsykd71h009snw0158kgp5in",
+      "status": 200,
+      "classification": "ux"
+    },
+    {
+      "category": "confusing_ui",
+      "id": "cmsykd74c009tnw01nkafcdf0",
+      "status": 200,
+      "classification": "ux"
+    },
+    {
+      "category": "performance_issue",
+      "id": "cmsykd774009unw010thcczp0",
+      "status": 200,
+      "classification": "ux"
+    },
+    {
+      "category": "seller_issue",
+      "id": "cmsykd79w009vnw01nmtlcgl8",
+      "status": 200,
+      "classification": "ux"
+    },
+    {
+      "category": "buyer_issue",
+      "id": "cmsykd7cq009wnw01h3l0ak7b",
+      "status": 200,
+      "classification": "ux"
+    },
+    {
+      "category": "feature_request",
+      "id": "cmsykd7fg009xnw01x8js15c9",
+      "status": 200,
+      "classification": "feature_request"
+    }
+  ],
+  "emptyRejected": true
+}
