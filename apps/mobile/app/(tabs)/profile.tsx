@@ -2,12 +2,12 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
-import { logout } from "../../src/api/client";
-import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
+import { fetchMobileUpdate, postTelemetry } from "../../src/api/endpoints";
 import { loadAppConfig } from "../../src/config/env";
-import { Avatar, GhostButton, PrimaryButton, SecondaryButton, SectionHeader } from "../../src/components/ui";
-import { getSessionMeta } from "../../src/storage/secure-session";
-import { useAppStore } from "../../src/store/app-store";
+import { Avatar } from "../../src/design-system/primitives/Badge";
+import { GhostButton, PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
+import { SectionHeader } from "../../src/design-system/layout/ScreenLayout";
+import { useProfileData } from "../../src/features/profile/useProfileData";
 import { buildErrorReport } from "../../src/telemetry/error-report";
 import { startApkDownload } from "../../src/update/download-apk";
 import { UPDATE_ANALYTICS } from "../../src/update/types";
@@ -15,18 +15,9 @@ import { colors, spacing, typography } from "../../src/theme/tokens";
 import type { MobileUpdateInfo } from "../../src/api/endpoints";
 
 export default function ProfileScreen() {
-  const mode = useAppStore((s) => s.mode);
-  const sellerCapable = useAppStore((s) => s.sellerCapable);
-  const setMode = useAppStore((s) => s.setMode);
-  const [email, setEmail] = useState<string>("—");
+  const profile = useProfileData();
   const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
   const config = loadAppConfig();
-
-  useEffect(() => {
-    getSessionMeta().then((meta) => {
-      if (meta?.userId) setEmail(meta.userId.slice(0, 8) + "…");
-    });
-  }, []);
 
   useEffect(() => {
     fetchMobileUpdate()
@@ -47,15 +38,10 @@ export default function ProfileScreen() {
     await startApkDownload(updateInfo);
   }
 
-  async function onLogout() {
-    await logout();
-    router.replace("/login");
-  }
-
   async function onReportError() {
     const report = buildErrorReport("profile");
     await postTelemetry({ screen: "profile", event: "error_report_requested" });
-    await submitProductFeedback({
+    await profile.submitFeedback({
       content: JSON.stringify(report),
       screen: "profile",
     }).catch(() => null);
@@ -68,23 +54,23 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Avatar label={email} size={56} />
+        <Avatar label={profile.email} size={56} />
         <View>
           <Text style={styles.title}>Профиль</Text>
-          <Text style={styles.subtitle}>ID: {email}</Text>
+          <Text style={styles.subtitle}>ID: {profile.email}</Text>
         </View>
       </View>
 
       <SectionHeader title="Режим" />
       <View style={styles.card}>
-        <Text style={styles.cardLabel}>Сейчас: {mode === "seller" ? "Продавец" : "Покупатель"}</Text>
-        {sellerCapable ? (
+        <Text style={styles.cardLabel}>Сейчас: {profile.mode === "seller" ? "Продавец" : "Покупатель"}</Text>
+        {profile.sellerCapable ? (
           <SecondaryButton
-            label={mode === "buyer" ? "Переключить на продавца" : "Переключить на покупателя"}
+            label={profile.mode === "buyer" ? "Переключить на продавца" : "Переключить на покупателя"}
             fullWidth
             onPress={() => {
-              const next = mode === "buyer" ? "seller" : "buyer";
-              setMode(next);
+              const next = profile.mode === "buyer" ? "seller" : "buyer";
+              profile.onSwitchMode(next);
               router.replace(next === "seller" ? "/(tabs)/seller-home" : "/(tabs)");
             }}
           />
@@ -119,7 +105,7 @@ export default function ProfileScreen() {
       ) : null}
 
       <GhostButton label="Сообщить об ошибке" onPress={onReportError} fullWidth />
-      <Pressable style={styles.logout} onPress={onLogout}>
+      <Pressable style={styles.logout} onPress={() => void profile.onLogout().then(() => router.replace("/login"))}>
         <Text style={styles.logoutText}>Выйти</Text>
       </Pressable>
 

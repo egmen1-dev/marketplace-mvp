@@ -1,0 +1,149 @@
+{
+  "epic": "EPIC-91",
+  "title": "EPIC 86 Seller Experience — Domain Readiness",
+  "baseline": "Sprint 90 UI ready · Domain layer not implemented",
+  "generatedAt": "2026-08-18T06:20:00.000Z",
+  "verdict": {
+    "sellerUiReady": true,
+    "sellerDomainReady": false,
+    "epic86CanStart": false,
+    "recommendedGate": "Implement SellerRepository + 4 seller use cases before EPIC 86 UI work"
+  },
+  "sellerScreens": [
+    {
+      "screen": "Seller Home",
+      "route": "app/(tabs)/seller-home.tsx",
+      "requiredDomains": ["seller", "wallet", "offline", "telemetry"],
+      "requiredRepositories": ["SellerRepository", "WalletRepository"],
+      "requiredUseCases": ["LoadSellerHome"],
+      "currentPattern": "Fat screen — direct fetchSellerHome + in-memory snapshot",
+      "domainGap": "No SellerRepository; no persisted offline cache",
+      "epic86Blocker": true
+    },
+    {
+      "screen": "Seller Products",
+      "route": "app/(tabs)/seller-products.tsx",
+      "requiredDomains": ["seller", "catalog", "search", "product"],
+      "requiredRepositories": ["SellerRepository", "SearchRepository"],
+      "requiredUseCases": ["LoadSellerProducts"],
+      "currentPattern": "Fat screen — direct fetchSellerProducts + local search filter",
+      "domainGap": "No feature module; product mutations not defined",
+      "epic86Blocker": true
+    },
+    {
+      "screen": "Seller Sales",
+      "route": "app/(tabs)/seller-sales.tsx",
+      "requiredDomains": ["seller", "orders", "offline"],
+      "requiredRepositories": ["SellerRepository", "OrderRepository"],
+      "requiredUseCases": ["LoadSellerOrders"],
+      "currentPattern": "Thin shell — useSellerSalesData hook (good pattern)",
+      "domainGap": "Hook calls API directly; duplicates wallet seller orders fetch",
+      "epic86Blocker": "partial"
+    },
+    {
+      "screen": "Public Seller Profile",
+      "route": "app/seller/[id].tsx",
+      "requiredDomains": ["seller", "catalog", "product"],
+      "requiredRepositories": ["SellerRepository", "CatalogRepository"],
+      "requiredUseCases": ["LoadSellerPublicProfile", "LoadCatalog"],
+      "currentPattern": "Orchestrator — useSellerCatalogProfile + useCatalogDiscovery",
+      "domainGap": "Profile hook calls API directly; catalog filter sellerId in hook",
+      "epic86Blocker": "partial"
+    },
+    {
+      "screen": "Wallet (seller mode)",
+      "route": "app/(tabs)/wallet.tsx",
+      "requiredDomains": ["wallet", "seller", "orders"],
+      "requiredRepositories": ["WalletRepository", "SellerRepository"],
+      "requiredUseCases": ["LoadWallet", "LoadSellerOrders"],
+      "currentPattern": "Fat screen — fetchWallet + fetchSellerOrders inline",
+      "domainGap": "Mixed buyer/seller concerns in one screen",
+      "epic86Blocker": true
+    },
+    {
+      "screen": "Profile (mode switch)",
+      "route": "app/(tabs)/profile.tsx",
+      "requiredDomains": ["profile", "authentication"],
+      "requiredRepositories": ["ProfileRepository", "AuthRepository"],
+      "requiredUseCases": ["SwitchAppMode", "LoadProfile"],
+      "currentPattern": "Fat screen — setMode in UI",
+      "domainGap": "Mode switch not a use case",
+      "epic86Blocker": "partial"
+    }
+  ],
+  "missingCapabilities": [
+    {
+      "capability": "SellerRepository",
+      "priority": "P0",
+      "blocks": ["seller-home", "seller-products", "seller-sales", "seller/[id]", "wallet seller mode"]
+    },
+    {
+      "capability": "SellerHomeDashboard domain entity",
+      "priority": "P0",
+      "blocks": ["seller-home KPI cards"]
+    },
+    {
+      "capability": "SellerProductPage domain entity",
+      "priority": "P0",
+      "blocks": ["seller-products inventory list"]
+    },
+    {
+      "capability": "SellerOrderPage domain entity",
+      "priority": "P0",
+      "blocks": ["seller-sales", "wallet recent sales"]
+    },
+    {
+      "capability": "Persistent seller offline snapshots",
+      "priority": "P1",
+      "blocks": ["seller-home offline", "seller-sales offline"]
+    },
+    {
+      "capability": "SellerOrderChanged domain event",
+      "priority": "P1",
+      "blocks": ["cross-screen badge refresh", "wallet + sales sync"]
+    },
+    {
+      "capability": "WalletRepository (seller balances)",
+      "priority": "P1",
+      "blocks": ["wallet seller mode", "seller-home WalletCard"]
+    },
+    {
+      "capability": "SwitchAppMode use case",
+      "priority": "P2",
+      "blocks": ["profile seller entry"]
+    },
+    {
+      "capability": "Seller analytics telemetry catalog",
+      "priority": "P2",
+      "blocks": ["EPIC 86 funnel metrics"]
+    },
+    {
+      "capability": "Notification domain (future)",
+      "priority": "P3",
+      "blocks": ["seller action alerts"]
+    }
+  ],
+  "epic86ScreenMapping": {
+    "plannedEpic86Screens": [
+      "Seller Dashboard (enhanced home)",
+      "Seller Product Management",
+      "Seller Order Operations",
+      "Seller Payout / Wallet",
+      "Seller Settings",
+      "Seller Onboarding prompts"
+    ],
+    "domainCoverage": {
+      "Seller Dashboard": ["SellerRepository.loadSellerHome", "WalletRepository", "TelemetryRepository"],
+      "Product Management": ["SellerRepository.loadSellerProducts", "ProductRepository (future mutations)"],
+      "Order Operations": ["SellerRepository.loadSellerOrders", "OrderRepository"],
+      "Payout / Wallet": ["WalletRepository", "SellerRepository"],
+      "Settings": ["ProfileRepository", "AuthRepository"],
+      "Onboarding": ["ConfigRepository flags", "ProfileRepository"]
+    }
+  },
+  "readinessScore": {
+    "uiFoundation": 9.0,
+    "domainFoundation": 2.5,
+    "overall": 5.8
+  }
+}

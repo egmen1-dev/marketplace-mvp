@@ -1,25 +1,35 @@
-import { Redirect } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import { Redirect, useRouter } from "expo-router";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import {
   BOOT_HARD_TIMEOUT_MS,
   runStartupPipeline,
+  type BootFailure,
   type StartupPipelineResult,
 } from "../src/boot/run-startup-pipeline";
+import { bootPipelineHungFailure } from "../src/boot/boot-errors";
+import { bootLogger } from "../src/boot/boot-logger";
+import { getCurrentBootId, getCurrentRetryCount } from "../src/boot/boot-session";
+import { saveStartupReport } from "../src/boot/boot-storage";
+import { bootMark, bootStage } from "../src/boot/early-boot";
 import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
-import { PrimaryButton } from "../src/components/ui";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
 import { useAppStore } from "../src/store/app-store";
 import { colors, spacing, typography } from "../src/theme/tokens";
 
+const LazyStartupErrorScreen = lazy(() =>
+  import("../src/features/startup/StartupErrorScreen").then((m) => ({ default: m.StartupErrorScreen })),
+);
+
 export default function BootScreen() {
+  const router = useRouter();
   const setBootstrapped = useAppStore((s) => s.setBootstrapped);
   const setRemoteConfig = useAppStore((s) => s.setRemoteConfig);
   const setUserRole = useAppStore((s) => s.setUserRole);
   const setPendingUpdate = useAppStore((s) => s.setPendingUpdate);
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<BootFailure | null>(null);
   const [unsupported, setUnsupported] = useState<MobileUpdateInfo | null>(null);
   const [ready, setReady] = useState<"login" | "app" | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -32,7 +42,7 @@ export default function BootScreen() {
         return;
       }
       if (result.status === "error") {
-        setError(result.message);
+        setFailure(result.failure);
         return;
       }
       if (result.remoteConfig) setRemoteConfig(result.remoteConfig);
@@ -45,13 +55,14 @@ export default function BootScreen() {
   );
 
   useEffect(() => {
+    bootStage("BOOT_PIPELINE_INIT");
     let cancelled = false;
     finishedRef.current = false;
-    setError(null);
+    setFailure(null);
     setUnsupported(null);
     setReady(null);
 
-    void runStartupPipeline().then((result) => {
+    void runStartupPipeline({ isRetry: attempt > 0 }).then((result) => {
       if (cancelled) return;
       finishedRef.current = true;
       applyResult(result);
@@ -60,8 +71,15 @@ export default function BootScreen() {
     const hardTimeout = setTimeout(() => {
       if (cancelled || finishedRef.current) return;
       finishedRef.current = true;
-      emitStartupEvent(STARTUP_EVENTS.bootTimeout);
-      setError("Не удалось загрузить приложение");
+      const durationMs = bootLogger.elapsedMs();
+      const hungFailure = bootPipelineHungFailure(durationMs);
+      const report = bootLogger.complete(false, undefined, {
+        bootId: getCurrentBootId(),
+        retryCount: getCurrentRetryCount(),
+      });
+      void saveStartupReport(report);
+      emitStartupEvent(STARTUP_EVENTS.bootAborted, hungFailure.code);
+      setFailure(hungFailure);
     }, BOOT_HARD_TIMEOUT_MS);
 
     return () => {
@@ -69,6 +87,10 @@ export default function BootScreen() {
       clearTimeout(hardTimeout);
     };
   }, [attempt, applyResult]);
+
+  const openBuildInfo = useCallback(() => {
+    router.push("/build-info");
+  }, [router]);
 
   if (unsupported) {
     return (
@@ -83,16 +105,33 @@ export default function BootScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.brand}>
+      <Pressable
+        accessibilityRole="imagebutton"
+        accessibilityHint="Удерживайте для информации о билде"
+        onLongPress={openBuildInfo}
+        delayLongPress={800}
+        style={styles.brand}
+      >
         <Image source={require("../assets/splash-icon.png")} style={styles.logo} />
         <Text style={styles.title}>ЛОТ</Text>
         <Text style={styles.tagline}>Маркетплейс, которому доверяют</Text>
-      </View>
-      {error ? (
-        <View style={styles.errorBlock}>
-          <Text style={styles.error}>{error}</Text>
-          <PrimaryButton label="Повторить" onPress={() => setAttempt((n) => n + 1)} fullWidth />
-        </View>
+      </Pressable>
+      {failure ? (
+        <Suspense
+          fallback={
+            <>
+              <ActivityIndicator color={colors.orange} size="large" />
+              <Text style={styles.caption}>Загрузка диагностики…</Text>
+            </>
+          }
+        >
+          <LazyStartupErrorScreen
+            failure={failure}
+            bootId={getCurrentBootId()}
+            retryCount={getCurrentRetryCount()}
+            onRetry={() => setAttempt((n) => n + 1)}
+          />
+        </Suspense>
       ) : (
         <>
           <ActivityIndicator color={colors.orange} size="large" />
@@ -110,6 +149,6 @@ const styles = StyleSheet.create({
   title: { ...typography.display, color: colors.orange, fontSize: 36 },
   tagline: { ...typography.body, color: colors.gray500 },
   caption: { ...typography.caption, color: colors.gray500, marginTop: spacing.md },
-  errorBlock: { width: "100%", maxWidth: 320, gap: spacing.md },
-  error: { color: colors.danger, textAlign: "center" },
 });
+
+bootMark("app/index module evaluated");

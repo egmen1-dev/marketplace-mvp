@@ -1,0 +1,289 @@
+{
+  "epic": "EPIC-91",
+  "title": "Repository Layer Architecture",
+  "generatedAt": "2026-08-18T06:20:00.000Z",
+  "principles": [
+    "Repositories isolate transport (REST today, GraphQL tomorrow)",
+    "Screens and hooks depend on repository interfaces only",
+    "DTO mapping happens inside repository implementations",
+    "Caching and offline policy owned by repository, not UI"
+  ],
+  "summary": {
+    "repositoryCount": 16,
+    "transportAdapter": "RestCommerceTransport (wraps api/client + endpoints)",
+    "proposedPath": "apps/mobile/src/domain/"
+  },
+  "repositories": [
+    {
+      "name": "AuthRepository",
+      "domain": "authentication",
+      "interface": {
+        "login": "LoginCredentials → Session",
+        "logout": "void → void",
+        "restoreSession": "void → Session | null",
+        "refreshToken": "void → AccessToken",
+        "getSession": "void → Session | null"
+      },
+      "dtoMapping": "BootstrapPayload + auth response → Session entity",
+      "caching": "SecureStore tokens + in-memory access token",
+      "offlinePolicy": "restoreSession reads cache only; login requires network",
+      "retryPolicy": "refresh once on 401; fail on REFRESH_REVOKED",
+      "telemetry": ["session.login", "session.logout", "session.refresh_failed"],
+      "dependencies": ["SecureSessionStore"],
+      "currentEndpoints": ["login", "logout", "fetchBootstrap", "client.refresh"]
+    },
+    {
+      "name": "CatalogRepository",
+      "domain": "catalog",
+      "interface": {
+        "loadCatalog": "CatalogQuery → CatalogPage",
+        "loadCategories": "void → Category[]",
+        "observeCatalog": "CatalogQuery → Observable<CatalogPage>"
+      },
+      "dtoMapping": "MobileProductListItem[] → ProductSummary[]",
+      "caching": "Memory LRU keyed by query hash; TTL 5m",
+      "offlinePolicy": "Return cached page if offline; stale-if-error",
+      "retryPolicy": "2 retries on retryable network errors",
+      "telemetry": ["catalog.load", "catalog.cache_hit"],
+      "dependencies": ["CacheStore", "OfflinePolicy"],
+      "currentEndpoints": ["fetchCatalog", "fetchCategories"]
+    },
+    {
+      "name": "SearchRepository",
+      "domain": "search",
+      "interface": {
+        "suggest": "string → SearchSuggestion[]",
+        "getHistory": "void → string[]",
+        "pushHistory": "string → string[]",
+        "clearHistory": "void → void"
+      },
+      "dtoMapping": "Suggest response → SearchSuggestion[]",
+      "caching": "History in SecureStore; suggest in memory 30s",
+      "offlinePolicy": "History local-only; suggest disabled offline",
+      "retryPolicy": "No retry on suggest; debounce 300ms",
+      "telemetry": ["search.suggest", "search.history_add"],
+      "dependencies": ["SearchHistoryStore"],
+      "currentEndpoints": ["fetchProductSuggest", "storage/search-history"]
+    },
+    {
+      "name": "ProductRepository",
+      "domain": "product",
+      "interface": {
+        "loadProduct": "ProductId → ProductDetail",
+        "loadRelated": "ProductId → ProductSummary[]",
+        "recordRecentView": "ProductId → void",
+        "getRecentViews": "void → ProductSummary[]"
+      },
+      "dtoMapping": "fetchProduct response → ProductDetail via parseProductDetail",
+      "caching": "SecureStore product-detail-cache max 24; recent-views max 12",
+      "offlinePolicy": "Serve cache first; network refresh when online",
+      "retryPolicy": "1 retry on 5xx",
+      "telemetry": ["product.view", "product.cache_hit"],
+      "dependencies": ["ProductDetailCache", "RecentViewsStore"],
+      "currentEndpoints": ["fetchProduct"]
+    },
+    {
+      "name": "FavoritesRepository",
+      "domain": "favorites",
+      "interface": {
+        "loadFavorites": "void → ProductSummary[]",
+        "toggleFavorite": "ProductId → FavoriteToggleResult",
+        "isFavorite": "ProductId → boolean"
+      },
+      "dtoMapping": "MobileProductListItem[] → ProductSummary[]",
+      "caching": "Memory snapshot + optimistic toggle",
+      "offlinePolicy": "Queue toggle mutations; list from cache",
+      "retryPolicy": "Retry toggle 3x with backoff",
+      "telemetry": ["favorites.toggle", "favorites.load"],
+      "dependencies": ["CatalogRepository (for product shape)"],
+      "currentEndpoints": ["fetchFavorites", "toggleFavorite"]
+    },
+    {
+      "name": "CartRepository",
+      "domain": "cart",
+      "interface": {
+        "loadCart": "void → Cart",
+        "addItem": "ProductId, quantity → Cart",
+        "updateQuantity": "ProductId, quantity → Cart",
+        "removeItem": "ProductId → Cart"
+      },
+      "dtoMapping": "Cart API → Cart entity via parseCartCommerceView",
+      "caching": "Memory cart snapshot; invalidate on mutation",
+      "offlinePolicy": "Block mutations offline; read last snapshot",
+      "retryPolicy": "Optimistic update + rollback on failure",
+      "telemetry": ["cart.add", "cart.update", "cart.remove"],
+      "dependencies": ["ProductRepository"],
+      "currentEndpoints": ["fetchCart", "addToCart", "removeCartItem", "updateCartQuantity"]
+    },
+    {
+      "name": "CheckoutRepository",
+      "domain": "checkout",
+      "interface": {
+        "quoteDelivery": "DeliveryRequest → DeliveryQuote",
+        "loadPickupPoints": "city → PickupPoint[]",
+        "validateCheckout": "CheckoutForm → ValidationResult"
+      },
+      "dtoMapping": "Delivery API payloads → domain DeliveryQuote",
+      "caching": "Quote cache keyed by city+method 2m",
+      "offlinePolicy": "Hard block — requires network",
+      "retryPolicy": "2 retries on quote",
+      "telemetry": ["checkout.quote", "checkout.validate_fail"],
+      "dependencies": ["CartRepository", "WalletRepository"],
+      "currentEndpoints": ["fetchDeliveryQuote", "fetchDeliveryPoints"]
+    },
+    {
+      "name": "OrderRepository",
+      "domain": "orders",
+      "interface": {
+        "loadOrders": "void → OrderSummary[]",
+        "loadOrderDetail": "OrderId → OrderDetail",
+        "shareOrder": "OrderId → SharePayload"
+      },
+      "dtoMapping": "Order API → OrderDetail via parseOrderDetail",
+      "caching": "SecureStore order-cache list + 12 details",
+      "offlinePolicy": "Cache-first list and detail",
+      "retryPolicy": "Background refresh when online",
+      "telemetry": ["orders.load", "orders.detail", "orders.share"],
+      "dependencies": ["ProductRepository"],
+      "currentEndpoints": ["fetchOrders", "fetchOrderDetail"]
+    },
+    {
+      "name": "SellerRepository",
+      "domain": "seller",
+      "interface": {
+        "loadSellerHome": "void → SellerHomeDashboard",
+        "loadSellerProducts": "cursor? → SellerProductPage",
+        "loadSellerOrders": "cursor? → SellerOrderPage",
+        "loadPublicProfile": "SellerId → SellerPublicProfile"
+      },
+      "dtoMapping": "Seller API responses → seller domain entities",
+      "caching": "Persistent snapshot for home/products/orders (EPIC 92)",
+      "offlinePolicy": "Snapshot read offline; block public profile without cache",
+      "retryPolicy": "2 retries; fallback to snapshot",
+      "telemetry": ["seller.home", "seller.products", "seller.orders", "seller.public_profile"],
+      "dependencies": ["OrderRepository", "CatalogRepository"],
+      "currentEndpoints": ["fetchSellerHome", "fetchSellerProducts", "fetchSellerOrders", "fetchSellerPublicProfile"]
+    },
+    {
+      "name": "WalletRepository",
+      "domain": "wallet",
+      "interface": {
+        "loadWallet": "void → WalletBalance",
+        "loadRecentSellerSales": "limit → SellerOrderSummary[]"
+      },
+      "dtoMapping": "Wallet API → WalletBalance entity",
+      "caching": "Memory 60s TTL",
+      "offlinePolicy": "Show last balance snapshot",
+      "retryPolicy": "1 retry",
+      "telemetry": ["wallet.load"],
+      "dependencies": ["SellerRepository"],
+      "currentEndpoints": ["fetchWallet", "fetchSellerOrders"]
+    },
+    {
+      "name": "ProfileRepository",
+      "domain": "profile",
+      "interface": {
+        "loadProfile": "void → UserProfile",
+        "submitFeedback": "FeedbackInput → void",
+        "setAppMode": "buyer | seller → void"
+      },
+      "dtoMapping": "Session meta → UserProfile",
+      "caching": "Session-derived; no separate cache",
+      "offlinePolicy": "Feedback queued offline",
+      "retryPolicy": "Queue + flush",
+      "telemetry": ["profile.feedback", "profile.mode_switch"],
+      "dependencies": ["AuthRepository"],
+      "currentEndpoints": ["submitProductFeedback", "getSessionMeta"]
+    },
+    {
+      "name": "BootstrapRepository",
+      "domain": "startup",
+      "interface": {
+        "runBootstrap": "void → BootstrapResult",
+        "checkUpdate": "void → UpdateInfo"
+      },
+      "dtoMapping": "MobileUpdateInfo → UpdateInfo domain type",
+      "caching": "boot-storage remote config cache",
+      "offlinePolicy": "Use cached bootstrap on failure",
+      "retryPolicy": "Stage timeouts per boot pipeline",
+      "telemetry": ["startup.bootstrap", "startup.update_check"],
+      "dependencies": ["AuthRepository", "ConfigRepository"],
+      "currentEndpoints": ["fetchBootstrap", "fetchMobileUpdate"]
+    },
+    {
+      "name": "ConfigRepository",
+      "domain": "configuration",
+      "interface": {
+        "loadRemoteConfig": "void → RemoteConfig",
+        "getFlag": "string → boolean",
+        "getExperiment": "string → string | null"
+      },
+      "dtoMapping": "RemoteConfigPayload → typed RemoteConfig",
+      "caching": "SecureStore + store.remoteConfig",
+      "offlinePolicy": "Always serve cached config",
+      "retryPolicy": "Fallback to DEFAULT_REMOTE_CONFIG",
+      "telemetry": ["config.load"],
+      "dependencies": [],
+      "currentEndpoints": ["fetchRemoteConfig"]
+    },
+    {
+      "name": "TelemetryRepository",
+      "domain": "telemetry",
+      "interface": {
+        "track": "DomainEvent → void",
+        "flush": "void → void"
+      },
+      "dtoMapping": "DomainEvent → postTelemetry payload",
+      "caching": "Offline queue (future)",
+      "offlinePolicy": "Drop or queue based on flag",
+      "retryPolicy": "Fire-and-forget; no user blocking",
+      "telemetry": [],
+      "dependencies": [],
+      "currentEndpoints": ["postTelemetry"]
+    },
+    {
+      "name": "DeepLinkRepository",
+      "domain": "deep-links",
+      "interface": {
+        "parse": "uri → DeepLinkRoute | null",
+        "resolve": "DeepLinkRoute → NavigationTarget",
+        "queuePending": "uri → void",
+        "consumePending": "void → uri | null"
+      },
+      "dtoMapping": "Pure — no transport",
+      "caching": "pendingDeepLink in session store",
+      "offlinePolicy": "N/A — routing only",
+      "retryPolicy": "N/A",
+      "telemetry": ["deeplink.open", "deeplink.deferred_auth"],
+      "dependencies": ["AuthRepository"],
+      "currentEndpoints": []
+    },
+    {
+      "name": "CacheRepository",
+      "domain": "caching",
+      "interface": {
+        "get": "CacheKey → T | null",
+        "set": "CacheKey, T, TTL → void",
+        "invalidate": "CacheKey | pattern → void",
+        "clear": "void → void"
+      },
+      "dtoMapping": "Internal serialization only",
+      "caching": "Unified memory + SecureStore tiers",
+      "offlinePolicy": "Foundation for all repositories",
+      "retryPolicy": "N/A",
+      "telemetry": ["cache.hit", "cache.miss", "cache.evict"],
+      "dependencies": [],
+      "currentEndpoints": []
+    }
+  ],
+  "dependencyRules": [
+    "Repositories may depend on CacheRepository and TelemetryRepository",
+    "Repositories must NOT import React, expo-router, or design-system",
+    "Repositories must NOT import app/ or features/",
+    "Transport adapter is the only layer importing api/endpoints"
+  ],
+  "cycles": {
+    "designed": 0,
+    "notes": "SellerRepository → OrderRepository is one-way; CartRepository → ProductRepository one-way"
+  }
+}
