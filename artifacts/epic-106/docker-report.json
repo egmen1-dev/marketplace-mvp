@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.134Z",
+  "dockerfilePath": "Dockerfile",
+  "workdir": "/app",
+  "copyStrategy": "COPY . . in builder stage (full repo root)",
+  "excludesAppApiProductOps": false,
+  "dockerignorePatterns": [
+    "node_modules",
+    ".next",
+    ".git",
+    ".playwright-browsers",
+    "test-results",
+    "playwright-report",
+    "coverage",
+    ".turbo",
+    ".vercel",
+    ".env",
+    ".env.*",
+    "!.env.example",
+    "*.log",
+    ".DS_Store",
+    "tmp",
+    "docs/acceptance",
+    "agent-transcripts"
+  ],
+  "gitignoreExcludesProductOps": false,
+  "buildSteps": [
+    "node scripts/write-build-info.mjs (uses RAILWAY_GIT_COMMIT_SHA or git HEAD)",
+    "npx prisma generate",
+    "npm run build",
+    "copy build-info into .next/standalone/lib"
+  ],
+  "runnerCopies": [
+    "public",
+    ".next/standalone",
+    ".next/static",
+    "lib/build-info.generated.json"
+  ],
+  "entrypoint": "node server.js",
+  "removesProductOps": false
+}

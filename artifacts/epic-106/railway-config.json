@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.131Z",
+  "railwayToml": "# Railway staging (Vercel production unchanged).\n# Docs: docs/BACKUP_DEPLOYMENT.md, docs/RAILWAY_BUILD_PIPELINE.md\n#\n# Build strategy: GitHub → Railway DOCKERFILE + Next standalone.\n\n[build]\nbuilder = \"DOCKERFILE\"\ndockerfilePath = \"Dockerfile\"\n\n[deploy]\nstartCommand = \"node server.js\"\nhealthcheckPath = \"/api/health\"\nhealthcheckTimeout = 180\nrestartPolicyType = \"ON_FAILURE\"\nrestartPolicyMaxRetries = 3\n",
+  "nextConfigOutput": "standalone",
+  "githubActionsWorkflows": [],
+  "branchMapping": {
+    "railwayConfiguredBranch": "main (per operator + docs/RAILWAY_BUILD_PIPELINE.md)",
+    "stagingLiveCommit": "feb4b8d",
+    "matchesOriginMain": true,
+    "detachedCommitOverride": "no evidence of GitHub Action override; no .github/workflows found"
+  }
+}

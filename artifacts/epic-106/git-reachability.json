@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.028Z",
+  "refs": {
+    "HEAD": "134f035bd8ee27d6a055d0a3dd491ee2462ad119",
+    "main": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "originMain": "feb4b8d067bf8b0426909d249c6a99fa21ac15f2",
+    "currentBranch": "cursor/epic-106-staging-deployment-investigation-7513"
+  },
+  "last20Commits": [
+    "134f035 feat(epic-105): closed beta launch validation gate and artifacts",
+    "b028271 feat(epic-104): Closed Beta readiness — web checkout + validation gate",
+    "81082c4 feat(epic-103): Closed Beta RC validation harness and evidence report",
+    "5303e56 feat(epic-102): Closed Beta Program observability and feedback infrastructure",
+    "feb4b8d feat(mobile): EPIC 83 minimum supported version + Alpha baseline (#95)",
+    "569c011 feat(mobile): EPIC 83 minimum supported version and UNSUPPORTED_CLIENT",
+    "299c645 fix(mobile): backward-compatible update payload for versionCode 1",
+    "c19b4a3 fix(mobile): boot hard timeout, fetch timeouts, non-blocking update",
+    "6d19d82 chore(mobile): EPIC-82-RELEASE-0.1.1-001 final report and rollback safety script",
+    "d9e6ccd release(mobile): publish 0.1.1-alpha artifact metadata with real SHA256",
+    "1e872b7 Merge pull request #93 from egmen1-dev/cursor/epic-82-closed-alpha-stabilization-d03e",
+    "979d5cd feat(mobile): EPIC 82 closed alpha stabilization and seamless updates",
+    "757c6c7 feat(mobile): EPIC 81 Wave 2 Mobile Commerce Experience",
+    "f31aa34 feat(mobile): EPIC 81 APP-SHELL-0.5 UX hardening and design system",
+    "16e3d47 Merge EPIC 80 — Closed Alpha Launch Gate (MOBILE-CLOSED-ALPHA-GO-001)",
+    "8dd8650 feat(mobile): EPIC-80 Closed Alpha Launch Gate",
+    "750377f Merge EPIC 79 — Product Operations Platform (POP) Wave 0 to main",
+    "d5d083c Merge EPIC 79 — Product Operations Platform (POP) Wave 0",
+    "bc8a306 Merge EPIC 78 — Mobile Release Platform (MRP) Wave 0",
+    "0c4ac3d feat(product): EPIC-79 Product Operations Platform Wave 0"
+  ],
+  "epics": [
+    {
+      "epic": 102,
+      "commit": "5303e565f9b441d87b002f791aad7f835c2d90ac",
+      "subject": "feat(epic-102): Closed Beta Program observability and feedback infrastructure",
+      "mergedToMain": false,
+      "reachableFromMain": false,
+      "reachableFromHEAD": true,
+      "pr": {
+        "number": 124,
+        "state": "OPEN",
+        "mergedAt": null
+      },
+      "branchesContaining": [
+        "cursor/epic-102-closed-beta-program-d03e",
+        "cursor/epic-103-closed-beta-rc-validation-d03e",
+        "cursor/epic-104-closed-beta-readiness-d03e",
+        "cursor/epic-105-closed-beta-launch-validation-d03e",
+        "* cursor/epic-106-staging-deployment-investigation-7513",
+        "remotes/origin/cursor/epic-102-closed-beta-program-d03e",
+        "remotes/origin/cursor/epic-103-closed-beta-rc-validation-d03e",
+        "remotes/origin/cursor/epic-104-closed-beta-readiness-d03e",
+        "remotes/origin/cursor/epic-105-closed-beta-launch-validation-d03e"
+      ]
+    },
+    {
+      "epic": 103,
+      "commit": "81082c4d17d678f59d903510fc2ffb0b4872baa7",
+      "subject": "feat(epic-103): Closed Beta RC validation harness and evidence report",
+      "mergedToMain": false,
+      "reachableFromMain": false,
+      "reachableFromHEAD": true,
+      "pr": {
+        "number": 125,
+        "state": "OPEN",
+        "mergedAt": null
+      },
+      "branchesContaining": [
+        "cursor/epic-103-closed-beta-rc-validation-d03e",
+        "cursor/epic-104-closed-beta-readiness-d03e",
+        "cursor/epic-105-closed-beta-launch-validation-d03e",
+        "* cursor/epic-106-staging-deployment-investigation-7513",
+        "remotes/origin/cursor/epic-103-closed-beta-rc-validation-d03e",
+        "remotes/origin/cursor/epic-104-closed-beta-readiness-d03e",
+        "remotes/origin/cursor/epic-105-closed-beta-launch-validation-d03e"
+      ]
+    },
+    {
+      "epic": 104,
+      "commit": "b028271b4db527bb189b04f26fc8d43117355977",
+      "subject": "feat(epic-104): Closed Beta readiness — web checkout + validation gate",
+      "mergedToMain": false,
+      "reachableFromMain": false,
+      "reachableFromHEAD": true,
+      "pr": {
+        "number": 126,
+        "state": "OPEN",
+        "mergedAt": null
+      },
+      "branchesContaining": [
+        "cursor/epic-104-closed-beta-readiness-d03e",
+        "cursor/epic-105-closed-beta-launch-validation-d03e",
+        "* cursor/epic-106-staging-deployment-investigation-7513",
+        "remotes/origin/cursor/epic-104-closed-beta-readiness-d03e",
+        "remotes/origin/cursor/epic-105-closed-beta-launch-validation-d03e"
+      ]
+    },
+    {
+      "epic": 105,
+      "commit": "134f035bd8ee27d6a055d0a3dd491ee2462ad119",
+      "subject": "feat(epic-105): closed beta launch validation gate and artifacts",
+      "mergedToMain": false,
+      "reachableFromMain": false,
+      "reachableFromHEAD": true,
+      "pr": {
+        "number": 127,
+        "state": "OPEN",
+        "mergedAt": null
+      },
+      "branchesContaining": [
+        "cursor/epic-105-closed-beta-launch-validation-d03e",
+        "* cursor/epic-106-staging-deployment-investigation-7513",
+        "remotes/origin/cursor/epic-105-closed-beta-launch-validation-d03e"
+      ]
+    }
+  ],
+  "mainContainsEpic102105Commits": false
+}

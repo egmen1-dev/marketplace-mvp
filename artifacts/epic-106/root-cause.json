@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-08-18T13:03:20.134Z",
+  "rootCause": "EPIC 102–105 code exists only on unmerged feature branches; Railway staging deploys origin/main at feb4b8d which contains no app/api/product-ops/beta/* route files.",
+  "hypothesisRanking": [
+    {
+      "id": "A",
+      "label": "EPIC 102–105 never merged into deployed branch",
+      "probability": "CONFIRMED",
+      "evidence": [
+        "origin/main = feb4b8d",
+        "git ls-tree main: no beta routes",
+        "PRs #124–#127 state OPEN mergedAt null",
+        "staging /api/version commit feb4b8d"
+      ]
+    },
+    {
+      "id": "E",
+      "label": "Staging deploys another branch/commit",
+      "probability": "CONFIRMED (same as A)",
+      "evidence": [
+        "staging commit matches main not EPIC branches",
+        "Railway branch main per docs"
+      ]
+    },
+    {
+      "id": "B",
+      "label": "Merged but not in build",
+      "probability": "RULED OUT",
+      "evidence": [
+        "not merged"
+      ]
+    },
+    {
+      "id": "C",
+      "label": "Routes excluded from build output",
+      "probability": "RULED OUT on EPIC HEAD",
+      "evidence": [
+        "HEAD build manifest lists all 6 beta routes",
+        "dockerignore/gitignore do not exclude app/api"
+      ]
+    },
+    {
+      "id": "D",
+      "label": "Wrong App Router path",
+      "probability": "RULED OUT",
+      "evidence": [
+        "filesystem app/api/product-ops/beta/*/route.ts maps to /api/product-ops/beta/*"
+      ]
+    }
+  ],
+  "stagingProbes": {
+    "/api/version": {
+      "commit": "feb4b8d",
+      "environment": "staging"
+    },
+    "/api/product-ops/config": {
+      "httpStatus": 200
+    },
+    "/api/product-ops/beta/readiness": {
+      "httpStatus": 404
+    },
+    "/api/mobile/checkout/web-url": {
+      "httpStatus": 404
+    },
+    "/api/health": {
+      "httpStatus": 200
+    }
+  },
+  "notCcOs503": "If routes existed but CCOS disabled, ccosApiGuard would return 503; staging returns 404"
+}
