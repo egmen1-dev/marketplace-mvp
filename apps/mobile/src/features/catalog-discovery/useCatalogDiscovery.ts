@@ -15,7 +15,11 @@ import {
 
 export type CategoryItem = { id: string; name: string; slug?: string };
 
-export function useCatalogDiscovery(initialQuery = "", initialCategoryId?: string | null) {
+export function useCatalogDiscovery(
+  initialQuery = "",
+  initialCategoryId?: string | null,
+  sellerId?: string | null,
+) {
   const offline = useAppStore((s) => s.offline);
   const [query, setQuery] = useState(initialQuery);
   const debouncedQuery = useDebouncedValue(query.trim(), 350);
@@ -84,6 +88,7 @@ export function useCatalogDiscovery(initialQuery = "", initialCategoryId?: strin
           cursor: reset ? null : cursorRef.current,
           sort: resolved.sort,
           categoryId: category?.id,
+          sellerId: sellerId ?? undefined,
           inStock: resolved.inStock,
         });
 
@@ -109,7 +114,7 @@ export function useCatalogDiscovery(initialQuery = "", initialCategoryId?: strin
         setRefreshing(false);
       }
     },
-    [offline, debouncedQuery, resolved.sort, resolved.inStock, resolved.dealsOnly, category?.id],
+    [offline, debouncedQuery, resolved.sort, resolved.inStock, resolved.dealsOnly, category?.id, sellerId],
   );
 
   const refresh = useCallback(async () => {
@@ -139,7 +144,7 @@ export function useCatalogDiscovery(initialQuery = "", initialCategoryId?: strin
 
   useEffect(() => {
     void loadPage(true);
-  }, [debouncedQuery, resolved.sort, resolved.inStock, resolved.dealsOnly, category?.id, offline]);
+  }, [debouncedQuery, resolved.sort, resolved.inStock, resolved.dealsOnly, category?.id, offline, sellerId]);
 
   useEffect(() => {
     if (debouncedQuery.length < 2 || offline) {

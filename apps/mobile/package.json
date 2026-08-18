@@ -30,7 +30,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "node --test src/**/*.test.mjs"
+    "test": "node --import tsx --test src/deep-links/deep-links.test.ts"
   },
   "private": true
 }

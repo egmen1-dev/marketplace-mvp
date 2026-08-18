@@ -163,6 +163,44 @@ export async function fetchSellerProducts(params?: { cursor?: string | null }) {
   );
 }
 
+export type MobileSellerOrderItem = {
+  id: string;
+  orderNumber: string;
+  status: string;
+  fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
+  isOverdue: boolean;
+  total: number;
+  sellerSubtotal: number;
+  currency: string;
+  createdAt: string;
+  buyerName: string | null;
+  itemCount: number;
+  sellerItemNames: string[];
+};
+
+export async function fetchSellerOrders(params?: { cursor?: string | null }) {
+  const search = new URLSearchParams();
+  if (params?.cursor) search.set("cursor", params.cursor);
+  const qs = search.toString();
+  return apiRequest<{ items: MobileSellerOrderItem[]; nextCursor: string | null; hasMore: boolean }>(
+    `/api/mobile/seller/orders${qs ? `?${qs}` : ""}`,
+  );
+}
+
+export type MobileSellerPublicProfile = {
+  id: string;
+  storeName: string;
+  slug: string | null;
+  description: string | null;
+  isVerified: boolean;
+  productCount: number;
+  available: boolean;
+};
+
+export async function fetchSellerPublicProfile(sellerId: string) {
+  return apiRequest<MobileSellerPublicProfile>(`/api/mobile/seller/public/${encodeURIComponent(sellerId)}`);
+}
+
 export async function fetchCategories() {
   return apiRequest<{ items: Array<{ id: string; name: string; slug: string; productCount?: number }> }>("/api/categories");
 }

@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -77,7 +78,12 @@ export function ProductDetailExperience({ state }: Props) {
           <PdpHighlights items={product.highlights} />
           {product.description ? <PdpDescription description={product.description} /> : null}
           <PdpSpecsTable rows={product.characteristics} />
-          {product.seller ? <PdpSellerCard seller={product.seller} /> : null}
+          {product.seller ? (
+            <PdpSellerCard
+              seller={product.seller}
+              onPress={() => router.push({ pathname: "/seller/[id]", params: { id: product.seller!.id } })}
+            />
+          ) : null}
           <PdpRelatedRail items={state.related} failed={state.relatedFailed} onRetry={() => void state.refresh()} />
         </View>
       </ScrollView>

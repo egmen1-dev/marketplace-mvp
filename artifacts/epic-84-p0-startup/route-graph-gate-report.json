@@ -1,12 +1,12 @@
 {
   "phase": "P0 Route Graph Gate",
-  "generatedAt": "2026-08-17T18:28:56.576Z",
+  "generatedAt": "2026-08-18T05:52:14.280Z",
   "verdict": "FAIL",
   "rows": [
     {
       "id": "route_file_count",
       "ok": true,
-      "detail": "19"
+      "detail": "20"
     },
     {
       "id": "route_default_app__tabs___layout_tsx",
@@ -99,6 +99,11 @@
       "detail": "app/product/[id].tsx"
     },
     {
+      "id": "route_default_app_seller__id__tsx",
+      "ok": true,
+      "detail": "app/seller/[id].tsx"
+    },
+    {
       "id": "route_default_app_startup_diagnostics_tsx",
       "ok": true,
       "detail": "app/startup-diagnostics.tsx"
@@ -168,6 +173,7 @@
     "app/login.tsx",
     "app/order/[id].tsx",
     "app/product/[id].tsx",
+    "app/seller/[id].tsx",
     "app/startup-diagnostics.tsx"
   ]
 }

@@ -104,7 +104,7 @@ export function useOrderDetailData(orderId: string | undefined): OrderDetailStat
 
   const onShare = useCallback(async () => {
     if (!order) return;
-    const url = Linking.createURL(`/order/${order.id}`);
+    const url = `lot://order/${order.id}`;
     try {
       await Share.share({
         message: `Заказ ${order.orderNumber} в LOT — ${url}`,

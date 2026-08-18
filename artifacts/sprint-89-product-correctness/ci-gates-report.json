@@ -1,0 +1,61 @@
+{
+  "sprint": "SPRINT-89",
+  "phase": "Product Correctness",
+  "generatedAt": "2026-08-18T05:52:19.096Z",
+  "verdict": "PASS",
+  "readyForSprint90": true,
+  "rows": [
+    {
+      "id": "npm run mobile:typecheck",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "npm run mobile:test",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "scripts/mobile-p0-token-cycle-gate.ts",
+      "ok": true,
+      "detail": "PASS (/workspace/artifacts/epic-84-p0-startup/token-cycle-gate-report.json)"
+    },
+    {
+      "id": "scripts/mobile-p0-route-graph-gate.ts",
+      "ok": true,
+      "detail": "PASS static audit; metro probe NOT_RUN (/workspace/artifacts/epic-84-p0-startup/route-graph-gate-report.json)"
+    },
+    {
+      "id": "scripts/mobile-p0-token-architecture-guard.ts",
+      "ok": true,
+      "detail": "PASS (/workspace/artifacts/epic-84-p0-startup/token-architecture-guard-report.json)"
+    },
+    {
+      "id": "scripts/epic-84-p0-startup-gate.ts",
+      "ok": true,
+      "detail": "PASS (/workspace/artifacts/epic-84-p0-startup/gate-report.json)"
+    },
+    {
+      "id": "deep_link_report",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "seller_route_audit",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "ci_gates_wired",
+      "ok": true,
+      "detail": "/workspace/.github/workflows/mobile-p0-gates.yml"
+    }
+  ],
+  "finalReport": {
+    "deepLinks": "PASS",
+    "sellerSales": "PASS",
+    "sellerRouteAudit": "PASS",
+    "ciGates": "PASS",
+    "regression": "PASS"
+  }
+}
