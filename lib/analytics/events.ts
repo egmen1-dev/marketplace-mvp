@@ -191,6 +191,11 @@ export const ANALYTICS_EVENTS = {
   PROMOTION_CENTER_VIEW: "promotion_center_view",
   PROMOTION_PRODUCT_SELECTED: "promotion_product_selected",
   PROMOTION_WALLET_PAYMENT_SELECTED: "promotion_wallet_payment_selected",
+  INVENTORY_OPENED: "inventory_opened",
+  STOCK_UPDATED: "stock_updated",
+  STOCK_ADJUSTED: "stock_adjusted",
+  INVENTORY_FILTERED: "inventory_filtered",
+  INVENTORY_SEARCHED: "inventory_searched",
   /** MARKETPLACE-RANKING-INTELLIGENCE-001 — advisory ranking layer (no PII) */
   RANKING_VIEW: "ranking_view",
   RANKING_SIMULATION: "ranking_simulation",

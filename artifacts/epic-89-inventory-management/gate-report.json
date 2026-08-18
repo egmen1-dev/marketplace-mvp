@@ -1,0 +1,218 @@
+{
+  "epic": "EPIC-89",
+  "name": "Inventory Management Platform",
+  "generatedAt": "2026-08-18T08:58:50.680Z",
+  "verdict": "PASS",
+  "rows": [
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "lib/seller-inventory-center/types.ts"
+    },
+    {
+      "id": "file_sections.ts",
+      "ok": true,
+      "detail": "lib/seller-inventory-center/sections.ts"
+    },
+    {
+      "id": "file_stock.ts",
+      "ok": true,
+      "detail": "lib/seller-inventory-center/stock.ts"
+    },
+    {
+      "id": "file_history.ts",
+      "ok": true,
+      "detail": "lib/seller-inventory-center/history.ts"
+    },
+    {
+      "id": "file_adjustments.ts",
+      "ok": true,
+      "detail": "lib/seller-inventory-center/adjustments.ts"
+    },
+    {
+      "id": "file_queries.ts",
+      "ok": true,
+      "detail": "lib/seller-inventory-center/queries.ts"
+    },
+    {
+      "id": "file_seller-inventory-data.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-inventory-data.ts"
+    },
+    {
+      "id": "file_seller-inventory-types.ts",
+      "ok": true,
+      "detail": "lib/mobile/seller-inventory-types.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/stock/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/low-stock/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/out-of-stock/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/history/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/adjustments/route.ts"
+    },
+    {
+      "id": "file_route.ts",
+      "ok": true,
+      "detail": "app/api/mobile/seller/inventory/[productId]/route.ts"
+    },
+    {
+      "id": "prisma_inventory_model",
+      "ok": true
+    },
+    {
+      "id": "prisma_history_model",
+      "ok": true
+    },
+    {
+      "id": "hide_unsupported",
+      "ok": true
+    },
+    {
+      "id": "no_fake_inventory",
+      "ok": true
+    },
+    {
+      "id": "pagination",
+      "ok": true
+    },
+    {
+      "id": "search_filter_sort",
+      "ok": true
+    },
+    {
+      "id": "batch_adjust",
+      "ok": true
+    },
+    {
+      "id": "offline_cache_contract",
+      "ok": true
+    },
+    {
+      "id": "history_read_api",
+      "ok": true
+    },
+    {
+      "id": "quick_stock_edit",
+      "ok": true
+    },
+    {
+      "id": "section_current_stock",
+      "ok": true,
+      "detail": "current_stock"
+    },
+    {
+      "id": "section_low_stock",
+      "ok": true,
+      "detail": "low_stock"
+    },
+    {
+      "id": "section_out_of_stock",
+      "ok": true,
+      "detail": "out_of_stock"
+    },
+    {
+      "id": "section_history",
+      "ok": true,
+      "detail": "history"
+    },
+    {
+      "id": "section_adjustments",
+      "ok": true,
+      "detail": "adjustments"
+    },
+    {
+      "id": "hidden_incoming",
+      "ok": true,
+      "detail": "incoming"
+    },
+    {
+      "id": "hidden_reserved",
+      "ok": true,
+      "detail": "reserved"
+    },
+    {
+      "id": "hidden_movements",
+      "ok": true,
+      "detail": "movements"
+    },
+    {
+      "id": "hidden_warehouses",
+      "ok": true,
+      "detail": "warehouses"
+    },
+    {
+      "id": "hidden_thresholds",
+      "ok": true,
+      "detail": "thresholds"
+    },
+    {
+      "id": "telemetry_inventory_opened",
+      "ok": true,
+      "detail": "inventory_opened"
+    },
+    {
+      "id": "telemetry_stock_updated",
+      "ok": true,
+      "detail": "stock_updated"
+    },
+    {
+      "id": "telemetry_stock_adjusted",
+      "ok": true,
+      "detail": "stock_adjusted"
+    },
+    {
+      "id": "telemetry_inventory_filtered",
+      "ok": true,
+      "detail": "inventory_filtered"
+    },
+    {
+      "id": "telemetry_inventory_searched",
+      "ok": true,
+      "detail": "inventory_searched"
+    },
+    {
+      "id": "inventory_tests",
+      "ok": true
+    },
+    {
+      "id": "inventory_regression",
+      "ok": true
+    },
+    {
+      "id": "build",
+      "ok": true
+    }
+  ],
+  "finalReport": {
+    "inventory": "PASS",
+    "lowStock": "PASS",
+    "history": "PASS",
+    "performance": "PASS",
+    "regression": "PASS",
+    "ready": "YES"
+  }
+}
