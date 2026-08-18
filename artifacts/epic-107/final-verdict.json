@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-08-18T13:12:29.756Z",
+  "safeToMerge": true,
+  "mergeConflicts": false,
+  "correctOrder": "124 → 125 → 126 → 127 → 128 (linear stack); OR single merge PR128 (includes all)",
+  "railwayWillDeployBetaAfterMerge": true,
+  "additionalWorkBeforeClosedBeta": true,
+  "recommendedStrategy": "A",
+  "strategyJustification": "Linear stacked branches with zero merge conflicts. Sequential merges preserve PR audit trail. Equivalent shortcut: merge PR128 once (contains entire stack). Squash/cherry-pick unnecessary.",
+  "evidence": {
+    "dryMergeConflicts": 0,
+    "githubMergeable": "all CLEAN",
+    "buildPasses": true,
+    "epicTestsPass": true,
+    "noPrismaMigrations": true
+  }
+}

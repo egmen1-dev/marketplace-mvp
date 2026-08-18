@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-08-18T13:12:29.723Z",
+  "method": "git merge --no-commit --no-ff <branch> into feb4b8d in worktree",
+  "results": [
+    {
+      "pr": 124,
+      "branch": "origin/cursor/epic-102-closed-beta-program-d03e",
+      "conflicts": 0,
+      "conflictFiles": [],
+      "severity": "none",
+      "stagedFileCount": 46,
+      "outcome": "Automatic merge went well"
+    },
+    {
+      "pr": 125,
+      "branch": "origin/cursor/epic-103-closed-beta-rc-validation-d03e",
+      "conflicts": 0,
+      "conflictFiles": [],
+      "severity": "none",
+      "stagedFileCount": 60,
+      "outcome": "Automatic merge went well"
+    },
+    {
+      "pr": 126,
+      "branch": "origin/cursor/epic-104-closed-beta-readiness-d03e",
+      "conflicts": 0,
+      "conflictFiles": [],
+      "severity": "none",
+      "stagedFileCount": 79,
+      "outcome": "Automatic merge went well"
+    },
+    {
+      "pr": 127,
+      "branch": "origin/cursor/epic-105-closed-beta-launch-validation-d03e",
+      "conflicts": 0,
+      "conflictFiles": [],
+      "severity": "none",
+      "stagedFileCount": 89,
+      "outcome": "Automatic merge went well"
+    },
+    {
+      "pr": 128,
+      "branch": "origin/cursor/epic-106-staging-deployment-investigation-7513",
+      "conflicts": 0,
+      "conflictFiles": [],
+      "severity": "none",
+      "stagedFileCount": 97,
+      "outcome": "Automatic merge went well"
+    }
+  ]
+}
