@@ -97,6 +97,12 @@ export function useSellerSalesData(): SellerSalesState {
     });
   }, [commerce.events, load]);
 
+  useEffect(() => {
+    return commerce.events.subscribe("SellerProductChanged", () => {
+      void load("refresh");
+    });
+  }, [commerce.events, load]);
+
   const onSaleOpened = useCallback(
     (orderId: string) => {
       commerce.trackScreenEvent({ screen: "seller_sales", event: "seller_sale_opened", errorCode: orderId });
