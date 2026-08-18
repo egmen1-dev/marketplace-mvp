@@ -1,5 +1,14 @@
 import type {
+  SellerHomeActivity,
   SellerHomeDashboard,
+  SellerHomeHeader,
+  SellerHomeInsight,
+  SellerHomeNotification,
+  SellerHomeOrderBuckets,
+  SellerHomeProductBuckets,
+  SellerHomeRevenue,
+  SellerHomeTask,
+  SellerHomeTodaySummary,
   SellerOrderPage,
   SellerOrderSummary,
   SellerProduct,
@@ -11,6 +20,53 @@ import { money } from "../../domain/contracts/value-objects/money";
 import { mapProductSummaryDto, type MobileProductListDto } from "./commerce-mapper";
 
 export type SellerHomeDto = {
+  header: { storeName: string; logoUrl: string | null; isVerified: boolean } | null;
+  todaySummary: {
+    revenueToday: number | null;
+    ordersToday: number;
+    pendingOrders: number;
+    productsNeedAttention: number;
+    unreadNotifications: number;
+  } | null;
+  revenue: {
+    today: number;
+    week: number;
+    month: number;
+    averageOrder: number | null;
+  } | null;
+  orderBuckets: {
+    new: number;
+    processing: number;
+    awaitingShipment: number;
+    completed: number;
+  } | null;
+  productBuckets: {
+    active: number;
+    outOfStock: number;
+    drafts: number;
+    hidden: number;
+    lowStock: number | null;
+  } | null;
+  tasks: Array<{ id: string; title: string; action: SellerHomeTask["action"] }>;
+  notifications: Array<{
+    id: string;
+    kind: SellerHomeNotification["kind"];
+    title: string;
+    body: string;
+    createdAt: string;
+  }>;
+  insights: {
+    bestSellingCategory: string | null;
+    mostViewedProduct: string | null;
+    returningCustomersPct: number | null;
+  } | null;
+  recentActivity: Array<{
+    id: string;
+    kind: SellerHomeActivity["kind"];
+    title: string;
+    subtitle: string;
+    createdAt: string;
+  }>;
   money: { available: number; pending: number };
   orders: { needAction: number };
   products: { active: number; needAttention: number };
@@ -44,8 +100,51 @@ export type SellerPublicProfileDto = {
   available: boolean;
 };
 
+function mapHeader(dto: SellerHomeDto["header"]): SellerHomeHeader | null {
+  if (!dto) return null;
+  return {
+    storeName: dto.storeName,
+    logoUrl: dto.logoUrl,
+    isVerified: dto.isVerified,
+  };
+}
+
+function mapTodaySummary(dto: SellerHomeDto["todaySummary"]): SellerHomeTodaySummary | null {
+  if (!dto) return null;
+  return { ...dto };
+}
+
+function mapRevenue(dto: SellerHomeDto["revenue"]): SellerHomeRevenue | null {
+  if (!dto) return null;
+  return {
+    today: money(dto.today, "RUB"),
+    week: money(dto.week, "RUB"),
+    month: money(dto.month, "RUB"),
+    averageOrder: dto.averageOrder !== null ? money(dto.averageOrder, "RUB") : null,
+  };
+}
+
+function mapOrderBuckets(dto: SellerHomeDto["orderBuckets"]): SellerHomeOrderBuckets | null {
+  if (!dto) return null;
+  return { ...dto };
+}
+
+function mapProductBuckets(dto: SellerHomeDto["productBuckets"]): SellerHomeProductBuckets | null {
+  if (!dto) return null;
+  return { ...dto };
+}
+
 export function mapSellerHomeDto(dto: SellerHomeDto): SellerHomeDashboard {
   return {
+    header: mapHeader(dto.header),
+    todaySummary: mapTodaySummary(dto.todaySummary),
+    revenue: mapRevenue(dto.revenue),
+    orderBuckets: mapOrderBuckets(dto.orderBuckets),
+    productBuckets: mapProductBuckets(dto.productBuckets),
+    tasks: dto.tasks.map((task) => ({ ...task })),
+    notifications: dto.notifications.map((n) => ({ ...n })),
+    insights: dto.insights ? { ...dto.insights } : null,
+    recentActivity: dto.recentActivity.map((a) => ({ ...a })),
     money: {
       available: money(dto.money.available, "RUB"),
       pending: money(dto.money.pending, "RUB"),
@@ -112,6 +211,22 @@ export function mapSellerPublicProfileDto(dto: SellerPublicProfileDto): SellerPu
 
 export function sellerHomeDashboardToSnapshot(dashboard: SellerHomeDashboard) {
   return {
+    header: dashboard.header,
+    todaySummary: dashboard.todaySummary,
+    revenue: dashboard.revenue
+      ? {
+          today: dashboard.revenue.today.amount,
+          week: dashboard.revenue.week.amount,
+          month: dashboard.revenue.month.amount,
+          averageOrder: dashboard.revenue.averageOrder?.amount ?? null,
+        }
+      : null,
+    orderBuckets: dashboard.orderBuckets,
+    productBuckets: dashboard.productBuckets,
+    tasks: dashboard.tasks,
+    notifications: dashboard.notifications,
+    insights: dashboard.insights,
+    recentActivity: dashboard.recentActivity,
     money: { available: dashboard.money.available.amount, pending: dashboard.money.pending.amount },
     orders: dashboard.orders,
     products: dashboard.products,
