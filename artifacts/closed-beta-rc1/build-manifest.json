@@ -1,0 +1,32 @@
+{
+  "candidate": "BUILT",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.6-beta.1",
+  "versionCode": 4,
+  "commitSha": "0887897b2d080c408741531fcac6c3b56ac57297",
+  "baseCommitSha": "d9f0eca635c777fa64cb204280dbd241c2c6ce1f",
+  "buildTime": "2026-08-18T15:44:00Z",
+  "environment": "staging",
+  "releaseChannel": "closed-beta",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "betaChannel": "CLOSED_BETA",
+  "artifact": {
+    "fileName": "lot-android-closed-beta-0.1.6-beta.1.apk",
+    "path": "artifacts/closed-beta-rc1/lot-android-closed-beta-0.1.6-beta.1.apk",
+    "sha256": "ee70963102b627d2dd2cd85794c0c8e2355f6f92caa8ebed6a81d68ab93ecca7",
+    "sizeBytes": 93635347
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "buildType": "release",
+    "signedWith": "debug.keystore (internal install only)"
+  },
+  "embeddedMetadata": {
+    "commitShaVerifiedInBundle": true,
+    "versionNameVerifiedInBundle": true,
+    "apiHostVerifiedInBundle": true
+  },
+  "publishStatus": "NOT_PUBLISHED_RC1"
+}

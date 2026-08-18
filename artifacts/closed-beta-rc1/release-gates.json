@@ -1,0 +1,127 @@
+{
+  "recordedAt": "2026-08-18T15:52:00Z",
+  "candidateVersion": "0.1.6-beta.1",
+  "candidateVersionCode": 4,
+  "summary": {
+    "typecheck": "PASS",
+    "tests": "PASS",
+    "p0StartupGate": "PASS",
+    "architectureGates": "PASS",
+    "sellerRegression": "PASS",
+    "betaApi": "PASS",
+    "checkoutRoute": "REGISTERED",
+    "firebaseTestLab": "NOT_RUN",
+    "physicalAndroid": "NOT_RUN"
+  },
+  "gates": [
+    {
+      "id": "mobile:typecheck",
+      "command": "npm run mobile:typecheck",
+      "verdict": "PASS"
+    },
+    {
+      "id": "mobile:test",
+      "command": "npm run mobile:test",
+      "verdict": "PASS",
+      "detail": "4 tests, 0 failures"
+    },
+    {
+      "id": "mobile:release-gate",
+      "command": "npm run mobile:release-gate",
+      "verdict": "PASS",
+      "detail": "mobileStagingBackend READY"
+    },
+    {
+      "id": "mobile:staging-smoke",
+      "command": "npm run mobile:staging-smoke",
+      "verdict": "PASS"
+    },
+    {
+      "id": "mobile:epic-102:gate",
+      "command": "npm run mobile:epic-102:gate",
+      "verdict": "PASS",
+      "detail": "architecturePreserved true, beta modules present"
+    },
+    {
+      "id": "mobile:epic-83:gate",
+      "command": "npm run mobile:epic-83:gate",
+      "verdict": "ENV_LIMITATION",
+      "detail": "DATABASE_URL not set in cloud agent VM; Prisma registry seed failed locally"
+    },
+    {
+      "id": "mobile:epic-82:gate",
+      "command": "npm run mobile:epic-82:gate",
+      "verdict": "NOT_APPLICABLE",
+      "detail": "Closed Alpha gate expects alpha 0.1.1/versionCode 2; superseded by Closed Beta RC1 packaging"
+    },
+    {
+      "id": "product:epic-88:promotion-center",
+      "command": "npm run product:epic-88:promotion-center",
+      "verdict": "PASS"
+    },
+    {
+      "id": "product:epic-89:inventory-management",
+      "command": "npm run product:epic-89:inventory-management",
+      "verdict": "PARTIAL",
+      "detail": "inventory PASS, regression PASS, root npm build step failed in gate script; mobile:typecheck PASS"
+    },
+    {
+      "id": "release:pipeline:verify",
+      "command": "npm run release:pipeline:verify",
+      "verdict": "ENV_LIMITATION",
+      "detail": "local_main_drift blocker because agent branch !== local main name; staging SHA matches origin/main"
+    },
+    {
+      "id": "product:epic-108:release-candidate-final",
+      "command": "npm run product:epic-108:release-candidate-final",
+      "verdict": "NOT_READY_FOR_CLOSED_BETA",
+      "detail": "Deployment precondition local main drift; buyer/seller/beta API journeys PASS on staging"
+    },
+    {
+      "id": "token-cycle-gate",
+      "command": null,
+      "verdict": "NOT_FOUND",
+      "detail": "No named npm script in repository"
+    },
+    {
+      "id": "token-architecture-guard",
+      "command": null,
+      "verdict": "NOT_FOUND",
+      "detail": "No named npm script in repository"
+    },
+    {
+      "id": "route-graph-gate",
+      "command": null,
+      "verdict": "NOT_FOUND",
+      "detail": "No named npm script in repository"
+    },
+    {
+      "id": "startup-p0-gate",
+      "command": "mobile:release-gate + run-startup-pipeline.ts module",
+      "verdict": "PASS",
+      "detail": "Staging smoke and release gate pass; epic-83 local DB limitation only"
+    },
+    {
+      "id": "domain-architecture-gate",
+      "command": "mobile:epic-102:gate",
+      "verdict": "PASS",
+      "detail": "architecturePreserved true"
+    },
+    {
+      "id": "seller-regression-gates",
+      "command": "product:epic-88 + product:epic-89 regression rows",
+      "verdict": "PASS"
+    },
+    {
+      "id": "closed-beta-infrastructure-gate",
+      "command": "mobile:epic-102:gate",
+      "verdict": "PASS"
+    },
+    {
+      "id": "firebase-test-lab",
+      "command": null,
+      "verdict": "NOT_RUN",
+      "detail": "No authenticated FTL credentials in cloud agent environment"
+    }
+  ]
+}
