@@ -1,6 +1,6 @@
 import { loadAppConfig } from "../../config/env";
 import { resolveImageUrl } from "../../utils/format";
-import type { MobileProductListItem } from "../../api/endpoints";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 
 export type OrderStatusCode =
   | "NEW"
@@ -251,7 +251,7 @@ export function mergeSellerName(detail: OrderDetailView, sellerName: string | nu
   return { ...detail, sellerName };
 }
 
-export function toRecommendationSeed(detail: OrderDetailView): MobileProductListItem | null {
+export function toRecommendationSeed(detail: OrderDetailView): MobileProductCardData | null {
   const first = detail.items[0];
   if (!first) return null;
   return {

@@ -2,11 +2,15 @@ import * as Linking from "expo-linking";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Share } from "react-native";
 
-import { addToCart, fetchOrderDetail, fetchProduct, postTelemetry } from "../../api/endpoints";
+import type { OrderDetail } from "../../domain/contracts/entities/order";
+import { orderId, productId } from "../../domain/contracts/value-objects/ids";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
 import { loadAppConfig } from "../../config/env";
 import { cacheOrderDetail, loadCachedOrderDetail } from "../../storage/order-cache";
 import { useAppStore } from "../../store/app-store";
-import { mergeSellerName, parseOrderDetail, type OrderDetailView } from "./types";
+import { mergeSellerNameInView, orderDetailToView } from "./order-view";
+import { parseOrderDetail, type OrderDetailView } from "./types";
 
 export type OrderDetailState = {
   order: OrderDetailView | null;
@@ -22,20 +26,62 @@ export type OrderDetailState = {
   onOpenWeb: () => void;
 };
 
-async function enrichSeller(detail: OrderDetailView): Promise<OrderDetailView> {
+const STATUS_TO_API: Record<OrderDetail["status"], string> = {
+  pending: "NEW",
+  paid: "PAID",
+  processing: "PROCESSING",
+  shipped: "SHIPPED",
+  delivered: "DELIVERED",
+  cancelled: "CANCELLED",
+  refunded: "REFUNDED",
+};
+
+function orderDetailToCacheRaw(order: OrderDetail): Record<string, unknown> {
+  return {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    status: STATUS_TO_API[order.status],
+    total: order.total.amount,
+    currency: order.total.currency,
+    subtotal: order.total.amount,
+    shippingCost: 0,
+    createdAt: order.createdAt,
+    items: order.lines.map((line, index) => ({
+      id: `${order.id}-${index}`,
+      productId: line.productId,
+      productName: line.title,
+      quantity: line.quantity,
+      unitPrice: line.price.amount,
+      totalPrice: line.price.amount * line.quantity,
+      primaryImage: line.imageUrl ? { url: line.imageUrl } : null,
+    })),
+    history: order.timeline.map((step) => ({
+      id: step.id,
+      status: STATUS_TO_API[order.status],
+      createdAt: order.createdAt,
+      label: step.label,
+    })),
+  };
+}
+
+async function enrichSeller(
+  commerce: ReturnType<typeof getCommerceUseCases>,
+  detail: OrderDetailView,
+): Promise<OrderDetailView> {
   const first = detail.items[0];
   if (!first?.productId) return detail;
   try {
-    const raw = await fetchProduct(first.productId);
-    const seller = raw.seller as { storeName?: string } | null | undefined;
-    const name = typeof seller?.storeName === "string" ? seller.storeName : null;
-    return mergeSellerName(detail, name);
+    const result = await commerce.loadProduct.execute({ productId: productId(first.productId) });
+    if (!result.ok) return detail;
+    const name = result.value.sellerName;
+    return mergeSellerNameInView(detail, typeof name === "string" ? name : null);
   } catch {
     return detail;
   }
 }
 
-export function useOrderDetailData(orderId: string | undefined): OrderDetailState {
+export function useOrderDetailData(orderIdParam: string | undefined): OrderDetailState {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
   const [order, setOrder] = useState<OrderDetailView | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,7 +93,7 @@ export function useOrderDetailData(orderId: string | undefined): OrderDetailStat
   const openedRef = useRef(false);
 
   const loadOrder = useCallback(async () => {
-    if (!orderId) {
+    if (!orderIdParam) {
       setLoading(false);
       setOrder(null);
       return;
@@ -59,7 +105,7 @@ export function useOrderDetailData(orderId: string | undefined): OrderDetailStat
     setOfflineBlocked(false);
 
     if (offline) {
-      const cached = await loadCachedOrderDetail(orderId);
+      const cached = await loadCachedOrderDetail(orderIdParam);
       if (cached) {
         setOrder(parseOrderDetail(cached));
         setFromCache(true);
@@ -73,30 +119,33 @@ export function useOrderDetailData(orderId: string | undefined): OrderDetailStat
     }
 
     try {
-      const raw = await fetchOrderDetail(orderId);
-      let parsed = parseOrderDetail(raw);
-      parsed = await enrichSeller(parsed);
+      const result = await commerce.loadOrderDetail.execute({ orderId: orderId(orderIdParam) });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+
+      let parsed = orderDetailToView(result.value);
+      parsed = await enrichSeller(commerce, parsed);
       setOrder(parsed);
-      await cacheOrderDetail(orderId, raw);
+      await cacheOrderDetail(orderIdParam, orderDetailToCacheRaw(result.value));
+
       if (!openedRef.current) {
         openedRef.current = true;
-        void postTelemetry({ screen: "purchase", event: "order_opened" });
-        void postTelemetry({ screen: "purchase", event: "order_timeline_opened" });
+        commerce.trackScreenEvent({ screen: "purchase", event: "order_opened" });
+        commerce.trackScreenEvent({ screen: "purchase", event: "order_timeline_opened" });
       }
     } catch (err) {
-      const cached = await loadCachedOrderDetail(orderId);
+      const cached = await loadCachedOrderDetail(orderIdParam);
       if (cached) {
         setOrder(parseOrderDetail(cached));
         setFromCache(true);
       } else {
         setOrder(null);
         setError(err instanceof Error ? err.message : "Не удалось загрузить заказ");
-        void postTelemetry({ screen: "purchase", event: "orders_retry", errorCode: "detail_failed" });
+        commerce.trackScreenEvent({ screen: "purchase", event: "orders_retry", errorCode: "detail_failed" });
       }
     } finally {
       setLoading(false);
     }
-  }, [offline, openedRef, orderId]);
+  }, [commerce.loadOrderDetail, commerce.trackScreenEvent, offline, orderIdParam]);
 
   useEffect(() => {
     void loadOrder();
@@ -104,36 +153,37 @@ export function useOrderDetailData(orderId: string | undefined): OrderDetailStat
 
   const onShare = useCallback(async () => {
     if (!order) return;
-    const url = `lot://order/${order.id}`;
     try {
+      const result = await commerce.shareOrder.execute({ orderId: orderId(order.id) });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
       await Share.share({
-        message: `Заказ ${order.orderNumber} в LOT — ${url}`,
-        url,
+        message: result.value.message,
+        url: result.value.uri,
       });
-      void postTelemetry({ screen: "purchase", event: "order_shared" });
+      commerce.trackScreenEvent({ screen: "purchase", event: "order_shared" });
     } catch {
       // user dismissed share sheet
     }
-  }, [order]);
+  }, [commerce.shareOrder, commerce.trackScreenEvent, order]);
 
   const onReorder = useCallback(async () => {
     if (!order || order.items.length === 0) return;
     setReorderBusy(true);
     setReorderMessage(null);
     try {
-      for (const item of order.items) {
-        if (item.productId) {
-          await addToCart(item.productId, item.quantity);
-        }
-      }
+      const items = order.items
+        .filter((item) => item.productId)
+        .map((item) => ({ productId: productId(item.productId), quantity: item.quantity }));
+      const result = await commerce.reorderItems.execute({ items });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
       setReorderMessage("Товары добавлены в корзину");
-      void postTelemetry({ screen: "purchase", event: "order_reordered" });
+      commerce.trackScreenEvent({ screen: "purchase", event: "order_reordered" });
     } catch (err) {
       setReorderMessage(err instanceof Error ? err.message : "Не удалось повторить заказ");
     } finally {
       setReorderBusy(false);
     }
-  }, [order]);
+  }, [commerce.reorderItems, commerce.trackScreenEvent, order]);
 
   const onOpenWeb = useCallback(() => {
     if (!order) return;

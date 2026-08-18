@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { logout } from "../../api/client";
 import { getCommerceUseCases } from "../../domain/services/commerce-container";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
 import { useAppStore } from "../../store/app-store";
@@ -41,9 +40,8 @@ export function useProfileData() {
   }, [commerce.events]);
 
   const onLogout = useCallback(async () => {
-    await logout();
-    commerce.events.publish({ type: "SessionExpired", reason: "logout" });
-  }, [commerce.events]);
+    await commerce.logoutUser.execute({});
+  }, [commerce.logoutUser]);
 
   const onSwitchMode = useCallback(
     (next: "buyer" | "seller") => {

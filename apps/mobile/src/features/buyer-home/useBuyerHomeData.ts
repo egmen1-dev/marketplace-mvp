@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchCatalog, fetchCategories, addToCart, toggleFavorite } from "../../api/endpoints";
 import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
+import { productId } from "../../domain/contracts/value-objects/ids";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { productSummariesToCardViews } from "../commerce/product-view";
 import { loadRecentViews } from "../../storage/recent-views";
 import { discountPercent } from "../../utils/format";
 import { useAppStore } from "../../store/app-store";
@@ -19,6 +22,7 @@ function emptySection<T>(data: T): SectionLoadState<T> {
 }
 
 export function useBuyerHomeData() {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
   const loadingRef = useRef(false);
 
@@ -31,15 +35,24 @@ export function useBuyerHomeData() {
   const [deals, setDeals] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
   const [recent, setRecent] = useState<SectionLoadState<MobileProductCardData[]>>(emptySection([]));
 
-  const loadCategories = useCallback(async () => {
+  const loadCategoriesSection = useCallback(async () => {
     if (offline) {
       setCategories((s) => ({ ...s, loading: false }));
       return;
     }
     setCategories((s) => ({ ...s, loading: true, error: null }));
     try {
-      const res = await fetchCategories();
-      setCategories({ data: res.items.slice(0, 12), loading: false, error: null });
+      const result = await commerce.loadCategories.execute({});
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      setCategories({
+        data: result.value.slice(0, 12).map((c) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug ?? undefined,
+        })),
+        loading: false,
+        error: null,
+      });
     } catch (err) {
       setCategories((s) => ({
         ...s,
@@ -47,7 +60,7 @@ export function useBuyerHomeData() {
         error: err instanceof Error ? err.message : "Ошибка категорий",
       }));
     }
-  }, [offline]);
+  }, [commerce.loadCategories, offline]);
 
   const loadPopular = useCallback(async () => {
     if (offline) {
@@ -60,11 +73,12 @@ export function useBuyerHomeData() {
     setRecommended((s) => ({ ...s, loading: true, error: null }));
     setDeals((s) => ({ ...s, loading: true, error: null }));
     try {
-      const res = await fetchCatalog({ sort: "popular" });
-      const items = res.items;
+      const result = await commerce.loadCatalog.execute({ sort: "popular" });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      const items = productSummariesToCardViews(result.value.items);
       setPopular({ data: items.slice(0, 8), loading: false, error: null });
       setRecommended({ data: items.slice(0, 6), loading: false, error: null });
-      const promo = items.filter((p: MobileProductCardData) => (discountPercent(p.price, p.compareAt) ?? 0) > 0).slice(0, 6);
+      const promo = items.filter((p) => (discountPercent(p.price, p.compareAt) ?? 0) > 0).slice(0, 6);
       setDeals({ data: promo, loading: false, error: null });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Ошибка загрузки";
@@ -72,7 +86,7 @@ export function useBuyerHomeData() {
       setRecommended((s) => ({ ...s, loading: false, error: message }));
       setDeals((s) => ({ ...s, loading: false, error: message }));
     }
-  }, [offline]);
+  }, [commerce.loadCatalog, offline]);
 
   const loadNewest = useCallback(async () => {
     if (offline) {
@@ -81,8 +95,9 @@ export function useBuyerHomeData() {
     }
     setNewest((s) => ({ ...s, loading: true, error: null }));
     try {
-      const res = await fetchCatalog({ sort: "newest" });
-      setNewest({ data: res.items.slice(0, 8), loading: false, error: null });
+      const result = await commerce.loadCatalog.execute({ sort: "newest" });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      setNewest({ data: productSummariesToCardViews(result.value.items).slice(0, 8), loading: false, error: null });
     } catch (err) {
       setNewest((s) => ({
         ...s,
@@ -90,13 +105,13 @@ export function useBuyerHomeData() {
         error: err instanceof Error ? err.message : "Ошибка новинок",
       }));
     }
-  }, [offline]);
+  }, [commerce.loadCatalog, offline]);
 
   const loadRecent = useCallback(async () => {
     setRecent((s) => ({ ...s, loading: true, error: null }));
     try {
       const views = await loadRecentViews();
-      setRecent({ data: views, loading: false, error: null });
+      setRecent({ data: views as MobileProductCardData[], loading: false, error: null });
     } catch {
       setRecent({ data: [], loading: false, error: null });
     }
@@ -105,10 +120,10 @@ export function useBuyerHomeData() {
   const loadAll = useCallback(async () => {
     if (loadingRef.current) return;
     loadingRef.current = true;
-    await Promise.all([loadCategories(), loadPopular(), loadNewest(), loadRecent()]);
+    await Promise.all([loadCategoriesSection(), loadPopular(), loadNewest(), loadRecent()]);
     loadingRef.current = false;
     setInitialLoading(false);
-  }, [loadCategories, loadPopular, loadNewest, loadRecent]);
+  }, [loadCategoriesSection, loadPopular, loadNewest, loadRecent]);
 
   const refresh = useCallback(async () => {
     if (refreshing || loadingRef.current) return;
@@ -117,13 +132,25 @@ export function useBuyerHomeData() {
     setRefreshing(false);
   }, [loadAll, refreshing]);
 
-  const onAddToCart = useCallback(async (productId: string) => {
-    await addToCart(productId, 1);
-  }, []);
+  const onAddToCart = useCallback(
+    async (id: string) => {
+      const result = await commerce.addToCart.execute({ productId: productId(id), quantity: 1 });
+      if (!result.ok) {
+        throw new Error(domainErrorMessage(result.error));
+      }
+    },
+    [commerce.addToCart],
+  );
 
-  const onToggleFavorite = useCallback(async (productId: string) => {
-    await toggleFavorite(productId);
-  }, []);
+  const onToggleFavorite = useCallback(
+    async (id: string) => {
+      const result = await commerce.toggleFavorite.execute({ productId: productId(id) });
+      if (!result.ok) {
+        throw new Error(domainErrorMessage(result.error));
+      }
+    },
+    [commerce.toggleFavorite],
+  );
 
   useEffect(() => {
     loadAll();
@@ -140,7 +167,7 @@ export function useBuyerHomeData() {
     deals,
     recent,
     refresh,
-    retryCategories: loadCategories,
+    retryCategories: loadCategoriesSection,
     retryPopular: loadPopular,
     retryNewest: loadNewest,
     retryRecent: loadRecent,

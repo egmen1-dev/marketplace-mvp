@@ -1,7 +1,7 @@
 import { loadAppConfig } from "../../config/env";
 import { discountPercent } from "../../utils/format";
 import { resolveImageUrl } from "../../utils/format";
-import type { MobileProductListItem } from "../../api/endpoints";
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 
 export type CartLineView = {
   productId: string;
@@ -172,7 +172,7 @@ export function lineDiscountPercent(line: CartLineView): number | null {
   return discountPercent(line.price, line.compareAt);
 }
 
-export function toRecommendationProduct(line: CartLineView): MobileProductListItem | null {
+export function toRecommendationProduct(line: CartLineView): MobileProductCardData | null {
   if (!line.productId) return null;
   return {
     id: line.productId,
@@ -181,7 +181,7 @@ export function toRecommendationProduct(line: CartLineView): MobileProductListIt
     compareAt: line.compareAt,
     stock: line.stock,
     primaryImage: line.imageUrl ? { url: line.imageUrl } : null,
-    seller: line.sellerId ? { id: line.sellerId, storeName: line.sellerName ?? undefined } : undefined,
+    seller: line.sellerName ? { storeName: line.sellerName } : undefined,
   };
 }
 

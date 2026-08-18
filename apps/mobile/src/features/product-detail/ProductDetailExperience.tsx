@@ -88,7 +88,7 @@ export function ProductDetailExperience({ state }: Props) {
             items={state.related}
             failed={state.relatedFailed}
             onRetry={() => void state.refresh()}
-            onToggleFavorite={(id) => void state.onToggleFavorite(id)}
+            onToggleFavorite={(id) => void state.onToggleFavoriteRelated(id)}
           />
         </View>
       </ScrollView>

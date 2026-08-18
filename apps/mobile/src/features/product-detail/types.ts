@@ -1,5 +1,5 @@
+import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { discountPercent } from "../../utils/format";
-import type { MobileProductListItem } from "../../api/endpoints";
 
 export type ProductImage = { url: string; alt?: string | null };
 export type ProductCharacteristic = { name: string; displayValue: string };
@@ -211,4 +211,4 @@ export function mergeSellerProductCount(product: ProductDetailView, count: numbe
   };
 }
 
-export type RelatedProduct = MobileProductListItem;
+export type RelatedProduct = MobileProductCardData;

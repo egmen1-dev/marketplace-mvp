@@ -1,16 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { fetchCatalog, fetchOrderDetail, fetchOrders, fetchProduct, postTelemetry, toggleFavorite } from "../../api/endpoints";
 import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
+import type { OrderDetail, OrderSummary } from "../../domain/contracts/entities/order";
+import { orderId, productId } from "../../domain/contracts/value-objects/ids";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { productSummariesToCardViews } from "../commerce/product-view";
 import { cacheOrdersList, loadCachedOrdersList } from "../../storage/order-cache";
 import { useAppStore } from "../../store/app-store";
 import {
   mergeOrderPreview,
-  parseOrderDetail,
   parseOrderListItem,
-  mergeSellerName,
   type OrderListCardView,
 } from "./types";
+import {
+  mergeSellerNameInView,
+  orderDetailToView,
+  orderSummaryToListCard,
+} from "./order-view";
 
 export type OrdersDataState = {
   activeOrders: OrderListCardView[];
@@ -26,23 +33,49 @@ export type OrdersDataState = {
   error: string | null;
   refresh: () => Promise<void>;
   retryRecommendations: () => Promise<void>;
-  onToggleFavorite: (productId: string) => Promise<void>;
+  onToggleFavoriteRecommendation: (productId: string) => Promise<void>;
 };
 
-async function enrichSeller(detail: ReturnType<typeof parseOrderDetail>): Promise<ReturnType<typeof parseOrderDetail>> {
+const STATUS_TO_API: Record<OrderSummary["status"], string> = {
+  pending: "NEW",
+  paid: "PAID",
+  processing: "PROCESSING",
+  shipped: "SHIPPED",
+  delivered: "DELIVERED",
+  cancelled: "CANCELLED",
+  refunded: "REFUNDED",
+};
+
+function orderSummaryToCacheRaw(order: OrderSummary): Record<string, unknown> {
+  return {
+    id: order.id,
+    orderNumber: order.orderNumber,
+    status: STATUS_TO_API[order.status],
+    total: order.total.amount,
+    currency: order.total.currency,
+    itemCount: order.itemCount,
+    createdAt: order.createdAt,
+  };
+}
+
+async function enrichSellerName(
+  commerce: ReturnType<typeof getCommerceUseCases>,
+  detail: ReturnType<typeof orderDetailToView>,
+): Promise<ReturnType<typeof orderDetailToView>> {
   const first = detail.items[0];
   if (!first?.productId) return detail;
   try {
-    const raw = await fetchProduct(first.productId);
-    const seller = raw.seller as { storeName?: string } | null | undefined;
-    const name = typeof seller?.storeName === "string" ? seller.storeName : null;
-    return mergeSellerName(detail, name);
+    const result = await commerce.loadProduct.execute({ productId: productId(first.productId) });
+    if (!result.ok) return detail;
+    const name = result.value.sellerName;
+    return mergeSellerNameInView(detail, typeof name === "string" ? name : null);
   } catch {
     return detail;
   }
 }
 
 export function useOrdersData(): OrdersDataState {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
   const [activeOrders, setActiveOrders] = useState<OrderListCardView[]>([]);
   const [completedOrders, setCompletedOrders] = useState<OrderListCardView[]>([]);
@@ -57,32 +90,37 @@ export function useOrdersData(): OrdersDataState {
 
   const loadRecommendations = useCallback(async () => {
     try {
-      const res = await fetchCatalog({ sort: "popular" });
-      setRecommendations(res.items.slice(0, 8));
+      const result = await commerce.loadCatalog.execute({ sort: "popular" });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      setRecommendations(productSummariesToCardViews(result.value.items).slice(0, 8));
       setRecommendationsFailed(false);
     } catch {
       setRecommendations([]);
       setRecommendationsFailed(true);
     }
-  }, []);
+  }, [commerce.loadCatalog]);
 
-  const enrichPreviews = useCallback(async (cards: OrderListCardView[]): Promise<OrderListCardView[]> => {
-    const targets = cards.filter((card) => card.isActive).slice(0, 8);
-    const enriched = await Promise.all(
-      targets.map(async (card) => {
-        try {
-          const raw = await fetchOrderDetail(card.id);
-          let detail = parseOrderDetail(raw);
-          detail = await enrichSeller(detail);
-          return mergeOrderPreview(card, detail);
-        } catch {
-          return card;
-        }
-      }),
-    );
-    const map = new Map(enriched.map((card) => [card.id, card]));
-    return cards.map((card) => map.get(card.id) ?? card);
-  }, []);
+  const enrichPreviews = useCallback(
+    async (cards: OrderListCardView[]): Promise<OrderListCardView[]> => {
+      const targets = cards.filter((card) => card.isActive).slice(0, 8);
+      const enriched = await Promise.all(
+        targets.map(async (card) => {
+          try {
+            const result = await commerce.loadOrderDetail.execute({ orderId: orderId(card.id) });
+            if (!result.ok) return card;
+            let detail = orderDetailToView(result.value);
+            detail = await enrichSellerName(commerce, detail);
+            return mergeOrderPreview(card, detail);
+          } catch {
+            return card;
+          }
+        }),
+      );
+      const map = new Map(enriched.map((card) => [card.id, card]));
+      return cards.map((card) => map.get(card.id) ?? card);
+    },
+    [commerce.loadOrderDetail],
+  );
 
   const applyOrders = useCallback(
     async (items: Record<string, unknown>[], cached: boolean) => {
@@ -92,13 +130,27 @@ export function useOrdersData(): OrdersDataState {
       setCompletedOrders(withPreviews.filter((item) => !item.isActive));
       setFromCache(cached);
       if (parsed.length === 0 && !cached) {
-        void postTelemetry({ screen: "purchase", event: "orders_empty" });
+        commerce.trackScreenEvent({ screen: "purchase", event: "orders_empty" });
       }
     },
-    [enrichPreviews],
+    [commerce.trackScreenEvent, enrichPreviews],
   );
 
-  const loadOrders = useCallback(
+  const applyDomainOrders = useCallback(
+    async (summaries: ReadonlyArray<OrderSummary>, cached: boolean) => {
+      const cards = summaries.map(orderSummaryToListCard);
+      const withPreviews = await enrichPreviews(cards);
+      setActiveOrders(withPreviews.filter((item) => item.isActive));
+      setCompletedOrders(withPreviews.filter((item) => !item.isActive));
+      setFromCache(cached);
+      if (summaries.length === 0 && !cached) {
+        commerce.trackScreenEvent({ screen: "purchase", event: "orders_empty" });
+      }
+    },
+    [commerce.trackScreenEvent, enrichPreviews],
+  );
+
+  const refreshOrders = useCallback(
     async (isRefresh = false) => {
       if (offline) {
         const cached = await loadCachedOrdersList();
@@ -123,13 +175,14 @@ export function useOrdersData(): OrdersDataState {
       setError(null);
 
       try {
-        const res = await fetchOrders();
-        await cacheOrdersList(res.items);
-        await applyOrders(res.items, false);
+        const result = await commerce.loadOrders.execute({});
+        if (!result.ok) throw new Error(domainErrorMessage(result.error));
+        await cacheOrdersList(result.value.map(orderSummaryToCacheRaw));
+        await applyDomainOrders(result.value, false);
         void loadRecommendations();
         if (!openedRef.current) {
           openedRef.current = true;
-          void postTelemetry({ screen: "purchase", event: "order_list_opened" });
+          commerce.trackScreenEvent({ screen: "purchase", event: "order_list_opened" });
         }
       } catch (err) {
         const cached = await loadCachedOrdersList();
@@ -137,23 +190,29 @@ export function useOrdersData(): OrdersDataState {
           await applyOrders(cached, true);
         } else {
           setError(err instanceof Error ? err.message : "Не удалось загрузить заказы");
-          void postTelemetry({ screen: "purchase", event: "orders_retry", errorCode: "load_failed" });
+          commerce.trackScreenEvent({ screen: "purchase", event: "orders_retry", errorCode: "load_failed" });
         }
       } finally {
         setLoading(false);
         setRefreshing(false);
       }
     },
-    [applyOrders, loadRecommendations, offline],
+    [applyDomainOrders, applyOrders, commerce.loadOrders, commerce.trackScreenEvent, loadRecommendations, offline],
   );
 
   useEffect(() => {
-    void loadOrders();
-  }, [loadOrders]);
+    void refreshOrders();
+  }, [refreshOrders]);
 
-  const onToggleFavorite = useCallback(async (productId: string) => {
-    await toggleFavorite(productId);
-  }, []);
+  const onToggleFavoriteRecommendation = useCallback(
+    async (recommendationProductId: string) => {
+      const result = await commerce.toggleFavorite.execute({ productId: productId(recommendationProductId) });
+      if (!result.ok) {
+        setError(domainErrorMessage(result.error));
+      }
+    },
+    [commerce.toggleFavorite],
+  );
 
   return {
     activeOrders,
@@ -167,8 +226,8 @@ export function useOrdersData(): OrdersDataState {
     fromCache,
     offlineBlocked,
     error,
-    refresh: () => loadOrders(true),
+    refresh: () => refreshOrders(true),
     retryRecommendations: loadRecommendations,
-    onToggleFavorite,
+    onToggleFavoriteRecommendation,
   };
 }

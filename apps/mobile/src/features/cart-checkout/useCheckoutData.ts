@@ -1,21 +1,20 @@
 import * as Linking from "expo-linking";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  fetchCart,
-  fetchDeliveryPoints,
-  fetchDeliveryQuote,
-  fetchProduct,
-  fetchWallet,
-  postTelemetry,
-} from "../../api/endpoints";
+import type { ProductDetail } from "../../domain/contracts/entities/catalog";
+import { productId } from "../../domain/contracts/value-objects/ids";
+import { money } from "../../domain/contracts/value-objects/money";
+import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { getCommerceUseCases } from "../../domain/services/commerce-container";
 import { loadAppConfig } from "../../config/env";
+import { cartToCommerceView } from "../commerce/cart-view";
+import { deliveryQuoteToView, pickupPointToView } from "../commerce/checkout-view";
 import { useAppStore } from "../../store/app-store";
 import {
   EMPTY_CHECKOUT_FORM,
-  mergeProductEnrichment,
-  parseCartCommerceView,
+  recomputeCartTotals,
   type CartCommerceView,
+  type CartLineView,
   type CheckoutFieldErrors,
   type CheckoutFormState,
   type CheckoutSummary,
@@ -88,7 +87,19 @@ function validateForm(form: CheckoutFormState, walletEnabled: boolean, walletSpe
   return errors;
 }
 
+function enrichLineFromProduct(line: CartLineView, product: ProductDetail): CartLineView {
+  return {
+    ...line,
+    compareAt: product.compareAt?.amount ?? null,
+    sellerName: product.sellerName,
+    sellerId: product.sellerId,
+    categoryId: null,
+    stock: product.stock,
+  };
+}
+
 export function useCheckoutData(): CheckoutDataState {
+  const commerce = getCommerceUseCases();
   const offline = useAppStore((s) => s.offline);
   const [cart, setCart] = useState<CartCommerceView | null>(null);
   const [form, setForm] = useState<CheckoutFormState>(EMPTY_CHECKOUT_FORM);
@@ -122,34 +133,52 @@ export function useCheckoutData(): CheckoutDataState {
     currency: cart?.currency ?? "RUB",
   };
 
-  const loadPoints = useCallback(async (city: string) => {
-    if (city.trim().length < 2) {
-      setPoints([]);
-      return;
-    }
-    setPointsLoading(true);
-    setPointsError(null);
-    try {
-      const res = await fetchDeliveryPoints(city.trim());
-      const mapped = (res.points ?? []).map((point) => ({
-        code: point.code,
-        name: point.name,
-        address: point.address,
-        city: point.city,
-        workTime: point.workTime,
-      }));
-      setPoints(mapped);
-      if (mapped.length > 0 && !form.delivery.pickupPointCode) {
-        setForm((prev) => ({ ...prev, delivery: { ...prev.delivery, pickupPointCode: mapped[0]!.code } }));
+  const enrichLines = useCallback(
+    async (view: CartCommerceView): Promise<CartCommerceView> => {
+      if (view.items.length === 0) return view;
+      const enriched = await Promise.all(
+        view.items.map(async (line) => {
+          try {
+            const result = await commerce.loadProduct.execute({ productId: productId(line.productId) });
+            if (!result.ok) return line;
+            return enrichLineFromProduct(line, result.value);
+          } catch {
+            return line;
+          }
+        }),
+      );
+      const totals = recomputeCartTotals(enriched);
+      return { ...view, items: enriched, ...totals };
+    },
+    [commerce.loadProduct],
+  );
+
+  const loadPoints = useCallback(
+    async (city: string) => {
+      if (city.trim().length < 2) {
+        setPoints([]);
+        return;
       }
-    } catch (err) {
-      setPoints([]);
-      setPointsError(err instanceof Error ? err.message : "Не удалось загрузить пункты выдачи");
-      void postTelemetry({ screen: "checkout", event: "checkout_error", errorCode: "points_failed" });
-    } finally {
-      setPointsLoading(false);
-    }
-  }, [form.delivery.pickupPointCode]);
+      setPointsLoading(true);
+      setPointsError(null);
+      try {
+        const result = await commerce.loadPickupPoints.execute({ city: city.trim() });
+        if (!result.ok) throw new Error(domainErrorMessage(result.error));
+        const mapped = result.value.map((point) => pickupPointToView(point));
+        setPoints(mapped);
+        if (mapped.length > 0 && !form.delivery.pickupPointCode) {
+          setForm((prev) => ({ ...prev, delivery: { ...prev.delivery, pickupPointCode: mapped[0]!.code } }));
+        }
+      } catch (err) {
+        setPoints([]);
+        setPointsError(err instanceof Error ? err.message : "Не удалось загрузить пункты выдачи");
+        commerce.trackScreenEvent({ screen: "checkout", event: "checkout_error", errorCode: "points_failed" });
+      } finally {
+        setPointsLoading(false);
+      }
+    },
+    [commerce.loadPickupPoints, commerce.trackScreenEvent, form.delivery.pickupPointCode],
+  );
 
   const loadQuote = useCallback(async () => {
     if (!cart || cart.items.length === 0) return;
@@ -159,27 +188,21 @@ export function useCheckoutData(): CheckoutDataState {
     setQuoteLoading(true);
     setQuoteError(null);
     try {
-      const weightGrams = cart.items.reduce((sum, line) => sum + line.quantity * 500, 0);
-      const res = await fetchDeliveryQuote({
+      const result = await commerce.quoteCheckoutDelivery.execute({
         method: form.delivery.method,
         city,
-        pickupPointCode: form.delivery.method === "PICKUP" ? form.delivery.pickupPointCode || undefined : undefined,
-        weightGrams: Math.max(weightGrams, 500),
+        cartSubtotal: money(cart.subtotal, cart.currency),
       });
-      setQuote({
-        cost: res.quote.cost,
-        currency: res.quote.currency,
-        etaLabel: res.etaLabel,
-        source: res.source,
-      });
+      if (!result.ok) throw new Error(domainErrorMessage(result.error));
+      setQuote(deliveryQuoteToView(result.value));
     } catch (err) {
       setQuote(null);
       setQuoteError(err instanceof Error ? err.message : "Не удалось рассчитать доставку");
-      void postTelemetry({ screen: "checkout", event: "checkout_error", errorCode: "quote_failed" });
+      commerce.trackScreenEvent({ screen: "checkout", event: "checkout_error", errorCode: "quote_failed" });
     } finally {
       setQuoteLoading(false);
     }
-  }, [cart, form.delivery.city, form.delivery.method, form.delivery.pickupPointCode]);
+  }, [cart, commerce.quoteCheckoutDelivery, commerce.trackScreenEvent, form.delivery.city, form.delivery.method]);
 
   const loadCheckout = useCallback(async () => {
     if (offline) {
@@ -194,34 +217,35 @@ export function useCheckoutData(): CheckoutDataState {
     setCartError(null);
 
     try {
-      const [rawCart, wallet] = await Promise.all([fetchCart(), fetchWallet().catch(() => null)]);
-      let parsed = parseCartCommerceView(rawCart as unknown as Record<string, unknown>);
-      const enriched = await Promise.all(
-        parsed.items.map(async (line) => {
-          try {
-            const productRaw = await fetchProduct(line.productId);
-            return mergeProductEnrichment(line, productRaw);
-          } catch {
-            return line;
-          }
-        }),
-      );
-      parsed = { ...parsed, items: enriched };
+      const [cartResult, walletResult] = await Promise.all([
+        commerce.loadCart.execute({}),
+        commerce.loadWallet.execute({}),
+      ]);
+      if (!cartResult.ok) throw new Error(domainErrorMessage(cartResult.error));
+
+      let parsed = cartToCommerceView(cartResult.value);
+      parsed = await enrichLines(parsed);
       setCart(parsed);
-      setWalletEnabled(Boolean(wallet?.enabled));
-      setWalletSpendable(Number(wallet?.spendable ?? 0));
+
+      if (walletResult.ok) {
+        setWalletEnabled(walletResult.value.enabled);
+        setWalletSpendable(walletResult.value.spendable.amount);
+      } else {
+        setWalletEnabled(false);
+        setWalletSpendable(0);
+      }
 
       if (!startedTelemetryRef.current) {
         startedTelemetryRef.current = true;
-        void postTelemetry({ screen: "checkout", event: "checkout_started" });
+        commerce.trackScreenEvent({ screen: "checkout", event: "checkout_started" });
       }
     } catch (err) {
       setCartError(err instanceof Error ? err.message : "Не удалось загрузить корзину");
-      void postTelemetry({ screen: "checkout", event: "checkout_error", errorCode: "cart_load_failed" });
+      commerce.trackScreenEvent({ screen: "checkout", event: "checkout_error", errorCode: "cart_load_failed" });
     } finally {
       setLoading(false);
     }
-  }, [offline]);
+  }, [commerce.loadCart, commerce.loadWallet, commerce.trackScreenEvent, enrichLines, offline]);
 
   useEffect(() => {
     void loadCheckout();
@@ -241,26 +265,26 @@ export function useCheckoutData(): CheckoutDataState {
     return () => {
       const elapsedMs = Date.now() - startedAtRef.current;
       if (elapsedMs > 3000 && !submitSuccess) {
-        void postTelemetry({
+        commerce.trackScreenEvent({
           screen: "checkout",
           event: "checkout_abandoned",
           errorCode: String(Math.round(elapsedMs / 1000)),
         });
       }
     };
-  }, [submitSuccess]);
+  }, [commerce.trackScreenEvent, submitSuccess]);
 
   const submit = useCallback(async () => {
     if (!cart || cart.items.length === 0) return;
     const errors = validateForm(form, walletEnabled, walletSpendable, orderTotal);
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
-      void postTelemetry({ screen: "checkout", event: "checkout_error", errorCode: "validation_failed" });
+      commerce.trackScreenEvent({ screen: "checkout", event: "checkout_error", errorCode: "validation_failed" });
       return;
     }
 
     setSubmitting(true);
-    void postTelemetry({ screen: "checkout", event: "checkout_submitted" });
+    commerce.trackScreenEvent({ screen: "checkout", event: "checkout_submitted" });
 
     await new Promise((resolve) => setTimeout(resolve, 450));
 
@@ -270,14 +294,14 @@ export function useCheckoutData(): CheckoutDataState {
     setSubmitting(false);
     setSubmitSuccess(true);
     setAlphaState({ visible: true, webCheckoutUrl });
-    void postTelemetry({ screen: "checkout", event: "checkout_alpha_redirect" });
-  }, [cart, form, orderTotal, walletEnabled, walletSpendable]);
+    commerce.trackScreenEvent({ screen: "checkout", event: "checkout_alpha_redirect" });
+  }, [cart, commerce.trackScreenEvent, form, orderTotal, walletEnabled, walletSpendable]);
 
   const openWebCheckout = useCallback(() => {
     if (!alphaState?.webCheckoutUrl) return;
     void Linking.openURL(alphaState.webCheckoutUrl);
-    void postTelemetry({ screen: "checkout", event: "checkout_web_opened" });
-  }, [alphaState?.webCheckoutUrl]);
+    commerce.trackScreenEvent({ screen: "checkout", event: "checkout_web_opened" });
+  }, [alphaState?.webCheckoutUrl, commerce.trackScreenEvent]);
 
   return {
     cart,

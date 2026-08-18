@@ -95,7 +95,7 @@ export function OrdersExperience({ state }: Props) {
           items={state.recommendations}
           failed={state.recommendationsFailed}
           onRetry={() => void state.retryRecommendations()}
-          onToggleFavorite={(id) => void state.onToggleFavorite(id)}
+          onToggleFavorite={(id) => void state.onToggleFavoriteRecommendation(id)}
         />
       </Animated.View>
     </ScrollView>
