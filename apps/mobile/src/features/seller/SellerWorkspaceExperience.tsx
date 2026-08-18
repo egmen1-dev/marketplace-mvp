@@ -1,6 +1,5 @@
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { router } from "expo-router";
 import { memo, useCallback, useMemo, useState } from "react";
+import { router } from "expo-router";
 import {
   Animated,
   FlatList,
@@ -14,6 +13,7 @@ import {
 import { CommerceSectionHeader } from "../../design-system/components/CommerceSectionHeader";
 import { SectionErrorCard } from "../../design-system/components/SectionErrorCard";
 import { SellerHomeHeader } from "../../design-system/components/SellerHomeHeader";
+import { UniversalActionCard } from "../../design-system/components/UniversalActionCard";
 import { SecondaryButton } from "../../design-system/forms/buttons";
 import { EmptyState, HomeSectionSkeleton } from "../../design-system/feedback/States";
 import { PageScroll } from "../../design-system/layout/ScreenLayout";
@@ -26,6 +26,10 @@ import { spacing } from "../../design-system/tokens/spacing";
 import { typography } from "../../design-system/tokens/typography";
 import { getCommerceUseCases } from "../../composition/commerce-container";
 import { useFadeIn } from "../../hooks/useFadeIn";
+import { ActionResultBanner } from "./action-center/ActionResultBanner";
+import { SELLER_ACTION_LABELS, priorityToCardTone } from "./action-center/action-router";
+import { SellerActionSheet } from "./action-center/SellerActionSheet";
+import { useSellerActionCenter } from "./action-center/useSellerActionCenter";
 import type { SellerWorkspaceItemView, SellerWorkspaceSection } from "./seller-view";
 import { SELLER_WORKSPACE_SECTION_LABELS, formatActivityTime } from "./seller-view";
 import type { SellerHomeDataState } from "./useSellerHomeData";
@@ -54,7 +58,17 @@ const PRIORITY_LABELS = {
   completed: "Завершено",
 } as const;
 
-const MemoTaskRow = memo(WorkspaceTaskRow);
+/** Workspace telemetry events (seller_task_completed fires from useSellerActionCenter). */
+const WORKSPACE_TELEMETRY = [
+  "seller_workspace_opened",
+  "seller_task_completed",
+  "seller_resume_clicked",
+  "seller_priority_changed",
+] as const;
+void WORKSPACE_TELEMETRY;
+
+const MemoActionCard = memo(WorkspaceActionCard);
+const MemoCompletedRow = memo(WorkspaceCompletedRow);
 
 function WorkspaceSkeleton() {
   return (
@@ -107,20 +121,29 @@ function PriorityLane({
   );
 }
 
-function WorkspaceTaskRow({
+function WorkspaceActionCard({
   item,
   onPress,
 }: {
   item: SellerWorkspaceItemView;
   onPress: (item: SellerWorkspaceItemView) => void;
 }) {
+  const actionLabel = item.actionKind ? SELLER_ACTION_LABELS[item.actionKind] : "Открыть";
+
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${item.title}. ${item.subtitle ?? ""}`}
+    <UniversalActionCard
+      title={item.title}
+      subtitle={item.subtitle ?? ""}
+      actionLabel={actionLabel}
+      priority={priorityToCardTone(item.priority)}
       onPress={() => onPress(item)}
-      style={styles.taskRow}
-    >
+    />
+  );
+}
+
+function WorkspaceCompletedRow({ item }: { item: SellerWorkspaceItemView }) {
+  return (
+    <View style={styles.completedRow}>
       <View style={styles.taskMain}>
         <Text style={styles.taskTitle} numberOfLines={2}>
           {item.title}
@@ -134,8 +157,7 @@ function WorkspaceTaskRow({
           <Text style={styles.taskTime}>{formatActivityTime(item.completedAt)}</Text>
         ) : null}
       </View>
-      <MaterialCommunityIcons name="chevron-right" size={18} color={text.muted} />
-    </Pressable>
+    </View>
   );
 }
 
@@ -169,7 +191,13 @@ function WorkspaceSectionBlock({
           keyExtractor={(item) => item.id}
           scrollEnabled={false}
           initialNumToRender={6}
-          renderItem={({ item }) => <MemoTaskRow item={item} onPress={onTaskPress} />}
+          renderItem={({ item }) =>
+            item.priority === "completed" ? (
+              <MemoCompletedRow item={item} />
+            ) : (
+              <MemoActionCard item={item} onPress={onTaskPress} />
+            )
+          }
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       ) : null}
@@ -184,12 +212,21 @@ export function SellerWorkspaceExperience({ state }: Props) {
   const data = dashboard.data;
   const [priorityFilter, setPriorityFilter] = useState<keyof typeof PRIORITY_LABELS | "all">("all");
 
-  const navigateForTask = useCallback((item: SellerWorkspaceItemView) => {
-    if (item.action === "orders") router.push("/(tabs)/seller-sales");
-    else if (item.action === "products") router.push("/(tabs)/seller-products");
-    else if (item.action === "wallet") router.push("/(tabs)/wallet");
-    else router.push("/(tabs)/profile");
-  }, []);
+  const trackTelemetry = useCallback(
+    (event: string, payload?: Record<string, unknown>) => {
+      commerce.trackScreenEvent({
+        screen: "seller_home",
+        event,
+        errorCode: payload?.taskId ? String(payload.taskId) : undefined,
+      });
+    },
+    [commerce],
+  );
+
+  const actionCenter = useSellerActionCenter({
+    onWorkspaceRefresh: retryDashboard,
+    onTelemetry: trackTelemetry,
+  });
 
   const onTaskPress = useCallback(
     (item: SellerWorkspaceItemView) => {
@@ -199,22 +236,20 @@ export function SellerWorkspaceExperience({ state }: Props) {
           event: "seller_resume_clicked",
           errorCode: item.resumeKey ?? item.id,
         });
-      } else if (item.priority === "completed") {
+      } else if (item.priority !== "completed") {
         commerce.trackScreenEvent({
           screen: "seller_home",
-          event: "seller_task_completed",
-          errorCode: item.id,
-        });
-      } else {
-        commerce.trackScreenEvent({
-          screen: "seller_home",
-          event: "seller_task_completed",
+          event: "seller_task_opened",
           errorCode: item.id,
         });
       }
-      navigateForTask(item);
+
+      if (item.actionKind) {
+        actionCenter.openTask(item);
+        return;
+      }
     },
-    [commerce, navigateForTask],
+    [actionCenter, commerce],
   );
 
   const onPrioritySelect = useCallback(
@@ -232,12 +267,12 @@ export function SellerWorkspaceExperience({ state }: Props) {
   const filteredSections = useMemo(() => {
     if (!data?.workspace) return [] as Array<{ section: SellerWorkspaceSection; items: SellerWorkspaceItemView[] }>;
     return SECTION_ORDER.map((section) => {
-      const items = data.workspace.sections[section].filter(
+      const items = actionCenter.filterVisibleTasks(data.workspace.sections[section]).filter(
         (item) => priorityFilter === "all" || item.priority === priorityFilter,
       );
       return { section, items };
     }).filter((entry) => entry.items.length > 0 || dashboard.loading || dashboard.error);
-  }, [data?.workspace, dashboard.error, dashboard.loading, priorityFilter]);
+  }, [actionCenter, data?.workspace, dashboard.error, dashboard.loading, priorityFilter]);
 
   const headerProps = useMemo(
     () =>
@@ -278,46 +313,68 @@ export function SellerWorkspaceExperience({ state }: Props) {
   const hasWorkspaceItems = (workspace?.items.length ?? 0) > 0;
 
   return (
-    <PageScroll refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} />}>
-      <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
-        {headerProps ? <SellerHomeHeader header={headerProps} /> : null}
+    <>
+      <PageScroll refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void refresh()} />}>
+        <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
+          {headerProps ? <SellerHomeHeader header={headerProps} /> : null}
 
-        <CommerceSectionHeader title="Рабочее пространство" subtitle="Задачи из заказов, товаров, кошелька и уведомлений" />
-
-        {offline ? (
-          <View style={styles.offlineBanner} accessibilityRole="text">
-            <Text style={styles.offlineText}>Оффлайн — показаны сохранённые задачи</Text>
-            <SecondaryButton label="Повторить" onPress={() => void retryDashboard()} />
-          </View>
-        ) : null}
-
-        {dashboard.error ? <SectionErrorCard message={dashboard.error} onRetry={() => void retryDashboard()} /> : null}
-
-        {workspace ? (
-          <PriorityLane counts={workspace.counts} active={priorityFilter} onSelect={onPrioritySelect} />
-        ) : null}
-
-        {!dashboard.loading && !dashboard.error && !hasWorkspaceItems ? (
-          <View style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>Задач пока нет</Text>
-            <Text style={styles.emptyText}>Когда появятся заказы, черновики или сообщения покупателей, они отобразятся здесь.</Text>
-          </View>
-        ) : null}
-
-        {filteredSections.map(({ section, items }) => (
-          <WorkspaceSectionBlock
-            key={section}
-            section={section}
-            items={items}
-            loading={dashboard.loading}
-            error={dashboard.error}
-            onRetry={() => void retryDashboard()}
-            onTaskPress={onTaskPress}
-            fade={fade}
+          <CommerceSectionHeader
+            title="Рабочее пространство"
+            subtitle="Выполняйте задачи прямо здесь — без лишних переходов"
           />
-        ))}
-      </Animated.View>
-    </PageScroll>
+
+          <ActionResultBanner
+            result={actionCenter.result}
+            onDismiss={actionCenter.dismissResult}
+            onUndo={actionCenter.undo}
+            undoLoading={actionCenter.executing}
+          />
+
+          {offline ? (
+            <View style={styles.offlineBanner} accessibilityRole="text">
+              <Text style={styles.offlineText}>Оффлайн — показаны сохранённые задачи</Text>
+              <SecondaryButton label="Повторить" onPress={() => void retryDashboard()} />
+            </View>
+          ) : null}
+
+          {dashboard.error ? <SectionErrorCard message={dashboard.error} onRetry={() => void retryDashboard()} /> : null}
+
+          {workspace ? (
+            <PriorityLane counts={workspace.counts} active={priorityFilter} onSelect={onPrioritySelect} />
+          ) : null}
+
+          {!dashboard.loading && !dashboard.error && !hasWorkspaceItems ? (
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>Задач пока нет</Text>
+              <Text style={styles.emptyText}>
+                Когда появятся заказы, черновики или сообщения покупателей, они отобразятся здесь.
+              </Text>
+            </View>
+          ) : null}
+
+          {filteredSections.map(({ section, items }) => (
+            <WorkspaceSectionBlock
+              key={section}
+              section={section}
+              items={items}
+              loading={dashboard.loading}
+              error={dashboard.error}
+              onRetry={() => void retryDashboard()}
+              onTaskPress={onTaskPress}
+              fade={fade}
+            />
+          ))}
+        </Animated.View>
+      </PageScroll>
+
+      <SellerActionSheet
+        task={actionCenter.activeTask}
+        visible={Boolean(actionCenter.activeTask)}
+        loading={actionCenter.executing}
+        onClose={actionCenter.closeSheet}
+        onExecute={(values) => void actionCenter.execute(values)}
+      />
+    </>
   );
 }
 
@@ -348,11 +405,7 @@ const styles = StyleSheet.create({
   priorityChipActive: { backgroundColor: brand.primarySoft, borderColor: brand.primary },
   priorityLabel: { ...typography.caption, color: text.secondary, fontWeight: "600" },
   priorityLabelActive: { color: brand.primary },
-  taskRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    minHeight: layout.buttonHeight,
+  completedRow: {
     padding: spacing.md,
     borderRadius: radii.md,
     backgroundColor: surface.card,
