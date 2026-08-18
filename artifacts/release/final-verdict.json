@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-08-18T15:00:00.000Z",
+  "verdict": "NOT_READY",
+  "releaseEngineering": {
+    "originMain": "74abf11",
+    "railwayCommit": "74abf11",
+    "shaParity": true,
+    "railwayUrl": "https://web-production-e56fb.up.railway.app",
+    "deploymentId": "b0ba36ea-d259-487c-b89d-7cb6ce581bdd",
+    "betaRoutesRegistered": true,
+    "mergeSummary": {
+      "merged": [122, 124, 125, 126, 127, 128, 129, 130, 131],
+      "notMerged": [123],
+      "strategy": "Merged #122, then #130 (contains #124–#129 stack), then #131 for release pipeline scripts"
+    }
+  },
+  "blockers": [
+    {
+      "id": "pr_123_merge_conflict",
+      "severity": "P1",
+      "evidence": "PR #123 state=OPEN mergeable=CONFLICTING mergeStateStatus=DIRTY after #122 merged; conflicts in lib/analytics/events.ts and package.json",
+      "detail": "EPIC 89 (inventory) not on main"
+    },
+    {
+      "id": "beta_exit_report",
+      "severity": "P1",
+      "evidence": "GET /api/product-ops/beta/exit-report → verdict NOT_READY, criticalBugs: 1, topBugs crash severity high",
+      "detail": "Closed Beta exit report gate fails on live staging data"
+    },
+    {
+      "id": "beta_readiness_score",
+      "severity": "P1",
+      "evidence": "GET /api/product-ops/beta/readiness → overallScore 32, buyerJourneyPercent 0, sellerJourneyPercent 0, criticalBugs 1",
+      "detail": "Readiness dashboard below Closed Beta threshold"
+    }
+  ],
+  "resolvedDuringPublish": [
+    {
+      "id": "railway_build_failure",
+      "fix": "74abf11 — ESLint hook name in checkout/enter route, JWT salt, auth jwt null return, tsconfig exclude scripts/tests from Next typecheck",
+      "evidence": "Railway deployment b0ba36ea SUCCESS; /api/version commit 74abf11"
+    },
+    {
+      "id": "beta_404",
+      "fix": "Merged Closed Beta stack (#130) to main",
+      "evidence": "Beta API routes return HTTP 200 on staging"
+    }
+  ],
+  "gateOutputs": {
+    "releasePipelineVerify": "BLOCKED (local main worktree drift in agent env; deploymentVerification PASS, routeVerification PASS)",
+    "epic108ReleaseCandidateFinal": "NOT_READY_FOR_CLOSED_BETA (deployment preconditions flagged local git; SHA match true)"
+  }
+}

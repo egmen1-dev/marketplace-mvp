@@ -1,0 +1,28 @@
+
+> marketplace-mvp@0.1.0 product:epic-108:release-candidate-final
+> tsx scripts/epic-108-release-candidate-final-verification-gate.ts
+
+{
+  "summaryTable": {
+    "Deployment": "FAIL",
+    "Buyer Journey": "PASS",
+    "Seller Journey": "PASS",
+    "Beta API": "PASS",
+    "Checkout": "PASS",
+    "Dashboard": "PASS",
+    "Telemetry": "PASS",
+    "Crash Observatory": "PASS",
+    "Performance": "PASS",
+    "Final Verdict": "NOT_READY_FOR_CLOSED_BETA"
+  },
+  "verdict": "NOT_READY_FOR_CLOSED_BETA",
+  "failedCriteria": [
+    {
+      "criterion": "Deployment SHA parity / preconditions",
+      "evidence": "{\"shaMatch\":true,\"githubMainSha\":\"74abf11\",\"stagingSha\":\"74abf11\",\"preconditions\":[\"local main !== origin/main\"]}",
+      "rootCause": "preconditions failed",
+      "severity": "P0",
+      "recommendedFix": "Merge PR #124–#128 into main and redeploy Railway"
+    }
+  ]
+}
