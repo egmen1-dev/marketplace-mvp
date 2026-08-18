@@ -1,0 +1,16 @@
+{
+  "phase": "P0 Final Validation 0.1.5-alpha",
+  "generatedAt": "2026-08-17T13:19:30Z",
+  "apkSha256": "a468413a232171708655b8543ae000baf9b2158615bd3066be68c3e430c0a5ed",
+  "apkMetadataGate": "PASS",
+  "bytecodeGuard": "PASS",
+  "expoDependencyGate": "PASS",
+  "firebaseTestLab": "NOT RUN",
+  "firebaseTestLabVerdict": "FAIL",
+  "p0Status": "OPEN",
+  "closedAlpha": "NO-GO",
+  "clipboardResolved": "YES",
+  "errorUtilsResolvedInCode": "YES",
+  "errorUtilsVerifiedOnDevice": "NO",
+  "ftlArtifactsCollected": false
+}

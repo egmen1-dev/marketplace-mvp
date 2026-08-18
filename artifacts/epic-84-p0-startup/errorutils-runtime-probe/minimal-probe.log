@@ -1,0 +1,13 @@
+[LOT] RN ErrorUtils import: undefined
+[LOT] global.ErrorUtils: {
+  setGlobalHandler: [Function: setGlobalHandler],
+  getGlobalHandler: [Function: getGlobalHandler],
+  reportError: [Function: reportError],
+  reportFatalError: [Function: reportFatalError],
+  applyWithGuard: [Function: applyWithGuard],
+  applyWithGuardIfNeeded: [Function: applyWithGuardIfNeeded],
+  inGuard: [Function: inGuard],
+  guard: [Function: guard]
+}
+[LOT] typeof global.ErrorUtils: object
+[LOT-P0-PROBE-RESULT] {"reactNativeNamedImportType":"undefined","globalErrorUtils":{},"globalErrorUtilsType":"object","globalHasGetGlobalHandler":"function"}

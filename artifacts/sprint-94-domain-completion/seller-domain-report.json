@@ -1,0 +1,11 @@
+{
+  "sellerRepositoryImplemented": true,
+  "sellerUseCases": [
+    "LoadSellerHome",
+    "LoadSellerProducts",
+    "LoadSellerOrders",
+    "LoadSellerPublicProfile"
+  ],
+  "sellerScreensMigrated": 3,
+  "sellerFoundationReady": true
+}
