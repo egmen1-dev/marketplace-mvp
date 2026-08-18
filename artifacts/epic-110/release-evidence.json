@@ -1,0 +1,138 @@
+{
+  "generatedAt": "2026-08-18T13:57:06.144Z",
+  "sha": {
+    "head": "6d8a9be",
+    "localMain": "feb4b8d",
+    "originMain": "feb4b8d",
+    "railway": "feb4b8d",
+    "allMatch": false,
+    "verdict": "FAIL"
+  },
+  "buildTime": "2026-08-16T18:57:44.101Z",
+  "deploymentId": null,
+  "railwayUrl": "https://web-production-e56fb.up.railway.app",
+  "version": "0.1.0",
+  "environment": "staging",
+  "routeRegistration": [
+    {
+      "id": "health",
+      "path": "/api/health",
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 99,
+      "onOriginMain": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "version",
+      "path": "/api/version",
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 121,
+      "onOriginMain": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "product_ops_config",
+      "path": "/api/product-ops/config?surface=mobile&deviceId=epic110",
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 103,
+      "onOriginMain": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "beta_dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_journey",
+      "path": "/api/product-ops/beta/journey",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_readiness",
+      "path": "/api/product-ops/beta/readiness",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_performance",
+      "path": "/api/product-ops/beta/performance",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_crashes",
+      "path": "/api/product-ops/beta/crashes",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_exit_report",
+      "path": "/api/product-ops/beta/exit-report",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "checkout_web_url",
+      "path": "/api/mobile/checkout/web-url",
+      "httpStatus": 0,
+      "expectedStatus": [
+        401,
+        403,
+        405
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    }
+  ],
+  "health": {
+    "status": 200,
+    "verdict": "PASS"
+  },
+  "betaReadiness": {
+    "status": 404,
+    "verdict": "FAIL"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-08-18T13:57:06.550Z",
+  "execution": {
+    "generatedAt": "2026-08-18T13:57:03.557Z",
+    "mode": "dry-run",
+    "actions": [
+      {
+        "pr": 124,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 125,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 126,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 127,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 128,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 129,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 130,
+        "action": "blocked_draft",
+        "ok": false,
+        "detail": "Mark Ready for review before merge"
+      },
+      {
+        "pr": 131,
+        "action": "would_merge",
+        "ok": true,
+        "detail": "CLEAN"
+      }
+    ],
+    "verdict": "FAIL"
+  },
+  "checks": {
+    "gitStack": "PENDING",
+    "stackLinear": "PASS",
+    "allPrsMerged": "FAIL",
+    "noDraftBlockers": "FAIL",
+    "shaQuartet": "FAIL",
+    "railwayRoutes": "PASS",
+    "deploymentDiff": "PASS",
+    "health": "PASS",
+    "betaReadiness": "FAIL",
+    "checkoutRoute": "PASS",
+    "dashboardRoute": "PASS",
+    "rollbackReadiness": "PASS"
+  },
+  "verdict": "NOT_READY",
+  "reasons": [
+    "PR stack not fully merged to main",
+    "Draft PRs remain in promotion stack",
+    "SHA mismatch: HEAD=6d8a9be main=feb4b8d origin=feb4b8d railway=feb4b8d",
+    "Beta readiness endpoint not HTTP 200"
+  ]
+}

@@ -40,6 +40,7 @@
     "product:epic-108:release-candidate-final": "tsx scripts/epic-108-release-candidate-final-verification-gate.ts",
     "release:pipeline:verify": "tsx scripts/release-pipeline-verify.ts",
     "release:pipeline:pr-audit": "tsx scripts/release-pipeline-pr-policy-audit.ts",
+    "product:epic-110:production-release": "tsx scripts/epic-110-production-release-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
     "finance:stress-gate": "FINANCIAL_STRESS_GATE=1 STRESS_OPS=1000 STRESS_PARALLEL=10 npx vitest run tests/financial-stress-gate.test.ts",
