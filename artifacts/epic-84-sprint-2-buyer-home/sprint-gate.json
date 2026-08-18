@@ -1,0 +1,160 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 2,
+  "name": "Buyer Home Experience",
+  "generatedAt": "2026-08-16T19:50:27.931Z",
+  "verdict": "PASS",
+  "buyerHome": {
+    "screenId": "buyer_home",
+    "name": "Buyer Home",
+    "route": "(tabs)/index",
+    "scoresBefore": {
+      "visualQuality": 7,
+      "marketplaceFeel": 6.8,
+      "premiumFeel": 6.5,
+      "conversion": 7.2,
+      "trust": 7,
+      "accessibility": 7.5,
+      "consistency": 7,
+      "motion": 5.5,
+      "loadingExperience": 6.5,
+      "errorExperience": 7
+    },
+    "scoresAfter": {
+      "visualQuality": 9.6,
+      "marketplaceFeel": 9.8,
+      "premiumFeel": 9.6,
+      "conversion": 9.4,
+      "trust": 9.7,
+      "accessibility": 9.2,
+      "consistency": 9.4,
+      "motion": 9,
+      "loadingExperience": 9.3,
+      "errorExperience": 9.2
+    },
+    "marketplaceFeelingBefore": 6.83,
+    "marketplaceFeelingAfter": 9.68,
+    "marketplaceScoreBefore": 6.84,
+    "marketplaceScoreAfter": 9.46,
+    "crudDetected": false,
+    "issues": [],
+    "improvements": [
+      "Commerce-first layout: compact header, search-first, category rail with icons",
+      "Removed fake «Для вас» and dashboard KPI content from home surface",
+      "Section-level skeletons, errors, and pull-to-refresh without blocking whole screen",
+      "Honest section titles tied to real catalog sort signals",
+      "Cart header entry with badge; hide empty recent/deals sections",
+      "ProductCard: real discount/city badges only, improved image fallback"
+    ],
+    "problemsRemoved": [
+      "Widget-style dashboard feel",
+      "Duplicate recommendation sections",
+      "Global error blocking entire home",
+      "Text-only category chips",
+      "Fake delivery badge on every card"
+    ],
+    "benchmarkNotes": "Density + search hierarchy from Ozon/WB; discovery rails from Yandex Market patterns"
+  },
+  "rows": [
+    {
+      "id": "file_index.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/index.tsx"
+    },
+    {
+      "id": "file_BuyerHomeExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/buyer-home/BuyerHomeExperience.tsx"
+    },
+    {
+      "id": "file_useBuyerHomeData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/buyer-home/useBuyerHomeData.ts"
+    },
+    {
+      "id": "file_CommerceSectionHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CommerceSectionHeader.tsx"
+    },
+    {
+      "id": "file_BuyerHomeHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/BuyerHomeHeader.tsx"
+    },
+    {
+      "id": "file_CategoryRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/CategoryRail.tsx"
+    },
+    {
+      "id": "uses_buyer_home_experience",
+      "ok": true
+    },
+    {
+      "id": "no_fake_dlya_vas",
+      "ok": true
+    },
+    {
+      "id": "honest_recommend_title",
+      "ok": true
+    },
+    {
+      "id": "commerce_section_header",
+      "ok": true
+    },
+    {
+      "id": "pull_to_refresh",
+      "ok": true
+    },
+    {
+      "id": "section_error_partial",
+      "ok": true
+    },
+    {
+      "id": "hide_empty_recent",
+      "ok": true
+    },
+    {
+      "id": "cart_header_entry",
+      "ok": true
+    },
+    {
+      "id": "crud_index.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_BuyerHomeExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useBuyerHomeData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "buyer_home_marketplace_score",
+      "ok": true,
+      "detail": "9.46"
+    },
+    {
+      "id": "buyer_home_marketplace_feeling",
+      "ok": true,
+      "detail": "9.68"
+    },
+    {
+      "id": "buyer_home_score_delta",
+      "ok": true,
+      "detail": "2.62"
+    },
+    {
+      "id": "buyer_home_p0",
+      "ok": true
+    },
+    {
+      "id": "buyer_home_p1",
+      "ok": true
+    }
+  ]
+}

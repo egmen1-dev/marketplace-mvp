@@ -1,9 +1,6 @@
-export class BootTimeoutError extends Error {
-  constructor(label: string, timeoutMs: number) {
-    super(`${label} timed out after ${timeoutMs}ms`);
-    this.name = "BootTimeoutError";
-  }
-}
+import { BootTimeoutError } from "../../../../lib/mobile/boot/errors";
+
+export { BootTimeoutError } from "../../../../lib/mobile/boot/errors";
 
 export async function withTimeout<T>(label: string, promise: Promise<T>, timeoutMs: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;

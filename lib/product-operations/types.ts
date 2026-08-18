@@ -119,3 +119,15 @@ export const JOURNEY_SCREENS = [
   "checkout",
   "purchase",
 ] as const;
+
+/** Seller funnel screens tracked via POP session replay (EPIC 84) */
+export const SELLER_JOURNEY_SCREENS = [
+  "login",
+  "seller_home",
+  "seller_products",
+  "seller_product",
+  "seller_edit",
+  "seller_stats",
+  "seller_wallet",
+  "seller_orders",
+] as const;

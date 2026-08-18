@@ -1,0 +1,96 @@
+{
+  "epic": "EPIC-92",
+  "version": "1.0.0",
+  "generatedAt": "2026-08-18T06:25:00.000Z",
+  "events": [
+    {
+      "type": "CartUpdated",
+      "description": "Cart lines or totals changed after add, update, or remove.",
+      "payload": {
+        "cart": "Cart entity (required)",
+        "changedProductId": "ProductId (optional)"
+      },
+      "publishers": ["AddToCart", "UpdateCartQuantity", "RemoveFromCart", "LoadCart"],
+      "subscribers": ["BadgeProjection", "CacheInvalidation(cart)", "TelemetryRepository"]
+    },
+    {
+      "type": "OrderCreated",
+      "description": "Checkout completed and order persisted.",
+      "payload": {
+        "orderId": "string (required)",
+        "orderNumber": "string (optional)"
+      },
+      "publishers": ["CreateOrder"],
+      "subscribers": ["OrderRepository cache", "BadgeProjection", "TelemetryRepository"]
+    },
+    {
+      "type": "FavoriteChanged",
+      "description": "User toggled favorite state for a product.",
+      "payload": {
+        "productId": "ProductId (required)",
+        "isFavorite": "boolean (required)",
+        "favoritesCount": "number (optional)"
+      },
+      "publishers": ["ToggleFavorite"],
+      "subscribers": ["BadgeProjection", "Catalog card refresh", "TelemetryRepository"]
+    },
+    {
+      "type": "SellerOrderChanged",
+      "description": "Seller order list changed.",
+      "payload": {
+        "order": "SellerOrderSummary (required)",
+        "change": "created | updated | status_changed"
+      },
+      "publishers": ["LoadSellerOrders", "future seller mutation use cases"],
+      "subscribers": ["SellerRepository cache", "Wallet recent sales", "TelemetryRepository"]
+    },
+    {
+      "type": "WalletChanged",
+      "description": "Wallet balances refreshed.",
+      "payload": {
+        "balance": "WalletBalance (required)"
+      },
+      "publishers": ["LoadWallet"],
+      "subscribers": ["Seller home WalletCard projection", "TelemetryRepository"]
+    },
+    {
+      "type": "SessionExpired",
+      "description": "Auth session no longer valid.",
+      "payload": {
+        "reason": "token_expired | refresh_revoked | logout",
+        "previousSession": "Session (optional)"
+      },
+      "publishers": ["AuthRepository", "LogoutUser"],
+      "subscribers": ["SessionStore", "CacheRepository.clear(auth scope)", "Navigation redirect"]
+    },
+    {
+      "type": "ProfileUpdated",
+      "description": "Profile or app mode changed.",
+      "payload": {
+        "profile": "UserProfile (required)"
+      },
+      "publishers": ["SwitchAppMode", "LoadProfile"],
+      "subscribers": ["SessionStore", "TelemetryRepository"]
+    },
+    {
+      "type": "ConnectivityChanged",
+      "description": "Device online/offline state changed.",
+      "payload": {
+        "offline": "boolean (required)",
+        "changedAt": "ISO8601 string (required)"
+      },
+      "publishers": ["ConnectivityStore / NetworkBanner adapter"],
+      "subscribers": ["OfflinePolicyService", "Repository refresh orchestrator"]
+    },
+    {
+      "type": "CatalogInvalidated",
+      "description": "Catalog cache scope invalidated.",
+      "payload": {
+        "scope": "all | query | category",
+        "queryHash": "string (optional)"
+      },
+      "publishers": ["InvalidateCache use case", "FavoriteChanged (optional)"],
+      "subscribers": ["CatalogRepository", "SearchRepository"]
+    }
+  ]
+}

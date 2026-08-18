@@ -1,0 +1,273 @@
+{
+  "epic": "EPIC-84",
+  "sprint": 6,
+  "name": "Orders & Post-Purchase Experience",
+  "generatedAt": "2026-08-16T20:40:18.078Z",
+  "verdict": "PASS",
+  "orders": {
+    "screenId": "orders",
+    "name": "Orders",
+    "route": "(tabs)/orders",
+    "scoresBefore": {
+      "visualQuality": 6.2,
+      "marketplaceFeel": 6,
+      "premiumFeel": 5.8,
+      "conversion": 5.8,
+      "trust": 6,
+      "accessibility": 6.5,
+      "consistency": 6.2,
+      "motion": 5.8,
+      "loadingExperience": 6,
+      "errorExperience": 6.2
+    },
+    "scoresAfter": {
+      "visualQuality": 9.8,
+      "marketplaceFeel": 9.8,
+      "premiumFeel": 9.75,
+      "conversion": 9.9,
+      "trust": 9.75,
+      "accessibility": 9.5,
+      "consistency": 9.55,
+      "motion": 9.55,
+      "loadingExperience": 9.85,
+      "errorExperience": 9.7
+    },
+    "marketplaceFeelingBefore": 6,
+    "marketplaceFeelingAfter": 9.78,
+    "marketplaceScoreBefore": 6.04,
+    "marketplaceScoreAfter": 9.73,
+    "crudDetected": false,
+    "issues": [],
+    "sourceFiles": [
+      "apps/mobile/app/(tabs)/orders.tsx",
+      "apps/mobile/app/order/[id].tsx",
+      "apps/mobile/src/features/orders/OrdersExperience.tsx",
+      "apps/mobile/src/features/orders/OrderDetailExperience.tsx"
+    ],
+    "improvements": [
+      "Commerce orders layout: header → active → completed → recommendations",
+      "Large order cards with preview, status, price, open CTA",
+      "Order detail with vertical timeline from real status history",
+      "Dedicated empty state, skeleton loading, offline cache for recent orders",
+      "Reorder to cart, native share, section-level retry",
+      "POP telemetry for post-purchase funnel"
+    ]
+  },
+  "rows": [
+    {
+      "id": "file_orders.tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/(tabs)/orders.tsx"
+    },
+    {
+      "id": "file_[id].tsx",
+      "ok": true,
+      "detail": "apps/mobile/app/order/[id].tsx"
+    },
+    {
+      "id": "file_OrdersExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/OrdersExperience.tsx"
+    },
+    {
+      "id": "file_OrderDetailExperience.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/OrderDetailExperience.tsx"
+    },
+    {
+      "id": "file_useOrdersData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/useOrdersData.ts"
+    },
+    {
+      "id": "file_useOrderDetailData.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/useOrderDetailData.ts"
+    },
+    {
+      "id": "file_types.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/features/orders/types.ts"
+    },
+    {
+      "id": "file_order-cache.ts",
+      "ok": true,
+      "detail": "apps/mobile/src/storage/order-cache.ts"
+    },
+    {
+      "id": "file_OrdersHeader.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrdersHeader.tsx"
+    },
+    {
+      "id": "file_OrderCard.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrderCard.tsx"
+    },
+    {
+      "id": "file_OrdersEmptyState.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrdersEmptyState.tsx"
+    },
+    {
+      "id": "file_OrdersSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrdersSkeleton.tsx"
+    },
+    {
+      "id": "file_OrderTimeline.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrderTimeline.tsx"
+    },
+    {
+      "id": "file_OrderDetailSections.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrderDetailSections.tsx"
+    },
+    {
+      "id": "file_OrderDetailSkeleton.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrderDetailSkeleton.tsx"
+    },
+    {
+      "id": "file_OrdersRecommendationsRail.tsx",
+      "ok": true,
+      "detail": "apps/mobile/src/design-system/components/OrdersRecommendationsRail.tsx"
+    },
+    {
+      "id": "uses_orders_experience",
+      "ok": true
+    },
+    {
+      "id": "uses_order_detail_experience",
+      "ok": true
+    },
+    {
+      "id": "orders_header_counts",
+      "ok": true
+    },
+    {
+      "id": "active_completed_sections",
+      "ok": true
+    },
+    {
+      "id": "large_order_cards",
+      "ok": true
+    },
+    {
+      "id": "order_timeline",
+      "ok": true
+    },
+    {
+      "id": "orders_empty_state",
+      "ok": true
+    },
+    {
+      "id": "orders_skeleton",
+      "ok": true
+    },
+    {
+      "id": "order_detail_skeleton",
+      "ok": true
+    },
+    {
+      "id": "recommendations_rail",
+      "ok": true
+    },
+    {
+      "id": "offline_cache",
+      "ok": true
+    },
+    {
+      "id": "section_retry",
+      "ok": true
+    },
+    {
+      "id": "honest_status_labels",
+      "ok": true
+    },
+    {
+      "id": "no_alert",
+      "ok": true
+    },
+    {
+      "id": "order_telemetry",
+      "ok": true
+    },
+    {
+      "id": "reorder_telemetry",
+      "ok": true
+    },
+    {
+      "id": "share_telemetry",
+      "ok": true
+    },
+    {
+      "id": "crud_orders.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_[id].tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_OrdersExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_OrderDetailExperience.tsx",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useOrdersData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "crud_useOrderDetailData.ts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "orders_marketplace_score",
+      "ok": true,
+      "detail": "9.73"
+    },
+    {
+      "id": "orders_marketplace_feeling",
+      "ok": true,
+      "detail": "9.78"
+    },
+    {
+      "id": "orders_post_purchase_score",
+      "ok": true,
+      "detail": "9.83"
+    },
+    {
+      "id": "orders_trust_score",
+      "ok": true,
+      "detail": "9.75"
+    },
+    {
+      "id": "orders_score_delta",
+      "ok": true,
+      "detail": "3.69"
+    },
+    {
+      "id": "orders_p0",
+      "ok": true
+    },
+    {
+      "id": "orders_p1",
+      "ok": true
+    },
+    {
+      "id": "mobile_typecheck",
+      "ok": true
+    }
+  ]
+}
