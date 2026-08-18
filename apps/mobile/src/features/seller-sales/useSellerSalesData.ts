@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { SellerOrderSummary } from "../../domain/contracts/entities/seller";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { readSnapshot, saveSnapshot } from "../../storage/offline-cache";
 import { useAppStore } from "../../store/app-store";
 import { formatPrice } from "../../utils/format";

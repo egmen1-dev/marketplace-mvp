@@ -12,11 +12,15 @@ export class RestAuthRepository implements AuthRepository {
   constructor(private readonly transport: CommerceTransport) {}
 
   async login(credentials: LoginCredentials): Promise<Result<Session>> {
+    return this.loginWithOptions(credentials);
+  }
+
+  async loginWithOptions(input: LoginCredentials & { pendingDeepLink?: string }): Promise<Result<Session>> {
     try {
       const data = await apiLogin({
-        email: credentials.email,
-        password: credentials.password,
-        pendingDeepLink: credentials.pendingDeepLink,
+        email: input.email,
+        password: input.password,
+        pendingDeepLink: input.pendingDeepLink,
       });
       return ok(mapSessionFromLogin(data));
     } catch (error) {

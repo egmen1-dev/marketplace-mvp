@@ -14,7 +14,6 @@ export type Session = {
 export type LoginCredentials = {
   readonly email: string;
   readonly password: string;
-  readonly pendingDeepLink?: string;
 };
 
 export type AccessToken = {

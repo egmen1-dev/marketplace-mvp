@@ -2,7 +2,7 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect } from "react";
 
 import { domainErrorMessage } from "../domain/errors/error-factory";
-import { getCommerceUseCases } from "../domain/services/commerce-container";
+import { getCommerceUseCases } from "../composition/commerce-container";
 import { useAppStore } from "../store/app-store";
 
 const COMPLETED_ORDER_STATUSES = new Set(["delivered", "cancelled", "refunded"]);

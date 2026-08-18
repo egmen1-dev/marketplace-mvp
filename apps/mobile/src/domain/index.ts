@@ -10,4 +10,4 @@ export * from "./value-objects/index";
 export * from "./errors/index";
 export * from "./events/index";
 export * from "./use-cases/index";
-export { getCommerceUseCases, type CommerceUseCases } from "./services/commerce-container";
+export { getCommerceUseCases, resetCommerceContainerForTests, type CommerceUseCases } from "../composition/commerce-container";

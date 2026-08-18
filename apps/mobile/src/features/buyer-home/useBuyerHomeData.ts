@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { productId } from "../../domain/contracts/value-objects/ids";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { productSummariesToCardViews } from "../commerce/product-view";
 import { loadRecentViews } from "../../storage/recent-views";
 import { discountPercent } from "../../utils/format";

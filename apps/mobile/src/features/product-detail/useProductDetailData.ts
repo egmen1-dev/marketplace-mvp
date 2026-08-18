@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { ProductDetail } from "../../domain/contracts/entities/catalog";
 import { categoryId, productId, sellerId } from "../../domain/contracts/value-objects/ids";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { cacheProductDetail, loadCachedProductDetail } from "../../storage/product-detail-cache";
 import { trackRecentView } from "../../storage/recent-views";
 import { useAppStore } from "../../store/app-store";

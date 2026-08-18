@@ -2,7 +2,7 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { readSnapshot, saveSnapshot } from "../../storage/offline-cache";
 import { useAppStore } from "../../store/app-store";
 import { sellerHomeToView, type SellerHomeView } from "./seller-view";

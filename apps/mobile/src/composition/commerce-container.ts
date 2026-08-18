@@ -1,50 +1,49 @@
 /**
- * Sprint 94 — Composition root for commerce domain (hooks import from here).
+ * Sprint 94 — Composition root (application layer). Hooks import from here.
  */
 
-import { getDomainEventBus } from "../events/domain-event-bus";
-import { LoginUser, LogoutUser } from "../use-cases/auth/auth-use-cases";
-import { LoadCatalog, LoadCategories } from "../use-cases/catalog/load-catalog";
-import { SearchProducts } from "../use-cases/catalog/search-products";
+import { getDomainEventBus } from "../domain/events/domain-event-bus";
+import { LoginUser, LogoutUser } from "../domain/use-cases/auth/auth-use-cases";
+import { LoadCatalog, LoadCategories } from "../domain/use-cases/catalog/load-catalog";
+import { SearchProducts } from "../domain/use-cases/catalog/search-products";
 import {
   LoadCatalogPage,
   LoadProductDetail,
   LoadRelatedProducts,
   LoadSellerCatalogCount,
-} from "../use-cases/product/product-use-cases";
-import { LoadProduct } from "../use-cases/product/load-product";
-import { LoadProfile } from "../use-cases/profile/load-profile";
-import { SubmitProductFeedback } from "../use-cases/profile/submit-feedback";
+} from "../domain/use-cases/product/product-use-cases";
+import { LoadProduct } from "../domain/use-cases/product/load-product";
+import { LoadProfile } from "../domain/use-cases/profile/load-profile";
+import { SubmitProductFeedback } from "../domain/use-cases/profile/submit-feedback";
 import {
   AddToCart,
   LoadCart,
   RemoveFromCart,
   UpdateCartQuantity,
-} from "../use-cases/cart/cart-use-cases";
-import { LoadFavorites, ToggleFavorite } from "../use-cases/favorites/favorites-use-cases";
-import { LoadOrderDetail, LoadOrders, ReorderItems, ShareOrder } from "../use-cases/order/order-use-cases";
-import { LoadPickupPoints, QuoteCheckoutDelivery } from "../use-cases/wallet/wallet-use-cases";
-import { LoadWallet } from "../use-cases/wallet/wallet-use-cases";
+} from "../domain/use-cases/cart/cart-use-cases";
+import { LoadFavorites, ToggleFavorite } from "../domain/use-cases/favorites/favorites-use-cases";
+import { LoadOrderDetail, LoadOrders, ReorderItems, ShareOrder } from "../domain/use-cases/order/order-use-cases";
+import { LoadPickupPoints, QuoteCheckoutDelivery, LoadWallet } from "../domain/use-cases/wallet/wallet-use-cases";
 import {
   LoadSellerHome,
   LoadSellerOrders,
   LoadSellerProducts,
   LoadSellerPublicProfile,
-} from "../use-cases/seller/seller-use-cases";
-import { MemoryCacheRepository } from "../../infrastructure/cache/memory-cache-repository";
-import { RestAuthRepository } from "../../infrastructure/repositories/rest-auth-repository";
-import { RestCatalogRepository } from "../../infrastructure/repositories/rest-catalog-repository";
-import { RestCartRepository } from "../../infrastructure/repositories/rest-cart-repository";
-import { RestCheckoutRepository } from "../../infrastructure/repositories/rest-checkout-repository";
-import { RestFavoritesRepository } from "../../infrastructure/repositories/rest-favorites-repository";
-import { RestOrderRepository } from "../../infrastructure/repositories/rest-order-repository";
-import { RestProductRepository } from "../../infrastructure/repositories/rest-product-repository";
-import { RestProfileRepository } from "../../infrastructure/repositories/rest-profile-repository";
-import { RestSearchRepository } from "../../infrastructure/repositories/rest-search-repository";
-import { RestSellerRepository } from "../../infrastructure/repositories/rest-seller-repository";
-import { RestTelemetryRepository, trackScreenEvent } from "../../infrastructure/repositories/rest-telemetry-repository";
-import { RestWalletRepository } from "../../infrastructure/repositories/rest-wallet-repository";
-import { getRestCommerceTransport } from "../../infrastructure/transport/rest-commerce-transport";
+} from "../domain/use-cases/seller/seller-use-cases";
+import { MemoryCacheRepository } from "../infrastructure/cache/memory-cache-repository";
+import { RestAuthRepository } from "../infrastructure/repositories/rest-auth-repository";
+import { RestCatalogRepository } from "../infrastructure/repositories/rest-catalog-repository";
+import { RestCartRepository } from "../infrastructure/repositories/rest-cart-repository";
+import { RestCheckoutRepository } from "../infrastructure/repositories/rest-checkout-repository";
+import { RestFavoritesRepository } from "../infrastructure/repositories/rest-favorites-repository";
+import { RestOrderRepository } from "../infrastructure/repositories/rest-order-repository";
+import { RestProductRepository } from "../infrastructure/repositories/rest-product-repository";
+import { RestProfileRepository } from "../infrastructure/repositories/rest-profile-repository";
+import { RestSearchRepository } from "../infrastructure/repositories/rest-search-repository";
+import { RestSellerRepository } from "../infrastructure/repositories/rest-seller-repository";
+import { RestTelemetryRepository, trackScreenEvent } from "../infrastructure/repositories/rest-telemetry-repository";
+import { RestWalletRepository } from "../infrastructure/repositories/rest-wallet-repository";
+import { getRestCommerceTransport } from "../infrastructure/transport/rest-commerce-transport";
 
 export type CommerceUseCases = {
   readonly loginUser: LoginUser;
@@ -88,8 +87,7 @@ export function getCommerceUseCases(): CommerceUseCases {
 
   const transport = getRestCommerceTransport();
   const events = getDomainEventBus();
-  const cache = new MemoryCacheRepository();
-  void cache;
+  void new MemoryCacheRepository();
 
   const auth = new RestAuthRepository(transport);
   const catalog = new RestCatalogRepository(transport);

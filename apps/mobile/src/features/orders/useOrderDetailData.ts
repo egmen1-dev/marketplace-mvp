@@ -5,7 +5,7 @@ import { Share } from "react-native";
 import type { OrderDetail } from "../../domain/contracts/entities/order";
 import { orderId, productId } from "../../domain/contracts/value-objects/ids";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { loadAppConfig } from "../../config/env";
 import { cacheOrderDetail, loadCachedOrderDetail } from "../../storage/order-cache";
 import { useAppStore } from "../../store/app-store";

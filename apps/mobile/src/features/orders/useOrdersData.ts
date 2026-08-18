@@ -4,7 +4,7 @@ import type { MobileProductCardData } from "../../design-system/commerce/Product
 import type { OrderDetail, OrderSummary } from "../../domain/contracts/entities/order";
 import { orderId, productId } from "../../domain/contracts/value-objects/ids";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { productSummariesToCardViews } from "../commerce/product-view";
 import { cacheOrdersList, loadCachedOrdersList } from "../../storage/order-cache";
 import { useAppStore } from "../../store/app-store";

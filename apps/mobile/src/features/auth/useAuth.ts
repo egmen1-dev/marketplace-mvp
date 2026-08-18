@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { routeDeepLink } from "../../deep-links/route-deep-link";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { hapticError, hapticSuccess } from "../../hooks/useHapticFeedback";
 import { useAppStore } from "../../store/app-store";
 

@@ -1,46 +1,21 @@
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
 import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
 
-import { fetchMobileUpdate, postTelemetry } from "../../src/api/endpoints";
 import { loadAppConfig } from "../../src/config/env";
 import { Avatar } from "../../src/design-system/primitives/Badge";
 import { GhostButton, PrimaryButton, SecondaryButton } from "../../src/design-system/forms/buttons";
 import { SectionHeader } from "../../src/design-system/layout/ScreenLayout";
 import { useProfileData } from "../../src/features/profile/useProfileData";
 import { buildErrorReport } from "../../src/telemetry/error-report";
-import { startApkDownload } from "../../src/update/download-apk";
-import { UPDATE_ANALYTICS } from "../../src/update/types";
 import { colors, spacing, typography } from "../../src/theme/tokens";
-import type { MobileUpdateInfo } from "../../src/update/types";
 
 export default function ProfileScreen() {
   const profile = useProfileData();
-  const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
   const config = loadAppConfig();
-
-  useEffect(() => {
-    fetchMobileUpdate()
-      .then(setUpdateInfo)
-      .catch(() => setUpdateInfo(null));
-  }, []);
-
-  const hasUpdate =
-    updateInfo &&
-    updateInfo.updateState !== "NO_UPDATE" &&
-    updateInfo.downloadUrl &&
-    updateInfo.versionCode > Number(config.buildNumber) &&
-    updateInfo.rollout.eligible;
-
-  async function onUpdate() {
-    if (!updateInfo) return;
-    await postTelemetry({ screen: "profile", event: UPDATE_ANALYTICS.started, errorCode: updateInfo.versionName });
-    await startApkDownload(updateInfo);
-  }
 
   async function onReportError() {
     const report = buildErrorReport("profile");
-    await postTelemetry({ screen: "profile", event: "error_report_requested" });
+    profile.trackEvent({ event: "error_report_requested" });
     await profile.submitFeedback({
       content: JSON.stringify(report),
       screen: "profile",
@@ -93,14 +68,14 @@ export default function ProfileScreen() {
         <Text style={styles.rowChevron}>›</Text>
       </Pressable>
 
-      {hasUpdate ? (
+      {profile.hasUpdate ? (
         <View style={styles.updateBanner}>
           <Text style={styles.updateTitle}>
-            {updateInfo?.updateState === "REQUIRED_UPDATE"
+            {profile.updateInfo?.updateState === "REQUIRED_UPDATE"
               ? "Требуется обновление"
-              : `Доступна версия ${updateInfo?.versionName}`}
+              : `Доступна версия ${profile.updateInfo?.versionName}`}
           </Text>
-          <PrimaryButton label="Обновить" onPress={onUpdate} size="sm" />
+          <PrimaryButton label="Обновить" onPress={() => void profile.onUpdate()} size="sm" />
         </View>
       ) : null}
 

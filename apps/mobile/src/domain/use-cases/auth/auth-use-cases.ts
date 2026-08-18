@@ -5,16 +5,30 @@ import type { DomainEventBus } from "../../contracts/events";
 import type { Result } from "../../contracts/result";
 import type { CommandUseCase } from "../../contracts/use-cases/index";
 
-export class LoginUser implements CommandUseCase<LoginCredentials, Session> {
+export type LoginUserInput = LoginCredentials & { pendingDeepLink?: string };
+
+export interface LoginAuthGateway extends AuthRepository {
+  loginWithOptions(input: LoginUserInput): Promise<Result<Session>>;
+}
+
+export class LoginUser implements CommandUseCase<LoginUserInput, Session> {
   constructor(
-    private readonly authRepository: AuthRepository,
+    private readonly authRepository: LoginAuthGateway,
     private readonly events: DomainEventBus,
   ) {}
 
-  async execute(input: LoginCredentials): Promise<Result<Session, DomainError>> {
-    const result = await this.authRepository.login(input);
+  async execute(input: LoginUserInput): Promise<Result<Session, DomainError>> {
+    const result = await this.authRepository.loginWithOptions(input);
     if (result.ok) {
-      this.events.publish({ type: "ProfileUpdated", profile: { email: result.value.email, displayName: result.value.userId, mode: "buyer", sellerCapable: result.value.sellerCapable } });
+      this.events.publish({
+        type: "ProfileUpdated",
+        profile: {
+          email: result.value.email,
+          displayName: result.value.userId,
+          mode: "buyer",
+          sellerCapable: result.value.sellerCapable,
+        },
+      });
     }
     return result;
   }

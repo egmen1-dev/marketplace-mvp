@@ -1,17 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { loadAppConfig } from "../../config/env";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
+import { startApkDownload } from "../../update/download-apk";
+import { fetchMobileUpdateInfo } from "../../update/mobile-update-client";
+import { UPDATE_ANALYTICS, type MobileUpdateInfo } from "../../update/types";
 import { useAppStore } from "../../store/app-store";
 
 export function useProfileData() {
   const commerce = getCommerceUseCases();
+  const config = loadAppConfig();
   const mode = useAppStore((s) => s.mode);
   const sellerCapable = useAppStore((s) => s.sellerCapable);
   const setMode = useAppStore((s) => s.setMode);
   const [email, setEmail] = useState<string>("—");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -30,6 +36,7 @@ export function useProfileData() {
 
   useEffect(() => {
     void load();
+    void fetchMobileUpdateInfo().then(setUpdateInfo).catch(() => setUpdateInfo(null));
   }, [load]);
 
   useEffect(() => {
@@ -62,15 +69,39 @@ export function useProfileData() {
     [commerce.submitProductFeedback],
   );
 
+  const hasUpdate =
+    updateInfo &&
+    updateInfo.updateState !== "NO_UPDATE" &&
+    updateInfo.downloadUrl &&
+    updateInfo.versionCode > Number(config.buildNumber) &&
+    updateInfo.rollout.eligible;
+
+  const onUpdate = useCallback(async () => {
+    if (!updateInfo) return;
+    commerce.trackScreenEvent({ screen: "profile", event: UPDATE_ANALYTICS.started, errorCode: updateInfo.versionName });
+    await startApkDownload(updateInfo);
+  }, [commerce, updateInfo]);
+
+  const trackEvent = useCallback(
+    (input: { event: string; errorCode?: string }) => {
+      commerce.trackScreenEvent({ screen: "profile", ...input });
+    },
+    [commerce],
+  );
+
   return {
     email,
     mode,
     sellerCapable,
     loading,
     error,
+    updateInfo,
+    hasUpdate,
     onLogout,
     onSwitchMode,
     submitFeedback,
+    onUpdate,
+    trackEvent,
     reload: load,
   };
 }

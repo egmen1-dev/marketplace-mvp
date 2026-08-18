@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { useAppStore } from "../../store/app-store";
 import { walletBalanceToView } from "./wallet-view";
 

@@ -104,10 +104,7 @@ export function mapSellerPublicProfileDto(dto: SellerPublicProfileDto): SellerPu
   return {
     id: sellerId(dto.id),
     storeName: dto.storeName,
-    subtitle: dto.description,
-    slug: dto.slug,
-    description: dto.description,
-    isVerified: dto.isVerified,
+    subtitle: dto.description ?? dto.slug,
     rating: null,
     productCount: dto.productCount,
   };

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
 import { productId } from "../../domain/contracts/value-objects/ids";
 import { productSummariesToCardViews } from "../commerce/product-view";

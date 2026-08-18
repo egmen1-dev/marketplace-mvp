@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 
 import type { MobileProductCardData } from "../../design-system/commerce/ProductCard";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { useAppStore } from "../../store/app-store";
 import { sellerProductToCard } from "./seller-view";
 

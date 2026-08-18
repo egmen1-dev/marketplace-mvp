@@ -119,9 +119,9 @@ export function sellerPublicProfileToView(profile: SellerPublicProfile): SellerP
   return {
     id: profile.id,
     storeName: profile.storeName,
-    slug: profile.slug,
-    description: profile.description ?? profile.subtitle,
-    isVerified: profile.isVerified,
+    slug: null,
+    description: profile.subtitle,
+    isVerified: false,
     productCount: profile.productCount,
   };
 }

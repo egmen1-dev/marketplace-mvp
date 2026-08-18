@@ -5,7 +5,7 @@ import type { ProductDetail } from "../../domain/contracts/entities/catalog";
 import { productId } from "../../domain/contracts/value-objects/ids";
 import { money } from "../../domain/contracts/value-objects/money";
 import { domainErrorMessage } from "../../domain/errors/error-factory";
-import { getCommerceUseCases } from "../../domain/services/commerce-container";
+import { getCommerceUseCases } from "../../composition/commerce-container";
 import { loadAppConfig } from "../../config/env";
 import { cartToCommerceView } from "../commerce/cart-view";
 import { deliveryQuoteToView, pickupPointToView } from "../commerce/checkout-view";

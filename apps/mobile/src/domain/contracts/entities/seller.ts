@@ -45,9 +45,6 @@ export type SellerPublicProfile = {
   readonly id: SellerId;
   readonly storeName: string;
   readonly subtitle: string | null;
-  readonly slug: string | null;
-  readonly description: string | null;
-  readonly isVerified: boolean;
   readonly rating: number | null;
   readonly productCount: number;
 };
