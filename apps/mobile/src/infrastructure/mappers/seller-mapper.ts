@@ -22,6 +22,10 @@ import type {
   SellerProductImageUploadResult,
   SellerPublicProfile,
   SellerTaxonomyBrowse,
+  SellerIntelligenceDashboard,
+  SellerIntelligenceSection,
+  SellerInsight,
+  SellerRevenueTrendPoint,
   SellerWorkspace,
   SellerWorkspaceItem,
 } from "../../domain/contracts/entities/seller";
@@ -406,5 +410,50 @@ export function sellerOrderSummaryToSaleCard(order: SellerOrderSummary) {
     sellerItemNames: order.previewTitle ? [order.previewTitle] : ([] as string[]),
     isOverdue: order.isOverdue,
     fulfillmentType: order.fulfillmentType,
+  };
+}
+
+export type SellerIntelligenceDto = {
+  generatedAt: string;
+  sections: Array<{
+    id: SellerIntelligenceSection["id"];
+    title: string;
+    insights: Array<{
+      id: string;
+      title: string;
+      evidence: Array<{ label: string; value: string }>;
+      reason: string;
+      recommendedAction: string;
+      cta: SellerInsight["cta"];
+    }>;
+  }>;
+  revenueTrend: Array<{ date: string; revenue: number; orders: number }> | null;
+  evidenceOnly: true;
+  advisoryOnly?: true;
+};
+
+export function mapSellerIntelligenceDto(dto: SellerIntelligenceDto): SellerIntelligenceDashboard {
+  return {
+    generatedAt: dto.generatedAt,
+    sections: dto.sections.map((section) => ({
+      id: section.id,
+      title: section.title,
+      insights: section.insights.map((insight) => ({
+        id: insight.id,
+        title: insight.title,
+        evidence: insight.evidence.map((item) => ({ ...item })),
+        reason: insight.reason,
+        recommendedAction: insight.recommendedAction,
+        cta: {
+          label: insight.cta.label,
+          actionKind: insight.cta.actionKind,
+          actionPayload: insight.cta.actionPayload,
+          route: insight.cta.route,
+          entityId: insight.cta.entityId,
+        },
+      })),
+    })),
+    revenueTrend: dto.revenueTrend?.map((point) => ({ ...point })) ?? null,
+    evidenceOnly: true,
   };
 }

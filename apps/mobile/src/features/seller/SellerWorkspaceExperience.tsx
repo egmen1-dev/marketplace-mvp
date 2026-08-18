@@ -318,6 +318,23 @@ export function SellerWorkspaceExperience({ state }: Props) {
         <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
           {headerProps ? <SellerHomeHeader header={headerProps} /> : null}
 
+          <View style={styles.intelligenceLinkRow}>
+            <CommerceSectionHeader
+              title="Аналитика"
+              subtitle="Решения на основе реальных данных магазина"
+            />
+            <SecondaryButton
+              label="Открыть центр"
+              onPress={() => {
+                commerce.trackScreenEvent({
+                  screen: "seller_home",
+                  event: "seller_intelligence_link_clicked",
+                });
+                router.push("/seller/intelligence");
+              }}
+            />
+          </View>
+
           <CommerceSectionHeader
             title="Рабочее пространство"
             subtitle="Выполняйте задачи прямо здесь — без лишних переходов"
@@ -380,6 +397,7 @@ export function SellerWorkspaceExperience({ state }: Props) {
 
 const styles = StyleSheet.create({
   section: { gap: spacing.md },
+  intelligenceLinkRow: { gap: spacing.sm },
   skeletonWrap: { gap: spacing.lg, paddingVertical: spacing.md },
   offlineBanner: {
     backgroundColor: semantic.warningSoft,

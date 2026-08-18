@@ -24,6 +24,7 @@ import {
 import { LoadFavorites, ToggleFavorite } from "../domain/use-cases/favorites/favorites-use-cases";
 import { LoadOrderDetail, LoadOrders, ReorderItems, ShareOrder } from "../domain/use-cases/order/order-use-cases";
 import { LoadPickupPoints, QuoteCheckoutDelivery, LoadWallet } from "../domain/use-cases/wallet/wallet-use-cases";
+import { LoadSellerIntelligence } from "../domain/use-cases/seller/seller-intelligence-use-cases";
 import {
   LoadSellerHome,
   LoadSellerOrderDetail,
@@ -96,6 +97,7 @@ export type CommerceUseCases = {
   readonly loadSellerOrdersSummary: LoadSellerOrdersSummary;
   readonly loadSellerOrderDetail: LoadSellerOrderDetail;
   readonly loadSellerPublicProfile: LoadSellerPublicProfile;
+  readonly loadSellerIntelligence: LoadSellerIntelligence;
   readonly executeSellerAction: ExecuteSellerAction;
   readonly trackScreenEvent: (input: { screen: string; event: string; errorCode?: string }) => void;
   readonly events: ReturnType<typeof getDomainEventBus>;
@@ -163,6 +165,7 @@ export function getCommerceUseCases(): CommerceUseCases {
     loadSellerOrdersSummary: new LoadSellerOrdersSummary(seller),
     loadSellerOrderDetail: new LoadSellerOrderDetail(seller),
     loadSellerPublicProfile: new LoadSellerPublicProfile(seller),
+    loadSellerIntelligence: new LoadSellerIntelligence(seller),
     executeSellerAction: new ExecuteSellerAction(seller, events),
     trackScreenEvent: (input) => trackScreenEvent(telemetryRepo!, input),
     events,

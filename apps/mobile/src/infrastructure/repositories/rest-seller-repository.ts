@@ -24,6 +24,7 @@ import {
   mapSellerProductEditorSaveResultDto,
   mapSellerCategoriesDto,
   mapSellerTaxonomyBrowseDto,
+  mapSellerIntelligenceDto,
   mapSellerProductImageUploadResult,
   mapSellerProductDto,
   mapSellerProductPageDto,
@@ -36,6 +37,7 @@ import {
   type SellerProductEditorSaveResultDto,
   type SellerCategoryOptionDto,
   type SellerTaxonomyBrowseDto,
+  type SellerIntelligenceDto,
   type SellerPublicProfileDto,
 } from "../mappers/seller-mapper";
 import { uploadProductImageFromUri } from "../upload/product-image-upload";
@@ -271,6 +273,17 @@ export class RestSellerRepository implements SellerRepository {
         path: `/api/mobile/seller/public/${encodeURIComponent(sellerId)}`,
       });
       return ok(mapSellerPublicProfileDto(dto));
+    } catch (error) {
+      return err(mapApiErrorToDomain(error));
+    }
+  }
+
+  async loadSellerIntelligence(): Promise<Result<import("../../domain/contracts/entities/seller").SellerIntelligenceDashboard>> {
+    try {
+      const dto = await this.transport.request<SellerIntelligenceDto>({
+        path: "/api/mobile/seller/intelligence",
+      });
+      return ok(mapSellerIntelligenceDto(dto));
     } catch (error) {
       return err(mapApiErrorToDomain(error));
     }

@@ -394,3 +394,56 @@ export type SellerPublicProfile = {
   readonly rating: number | null;
   readonly productCount: number;
 };
+
+export type SellerIntelligenceSectionId =
+  | "todays_risks"
+  | "todays_opportunities"
+  | "products_losing_sales"
+  | "products_gaining_sales"
+  | "low_stock_forecast"
+  | "revenue_trend"
+  | "top_products"
+  | "slow_products"
+  | "pending_actions"
+  | "completed_actions";
+
+export type SellerInsightEvidence = {
+  readonly label: string;
+  readonly value: string;
+};
+
+export type SellerInsightCta = {
+  readonly label: string;
+  readonly actionKind: SellerActionKind | null;
+  readonly actionPayload: Readonly<Record<string, string | number | boolean | null>> | null;
+  readonly route: "orders" | "products" | "wallet" | "profile" | null;
+  readonly entityId: string | null;
+};
+
+export type SellerInsight = {
+  readonly id: string;
+  readonly title: string;
+  readonly evidence: ReadonlyArray<SellerInsightEvidence>;
+  readonly reason: string;
+  readonly recommendedAction: string;
+  readonly cta: SellerInsightCta;
+};
+
+export type SellerIntelligenceSection = {
+  readonly id: SellerIntelligenceSectionId;
+  readonly title: string;
+  readonly insights: ReadonlyArray<SellerInsight>;
+};
+
+export type SellerRevenueTrendPoint = {
+  readonly date: string;
+  readonly revenue: number;
+  readonly orders: number;
+};
+
+export type SellerIntelligenceDashboard = {
+  readonly generatedAt: string;
+  readonly sections: ReadonlyArray<SellerIntelligenceSection>;
+  readonly revenueTrend: ReadonlyArray<SellerRevenueTrendPoint> | null;
+  readonly evidenceOnly: true;
+};

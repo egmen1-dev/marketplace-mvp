@@ -103,6 +103,7 @@ export interface SellerRepository {
   loadSellerOrdersSummary(): Promise<Result<import("../entities/seller").SellerOrdersSummary>>;
   loadSellerOrderDetail(orderId: OrderId): Promise<Result<import("../entities/seller").SellerOrderDetail>>;
   loadPublicProfile(sellerId: SellerId): Promise<Result<SellerPublicProfile>>;
+  loadSellerIntelligence(): Promise<Result<import("../entities/seller").SellerIntelligenceDashboard>>;
   executeAction(input: import("../entities/seller").SellerActionInput): Promise<Result<import("../entities/seller").SellerActionResult>>;
 }
 
