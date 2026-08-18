@@ -1,119 +1,81 @@
 import { router } from "expo-router";
-import { useState } from "react";
-import { Image, Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useMemo, useState } from "react";
+import { Linking } from "react-native";
 
 import { login } from "../src/api/client";
 import { postTelemetry } from "../src/api/endpoints";
 import { loadAppConfig } from "../src/config/env";
 import { routeDeepLink } from "../src/deep-links/route-deep-link";
-import { GhostButton, PrimaryButton } from "../src/components/ui";
+import { LoginExperience } from "../src/features/auth/LoginExperience";
+import { hapticError, hapticSuccess } from "../src/hooks/useHapticFeedback";
 import { useAppStore } from "../src/store/app-store";
-import { colors, layout, radii, spacing, typography } from "../src/theme/tokens";
+
+const SUCCESS_HOLD_MS = 450;
 
 export default function LoginScreen() {
   const pendingDeepLink = useAppStore((s) => s.pendingDeepLink);
   const setPendingDeepLink = useAppStore((s) => s.setPendingDeepLink);
   const setUserRole = useAppStore((s) => s.setUserRole);
   const config = loadAppConfig();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  async function onSubmit() {
-    setLoading(true);
-    setError(null);
-    try {
-      const pending = pendingDeepLink;
-      const data = await login({ email, password, pendingDeepLink: pending ?? undefined });
-      setUserRole(data.role ?? "BUYER");
-      await postTelemetry({ screen: "login", event: "login_success" });
-      setPendingDeepLink(null);
-      if (pending && routeDeepLink(pending)) return;
-      router.replace("/(tabs)");
-    } catch (err) {
-      await postTelemetry({ screen: "login", event: "login_failed", errorCode: "LOGIN_FAILED" });
-      setError(err instanceof Error ? err.message : "Не удалось войти");
-    } finally {
-      setLoading(false);
-    }
-  }
+  const canSubmit = useMemo(
+    () => email.trim().length > 3 && password.length >= 4 && !loading && !success,
+    [email, password, loading, success],
+  );
 
   function openWeb(path: string) {
     Linking.openURL(`${config.apiBaseUrl}${path}`);
   }
 
+  async function onSubmit() {
+    if (!canSubmit) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const pending = pendingDeepLink;
+      const data = await login({ email: email.trim(), password, pendingDeepLink: pending ?? undefined });
+      setUserRole(data.role ?? "BUYER");
+      await postTelemetry({ screen: "login", event: "login_success" });
+      setPendingDeepLink(null);
+      setSuccess(true);
+      hapticSuccess();
+      await new Promise((resolve) => setTimeout(resolve, SUCCESS_HOLD_MS));
+      if (pending && routeDeepLink(pending)) return;
+      router.replace("/(tabs)");
+    } catch (err) {
+      await postTelemetry({ screen: "login", event: "login_failed", errorCode: "LOGIN_FAILED" });
+      hapticError();
+      setError(err instanceof Error ? err.message : "Проверьте email и пароль и попробуйте снова");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <View style={styles.container}>
-      <View style={styles.brandBlock}>
-        <Image source={require("../assets/splash-icon.png")} style={styles.logo} />
-        <Text style={styles.brandTitle}>ЛОТ</Text>
-        <Text style={styles.brandSubtitle}>Покупайте и продавайте в одном приложении</Text>
-      </View>
-
-      <View style={styles.form}>
-        <TextInput
-          autoCapitalize="none"
-          keyboardType="email-address"
-          placeholder="Email"
-          placeholderTextColor={colors.gray500}
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-        />
-        <View style={styles.passwordRow}>
-          <TextInput
-            secureTextEntry={!showPassword}
-            placeholder="Пароль"
-            placeholderTextColor={colors.gray500}
-            value={password}
-            onChangeText={setPassword}
-            style={[styles.input, styles.passwordInput]}
-          />
-          <Pressable
-            accessibilityLabel="Показать пароль"
-            onPress={() => setShowPassword((v) => !v)}
-            style={styles.eye}
-          >
-            <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={colors.gray500} />
-          </Pressable>
-        </View>
-
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-
-        <PrimaryButton label="Войти" onPress={onSubmit} loading={loading} fullWidth size="md" />
-
-        <View style={styles.links}>
-          <GhostButton label="Создать аккаунт" onPress={() => openWeb("/auth/sign-up")} />
-          <GhostButton label="Забыли пароль?" onPress={() => openWeb("/auth/sign-in")} />
-        </View>
-      </View>
-    </View>
+    <LoginExperience
+      email={email}
+      password={password}
+      showPassword={showPassword}
+      error={error}
+      loading={loading}
+      success={success}
+      canSubmit={canSubmit}
+      onEmailChange={setEmail}
+      onPasswordChange={setPassword}
+      onTogglePassword={() => setShowPassword((v) => !v)}
+      onSubmit={onSubmit}
+      onClearError={() => setError(null)}
+      onRegister={() => openWeb("/auth/sign-up")}
+      onForgotPassword={() => openWeb("/auth/sign-in")}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.xl, backgroundColor: colors.white, justifyContent: "center", gap: spacing.xxl },
-  brandBlock: { alignItems: "center", gap: spacing.sm },
-  logo: { width: 72, height: 72, borderRadius: radii.lg },
-  brandTitle: { ...typography.display, color: colors.orange },
-  brandSubtitle: { ...typography.body, color: colors.gray500, textAlign: "center" },
-  form: { gap: spacing.md },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.lg,
-    minHeight: layout.inputHeight,
-    backgroundColor: colors.white,
-    ...typography.body,
-    color: colors.black,
-  },
-  passwordRow: { position: "relative" },
-  passwordInput: { paddingRight: 48 },
-  eye: { position: "absolute", right: spacing.sm, top: 0, bottom: 0, width: 40, alignItems: "center", justifyContent: "center" },
-  error: { color: colors.danger, ...typography.caption },
-  links: { flexDirection: "row", justifyContent: "space-between" },
-});
