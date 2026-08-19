@@ -1,5 +1,6 @@
 import type { MobileReleaseChannelId } from "@prisma/client";
 
+import { resolveMRPChannelFromClient } from "../channels";
 import { isClientBelowMinimumSupported, getMinimumSupportedVersion } from "../baseline";
 import { evaluateCompatibility, type CompatibilityInput } from "../compatibility";
 import { parseReleaseNotes } from "../registry/map-release";
@@ -10,7 +11,8 @@ import { resolveUpdateState } from "./resolve-update-state";
 import { buildUnsupportedClientPayload } from "./unsupported-client";
 
 export type UpdateQuery = CompatibilityInput & {
-  channel?: MobileReleaseChannelId;
+  /** MRP channel id or client label (e.g. CLOSED_BETA → BETA). */
+  channel?: MobileReleaseChannelId | string;
   deviceId?: string;
 };
 
@@ -21,7 +23,7 @@ const CLOSED_ALPHA_KNOWN_ISSUES = [
 ];
 
 export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVersionCode: 1 }): Promise<MobileUpdatePayload> {
-  const channel = query.channel ?? "CLOSED_ALPHA";
+  const channel = resolveMRPChannelFromClient(query.channel ?? "CLOSED_ALPHA");
   const latest = await getLatestPublishedRelease(channel);
   const history = await listReleaseVersions();
   const previous = history.find((row) => row.versionCode < (latest?.versionCode ?? 0)) ?? null;

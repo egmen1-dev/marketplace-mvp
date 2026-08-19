@@ -11,10 +11,12 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const versionCode = Number(url.searchParams.get("versionCode") ?? "1");
   const deviceId = url.searchParams.get("deviceId") ?? undefined;
+  const channel = url.searchParams.get("channel") ?? undefined;
 
   const payload = await buildLegacyAndroidUpdatePayload({
     clientVersionCode: Number.isFinite(versionCode) ? versionCode : 1,
     deviceId,
+    channel,
   });
 
   return NextResponse.json(withMobileApiContract(payload, payload.latestVersion));

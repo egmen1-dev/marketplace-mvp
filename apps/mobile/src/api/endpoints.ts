@@ -3,6 +3,7 @@ import type { BootstrapPayload } from "../types/api";
 import { getDeviceId } from "../storage/secure-session";
 import { loadAppConfig } from "../config/env";
 import { getSessionId } from "../telemetry/session";
+import { getMobileUpdateChannel } from "./update-channel";
 
 export type MobileUpdateState =
   | "NO_UPDATE"
@@ -69,7 +70,7 @@ export async function fetchMobileUpdate(): Promise<MobileUpdateInfo> {
   const qs = new URLSearchParams({
     versionCode: String(versionCode),
     deviceId,
-    channel: "CLOSED_ALPHA",
+    channel: getMobileUpdateChannel(),
   });
   const raw = await apiRequest<
     MobileUpdateInfo & {

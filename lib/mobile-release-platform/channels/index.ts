@@ -1,5 +1,6 @@
 export { RELEASE_CHANNELS } from "../types";
 export type { ReleaseChannelMeta } from "../types";
+export { resolveMRPChannelFromClient, type ClientReleaseChannel } from "./resolve-client-channel";
 
 import type { MobileReleaseChannelId } from "@prisma/client";
 

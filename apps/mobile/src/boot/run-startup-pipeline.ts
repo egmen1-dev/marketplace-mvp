@@ -18,6 +18,7 @@ import {
   type StartupBootReport,
 } from "./startup-diagnostics";
 import { withTimeout } from "./with-timeout";
+import { getMobileUpdateChannel } from "../api/update-channel";
 
 export const BOOT_STEP_TIMEOUT_MS = 12_000;
 export const BOOT_HARD_TIMEOUT_MS = 60_000;
@@ -174,7 +175,7 @@ export async function runStartupPipeline(): Promise<StartupPipelineResult> {
     const qs = new URLSearchParams({
       versionCode: String(versionCode),
       deviceId,
-      channel: "CLOSED_ALPHA",
+      channel: getMobileUpdateChannel(),
     });
     update = await withTimeout(
       "update_check",
