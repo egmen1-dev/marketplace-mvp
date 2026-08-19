@@ -94,7 +94,26 @@ export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVers
 
 /** Android/update alias — same unified payload since EPIC 83 */
 export async function buildLegacyAndroidUpdatePayload(query: UpdateQuery = { clientVersionCode: 1 }) {
-  const payload = await buildMobileUpdatePayload(query);
+  let payload: MobileUpdatePayload;
+
+  if (!query.channel) {
+    const betaMinimum = getMinimumSupportedVersion("BETA");
+    const eligibleForBeta =
+      betaMinimum != null && query.clientVersionCode >= betaMinimum.versionCode;
+    if (eligibleForBeta) {
+      const betaPayload = await buildMobileUpdatePayload({ ...query, channel: "BETA" });
+      if (betaPayload.downloadUrl) {
+        payload = betaPayload;
+      } else {
+        payload = await buildMobileUpdatePayload({ ...query, channel: "CLOSED_ALPHA" });
+      }
+    } else {
+      payload = await buildMobileUpdatePayload({ ...query, channel: "CLOSED_ALPHA" });
+    }
+  } else {
+    payload = await buildMobileUpdatePayload(query);
+  }
+
   return {
     versionCode: payload.versionCode,
     versionName: payload.versionName,
