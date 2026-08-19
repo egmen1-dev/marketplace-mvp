@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-08-18T13:57:04.488Z",
+  "routes": [
+    {
+      "id": "health",
+      "path": "/api/health",
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 245,
+      "onOriginMain": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "version",
+      "path": "/api/version",
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 96,
+      "onOriginMain": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "product_ops_config",
+      "path": "/api/product-ops/config?surface=mobile&deviceId=epic110",
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 153,
+      "onOriginMain": true,
+      "verdict": "PASS"
+    },
+    {
+      "id": "beta_dashboard",
+      "path": "/api/product-ops/beta/dashboard",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_journey",
+      "path": "/api/product-ops/beta/journey",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_readiness",
+      "path": "/api/product-ops/beta/readiness",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_performance",
+      "path": "/api/product-ops/beta/performance",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_crashes",
+      "path": "/api/product-ops/beta/crashes",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "beta_exit_report",
+      "path": "/api/product-ops/beta/exit-report",
+      "httpStatus": 0,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    },
+    {
+      "id": "checkout_web_url",
+      "path": "/api/mobile/checkout/web-url",
+      "httpStatus": 0,
+      "expectedStatus": [
+        401,
+        403,
+        405
+      ],
+      "latencyMs": 0,
+      "onOriginMain": false,
+      "verdict": "SKIP"
+    }
+  ],
+  "verdict": "PASS"
+}

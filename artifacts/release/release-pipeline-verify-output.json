@@ -1,0 +1,50 @@
+
+> marketplace-mvp@0.1.0 release:pipeline:verify
+> tsx scripts/release-pipeline-verify.ts
+
+{
+  "epic": "EPIC-109",
+  "generatedAt": "2026-08-18T14:59:46.631Z",
+  "verdict": "BLOCKED",
+  "deploymentVerification": "PASS",
+  "healthCheck": "PASS",
+  "routeVerification": "PASS",
+  "prPolicyAudit": {
+    "generatedAt": "2026-08-18T14:59:46.630Z",
+    "creationPaths": {
+      "cursorCloudAgentManagePullRequest": {
+        "createsDraftByDefault": true,
+        "evidence": "Cloud agent ManagePullRequest create_pr uses draft=true unless draft=false passed",
+        "recommendation": "Always pass draft: false when creating PRs; see docs/RELEASE_PIPELINE.md"
+      },
+      "githubUi": {
+        "createsDraftByDefault": false,
+        "note": "Operator chooses Draft PR checkbox manually"
+      },
+      "githubCli": {
+        "createsDraftByDefault": false,
+        "flag": "--draft optional; not used in this repository scripts",
+        "evidence": "No gh pr create in repo"
+      }
+    },
+    "openDraftPrCount": 35,
+    "mergeableCleanDraftPrs": [],
+    "limitation": "Cursor cannot change global ManagePullRequest default; agents must set draft=false per AGENTS.md"
+  },
+  "acceptanceCriteria": {
+    "noProductionReadyDraftPr": true,
+    "deploymentVerifiedAgainstGitSha": true,
+    "criticalRoutesAutomated": true,
+    "railwayVerificationExists": true,
+    "releaseDocumentationUpdated": true,
+    "futureReleasesCannotSkipVerification": true
+  },
+  "blockers": [
+    {
+      "id": "local_main_drift",
+      "severity": "P0",
+      "detail": "git main !== origin/main — fetch and align before release sign-off"
+    }
+  ],
+  "releaseStatusPath": "artifacts/release-pipeline/release-status.json"
+}

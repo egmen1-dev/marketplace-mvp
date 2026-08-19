@@ -76,6 +76,12 @@ const NAV_ITEMS = [
     match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_BETA_DASHBOARD),
   },
   {
+    href: ROUTES.ADMIN_RELEASE,
+    label: "Release",
+    icon: Rocket,
+    match: (pathname: string) => pathname.startsWith(ROUTES.ADMIN_RELEASE),
+  },
+  {
     href: ROUTES.ADMIN_TRUST_CENTER,
     label: "Trust Center",
     icon: ShieldCheck,
