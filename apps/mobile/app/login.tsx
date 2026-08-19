@@ -6,7 +6,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { login } from "../src/api/client";
 import { postTelemetry } from "../src/api/endpoints";
 import { loadAppConfig } from "../src/config/env";
-import { routeDeepLink } from "../src/deep-links/route-deep-link";
+import { resolvePostAuthHref } from "../src/deep-links/resolve-post-auth-href";
 import { GhostButton, PrimaryButton } from "../src/components/ui";
 import { useAppStore } from "../src/store/app-store";
 import { colors, layout, radii, spacing, typography } from "../src/theme/tokens";
@@ -28,11 +28,17 @@ export default function LoginScreen() {
     try {
       const pending = pendingDeepLink;
       const data = await login({ email, password, pendingDeepLink: pending ?? undefined });
-      setUserRole(data.role ?? "BUYER");
+      const role = data.role ?? "BUYER";
+      setUserRole(role);
       await postTelemetry({ screen: "login", event: "login_success" });
       setPendingDeepLink(null);
-      if (pending && routeDeepLink(pending)) return;
-      router.replace("/(tabs)");
+      router.replace(
+        resolvePostAuthHref({
+          role,
+          pendingDeepLink: pending,
+          destination: data.destination as { webPath?: string } | null | undefined,
+        }),
+      );
     } catch (err) {
       await postTelemetry({ screen: "login", event: "login_failed", errorCode: "LOGIN_FAILED" });
       setError(err instanceof Error ? err.message : "Не удалось войти");

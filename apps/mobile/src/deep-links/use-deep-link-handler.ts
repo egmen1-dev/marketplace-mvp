@@ -2,7 +2,8 @@ import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import { useEffect } from "react";
 
-import { routeDeepLink } from "../deep-links/route-deep-link";
+import { shouldCaptureAsPendingDeepLink } from "./is-app-deep-link";
+import { routeDeepLink } from "./route-deep-link";
 import { getAccessToken } from "../storage/secure-session";
 import { useAppStore } from "../store/app-store";
 
@@ -11,7 +12,8 @@ export function useDeepLinkHandler() {
 
   useEffect(() => {
     async function handle(url: string | null) {
-      if (!url) return;
+      if (!url || !shouldCaptureAsPendingDeepLink(url)) return;
+
       const token = await getAccessToken();
       if (!token) {
         setPendingDeepLink(url);

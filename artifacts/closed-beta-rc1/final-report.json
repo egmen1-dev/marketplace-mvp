@@ -1,0 +1,65 @@
+{
+  "candidate": "BUILT",
+  "apk": "artifacts/closed-beta-rc1/lot-android-closed-beta-0.1.6-beta.1.apk",
+  "sha256": "ee70963102b627d2dd2cd85794c0c8e2355f6f92caa8ebed6a81d68ab93ecca7",
+  "package": "ru.lot.marketplace.alpha",
+  "version": "0.1.6-beta.1",
+  "versionCode": 4,
+  "mobileCommit": "0887897b2d080c408741531fcac6c3b56ac57297",
+  "stagingApi": "https://web-production-e56fb.up.railway.app",
+  "railwayCommit": "d9f0eca635c777fa64cb204280dbd241c2c6ce1f",
+  "environment": "staging",
+  "releaseChannel": "closed-beta",
+  "typecheck": "PASS",
+  "tests": "PASS",
+  "p0StartupGate": "PASS",
+  "architectureGates": "PASS",
+  "sellerRegression": "PASS",
+  "betaApi": "PASS",
+  "checkoutRoute": "REGISTERED",
+  "firebaseTestLab": "NOT_RUN",
+  "physicalAndroid": "NOT_RUN",
+  "final": "READY_FOR_INTERNAL_INSTALL",
+  "notClaimed": [
+    "READY_FOR_CLOSED_BETA",
+    "PHYSICAL_ANDROID_PASS",
+    "PUBLIC_BETA_PUBLISHED"
+  ],
+  "staticSurfaces": {
+    "buyer": {
+      "login": { "route": "app/login.tsx", "status": "NATIVE" },
+      "home": { "route": "app/(tabs)/index.tsx", "status": "NATIVE" },
+      "catalogSearch": { "route": "app/(tabs)/catalog.tsx", "status": "NATIVE" },
+      "pdp": { "route": "app/product/[id].tsx", "status": "NATIVE" },
+      "favorites": { "route": "app/(tabs)/favorites.tsx", "status": "NATIVE" },
+      "cart": { "route": "app/cart.tsx", "status": "NATIVE" },
+      "checkoutHandoff": { "route": "app/checkout.tsx", "status": "NATIVE_WEB_HANDOFF" },
+      "orders": { "route": "app/(tabs)/orders.tsx", "status": "NATIVE" },
+      "profile": { "route": "app/(tabs)/profile.tsx", "status": "NATIVE" }
+    },
+    "seller": {
+      "sellerHome": { "route": "app/(tabs)/seller-home.tsx", "status": "NATIVE" },
+      "workspace": { "status": "WEB_DELEGATED", "note": "No dedicated native route" },
+      "actionCenter": { "status": "EMBEDDED", "note": "Tasks surfaced on seller-home" },
+      "products": { "route": "app/(tabs)/seller-products.tsx", "status": "NATIVE" },
+      "productEditor": { "status": "WEB_DELEGATED", "note": "No dedicated native editor route" },
+      "orders": { "route": "app/(tabs)/seller-sales.tsx", "status": "NATIVE" },
+      "inventory": { "status": "WEB_DELEGATED", "note": "Backend EPIC 89; no native inventory screen" },
+      "promotionCenter": { "status": "EMBEDDED", "note": "Metrics on seller-home; full center web-delegated" },
+      "intelligence": { "status": "EMBEDDED", "note": "AI block on seller-home" },
+      "wallet": { "route": "app/(tabs)/wallet.tsx", "status": "NATIVE" }
+    },
+    "beta": {
+      "feedbackCenter": { "route": "app/feedback.tsx", "status": "NATIVE" },
+      "buildInfo": { "route": "app/(tabs)/profile.tsx footer", "status": "NATIVE_DIAGNOSTICS" },
+      "startupDiagnostics": { "status": "TELEMETRY_ONLY", "note": "run-startup-pipeline.ts; no dedicated UI screen" }
+    }
+  },
+  "apkVerification": {
+    "aaptBadging": "artifacts/closed-beta-rc1/aapt-badging.txt",
+    "apkanalyzerManifest": "artifacts/closed-beta-rc1/apkanalyzer-manifest.xml",
+    "minSdk": 24,
+    "targetSdk": 36,
+    "installableReleaseBinary": true
+  }
+}

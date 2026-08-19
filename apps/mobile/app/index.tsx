@@ -1,14 +1,20 @@
 import { Redirect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 
 import {
   BOOT_HARD_TIMEOUT_MS,
   runStartupPipeline,
   type StartupPipelineResult,
 } from "../src/boot/run-startup-pipeline";
-import { emitStartupEvent, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
-import { PrimaryButton } from "../src/components/ui";
+import {
+  formatBootReportJson,
+  formatBootReportSummary,
+  getCurrentBootStage,
+  getStartupBootReport,
+} from "../src/boot/startup-diagnostics";
+import { emitStartupEvent, emitStartupFailureReport, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
+import { PrimaryButton, SecondaryButton } from "../src/components/ui";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
 import { useAppStore } from "../src/store/app-store";
@@ -20,6 +26,7 @@ export default function BootScreen() {
   const setUserRole = useAppStore((s) => s.setUserRole);
   const setPendingUpdate = useAppStore((s) => s.setPendingUpdate);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [unsupported, setUnsupported] = useState<MobileUpdateInfo | null>(null);
   const [ready, setReady] = useState<"login" | "app" | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -32,9 +39,12 @@ export default function BootScreen() {
         return;
       }
       if (result.status === "error") {
-        setError(result.message);
+        setError(result.userMessage);
+        setErrorDetails(result.message);
         return;
       }
+      setError(null);
+      setErrorDetails(null);
       if (result.remoteConfig) setRemoteConfig(result.remoteConfig);
       if (result.role) setUserRole(result.role);
       if (result.update) setPendingUpdate(result.update);
@@ -48,6 +58,7 @@ export default function BootScreen() {
     let cancelled = false;
     finishedRef.current = false;
     setError(null);
+    setErrorDetails(null);
     setUnsupported(null);
     setReady(null);
 
@@ -60,8 +71,14 @@ export default function BootScreen() {
     const hardTimeout = setTimeout(() => {
       if (cancelled || finishedRef.current) return;
       finishedRef.current = true;
-      emitStartupEvent(STARTUP_EVENTS.bootTimeout);
+      const stage = getCurrentBootStage();
+      const report = getStartupBootReport();
+      emitStartupEvent(STARTUP_EVENTS.bootTimeout, stage);
+      emitStartupFailureReport(report);
       setError("Не удалось загрузить приложение");
+      setErrorDetails(
+        `${formatBootReportSummary(report)}\n\nТаймаут загрузки (${BOOT_HARD_TIMEOUT_MS}ms) на этапе: ${stage}`,
+      );
     }, BOOT_HARD_TIMEOUT_MS);
 
     return () => {
@@ -69,6 +86,14 @@ export default function BootScreen() {
       clearTimeout(hardTimeout);
     };
   }, [attempt, applyResult]);
+
+  async function shareDiagnostics() {
+    const report = getStartupBootReport();
+    await Share.share({
+      message: formatBootReportJson(report),
+      title: "ЛОТ — диагностика запуска",
+    });
+  }
 
   if (unsupported) {
     return (
@@ -91,7 +116,13 @@ export default function BootScreen() {
       {error ? (
         <View style={styles.errorBlock}>
           <Text style={styles.error}>{error}</Text>
+          {errorDetails ? (
+            <ScrollView style={styles.detailsScroll} nestedScrollEnabled>
+              <Text style={styles.details} selectable>{errorDetails}</Text>
+            </ScrollView>
+          ) : null}
           <PrimaryButton label="Повторить" onPress={() => setAttempt((n) => n + 1)} fullWidth />
+          <SecondaryButton label="Отправить диагностику" onPress={shareDiagnostics} fullWidth />
         </View>
       ) : (
         <>
@@ -110,6 +141,8 @@ const styles = StyleSheet.create({
   title: { ...typography.display, color: colors.orange, fontSize: 36 },
   tagline: { ...typography.body, color: colors.gray500 },
   caption: { ...typography.caption, color: colors.gray500, marginTop: spacing.md },
-  errorBlock: { width: "100%", maxWidth: 320, gap: spacing.md },
-  error: { color: colors.danger, textAlign: "center" },
+  errorBlock: { width: "100%", maxWidth: 360, gap: spacing.md },
+  error: { color: colors.danger, textAlign: "center", ...typography.subtitle },
+  detailsScroll: { maxHeight: 220, borderWidth: 1, borderColor: colors.gray200, borderRadius: 12, padding: spacing.sm },
+  details: { ...typography.caption, color: colors.gray700, fontFamily: "monospace" },
 });
