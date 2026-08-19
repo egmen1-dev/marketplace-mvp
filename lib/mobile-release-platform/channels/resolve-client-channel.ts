@@ -19,6 +19,8 @@ export function resolveMRPChannelFromClient(clientChannel?: string | null): Mobi
     case "CLOSED_BETA":
     case "OPEN_BETA":
       return "BETA";
+    case "BETA":
+      return "BETA";
     case "RC":
       return "RC";
     case "PRODUCTION":

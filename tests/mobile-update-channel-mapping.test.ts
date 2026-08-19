@@ -11,7 +11,9 @@ describe("resolveMRPChannelFromClient", () => {
     expect(resolveMRPChannelFromClient("CLOSED_ALPHA")).toBe("CLOSED_ALPHA");
   });
 
-  it("defaults unknown channels to CLOSED_ALPHA", () => {
+  it("maps BETA to BETA", () => {
+    expect(resolveMRPChannelFromClient("BETA")).toBe("BETA");
+  });
     expect(resolveMRPChannelFromClient(undefined)).toBe("CLOSED_ALPHA");
     expect(resolveMRPChannelFromClient("")).toBe("CLOSED_ALPHA");
   });
