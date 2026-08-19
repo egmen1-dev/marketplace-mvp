@@ -1,0 +1,53 @@
+{
+  "candidate": "RC2",
+  "buildResult": "SUCCESS",
+  "verificationResult": "PASS",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "apkPath": "artifacts/closed-beta-rc2/lot_android_closed_beta_0.1.7_beta.1.apk",
+  "apkSizeBytes": 93651247,
+  "sha256": "dfc86aa3ca4f3e77397b87a364f12a5e2fd3cf43de96a8b41d7edc23576da13c",
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.7-beta.1",
+  "versionCode": 6,
+  "minSdk": 24,
+  "targetSdk": 36,
+  "abi": ["arm64-v8a"],
+  "commitSha": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "railwaySha": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "buildTime": "2026-08-19T10:50:30Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "signedWith": "debug.keystore (internal testing only)",
+  "releaseGates": {
+    "preconditions": "PASS",
+    "pr135Merge": "PASS",
+    "typecheck": "PASS",
+    "mobileTests": "PASS",
+    "p0Tests": "PASS",
+    "releaseGate": "PASS",
+    "apkVerification": "PASS"
+  },
+  "verificationSummary": "Canonical RC2 built from origin/main after PR #135 merge and version bump. All automated gates PASS. APK metadata matches target package/version. Embedded commit SHA, build time, staging API URL, and CLOSED_BETA channel verified in bundle.",
+  "p0FixesIncluded": [
+    "bootstrap-diagnostics",
+    "post-login-native-navigation",
+    "https-network-security"
+  ],
+  "knownLimitations": [
+    "Debug keystore signing — internal testing only",
+    "Physical Android validation NOT_RUN",
+    "RC1.1 physical testing in progress on separate build (0.1.6-beta.2 code 5)",
+    "Beta readiness dashboard buyer/seller journey metrics may show FAIL on staging (observability; not an APK build gate)"
+  ],
+  "artifacts": {
+    "apk": "artifacts/closed-beta-rc2/lot_android_closed_beta_0.1.7_beta.1.apk",
+    "sha256": "artifacts/closed-beta-rc2/sha256.txt",
+    "buildManifest": "artifacts/closed-beta-rc2/build-manifest.json",
+    "aaptBadging": "artifacts/closed-beta-rc2/aapt-badging.txt",
+    "apkanalyzerManifest": "artifacts/closed-beta-rc2/apkanalyzer-manifest.xml",
+    "releaseGates": "artifacts/closed-beta-rc2/release-gates.json",
+    "backendParity": "artifacts/closed-beta-rc2/backend-parity.json",
+    "finalReport": "artifacts/closed-beta-rc2/final-report.json"
+  }
+}

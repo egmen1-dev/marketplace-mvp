@@ -1,0 +1,78 @@
+{
+  "recordedAt": "2026-08-19T13:18:13Z",
+  "candidateVersion": "0.1.7-beta.1",
+  "candidateVersionCode": 6,
+  "buildAttempted": true,
+  "summary": {
+    "preconditions": "PASS",
+    "pr135Merge": "PASS",
+    "typecheck": "PASS",
+    "mobileTests": "PASS",
+    "p0BootstrapDiagnosticsTests": "PASS",
+    "p0PostAuthNavigationTests": "PASS",
+    "releaseGate": "PASS",
+    "apkVerification": "PASS",
+    "physicalAndroid": "NOT_RUN"
+  },
+  "gates": [
+    {
+      "id": "precondition:pr135-merge",
+      "command": "gh pr merge 135",
+      "verdict": "PASS",
+      "detail": "PR #135 merged to main (merge commit c95e4fe)"
+    },
+    {
+      "id": "precondition:p0-on-main",
+      "command": "git cat-file on origin/main",
+      "verdict": "PASS",
+      "detail": "startup-diagnostics, +native-intent, resolve-post-auth-href, withAndroidNetworkSecurity present"
+    },
+    {
+      "id": "precondition:staging-sha-parity",
+      "command": "npm run mobile:release-gate",
+      "verdict": "PASS",
+      "detail": "stagingSha 7f12bde equals mainSha 7f12bde"
+    },
+    {
+      "id": "mobile:typecheck",
+      "command": "npm run mobile:typecheck",
+      "verdict": "PASS"
+    },
+    {
+      "id": "mobile:test",
+      "command": "npm run mobile:test",
+      "verdict": "PASS",
+      "detail": "apps/mobile node:test 4 pass"
+    },
+    {
+      "id": "mobile:p0-bootstrap-diagnostics-tests",
+      "command": "npm test -- tests/mobile-bootstrap-diagnostics.test.ts",
+      "verdict": "PASS",
+      "detail": "2 tests, 0 failures"
+    },
+    {
+      "id": "mobile:p0-post-auth-navigation-tests",
+      "command": "npm test -- tests/mobile-post-auth-navigation.test.ts",
+      "verdict": "PASS",
+      "detail": "6 tests, 0 failures"
+    },
+    {
+      "id": "mobile:release-gate",
+      "command": "npm run mobile:release-gate",
+      "verdict": "PASS",
+      "detail": "mobileStagingBackend READY"
+    },
+    {
+      "id": "apk:verify-android-apk",
+      "command": "node scripts/verify-android-apk.mjs",
+      "verdict": "PASS",
+      "detail": "ru.lot.marketplace.alpha 0.1.7-beta.1 code 6 minSdk 24 targetSdk 36 size 93651247"
+    },
+    {
+      "id": "physical-android",
+      "command": null,
+      "verdict": "NOT_RUN",
+      "detail": "RC2 built for operator physical validation"
+    }
+  ]
+}

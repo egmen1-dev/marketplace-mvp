@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-08-19T13:18:13Z",
+  "originMainCommit": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "railwayStagingCommit": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "mobileApkCommit": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "stagingApiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "parityAssessment": "ALIGNED",
+  "parityNote": "origin/main, Railway staging deploy, and RC2 APK embed the same commit SHA after PR #135 merge and RC2 version bump.",
+  "routeProbes": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "path": "/api/version",
+      "status": 200,
+      "ok": true,
+      "commit": "7f12bde"
+    },
+    {
+      "path": "/api/product-ops/beta/readiness",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "path": "/api/product-ops/beta/dashboard",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "path": "/api/mobile/checkout/web-url",
+      "status": 401,
+      "ok": true,
+      "note": "401 proves route registered; auth required"
+    },
+    {
+      "path": "/api/mobile/checkout/enter",
+      "status": 307,
+      "ok": true,
+      "note": "redirect without token; route registered"
+    }
+  ],
+  "checkoutRoute": "REGISTERED",
+  "mobileVersion": {
+    "versionName": "0.1.7-beta.1",
+    "versionCode": 6
+  }
+}

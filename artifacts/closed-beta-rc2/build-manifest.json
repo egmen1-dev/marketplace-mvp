@@ -1,0 +1,43 @@
+{
+  "candidate": "RC2",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.7-beta.1",
+  "versionCode": 6,
+  "commitSha": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "baseCommitSha": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a",
+  "buildTime": "2026-08-19T10:50:30Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "betaChannel": "CLOSED_BETA",
+  "startupVerbose": true,
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.7_beta.1.apk",
+    "path": "artifacts/closed-beta-rc2/lot_android_closed_beta_0.1.7_beta.1.apk",
+    "sha256": "dfc86aa3ca4f3e77397b87a364f12a5e2fd3cf43de96a8b41d7edc23576da13c",
+    "sizeBytes": 93651247
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "buildType": "release",
+    "signedWith": "debug.keystore (internal install only)",
+    "abi": ["arm64-v8a"]
+  },
+  "embeddedMetadata": {
+    "commitShaVerifiedInBundle": true,
+    "buildTimeVerifiedInBundle": true,
+    "versionNameVerifiedInBundle": true,
+    "apiHostVerifiedInBundle": true,
+    "betaChannelVerifiedInBundle": true,
+    "p0BootstrapDiagnosticsVerifiedInBundle": true,
+    "p0PostAuthNavigationVerifiedInBundle": true
+  },
+  "mergeHistory": {
+    "pr135MergedAt": "2026-08-19T10:44:34Z",
+    "pr135MergeCommit": "c95e4fe83b6995213cda60c9c7b0a66d48df424c",
+    "releaseMetadataCommit": "7f12bde6e874b3654897add7fa6eb94ef02e2a5a"
+  },
+  "publishStatus": "NOT_PUBLISHED_RC2"
+}
