@@ -1,0 +1,74 @@
+{
+  "candidate": "RC2",
+  "buildResult": "BUILD_FAILED",
+  "verificationResult": "NOT_RUN",
+  "finalVerdict": "BUILD_FAILED",
+  "apkPath": null,
+  "apkSizeBytes": null,
+  "sha256": null,
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.7-beta.1",
+  "versionCode": 6,
+  "minSdk": 24,
+  "targetSdk": 36,
+  "commitSha": null,
+  "railwaySha": "d9f0eca635c777fa64cb204280dbd241c2c6ce1f",
+  "buildTime": null,
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "releaseGates": {
+    "preconditions": "FAIL",
+    "typecheck": "NOT_RUN",
+    "tests": "NOT_RUN",
+    "releaseGate": "NOT_RUN",
+    "apkVerification": "NOT_RUN"
+  },
+  "verificationSummary": "Build aborted at precondition gate. No APK was compiled. Staging API probes PASS; Railway commit matches origin/main.",
+  "blockers": [
+    {
+      "id": "dirty-working-tree",
+      "severity": "P0",
+      "detail": "21 modified artifact/gate files on feature branch before RC2 attempt; precondition requires clean tree"
+    },
+    {
+      "id": "p0-fixes-not-on-main",
+      "severity": "P0",
+      "detail": "Bootstrap diagnostics, post-login native navigation, and HTTPS network security plugin are absent on origin/main. PR #135 (cursor/p0-android-bootstrap-diagnostics-7513) is OPEN and not merged."
+    },
+    {
+      "id": "rc2-version-not-on-main",
+      "severity": "P0",
+      "detail": "origin/main mobile app.json is version 0.1.2 versionCode 3; RC2 requires 0.1.7-beta.1 versionCode 6"
+    }
+  ],
+  "missingDeliverables": [
+    "lot_android_closed_beta_0.1.7_beta.1.apk",
+    "sha256.txt",
+    "build-manifest.json",
+    "aapt-badging.txt",
+    "apkanalyzer-manifest.xml"
+  ],
+  "presentDeliverables": [
+    "artifacts/closed-beta-rc2/backend-parity.json",
+    "artifacts/closed-beta-rc2/release-gates.json",
+    "artifacts/closed-beta-rc2/final-report.json"
+  ],
+  "knownLimitations": [
+    "RC2 cannot be a canonical main-branch build until P0 mobile fixes are merged to main and version metadata is bumped to 0.1.7-beta.1 (code 6)",
+    "RC1.1 was built from cursor/p0-android-bootstrap-diagnostics-7513 (0.1.6-beta.2 code 5) — not from main",
+    "Physical Android validation has not been completed for RC1.1",
+    "Beta readiness dashboard shows buyer/seller journey FAIL on staging (observability only; not a build gate for this aborted attempt)"
+  ],
+  "requiredActionsBeforeRetry": [
+    "Merge PR #135 (P0 bootstrap diagnostics + post-login native navigation) into main",
+    "Bump mobile version to 0.1.7-beta.1 and versionCode 6 on main (release metadata commit)",
+    "Ensure clean working tree on main",
+    "Re-run RC2 build from main"
+  ],
+  "artifacts": {
+    "backendParity": "artifacts/closed-beta-rc2/backend-parity.json",
+    "releaseGates": "artifacts/closed-beta-rc2/release-gates.json",
+    "finalReport": "artifacts/closed-beta-rc2/final-report.json"
+  }
+}
