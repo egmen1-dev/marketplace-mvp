@@ -1,0 +1,82 @@
+{
+  "recordedAt": "2026-08-19T06:32:00Z",
+  "candidateVersion": "0.1.7-beta.1",
+  "candidateVersionCode": 6,
+  "buildAttempted": false,
+  "summary": {
+    "preconditions": "FAIL",
+    "typecheck": "NOT_RUN",
+    "tests": "NOT_RUN",
+    "releaseGate": "NOT_RUN",
+    "apkVerification": "NOT_RUN",
+    "physicalAndroid": "NOT_RUN"
+  },
+  "gates": [
+    {
+      "id": "precondition:clean-working-tree",
+      "command": "git status --porcelain",
+      "verdict": "FAIL",
+      "detail": "21 modified/untracked artifact files on cursor/p0-android-bootstrap-diagnostics-7513 before branch switch (stashed as rc2-prebuild-dirty-artifacts)"
+    },
+    {
+      "id": "precondition:build-from-main",
+      "command": "git branch --show-current",
+      "verdict": "FAIL",
+      "detail": "Build session started on cursor/p0-android-bootstrap-diagnostics-7513; switched to cursor/closed-beta-rc2-build-7513 from origin/main for precondition audit only"
+    },
+    {
+      "id": "precondition:rc2-version-on-main",
+      "command": "git show origin/main:apps/mobile/app.json",
+      "verdict": "FAIL",
+      "detail": "origin/main has version 0.1.2 versionCode 3; RC2 requires 0.1.7-beta.1 versionCode 6"
+    },
+    {
+      "id": "precondition:p0-bootstrap-diagnostics",
+      "command": "git cat-file origin/main:apps/mobile/src/boot/startup-diagnostics.ts",
+      "verdict": "FAIL",
+      "detail": "File does not exist on origin/main"
+    },
+    {
+      "id": "precondition:p0-post-login-navigation",
+      "command": "git cat-file origin/main:apps/mobile/app/+native-intent.tsx",
+      "verdict": "FAIL",
+      "detail": "File does not exist on origin/main; PR #135 OPEN (not merged)"
+    },
+    {
+      "id": "precondition:https-network-security",
+      "command": "git cat-file origin/main:apps/mobile/plugins/withAndroidNetworkSecurity.js",
+      "verdict": "FAIL",
+      "detail": "HTTPS-only network security plugin not on origin/main"
+    },
+    {
+      "id": "precondition:railway-commit",
+      "command": "curl /api/version",
+      "verdict": "PASS",
+      "detail": "Staging commit d9f0eca matches origin/main"
+    },
+    {
+      "id": "mobile:typecheck",
+      "command": "npm run mobile:typecheck",
+      "verdict": "NOT_RUN",
+      "detail": "Aborted before gates — preconditions failed"
+    },
+    {
+      "id": "mobile:test",
+      "command": "npm test",
+      "verdict": "NOT_RUN",
+      "detail": "Aborted before gates — preconditions failed"
+    },
+    {
+      "id": "mobile:release-gate",
+      "command": "npm run mobile:release-gate",
+      "verdict": "NOT_RUN",
+      "detail": "Aborted before gates — preconditions failed"
+    },
+    {
+      "id": "apk:verify-android-apk",
+      "command": "node scripts/verify-android-apk.mjs",
+      "verdict": "NOT_RUN",
+      "detail": "No APK produced"
+    }
+  ]
+}
