@@ -1,17 +1,19 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Linking, Pressable, Share, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 
 import { logout } from "../../src/api/client";
 import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
 import { getBuildInfo } from "../../src/beta/build-info";
 import { loadAppConfig } from "../../src/config/env";
-import { Avatar, GhostButton, PrimaryButton, SectionHeader } from "../../src/components/ui";
+import { Avatar, GhostButton, PrimaryButton } from "../../src/components/ui";
+import { ProfileMenu } from "../../src/components/ProfileMenu";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
 import { buildErrorReport } from "../../src/telemetry/error-report";
 import { startApkDownload } from "../../src/update/download-apk";
 import { UPDATE_ANALYTICS } from "../../src/update/types";
+import { isUpdateEligibleForInstall } from "../../src/utils/update-eligibility";
 import { colors, spacing, typography } from "../../src/theme/tokens";
 import type { MobileUpdateInfo } from "../../src/api/endpoints";
 
@@ -34,12 +36,7 @@ export default function ProfileScreen() {
       .catch(() => setUpdateInfo(null));
   }, []);
 
-  const hasUpdate =
-    updateInfo &&
-    updateInfo.updateState !== "NO_UPDATE" &&
-    updateInfo.downloadUrl &&
-    updateInfo.versionCode > Number(config.buildNumber) &&
-    updateInfo.rollout.eligible;
+  const hasUpdate = isUpdateEligibleForInstall(updateInfo, Number(config.buildNumber));
 
   async function onUpdate() {
     if (!updateInfo) return;
@@ -61,12 +58,12 @@ export default function ProfileScreen() {
     }).catch(() => null);
     await Share.share({
       message: JSON.stringify(report, null, 2),
-      title: "ЛОТ Alpha — сообщить об ошибке",
+      title: "ЛОТ — сообщить об ошибке",
     });
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Avatar label={email} size={56} />
         <View>
@@ -75,92 +72,50 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <SectionHeader title="Покупки" />
-      <Pressable style={styles.row} onPress={() => router.push("/(tabs)/orders")}>
-        <Text style={styles.rowText}>Мои заказы</Text>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-      <Pressable style={styles.row} onPress={() => router.push("/(tabs)/favorites")}>
-        <Text style={styles.rowText}>Избранное</Text>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
+      <ProfileMenu
+        sellerCapable={sellerCapable}
+        onPersonalData={() => Linking.openURL(`${config.apiBaseUrl}/account/settings`)}
+        onFeedback={() => router.push("/feedback")}
+        onSupport={onReportError}
+        onAbout={() => Linking.openURL(`${config.apiBaseUrl}/about`)}
+        footer={
+          <>
+            {hasUpdate ? (
+              <View style={styles.updateBanner}>
+                <Text style={styles.updateTitle}>
+                  {updateInfo?.updateState === "REQUIRED_UPDATE"
+                    ? "Требуется обновление"
+                    : `Доступна версия ${updateInfo?.versionName}`}
+                </Text>
+                <PrimaryButton label="Обновить" onPress={onUpdate} size="sm" />
+              </View>
+            ) : null}
 
-      {sellerCapable ? (
-        <>
-          <SectionHeader title="Продажи" />
-          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/seller-home")}>
-            <Text style={styles.rowText}>Панель продавца</Text>
-            <Text style={styles.rowChevron}>›</Text>
-          </Pressable>
-          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/seller-products")}>
-            <Text style={styles.rowText}>Мои товары</Text>
-            <Text style={styles.rowChevron}>›</Text>
-          </Pressable>
-          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/seller-sales")}>
-            <Text style={styles.rowText}>Мои продажи</Text>
-            <Text style={styles.rowChevron}>›</Text>
-          </Pressable>
-          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/wallet")}>
-            <Text style={styles.rowText}>Кошелёк и финансы</Text>
-            <Text style={styles.rowChevron}>›</Text>
-          </Pressable>
-        </>
-      ) : null}
+            <GhostButton label="Сообщить об ошибке" onPress={onReportError} fullWidth />
+            <Pressable style={styles.logout} onPress={onLogout} accessibilityRole="button" accessibilityLabel="Выйти">
+              <Text style={styles.logoutText}>Выйти</Text>
+            </Pressable>
 
-      <SectionHeader title="Настройки" />
-      <Pressable style={styles.row} onPress={() => Linking.openURL(`${config.apiBaseUrl}/account/settings`)}>
-        <Text style={styles.rowText}>Личные данные</Text>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-      <Pressable style={styles.row} onPress={() => router.push("/feedback")}>
-        <Text style={styles.rowText}>Центр обратной связи</Text>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-      <Pressable style={styles.row} onPress={onReportError}>
-        <Text style={styles.rowText}>Поддержка</Text>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-      <Pressable style={styles.row} onPress={() => Linking.openURL(`${config.apiBaseUrl}/about`)}>
-        <Text style={styles.rowText}>О приложении</Text>
-        <Text style={styles.rowChevron}>›</Text>
-      </Pressable>
-
-      {hasUpdate ? (
-        <View style={styles.updateBanner}>
-          <Text style={styles.updateTitle}>
-            {updateInfo?.updateState === "REQUIRED_UPDATE"
-              ? "Требуется обновление"
-              : `Доступна версия ${updateInfo?.versionName}`}
-          </Text>
-          <PrimaryButton label="Обновить" onPress={onUpdate} size="sm" />
-        </View>
-      ) : null}
-
-      <GhostButton label="Сообщить об ошибке" onPress={onReportError} fullWidth />
-      <Pressable style={styles.logout} onPress={onLogout}>
-        <Text style={styles.logoutText}>Выйти</Text>
-      </Pressable>
-
-      <Text style={styles.version}>
-        Версия {buildInfo.appVersion} ({buildInfo.buildNumber}) · {buildInfo.releaseChannel}
-        {"\n"}Канал: {buildInfo.channel} · API: {buildInfo.apiBaseUrl}
-        {"\n"}Commit: {buildInfo.commitSha} · Сборка: {buildInfo.buildTime}
-      </Text>
-    </View>
+            <Text style={styles.version}>
+              Версия {buildInfo.appVersion} ({buildInfo.buildNumber}) · {buildInfo.releaseChannel}
+              {"\n"}Канал: {buildInfo.channel} · API: {buildInfo.apiBaseUrl}
+              {"\n"}Commit: {buildInfo.commitSha} · Сборка: {buildInfo.buildTime}
+            </Text>
+          </>
+        }
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
-  header: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.sm },
+  container: { padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.white },
+  header: { flexDirection: "row", alignItems: "center", gap: spacing.md },
   title: { ...typography.h1 },
   subtitle: { ...typography.caption, color: colors.gray500 },
-  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
-  rowText: { ...typography.body, color: colors.black },
-  rowChevron: { ...typography.h2, color: colors.gray500 },
   updateBanner: { borderWidth: 1, borderColor: colors.gray200, borderRadius: 12, padding: spacing.md, gap: spacing.sm, backgroundColor: colors.gray100 },
   updateTitle: { ...typography.subtitle },
   logout: { backgroundColor: colors.black, minHeight: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   logoutText: { color: colors.white, ...typography.subtitle },
-  version: { ...typography.caption, color: colors.gray500, textAlign: "center", marginTop: "auto" },
+  version: { ...typography.caption, color: colors.gray500, textAlign: "center", marginTop: spacing.sm },
 });

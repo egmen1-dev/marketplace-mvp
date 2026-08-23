@@ -1,0 +1,5 @@
+{
+  "physicalAndroid": "NOT_RUN",
+  "scenarios": 24,
+  "note": "Operator must execute on Android device; cloud agent does not simulate PASS"
+}

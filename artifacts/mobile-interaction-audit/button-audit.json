@@ -1,0 +1,15 @@
+{
+  "status": "FIXED",
+  "patterns": [
+    "onPress",
+    "router.push",
+    "Linking.openURL",
+    "ProductCard CTA",
+    "favorite",
+    "filter chips"
+  ],
+  "deadHandlersRemoved": [
+    "wallet empty onPress",
+    "catalog ignored sort param"
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "status": "PASS",
+  "chain": "useCommerceActions + refreshTabBadges + error toasts"
+}

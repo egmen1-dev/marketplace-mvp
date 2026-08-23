@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { addToCart, fetchCatalog, fetchProduct, postTelemetry, toggleFavorite, type MobileProductListItem } from "../../src/api/endpoints";
+import { fetchCatalog, fetchProduct, postTelemetry, type MobileProductListItem } from "../../src/api/endpoints";
 import { loadAppConfig } from "../../src/config/env";
 import {
   Badge,
@@ -20,6 +20,8 @@ import {
   SkeletonGrid,
 } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
+import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+import { openSellerStorefront } from "../../src/navigation/seller-routes";
 import { trackRecentView } from "../../src/storage/recent-views";
 import { discountPercent, resolveImageUrl } from "../../src/utils/format";
 import { useAppStore } from "../../src/store/app-store";
@@ -32,6 +34,7 @@ export default function ProductScreen() {
   const insets = useSafeAreaInsets();
   const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
+  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const config = loadAppConfig();
   const [product, setProduct] = useState<Record<string, unknown> | null>(null);
   const [similar, setSimilar] = useState<MobileProductListItem[]>([]);
@@ -55,14 +58,23 @@ export default function ProductScreen() {
   }, [id]);
 
   async function onAddToCart() {
-    if (offline) {
-      setMessage("Для этого действия требуется интернет");
-      return;
-    }
     if (!id) return;
-    await addToCart(id, 1);
-    await postTelemetry({ screen: "product", event: "add_to_cart" });
-    setMessage("Добавлено в корзину");
+    try {
+      await addProductToCart(id, 1);
+      await postTelemetry({ screen: "product", event: "add_to_cart" });
+      setMessage("Добавлено в корзину");
+    } catch {
+      setMessage(null);
+    }
+  }
+
+  async function onToggleFavorite() {
+    if (!id) return;
+    try {
+      await toggleProductFavorite(id);
+    } catch {
+      // toast handled in hook
+    }
   }
 
   if (loading) {
@@ -82,7 +94,7 @@ export default function ProductScreen() {
   const imageUrl = resolveImageUrl(currentImage, config.apiBaseUrl);
   const price = Number(product.price ?? 0);
   const compareAt = product.compareAt != null ? Number(product.compareAt) : null;
-  const seller = product.seller as { storeName?: string; isVerified?: boolean } | undefined;
+  const seller = product.seller as { id?: string; storeName?: string; isVerified?: boolean } | undefined;
   const characteristics = (product.characteristics as Array<{ name: string; displayValue: string }> | undefined) ?? [];
   const pickupPoints = (product.pickupPoints as Array<{ city?: string; name?: string }> | undefined) ?? [];
   const favoritesCount = Number(product.favoritesCount ?? 0);
@@ -146,7 +158,13 @@ export default function ProductScreen() {
               {seller?.isVerified ? <Badge label="Проверенный продавец" tone="success" /> : null}
             </View>
 
-            {seller?.storeName ? <SellerCard storeName={seller.storeName} subtitle="Продавец на ЛОТ" /> : null}
+            {seller?.storeName ? (
+              <SellerCard
+                storeName={seller.storeName}
+                subtitle="Продавец на ЛОТ"
+                onPress={seller.id ? () => openSellerStorefront(seller.id!, seller.storeName) : undefined}
+              />
+            ) : null}
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Доставка</Text>
@@ -181,7 +199,16 @@ export default function ProductScreen() {
                 <SectionHeader title="Похожие товары" />
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.similarRow}>
                   {similar.map((item) => (
-                    <ProductCard key={item.id} product={item} compact onPress={() => router.push(`/product/${item.id}`)} />
+                    <ProductCard
+                      key={item.id}
+                      product={item}
+                      compact
+                      isFavorite={isFavorite(item.id)}
+                      onPress={() => router.push(`/product/${item.id}`)}
+                      onFavorite={() => toggleProductFavorite(item.id)}
+                      onAddToCart={() => addProductToCart(item.id, 1)}
+                      onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
+                    />
                   ))}
                 </ScrollView>
               </View>
@@ -193,7 +220,11 @@ export default function ProductScreen() {
       <View style={[styles.stickyBar, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
         {message ? <Text style={styles.message}>{message}</Text> : null}
         <View style={styles.stickyActions}>
-          <SecondaryButton label="Избранное" onPress={() => id && toggleFavorite(id)} style={styles.secondaryBtn} />
+          <SecondaryButton
+            label={id && isFavorite(id) ? "В избранном" : "Избранное"}
+            onPress={onToggleFavorite}
+            style={styles.secondaryBtn}
+          />
           <PrimaryButton label="В корзину" onPress={onAddToCart} style={styles.primaryBtn} />
         </View>
         <Pressable onPress={() => Share.share({ message: `lot://product/${id}`, url: `lot://product/${id}` })}>

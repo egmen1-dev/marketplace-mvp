@@ -7,6 +7,7 @@ import { setSessionClearedHandler } from "../src/api/client";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NetworkBanner } from "../src/components/NetworkBanner";
 import { UpdateHost } from "../src/components/UpdateHost";
+import { CommerceToastHost } from "../src/components/CommerceToastHost";
 import { BetaBanner, ObservabilityProvider } from "../src/beta";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
 import { colors } from "../src/theme/tokens";
@@ -29,6 +30,7 @@ function RootShell() {
       <SessionGuard />
       <BetaBanner />
       <NetworkBanner />
+      <CommerceToastHost />
       <UpdateHost />
       <Stack
         screenOptions={{
@@ -42,6 +44,7 @@ function RootShell() {
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="product/[id]" options={{ title: "Товар" }} />
+        <Stack.Screen name="seller/[id]" options={{ title: "Продавец" }} />
         <Stack.Screen name="cart" options={{ title: "Корзина" }} />
         <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
         <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />

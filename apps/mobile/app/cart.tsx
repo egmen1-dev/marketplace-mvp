@@ -3,6 +3,7 @@ import { Animated, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Tex
 import { router } from "expo-router";
 
 import { fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
+import { refreshTabBadges } from "../src/commerce/refresh-tab-badges";
 import { EmptyState, PrimaryButton, SkeletonGrid } from "../src/components/ui";
 import { useFadeIn } from "../src/hooks/useFadeIn";
 import { useAppStore } from "../src/store/app-store";
@@ -52,12 +53,14 @@ export default function CartScreen() {
     if (offline) return;
     await removeCartItem(productId);
     await load();
+    await refreshTabBadges();
   }
 
   async function onQty(productId: string, quantity: number) {
     if (offline) return;
     await updateCartQuantity(productId, quantity);
     await load();
+    await refreshTabBadges();
   }
 
   if (loading && items.length === 0) {

@@ -1,0 +1,8 @@
+{
+  "routes": [
+    "seller/[id]",
+    "cart",
+    "favorites",
+    "catalog?sellerId&sort&deals"
+  ]
+}

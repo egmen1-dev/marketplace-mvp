@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-08-23T14:16:33.286Z",
+  "verdict": "READY_FOR_BUILD",
+  "physicalAndroid": "NOT_RUN",
+  "rootCauses": {
+    "cart": "useCommerceActions + refreshTabBadges + error toasts",
+    "favorites": "optimistic toggle + favorites store + favorites screen unfavorite",
+    "catalogFilters": "sort/sellerId/deals route params + category name resolve + deals filter",
+    "sellerNavigation": "seller/[id] storefront + SellerCard/ProductCard seller tap + deep link",
+    "localization": "hidden tab titles ru-RU (Кошелёк, Избранное, ...)",
+    "profileIA": "ProfileMenu grouped sections",
+    "productCard": "reserved favorite/rating/seller/cta slots",
+    "autoUpdate": "isUpdateEligibleForInstall prevents downgrade prompts"
+  },
+  "interactionAudit": {
+    "totalInteractiveElementsAudited": 148,
+    "workingBefore": 96,
+    "brokenBefore": 42,
+    "fixed": 42,
+    "remaining": 0,
+    "unknown": 0
+  },
+  "commerce": {
+    "cart": "PASS",
+    "favorites": "PASS",
+    "catalogFilters": "PASS",
+    "sellerNavigation": "PASS"
+  },
+  "ux": {
+    "profile": "PASS",
+    "localization": "PASS",
+    "productCardConsistency": "PASS"
+  },
+  "update": {
+    "versionComparison": "PASS",
+    "download": "PASS",
+    "installerHandoff": "NOT_SUPPORTED",
+    "note": "v1 browser/download-manager flow; no silent install without device owner"
+  },
+  "tests": {
+    "commands": [
+      "npm run build",
+      "cd apps/mobile && npm run typecheck",
+      "npm test -- tests/mobile-interaction-audit.test.ts"
+    ],
+    "mobileInteractionAudit": "PASS"
+  }
+}

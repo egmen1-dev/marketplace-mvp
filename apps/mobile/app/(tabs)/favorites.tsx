@@ -1,26 +1,35 @@
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet } from "react-native";
 
-import { fetchFavorites } from "../../src/api/endpoints";
+import { fetchFavorites, type MobileProductListItem } from "../../src/api/endpoints";
 import { EmptyState, PageContainer, ProductCard, SkeletonGrid } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
-import type { MobileProductListItem } from "../../src/api/endpoints";
+import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+import { openSellerStorefront } from "../../src/navigation/seller-routes";
+import { useFavoritesStore } from "../../src/commerce/favorites-store";
 import { spacing } from "../../src/theme/tokens";
 
 export default function FavoritesScreen() {
   const fade = useFadeIn();
+  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const setAll = useFavoritesStore((s) => s.setAll);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = () =>
-    fetchFavorites()
-      .then((res) => setItems(res.items))
+  const load = useCallback(() => {
+    setLoading(true);
+    return fetchFavorites()
+      .then((res) => {
+        setItems(res.items);
+        setAll(res.items.map((i) => i.id));
+      })
       .finally(() => setLoading(false));
+  }, [setAll]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   if (loading) {
     return (
@@ -44,7 +53,15 @@ export default function FavoritesScreen() {
             <EmptyState preset="favorites" actionLabel="В каталог" onAction={() => router.push("/(tabs)/catalog")} />
           }
           renderItem={({ item }) => (
-            <ProductCard product={item} width="48%" isFavorite onPress={() => router.push(`/product/${item.id}`)} />
+            <ProductCard
+              product={item}
+              width="48%"
+              isFavorite={isFavorite(item.id)}
+              onPress={() => router.push(`/product/${item.id}`)}
+              onFavorite={() => toggleProductFavorite(item.id).then(load)}
+              onAddToCart={() => addProductToCart(item.id, 1)}
+              onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
+            />
           )}
         />
       </Animated.View>

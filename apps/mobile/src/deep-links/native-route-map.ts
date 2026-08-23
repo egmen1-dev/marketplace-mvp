@@ -40,7 +40,9 @@ export function mapLotDeepLinkToHref(uri: string): string | null {
     case "order":
       return "/(tabs)/orders";
     case "seller":
-      return "/(tabs)/catalog";
+      return parsed.sellerId
+        ? `/seller/${parsed.sellerId}`
+        : "/(tabs)/catalog";
     default:
       return null;
   }
