@@ -1,18 +1,21 @@
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { colors, radii, spacing, typography } from "../../theme/tokens";
 import { ShimmerBlock } from "./Shimmer";
 import { PrimaryButton, SecondaryButton } from "./buttons";
 
+type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
+
 const EMPTY_PRESETS = {
-  favorites: { emoji: "♡", title: "Избранное пусто", description: "Сохраняйте товары сердечком — они появятся здесь." },
-  cart: { emoji: "🛒", title: "Корзина пуста", description: "Добавьте товары из каталога или главной." },
-  orders: { emoji: "📦", title: "Заказов пока нет", description: "Оформите первую покупку — статус появится здесь." },
-  sales: { emoji: "📈", title: "Продаж пока нет", description: "Когда покупатели оформят заказы, они отобразятся в этом разделе." },
-  products: { emoji: "🏷️", title: "Нет товаров", description: "Создайте первый товар в веб-кабинете продавца." },
-  wallet: { emoji: "💳", title: "Операций пока нет", description: "История пополнений и выплат появится после первых транзакций." },
-  history: { emoji: "🕘", title: "История пуста", description: "Здесь будут последние действия и переводы." },
-  catalog: { emoji: "🔍", title: "Ничего не найдено", description: "Измените запрос или сбросьте фильтры." },
+  favorites: { icon: "heart-outline" as IconName, title: "Избранное пусто", description: "Сохраняйте товары сердечком — они появятся здесь." },
+  cart: { icon: "cart-outline" as IconName, title: "Корзина пуста", description: "Добавьте товары из каталога или главной." },
+  orders: { icon: "package-variant-closed" as IconName, title: "Заказов пока нет", description: "Оформите первую покупку — статус появится здесь." },
+  sales: { icon: "chart-line" as IconName, title: "Продаж пока нет", description: "Когда покупатели оформят заказы, они отобразятся в этом разделе." },
+  products: { icon: "tag-outline" as IconName, title: "Нет товаров", description: "Создайте первый товар в веб-кабинете продавца." },
+  wallet: { icon: "wallet-outline" as IconName, title: "Операций пока нет", description: "История пополнений и выплат появится после первых транзакций." },
+  history: { icon: "history" as IconName, title: "История пуста", description: "Здесь будут последние действия и переводы." },
+  catalog: { icon: "magnify" as IconName, title: "Ничего не найдено", description: "Измените запрос или сбросьте фильтры." },
 } as const;
 
 export type EmptyPreset = keyof typeof EMPTY_PRESETS;
@@ -23,20 +26,25 @@ export function EmptyState({
   actionLabel,
   onAction,
   preset,
+  icon,
 }: {
   title?: string;
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
   preset?: EmptyPreset;
+  icon?: IconName;
 }) {
   const presetData = preset ? EMPTY_PRESETS[preset] : null;
   const resolvedTitle = title ?? presetData?.title ?? "Пусто";
   const resolvedDescription = description ?? presetData?.description;
+  const resolvedIcon = icon ?? presetData?.icon ?? "inbox-outline";
 
   return (
     <View style={styles.empty}>
-      <Text style={styles.emptyEmoji}>{presetData?.emoji ?? "📭"}</Text>
+      <View style={styles.iconWrap}>
+        <MaterialCommunityIcons name={resolvedIcon} size={32} color={colors.orange} />
+      </View>
       <Text style={styles.emptyTitle}>{resolvedTitle}</Text>
       {resolvedDescription ? <Text style={styles.emptyDescription}>{resolvedDescription}</Text> : null}
       {actionLabel && onAction ? <PrimaryButton label={actionLabel} onPress={onAction} style={styles.emptyAction} /> : null}
@@ -44,10 +52,25 @@ export function EmptyState({
   );
 }
 
-export function ErrorState({ title, description, onRetry }: { title: string; description?: string; onRetry?: () => void }) {
+export function ErrorState({
+  title,
+  description,
+  onRetry,
+  variant = "network",
+}: {
+  title: string;
+  description?: string;
+  onRetry?: () => void;
+  variant?: "network" | "offline" | "server" | "auth";
+}) {
+  const icon: IconName =
+    variant === "offline" ? "wifi-off" : variant === "server" ? "server-off" : variant === "auth" ? "account-alert-outline" : "cloud-alert-outline";
+
   return (
     <View style={styles.empty}>
-      <Text style={styles.emptyEmoji}>⚠️</Text>
+      <View style={[styles.iconWrap, styles.errorIconWrap]}>
+        <MaterialCommunityIcons name={icon} size={32} color={colors.warning} />
+      </View>
       <Text style={styles.emptyTitle}>{title}</Text>
       {description ? <Text style={styles.emptyDescription}>{description}</Text> : null}
       {onRetry ? <SecondaryButton label="Повторить" onPress={onRetry} style={styles.emptyAction} /> : null}
@@ -103,7 +126,15 @@ export function HomeSectionSkeleton() {
 
 const styles = StyleSheet.create({
   empty: { alignItems: "center", justifyContent: "center", padding: spacing.xxl, gap: spacing.md },
-  emptyEmoji: { fontSize: 40 },
+  iconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.orangeSoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorIconWrap: { backgroundColor: "#FFF7ED" },
   emptyTitle: { ...typography.h2, color: colors.black, textAlign: "center" },
   emptyDescription: { ...typography.body, color: colors.gray500, textAlign: "center" },
   emptyAction: { marginTop: spacing.sm, minWidth: 160 },

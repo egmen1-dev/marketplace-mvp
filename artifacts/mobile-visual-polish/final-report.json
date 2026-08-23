@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-08-23T15:11:11.289Z",
+  "epic": "LOT Mobile Visual Polish & Design System Audit",
+  "baseline": {
+    "rc3PhysicalObservation": "Giant category circles on RC3 device (0.1.8-beta.1)",
+    "mainBeforeEpic": "Pill chips existed on main but catalog header still tall; boot still spinner-first",
+    "rc4Published": "0.1.9-beta.1 (code 8) — functional fixes; visual polish deferred to this EPIC"
+  },
+  "verdict": "READY_FOR_BUILD",
+  "physicalAndroid": "NOT_RUN",
+  "p0Fixes": {
+    "catalogCategorySelector": "PASS",
+    "catalogAboveTheFold": "PASS",
+    "brandedBootScreen": "PASS",
+    "skeletonFirstLoading": "PASS",
+    "productCardConsistency": "PASS"
+  },
+  "designSystem": {
+    "tokens": "Extended (h3, price, semantic.ts)",
+    "spacing": "Normalized via existing spacing scale",
+    "typography": "Restricted set in tokens.ts",
+    "colors": "semantic.ts aliases added",
+    "radius": "componentRadii in semantic.ts"
+  },
+  "localizationAudit": "PASS — Кошелёк preserved; automated regression in mobile-visual-polish.test.ts",
+  "functionalRegressionPreserved": true,
+  "apkBuild": "NOT_RUN — separate release task"
+}

@@ -1,0 +1,53 @@
+{
+  "components": [
+    {
+      "component": "Chip",
+      "problem": "Duplicated pill styles on Home/Catalog",
+      "action": "Unified chip primitive",
+      "reusable": true,
+      "status": "ADDED"
+    },
+    {
+      "component": "CategoryRail",
+      "problem": "RC3 giant circles / inconsistent chips",
+      "action": "Compact horizontal Chip rail",
+      "reusable": true,
+      "status": "REFINED"
+    },
+    {
+      "component": "CatalogToolbar",
+      "problem": "Full sort pill row consumed vertical space",
+      "action": "Sort dropdown + Filters modal",
+      "reusable": true,
+      "status": "REFINED"
+    },
+    {
+      "component": "BootSplash",
+      "problem": "Gray logo + tiny spinner",
+      "action": "Branded startup + progressive copy",
+      "reusable": true,
+      "status": "ADDED"
+    },
+    {
+      "component": "EmptyState",
+      "problem": "Emoji placeholders",
+      "action": "Icon-based empty states",
+      "reusable": true,
+      "status": "REFINED"
+    },
+    {
+      "component": "ProductCard",
+      "problem": "Optional fields broke grid height",
+      "action": "Reserved slots preserved",
+      "reusable": true,
+      "status": "VERIFIED"
+    },
+    {
+      "component": "ProfileMenu",
+      "problem": "Flat settings dump feel",
+      "action": "Grouped sections + white cards",
+      "reusable": true,
+      "status": "REFINED"
+    }
+  ]
+}

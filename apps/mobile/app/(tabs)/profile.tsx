@@ -64,10 +64,10 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
+      <View style={styles.identityCard}>
         <Avatar label={email} size={56} />
-        <View>
-          <Text style={styles.title}>Профиль</Text>
+        <View style={styles.identityText}>
+          <Text style={styles.title}>Аккаунт</Text>
           <Text style={styles.subtitle}>ID: {email}</Text>
         </View>
       </View>
@@ -109,13 +109,39 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.white },
-  header: { flexDirection: "row", alignItems: "center", gap: spacing.md },
-  title: { ...typography.h1 },
+  container: { padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.gray100 },
+  identityCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+  },
+  identityText: { flex: 1 },
+  title: { ...typography.h2 },
   subtitle: { ...typography.caption, color: colors.gray500 },
-  updateBanner: { borderWidth: 1, borderColor: colors.gray200, borderRadius: 12, padding: spacing.md, gap: spacing.sm, backgroundColor: colors.gray100 },
-  updateTitle: { ...typography.subtitle },
-  logout: { backgroundColor: colors.black, minHeight: 48, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  logoutText: { color: colors.white, ...typography.subtitle },
+  updateBanner: {
+    borderWidth: 1,
+    borderColor: colors.orangeSoft,
+    borderRadius: 12,
+    padding: spacing.md,
+    gap: spacing.sm,
+    backgroundColor: colors.orangeSoft,
+  },
+  updateTitle: { ...typography.h3, color: colors.black },
+  logout: {
+    backgroundColor: colors.white,
+    minHeight: 48,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.danger,
+    marginTop: spacing.sm,
+  },
+  logoutText: { color: colors.danger, ...typography.button },
   version: { ...typography.caption, color: colors.gray500, textAlign: "center", marginTop: spacing.sm },
 });

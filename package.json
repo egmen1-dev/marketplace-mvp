@@ -32,6 +32,7 @@
     "mobile:closed-alpha:publish-011": "tsx scripts/epic-82-publish-closed-alpha-011.ts",
     "mobile:closed-beta:publish-rc2": "tsx scripts/publish-closed-beta-rc2.ts",
     "mobile:interaction-audit": "node scripts/mobile-interaction-audit.mjs",
+    "mobile:visual-polish-audit": "node scripts/mobile-visual-polish-audit.mjs",
     "mobile:closed-alpha:gate": "tsx scripts/epic-80-closed-alpha-launch-gate.ts",
     "mobile:epic-82:gate": "tsx scripts/epic-82-closed-alpha-stabilization-gate.ts",
     "mobile:epic-83:gate": "tsx scripts/epic-83-minimum-supported-version-gate.ts",

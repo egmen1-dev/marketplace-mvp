@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   wrap: { gap: spacing.lg },
   section: { gap: spacing.sm },
   sectionTitle: { ...typography.caption, color: colors.gray500, fontWeight: "700", textTransform: "uppercase" },
-  card: { backgroundColor: colors.gray100, borderRadius: radii.lg, overflow: "hidden" },
+  card: { backgroundColor: colors.white, borderRadius: radii.lg, overflow: "hidden", borderWidth: 1, borderColor: colors.gray200 },
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.gray200 },
   rowText: { ...typography.body, color: colors.black, flex: 1 },

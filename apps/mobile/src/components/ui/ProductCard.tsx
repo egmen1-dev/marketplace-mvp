@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   body: { padding: spacing.md, gap: spacing.xs },
   priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap", minHeight: 24 },
-  price: { ...typography.h2, color: colors.black },
+  price: { ...typography.price, color: colors.black },
   compareAt: { ...typography.caption, color: colors.gray500, textDecorationLine: "line-through" },
   compareAtHidden: { opacity: 0 },
   title: { ...typography.caption, color: colors.gray900, minHeight: 36 },

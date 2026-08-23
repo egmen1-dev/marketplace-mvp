@@ -1,0 +1,737 @@
+{
+  "screens": [
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "+native-intent.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "cart.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "checkout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "feedback.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "index.tsx",
+      "beforeIssue": "Generic spinner boot",
+      "change": "Branded BootSplash",
+      "status": "REFINED"
+    },
+    {
+      "screen": "login.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "product/[id].tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "+native-intent.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "cart.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "checkout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "feedback.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "index.tsx",
+      "beforeIssue": "Generic spinner boot",
+      "change": "Branded BootSplash",
+      "status": "REFINED"
+    },
+    {
+      "screen": "login.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "product/[id].tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "seller/[id].tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "+native-intent.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "cart.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "checkout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "feedback.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "index.tsx",
+      "beforeIssue": "Generic spinner boot",
+      "change": "Branded BootSplash",
+      "status": "REFINED"
+    },
+    {
+      "screen": "login.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "product/[id].tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/catalog.tsx",
+      "beforeIssue": "Large category controls pushed products below fold (RC3 circles / pre-compact pills)",
+      "change": "Compact CategoryRail + sort/filters bar",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/favorites.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/index.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/orders.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/profile.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/sell.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-home.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-products.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/seller-sales.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "(tabs)/wallet.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "+native-intent.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "_layout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "cart.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "checkout.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "feedback.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "index.tsx",
+      "beforeIssue": "Generic spinner boot",
+      "change": "Branded BootSplash",
+      "status": "REFINED"
+    },
+    {
+      "screen": "login.tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "product/[id].tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    },
+    {
+      "screen": "seller/[id].tsx",
+      "beforeIssue": "Mixed inline styles",
+      "change": "Token-aligned shared components",
+      "status": "REFINED"
+    }
+  ],
+  "count": 122
+}

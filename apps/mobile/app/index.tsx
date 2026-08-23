@@ -1,6 +1,6 @@
 import { Redirect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Image, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Share, StyleSheet, Text, View } from "react-native";
 
 import {
   BOOT_HARD_TIMEOUT_MS,
@@ -14,6 +14,7 @@ import {
   getStartupBootReport,
 } from "../src/boot/startup-diagnostics";
 import { emitStartupEvent, emitStartupFailureReport, STARTUP_EVENTS } from "../src/boot/startup-telemetry";
+import { BootSplash } from "../src/components/BootSplash";
 import { PrimaryButton, SecondaryButton } from "../src/components/ui";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
@@ -108,43 +109,41 @@ export default function BootScreen() {
   if (ready === "app") return <Redirect href="/(tabs)" />;
   if (ready === "login") return <Redirect href="/login" />;
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.brand}>
-        <Image source={require("../assets/splash-icon.png")} style={styles.logo} />
-        <Text style={styles.title}>ЛОТ</Text>
-        <Text style={styles.tagline}>Маркетплейс, которому доверяют</Text>
-      </View>
-      {error ? (
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <BootSplash statusMessage="Не удалось запустить приложение" />
         <View style={styles.errorBlock}>
           <Text style={styles.error}>{error}</Text>
           {errorDetails ? (
             <ScrollView style={styles.detailsScroll} nestedScrollEnabled>
-              <Text style={styles.details} selectable>{errorDetails}</Text>
+              <Text style={styles.details} selectable>
+                {errorDetails}
+              </Text>
             </ScrollView>
           ) : null}
           <PrimaryButton label="Повторить" onPress={() => setAttempt((n) => n + 1)} fullWidth />
           <SecondaryButton label="Отправить диагностику" onPress={shareDiagnostics} fullWidth />
         </View>
-      ) : (
-        <>
-          <ActivityIndicator color={colors.orange} size="large" />
-          <Text style={styles.caption}>Загрузка…</Text>
-        </>
-      )}
-    </View>
-  );
+      </View>
+    );
+  }
+
+  return <BootSplash />;
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.white, padding: spacing.xl },
-  brand: { alignItems: "center", gap: spacing.md, marginBottom: spacing.xxl },
-  logo: { width: 96, height: 96 },
-  title: { ...typography.display, color: colors.orange, fontSize: 36 },
-  tagline: { ...typography.body, color: colors.gray500 },
-  caption: { ...typography.caption, color: colors.gray500, marginTop: spacing.md },
-  errorBlock: { width: "100%", maxWidth: 360, gap: spacing.md },
+  container: { flex: 1, backgroundColor: colors.white },
+  errorBlock: {
+    position: "absolute",
+    left: spacing.xl,
+    right: spacing.xl,
+    bottom: spacing.xxl,
+    gap: spacing.md,
+    maxWidth: 360,
+    alignSelf: "center",
+  },
   error: { color: colors.danger, textAlign: "center", ...typography.subtitle },
-  detailsScroll: { maxHeight: 220, borderWidth: 1, borderColor: colors.gray200, borderRadius: 12, padding: spacing.sm },
+  detailsScroll: { maxHeight: 160, borderWidth: 1, borderColor: colors.gray200, borderRadius: 12, padding: spacing.sm },
   details: { ...typography.caption, color: colors.gray700, fontFamily: "monospace" },
 });
