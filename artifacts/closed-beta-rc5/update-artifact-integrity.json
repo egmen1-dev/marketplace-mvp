@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-08-23T15:51:30Z",
+  "canonicalSha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+  "canonicalSizeBytes": 43492086,
+  "updatePayloadForVersionCode7": {
+    "versionName": "0.1.10-beta.1",
+    "versionCode": 9,
+    "sha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "channel": "BETA",
+    "releaseNotesCount": 7,
+    "compatibility": {
+      "compatible": true,
+      "forceUpgrade": false,
+      "minAppVersion": "0.1.6-beta.2"
+    },
+    "pointsToRc2": false,
+    "pointsToRc3": false,
+    "pointsToRc4": false,
+    "pointsToRc5": true
+  },
+  "downloadVerification": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "httpStatus": 200,
+    "sizeBytes": 43492086,
+    "sha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "sha256Match": "YES"
+  },
+  "verdict": "PASS"
+}
