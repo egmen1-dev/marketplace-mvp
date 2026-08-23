@@ -8,6 +8,7 @@ import { colors } from "../../theme/tokens";
 export type TabIconName =
   | "home"
   | "catalog"
+  | "sell"
   | "favorites"
   | "orders"
   | "seller-home"
@@ -19,6 +20,7 @@ export type TabIconName =
 const ICONS: Record<TabIconName, { active: keyof typeof MaterialCommunityIcons.glyphMap; inactive: keyof typeof MaterialCommunityIcons.glyphMap }> = {
   home: { active: "home", inactive: "home-outline" },
   catalog: { active: "view-grid", inactive: "view-grid-outline" },
+  sell: { active: "plus-circle", inactive: "plus-circle-outline" },
   favorites: { active: "heart", inactive: "heart-outline" },
   orders: { active: "package-variant-closed", inactive: "package-variant" },
   "seller-home": { active: "store", inactive: "store-outline" },

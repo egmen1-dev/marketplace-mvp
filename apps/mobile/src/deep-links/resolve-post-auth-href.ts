@@ -11,8 +11,8 @@ function isSellerRole(role: string): boolean {
   return role === "SELLER" || role === "ADMIN";
 }
 
-function defaultHomeHref(role: string): string {
-  return isSellerRole(role) ? "/(tabs)/seller-home" : "/(tabs)";
+function defaultHomeHref(_role: string): string {
+  return "/(tabs)";
 }
 
 /**

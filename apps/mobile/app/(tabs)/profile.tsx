@@ -6,7 +6,7 @@ import { logout } from "../../src/api/client";
 import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
 import { getBuildInfo } from "../../src/beta/build-info";
 import { loadAppConfig } from "../../src/config/env";
-import { Avatar, GhostButton, PrimaryButton, SecondaryButton, SectionHeader } from "../../src/components/ui";
+import { Avatar, GhostButton, PrimaryButton, SectionHeader } from "../../src/components/ui";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
 import { buildErrorReport } from "../../src/telemetry/error-report";
@@ -16,9 +16,7 @@ import { colors, spacing, typography } from "../../src/theme/tokens";
 import type { MobileUpdateInfo } from "../../src/api/endpoints";
 
 export default function ProfileScreen() {
-  const mode = useAppStore((s) => s.mode);
   const sellerCapable = useAppStore((s) => s.sellerCapable);
-  const setMode = useAppStore((s) => s.setMode);
   const [email, setEmail] = useState<string>("—");
   const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
   const config = loadAppConfig();
@@ -77,23 +75,37 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <SectionHeader title="Режим" />
-      <View style={styles.card}>
-        <Text style={styles.cardLabel}>Сейчас: {mode === "seller" ? "Продавец" : "Покупатель"}</Text>
-        {sellerCapable ? (
-          <SecondaryButton
-            label={mode === "buyer" ? "Переключить на продавца" : "Переключить на покупателя"}
-            fullWidth
-            onPress={() => {
-              const next = mode === "buyer" ? "seller" : "buyer";
-              setMode(next);
-              router.replace(next === "seller" ? "/(tabs)/seller-home" : "/(tabs)");
-            }}
-          />
-        ) : (
-          <Text style={styles.hint}>Аккаунт покупателя — режим продавца недоступен.</Text>
-        )}
-      </View>
+      <SectionHeader title="Покупки" />
+      <Pressable style={styles.row} onPress={() => router.push("/(tabs)/orders")}>
+        <Text style={styles.rowText}>Мои заказы</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </Pressable>
+      <Pressable style={styles.row} onPress={() => router.push("/(tabs)/favorites")}>
+        <Text style={styles.rowText}>Избранное</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </Pressable>
+
+      {sellerCapable ? (
+        <>
+          <SectionHeader title="Продажи" />
+          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/seller-home")}>
+            <Text style={styles.rowText}>Панель продавца</Text>
+            <Text style={styles.rowChevron}>›</Text>
+          </Pressable>
+          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/seller-products")}>
+            <Text style={styles.rowText}>Мои товары</Text>
+            <Text style={styles.rowChevron}>›</Text>
+          </Pressable>
+          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/seller-sales")}>
+            <Text style={styles.rowText}>Мои продажи</Text>
+            <Text style={styles.rowChevron}>›</Text>
+          </Pressable>
+          <Pressable style={styles.row} onPress={() => router.push("/(tabs)/wallet")}>
+            <Text style={styles.rowText}>Кошелёк и финансы</Text>
+            <Text style={styles.rowChevron}>›</Text>
+          </Pressable>
+        </>
+      ) : null}
 
       <SectionHeader title="Настройки" />
       <Pressable style={styles.row} onPress={() => Linking.openURL(`${config.apiBaseUrl}/account/settings`)}>
@@ -143,9 +155,6 @@ const styles = StyleSheet.create({
   header: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.sm },
   title: { ...typography.h1 },
   subtitle: { ...typography.caption, color: colors.gray500 },
-  card: { backgroundColor: colors.gray100, borderRadius: 16, padding: spacing.lg, gap: spacing.sm },
-  cardLabel: { ...typography.body, color: colors.gray900 },
-  hint: { ...typography.caption, color: colors.gray500 },
   row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
   rowText: { ...typography.body, color: colors.black },
   rowChevron: { ...typography.h2, color: colors.gray500 },

@@ -30,8 +30,8 @@ describe("mobile post-auth native navigation guard", () => {
     ).toBe("/(tabs)");
   });
 
-  it("resolvePostAuthHref routes sellers to seller home", () => {
-    expect(resolvePostAuthHref({ role: "SELLER" })).toBe("/(tabs)/seller-home");
+  it("resolvePostAuthHref routes sellers to unified home", () => {
+    expect(resolvePostAuthHref({ role: "SELLER" })).toBe("/(tabs)");
   });
 
   it("resolvePostAuthHref honors lot:// pending deep links", () => {

@@ -54,6 +54,8 @@ export type MobileProductListItem = {
   status?: string;
   favoritesCount?: number;
   views?: number;
+  averageRating?: number | null;
+  reviewsCount?: number;
   primaryImage?: { url: string } | null;
   seller?: { storeName?: string; id?: string };
   category?: { id: string; name: string; slug?: string } | null;
@@ -177,6 +179,35 @@ export async function fetchProductSuggest(q: string) {
 
 export async function fetchProduct(id: string) {
   return apiRequest<Record<string, unknown>>(`/api/products/${id}`);
+}
+
+export type ProductReviewDto = {
+  id: string;
+  rating: number;
+  text: string | null;
+  pros: string | null;
+  cons: string | null;
+  buyerName: string | null;
+  createdAt: string;
+  photos: { id: string; url: string }[];
+};
+
+export type ProductRatingSnapshot = {
+  averageRating: number;
+  reviewsCount: number;
+  distribution: { stars: number; percent: number; count: number }[];
+};
+
+export async function fetchProductReviews(productId: string, cursor?: string | null) {
+  const qs = new URLSearchParams();
+  if (cursor) qs.set("cursor", cursor);
+  const suffix = qs.toString();
+  return apiRequest<{
+    rating: ProductRatingSnapshot | null;
+    items: ProductReviewDto[];
+    nextCursor: string | null;
+    hasMore: boolean;
+  }>(`/api/mobile/products/${encodeURIComponent(productId)}/reviews${suffix ? `?${suffix}` : ""}`);
 }
 
 export async function fetchCart() {

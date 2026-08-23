@@ -21,6 +21,9 @@ export const STARTUP_EVENTS = {
   navigationReady: "NAVIGATION_READY",
   bootTimeout: "BOOT_TIMEOUT",
   bootDiagnostics: "BOOT_DIAGNOSTICS",
+  bootNetworkRetry: "BOOT_NETWORK_RETRY",
+  bootNetworkRecovered: "BOOT_NETWORK_RECOVERED",
+  bootDegradedMode: "BOOT_DEGRADED_MODE",
 } as const;
 
 /** Fire-and-forget startup telemetry — never blocks boot. */

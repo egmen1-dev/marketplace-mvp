@@ -11,6 +11,8 @@ import {
   Badge,
   PrimaryButton,
   ProductCard,
+  ProductRatingRow,
+  ProductReviewsSection,
   SecondaryButton,
   SectionHeader,
   SellerCard,
@@ -85,6 +87,8 @@ export default function ProductScreen() {
   const pickupPoints = (product.pickupPoints as Array<{ city?: string; name?: string }> | undefined) ?? [];
   const favoritesCount = Number(product.favoritesCount ?? 0);
   const views = Number(product.views ?? 0);
+  const averageRating = product.averageRating != null ? Number(product.averageRating) : null;
+  const reviewsCount = Number(product.reviewsCount ?? 0);
   const discount = discountPercent(price, compareAt);
 
   return (
@@ -123,6 +127,8 @@ export default function ProductScreen() {
               <Badge label="Доставка СДЭК" tone="neutral" />
               {Number(product.stock ?? 0) > 0 ? <Badge label="В наличии" tone="success" /> : <Badge label="Нет в наличии" tone="danger" />}
             </View>
+
+            <ProductRatingRow averageRating={averageRating} reviewsCount={reviewsCount} />
 
             <View style={styles.trustRow}>
               {favoritesCount > 0 ? (
@@ -167,6 +173,8 @@ export default function ProductScreen() {
                 ))}
               </View>
             ) : null}
+
+            {id ? <ProductReviewsSection productId={id} /> : null}
 
             {similar.length > 0 ? (
               <View style={styles.section}>

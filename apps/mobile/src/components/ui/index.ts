@@ -2,6 +2,8 @@ export * from "./buttons";
 export * from "./layout";
 export * from "./cards";
 export * from "./ProductCard";
+export * from "./ProductRatingRow";
+export * from "./ProductReviewsSection";
 export * from "./SellerProductCard";
 export * from "./primitives";
 export * from "./feedback";
