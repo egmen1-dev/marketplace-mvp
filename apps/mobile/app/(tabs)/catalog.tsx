@@ -161,7 +161,10 @@ export default function CatalogScreen() {
         <CategoryRail
           categories={categories}
           activeId={category?.id ?? null}
-          onSelect={(cat) => setCategory(cat)}
+          onSelect={(cat) => {
+            setCategory(cat);
+            if (cat) setQ("");
+          }}
         />
 
         <CatalogToolbar

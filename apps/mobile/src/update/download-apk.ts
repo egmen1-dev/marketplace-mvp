@@ -33,14 +33,10 @@ export async function startApkDownload(info: MobileUpdateInfo): Promise<{ ok: tr
       return { ok: false, code: "download_url_unavailable" };
     }
 
+    // v1 flow: browser/download-manager handoff — we do NOT download or install in-app.
     await postTelemetry({
       screen: "update",
       event: UPDATE_ANALYTICS.started,
-      errorCode: info.versionName,
-    });
-    await postTelemetry({
-      screen: "update",
-      event: UPDATE_ANALYTICS.downloaded,
       errorCode: info.versionName,
     });
 

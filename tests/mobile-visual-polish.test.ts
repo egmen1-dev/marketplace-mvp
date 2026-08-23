@@ -57,5 +57,7 @@ describe("mobile visual polish — commerce invariants", () => {
 
   it("keeps wallet label localized in profile menu", () => {
     expect(profileMenu).toContain('label: "Кошелёк"');
+    expect(profileMenu).toContain('label: "Корзина"');
+    expect(profileMenu).toContain('label: "Кабинет продавца"');
   });
 });
