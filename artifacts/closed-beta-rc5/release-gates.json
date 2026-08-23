@@ -1,0 +1,38 @@
+{
+  "candidate": "RC5",
+  "generatedAt": "2026-08-23T15:41:00Z",
+  "preconditions": {
+    "pr139Merged": "PASS",
+    "pr141Merged": "PASS",
+    "pr141MergeSha": "b6bf68c",
+    "preflightAnalysis": "PASS",
+    "falsePositiveAudit": "PASS",
+    "worktreeCleanBeforeBump": "PASS"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "mobileTest": "PASS",
+    "commerceIntegration": "PASS",
+    "visualPolish": "PASS",
+    "interactionAudit": "PASS",
+    "testCount": 42
+  },
+  "root": {
+    "build": "PASS",
+    "mobileReleaseGate": "PASS",
+    "releasePipelineVerify": "PASS",
+    "rc5StagingSmoke": "PASS"
+  },
+  "p0Interactions": {
+    "cart": { "source": "PASS", "staging": "PASS", "physical": "NOT_RUN" },
+    "favorites": { "source": "PASS", "staging": "PASS", "physical": "NOT_RUN" },
+    "catalogFilters": { "source": "PASS", "staging": "PASS", "physical": "NOT_RUN" },
+    "sellerNavigation": { "source": "PASS", "staging": "PASS", "physical": "NOT_RUN" },
+    "profile": { "source": "PASS", "staging": "NOT_TESTABLE", "physical": "NOT_RUN" },
+    "localization": { "source": "PASS", "staging": "NOT_TESTABLE", "physical": "NOT_RUN" },
+    "updateFlow": { "source": "PASS", "mrpPublish": "PENDING", "physical": "NOT_RUN" }
+  },
+  "apkVerification": "PASS",
+  "releaseIdentityGate": "PASS",
+  "embeddedFixVerification": "PASS"
+}

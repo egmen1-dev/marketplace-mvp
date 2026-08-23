@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-23T15:38:00.929Z",
+  "generatedAt": "2026-08-23T15:39:26.772Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "mainSha": "b6bf68c",
+  "mainSha": "477f671",
   "stagingSha": "b6bf68c",
   "summary": {
     "total": 14,
@@ -12,7 +12,7 @@
     {
       "name": "staging_version",
       "ok": true,
-      "detail": "staging=b6bf68c local=b6bf68c"
+      "detail": "staging=b6bf68c local=477f671"
     },
     {
       "name": "bootstrap",

@@ -1,0 +1,51 @@
+{
+  "candidate": "RC5",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.10-beta.1",
+  "versionCode": 9,
+  "commitSha": "baf8cd10807834fca0c308ed5afa29448f2542f7",
+  "mergeCommitSha": "b6bf68c",
+  "pr141MergeSha": "b6bf68c",
+  "railwaySha": "b6bf68c",
+  "buildTime": "2026-08-23T15:41:00Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "startupVerbose": true,
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.10_beta.1.apk",
+    "path": "artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "sha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "sizeBytes": 43492086
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "buildType": "release",
+    "signedWith": "debug.keystore (internal install only)",
+    "abi": ["arm64-v8a"],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "commitShaVerifiedInBundle": true,
+    "buildTimeVerifiedInBundle": true,
+    "versionNameVerifiedInBundle": true,
+    "apiHostVerifiedInBundle": true,
+    "betaChannelVerifiedInBundle": true,
+    "useCommerceActionsVerifiedInBundle": true,
+    "commerceTelemetryVerifiedInBundle": true,
+    "warmSessionVerifiedInBundle": true,
+    "aboutScreenVerifiedInBundle": true,
+    "catalogToolbarVerifiedInBundle": true,
+    "bootSplashVerifiedInBundle": true,
+    "updateHonestyVerifiedInBundle": true
+  },
+  "buildNotes": {
+    "nativeDeps": "Pinned react-native-reanimated@4.5.0 + react-native-worklets@0.10.1",
+    "newArchDisabled": "newArchEnabled=false in app.json",
+    "rcLabel": "RC5",
+    "identityGate": "PASS"
+  }
+}

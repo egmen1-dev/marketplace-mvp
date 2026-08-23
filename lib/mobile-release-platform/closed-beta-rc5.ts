@@ -3,10 +3,10 @@
 export const CLOSED_BETA_RELEASE_RC5 = {
   versionName: "0.1.10-beta.1",
   versionCode: 9,
-  sha256: "", // populated after APK build
-  artifactSizeBytes: 0,
+  sha256: "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+  artifactSizeBytes: 43492086,
   artifactFileName: "lot_android_closed_beta_0.1.10_beta.1.apk",
-  gitCommit: "", // populated at publish time
+  gitCommit: "baf8cd1",
   githubTag: "closed-beta-rc5-0.1.10-beta.1",
   releaseNotes: [
     "Closed Beta RC5 — release-truth audit + physical validation build",
