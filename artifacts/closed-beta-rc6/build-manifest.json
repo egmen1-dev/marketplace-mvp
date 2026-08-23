@@ -1,0 +1,49 @@
+{
+  "candidate": "RC6",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.11-beta.1",
+  "versionCode": 11,
+  "commitSha": "b774ebd",
+  "mergeCommitSha": "0be57c5",
+  "pr146MergeSha": "0be57c5",
+  "pr146HeadSha": "4f5ce74",
+  "railwaySha": "0be57c5",
+  "buildTime": "2026-08-23T18:16:24.164Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.11_beta.1.apk",
+    "path": "artifacts/closed-beta-rc6/lot_android_closed_beta_0.1.11_beta.1.apk",
+    "sha256": "128530437e73baf599e9a2db800a5c2f335d10252004437dc6e2effbb6723afe",
+    "sizeBytes": 43519078
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "CommerceHeader": true,
+    "messagesRoute": true,
+    "conversationScreen": true,
+    "useMessagesBadge": true,
+    "chatApiClient": true,
+    "profileMessages": true,
+    "pdpChat": true,
+    "sellerStorefrontChat": true,
+    "orderChat": "where_supported",
+    "BootSplash": true,
+    "CatalogToolbar": true,
+    "useCommerceActions": true,
+    "updateRoute": true
+  },
+  "buildNotes": {
+    "release": "RC6 — CommerceHeader + buyer-seller chat (PR #146)",
+    "previousRelease": "RC5.1 0.1.10-beta.2 (code 10)"
+  }
+}

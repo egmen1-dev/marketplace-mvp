@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-08-23T18:16:00Z",
+  "candidate": "RC6",
+  "levels": ["source", "integration", "staging", "apk", "physical"],
+  "features": [
+    { "feature": "Cart", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    { "feature": "Favorites", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    { "feature": "Catalog", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    { "feature": "Seller", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    { "feature": "Chat", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    { "feature": "CommerceHeader", "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    { "feature": "Update", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" }
+  ],
+  "note": "Physical column NOT_RUN until device evidence. Staging chat security validated via rc6-chat-staging-security-smoke.mjs."
+}

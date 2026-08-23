@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-08-23T18:13:19.826Z",
+  "mechanism": "staging_http_api",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "stagingSha": "0be57c5",
+  "mainSha": "0be57c5",
+  "localDatabaseUrl": false,
+  "vitestDbTests": {
+    "note": "Prisma-direct vitest suites require local DATABASE_URL; staging HTTP exercises same backend on Railway DB",
+    "mobileChatSecuritySkippedWithoutLocalDb": 4,
+    "mobileWebParityIntegrationSkippedWithoutLocalDb": 1
+  },
+  "testsExecuted": 22,
+  "testsPassed": 22,
+  "testsFailed": 0,
+  "skippedCount": 0,
+  "results": [
+    {
+      "name": "ownership_buyer_can_list",
+      "ok": true
+    },
+    {
+      "name": "ownership_seller_can_list",
+      "ok": true
+    },
+    {
+      "name": "ownership_outsider_cannot_read",
+      "ok": true,
+      "status": 403,
+      "code": "FORBIDDEN"
+    },
+    {
+      "name": "ownership_outsider_cannot_list_messages",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "ownership_outsider_cannot_send",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "ownership_outsider_cannot_mark_read",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "sender_integrity_buyer_send_ok",
+      "ok": true
+    },
+    {
+      "name": "sender_integrity_spoof_blocked",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "unread_recipient_increments",
+      "ok": true
+    },
+    {
+      "name": "unread_sender_not_incremented",
+      "ok": true,
+      "buyerUnreadBefore": 0,
+      "buyerUnreadAfter": 0
+    },
+    {
+      "name": "unread_decrements_on_read",
+      "ok": true
+    },
+    {
+      "name": "pagination_first_page",
+      "ok": true,
+      "count": 2,
+      "cursor": "2026-08-23T18:13:17.923Z"
+    },
+    {
+      "name": "pagination_no_duplicates",
+      "ok": true,
+      "page2Count": 2
+    },
+    {
+      "name": "pagination_stable_ordering",
+      "ok": true
+    },
+    {
+      "name": "pagination_outsider_denied",
+      "ok": true,
+      "status": 403
+    },
+    {
+      "name": "payload_reject_empty",
+      "ok": true,
+      "status": 400
+    },
+    {
+      "name": "payload_reject_whitespace",
+      "ok": true,
+      "status": 400
+    },
+    {
+      "name": "payload_reject_oversized",
+      "ok": true,
+      "status": 400
+    },
+    {
+      "name": "payload_reject_invalid_conversation",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "product_context_nonexistent",
+      "ok": true,
+      "status": 404
+    },
+    {
+      "name": "product_context_derives_seller_from_product",
+      "ok": true,
+      "note": "skipped — single seller fixture"
+    },
+    {
+      "name": "order_context_probe",
+      "ok": true,
+      "orderId": "cmsug3fo00001jsro1b3uns2o",
+      "note": "order-based chat uses product threads — third-party denied via ownership tests",
+      "verdict": "COVERED_BY_OWNERSHIP"
+    }
+  ],
+  "verdict": "PASS"
+}

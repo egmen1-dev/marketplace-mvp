@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-08-23T18:13:19.826Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "stagingSha": "0be57c5",
+  "create": true,
+  "send": true,
+  "receive": true,
+  "reply": true,
+  "read": true,
+  "unread": true,
+  "unauthorized": true,
+  "results": [
+    {
+      "name": "buyer_login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "seller_login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "outsider_login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "catalog_product_fixture",
+      "ok": true,
+      "productId": "cmsmzsjx0002xy0w60fa73kqf"
+    },
+    {
+      "name": "create_conversation",
+      "ok": true,
+      "status": 200,
+      "conversationId": "cmsnjx6hw0005l81mvb8n2t9k",
+      "created": false
+    },
+    {
+      "name": "buyer_send_message",
+      "ok": true,
+      "status": 200,
+      "messageId": "cmt64l3oj000pmo01ceifpn50"
+    },
+    {
+      "name": "seller_inbox_receives_thread",
+      "ok": true,
+      "unreadCount": 1
+    },
+    {
+      "name": "seller_mark_read",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "seller_reply",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "buyer_receives_reply_unread",
+      "ok": true
+    }
+  ],
+  "verdict": "PASS"
+}

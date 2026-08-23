@@ -1,0 +1,35 @@
+{
+  "candidate": "RC6",
+  "generatedAt": "2026-08-23T18:16:00Z",
+  "preconditions": {
+    "pr146Merged": "PASS",
+    "pr146MergeSha": "0be57c5",
+    "pr146HeadSha": "4f5ce74",
+    "chatSecurityStaging": "PASS",
+    "versionBump": "PASS"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "mobileTest": "PASS",
+    "webParityGate": "PASS",
+    "chatSecurityReport": "PASS",
+    "chatStagingSmoke": "PASS",
+    "stagingSmoke": "PASS",
+    "releasePipelineVerify": "PASS"
+  },
+  "apkVerification": "PASS",
+  "bundleSymbols": {
+    "CommerceHeader": "PASS",
+    "messagesRoute": "PASS",
+    "conversationScreen": "PASS",
+    "useMessagesBadge": "PASS",
+    "chatApiClient": "PASS",
+    "BootSplash": "PASS",
+    "CatalogToolbar": "PASS",
+    "useCommerceActions": "PASS",
+    "updateRoute": "PASS"
+  },
+  "mrpPublish": "PENDING_MERGE_TO_MAIN",
+  "updateApiVerification": "PENDING_MRP_PUBLISH",
+  "physicalAndroid": "NOT_RUN"
+}
