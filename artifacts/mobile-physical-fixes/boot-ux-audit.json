@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "physicalFeedback": "BootSplash partially present but perceived as FAIL — debug-like, weak branding",
+  "before": {
+    "logo": "88x88 flat on white",
+    "progress": "static 42% opacity pulse bar",
+    "status": "technical stage messages every 180ms",
+    "betaBar": "full orange strip with version string competing with splash"
+  },
+  "after": {
+    "logo": "72px in 112px orange-soft ring",
+    "progress": "indeterminate sliding segment on thin track",
+    "status": "human-readable stages polled every 400ms",
+    "betaBar": "compact 'Beta' pill with safe-area inset; version in Profile → О приложении"
+  },
+  "files": ["apps/mobile/src/components/BootSplash.tsx", "apps/mobile/src/beta/BetaBanner.tsx"],
+  "physicalStatus": "NOT_RUN"
+}

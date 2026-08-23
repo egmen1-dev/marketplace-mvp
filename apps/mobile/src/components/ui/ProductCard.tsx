@@ -57,7 +57,7 @@ export function ProductCard({
   const showFavorite = reserveFavoriteSlot || Boolean(onFavorite);
 
   return (
-    <Animated.View style={[{ width: cardWidth }, { transform: [{ scale }] }]}>
+    <Animated.View style={[{ width: cardWidth, flexGrow: 1 }, { transform: [{ scale }] }]}>
       <Pressable style={[styles.card, compact ? styles.cardCompact : null]} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
         <View style={[styles.imageWrap, compact ? styles.imageWrapCompact : null]}>
           {imageUrl ? (
@@ -134,8 +134,12 @@ export function ProductCard({
           </Text>
 
           <View style={styles.metaRow}>
-            {socialCount > 0 ? <Text style={styles.social}>♥ {socialCount} в избранном</Text> : <Text style={styles.metaPlaceholder}> </Text>}
-            {(product.views ?? 0) > 0 ? <Text style={styles.views}>{product.views} просм.</Text> : null}
+            <Text style={styles.social} numberOfLines={1}>
+              {socialCount > 0 ? `♥ ${socialCount} в избранном` : " "}
+            </Text>
+            <Text style={styles.views} numberOfLines={1}>
+              {(product.views ?? 0) > 0 ? `${product.views} просм.` : " "}
+            </Text>
           </View>
 
           {onAddToCart ? (
@@ -167,6 +171,7 @@ export function ProductCardGrid({ children }: { children: ReactNode }) {
 const styles = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md, justifyContent: "space-between" },
   card: {
+    flex: 1,
     backgroundColor: colors.white,
     borderRadius: radii.lg,
     overflow: "hidden",
@@ -196,12 +201,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     ...shadows.card,
   },
-  body: { padding: spacing.md, gap: spacing.xs },
+  body: { flex: 1, padding: spacing.md, gap: spacing.xs, justifyContent: "flex-start" },
   priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap", minHeight: 24 },
   price: { ...typography.price, color: colors.black },
   compareAt: { ...typography.caption, color: colors.gray500, textDecorationLine: "line-through" },
   compareAtHidden: { opacity: 0 },
-  title: { ...typography.caption, color: colors.gray900, minHeight: 36 },
+  title: { ...typography.caption, color: colors.gray900, minHeight: 36, lineHeight: 18 },
   ratingSlot: { minHeight: 18, justifyContent: "center" },
   sellerSlot: { minHeight: 18, justifyContent: "center" },
   seller: { ...typography.caption, color: colors.gray500 },
@@ -209,10 +214,9 @@ const styles = StyleSheet.create({
   sellerHidden: { ...typography.caption, opacity: 0 },
   location: { ...typography.caption, color: colors.gray500 },
   locationHidden: { opacity: 0 },
-  metaRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexWrap: "wrap", minHeight: 18 },
-  metaPlaceholder: { ...typography.caption, opacity: 0 },
-  social: { ...typography.caption, color: colors.gray700, fontWeight: "600" },
-  views: { ...typography.caption, color: colors.gray500 },
+  metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: 18 },
+  social: { ...typography.caption, color: colors.gray700, fontWeight: "600", flex: 1 },
+  views: { ...typography.caption, color: colors.gray500, textAlign: "right", minWidth: 56 },
   cta: {
     marginTop: spacing.xs,
     flexDirection: "row",

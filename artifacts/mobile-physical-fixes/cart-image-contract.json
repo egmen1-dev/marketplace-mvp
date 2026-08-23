@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-23T18:51:55.941Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "productId": "cmsmzsjx0002xy0w60fa73kqf",
+  "catalogImageUrl": "/images/seed/photo-1572981779307-38b8cabb2407.jpg",
+  "cartImageUrl": "/images/seed/photo-1572981779307-38b8cabb2407.jpg",
+  "mobileRenderContract": "resolveImageUrl(relativePath, apiBaseUrl) required on client",
+  "checks": [
+    {
+      "name": "cart_get_ok",
+      "ok": true
+    },
+    {
+      "name": "item_present",
+      "ok": true
+    },
+    {
+      "name": "primaryImage_present",
+      "ok": true
+    },
+    {
+      "name": "image_url_resolvable",
+      "ok": true
+    },
+    {
+      "name": "matches_catalog_image",
+      "ok": true
+    }
+  ],
+  "verdict": "PASS"
+}

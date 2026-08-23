@@ -1,0 +1,520 @@
+{
+  "generatedAt": "2026-08-23T18:51:54.953Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "categoriesAudited": 51,
+  "filterBugs": 0,
+  "emptyFixtures": 21,
+  "rows": [
+    {
+      "categoryId": "cmsoz1je6yofifqw0",
+      "category": "Автоаксессуары",
+      "slug": "auto-accessories-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1jxvu05pn2y8",
+      "category": "Женская одежда",
+      "slug": "women-clothing",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsnia09yci7qzw77",
+      "category": "Климатическая техника",
+      "slug": "climate-tech",
+      "dbProducts": 16,
+      "eligibleProducts": 16,
+      "mobileApiProducts": 16,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsnia0a8y1fywihi",
+      "category": "Компьютеры",
+      "slug": "computers",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1ih6db1wwcrb",
+      "category": "Мебель",
+      "slug": "furniture-cat",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs2qr000ry0w646jtra3u",
+      "category": "Обогреватели",
+      "slug": "heaters",
+      "dbProducts": 8,
+      "eligibleProducts": 8,
+      "mobileApiProducts": 8,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsnia0acpsnzoisk",
+      "category": "Обувь",
+      "slug": "footwear",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1kb1kws8bmq1",
+      "category": "Обувь",
+      "slug": "shoes-all",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs0a8000fy0w6rfjckcnq",
+      "category": "Строительство и ремонт",
+      "slug": "construction",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 27,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1khk4mvdkgka",
+      "category": "Уход за кожей",
+      "slug": "skincare-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1kunbb4ym94q",
+      "category": "Фитнес",
+      "slug": "fitness-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs3hp000vy0w6q7fuponx",
+      "category": "Электроинструмент",
+      "slug": "power-tools",
+      "dbProducts": 4,
+      "eligibleProducts": 4,
+      "mobileApiProducts": 4,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1jkquivvfmx1",
+      "category": "Автохимия и уход",
+      "slug": "auto-care-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzsdus002dy0w6iqcxrw7i",
+      "category": "Бег",
+      "slug": "running",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1inpfyfcg2c5",
+      "category": "Бытовая техника для дома",
+      "slug": "home-appliances",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1l17zdanqwv0",
+      "category": "Велоспорт",
+      "slug": "cycling-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzsbl10021y0w62ksxff9k",
+      "category": "Верхняя одежда",
+      "slug": "outerwear",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs349000ty0w6q5ki81d9",
+      "category": "Инструменты",
+      "slug": "tools",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 4,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs5dp0015y0w6jy0j4y09",
+      "category": "Ключи",
+      "slug": "wrenches",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs18g000jy0w6o0sh8daw",
+      "category": "Крепёж",
+      "slug": "fasteners",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs0v1000hy0w6cqbtdi73",
+      "category": "Материалы",
+      "slug": "materials",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 2,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs8ki001ly0w6aplr3j7i",
+      "category": "Мебель",
+      "slug": "furniture",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1k4fj94m5995",
+      "category": "Мужская одежда",
+      "slug": "men-clothing",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1ko413avl7rs",
+      "category": "Парфюмерия",
+      "slug": "perfume-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs6ia001by0w6113tepnj",
+      "category": "Смартфоны",
+      "slug": "smartphones",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1hx9z0xzs7nk",
+      "category": "Смартфоны и телефоны",
+      "slug": "phones",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzscpb0027y0w6qrd4hqrq",
+      "category": "Уход за кожей",
+      "slug": "skincare",
+      "dbProducts": 2,
+      "eligibleProducts": 2,
+      "mobileApiProducts": 2,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs5r80017y0w6piofj32r",
+      "category": "Измерительный",
+      "slug": "measuring-tools",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs1m2000ly0w6jieuqs6n",
+      "category": "Лакокрасочные",
+      "slug": "paints",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs72h001dy0w6kxuz21ne",
+      "category": "Наушники",
+      "slug": "headphones",
+      "dbProducts": 4,
+      "eligibleProducts": 4,
+      "mobileApiProducts": 4,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1iu9pnxf1vdz",
+      "category": "Освещение",
+      "slug": "lighting-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs8xy001ny0w61jtj4f3x",
+      "category": "Освещение",
+      "slug": "lighting",
+      "dbProducts": 2,
+      "eligibleProducts": 2,
+      "mobileApiProducts": 2,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs1zk000ny0w60rm4d48a",
+      "category": "Отопление",
+      "slug": "heating",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzsd3b0029y0w66sfujim8",
+      "category": "Парфюмерия",
+      "slug": "perfume",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs50a0013y0w67pnsqrpj",
+      "category": "Ручной инструмент",
+      "slug": "hand-tools",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1i3vruhcepty",
+      "category": "ТВ и аудио",
+      "slug": "tv-audio",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzsatz001xy0w6orlsrqnh",
+      "category": "Уход",
+      "slug": "auto-care",
+      "dbProducts": 2,
+      "eligibleProducts": 2,
+      "mobileApiProducts": 2,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzse8c002fy0w6pe3hsakc",
+      "category": "Фитнес",
+      "slug": "fitness",
+      "dbProducts": 2,
+      "eligibleProducts": 2,
+      "mobileApiProducts": 2,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1jrbq6puiiyz",
+      "category": "Шины и диски",
+      "slug": "tires-wheels-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs64z0019y0w684kcljxe",
+      "category": "Электроника",
+      "slug": "electronics",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 7,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1iafuuha75fs",
+      "category": "Носимая электроника",
+      "slug": "wearables-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzsb7i001zy0w6d5yk96de",
+      "category": "Одежда и обувь",
+      "slug": "clothing",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 2,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsoz1j0xssdlpmf7",
+      "category": "Посуда",
+      "slug": "kitchenware-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1hmchhyap713",
+      "category": "Строительные материалы",
+      "slug": "building-materials",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsoz1j7kvk47tclu",
+      "category": "Домашний текстиль",
+      "slug": "home-textile-cat",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 0,
+      "missing": 0,
+      "classification": "NO_CATEGORY_FIXTURE_DATA"
+    },
+    {
+      "categoryId": "cmsmzs86y001jy0w67a7g6ift",
+      "category": "Дом и сад",
+      "slug": "home",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 6,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs9p1001ry0w63q86d277",
+      "category": "Кухня",
+      "slug": "kitchenware",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzs7tg001hy0w6twhozq8b",
+      "category": "Носимая электроника",
+      "slug": "wearables",
+      "dbProducts": 1,
+      "eligibleProducts": 1,
+      "mobileApiProducts": 1,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzsa2t001ty0w66wulr4yb",
+      "category": "Автотовары",
+      "slug": "auto",
+      "dbProducts": 6,
+      "eligibleProducts": 6,
+      "mobileApiProducts": 8,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzscc00025y0w6ne9hld02",
+      "category": "Красота и здоровье",
+      "slug": "beauty",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 3,
+      "missing": 0,
+      "classification": "OK"
+    },
+    {
+      "categoryId": "cmsmzsdgz002by0w6w3h411b7",
+      "category": "Спорт и отдых",
+      "slug": "sport",
+      "dbProducts": 0,
+      "eligibleProducts": 0,
+      "mobileApiProducts": 3,
+      "missing": 0,
+      "classification": "OK"
+    }
+  ],
+  "verdict": "PASS"
+}

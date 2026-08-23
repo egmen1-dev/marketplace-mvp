@@ -23,6 +23,7 @@ export function CatalogToolbar({
   onDealsChange,
   categoryName,
   onClearCategory,
+  onResetFilters,
 }: {
   sort: CatalogSort;
   onSortChange: (sort: CatalogSort) => void;
@@ -32,6 +33,7 @@ export function CatalogToolbar({
   onDealsChange?: (value: boolean) => void;
   categoryName?: string | null;
   onClearCategory?: () => void;
+  onResetFilters?: () => void;
 }) {
   const [sortOpen, setSortOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -70,7 +72,7 @@ export function CatalogToolbar({
       </View>
 
       {filterSummary ? (
-        <Pressable onPress={onClearCategory} accessibilityRole="button" accessibilityLabel="Сбросить фильтры">
+        <Pressable onPress={onResetFilters ?? onClearCategory} accessibilityRole="button" accessibilityLabel="Сбросить фильтры">
           <Text style={styles.activeFilters} numberOfLines={1}>
             {filterSummary} · сбросить
           </Text>
@@ -106,6 +108,15 @@ export function CatalogToolbar({
               <Chip label="В наличии" active={inStockOnly} onPress={() => onInStockChange(!inStockOnly)} />
               {onDealsChange ? <Chip label="Скидки" active={Boolean(dealsOnly)} onPress={() => onDealsChange(!dealsOnly)} /> : null}
             </View>
+            <Pressable
+              style={styles.sheetRow}
+              onPress={() => {
+                onResetFilters?.();
+                setFiltersOpen(false);
+              }}
+            >
+              <Text style={styles.sheetRowText}>Сбросить все фильтры</Text>
+            </Pressable>
             {categoryName ? (
               <Pressable style={styles.sheetRow} onPress={() => { onClearCategory?.(); setFiltersOpen(false); }}>
                 <Text style={styles.sheetRowText}>Сбросить категорию: {categoryName}</Text>
@@ -182,7 +193,7 @@ const styles = StyleSheet.create({
   },
   badgeText: { fontSize: 11, fontWeight: "700", color: colors.white },
   activeFilters: { ...typography.caption, color: colors.orange, fontWeight: "600" },
-  rail: { gap: spacing.sm, paddingVertical: spacing.xs },
+  rail: { gap: spacing.sm, paddingVertical: 2, alignItems: "center", flexGrow: 0 },
   backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "flex-end" },
   sheet: {
     backgroundColor: colors.white,

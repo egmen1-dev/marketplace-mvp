@@ -1,0 +1,27 @@
+{
+  "epic": "Physical Validation Fixes",
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "baseMain": "2bb86dd (RC6 merged)",
+  "apkBuilt": false,
+  "verdict": "READY_FOR_REVIEW",
+  "summary": {
+    "categoryUi": "FIXED in source — root cause was stale RC5.1 APK with removed circle component",
+    "categoryData": "NO_CATEGORY_FIXTURE_DATA for Женская одежда/Автоаксессуары; stale q bug fixed",
+    "filters": "Reset matrix + clearFilters wired",
+    "productCard": "Layout invariant + grid stretch",
+    "cartImages": "resolveImageUrl applied; staging contract PASS",
+    "bootUx": "Redesigned splash + compact beta banner",
+    "rc6Regression": "CommerceHeader/chat preserved"
+  },
+  "staging": {
+    "categoryCoverage": "PASS (0 filter bugs, 21 empty fixtures)",
+    "cartImageContract": "PASS",
+    "filterMatrix": "PASS"
+  },
+  "tests": {
+    "mobileTypecheck": "PASS",
+    "mobilePhysicalFixes": "9/9 PASS",
+    "mobileCommerceIntegration": "9/9 PASS"
+  },
+  "physical": "NOT_RUN — no new APK in this EPIC"
+}

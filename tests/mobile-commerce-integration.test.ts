@@ -37,8 +37,9 @@ describe("mobile commerce integration — wiring contracts", () => {
     expect(endpointsSource).not.toMatch(/search\.set\("category",/);
   });
 
-  it("home category nav passes categoryId only", () => {
-    expect(indexSource).toContain("params: { categoryId: cat.id }");
+  it("home category nav passes categoryId and clears search param", () => {
+    expect(indexSource).toContain("categoryId: cat.id");
+    expect(indexSource).toContain('q: ""');
     expect(indexSource).not.toMatch(/categoryId: cat\.id,\s*q: cat\.name/);
   });
 

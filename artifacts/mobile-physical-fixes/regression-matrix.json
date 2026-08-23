@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "features": [
+    { "feature": "Session", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "PASS_PHYSICAL" },
+    { "feature": "Home", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "PASS_PHYSICAL" },
+    { "feature": "Category UI", "source": "PASS", "integration": "PASS", "staging": "N/A", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "Category data", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "Filters", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "ProductCard layout", "source": "PASS", "integration": "PASS", "staging": "N/A", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "Cart images", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "BootSplash", "source": "PASS", "integration": "N/A", "staging": "N/A", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "CommerceHeader", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "Chat", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    { "feature": "Favorites", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "PASS_PHYSICAL" },
+    { "feature": "Cart", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "PASS_PHYSICAL" },
+    { "feature": "Update", "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "PASS_PHYSICAL" }
+  ],
+  "commands": {
+    "typecheck": "npm run mobile:typecheck",
+    "unit": "npx vitest run tests/mobile-physical-fixes.test.ts tests/mobile-commerce-integration.test.ts",
+    "categoryCoverage": "node scripts/mobile-category-coverage-audit.mjs",
+    "cartImage": "node scripts/mobile-cart-image-staging-smoke.mjs",
+    "filterMatrix": "node scripts/mobile-filter-matrix-staging.mjs"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "replacedPatterns": [
+    {
+      "pattern": "source.includes('Chip') as sole proof",
+      "replacement": "Chip dimension assertions + staging category coverage audit"
+    },
+    {
+      "pattern": "grep bundle for handler names",
+      "replacement": "cart-image-contract staging smoke with API DTO checks"
+    },
+    {
+      "pattern": "static wiring test only for category filter",
+      "replacement": "filter-matrix staging HTTP + useFocusEffect contract tests"
+    }
+  ],
+  "newTests": ["tests/mobile-physical-fixes.test.ts"],
+  "newStagingScripts": [
+    "scripts/mobile-category-coverage-audit.mjs",
+    "scripts/mobile-cart-image-staging-smoke.mjs",
+    "scripts/mobile-filter-matrix-staging.mjs"
+  ]
+}
