@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "physicalApk": "0.1.10-beta.2 (RC5.1)",
+  "currentSource": "main RC6",
+  "catalogRenderer": {
+    "component": "CategoryRail",
+    "file": "apps/mobile/src/components/ui/CatalogToolbar.tsx",
+    "child": "Chip",
+    "fileChip": "apps/mobile/src/components/ui/Chip.tsx",
+    "usedOn": ["apps/mobile/app/(tabs)/catalog.tsx", "apps/mobile/app/(tabs)/index.tsx"]
+  },
+  "rootCauseVerdict": "D",
+  "rootCauseDetail": "Physical RC5.1 device ran stale/older bundle with deleted design-system CategoryRail (88x88 circles). Current main uses horizontal Chip rail only.",
+  "legacyRemoved": {
+    "file": "apps/mobile/src/design-system/components/CategoryRail.tsx",
+    "pattern": "width:88 minHeight:88 iconWrap 44x44 borderRadius:22",
+    "status": "deleted before RC3"
+  },
+  "secondaryContributors": [
+    { "id": "C", "note": "Pre-unification duplicate implementations existed; now single CategoryRail→Chip" },
+    { "id": "B", "note": "No conditional style switches to circle layout in current Chip" }
+  ],
+  "fixesApplied": [
+    "Chip: minHeight 38, maxHeight 42, paddingHorizontal 16, ellipsize, maxWidth 160",
+    "CategoryRail: compact rail padding (2px vertical)",
+    "Full category list loaded (no slice(0,12))"
+  ],
+  "grepProof": {
+    "aspectRatio1InCategorySource": false,
+    "width88InCategorySource": false
+  }
+}

@@ -1,8 +1,9 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
 
 import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../src/api/endpoints";
+import { selectRailCategories } from "../../src/catalog/rail-categories";
 import { CommerceHeader } from "../../src/components/CommerceHeader";
 import {
   CatalogToolbar,
@@ -32,6 +33,14 @@ function parseSort(value: unknown): CatalogSort {
   return typeof value === "string" && SORT_VALUES.has(value as CatalogSort) ? (value as CatalogSort) : "popular";
 }
 
+function resolveCategoryFromList(
+  categoryId: string,
+  list: Array<{ id: string; name: string }>,
+): { id: string; name: string } {
+  const match = list.find((c) => c.id === categoryId);
+  return match ? { id: match.id, name: match.name } : { id: categoryId, name: "Категория" };
+}
+
 export default function CatalogScreen() {
   const params = useLocalSearchParams<{
     q?: string;
@@ -50,14 +59,15 @@ export default function CatalogScreen() {
   const [inStockOnly, setInStockOnly] = useState(false);
   const [dealsOnly, setDealsOnly] = useState(params.deals === "1");
   const [category, setCategory] = useState<{ id: string; name: string } | null>(
-    typeof params.categoryId === "string" ? { id: params.categoryId, name: "Категория" } : null,
+    typeof params.categoryId === "string" ? resolveCategoryFromList(params.categoryId, []) : null,
   );
   const [sellerFilter, setSellerFilter] = useState<{ id: string; name: string } | null>(
     typeof params.sellerId === "string"
       ? { id: params.sellerId, name: typeof params.sellerName === "string" ? params.sellerName : "Продавец" }
       : null,
   );
-  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; catalogProductCount?: number; productCount?: number }>>([]);
+  const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
   const [history, setHistory] = useState<string[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
@@ -69,26 +79,42 @@ export default function CatalogScreen() {
     loadSearchHistory().then(setHistory);
     fetchCategories()
       .then((res) => {
-        const list = res.items.slice(0, 12);
-        setCategories(list);
+        const list = res.items;
+        setAllCategories(list);
         if (typeof params.categoryId === "string") {
-          const match = list.find((c) => c.id === params.categoryId);
-          if (match) setCategory({ id: match.id, name: match.name });
+          setCategory(resolveCategoryFromList(params.categoryId, list));
         }
       })
       .catch(() => null);
   }, [params.categoryId]);
 
-  useEffect(() => {
-    if (typeof params.sort === "string") setSort(parseSort(params.sort));
-    if (params.deals === "1") setDealsOnly(true);
-    if (typeof params.sellerId === "string") {
-      setSellerFilter({
-        id: params.sellerId,
-        name: typeof params.sellerName === "string" ? params.sellerName : "Продавец",
-      });
-    }
-  }, [params.sort, params.deals, params.sellerId, params.sellerName]);
+  useFocusEffect(
+    useCallback(() => {
+      if (typeof params.categoryId === "string") {
+        setCategory((prev) => {
+          const resolved = resolveCategoryFromList(params.categoryId!, allCategories);
+          if (prev?.id === resolved.id && prev?.name === resolved.name) return prev;
+          return resolved;
+        });
+        setQ("");
+        setSellerFilter(null);
+        if (params.deals !== "1") setDealsOnly(false);
+      } else if (typeof params.q === "string" && params.q.length > 0) {
+        setQ(params.q);
+        setCategory(null);
+      }
+      if (typeof params.sort === "string") setSort(parseSort(params.sort));
+      if (params.deals === "1") setDealsOnly(true);
+      if (typeof params.sellerId === "string") {
+        setSellerFilter({
+          id: params.sellerId,
+          name: typeof params.sellerName === "string" ? params.sellerName : "Продавец",
+        });
+        setCategory(null);
+        setQ("");
+      }
+    }, [params.categoryId, params.q, params.sort, params.deals, params.sellerId, params.sellerName, allCategories]),
+  );
 
   useEffect(() => {
     if (params.focusSearch === "1") {
@@ -102,7 +128,7 @@ export default function CatalogScreen() {
       setLoading(true);
       try {
         const res = await fetchCatalog({
-          q,
+          q: q.trim() || undefined,
           cursor: reset ? null : cursor,
           sort,
           categoryId: category?.id,
@@ -121,6 +147,7 @@ export default function CatalogScreen() {
   );
 
   useEffect(() => {
+    setCursor(null);
     load(true);
   }, [q, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly]);
 
@@ -132,6 +159,9 @@ export default function CatalogScreen() {
   }, [sellerFilter, dealsOnly]);
 
   async function submitSearch(value: string) {
+    setCategory(null);
+    setSellerFilter(null);
+    setDealsOnly(false);
     setQ(value);
     setSearchFocused(false);
     const next = await pushSearchHistory(value);
@@ -145,6 +175,7 @@ export default function CatalogScreen() {
     setInStockOnly(false);
     setDealsOnly(false);
     setSort("popular");
+    setCursor(null);
   }
 
   return (
@@ -171,11 +202,14 @@ export default function CatalogScreen() {
         />
 
         <CategoryRail
-          categories={categories}
+          categories={railCategories}
           activeId={category?.id ?? null}
           onSelect={(cat) => {
             setCategory(cat);
+            setSellerFilter(null);
+            setDealsOnly(false);
             if (cat) setQ("");
+            else clearFilters();
           }}
         />
 
@@ -187,12 +221,8 @@ export default function CatalogScreen() {
           dealsOnly={dealsOnly}
           onDealsChange={setDealsOnly}
           categoryName={(category?.name ?? activeFiltersLabel) || null}
-          onClearCategory={() => {
-            if (category) setCategory(null);
-            else if (sellerFilter) setSellerFilter(null);
-            else if (dealsOnly) setDealsOnly(false);
-            else setInStockOnly(false);
-          }}
+          onClearCategory={() => setCategory(null)}
+          onResetFilters={clearFilters}
         />
 
         {loading && items.length === 0 ? (
@@ -206,19 +236,21 @@ export default function CatalogScreen() {
             contentContainerStyle={styles.list}
             refreshControl={<RefreshControl refreshing={loading} onRefresh={() => load(true)} />}
             renderItem={({ item }) => (
-              <ProductCard
-                product={item}
-                width="48%"
-                isFavorite={isFavorite(item.id)}
-                onPress={() => router.push(`/product/${item.id}`)}
-                onFavorite={() => toggleProductFavorite(item.id)}
-                onAddToCart={() => addProductToCart(item.id, 1)}
-                onSellerPress={
-                  item.seller?.id
-                    ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName)
-                    : undefined
-                }
-              />
+              <View style={styles.cardCell}>
+                <ProductCard
+                  product={item}
+                  width="100%"
+                  isFavorite={isFavorite(item.id)}
+                  onPress={() => router.push(`/product/${item.id}`)}
+                  onFavorite={() => toggleProductFavorite(item.id)}
+                  onAddToCart={() => addProductToCart(item.id, 1)}
+                  onSellerPress={
+                    item.seller?.id
+                      ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName)
+                      : undefined
+                  }
+                />
+              </View>
             )}
             ListEmptyComponent={
               !loading ? (
@@ -236,5 +268,6 @@ export default function CatalogScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
   list: { paddingBottom: spacing.xxl, gap: spacing.md },
-  row: { justifyContent: "space-between", marginBottom: spacing.md },
+  row: { justifyContent: "space-between", alignItems: "stretch", marginBottom: spacing.md },
+  cardCell: { width: "48%" },
 });

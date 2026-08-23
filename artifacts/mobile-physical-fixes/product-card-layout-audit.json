@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "component": "ProductCard",
+  "file": "apps/mobile/src/components/ui/ProductCard.tsx",
+  "physicalIssue": "Cards in same grid row had unequal heights",
+  "causes": [
+    "FlatList/flexWrap rows did not stretch children",
+    "metaRow conditionally omitted views text",
+    "title 1 vs 2 lines within same minHeight"
+  ],
+  "layoutInvariant": {
+    "slots": ["IMAGE", "PRICE", "TITLE(2 lines)", "RATING", "SELLER", "LOCATION", "META(social+views)", "CTA"],
+    "reservedHeights": {
+      "title": 36,
+      "ratingSlot": 18,
+      "sellerSlot": 18,
+      "metaRow": 18,
+      "cta": "layout.buttonHeightSm + spacing.xs"
+    }
+  },
+  "fixes": [
+    "card flex:1 + flexGrow:1 on wrapper",
+    "metaRow always renders social + views placeholders",
+    "catalog + home grids use cardCell width 48% with alignItems stretch"
+  ],
+  "physicalStatus": "NOT_RUN"
+}

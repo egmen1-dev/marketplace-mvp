@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-08-23T18:53:00Z",
+  "testedApk": "0.1.10-beta.2 (RC5.1) — physical ground truth",
+  "fixesTarget": "main @ RC6 (0.1.11-beta.1 source)",
+  "findings": [
+    { "check": "Session persistence", "physical": "PASS", "fixRequired": false },
+    { "check": "Home shows products immediately", "physical": "PASS", "fixRequired": false },
+    { "check": "Category UI compact chips", "physical": "FAIL", "rootCause": "D+A", "fix": "Chip rail hardened; RC5.1 had legacy circle component in older APK" },
+    { "check": "Category filtering", "physical": "FAIL", "rootCause": "stale_q+empty_fixture", "fix": "useFocusEffect clears q; coverage audit classifies empty categories" },
+    { "check": "Sort", "physical": "PASS", "fixRequired": false },
+    { "check": "Filters", "physical": "PARTIAL", "rootCause": "incomplete reset + client deals filter", "fix": "clearFilters + onResetFilters" },
+    { "check": "Favorites", "physical": "PASS", "fixRequired": false },
+    { "check": "ProductCard equal height", "physical": "FAIL", "rootCause": "grid stretch + meta row variance", "fix": "flex card + reserved meta slots + cardCell wrapper" },
+    { "check": "PDP", "physical": "PASS", "fixRequired": false },
+    { "check": "Seller navigation", "physical": "PASS", "fixRequired": false },
+    { "check": "Cart add", "physical": "PASS", "fixRequired": false },
+    { "check": "Cart images", "physical": "FAIL", "rootCause": "missing resolveImageUrl in cart.tsx", "fix": "resolveImageUrl + expo-image" },
+    { "check": "Profile/localization", "physical": "PASS", "fixRequired": false },
+    { "check": "BootSplash", "physical": "FAIL", "rootCause": "weak branding + fake progress + beta bar clash", "fix": "BootSplash redesign + compact BetaBanner" },
+    { "check": "Network failure", "physical": "PASS", "fixRequired": false },
+    { "check": "Update check", "physical": "PASS", "fixRequired": false }
+  ]
+}

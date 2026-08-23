@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-08-23T19:07:26.740Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "baselineCount": 20,
+  "categoryId": "cmsoz1je6yofifqw0",
+  "results": [
+    {
+      "id": "baseline",
+      "path": "/api/mobile/catalog/products?limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 20,
+      "verdict": "PASS"
+    },
+    {
+      "id": "category",
+      "path": "/api/mobile/catalog/products?categoryId=cmsoz1je6yofifqw0&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "in_stock",
+      "path": "/api/mobile/catalog/products?inStock=1&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 20,
+      "verdict": "PASS"
+    },
+    {
+      "id": "sort_newest",
+      "path": "/api/mobile/catalog/products?sort=newest&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 20,
+      "verdict": "PASS"
+    },
+    {
+      "id": "category_stock",
+      "path": "/api/mobile/catalog/products?categoryId=cmsoz1je6yofifqw0&inStock=1&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "category_sort",
+      "path": "/api/mobile/catalog/products?categoryId=cmsoz1je6yofifqw0&sort=price_asc&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 0,
+      "verdict": "PASS"
+    },
+    {
+      "id": "search_only",
+      "path": "/api/mobile/catalog/products?q=дрель&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 2,
+      "verdict": "PASS"
+    },
+    {
+      "id": "category_plus_search_conflict",
+      "path": "/api/mobile/catalog/products?categoryId=cmsoz1je6yofifqw0&q=дрель&limit=20",
+      "ok": true,
+      "status": 200,
+      "count": 0,
+      "verdict": "PASS",
+      "note": "AND semantics — client must clear q when category selected"
+    }
+  ],
+  "clientFixes": [
+    "useFocusEffect clears q when categoryId param set",
+    "CategoryRail onSelect clears q",
+    "clearFilters resets category, q, stock, deals, sort"
+  ],
+  "verdict": "PASS"
+}

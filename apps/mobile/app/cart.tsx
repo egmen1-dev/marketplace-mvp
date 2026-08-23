@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
-import { Animated, Image, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 
 import { fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
+import { loadAppConfig } from "../src/config/env";
 import { refreshTabBadges } from "../src/commerce/refresh-tab-badges";
 import { EmptyState, PrimaryButton, SkeletonGrid } from "../src/components/ui";
 import { useFadeIn } from "../src/hooks/useFadeIn";
 import { useAppStore } from "../src/store/app-store";
-import { formatPrice } from "../src/utils/format";
+import { formatPrice, resolveImageUrl } from "../src/utils/format";
 import { colors, layout, radii, spacing, typography } from "../src/theme/tokens";
 
 type CartItem = {
@@ -19,6 +21,7 @@ type CartItem = {
 
 export default function CartScreen() {
   const fade = useFadeIn();
+  const config = loadAppConfig();
   const offline = useAppStore((s) => s.offline);
   const [items, setItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -79,10 +82,12 @@ export default function CartScreen() {
         {items.length === 0 ? (
           <EmptyState preset="cart" actionLabel="В каталог" onAction={() => router.push("/(tabs)/catalog")} />
         ) : (
-          items.map((item) => (
+          items.map((item) => {
+            const imageUrl = resolveImageUrl(item.product?.primaryImage?.url ?? null, config.apiBaseUrl);
+            return (
             <View key={item.productId} style={styles.row}>
-              {item.product?.primaryImage?.url ? (
-                <Image source={{ uri: item.product.primaryImage.url }} style={styles.thumb} />
+              {imageUrl ? (
+                <Image source={{ uri: imageUrl }} style={styles.thumb} contentFit="cover" transition={200} />
               ) : (
                 <View style={styles.thumbFallback}>
                   <Text style={styles.thumbFallbackText}>📦</Text>
@@ -103,7 +108,8 @@ export default function CartScreen() {
                 <Text style={styles.removeText}>✕</Text>
               </Pressable>
             </View>
-          ))
+            );
+          })
         )}
         {items.length > 0 ? (
           <>
