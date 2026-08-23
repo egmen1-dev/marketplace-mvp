@@ -1,0 +1,100 @@
+{
+  "generatedAt": "2026-08-23T15:39:26.772Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "mainSha": "477f671",
+  "stagingSha": "b6bf68c",
+  "summary": {
+    "total": 14,
+    "passed": 14,
+    "failed": 0
+  },
+  "results": [
+    {
+      "name": "staging_version",
+      "ok": true,
+      "detail": "staging=b6bf68c local=477f671"
+    },
+    {
+      "name": "bootstrap",
+      "ok": true,
+      "status": 200,
+      "count": null
+    },
+    {
+      "name": "categories",
+      "ok": true,
+      "status": 200,
+      "count": 51
+    },
+    {
+      "name": "catalog_popular",
+      "ok": true,
+      "status": 200,
+      "count": 5
+    },
+    {
+      "name": "catalog_newest",
+      "ok": true,
+      "status": 200,
+      "count": 5
+    },
+    {
+      "name": "update_v7",
+      "ok": true,
+      "status": 200,
+      "count": 6,
+      "updateState": "NO_UPDATE"
+    },
+    {
+      "name": "update_v8",
+      "ok": true,
+      "status": 200,
+      "count": 6,
+      "updateState": "NO_UPDATE"
+    },
+    {
+      "name": "android_update_v7",
+      "ok": true,
+      "status": 200,
+      "count": 5,
+      "updateState": "NO_UPDATE"
+    },
+    {
+      "name": "buyer_login",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "catalog_authenticated",
+      "ok": true,
+      "count": 3
+    },
+    {
+      "name": "catalog_category_filter",
+      "ok": true,
+      "categoryId": "cmsoz1je6yofifqw0",
+      "count": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "cart_add",
+      "ok": true,
+      "status": 201,
+      "productId": "cmsmzsjx0002xy0w60fa73kqf",
+      "verdict": "PASS"
+    },
+    {
+      "name": "favorites_toggle",
+      "ok": true,
+      "status": 200,
+      "verdict": "PASS"
+    },
+    {
+      "name": "favorites_remove",
+      "ok": true,
+      "isFavorite": false,
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "PASS"
+}

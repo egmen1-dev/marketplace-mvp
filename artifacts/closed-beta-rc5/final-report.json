@@ -1,0 +1,102 @@
+{
+  "candidate": "RC5",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "verificationResult": "PASS",
+  "rc4Discrepancy": {
+    "classification": "MULTIPLE_CAUSES",
+    "causes": [
+      "OLD_APK_STILL_INSTALLED",
+      "FIX_NOT_IN_APK",
+      "STAGING_CONFIGURATION",
+      "TEST_FALSE_POSITIVE"
+    ],
+    "evidence": "Physical beta banner showed v0.1.8-beta.1 (7)=RC3. MRP only published RC2 (code 6). PR #139 fixes in RC4+ only. Audit tests validated 2/148 interactions."
+  },
+  "pr141": {
+    "status": "MERGED",
+    "mergeSha": "b6bf68c",
+    "conflicts": "NONE"
+  },
+  "apkPath": "artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+  "apkSizeBytes": 43492086,
+  "sha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.10-beta.1",
+  "versionCode": 9,
+  "minSdk": 24,
+  "targetSdk": 36,
+  "abi": ["arm64-v8a"],
+  "signing": "debug.keystore (internal Closed Beta install only)",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "physicalAndroid": "NOT_RUN",
+  "functionalFixes": {
+    "cart": { "rootCause": "RC3 lacked PR#139 fixes; session may not warm before commerce", "fix": "warmSessionFromStorage + commerce telemetry + 401 redirect", "testEvidence": "staging cart_add PASS", "stagingEvidence": "PASS", "physicalStatus": "NOT_RUN" },
+    "favorites": { "rootCause": "Same as cart — stale APK + auth", "fix": "useCommerceActions optimistic toggle + rollback", "testEvidence": "staging favorites_toggle PASS", "stagingEvidence": "PASS", "physicalStatus": "NOT_RUN" },
+    "catalog": { "rootCause": "categoryId + q double-filter sent empty results", "fix": "Clear q on category select; pass categoryId only from home", "testEvidence": "mobile-commerce-integration.test.ts", "stagingEvidence": "catalog_category_filter PASS", "physicalStatus": "NOT_RUN" },
+    "seller": { "rootCause": "RC3 missing seller storefront wiring", "fix": "openSellerStorefront + /seller/[id] route", "testEvidence": "mobile-interaction-audit deep link", "stagingEvidence": "seller_catalog PASS", "physicalStatus": "NOT_RUN" },
+    "profile": { "rootCause": "Web about fallback; missing cart in menu", "fix": "Native /about + ProfileMenu hierarchy", "testEvidence": "ProfileMenu source audit", "stagingEvidence": "NOT_TESTABLE", "physicalStatus": "NOT_RUN" },
+    "localization": { "rootCause": "Internal route names in some surfaces", "fix": "Russian ProfileMenu labels", "testEvidence": "mobile-visual-polish.test.ts", "stagingEvidence": "NOT_TESTABLE", "physicalStatus": "NOT_RUN" },
+    "update": { "rootCause": "MRP never published RC3/RC4; false downloaded telemetry", "fix": "Honest browser handoff; RC5 MRP publish script", "testEvidence": "download-apk no downloaded event", "stagingEvidence": "update API returns NO_UPDATE until RC5 published", "physicalStatus": "NOT_RUN" }
+  },
+  "visualFixes": {
+    "categories": "PR #141 Chip CategoryRail — in APK",
+    "toolbar": "CatalogToolbar sort/filters — in APK",
+    "boot": "BootSplash — in APK",
+    "emptyErrorStates": "Icon-based EmptyState/ErrorState — in APK",
+    "profile": "Grouped hierarchy — in APK",
+    "cards": "ProductCard reserved slots — in APK"
+  },
+  "provenance": {
+    "mainSha": "baf8cd1",
+    "railwaySha": "b6bf68c",
+    "buildSha": "baf8cd1",
+    "buildTime": "2026-08-23T15:41:00Z",
+    "environment": "staging",
+    "channel": "CLOSED_BETA"
+  },
+  "gates": {
+    "sourceAudit": "PASS",
+    "falsePositiveAudit": "PASS",
+    "cartWiring": "PASS",
+    "favoritesWiring": "PASS",
+    "catalogFilters": "PASS",
+    "sellerNavigation": "PASS",
+    "localization": "PASS",
+    "profileIA": "PASS",
+    "updateArchitecture": "PASS",
+    "pr141Merged": "PASS",
+    "mobileTypecheck": "PASS",
+    "mobileTests": "PASS",
+    "integrationTests": "PASS",
+    "releaseGate": "PASS",
+    "stagingApi": "PASS",
+    "apkForensics": "PASS",
+    "releaseIdentityGate": "PASS"
+  },
+  "knownLimitations": [
+    "Physical Android validation NOT_RUN",
+    "MRP RC5 publish requires DATABASE_URL — run npm run mobile:closed-beta:publish-rc5 after merge",
+    "Update flow is browser handoff only — user must confirm Android install",
+    "APK signed with debug keystore",
+    "arm64-v8a only"
+  ],
+  "deliverables": [
+    "artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "artifacts/closed-beta-rc5/sha256.txt",
+    "artifacts/closed-beta-rc5/build-manifest.json",
+    "artifacts/closed-beta-rc5/aapt-badging.txt",
+    "artifacts/closed-beta-rc5/apkanalyzer-manifest.xml",
+    "artifacts/closed-beta-rc5/backend-parity.json",
+    "artifacts/closed-beta-rc5/release-gates.json",
+    "artifacts/closed-beta-rc5/interaction-matrix.json",
+    "artifacts/closed-beta-rc5/preflight-installed-version-analysis.json",
+    "artifacts/closed-beta-rc5/staging-runtime-smoke.json",
+    "artifacts/closed-beta-rc5/physical-checklist.json",
+    "artifacts/closed-beta-rc5/final-report.json",
+    "docs/mobile/RC5_FALSE_POSITIVE_TEST_AUDIT.md",
+    "docs/product/CLOSED_BETA_RC5_BUILD.md"
+  ]
+}

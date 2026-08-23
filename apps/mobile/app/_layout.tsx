@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { setSessionClearedHandler } from "../src/api/client";
+import { setSessionClearedHandler, warmSessionFromStorage } from "../src/api/client";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NetworkBanner } from "../src/components/NetworkBanner";
 import { UpdateHost } from "../src/components/UpdateHost";
@@ -14,6 +14,7 @@ import { colors } from "../src/theme/tokens";
 
 function SessionGuard() {
   useEffect(() => {
+    void warmSessionFromStorage();
     setSessionClearedHandler(() => {
       router.replace("/login");
     });
@@ -48,6 +49,7 @@ function RootShell() {
         <Stack.Screen name="cart" options={{ title: "Корзина" }} />
         <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
         <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />
+        <Stack.Screen name="about" options={{ title: "О приложении" }} />
       </Stack>
     </>
   </ObservabilityProvider>

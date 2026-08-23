@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-08-23T15:41:00Z",
+  "pr141MergeCommitSha": "b6bf68c",
+  "releaseCommitSha": "baf8cd1",
+  "railwayStagingCommit": "b6bf68c",
+  "mobileApkEmbeddedCommit": "baf8cd1",
+  "stagingApiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "parityAssessment": "ALIGNED_FOR_RC5",
+  "parityNote": "RC5 includes PR #141 visual polish + release-truth audit fixes. Staging SHA matches main at investigation time.",
+  "commerceStaging": {
+    "cart_add": "PASS (201)",
+    "favorites_toggle": "PASS (200)",
+    "favorites_remove": "PASS (200)",
+    "catalog_popular": "PASS",
+    "catalog_category_filter": "PASS when category has products"
+  },
+  "updateApi": {
+    "currentPublished": "RC2 versionCode 6",
+    "rc5PublishRequired": true,
+    "note": "MRP must publish RC5 (code 9) before in-app update delivers to RC3/RC4 devices"
+  },
+  "trustLoop": {
+    "MARKETPLACE_TRUST_LOOP_ENABLED": false,
+    "doesNotBlockRc5Build": true
+  }
+}

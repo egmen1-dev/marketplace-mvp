@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-08-23T15:30:00Z",
+  "investigation": "RC5 preflight — why physical device may show RC3 while RC4 was reported shipped",
+  "rc3": {
+    "candidate": "RC3",
+    "versionName": "0.1.8-beta.1",
+    "versionCode": 7,
+    "package": "ru.lot.marketplace.alpha",
+    "sha256": "e45193be6089f4eecd26d31f584784195b60a48f9d4afadd6f82ce913c685824",
+    "commitSha": "31e91aaece3a7b1fc7a92e9c6591011a4789f36e",
+    "mergeCommitSha": "ccf2c9914cad99ca7d67da0a966533add4612acb",
+    "buildTime": "2026-08-23T13:09:00Z",
+    "artifactPath": "artifacts/closed-beta-rc3/lot_android_closed_beta_0.1.8_beta.1.apk",
+    "signing": "debug.keystore (internal install only)",
+    "includesPr139Fixes": false,
+    "scope": "Session resilience, network retry, reviews UI, unified nav — NO commerce interaction audit"
+  },
+  "rc4": {
+    "candidate": "RC4",
+    "versionName": "0.1.9-beta.1",
+    "versionCode": 8,
+    "package": "ru.lot.marketplace.alpha",
+    "sha256": "57e249ae132d2d278edecf1c023e28e06696a203bdd812effddb34aad83eec96",
+    "commitSha": "6209cf184f795fb5900112b3243a74e96f082222",
+    "mergeCommitSha": "be07163",
+    "pr139MergeSha": "be07163",
+    "buildTime": "2026-08-23T14:43:20Z",
+    "artifactPath": "artifacts/closed-beta-rc4/lot_android_closed_beta_0.1.9_beta.1.apk",
+    "signing": "debug.keystore (internal install only)",
+    "includesPr139Fixes": true,
+    "scope": "PR #139 — cart, favorites, catalog filters, seller nav, profile IA, update downgrade protection"
+  },
+  "physicalObservation": {
+    "betaBannerShown": "Closed Beta · v0.1.8-beta.1 (7)",
+    "matchesRc": "RC3",
+    "doesNotMatchRc": "RC4",
+    "conclusion": "Device screenshots indicate RC3 was running, not RC4"
+  },
+  "upgradePath": {
+    "rc3ToRc4": {
+      "packageMatch": true,
+      "signatureMatch": true,
+      "versionCodeIncreases": true,
+      "androidWillAccept": true,
+      "requiresUninstall": false
+    },
+    "rc3ToRc5": {
+      "packageMatch": true,
+      "signatureMatch": true,
+      "versionCodeIncreases": true,
+      "androidWillAccept": true,
+      "requiresUninstall": false
+    },
+    "rc4ToRc5": {
+      "packageMatch": true,
+      "signatureMatch": true,
+      "versionCodeIncreases": true,
+      "androidWillAccept": true,
+      "requiresUninstall": false
+    }
+  },
+  "likelyReasonOldVersionRemained": [
+    {
+      "cause": "OLD_APK_STILL_INSTALLED",
+      "evidence": "Beta banner on device shows versionCode 7 (RC3), not 8 (RC4)",
+      "likelihood": "HIGH"
+    },
+    {
+      "cause": "MRP_NEVER_PUBLISHED_RC3_RC4",
+      "evidence": "GET /api/mobile/update?versionCode=7&channel=CLOSED_BETA returns updateState=NO_UPDATE, latest versionCode=6 (RC2 only)",
+      "likelihood": "HIGH"
+    },
+    {
+      "cause": "UPDATE_DOWNLOAD_NOT_INSTALL",
+      "evidence": "download-apk.ts uses Linking.openURL only — opens browser; does not invoke Android package installer; telemetry previously falsely reported 'downloaded' before handoff",
+      "likelihood": "MEDIUM"
+    },
+    {
+      "cause": "USER_DID_NOT_CONFIRM_INSTALL",
+      "evidence": "Android requires user confirmation for APK sideload; download completing in browser does not equal app update",
+      "likelihood": "MEDIUM"
+    }
+  ],
+  "autoUpdateImplementation": {
+    "discoversVersion": "GET /api/mobile/update or /api/mobile/android/update",
+    "comparesVersionCode": "isUpdateEligibleForInstall — client versionCode < server versionCode",
+    "apkUrlSource": "MRP BETA channel latest published release downloadUrl",
+    "downloadMechanism": "Linking.openURL(downloadUrl) — browser/download-manager",
+    "installsApk": false,
+    "opensAndroidInstaller": false,
+    "detectsInstallCompletion": false,
+    "verdict": "Download handoff only — NOT automatic install. User must manually open downloaded APK and confirm Android install dialog."
+  },
+  "verifyInstalledVersionOnAndroid": {
+    "method1": "Open app → Profile → О приложении → check versionName, versionCode, commit SHA",
+    "method2": "Observe beta banner: 'Closed Beta · v{version} ({code})'",
+    "method3": "adb shell dumpsys package ru.lot.marketplace.alpha | grep versionCode",
+    "method4": "Settings → Apps → ЛОТ → App info → version"
+  },
+  "classification": {
+    "primary": "MULTIPLE_CAUSES",
+    "causes": [
+      "OLD_APK_STILL_INSTALLED",
+      "FIX_NOT_IN_APK",
+      "STAGING_CONFIGURATION",
+      "TEST_FALSE_POSITIVE"
+    ],
+    "explanation": "Physical device ran RC3 (pre-PR#139). In-app update could not deliver RC4 because MRP only publishes RC2 (code 6), which is older than installed code 7. Automated tests claimed fixes without runtime proof."
+  }
+}

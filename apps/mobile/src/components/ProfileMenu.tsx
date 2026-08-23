@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
 import type { ReactNode } from "react";
-import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radii, spacing, typography } from "../theme/tokens";
 
@@ -37,30 +37,30 @@ function ProfileMenuSection({ title, items }: { title: string; items: MenuItem[]
 
 export function ProfileMenu({
   sellerCapable,
-  onPersonalData,
-  onFeedback,
   onSupport,
+  onReportError,
   onAbout,
+  onCheckUpdate,
   footer,
 }: {
   sellerCapable: boolean;
-  onPersonalData: () => void;
-  onFeedback: () => void;
   onSupport: () => void;
+  onReportError: () => void;
   onAbout: () => void;
+  onCheckUpdate: () => void;
   footer?: ReactNode;
 }) {
   const purchases: MenuItem[] = [
     { id: "orders", label: "Заказы", icon: "package-variant-closed", onPress: () => router.push("/(tabs)/orders") },
     { id: "favorites", label: "Избранное", icon: "heart-outline", onPress: () => router.push("/(tabs)/favorites") },
+    { id: "cart", label: "Корзина", icon: "cart-outline", onPress: () => router.push("/cart") },
   ];
 
   const sales: MenuItem[] = sellerCapable
     ? [
         { id: "products", label: "Мои товары", icon: "tag-outline", onPress: () => router.push("/(tabs)/seller-products") },
         { id: "sales", label: "Продажи", icon: "chart-line", onPress: () => router.push("/(tabs)/seller-sales") },
-        { id: "inventory", label: "Остатки", icon: "cube-outline", onPress: () => router.push("/(tabs)/seller-products") },
-        { id: "promotion", label: "Продвижение", icon: "bullhorn-outline", onPress: () => router.push("/(tabs)/seller-home") },
+        { id: "seller-home", label: "Кабинет продавца", icon: "store-outline", onPress: () => router.push("/(tabs)/seller-home") },
       ]
     : [];
 
@@ -69,13 +69,13 @@ export function ProfileMenu({
     : [];
 
   const support: MenuItem[] = [
-    { id: "feedback", label: "Центр обратной связи", icon: "message-text-outline", onPress: onFeedback },
-    { id: "help", label: "Помощь", icon: "lifebuoy", onPress: onSupport },
+    { id: "support", label: "Поддержка", icon: "lifebuoy", onPress: onSupport },
+    { id: "report", label: "Сообщить об ошибке", icon: "alert-circle-outline", onPress: onReportError },
   ];
 
   const app: MenuItem[] = [
-    { id: "personal", label: "Личные данные", icon: "account-outline", onPress: onPersonalData },
     { id: "about", label: "О приложении", icon: "information-outline", onPress: onAbout },
+    { id: "update", label: "Проверить обновление", icon: "update", onPress: onCheckUpdate },
   ];
 
   return (

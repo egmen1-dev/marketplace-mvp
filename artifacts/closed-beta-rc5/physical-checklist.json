@@ -1,0 +1,31 @@
+{
+  "candidate": "RC5",
+  "versionName": "0.1.10-beta.1",
+  "versionCode": 9,
+  "generatedAt": "2026-08-23T15:41:00Z",
+  "physicalAndroid": "NOT_RUN",
+  "scenarios": {
+    "A_releaseIdentity": "NOT_RUN",
+    "B_coldStart": "NOT_RUN",
+    "C_session": "NOT_RUN",
+    "D_home": "NOT_RUN",
+    "E_catalog": "NOT_RUN",
+    "F_sorting": "NOT_RUN",
+    "G_filters": "NOT_RUN",
+    "H_favorite": "NOT_RUN",
+    "I_pdp": "NOT_RUN",
+    "J_seller": "NOT_RUN",
+    "K_cart": "NOT_RUN",
+    "L_orders": "NOT_RUN",
+    "M_sell": "NOT_RUN",
+    "N_profile": "NOT_RUN",
+    "O_offline": "NOT_RUN",
+    "P_restart": "NOT_RUN",
+    "Q_update": "NOT_RUN"
+  },
+  "installProcedure": {
+    "fromRc3": "adb install -r artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "fromRc4": "adb install -r artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "verifyVersion": "Profile → О приложении must show 0.1.10-beta.1 (9) and SHA baf8cd1"
+  }
+}

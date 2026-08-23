@@ -175,7 +175,7 @@ export default function BuyerHomeScreen() {
                 router.push("/(tabs)/catalog");
                 return;
               }
-              router.push({ pathname: "/(tabs)/catalog", params: { categoryId: cat.id, q: cat.name } });
+              router.push({ pathname: "/(tabs)/catalog", params: { categoryId: cat.id } });
             }}
           />
         </View>

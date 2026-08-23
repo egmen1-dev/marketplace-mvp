@@ -4,6 +4,7 @@ import { addToCart, toggleFavorite } from "../api/endpoints";
 import { ApiClientError } from "../api/client";
 import { useAppStore } from "../store/app-store";
 import { showCommerceToast } from "../commerce/commerce-toast-store";
+import { handleCommerceAuthFailure, trackCommerceAction } from "../commerce/commerce-telemetry";
 import { useFavoritesStore } from "../commerce/favorites-store";
 import { refreshTabBadges } from "../commerce/refresh-tab-badges";
 
@@ -39,12 +40,32 @@ export function useCommerceActions() {
         return;
       }
       busyRef.current.add(key);
+      const startedAt = Date.now();
       try {
         await addToCart(productId, quantity);
         await refreshTabBadges();
         showCommerceToast("Добавлено в корзину", "success");
+        await trackCommerceAction({
+          action: "add_to_cart",
+          productId,
+          endpoint: "/api/cart",
+          startedAt,
+          success: true,
+        });
       } catch (err) {
-        showCommerceToast(formatCommerceError(err), "error");
+        if (handleCommerceAuthFailure(err)) {
+          showCommerceToast("Войдите в аккаунт для этого действия", "error");
+        } else {
+          showCommerceToast(formatCommerceError(err), "error");
+        }
+        await trackCommerceAction({
+          action: "add_to_cart",
+          productId,
+          endpoint: "/api/cart",
+          startedAt,
+          success: false,
+          error: err,
+        });
         throw err;
       } finally {
         busyRef.current.delete(key);
@@ -64,14 +85,34 @@ export function useCommerceActions() {
       const wasFavorite = favoriteIds.has(productId);
       setFavorite(productId, !wasFavorite);
       busyRef.current.add(key);
+      const startedAt = Date.now();
       try {
         const res = await toggleFavorite(productId);
         setFavorite(productId, res.isFavorite);
         await refreshTabBadges();
         showCommerceToast(res.isFavorite ? "Добавлено в избранное" : "Удалено из избранного", "success");
+        await trackCommerceAction({
+          action: "toggle_favorite",
+          productId,
+          endpoint: "/api/mobile/favorites",
+          startedAt,
+          success: true,
+        });
       } catch (err) {
         setFavorite(productId, wasFavorite);
-        showCommerceToast(formatCommerceError(err), "error");
+        if (handleCommerceAuthFailure(err)) {
+          showCommerceToast("Войдите в аккаунт для этого действия", "error");
+        } else {
+          showCommerceToast(formatCommerceError(err), "error");
+        }
+        await trackCommerceAction({
+          action: "toggle_favorite",
+          productId,
+          endpoint: "/api/mobile/favorites",
+          startedAt,
+          success: false,
+          error: err,
+        });
         throw err;
       } finally {
         busyRef.current.delete(key);
