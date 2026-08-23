@@ -139,7 +139,7 @@ export default function CatalogScreen() {
 
   return (
     <PageContainer style={styles.container}>
-      <Animated.View style={{ opacity: fade, gap: spacing.md, flex: 1 }}>
+      <Animated.View style={{ opacity: fade, gap: spacing.sm, flex: 1 }}>
         <CommerceSearchBar
           placeholder="Поиск товаров и категорий"
           value={q}
@@ -169,11 +169,14 @@ export default function CatalogScreen() {
           onSortChange={setSort}
           inStockOnly={inStockOnly}
           onInStockChange={setInStockOnly}
+          dealsOnly={dealsOnly}
+          onDealsChange={setDealsOnly}
           categoryName={(category?.name ?? activeFiltersLabel) || null}
           onClearCategory={() => {
             if (category) setCategory(null);
             else if (sellerFilter) setSellerFilter(null);
             else if (dealsOnly) setDealsOnly(false);
+            else setInStockOnly(false);
           }}
         />
 
@@ -216,7 +219,7 @@ export default function CatalogScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg },
+  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
   list: { paddingBottom: spacing.xxl, gap: spacing.md },
   row: { justifyContent: "space-between", marginBottom: spacing.md },
 });

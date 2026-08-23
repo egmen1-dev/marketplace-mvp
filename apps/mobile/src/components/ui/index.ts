@@ -11,4 +11,5 @@ export * from "./TabBarIcon";
 export * from "./TabBarBadge";
 export * from "./Shimmer";
 export * from "./CommerceSearchBar";
+export * from "./Chip";
 export * from "./CatalogToolbar";

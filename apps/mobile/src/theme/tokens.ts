@@ -37,10 +37,12 @@ export const typography = {
   display: { fontSize: 28, fontWeight: "700" as const, lineHeight: 34 },
   h1: { fontSize: 22, fontWeight: "700" as const, lineHeight: 28 },
   h2: { fontSize: 18, fontWeight: "600" as const, lineHeight: 24 },
+  h3: { fontSize: 16, fontWeight: "600" as const, lineHeight: 22 },
   body: { fontSize: 15, fontWeight: "400" as const, lineHeight: 22 },
   caption: { fontSize: 13, fontWeight: "400" as const, lineHeight: 18 },
   button: { fontSize: 15, fontWeight: "600" as const, lineHeight: 20 },
   buttonSm: { fontSize: 13, fontWeight: "600" as const, lineHeight: 18 },
+  price: { fontSize: 18, fontWeight: "700" as const, lineHeight: 24 },
   /** @deprecated use h1 */
   title: { fontSize: 22, fontWeight: "700" as const, lineHeight: 28 },
   /** @deprecated use h2 */

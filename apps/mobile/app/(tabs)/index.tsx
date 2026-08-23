@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
   fetchBuyerHome,
@@ -10,6 +10,8 @@ import {
 } from "../../src/api/endpoints";
 import {
   AppHeader,
+  CategoryRail,
+  Chip,
   CommerceSearchBar,
   EmptyState,
   ErrorState,
@@ -151,34 +153,31 @@ export default function BuyerHomeScreen() {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
           {QUICK_FILTERS.map((filter) => (
-            <Pressable
+            <Chip
               key={filter.id}
-              style={[styles.filterChip, activeFilter === filter.id ? styles.filterChipActive : null]}
+              label={filter.label}
+              active={activeFilter === filter.id}
               onPress={() => openQuickFilter(filter.id)}
-            >
-              <Text style={[styles.filterChipText, activeFilter === filter.id ? styles.filterChipTextActive : null]}>
-                {filter.label}
-              </Text>
-            </Pressable>
+            />
           ))}
         </ScrollView>
 
         {offline ? <Text style={styles.offline}>Оффлайн — показаны сохранённые данные</Text> : null}
-        {error ? <ErrorState title="Не удалось обновить ленту" description={error} onRetry={load} /> : null}
+        {error ? <ErrorState title="Не удалось обновить ленту" description={error} onRetry={load} variant="network" /> : null}
 
         <View style={styles.section}>
           <SectionHeader title="Категории" actionLabel="Все" onAction={() => router.push("/(tabs)/catalog")} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
-            {categories.map((cat) => (
-              <Pressable
-                key={cat.id}
-                style={styles.categoryChip}
-                onPress={() => router.push({ pathname: "/(tabs)/catalog", params: { categoryId: cat.id, q: cat.name } })}
-              >
-                <Text style={styles.categoryChipText}>{cat.name}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
+          <CategoryRail
+            categories={categories}
+            activeId={null}
+            onSelect={(cat) => {
+              if (!cat) {
+                router.push("/(tabs)/catalog");
+                return;
+              }
+              router.push({ pathname: "/(tabs)/catalog", params: { categoryId: cat.id, q: cat.name } });
+            }}
+          />
         </View>
 
         <ProductSection
@@ -288,13 +287,7 @@ const styles = StyleSheet.create({
   section: { gap: spacing.md },
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   promoBadge: { ...typography.caption, color: colors.white, backgroundColor: colors.orange, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill, overflow: "hidden" },
-  chipsRow: { gap: spacing.sm },
-  filterChip: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill, backgroundColor: colors.gray100, minHeight: 36, justifyContent: "center" },
-  filterChipActive: { backgroundColor: colors.orangeSoft, borderWidth: 1, borderColor: colors.orange },
-  filterChipText: { ...typography.caption, color: colors.gray900, fontWeight: "600" },
-  filterChipTextActive: { color: colors.orange },
-  categoryChip: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill, backgroundColor: colors.gray100, minHeight: 36, justifyContent: "center" },
-  categoryChipText: { ...typography.caption, color: colors.gray900, fontWeight: "600" },
+  chipsRow: { gap: spacing.sm, paddingVertical: spacing.xs },
   grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", rowGap: spacing.md },
   horizontalList: { gap: spacing.md, paddingRight: spacing.lg },
 });

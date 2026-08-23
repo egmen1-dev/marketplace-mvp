@@ -1,8 +1,9 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useMemo, useState } from "react";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { POPULAR_SEARCHES } from "../../storage/search-history";
 import { colors, radii, spacing, typography } from "../../theme/tokens";
+import { Chip } from "./Chip";
 
 export type CatalogSort = "popular" | "newest" | "price_asc" | "price_desc";
 
@@ -18,6 +19,8 @@ export function CatalogToolbar({
   onSortChange,
   inStockOnly,
   onInStockChange,
+  dealsOnly,
+  onDealsChange,
   categoryName,
   onClearCategory,
 }: {
@@ -25,30 +28,95 @@ export function CatalogToolbar({
   onSortChange: (sort: CatalogSort) => void;
   inStockOnly: boolean;
   onInStockChange: (value: boolean) => void;
+  dealsOnly?: boolean;
+  onDealsChange?: (value: boolean) => void;
   categoryName?: string | null;
   onClearCategory?: () => void;
 }) {
+  const [sortOpen, setSortOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const sortLabel = SORT_OPTIONS.find((o) => o.id === sort)?.label ?? "Популярные";
+  const activeFilterCount = [inStockOnly, dealsOnly, Boolean(categoryName)].filter(Boolean).length;
+
+  const filterSummary = useMemo(() => {
+    const parts: string[] = [];
+    if (inStockOnly) parts.push("В наличии");
+    if (dealsOnly) parts.push("Скидки");
+    if (categoryName) parts.push(categoryName);
+    return parts.join(" · ");
+  }, [categoryName, dealsOnly, inStockOnly]);
+
   return (
     <View style={styles.wrap}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-        {SORT_OPTIONS.map((opt) => {
-          const active = sort === opt.id;
-          return (
-            <Pressable key={opt.id} style={[styles.chip, active ? styles.chipActive : null]} onPress={() => onSortChange(opt.id)}>
-              <Text style={[styles.chipText, active ? styles.chipTextActive : null]}>{opt.label}</Text>
-            </Pressable>
-          );
-        })}
-        <Pressable style={[styles.chip, inStockOnly ? styles.chipActive : null]} onPress={() => onInStockChange(!inStockOnly)}>
-          <MaterialCommunityIcons name="check-circle-outline" size={14} color={inStockOnly ? colors.white : colors.gray700} />
-          <Text style={[styles.chipText, inStockOnly ? styles.chipTextActive : null]}>В наличии</Text>
+      <View style={styles.bar}>
+        <Pressable style={styles.sortButton} onPress={() => setSortOpen(true)} accessibilityRole="button" accessibilityLabel={`Сортировка: ${sortLabel}`}>
+          <Text style={styles.sortLabel}>Сортировка:</Text>
+          <Text style={styles.sortValue} numberOfLines={1}>
+            {sortLabel}
+          </Text>
+          <MaterialCommunityIcons name="chevron-down" size={18} color={colors.gray700} />
         </Pressable>
-        {categoryName ? (
-          <Pressable style={[styles.chip, styles.chipActive]} onPress={onClearCategory}>
-            <Text style={[styles.chipText, styles.chipTextActive]}>{categoryName} ✕</Text>
-          </Pressable>
-        ) : null}
-      </ScrollView>
+
+        <Pressable style={styles.filterButton} onPress={() => setFiltersOpen(true)} accessibilityRole="button" accessibilityLabel="Фильтры">
+          <MaterialCommunityIcons name="tune-variant" size={18} color={colors.gray900} />
+          <Text style={styles.filterText}>Фильтры</Text>
+          {activeFilterCount > 0 ? (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{activeFilterCount}</Text>
+            </View>
+          ) : null}
+        </Pressable>
+      </View>
+
+      {filterSummary ? (
+        <Pressable onPress={onClearCategory} accessibilityRole="button" accessibilityLabel="Сбросить фильтры">
+          <Text style={styles.activeFilters} numberOfLines={1}>
+            {filterSummary} · сбросить
+          </Text>
+        </Pressable>
+      ) : null}
+
+      <Modal visible={sortOpen} transparent animationType="fade" onRequestClose={() => setSortOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setSortOpen(false)}>
+          <View style={styles.sheet}>
+            <Text style={styles.sheetTitle}>Сортировка</Text>
+            {SORT_OPTIONS.map((opt) => (
+              <Pressable
+                key={opt.id}
+                style={styles.sheetRow}
+                onPress={() => {
+                  onSortChange(opt.id);
+                  setSortOpen(false);
+                }}
+              >
+                <Text style={[styles.sheetRowText, sort === opt.id ? styles.sheetRowActive : null]}>{opt.label}</Text>
+                {sort === opt.id ? <MaterialCommunityIcons name="check" size={18} color={colors.orange} /> : null}
+              </Pressable>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
+
+      <Modal visible={filtersOpen} transparent animationType="fade" onRequestClose={() => setFiltersOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setFiltersOpen(false)}>
+          <View style={styles.sheet}>
+            <Text style={styles.sheetTitle}>Фильтры</Text>
+            <View style={styles.filterChips}>
+              <Chip label="В наличии" active={inStockOnly} onPress={() => onInStockChange(!inStockOnly)} />
+              {onDealsChange ? <Chip label="Скидки" active={Boolean(dealsOnly)} onPress={() => onDealsChange(!dealsOnly)} /> : null}
+            </View>
+            {categoryName ? (
+              <Pressable style={styles.sheetRow} onPress={() => { onClearCategory?.(); setFiltersOpen(false); }}>
+                <Text style={styles.sheetRowText}>Сбросить категорию: {categoryName}</Text>
+              </Pressable>
+            ) : null}
+            <Pressable style={styles.sheetDone} onPress={() => setFiltersOpen(false)}>
+              <Text style={styles.sheetDoneText}>Готово</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -63,52 +131,79 @@ export function CategoryRail({
   onSelect: (category: { id: string; name: string } | null) => void;
 }) {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-      <Pressable style={[styles.catChip, !activeId ? styles.chipActive : null]} onPress={() => onSelect(null)}>
-        <Text style={[styles.catText, !activeId ? styles.chipTextActive : null]}>Все</Text>
-      </Pressable>
-      {categories.map((cat) => {
-        const active = activeId === cat.id;
-        return (
-          <Pressable key={cat.id} style={[styles.catChip, active ? styles.chipActive : null]} onPress={() => onSelect(cat)}>
-            <Text style={[styles.catText, active ? styles.chipTextActive : null]} numberOfLines={1}>
-              {cat.name}
-            </Text>
-          </Pressable>
-        );
-      })}
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rail}>
+      <Chip label="Все" active={!activeId} onPress={() => onSelect(null)} />
+      {categories.map((cat) => (
+        <Chip key={cat.id} label={cat.name} active={activeId === cat.id} onPress={() => onSelect(cat)} />
+      ))}
     </ScrollView>
   );
 }
 
-export { POPULAR_SEARCHES };
+export { POPULAR_SEARCHES } from "../../storage/search-history";
 
 const styles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
-  row: { gap: spacing.sm, paddingVertical: spacing.xs },
-  chip: {
+  wrap: { gap: spacing.xs },
+  bar: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  sortButton: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.pill,
+    minHeight: 40,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.gray200,
     backgroundColor: colors.white,
-    minHeight: 36,
   },
-  chipActive: { backgroundColor: colors.orange, borderColor: colors.orange },
-  chipText: { ...typography.caption, color: colors.gray700, fontWeight: "600" },
-  chipTextActive: { color: colors.white },
-  catChip: {
-    maxWidth: 140,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.pill,
-    backgroundColor: colors.gray100,
-    minHeight: 36,
+  sortLabel: { ...typography.caption, color: colors.gray500 },
+  sortValue: { ...typography.caption, color: colors.black, fontWeight: "700", flexShrink: 1 },
+  filterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    minHeight: 40,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    backgroundColor: colors.white,
+  },
+  filterText: { ...typography.caption, color: colors.gray900, fontWeight: "600" },
+  badge: {
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: colors.orange,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: { fontSize: 11, fontWeight: "700", color: colors.white },
+  activeFilters: { ...typography.caption, color: colors.orange, fontWeight: "600" },
+  rail: { gap: spacing.sm, paddingVertical: spacing.xs },
+  backdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "flex-end" },
+  sheet: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: radii.xl,
+    borderTopRightRadius: radii.xl,
+    padding: spacing.lg,
+    gap: spacing.sm,
+    paddingBottom: spacing.xxl,
+  },
+  sheetTitle: { ...typography.h2, marginBottom: spacing.xs },
+  sheetRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.md },
+  sheetRowText: { ...typography.body, color: colors.gray900 },
+  sheetRowActive: { color: colors.orange, fontWeight: "700" },
+  filterChips: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  sheetDone: {
+    marginTop: spacing.md,
+    minHeight: 44,
+    borderRadius: radii.md,
+    backgroundColor: colors.orange,
+    alignItems: "center",
     justifyContent: "center",
   },
-  catText: { ...typography.caption, color: colors.gray900, fontWeight: "600" },
+  sheetDoneText: { ...typography.button, color: colors.white },
 });
