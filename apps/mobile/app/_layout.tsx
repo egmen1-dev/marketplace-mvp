@@ -50,6 +50,7 @@ function RootShell() {
         <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
         <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />
         <Stack.Screen name="about" options={{ title: "О приложении" }} />
+        <Stack.Screen name="update" options={{ title: "Проверить обновление" }} />
       </Stack>
     </>
   </ObservabilityProvider>

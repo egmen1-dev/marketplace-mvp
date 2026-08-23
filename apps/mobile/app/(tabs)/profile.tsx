@@ -3,28 +3,18 @@ import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 
 import { logout } from "../../src/api/client";
-import { fetchMobileUpdate, postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
+import { postTelemetry, submitProductFeedback } from "../../src/api/endpoints";
 import { getBuildInfo } from "../../src/beta/build-info";
-import { Avatar, GhostButton, PrimaryButton } from "../../src/components/ui";
+import { Avatar } from "../../src/components/ui";
 import { ProfileMenu } from "../../src/components/ProfileMenu";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { useAppStore } from "../../src/store/app-store";
 import { buildErrorReport } from "../../src/telemetry/error-report";
-import { getUpdateErrorMessage, startApkDownload } from "../../src/update/download-apk";
-import { UPDATE_UI_LABELS } from "../../src/update/update-ui-labels";
-import { UPDATE_ANALYTICS } from "../../src/update/types";
-import { isUpdateEligibleForInstall } from "../../src/utils/update-eligibility";
 import { colors, spacing, typography } from "../../src/theme/tokens";
-import type { MobileUpdateInfo } from "../../src/api/endpoints";
-
-type UpdatePhase = "idle" | "checking" | "available" | "handoff" | "up_to_date" | "failed";
 
 export default function ProfileScreen() {
   const sellerCapable = useAppStore((s) => s.sellerCapable);
   const [email, setEmail] = useState<string>("—");
-  const [updateInfo, setUpdateInfo] = useState<MobileUpdateInfo | null>(null);
-  const [updatePhase, setUpdatePhase] = useState<UpdatePhase>("idle");
-  const [updateError, setUpdateError] = useState<string | null>(null);
   const buildInfo = getBuildInfo();
 
   useEffect(() => {
@@ -32,43 +22,6 @@ export default function ProfileScreen() {
       if (meta?.userId) setEmail(meta.userId.slice(0, 8) + "…");
     });
   }, []);
-
-  useEffect(() => {
-    fetchMobileUpdate()
-      .then(setUpdateInfo)
-      .catch(() => setUpdateInfo(null));
-  }, []);
-
-  const hasUpdate = isUpdateEligibleForInstall(updateInfo, buildInfo.buildNumber);
-
-  async function checkForUpdate() {
-    setUpdatePhase("checking");
-    setUpdateError(null);
-    try {
-      const info = await fetchMobileUpdate();
-      setUpdateInfo(info);
-      if (isUpdateEligibleForInstall(info, buildInfo.buildNumber)) {
-        setUpdatePhase("available");
-      } else {
-        setUpdatePhase("up_to_date");
-      }
-    } catch {
-      setUpdatePhase("failed");
-      setUpdateError(UPDATE_UI_LABELS.installFailed);
-    }
-  }
-
-  async function onInstallUpdate() {
-    if (!updateInfo) return;
-    setUpdatePhase("handoff");
-    setUpdateError(null);
-    await postTelemetry({ screen: "profile", event: UPDATE_ANALYTICS.started, errorCode: updateInfo.versionName });
-    const result = await startApkDownload(updateInfo);
-    if (!result.ok) {
-      setUpdatePhase("failed");
-      setUpdateError(getUpdateErrorMessage(result.code));
-    }
-  }
 
   async function onLogout() {
     await logout();
@@ -88,18 +41,6 @@ export default function ProfileScreen() {
     });
   }
 
-  function updateStatusText(): string | null {
-    if (updatePhase === "checking") return UPDATE_UI_LABELS.checking;
-    if (updatePhase === "available" && updateInfo) return `${UPDATE_UI_LABELS.available}: ${updateInfo.versionName}`;
-    if (updatePhase === "handoff") return UPDATE_UI_LABELS.installerOpened;
-    if (updatePhase === "up_to_date") return UPDATE_UI_LABELS.upToDate;
-    if (updatePhase === "failed") return updateError ?? UPDATE_UI_LABELS.installFailed;
-    if (hasUpdate && updateInfo) return `${UPDATE_UI_LABELS.available}: ${updateInfo.versionName}`;
-    return null;
-  }
-
-  const statusText = updateStatusText();
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.identityCard}>
@@ -115,28 +56,14 @@ export default function ProfileScreen() {
         onSupport={onReportError}
         onReportError={onReportError}
         onAbout={() => router.push("/about")}
-        onCheckUpdate={checkForUpdate}
         footer={
           <>
-            {statusText ? (
-              <View style={styles.updateBanner}>
-                <Text style={styles.updateTitle}>{statusText}</Text>
-                {updatePhase === "handoff" ? (
-                  <Text style={styles.updateHint}>{UPDATE_UI_LABELS.browserHandoff}</Text>
-                ) : null}
-                {(hasUpdate || updatePhase === "available") && updateInfo ? (
-                  <PrimaryButton label={UPDATE_UI_LABELS.install} onPress={onInstallUpdate} size="sm" />
-                ) : null}
-              </View>
-            ) : null}
-
             <Pressable style={styles.logout} onPress={onLogout} accessibilityRole="button" accessibilityLabel="Выйти">
               <Text style={styles.logoutText}>Выйти</Text>
             </Pressable>
 
             <Text style={styles.version}>
               {buildInfo.appVersion} ({buildInfo.buildNumber}) · {buildInfo.channel}
-              {"\n"}SHA {buildInfo.commitSha.slice(0, 7)} · {buildInfo.environment}
             </Text>
           </>
         }
@@ -160,16 +87,6 @@ const styles = StyleSheet.create({
   identityText: { flex: 1 },
   title: { ...typography.h2 },
   subtitle: { ...typography.caption, color: colors.gray500 },
-  updateBanner: {
-    borderWidth: 1,
-    borderColor: colors.orangeSoft,
-    borderRadius: 12,
-    padding: spacing.md,
-    gap: spacing.sm,
-    backgroundColor: colors.orangeSoft,
-  },
-  updateTitle: { ...typography.h3, color: colors.black },
-  updateHint: { ...typography.caption, color: colors.gray700 },
   logout: {
     backgroundColor: colors.white,
     minHeight: 48,

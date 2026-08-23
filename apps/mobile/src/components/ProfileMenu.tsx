@@ -40,14 +40,12 @@ export function ProfileMenu({
   onSupport,
   onReportError,
   onAbout,
-  onCheckUpdate,
   footer,
 }: {
   sellerCapable: boolean;
   onSupport: () => void;
   onReportError: () => void;
   onAbout: () => void;
-  onCheckUpdate: () => void;
   footer?: ReactNode;
 }) {
   const purchases: MenuItem[] = [
@@ -75,7 +73,7 @@ export function ProfileMenu({
 
   const app: MenuItem[] = [
     { id: "about", label: "О приложении", icon: "information-outline", onPress: onAbout },
-    { id: "update", label: "Проверить обновление", icon: "update", onPress: onCheckUpdate },
+    { id: "update", label: "Проверить обновление", icon: "update", onPress: () => router.push("/update") },
   ];
 
   return (

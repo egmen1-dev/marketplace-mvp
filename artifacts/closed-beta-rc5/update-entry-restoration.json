@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-08-23T16:01:00Z",
+  "shippedRc5Apk": {
+    "versionName": "0.1.10-beta.1",
+    "versionCode": 9,
+    "profileMenuBytecode": "PRESENT",
+    "onCheckUpdateHandler": "PRESENT",
+    "dedicatedUpdateRoute": "MISSING",
+    "verdict": "RC5_UPDATE_ENTRY_MISSING"
+  },
+  "rootCause": "RC5 shipped inline onCheckUpdate on Profile footer only — no /update screen. Menu item existed in source but was below fold (Приложение section last) and tap showed no dedicated UI until async check completed. RC3/RC4 APKs lack entry entirely.",
+  "fix": "Added /update screen with useUpdateCheckFlow; ProfileMenu navigates via router.push('/update'); registered Russian stack title.",
+  "postFixStatus": "READY_FOR_BUILD"
+}

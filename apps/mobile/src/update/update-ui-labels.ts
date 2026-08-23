@@ -1,15 +1,14 @@
 /** User-facing Russian labels for the Closed Beta update flow. */
 export const UPDATE_UI_LABELS = {
-  checking: "Проверяем обновления",
+  checking: "Проверяем обновления…",
+  upToDate: "У вас установлена актуальная версия",
   available: "Доступна новая версия",
-  downloading: "Скачиваем обновление",
-  downloaded: "Обновление загружено",
-  install: "Установить обновление",
+  downloadCta: "Скачать обновление",
   installerOpened: "Открыт установщик Android",
-  upToDate: "Установлена актуальная версия",
-  installFailed: "Не удалось установить обновление",
   browserHandoff:
-    "Загрузка откроется в браузере. После скачивания подтвердите установку в системном диалоге Android.",
+    "APK откроется в браузере. После загрузки подтвердите установку в Android.",
+  installFailed: "Не удалось проверить обновление",
+  retry: "Повторить",
 } as const;
 
-export type UpdateUiPhase = keyof typeof UPDATE_UI_LABELS;
+export type UpdateUiPhase = "checking" | "up_to_date" | "available" | "handoff" | "failed";
