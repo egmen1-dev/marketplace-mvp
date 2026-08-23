@@ -108,8 +108,12 @@ async function main() {
     { status: sellerOrders.status, count: (sellerOrders.body?.items ?? sellerOrders.body?.orders ?? []).length },
   );
 
-  const webHandoff = await json("/api/mobile/web-handoff/url?target=seller-onboarding", { headers: sellerAuth });
-  push("epic152_web_handoff_url", webHandoff.ok && Boolean(webHandoff.body?.url), { status: webHandoff.status });
+  const webHandoff = await json(`/api/mobile/web-handoff/url?dest=${encodeURIComponent("/account/seller-start")}`, {
+    headers: sellerAuth,
+  });
+  push("epic152_web_handoff_url", webHandoff.ok && Boolean(webHandoff.body?.handoffUrl), {
+    status: webHandoff.status,
+  });
 
   const sellerCatalog = sellerId
     ? await json(`/api/mobile/catalog/products?sellerId=${sellerId}&limit=5`, { headers: auth })

@@ -79,8 +79,8 @@ const symbolGroups = {
     { name: "useCheckoutReturnRefresh", pattern: "useCheckoutReturnRefresh" },
     { name: "checkoutSuccessParam", pattern: "checkoutSuccess=1" },
     { name: "formatBuyerOrderStatus", pattern: "formatBuyerOrderStatus" },
-    { name: "orderSuccessBanner", pattern: "Заказ оформлен" },
-    { name: "sellerTrustBlock", pattern: "buildMobileSellerStorefront" },
+    { name: "orderSuccessBanner", pattern: "successCard" },
+    { name: "sellerTrustBlock", pattern: "trustBlock" },
   ],
   update: [
     { name: "updateRoute", pattern: "/update" },

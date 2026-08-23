@@ -1,0 +1,36 @@
+{
+  "candidate": "RC8",
+  "generatedAt": "2026-08-23T20:35:00Z",
+  "preconditions": {
+    "pr152Merged": "PASS",
+    "pr152MergeSha": "9ab320b",
+    "pr154Merged": "PASS",
+    "pr154MergeSha": "4cf3b19",
+    "railwayDeployed": "PASS",
+    "railwaySha": "4cf3b19",
+    "versionBump": "PASS"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "mobileTest": "PASS",
+    "epic152Gate": "PASS",
+    "epic154Gate": "PASS",
+    "stagingRuntimeGate": "PASS",
+    "releaseGate": "PASS",
+    "releasePipelineVerify": "PASS"
+  },
+  "apkVerification": "PASS",
+  "bundleSymbols": {
+    "epic152_sellerLoop": "PASS",
+    "epic154_checkoutReturn": "PASS",
+    "orderTimeline": "PASS",
+    "sellerOrders": "PASS",
+    "sellerTrustBlock": "PASS",
+    "CommerceHeader": "PASS",
+    "CategoryRail": "PASS",
+    "updateRoute": "PASS"
+  },
+  "mrpPublish": "PENDING",
+  "updateApiVerification": "PENDING",
+  "physicalAndroid": "NOT_RUN"
+}
