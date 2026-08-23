@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-08-23T13:30:01.383Z",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "envVar": "MARKETPLACE_TRUST_LOOP_ENABLED",
+  "envVarDirectAccess": false,
+  "envVarDirectAccessReason": "No Railway credentials in cloud agent environment",
+  "runtimeValue": "false",
+  "runtimeEvidence": {
+    "marketplaceDebugBanner": {
+      "found": true,
+      "activeModules": [],
+      "inactiveModules": [
+        "Marketplace UX Completion",
+        "Trust Loop",
+        "Trust Score Model",
+        "Trust Experience",
+        "New Seller Trust",
+        "Trust Conversion",
+        "Seller Business Intelligence",
+        "Seller Journey",
+        "Seller First Entry",
+        "Seller Operating Desk",
+        "Seller Operations",
+        "Promotion Center",
+        "Seller Payout",
+        "Discovery",
+        "Ranking Intelligence",
+        "Social Growth",
+        "Conversion Audit"
+      ]
+    },
+    "trustLoopInActiveModules": false,
+    "trustLoopInInactiveModules": true,
+    "probeUrl": "https://web-production-e56fb.up.railway.app/?debug=marketplace"
+  },
+  "productOpsConfig": {
+    "key": "trust_loop",
+    "stage": "PRODUCTION",
+    "enabled": true
+  },
+  "productOpsNote": "product-ops/config may show trust_loop enabled via DB override; runtime reviews use process.env.MARKETPLACE_TRUST_LOOP_ENABLED only (lib/marketplace-trust-loop/flags.ts)",
+  "operatorActionCompleted": true,
+  "operatorActionVerified": false,
+  "enableBlocked": true,
+  "enableBlockedReason": "Operator marked Railway variable update complete, but staging debug banner still lists Trust Loop inactive — verify exact value `true` on service web-v2 and confirm redeploy completed.",
+  "operatorSteps": [
+    "Railway → project marketplace-mvp-backup → service web-v2 → Variables",
+    "Set MARKETPLACE_TRUST_LOOP_ENABLED=true (staging only, lowercase true)",
+    "Trigger redeploy / wait for health 200",
+    "Re-run: npm run mobile:closed-beta:rc3-physical-readiness -- --operator-action-completed",
+    "Verify /?debug=marketplace lists Trust Loop under activeModules"
+  ],
+  "postEnableExpectation": "Catalog averageRating/reviewsCount populated for products with approved reviews"
+}

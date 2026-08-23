@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-08-23T13:30:01.383Z",
+  "trustLoopEnabled": false,
+  "contract": {
+    "catalogHasRatingFields": true,
+    "reviewsEndpointRegistered": true,
+    "paginationFields": [
+      "nextCursor",
+      "hasMore"
+    ]
+  },
+  "probes": {
+    "catalog": {
+      "status": 200,
+      "itemCount": 60
+    },
+    "reviewsSample": null,
+    "reviewsEmptyProduct": {
+      "productId": "cmsmzsjx0002xy0w60fa73kqf",
+      "status": 200,
+      "rating": null,
+      "itemCount": 0
+    }
+  },
+  "legacyProductProbe": {
+    "productId": "cmssvqoas000ajsf24b4e59hj",
+    "pdp": {
+      "averageRating": null,
+      "reviewsCount": 0,
+      "title": "Товар нового продавца (audit)"
+    },
+    "reviews": {
+      "status": 200,
+      "rating": null,
+      "itemCount": 0
+    }
+  },
+  "verdict": "CONTRACT_PASS_DATA_EMPTY_FLAG_OFF"
+}

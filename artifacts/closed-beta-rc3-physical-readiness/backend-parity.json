@@ -1,0 +1,41 @@
+{
+  "checkedAt": "2026-08-23T13:30:01.383Z",
+  "originMainSha": "23caa588810276dd9fa6aeea57fe4175f98d7e8e",
+  "originMainShort": "23caa58",
+  "headSha": "1d0316ab4e9462733ffc84ca7757dfdf717ac62c",
+  "railwayStagingCommit": "23caa58",
+  "releaseCommitSha": "31e91aaece3a7b1fc7a92e9c6591011a4789f36e",
+  "buildFixCommitSha": "23caa588810276dd9fa6aeea57fe4175f98d7e8e",
+  "parityAssessment": "ALIGNED",
+  "parityNote": "Railway staging commit matches origin/main HEAD (includes RC3 build-fix 23caa58).",
+  "stagingApiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "environment": "staging",
+  "routeProbes": [
+    {
+      "path": "/api/health",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "path": "/api/version",
+      "status": 200,
+      "ok": true,
+      "commit": "23caa58"
+    },
+    {
+      "path": "/api/mobile/catalog/products",
+      "status": 200,
+      "ok": true,
+      "hasRatingFields": true
+    }
+  ],
+  "noNPlusOne": {
+    "verdict": "PASS",
+    "evidence": "app/api/mobile/catalog/products/route.ts calls getProductRatingsMap once for all item IDs (batch query), not per product.",
+    "implementationFile": "lib/marketplace-trust-loop/ratings/batch-ratings.ts"
+  },
+  "rc3RebuildRequired": {
+    "verdict": "NO",
+    "evidence": "MARKETPLACE_TRUST_LOOP_ENABLED is server-side only (lib/marketplace-trust-loop/flags.ts). No references in apps/mobile."
+  }
+}
