@@ -1,0 +1,79 @@
+{
+  "candidate": "RC8",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "pr152": {
+    "status": "MERGED",
+    "mergeSha": "9ab320b"
+  },
+  "pr154": {
+    "status": "MERGED",
+    "mergeSha": "4cf3b19"
+  },
+  "pr155": {
+    "status": "MERGED",
+    "mergeSha": "885de86",
+    "buildCommitSha": "5c30c8e"
+  },
+  "mainSha": "885de86",
+  "provenance": {
+    "sourceMainSha": "4cf3b19",
+    "buildSha": "11a36f3",
+    "apkEmbeddedSha": "11a36f3",
+    "mergeSha": "885de86",
+    "railwaySha": "4cf3b19",
+    "buildTime": "2026-08-23T20:34:00Z"
+  },
+  "railway": {
+    "deploymentStatus": "HEALTHY",
+    "catalogProductCountRuntime": "PASS",
+    "visibleCategories": 30,
+    "totalCategories": 51
+  },
+  "build": "SUCCESS",
+  "apk": {
+    "path": "artifacts/closed-beta-rc8/lot_android_closed_beta_0.1.13_beta.1.apk",
+    "sizeBytes": 43543214,
+    "sha256": "acbb09c86c2ff038bc11135bbb28606ed08d9e136c33a5f897222e69570991e1",
+    "versionName": "0.1.13-beta.1",
+    "versionCode": 13,
+    "package": "ru.lot.marketplace.alpha",
+    "abi": ["arm64-v8a"],
+    "minSdk": 24,
+    "targetSdk": 36,
+    "environment": "staging",
+    "releaseChannel": "CLOSED_BETA",
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app"
+  },
+  "mrp": {
+    "publishStatus": "PUBLISHED",
+    "versionName": "0.1.13-beta.1",
+    "versionCode": 13,
+    "channel": "BETA",
+    "clientChannel": "CLOSED_BETA",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc8/lot_android_closed_beta_0.1.13_beta.1.apk",
+    "code7": "OPTIONAL_UPDATE → 13",
+    "code8": "OPTIONAL_UPDATE → 13",
+    "code9": "OPTIONAL_UPDATE → 13",
+    "code10": "OPTIONAL_UPDATE → 13",
+    "code11": "OPTIONAL_UPDATE → 13",
+    "code12": "OPTIONAL_UPDATE → 13",
+    "code13": "NO_UPDATE",
+    "code14": "NO_UPDATE",
+    "apkSha256Match": "PASS",
+    "downloadHttp200": "PASS"
+  },
+  "sellerLoop": "PASS",
+  "buyerLoop": "PASS",
+  "featureMatrix": {
+    "EPIC152_sellerOrders": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "EPIC152_webHandoff": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "EPIC154_checkoutReturn": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "EPIC154_orderTimeline": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "EPIC154_sellerTrust": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "CategoryRail": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Filters": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Chat": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" }
+  },
+  "physical": "NOT_RUN"
+}

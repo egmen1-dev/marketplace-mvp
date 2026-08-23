@@ -30,7 +30,7 @@
     "CategoryRail": "PASS",
     "updateRoute": "PASS"
   },
-  "mrpPublish": "PENDING",
-  "updateApiVerification": "PENDING",
+  "mrpPublish": "PASS",
+  "updateApiVerification": "PASS",
   "physicalAndroid": "NOT_RUN"
 }
