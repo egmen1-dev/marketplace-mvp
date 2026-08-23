@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-08-23T15:52:30Z",
+  "candidate": "RC5",
+  "versionName": "0.1.10-beta.1",
+  "versionCode": 9,
+  "pr142": {
+    "status": "MERGED",
+    "mergeSha": "6e4e97c233ceb51fe81a8a3d62b68817dbcda5cd"
+  },
+  "mrp": {
+    "publishStatus": "PUBLISHED",
+    "publishedVersion": "0.1.10-beta.1",
+    "versionCode": 9,
+    "channel": "BETA",
+    "clientChannel": "CLOSED_BETA",
+    "artifactSha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "publishedAt": "2026-08-23T15:50:37.675Z"
+  },
+  "updateApi": {
+    "code7": "OPTIONAL_UPDATE → target 9",
+    "code8": "OPTIONAL_UPDATE → target 9",
+    "code9": "NO_UPDATE",
+    "codeGreaterThan9": "NO_UPDATE"
+  },
+  "apkIntegrity": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "httpStatus": 200,
+    "downloadedSha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "match": "YES"
+  },
+  "physicalUpdate": "NOT_RUN",
+  "gates": {
+    "mrpPublish": "PASS",
+    "updateApiVerification": "PASS",
+    "artifactIntegrity": "PASS",
+    "updateFlowHonesty": "PASS"
+  },
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION"
+}

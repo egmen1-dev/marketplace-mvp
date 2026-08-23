@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-08-23T15:51:00Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "channel": "CLOSED_BETA",
+  "probes": [
+    {
+      "installedVersionCode": 7,
+      "endpoint": "/api/mobile/update?versionCode=7&channel=CLOSED_BETA",
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 9,
+      "targetVersionName": "0.1.10-beta.1",
+      "downloadUrlPresent": true,
+      "expected": "UPDATE_AVAILABLE (OPTIONAL_UPDATE)",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 8,
+      "endpoint": "/api/mobile/update?versionCode=8&channel=CLOSED_BETA",
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 9,
+      "targetVersionName": "0.1.10-beta.1",
+      "downloadUrlPresent": true,
+      "expected": "UPDATE_AVAILABLE (OPTIONAL_UPDATE)",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 9,
+      "endpoint": "/api/mobile/update?versionCode=9&channel=CLOSED_BETA",
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 9,
+      "downloadUrlPresent": false,
+      "expected": "NO_UPDATE",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 10,
+      "endpoint": "/api/mobile/update?versionCode=10&channel=CLOSED_BETA",
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 9,
+      "downloadUrlPresent": false,
+      "expected": "NO_UPDATE (downgrade protection)",
+      "verdict": "PASS"
+    }
+  ],
+  "androidUpdateRoute": {
+    "versionCode7": {
+      "updateState": "OPTIONAL_UPDATE",
+      "versionCode": 9
+    },
+    "versionCode8": {
+      "updateState": "OPTIONAL_UPDATE",
+      "versionCode": 9
+    }
+  },
+  "verdict": "PASS"
+}

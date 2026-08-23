@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-23T15:52:00Z",
+  "candidate": "RC5",
+  "physicalAndroid": "NOT_RUN",
+  "updateFlowSemantics": {
+    "architecture": "browser_handoff_v1",
+    "autoInstallSupported": false,
+    "installerHandoffInApp": false,
+    "telemetryHonesty": "PASS — download-apk.ts does not emit 'downloaded' before browser open; emits started → installOpened",
+    "uiLabels": "Profile update states use UPDATE_UI_LABELS; browserHandoff message explains manual install required",
+    "verdict": "HONEST — not labeled as auto-update complete on download start"
+  },
+  "scenarios": {
+    "A_rc3_to_rc5": {
+      "title": "RC3 (code 7) → RC5 (code 9)",
+      "steps": [
+        "Install RC3 code 7",
+        "Open Profile → Проверить обновление",
+        "RC5 0.1.10-beta.1 must be offered (OPTIONAL_UPDATE)",
+        "Tap Установить обновление → browser opens APK URL",
+        "Download APK in browser/download manager",
+        "Open downloaded APK → Android install confirmation",
+        "Confirm install → relaunch app",
+        "Profile → О приложении shows 0.1.10-beta.1, code 9, SHA baf8cd1"
+      ],
+      "status": "NOT_RUN"
+    },
+    "B_rc4_to_rc5": {
+      "title": "RC4 (code 8) → RC5 (code 9)",
+      "steps": [
+        "Install RC4 code 8",
+        "Open Profile → Проверить обновление",
+        "RC5 must be offered",
+        "Download via browser handoff",
+        "Android install confirmation",
+        "Relaunch and verify Profile → О приложении"
+      ],
+      "status": "NOT_RUN"
+    },
+    "C_rc5_current": {
+      "title": "RC5 already installed (code 9)",
+      "expected": "NO_UPDATE — no update prompt",
+      "status": "NOT_RUN"
+    },
+    "D_downgrade_protection": {
+      "title": "Installed code > 9",
+      "expected": "NO_UPDATE — RC5 must not be offered as downgrade",
+      "apiVerified": "PASS (versionCode 10 → NO_UPDATE)",
+      "physicalStatus": "NOT_RUN"
+    }
+  },
+  "installProcedure": {
+    "adbFromRc3": "adb install -r artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "adbFromRc4": "adb install -r artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "inAppUpdate": "Profile → Проверить обновление → browser download → manual APK install"
+  }
+}

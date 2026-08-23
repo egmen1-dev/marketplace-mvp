@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-08-23T15:50:37Z",
+  "pr142": {
+    "status": "MERGED",
+    "mergeSha": "6e4e97c233ceb51fe81a8a3d62b68817dbcda5cd",
+    "mergedAt": "2026-08-23T15:47:11Z"
+  },
+  "publishMethod": "staging_admin_api",
+  "publishMethodNote": "Local DATABASE_URL unavailable in cloud agent VM. Published via authenticated staging admin API (POST /api/admin/mobile/releases) which invokes the same MRP Prisma registry on the staging server.",
+  "canonicalCommandEquivalent": "npm run mobile:closed-beta:publish-rc5",
+  "releaseId": "cmt5zhme9000klj01jx7hyab7",
+  "publishedAt": "2026-08-23T15:50:37.675Z",
+  "expected": {
+    "versionName": "0.1.10-beta.1",
+    "versionCode": 9,
+    "package": "ru.lot.marketplace.alpha",
+    "channel": "CLOSED_BETA",
+    "environment": "staging",
+    "sha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "buildSha": "baf8cd1"
+  },
+  "published": {
+    "versionName": "0.1.10-beta.1",
+    "versionCode": 9,
+    "package": "ru.lot.marketplace.alpha",
+    "channel": "BETA",
+    "mrpChannel": "BETA",
+    "clientChannel": "CLOSED_BETA",
+    "environment": "staging",
+    "sha256": "2d4041c5e29e31c25ac7cab65ce7d98d1c402ded5ba0307d71922cb220e3e4d1",
+    "gitCommit": "baf8cd1",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc5/lot_android_closed_beta_0.1.10_beta.1.apk",
+    "rolloutPercent": 100,
+    "status": "PUBLISHED"
+  },
+  "metadataVerification": {
+    "versionName": "PASS",
+    "versionCode": "PASS",
+    "sha256": "PASS",
+    "buildSha": "PASS",
+    "channelMapping": "PASS",
+    "artifactSizeBytes": "NOT_SET",
+    "verdict": "PASS"
+  },
+  "verdict": "PUBLISHED"
+}
