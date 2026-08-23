@@ -1,0 +1,50 @@
+{
+  "candidate": "RC4",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.9-beta.1",
+  "versionCode": 8,
+  "commitSha": "6209cf184f795fb5900112b3243a74e96f082222",
+  "mergeCommitSha": "be07163",
+  "pr139HeadSha": "99d585e",
+  "railwaySha": "be07163",
+  "buildTime": "2026-08-23T14:43:20Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "startupVerbose": true,
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.9_beta.1.apk",
+    "path": "artifacts/closed-beta-rc4/lot_android_closed_beta_0.1.9_beta.1.apk",
+    "sha256": "57e249ae132d2d278edecf1c023e28e06696a203bdd812effddb34aad83eec96",
+    "sizeBytes": 43479214
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "buildType": "release",
+    "signedWith": "debug.keystore (internal install only)",
+    "abi": ["arm64-v8a"],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "commitShaVerifiedInBundle": true,
+    "buildTimeVerifiedInBundle": true,
+    "versionNameVerifiedInBundle": true,
+    "apiHostVerifiedInBundle": true,
+    "betaChannelVerifiedInBundle": true,
+    "useCommerceActionsVerifiedInBundle": true,
+    "commerceToastHostVerifiedInBundle": true,
+    "commerceHeaderActionsVerifiedInBundle": true,
+    "sellerStorefrontVerifiedInBundle": true,
+    "profileMenuVerifiedInBundle": true,
+    "productCardSlotsVerifiedInBundle": true,
+    "updateDowngradeProtectionVerifiedInBundle": true
+  },
+  "buildNotes": {
+    "nativeDeps": "Pinned react-native-reanimated@4.5.0 + react-native-worklets@0.10.1 for expo-modules-core native link compatibility",
+    "newArchDisabled": "newArchEnabled=false in app.json; gradle.properties patched post-prebuild (RN 0.86 warns but accepts)",
+    "gradleOrder": "Worklets native lib must build before expo-modules-core CMake link; clean .cxx caches if hash mismatch"
+  }
+}

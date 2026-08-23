@@ -1,0 +1,54 @@
+{
+  "candidate": "RC4",
+  "generatedAt": "2026-08-23T14:43:20Z",
+  "preconditions": {
+    "pr139Merged": "PASS",
+    "pr139HeadSha": "99d585e",
+    "pr139MergeSha": "be07163",
+    "mainSynced": "PASS",
+    "worktreeCleanBeforeBump": "PASS",
+    "railwayParity": "PASS",
+    "railwayParityNote": "Staging at merge SHA; release commit is version bump only"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "mobileTest": "PASS",
+    "regressionTests": "PASS",
+    "testCount": 33,
+    "suites": [
+      "mobile-interaction-audit",
+      "mobile-navigation",
+      "mobile-deep-links",
+      "mobile-post-auth-navigation",
+      "mobile-session-resilience",
+      "mobile-bootstrap-diagnostics",
+      "mobile-reviews",
+      "mobile-refresh",
+      "mobile-refresh-replay"
+    ]
+  },
+  "root": {
+    "build": "PASS",
+    "mobileReleaseGate": "PASS",
+    "releasePipelineVerify": "PASS"
+  },
+  "interactionFixes": {
+    "cart": "PASS",
+    "favorites": "PASS",
+    "catalogFilters": "PASS",
+    "sellerNavigation": "PASS",
+    "profile": "PASS",
+    "localization": "PASS",
+    "productCardConsistency": "PASS",
+    "updateDowngradeProtection": "PASS"
+  },
+  "reviews": {
+    "catalogRatingFields": "PASS",
+    "reviewsApiContract": "PASS",
+    "paginationContract": "PASS",
+    "liveRatingsOnStaging": "BLOCKED",
+    "trustLoopFlag": "MARKETPLACE_TRUST_LOOP_ENABLED=false"
+  },
+  "apkVerification": "PASS",
+  "embeddedFixVerification": "PASS"
+}

@@ -1,0 +1,59 @@
+{
+  "candidate": "RC4",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "verificationResult": "PASS",
+  "pr": "#139",
+  "prHeadSha": "99d585e",
+  "mergeCommitSha": "be07163",
+  "releaseCommitSha": "6209cf1",
+  "railwaySha": "be07163",
+  "apkPath": "artifacts/closed-beta-rc4/lot_android_closed_beta_0.1.9_beta.1.apk",
+  "apkSizeBytes": 43479214,
+  "sha256": "57e249ae132d2d278edecf1c023e28e06696a203bdd812effddb34aad83eec96",
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.9-beta.1",
+  "versionCode": 8,
+  "minSdk": 24,
+  "targetSdk": 36,
+  "abi": ["arm64-v8a"],
+  "signing": "debug.keystore (internal Closed Beta install only)",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "physicalAndroid": "NOT_RUN",
+  "interactionFixes": {
+    "cart": "PASS",
+    "favorites": "PASS",
+    "catalogFilters": "PASS",
+    "sellerNavigation": "PASS",
+    "profile": "PASS",
+    "localization": "PASS",
+    "productCardConsistency": "PASS",
+    "updateDowngradeProtection": "PASS"
+  },
+  "trustLoop": {
+    "MARKETPLACE_TRUST_LOOP_ENABLED": false,
+    "catalogRatings": "API fields present; values null until flag enabled",
+    "reviewsApi": "PASS (contract); empty data on staging",
+    "doesNotBlockRc4Build": true
+  },
+  "knownLimitations": [
+    "Physical Android validation NOT_RUN — tester must execute checklist in docs/product/CLOSED_BETA_RC4_BUILD.md",
+    "MARKETPLACE_TRUST_LOOP_ENABLED=false on staging — review/rating UI shows empty states until flag enabled",
+    "APK signed with debug keystore (internal testing only)",
+    "arm64-v8a only",
+    "APK under 50MB threshold warning from verify script (RC3 was similar size class; not a truncation signal for this build)"
+  ],
+  "deliverables": [
+    "artifacts/closed-beta-rc4/lot_android_closed_beta_0.1.9_beta.1.apk",
+    "artifacts/closed-beta-rc4/sha256.txt",
+    "artifacts/closed-beta-rc4/build-manifest.json",
+    "artifacts/closed-beta-rc4/aapt-badging.txt",
+    "artifacts/closed-beta-rc4/apkanalyzer-manifest.xml",
+    "artifacts/closed-beta-rc4/backend-parity.json",
+    "artifacts/closed-beta-rc4/release-gates.json",
+    "artifacts/closed-beta-rc4/final-report.json",
+    "docs/product/CLOSED_BETA_RC4_BUILD.md"
+  ]
+}

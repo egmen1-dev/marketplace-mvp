@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-08-23T14:43:20Z",
+  "pr139MergeCommitSha": "be07163",
+  "releaseCommitSha": "6209cf1",
+  "railwayStagingCommit": "be07163",
+  "mobileApkEmbeddedCommit": "6209cf1",
+  "stagingApiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "parityAssessment": "ALIGNED_FOR_RC4",
+  "parityNote": "Railway staging matches PR #139 merge SHA be07163. RC4 release commit 6209cf1 is mobile version-metadata only (0.1.9-beta.1 / code 8); strict SHA parity with Railway is not required for this build.",
+  "routeProbes": [
+    { "path": "/api/health", "status": 200, "ok": true },
+    { "path": "/api/version", "status": 200, "ok": true, "commit": "be07163" },
+    { "path": "/api/mobile/bootstrap", "status": 200, "ok": true },
+    { "path": "/api/mobile/catalog/products", "status": 200, "ok": true, "hasRatingFields": true },
+    { "path": "/api/mobile/products/cmsmzsjx0002xy0w60fa73kqf/reviews", "status": 200, "ok": true },
+    { "path": "/api/mobile/auth/refresh", "status": 400, "ok": true, "note": "route registered; 400 without body" }
+  ],
+  "trustLoop": {
+    "MARKETPLACE_TRUST_LOOP_ENABLED": false,
+    "evidence": "Catalog averageRating null; reviews API returns rating:null and items:[] for seeded product. Contract intact; live ratings unavailable until flag enabled.",
+    "actionRequired": "Enable MARKETPLACE_TRUST_LOOP_ENABLED=true on Railway staging for physical review/rating UI validation."
+  }
+}
