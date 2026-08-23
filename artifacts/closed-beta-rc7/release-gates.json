@@ -1,0 +1,42 @@
+{
+  "candidate": "RC7",
+  "generatedAt": "2026-08-23T19:30:00Z",
+  "preconditions": {
+    "pr148Merged": "PASS",
+    "pr148MergeSha": "3fdd3bf",
+    "railwayDeployed": "PASS",
+    "railwaySha": "3fdd3bf",
+    "catalogProductCountRuntime": "PASS",
+    "versionBump": "PASS"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "mobileTest": "PASS",
+    "productCardLayoutGate": "PASS",
+    "stagingRuntimeGate": "PASS",
+    "releasePipelineVerify": "PASS"
+  },
+  "apkVerification": "PASS",
+  "apkIdentityGate": "PASS",
+  "bundleSymbols": {
+    "BootSplash": "PASS",
+    "CategoryRail": "PASS",
+    "Chip": "PASS",
+    "CatalogToolbar": "PASS",
+    "BetaBanner": "PASS",
+    "ProductCardLayout": "PASS",
+    "selectRailCategories": "PASS",
+    "CommerceHeader": "PASS",
+    "useCommerceActions": "PASS",
+    "resolveImageUrl": "PASS",
+    "messagesRoute": "PASS",
+    "conversationScreen": "PASS",
+    "useMessagesBadge": "PASS",
+    "openSellerStorefront": "PASS",
+    "updateRoute": "PASS",
+    "useUpdateCheckFlow": "PASS"
+  },
+  "mrpPublish": "PENDING_MERGE",
+  "updateApiVerification": "PENDING_MERGE",
+  "physicalAndroid": "NOT_RUN"
+}

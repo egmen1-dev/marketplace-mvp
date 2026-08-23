@@ -1,0 +1,44 @@
+{
+  "candidate": "RC7",
+  "versionName": "0.1.12-beta.1",
+  "versionCode": 12,
+  "commitSha": "PENDING_MERGE",
+  "generatedAt": "2026-08-23T19:30:00Z",
+  "status": "NOT_RUN",
+  "device": null,
+  "identityGate": {
+    "instruction": "Profile → О приложении MUST show before any A–T scenario",
+    "expected": {
+      "versionName": "0.1.12-beta.1",
+      "versionCode": 12,
+      "rcLabel": "RC7",
+      "commitShaShort": "see build-manifest.json",
+      "environment": "staging",
+      "channel": "CLOSED_BETA"
+    },
+    "stopCondition": "If identity mismatch → STOP — OLD_APK_INSTALLED"
+  },
+  "scenarios": [
+    { "id": "0", "name": "Identity", "expected": "0.1.12-beta.1, code 12, RC7, expected SHA, staging, CLOSED_BETA", "status": "NOT_RUN" },
+    { "id": "A", "name": "Cold boot BootSplash", "expected": "New branded BootSplash, indeterminate progress (no fake %)", "status": "NOT_RUN" },
+    { "id": "B", "name": "Session persist", "expected": "Restart without re-login", "status": "NOT_RUN" },
+    { "id": "C", "name": "CommerceHeader Home", "expected": "LOT, search, messages, cart visible on Home", "status": "NOT_RUN" },
+    { "id": "D", "name": "CategoryRail compact", "expected": "Chip pills 38–42dp, no circle tiles", "status": "NOT_RUN" },
+    { "id": "E", "name": "Empty categories hidden", "expected": "Женская одежда / Автоаксессуары absent from rail", "status": "NOT_RUN" },
+    { "id": "F", "name": "Category filtering", "expected": "3 populated categories filter products correctly", "status": "NOT_RUN" },
+    { "id": "G", "name": "Filters + reset", "expected": "category→stock→deals→sort→search→reset returns baseline", "status": "NOT_RUN" },
+    { "id": "H", "name": "ProductCard height", "expected": "Grid cards same height in row", "status": "NOT_RUN" },
+    { "id": "I", "name": "Favorites", "expected": "Add/remove favorite on PDP or card", "status": "NOT_RUN" },
+    { "id": "J", "name": "Cart add", "expected": "Add to cart from catalog/PDP", "status": "NOT_RUN" },
+    { "id": "K", "name": "Cart images", "expected": "Cart line items show real product images", "status": "NOT_RUN" },
+    { "id": "L", "name": "Cart persist", "expected": "Cart survives restart", "status": "NOT_RUN" },
+    { "id": "M", "name": "Seller storefront", "expected": "Seller name → storefront catalog", "status": "NOT_RUN" },
+    { "id": "N", "name": "PDP → chat", "expected": "Написать продавцу opens conversation", "status": "NOT_RUN" },
+    { "id": "O", "name": "Chat send/receive/reply/read", "expected": "Buyer↔seller message flow + read state", "status": "NOT_RUN" },
+    { "id": "P", "name": "Messages badge", "expected": "Unread badge updates after message", "status": "NOT_RUN" },
+    { "id": "Q", "name": "Cart badge", "expected": "Cart badge reflects item count", "status": "NOT_RUN" },
+    { "id": "R", "name": "Search focus", "expected": "Search icon → catalog with keyboard focus", "status": "NOT_RUN" },
+    { "id": "S", "name": "Update screen", "expected": "Update check flow reachable", "status": "NOT_RUN" },
+    { "id": "T", "name": "Offline/degraded boot", "expected": "Graceful degraded mode on network loss", "status": "NOT_RUN" }
+  ]
+}

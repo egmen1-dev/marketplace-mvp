@@ -121,12 +121,17 @@ async function main() {
   }
   push("cart_image_http_200_x3", cartChecks.length >= 3 && cartChecks.every((c) => c.httpOk), { cartChecks });
 
-  const favProduct = (catalog.body?.items ?? [])[0];
-  const addFav = await json("/api/favorites", { method: "POST", headers: auth, body: JSON.stringify({ productId: favProduct.id }) });
-  const getFav = await json("/api/favorites", { headers: auth });
-  const hasFav = (getFav.body?.items ?? []).some((i) => i.productId === favProduct.id || i.id === favProduct.id);
-  const rmFav = await json(`/api/favorites/${favProduct.id}`, { method: "DELETE", headers: auth });
-  push("favorites_add_get_remove", addFav.ok && getFav.ok && hasFav && rmFav.ok, { productId: favProduct.id });
+  const favProduct = (catalog.body?.items ?? []).find((p) => p.id);
+  let addFav = await json("/api/mobile/favorites", { method: "POST", headers: auth, body: JSON.stringify({ productId: favProduct.id }) });
+  if (!addFav.body?.isFavorite) {
+    addFav = await json("/api/mobile/favorites", { method: "POST", headers: auth, body: JSON.stringify({ productId: favProduct.id }) });
+  }
+  const getFav = await json("/api/mobile/favorites", { headers: auth });
+  const hasFav = (getFav.body?.items ?? []).some((i) => i.id === favProduct.id || i.productId === favProduct.id);
+  const rmFav = await json("/api/mobile/favorites", { method: "POST", headers: auth, body: JSON.stringify({ productId: favProduct.id }) });
+  const getFavAfter = await json("/api/mobile/favorites", { headers: auth });
+  const removed = !(getFavAfter.body?.items ?? []).some((i) => i.id === favProduct.id || i.productId === favProduct.id);
+  push("favorites_add_get_remove", addFav.ok && addFav.body?.isFavorite === true && getFav.ok && hasFav && rmFav.ok && rmFav.body?.isFavorite === false && removed, { productId: favProduct.id });
 
   const sellerProduct = (catalog.body?.items ?? []).find((p) => p.seller?.id);
   const sellerId = sellerProduct?.seller?.id;
@@ -148,7 +153,7 @@ async function main() {
     ? await json(`/api/mobile/conversations/${conversationId}/messages`, {
         method: "POST",
         headers: auth,
-        body: JSON.stringify({ body: buyerMsg }),
+        body: JSON.stringify({ text: buyerMsg }),
       })
     : { ok: false };
   push("chat_send", send.ok);
@@ -163,15 +168,15 @@ async function main() {
     ? await json(`/api/mobile/conversations/${conversationId}/messages`, {
         method: "POST",
         headers: sellerAuth,
-        body: JSON.stringify({ body: sellerReply }),
+        body: JSON.stringify({ text: sellerReply }),
       })
     : { ok: false };
   push("chat_seller_reply", reply.ok);
 
-  const buyerThread = conversationId
-    ? await json(`/api/mobile/conversations/${conversationId}`, { headers: auth })
+  const buyerMessages = conversationId
+    ? await json(`/api/mobile/conversations/${conversationId}/messages?limit=20`, { headers: auth })
     : { ok: false, body: {} };
-  const buyerSeesReply = (buyerThread.body?.messages ?? []).some((m) => m.body?.includes("RC7 seller reply"));
+  const buyerSeesReply = (buyerMessages.body?.items ?? []).some((m) => String(m.text ?? m.body ?? "").includes("RC7 seller reply"));
   push("chat_buyer_receives_reply", buyerSeesReply);
 
   const markRead = conversationId
@@ -197,7 +202,7 @@ async function main() {
     "Category filtering": { source: "PASS", integration: "PASS", staging: populatedChecks.every((c) => c.ok) ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },
     Filters: { source: "PASS", integration: "PASS", staging: filterResults.every((f) => f.ok) ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },
     ProductCard: { source: "PASS", integration: "PASS", staging: "NOT_RUN", apk: "PENDING", physical: "NOT_RUN" },
-    Favorites: { source: "PASS", integration: "PASS", staging: hasFav ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },
+    Favorites: { source: "PASS", integration: "PASS", staging: hasFav && removed ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },
     Cart: { source: "PASS", integration: "PASS", staging: cartChecks.every((c) => c.httpOk) ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },
     "Cart images": { source: "PASS", integration: "PASS", staging: cartChecks.every((c) => c.httpOk) ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },
     Seller: { source: "PASS", integration: "PASS", staging: sellerCatalog.ok ? "PASS" : "FAIL", apk: "PENDING", physical: "NOT_RUN" },

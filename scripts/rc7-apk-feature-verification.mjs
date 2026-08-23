@@ -20,7 +20,7 @@ function run(cmd, args) {
 function bundleContains(pattern) {
   const out = run("bash", [
     "-c",
-    `unzip -p '${fullPath}' 'assets/index.android.bundle' 2>/dev/null | grep -F '${pattern}' | head -1`,
+    `unzip -p '${fullPath}' 'assets/index.android.bundle' 2>/dev/null | strings | grep -F '${pattern}' | head -1`,
   ]);
   return out.length > 0;
 }

@@ -1,0 +1,50 @@
+{
+  "candidate": "RC7",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.12-beta.1",
+  "versionCode": 12,
+  "commitSha": "46567b1",
+  "mergeCommitSha": "3fdd3bf",
+  "pr148MergeSha": "3fdd3bf",
+  "railwaySha": "3fdd3bf",
+  "buildTime": "2026-08-23T19:27:26Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.12_beta.1.apk",
+    "path": "artifacts/closed-beta-rc7/lot_android_closed_beta_0.1.12_beta.1.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc7/lot_android_closed_beta_0.1.12_beta.1.apk",
+    "sha256": "8f511ded742b1b82a1847fbf680c9c30cde510418298bee1acb1ce67383fe8de",
+    "sizeBytes": 43521738
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "CommerceHeader": true,
+    "messagesRoute": true,
+    "conversationScreen": true,
+    "useMessagesBadge": true,
+    "chatApiClient": true,
+    "BootSplash": true,
+    "CategoryRail": true,
+    "selectRailCategories": true,
+    "CatalogToolbar": true,
+    "useCommerceActions": true,
+    "resolveImageUrl": true,
+    "updateRoute": true,
+    "ProductCardLayout": true,
+    "BetaBanner": true
+  },
+  "buildNotes": {
+    "release": "RC7 — physical validation fixes (PR #148) on RC6 base",
+    "previousRelease": "RC6 0.1.11-beta.1 (code 11)"
+  }
+}
