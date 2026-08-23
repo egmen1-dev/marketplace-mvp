@@ -9,6 +9,7 @@ import { productStatusLabel, productStatusTone } from "../../theme/status-labels
 import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
 import type { MobileProductListItem } from "../../api/endpoints";
 import { Badge } from "./primitives";
+import { ProductImageFallback } from "./ProductImageFallback";
 
 export function SellerProductCard({
   product,
@@ -36,7 +37,7 @@ export function SellerProductCard({
     <Animated.View style={{ transform: [{ scale }] }}>
       <Pressable style={styles.card} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
         <View style={styles.thumb}>
-          {imageUrl ? <Image source={{ uri: imageUrl }} style={styles.thumbImage} contentFit="cover" /> : <Text style={styles.thumbFallback}>📦</Text>}
+          {imageUrl ? <Image source={{ uri: imageUrl }} style={styles.thumbImage} contentFit="cover" /> : <ProductImageFallback compact />}
         </View>
         <View style={styles.body}>
           <Text style={styles.title} numberOfLines={2}>
@@ -71,7 +72,6 @@ const styles = StyleSheet.create({
   },
   thumb: { width: 88, height: 88, borderRadius: radii.md, overflow: "hidden", backgroundColor: colors.gray100, alignItems: "center", justifyContent: "center" },
   thumbImage: { width: "100%", height: "100%" },
-  thumbFallback: { fontSize: 28 },
   body: { flex: 1, gap: spacing.xs, paddingRight: spacing.sm },
   title: { ...typography.body, fontWeight: "600", color: colors.black },
   price: { ...typography.h2, color: colors.orange },

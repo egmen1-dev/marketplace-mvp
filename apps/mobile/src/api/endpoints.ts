@@ -158,9 +158,10 @@ export async function fetchCatalog(params?: CatalogParams) {
   );
 }
 
-export async function fetchSellerProducts(params?: { cursor?: string | null }) {
+export async function fetchSellerProducts(params?: { cursor?: string | null; tab?: "active" | "drafts" | "sold" }) {
   const search = new URLSearchParams();
   if (params?.cursor) search.set("cursor", params.cursor);
+  if (params?.tab) search.set("tab", params.tab);
   const qs = search.toString();
   return apiRequest<{ items: MobileProductListItem[]; nextCursor: string | null; hasMore: boolean }>(
     `/api/mobile/seller/products${qs ? `?${qs}` : ""}`,

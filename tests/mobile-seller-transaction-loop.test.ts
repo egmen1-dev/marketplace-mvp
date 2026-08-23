@@ -24,13 +24,14 @@ describe("EPIC 152 — seller transaction loop contracts", () => {
     expect(endpointsSource).toContain("fetchWebHandoffUrl");
   });
 
-  it("sell tab routes non-sellers to web onboarding and sellers to hub actions", () => {
-    expect(sellSource).toContain("Начните продавать");
+  it("sell tab routes non-sellers to web onboarding and sellers to native LOT creation", () => {
+    expect(sellSource).toContain("Начните продавать на LOT");
     expect(sellSource).toContain("Создать магазин");
     expect(sellSource).toContain("openWebHandoff");
     expect(sellSource).toContain("/account/seller-start");
-    expect(sellSource).toContain("Добавить товар");
-    expect(sellSource).toContain("Мои товары");
+    expect(sellSource).toContain("Создать ЛОТ");
+    expect(sellSource).toContain('/sell/create');
+    expect(sellSource).toContain("Мои ЛОТы");
     expect(sellSource).toContain("Заказы");
     expect(sellSource).toContain("Сообщения");
   });
