@@ -1,0 +1,1 @@
+128530437e73baf599e9a2db800a5c2f335d10252004437dc6e2effbb6723afe  artifacts/closed-beta-rc6/lot_android_closed_beta_0.1.11_beta.1.apk

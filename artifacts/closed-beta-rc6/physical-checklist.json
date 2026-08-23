@@ -1,0 +1,22 @@
+{
+  "candidate": "RC6",
+  "versionName": "0.1.11-beta.1",
+  "versionCode": 11,
+  "generatedAt": "2026-08-23T18:16:00Z",
+  "status": "NOT_RUN",
+  "device": null,
+  "scenarios": [
+    { "id": "A", "name": "Identity", "expected": "0.1.11-beta.1, code 11, RC6, SHA b774ebd, staging, CLOSED_BETA", "status": "NOT_RUN" },
+    { "id": "B", "name": "Header", "expected": "LOT, Search, Messages, Cart on Home and Catalog", "status": "NOT_RUN" },
+    { "id": "C", "name": "Search", "expected": "Catalog opens with keyboard focus, real results", "status": "NOT_RUN" },
+    { "id": "D", "name": "Cart badge", "expected": "Badge increments/decrements with cart changes", "status": "NOT_RUN" },
+    { "id": "E", "name": "Chat from PDP", "expected": "Написать продавцу opens conversation, message sends", "status": "NOT_RUN" },
+    { "id": "F", "name": "Seller receives chat", "expected": "Seller inbox + unread badge + reply", "status": "NOT_RUN" },
+    { "id": "G", "name": "Buyer receives reply", "expected": "Unread badge updates, reply visible", "status": "NOT_RUN" },
+    { "id": "H", "name": "Seller storefront chat", "expected": "Correct conversation from storefront CTA", "status": "NOT_RUN" },
+    { "id": "I", "name": "Order chat", "expected": "Order → message seller if fixture exists", "status": "NOT_TESTABLE" },
+    { "id": "J", "name": "Session", "expected": "Restart without login, history persists", "status": "NOT_RUN" },
+    { "id": "K", "name": "Offline chat", "expected": "Failure/retry UI, no silent loss", "status": "NOT_RUN" },
+    { "id": "L", "name": "Core regression", "expected": "cart, favorites, catalog, seller, profile, update, BootSplash", "status": "NOT_RUN" }
+  ]
+}

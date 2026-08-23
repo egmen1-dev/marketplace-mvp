@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-08-23T18:16:00Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "stagingSha": "0be57c5",
+  "buildSha": "b774ebd",
+  "features": {
+    "Cart": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Favorites": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Catalog": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Seller": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Chat": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "CommerceHeader": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "Update": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" }
+  },
+  "commerceHeader": {
+    "lotToHome": "PASS (source: CommerceHeader on Home)",
+    "searchToCatalogFocus": "PASS (source: focusSearch=1)",
+    "messagesRoute": "PASS (source: /messages)",
+    "cartRoute": "PASS (source: /cart)",
+    "cartBadgeReal": "PASS (source: cart count from API)",
+    "messagesBadgeReal": "PASS (source: fetchConversationsUnread, no polling)",
+    "noPerCardRequests": "PASS",
+    "noPollingLoop": "PASS"
+  },
+  "regression": {
+    "session": "PASS (staging smoke)",
+    "cart": "PASS (staging smoke)",
+    "favorites": "PASS (staging smoke)",
+    "catalog": "PASS (staging smoke)",
+    "seller": "PASS (staging smoke)",
+    "update": "PASS (source + bundle)",
+    "visual": "PASS (bundle symbols)"
+  },
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION"
+}
