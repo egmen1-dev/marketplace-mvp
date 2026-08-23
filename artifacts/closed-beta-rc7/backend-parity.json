@@ -1,0 +1,315 @@
+{
+  "generatedAt": "2026-08-23T19:26:50.291Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "railwaySha": "3fdd3bf",
+  "catalogProductCountRuntime": "PASS",
+  "visibleCategoryCount": 30,
+  "totalCategoryCount": 51,
+  "results": [
+    {
+      "name": "railway_health",
+      "ok": true,
+      "railwaySha": "3fdd3bf"
+    },
+    {
+      "name": "buyer_session",
+      "ok": true
+    },
+    {
+      "name": "seller_session",
+      "ok": true
+    },
+    {
+      "name": "bootstrap",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "catalogProductCount_present",
+      "ok": true
+    },
+    {
+      "name": "category_rail_visible_min_3",
+      "ok": true,
+      "visible": 30,
+      "total": 51
+    },
+    {
+      "name": "empty_categories_detected",
+      "ok": true
+    },
+    {
+      "name": "populated_categories_return_products",
+      "ok": true,
+      "populatedChecks": [
+        {
+          "category": "Климатическая техника",
+          "count": 5,
+          "ok": true
+        },
+        {
+          "category": "Компьютеры",
+          "count": 1,
+          "ok": true
+        },
+        {
+          "category": "Мебель",
+          "count": 1,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "name": "filter_matrix",
+      "ok": true,
+      "filterResults": [
+        {
+          "id": "baseline",
+          "path": "/api/mobile/catalog/products?limit=20",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "id": "category",
+          "path": "/api/mobile/catalog/products?categoryId=cmsnia09yci7qzw77&limit=20",
+          "ok": true,
+          "count": 16
+        },
+        {
+          "id": "stock",
+          "path": "/api/mobile/catalog/products?inStock=1&limit=20",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "id": "deals",
+          "path": "/api/mobile/catalog/products?deals=1&limit=20",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "id": "sort",
+          "path": "/api/mobile/catalog/products?sort=newest&limit=20",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "id": "category_stock",
+          "path": "/api/mobile/catalog/products?categoryId=cmsnia09yci7qzw77&inStock=1&limit=20",
+          "ok": true,
+          "count": 16
+        },
+        {
+          "id": "category_sort",
+          "path": "/api/mobile/catalog/products?categoryId=cmsnia09yci7qzw77&sort=price_asc&limit=20",
+          "ok": true,
+          "count": 16
+        },
+        {
+          "id": "search",
+          "path": "/api/mobile/catalog/products?q=дрель&limit=20",
+          "ok": true,
+          "count": 2
+        },
+        {
+          "id": "reset_baseline",
+          "path": "/api/mobile/catalog/products?limit=20",
+          "ok": true,
+          "count": 20
+        }
+      ],
+      "baselineCount": 20
+    },
+    {
+      "name": "cart_image_http_200_x3",
+      "ok": true,
+      "cartChecks": [
+        {
+          "productId": "cmsmzsjx0002xy0w60fa73kqf",
+          "rel": "/images/seed/photo-1572981779307-38b8cabb2407.jpg",
+          "abs": "https://web-production-e56fb.up.railway.app/images/seed/photo-1572981779307-38b8cabb2407.jpg",
+          "httpOk": true
+        },
+        {
+          "productId": "cmssvqouc000ijsf23cbho4ln",
+          "rel": "/images/seed/photo-1505740420928-5e560c06d30e.jpg",
+          "abs": "https://web-production-e56fb.up.railway.app/images/seed/photo-1505740420928-5e560c06d30e.jpg",
+          "httpOk": true
+        },
+        {
+          "productId": "cmsmzt6lr004fy0w6wzhy1t32",
+          "rel": "/images/seed/photo-1498049794561-7780e7231661.jpg",
+          "abs": "https://web-production-e56fb.up.railway.app/images/seed/photo-1498049794561-7780e7231661.jpg",
+          "httpOk": true
+        }
+      ]
+    },
+    {
+      "name": "favorites_add_get_remove",
+      "ok": true,
+      "productId": "cmsmzsjx0002xy0w60fa73kqf"
+    },
+    {
+      "name": "seller_catalog",
+      "ok": true,
+      "sellerId": "cmsmzrxgj0005y0w6jhe5qqle"
+    },
+    {
+      "name": "chat_create",
+      "ok": true,
+      "conversationId": "cmsnjx6hw0005l81mvb8n2t9k"
+    },
+    {
+      "name": "chat_send",
+      "ok": true
+    },
+    {
+      "name": "chat_seller_receives",
+      "ok": true
+    },
+    {
+      "name": "chat_seller_reply",
+      "ok": true
+    },
+    {
+      "name": "chat_buyer_receives_reply",
+      "ok": true
+    },
+    {
+      "name": "chat_read_unread",
+      "ok": true,
+      "unreadTotal": 0
+    },
+    {
+      "name": "rc6_chat_conversations",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "rc6_chat_unread",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "rc6_android_update",
+      "ok": true,
+      "status": 200
+    }
+  ],
+  "featureMatrix": {
+    "Session": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "BootSplash": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "CategoryRail": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Category filtering": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Filters": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "ProductCard": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Favorites": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Cart": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Cart images": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Seller": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "CommerceHeader": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Search": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Chat": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Message badge": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Cart badge": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Update": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    }
+  },
+  "failed": [],
+  "verdict": "PASS"
+}

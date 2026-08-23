@@ -1,0 +1,243 @@
+{
+  "generatedAt": "2026-08-23T19:27:07.784Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc7/lot_android_closed_beta_0.1.12_beta.1.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.12-beta.1",
+    "versionCode": "12",
+    "nativeCode": "arm64-v8a",
+    "sha256": "8f511ded742b1b82a1847fbf680c9c30cde510418298bee1acb1ce67383fe8de",
+    "sizeBytes": 43521738
+  },
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.12-beta.1",
+      "actual": "0.1.12-beta.1"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "12",
+      "actual": "12"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc7Label",
+      "ok": true,
+      "expected": "RC7 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingChannel",
+      "ok": true,
+      "expected": "staging",
+      "actual": "bundle"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "visual",
+      "name": "BootSplash",
+      "pattern": "BootSplash",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "CategoryRail",
+      "pattern": "CategoryRail",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "Chip",
+      "pattern": "Chip",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "CatalogToolbar",
+      "pattern": "CatalogToolbar",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "BetaBanner",
+      "pattern": "BetaBanner",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "ProductCardLayout",
+      "pattern": "PRODUCT_CARD_LAYOUT",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "selectRailCategories",
+      "pattern": "selectRailCategories",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "useCommerceActions",
+      "pattern": "useCommerceActions",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "cart",
+      "pattern": "/cart",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "favorites",
+      "pattern": "favorites",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "resolveImageUrl",
+      "pattern": "resolveImageUrl",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "CommerceHeader",
+      "pattern": "CommerceHeader",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "searchEntry",
+      "pattern": "focusSearch",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "messagesEntry",
+      "pattern": "/messages",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "cartEntry",
+      "pattern": "/cart",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "useMessagesBadge",
+      "pattern": "useMessagesBadge",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "messagesRoute",
+      "pattern": "/messages",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "conversationScreen",
+      "pattern": "conversations",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "sendMessage",
+      "pattern": "sendConversationMessage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "unreadHandling",
+      "pattern": "fetchConversationsUnread",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "seller",
+      "name": "sellerStorefront",
+      "pattern": "seller",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "seller",
+      "name": "openSellerStorefront",
+      "pattern": "openSellerStorefront",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "updateRoute",
+      "pattern": "/update",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "useUpdateCheckFlow",
+      "pattern": "useUpdateCheckFlow",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "fetchMobileUpdate",
+      "pattern": "fetchMobileUpdate",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "startApkDownload",
+      "pattern": "startApkDownload",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}
