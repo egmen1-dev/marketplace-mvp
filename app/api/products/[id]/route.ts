@@ -12,6 +12,7 @@ import {
   ProductServiceError,
   updateProduct,
 } from "@/features/products/queries";
+import { getProductRatingsMap } from "@/lib/marketplace-trust-loop/ratings/batch-ratings";
 import { updateProductSchema } from "@/features/products/schemas";
 
 type RouteContext = {
@@ -44,7 +45,13 @@ export async function GET(_request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Товар не найден" }, { status: 404 });
     }
 
-    return NextResponse.json(product);
+    const ratingsMap = await getProductRatingsMap([product.id]);
+    const rating = ratingsMap.get(product.id);
+    return NextResponse.json({
+      ...product,
+      averageRating: rating?.averageRating ?? null,
+      reviewsCount: rating?.reviewsCount ?? 0,
+    });
   } catch (err) {
     console.error("[GET /api/products/:id]", err);
     return NextResponse.json(

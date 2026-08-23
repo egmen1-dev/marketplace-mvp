@@ -1,23 +1,26 @@
 import { loadAppConfig } from "../config/env";
-import type { MobileErrorPayload, MobileEnvelope } from "../types/api";
-import { clearSession, getAccessToken, getDeviceId, getRefreshToken, saveTokens } from "../storage/secure-session";
+import type { MobileEnvelope } from "../types/api";
+import { ApiClientError, parseApiError } from "./errors";
+import { clearSession, getAccessToken, getDeviceId, getRefreshToken, getSessionMeta, saveTokens } from "../storage/secure-session";
 
-export class ApiClientError extends Error {
-  constructor(
-    public code: string,
-    message: string,
-    public retryable = false,
-    public status = 400,
-  ) {
-    super(message);
-    this.name = "ApiClientError";
-  }
-}
+export { ApiClientError, parseApiError } from "./errors";
 
 let memoryAccessToken: string | null = null;
 let refreshInFlight: Promise<string | null> | null = null;
+let sessionClearedHandler: (() => void) | null = null;
+
+const DEFINITIVE_REFRESH_FAILURE_CODES = new Set([
+  "REFRESH_REVOKED",
+  "REFRESH_INVALID",
+  "REFRESH_REPLAY",
+  "REFRESH_EXPIRED",
+]);
 
 export const DEFAULT_FETCH_TIMEOUT_MS = 15_000;
+
+export function setSessionClearedHandler(handler: (() => void) | null): void {
+  sessionClearedHandler = handler;
+}
 
 function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs = DEFAULT_FETCH_TIMEOUT_MS): Promise<Response> {
   const timeoutSignal = AbortSignal.timeout(timeoutMs);
@@ -32,13 +35,19 @@ export function setMemoryAccessToken(token: string | null): void {
   memoryAccessToken = token;
 }
 
+export async function warmSessionFromStorage(): Promise<void> {
+  const token = await getAccessToken();
+  if (token) memoryAccessToken = token;
+}
+
+async function clearSessionAndNotify(): Promise<void> {
+  await clearSession();
+  memoryAccessToken = null;
+  sessionClearedHandler?.();
+}
+
 async function parseError(res: Response): Promise<ApiClientError> {
-  const body = (await res.json().catch(() => ({}))) as MobileErrorPayload & { message?: string; error?: string };
-  const nested = body.error;
-  if (nested?.code) {
-    return new ApiClientError(nested.code, nested.message, Boolean(nested.retryable), res.status);
-  }
-  return new ApiClientError("HTTP_ERROR", body.message ?? body.error ?? res.statusText, res.status >= 500, res.status);
+  return parseApiError(res);
 }
 
 async function refreshAccessToken(): Promise<string | null> {
@@ -57,9 +66,8 @@ async function refreshAccessToken(): Promise<string | null> {
 
     if (!res.ok) {
       const err = await parseError(res);
-      if (err.code === "REFRESH_REVOKED" || err.code === "REFRESH_INVALID" || err.code === "REFRESH_REPLAY") {
-        await clearSession();
-        memoryAccessToken = null;
+      if (DEFINITIVE_REFRESH_FAILURE_CODES.has(err.code)) {
+        await clearSessionAndNotify();
       }
       throw err;
     }
@@ -73,13 +81,14 @@ async function refreshAccessToken(): Promise<string | null> {
       role?: string;
     };
 
+    const existingMeta = await getSessionMeta();
     await saveTokens({
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
       meta: {
         sessionId: data.sessionId,
-        userId: data.userId ?? "",
-        role: data.role ?? "BUYER",
+        userId: data.userId ?? existingMeta?.userId ?? "",
+        role: data.role ?? existingMeta?.role ?? "BUYER",
       },
     });
     memoryAccessToken = data.accessToken;
@@ -104,8 +113,14 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}, retry 
   if (res.status === 401 && retry) {
     const err = await parseError(res);
     if (err.code === "TOKEN_EXPIRED" || err.code === "UNAUTHORIZED" || err.message.toLowerCase().includes("token")) {
-      const refreshed = await refreshAccessToken();
-      if (refreshed) return apiRequest<T>(path, init, false);
+      try {
+        const refreshed = await refreshAccessToken();
+        if (refreshed) return apiRequest<T>(path, init, false);
+      } catch (refreshErr) {
+        if (refreshErr instanceof ApiClientError && DEFINITIVE_REFRESH_FAILURE_CODES.has(refreshErr.code)) {
+          throw refreshErr;
+        }
+      }
     }
     throw err;
   }
@@ -160,6 +175,5 @@ export async function logout(): Promise<void> {
       // local cleanup still required
     }
   }
-  await clearSession();
-  memoryAccessToken = null;
+  await clearSessionAndNotify();
 }

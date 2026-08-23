@@ -1,24 +1,36 @@
 import { useEffect, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 
-import { fetchOrders } from "../../src/api/endpoints";
-import { Badge, EmptyState, PageContainer, SkeletonGrid } from "../../src/components/ui";
+import { fetchOrders, fetchSellerHome } from "../../src/api/endpoints";
+import { Badge, EmptyState, PageContainer, SectionHeader, SkeletonGrid } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
+import { useAppStore } from "../../src/store/app-store";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 export default function OrdersScreen() {
   const fade = useFadeIn();
+  const sellerCapable = useAppStore((s) => s.sellerCapable);
   const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
+  const [sellerSummary, setSellerSummary] = useState<{ needAction?: number } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const load = () =>
-    fetchOrders()
-      .then((res) => setItems(res.items))
-      .finally(() => setLoading(false));
+  const load = async () => {
+    setLoading(true);
+    try {
+      const [orders, sellerHome] = await Promise.all([
+        fetchOrders(),
+        sellerCapable ? fetchSellerHome().catch(() => null) : Promise.resolve(null),
+      ]);
+      setItems(orders.items);
+      setSellerSummary(sellerHome?.orders ?? null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     load();
-  }, []);
+  }, [sellerCapable]);
 
   if (loading) {
     return (
@@ -31,12 +43,26 @@ export default function OrdersScreen() {
   return (
     <PageContainer style={styles.container}>
       <Animated.View style={{ opacity: fade, flex: 1 }}>
+        <SectionHeader title="Мои покупки" />
+        {sellerCapable && sellerSummary?.needAction ? (
+          <Text style={styles.sellerHint}>
+            У вас {sellerSummary.needAction} продаж требуют внимания — откройте «Мои продажи» в профиле.
+          </Text>
+        ) : null}
         <FlatList
           data={items}
           keyExtractor={(item, idx) => String(item.id ?? idx)}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
           contentContainerStyle={styles.list}
-          ListEmptyComponent={<EmptyState preset="orders" actionLabel="Обновить" onAction={load} />}
+          ListEmptyComponent={
+            <EmptyState
+              preset="orders"
+              title="Покупок пока нет"
+              description="Когда вы оформите покупку, заказ появится здесь."
+              actionLabel="Обновить"
+              onAction={load}
+            />
+          }
           renderItem={({ item }) => (
             <View style={styles.card}>
               <View style={styles.cardHeader}>
@@ -61,6 +87,7 @@ function formatOrderMeta(item: Record<string, unknown>): string {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   list: { padding: spacing.lg, gap: spacing.md },
+  sellerHint: { ...typography.caption, color: colors.gray700, paddingHorizontal: spacing.lg, marginBottom: spacing.sm },
   card: { backgroundColor: colors.gray100, borderRadius: radii.lg, padding: spacing.lg, gap: spacing.sm },
   cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: spacing.sm },
   title: { ...typography.subtitle, color: colors.black },

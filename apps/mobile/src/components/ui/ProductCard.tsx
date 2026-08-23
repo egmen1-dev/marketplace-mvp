@@ -8,6 +8,7 @@ import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
 import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
 import { Badge } from "./primitives";
+import { ProductRatingRow } from "./ProductRatingRow";
 
 export type MobileProductCardData = {
   id: string;
@@ -20,6 +21,9 @@ export type MobileProductCardData = {
   status?: string;
   favoritesCount?: number;
   views?: number;
+  averageRating?: number | null;
+  reviewsCount?: number;
+  city?: string | null;
 };
 
 export function ProductCard({
@@ -88,7 +92,10 @@ export function ProductCard({
             {product.title}
           </Text>
 
+          <ProductRatingRow averageRating={product.averageRating} reviewsCount={product.reviewsCount} compact />
+
           {product.seller?.storeName ? <Text style={styles.seller}>{product.seller.storeName}</Text> : null}
+          {product.city ? <Text style={styles.location}>{product.city}</Text> : null}
 
           <View style={styles.metaRow}>
             {socialCount > 0 ? <Text style={styles.social}>♥ {socialCount} в избранном</Text> : null}
@@ -152,6 +159,7 @@ const styles = StyleSheet.create({
   compareAt: { ...typography.caption, color: colors.gray500, textDecorationLine: "line-through" },
   title: { ...typography.caption, color: colors.gray900, minHeight: 36 },
   seller: { ...typography.caption, color: colors.gray500 },
+  location: { ...typography.caption, color: colors.gray500 },
   metaRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm, flexWrap: "wrap", minHeight: 18 },
   social: { ...typography.caption, color: colors.gray700, fontWeight: "600" },
   views: { ...typography.caption, color: colors.gray500 },

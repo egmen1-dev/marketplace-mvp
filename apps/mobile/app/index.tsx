@@ -22,6 +22,7 @@ import { colors, spacing, typography } from "../src/theme/tokens";
 
 export default function BootScreen() {
   const setBootstrapped = useAppStore((s) => s.setBootstrapped);
+  const setBootDegraded = useAppStore((s) => s.setBootDegraded);
   const setRemoteConfig = useAppStore((s) => s.setRemoteConfig);
   const setUserRole = useAppStore((s) => s.setUserRole);
   const setPendingUpdate = useAppStore((s) => s.setPendingUpdate);
@@ -48,10 +49,11 @@ export default function BootScreen() {
       if (result.remoteConfig) setRemoteConfig(result.remoteConfig);
       if (result.role) setUserRole(result.role);
       if (result.update) setPendingUpdate(result.update);
+      setBootDegraded(Boolean(result.degraded));
       setBootstrapped(true);
       setReady(result.destination);
     },
-    [setBootstrapped, setPendingUpdate, setRemoteConfig, setUserRole],
+    [setBootstrapped, setBootDegraded, setPendingUpdate, setRemoteConfig, setUserRole],
   );
 
   useEffect(() => {

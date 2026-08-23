@@ -8,13 +8,21 @@ import { colors, spacing, typography } from "../theme/tokens";
 
 export function NetworkBanner() {
   const offline = useAppStore((s) => s.offline);
+  const bootDegraded = useAppStore((s) => s.bootDegraded);
   const setOffline = useAppStore((s) => s.setOffline);
+  const setBootDegraded = useAppStore((s) => s.setBootDegraded);
 
   useEffect(() => {
     let cancelled = false;
     async function poll() {
       const state = await Network.getNetworkStateAsync();
-      if (!cancelled) setOffline(!state.isConnected);
+      if (!cancelled) {
+        const isOffline = !state.isConnected;
+        setOffline(isOffline);
+        if (!isOffline && bootDegraded) {
+          setBootDegraded(false);
+        }
+      }
     }
     poll();
     const id = setInterval(poll, 5000);
@@ -22,15 +30,18 @@ export function NetworkBanner() {
       cancelled = true;
       clearInterval(id);
     };
-  }, [setOffline]);
+  }, [bootDegraded, setBootDegraded, setOffline]);
 
-  if (!offline) return null;
+  if (!offline && !bootDegraded) return null;
 
   return (
     <View style={styles.banner} accessibilityRole="alert">
-      <MaterialCommunityIcons name="wifi-off" size={16} color={colors.white} />
-      <Text style={styles.text}>Нет подключения к интернету</Text>
-      <Text style={styles.subtext}>Некоторые данные могут быть неактуальны</Text>
+      <MaterialCommunityIcons name={offline ? "wifi-off" : "cloud-alert-outline"} size={16} color={colors.white} />
+      <Text style={styles.text}>
+        {offline
+          ? "Нет соединения. Показываем последние доступные данные."
+          : "Сервер временно недоступен. Показываем последние доступные данные."}
+      </Text>
     </View>
   );
 }
@@ -40,9 +51,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
+    flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
+    justifyContent: "center",
+    gap: spacing.sm,
   },
-  text: { ...typography.caption, color: colors.white, fontWeight: "600" },
-  subtext: { ...typography.caption, color: colors.gray300, fontSize: 11 },
+  text: { ...typography.caption, color: colors.white, fontWeight: "600", flexShrink: 1 },
 });

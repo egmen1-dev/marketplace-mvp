@@ -23,6 +23,8 @@ export async function POST(request: Request) {
           refreshToken: tokens.refreshToken,
           expiresIn: tokens.expiresIn,
           sessionId: tokens.sessionId,
+          userId: tokens.userId,
+          role: tokens.role,
         },
         tokens.sessionId,
       ),

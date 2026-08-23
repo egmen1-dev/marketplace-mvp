@@ -56,7 +56,7 @@ export default function LoginScreen() {
       <View style={styles.brandBlock}>
         <Image source={require("../assets/splash-icon.png")} style={styles.logo} />
         <Text style={styles.brandTitle}>ЛОТ</Text>
-        <Text style={styles.brandSubtitle}>Покупайте и продавайте в одном приложении</Text>
+        <Text style={styles.brandSubtitle}>Покупайте выгодно. Продавайте быстро.</Text>
       </View>
 
       <View style={styles.form}>

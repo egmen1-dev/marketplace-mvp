@@ -1,7 +1,9 @@
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
+import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { setSessionClearedHandler } from "../src/api/client";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NetworkBanner } from "../src/components/NetworkBanner";
 import { UpdateHost } from "../src/components/UpdateHost";
@@ -9,11 +11,22 @@ import { BetaBanner, ObservabilityProvider } from "../src/beta";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
 import { colors } from "../src/theme/tokens";
 
+function SessionGuard() {
+  useEffect(() => {
+    setSessionClearedHandler(() => {
+      router.replace("/login");
+    });
+    return () => setSessionClearedHandler(null);
+  }, []);
+  return null;
+}
+
 function RootShell() {
   useDeepLinkHandler();
   return (
   <ObservabilityProvider>
     <>
+      <SessionGuard />
       <BetaBanner />
       <NetworkBanner />
       <UpdateHost />

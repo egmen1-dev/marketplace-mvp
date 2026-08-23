@@ -1,6 +1,5 @@
 import { loadAppConfig } from "../config/env";
 import { ApiClientError, DEFAULT_FETCH_TIMEOUT_MS } from "../api/client";
-import type { MobileErrorPayload } from "../types/api";
 import {
   logStartupRequestFail,
   logStartupRequestOk,
@@ -19,17 +18,18 @@ function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs = DEFAU
 
 async function httpErrorFromResponse(res: Response, bodyText: string): Promise<ApiClientError> {
   try {
-    const body = JSON.parse(bodyText) as MobileErrorPayload & { message?: string; error?: string };
+    const body = JSON.parse(bodyText) as {
+      message?: string;
+      error?: string | { code?: string; message?: string; retryable?: boolean };
+    };
     const nested = body.error;
-    if (nested?.code) {
-      return new ApiClientError(nested.code, nested.message, Boolean(nested.retryable), res.status);
+    if (nested && typeof nested === "object" && nested.code) {
+      return new ApiClientError(nested.code, nested.message ?? nested.code, Boolean(nested.retryable), res.status);
     }
-    return new ApiClientError(
-      "HTTP_ERROR",
-      body.message ?? (typeof body.error === "string" ? body.error : res.statusText),
-      res.status >= 500,
-      res.status,
-    );
+    if (typeof body.error === "string" && body.error.length > 0) {
+      return new ApiClientError(body.error, body.message ?? body.error, res.status >= 500, res.status);
+    }
+    return new ApiClientError("HTTP_ERROR", body.message ?? res.statusText, res.status >= 500, res.status);
   } catch {
     return new ApiClientError(
       "HTTP_ERROR",

@@ -18,9 +18,7 @@ function tabIcon(name: TabIconName, badge?: number) {
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
-  const mode = useAppStore((s) => s.mode);
   const badges = useAppStore((s) => s.badges);
-  const isSeller = mode === "seller";
   useTabBadges();
 
   const tabBarHeight = 56 + Math.max(insets.bottom, Platform.OS === "android" ? 8 : 0);
@@ -43,21 +41,26 @@ export default function TabsLayout() {
         animation: "fade",
       }}
     >
-      <Tabs.Screen name="index" options={{ title: "Главная", tabBarIcon: tabIcon("home"), href: isSeller ? null : undefined }} />
-      <Tabs.Screen name="catalog" options={{ title: "Каталог", tabBarIcon: tabIcon("catalog"), href: isSeller ? null : undefined }} />
+      <Tabs.Screen name="index" options={{ title: "Главная", tabBarIcon: tabIcon("home") }} />
+      <Tabs.Screen name="catalog" options={{ title: "Каталог", tabBarIcon: tabIcon("catalog") }} />
       <Tabs.Screen
-        name="favorites"
-        options={{ title: "Избранное", tabBarIcon: tabIcon("favorites", badges.favorites), href: isSeller ? null : undefined }}
+        name="sell"
+        options={{
+          title: "Продать",
+          tabBarIcon: tabIcon("sell"),
+        }}
       />
       <Tabs.Screen
         name="orders"
-        options={{ title: "Заказы", tabBarIcon: tabIcon("orders", badges.orders), href: isSeller ? null : undefined }}
+        options={{ title: "Заказы", tabBarIcon: tabIcon("orders", badges.orders) }}
       />
-      <Tabs.Screen name="seller-home" options={{ title: "Главная", tabBarIcon: tabIcon("seller-home"), href: isSeller ? undefined : null }} />
-      <Tabs.Screen name="seller-products" options={{ title: "Товары", tabBarIcon: tabIcon("seller-products"), href: isSeller ? undefined : null }} />
-      <Tabs.Screen name="seller-sales" options={{ title: "Продажи", tabBarIcon: tabIcon("seller-sales"), href: isSeller ? undefined : null }} />
-      <Tabs.Screen name="wallet" options={{ title: "Кошелёк", tabBarIcon: tabIcon("wallet"), href: isSeller ? undefined : null }} />
       <Tabs.Screen name="profile" options={{ title: "Профиль", tabBarIcon: tabIcon("profile") }} />
+
+      <Tabs.Screen name="favorites" options={{ href: null }} />
+      <Tabs.Screen name="seller-home" options={{ href: null }} />
+      <Tabs.Screen name="seller-products" options={{ href: null }} />
+      <Tabs.Screen name="seller-sales" options={{ href: null }} />
+      <Tabs.Screen name="wallet" options={{ href: null }} />
     </Tabs>
   );
 }

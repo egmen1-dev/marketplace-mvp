@@ -30,6 +30,15 @@ import { discountPercent } from "../../src/utils/format";
 import { useAppStore } from "../../src/store/app-store";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
+type QuickFilter = "for_you" | "deals" | "new" | "popular";
+
+const QUICK_FILTERS: Array<{ id: QuickFilter; label: string }> = [
+  { id: "for_you", label: "Для вас" },
+  { id: "deals", label: "Скидки" },
+  { id: "new", label: "Новинки" },
+  { id: "popular", label: "Популярное" },
+];
+
 export default function BuyerHomeScreen() {
   const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
@@ -43,6 +52,7 @@ export default function BuyerHomeScreen() {
   const [history, setHistory] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<QuickFilter>("for_you");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,10 +73,10 @@ export default function BuyerHomeScreen() {
       ]);
       saveSnapshot("buyer-home", home);
       setSummary(home);
-      setRecommended(popularRes.items.slice(0, 4));
+      setRecommended(popularRes.items.slice(0, 8));
       setPopular(popularRes.items.slice(0, 8));
       setNewest(newestRes.items.slice(0, 8));
-      setPromo(popularRes.items.filter((p) => discountPercent(p.price, p.compareAt)).slice(0, 6));
+      setPromo(popularRes.items.filter((p) => discountPercent(p.price, p.compareAt)).slice(0, 8));
       setRecent(recentViews);
       setCategories(categoriesRes.items.slice(0, 10));
     } catch (err) {
@@ -87,6 +97,24 @@ export default function BuyerHomeScreen() {
     router.push({ pathname: "/(tabs)/catalog", params: { q: value } });
   }
 
+  function openQuickFilter(filter: QuickFilter) {
+    setActiveFilter(filter);
+    if (filter === "deals") {
+      router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } });
+      return;
+    }
+    if (filter === "new") {
+      router.push({ pathname: "/(tabs)/catalog", params: { sort: "newest" } });
+      return;
+    }
+    if (filter === "popular") {
+      router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } });
+    }
+  }
+
+  const featuredItems =
+    activeFilter === "new" ? newest : activeFilter === "deals" ? promo : activeFilter === "popular" ? popular : recommended;
+
   if (loading && !summary) {
     return (
       <PageScroll>
@@ -99,7 +127,7 @@ export default function BuyerHomeScreen() {
   return (
     <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
-        <AppHeader title="ЛОТ" subtitle="Маркетплейс рядом с вами" />
+        <AppHeader title="ЛОТ" subtitle="Товары рядом с вами — покупайте и продавайте" />
 
         <CommerceSearchBar
           placeholder="Искать товары, бренды, категории"
@@ -114,6 +142,20 @@ export default function BuyerHomeScreen() {
           showSuggestions={searchFocused}
           onSelectSuggestion={submitSearch}
         />
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+          {QUICK_FILTERS.map((filter) => (
+            <Pressable
+              key={filter.id}
+              style={[styles.filterChip, activeFilter === filter.id ? styles.filterChipActive : null]}
+              onPress={() => openQuickFilter(filter.id)}
+            >
+              <Text style={[styles.filterChipText, activeFilter === filter.id ? styles.filterChipTextActive : null]}>
+                {filter.label}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
 
         {offline ? <Text style={styles.offline}>Оффлайн — показаны сохранённые данные</Text> : null}
         {error ? <ErrorState title="Не удалось обновить ленту" description={error} onRetry={load} /> : null}
@@ -133,12 +175,11 @@ export default function BuyerHomeScreen() {
           </ScrollView>
         </View>
 
-        <ProductSection title="Рекомендуем" items={recommended} onMore={() => router.push("/(tabs)/catalog")} />
+        <ProductSection title="Рекомендуем" items={featuredItems.slice(0, 4)} onMore={() => router.push("/(tabs)/catalog")} />
         <ProductSection title="Популярное" items={popular.slice(0, 4)} horizontal={false} />
         <ProductSection title="Новинки" items={newest} horizontal />
         <ProductSection title="Продолжить просмотр" items={recent} horizontal emptyPreset="catalog" />
-        <ProductSection title="Для вас" items={recommended} horizontal />
-        <ProductSection title="Акции" items={promo} horizontal badge="Скидки" />
+        <ProductSection title="Выгодные предложения" items={promo} horizontal badge="Скидки" />
       </Animated.View>
     </PageScroll>
   );
@@ -203,6 +244,10 @@ const styles = StyleSheet.create({
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   promoBadge: { ...typography.caption, color: colors.white, backgroundColor: colors.orange, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill, overflow: "hidden" },
   chipsRow: { gap: spacing.sm },
+  filterChip: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill, backgroundColor: colors.gray100, minHeight: 36, justifyContent: "center" },
+  filterChipActive: { backgroundColor: colors.orangeSoft, borderWidth: 1, borderColor: colors.orange },
+  filterChipText: { ...typography.caption, color: colors.gray900, fontWeight: "600" },
+  filterChipTextActive: { color: colors.orange },
   categoryChip: { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radii.pill, backgroundColor: colors.gray100, minHeight: 36, justifyContent: "center" },
   categoryChipText: { ...typography.caption, color: colors.gray900, fontWeight: "600" },
   grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", rowGap: spacing.md },

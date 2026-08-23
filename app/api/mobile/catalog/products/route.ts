@@ -5,6 +5,7 @@ import { listProducts, resolveListStatusFilter } from "@/features/products/queri
 import { listProductsQuerySchema } from "@/features/products/schemas";
 import { parseFacetQueryParams } from "@/lib/catalog-taxonomy/facets";
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
+import { enrichItemsWithRatings, getProductRatingsMap } from "@/lib/marketplace-trust-loop/ratings/batch-ratings";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
 import { parseMobilePageCursor, toMobilePagination } from "@/lib/mobile/pagination";
 
@@ -62,6 +63,8 @@ export async function GET(request: Request) {
     offset: q.offset,
   });
 
-  const page = toMobilePagination(result);
+  const ratingsMap = await getProductRatingsMap(result.items.map((item) => item.id));
+  const enrichedItems = enrichItemsWithRatings(result.items, ratingsMap);
+  const page = toMobilePagination({ ...result, items: enrichedItems });
   return NextResponse.json(withMobileApiContract(page, `catalog-p${result.page}`));
 }
