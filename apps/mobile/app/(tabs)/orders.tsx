@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 
-import { fetchOrders, fetchSellerHome } from "../../src/api/endpoints";
-import { Badge, EmptyState, PageContainer, SectionHeader, SkeletonGrid } from "../../src/components/ui";
+import { fetchOrder, fetchOrders, fetchSellerHome } from "../../src/api/endpoints";
+import { Badge, EmptyState, PageContainer, SecondaryButton, SectionHeader, SkeletonGrid } from "../../src/components/ui";
+import { openProductConversation } from "../../src/hooks/useChatActions";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useAppStore } from "../../src/store/app-store";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
@@ -31,6 +32,17 @@ export default function OrdersScreen() {
   useEffect(() => {
     load();
   }, [sellerCapable]);
+
+  async function onWriteSeller(orderId: string) {
+    try {
+      const order = await fetchOrder(orderId);
+      const items = (order.items as Array<{ productId?: string }> | undefined) ?? [];
+      const productId = items.find((item) => item.productId)?.productId;
+      if (productId) await openProductConversation(productId);
+    } catch {
+      // auth handled in hook
+    }
+  }
 
   if (loading) {
     return (
@@ -70,6 +82,11 @@ export default function OrdersScreen() {
                 <Badge label={String(item.status ?? "NEW")} tone="neutral" />
               </View>
               <Text style={styles.caption}>{formatOrderMeta(item)}</Text>
+              <SecondaryButton
+                label="Написать продавцу"
+                onPress={() => void onWriteSeller(String(item.id))}
+                style={styles.chatBtn}
+              />
             </View>
           )}
         />
@@ -92,4 +109,5 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: spacing.sm },
   title: { ...typography.subtitle, color: colors.black },
   caption: { ...typography.caption, color: colors.gray500 },
+  chatBtn: { marginTop: spacing.xs },
 });

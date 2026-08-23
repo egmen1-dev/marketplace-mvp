@@ -28,6 +28,7 @@
     "mobile:validate": "npm run mobile:typecheck && npm run mobile:test",
     "mobile:staging-smoke": "tsx scripts/mobile-staging-integration-smoke.ts",
     "mobile:release-gate": "tsx scripts/mobile-release-gate-003-staging.ts",
+    "mobile:web-parity:gate": "tsx scripts/mobile-web-parity-gate.ts",
     "mobile:closed-alpha:publish": "tsx scripts/epic-80-publish-closed-alpha-release.ts",
     "mobile:closed-alpha:publish-011": "tsx scripts/epic-82-publish-closed-alpha-011.ts",
     "mobile:closed-beta:publish-rc2": "tsx scripts/publish-closed-beta-rc2.ts",

@@ -8,8 +8,8 @@ import {
   fetchCategories,
   type MobileProductListItem,
 } from "../../src/api/endpoints";
+import { CommerceHeader } from "../../src/components/CommerceHeader";
 import {
-  AppHeader,
   CategoryRail,
   Chip,
   CommerceSearchBar,
@@ -22,7 +22,6 @@ import {
   SectionHeader,
   SkeletonGrid,
 } from "../../src/components/ui";
-import { CommerceHeaderActions } from "../../src/components/CommerceHeaderActions";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { loadSearchHistory, pushSearchHistory } from "../../src/storage/search-history";
@@ -131,11 +130,7 @@ export default function BuyerHomeScreen() {
   return (
     <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
-        <AppHeader
-          title="ЛОТ"
-          subtitle="Товары рядом с вами — покупайте и продавайте"
-          right={<CommerceHeaderActions />}
-        />
+        <CommerceHeader subtitle="Товары рядом с вами — покупайте и продавайте" />
 
         <CommerceSearchBar
           placeholder="Искать товары, бренды, категории"
