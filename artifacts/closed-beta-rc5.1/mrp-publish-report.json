@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-08-23T16:06:34Z",
+  "candidate": "RC5.1",
+  "versionName": "0.1.10-beta.2",
+  "versionCode": 10,
+  "publishMethod": "staging_admin_api",
+  "releaseId": "cmt6024yx000hqd01slm63zre",
+  "publishedAt": "2026-08-23T16:06:34.861Z",
+  "sha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59",
+  "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc5.1/lot_android_closed_beta_0.1.10_beta.2.apk",
+  "channel": "BETA",
+  "verdict": "PUBLISHED"
+}

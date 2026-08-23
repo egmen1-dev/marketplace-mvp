@@ -9,7 +9,7 @@ export default function UpdateCheckScreen() {
   const { buildInfo, phase, updateInfo, errorMessage, hasUpdate, checkForUpdate, downloadUpdate } =
     useUpdateCheckFlow();
 
-  const rcLabel = process.env.EXPO_PUBLIC_RC_LABEL ?? "RC5";
+  const rcLabel = process.env.EXPO_PUBLIC_RC_LABEL ?? "RC5.1";
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

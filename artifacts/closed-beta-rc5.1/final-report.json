@@ -1,0 +1,51 @@
+{
+  "candidate": "RC5.1",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "pr144": {
+    "status": "MERGED",
+    "mergeSha": "a356c5f233ceb51fe81a8a3d62b68817dbcda5cd"
+  },
+  "apkPath": "artifacts/closed-beta-rc5.1/lot_android_closed_beta_0.1.10_beta.2.apk",
+  "apkSizeBytes": 43492622,
+  "sha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59",
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.10-beta.2",
+  "versionCode": 10,
+  "abi": ["arm64-v8a"],
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "physicalAndroid": "NOT_RUN",
+  "provenance": {
+    "mainSha": "a356c5f",
+    "buildSha": "64b5717",
+    "railwaySha": "6e4e97c",
+    "buildTime": "2026-08-23T16:05:00Z"
+  },
+  "mrp": {
+    "publishedVersion": "0.1.10-beta.2",
+    "versionCode": 10,
+    "code7": "OPTIONAL_UPDATE → 10",
+    "code8": "OPTIONAL_UPDATE → 10",
+    "code9": "OPTIONAL_UPDATE → 10",
+    "code10": "NO_UPDATE",
+    "code11": "NO_UPDATE"
+  },
+  "updateEntry": {
+    "buyer": "PASS (source)",
+    "seller": "PASS (source)",
+    "updateScreen": "PASS (source + bundle)"
+  },
+  "commerceRegression": {
+    "cart": "PASS (staging inherited)",
+    "favorites": "PASS (staging inherited)",
+    "catalog": "PASS (staging inherited)",
+    "seller": "PASS (staging inherited)"
+  },
+  "visual": {
+    "bootSplash": "PASS (bundle)",
+    "categories": "PASS (bundle)",
+    "toolbar": "PASS (bundle)",
+    "profile": "PASS (source)"
+  }
+}

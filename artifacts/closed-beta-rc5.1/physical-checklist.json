@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-08-23T16:06:45Z",
+  "candidate": "RC5.1",
+  "physicalAndroid": "NOT_RUN",
+  "firstStep": "Profile → О приложении must show 0.1.10-beta.2 (10) RC5.1 before functional testing",
+  "scenarios": {
+    "A_bootSplash": "NOT_RUN",
+    "B_session": "NOT_RUN",
+    "C_home": "NOT_RUN",
+    "D_compactCategories": "NOT_RUN",
+    "E_catalogCategories": "NOT_RUN",
+    "F_sorting": "NOT_RUN",
+    "G_filters": "NOT_RUN",
+    "H_favorites": "NOT_RUN",
+    "I_pdp": "NOT_RUN",
+    "J_seller": "NOT_RUN",
+    "K_cart": "NOT_RUN",
+    "L_cartContents": "NOT_RUN",
+    "M_orders": "NOT_RUN",
+    "N_sell": "NOT_RUN",
+    "O_profile": "NOT_RUN",
+    "P_localization": "NOT_RUN",
+    "Q_offline": "NOT_RUN",
+    "R_restart": "NOT_RUN",
+    "S_checkUpdate": "NOT_RUN",
+    "T_updateStateCode10": "NOT_RUN"
+  },
+  "upgradePathTest": {
+    "from": "RC5 code 9",
+    "to": "RC5.1 code 10",
+    "steps": [
+      "Profile → Проверить обновление",
+      "See 0.1.10-beta.2",
+      "Download via browser",
+      "Android installer",
+      "Relaunch",
+      "О приложении shows code 10"
+    ],
+    "status": "NOT_RUN"
+  }
+}

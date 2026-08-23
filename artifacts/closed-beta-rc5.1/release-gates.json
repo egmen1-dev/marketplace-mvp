@@ -1,0 +1,29 @@
+{
+  "candidate": "RC5.1",
+  "generatedAt": "2026-08-23T16:06:45Z",
+  "preconditions": {
+    "pr144Merged": "PASS",
+    "pr144MergeSha": "a356c5f",
+    "versionBump": "PASS"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "mobileTest": "PASS",
+    "regressionTests": "PASS",
+    "testCount": 64,
+    "mobileUpdateEntry": "PASS",
+    "mobileReleaseGate": "PASS"
+  },
+  "apkVerification": "PASS",
+  "bundleSymbols": {
+    "useUpdateCheckFlow": "PASS",
+    "ProfileMenu": "PASS",
+    "fetchMobileUpdate": "PASS",
+    "startApkDownload": "PASS",
+    "BootSplash": "PASS",
+    "CatalogToolbar": "PASS",
+    "useCommerceActions": "PASS"
+  },
+  "mrpPublish": "PASS",
+  "updateApiVerification": "PASS"
+}
