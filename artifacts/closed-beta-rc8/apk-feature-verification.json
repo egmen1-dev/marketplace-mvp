@@ -1,0 +1,305 @@
+{
+  "generatedAt": "2026-08-23T20:36:12.696Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc8/lot_android_closed_beta_0.1.13_beta.1.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.13-beta.1",
+    "versionCode": "13",
+    "nativeCode": "arm64-v8a",
+    "sha256": "acbb09c86c2ff038bc11135bbb28606ed08d9e136c33a5f897222e69570991e1",
+    "sizeBytes": 43543214
+  },
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.13-beta.1",
+      "actual": "0.1.13-beta.1"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "13",
+      "actual": "13"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc8Label",
+      "ok": true,
+      "expected": "RC8 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "11a36f3"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "visual",
+      "name": "BootSplash",
+      "pattern": "BootSplash",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "CategoryRail",
+      "pattern": "CategoryRail",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "Chip",
+      "pattern": "Chip",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "CatalogToolbar",
+      "pattern": "CatalogToolbar",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "BetaBanner",
+      "pattern": "BetaBanner",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "ProductCardLayout",
+      "pattern": "PRODUCT_CARD_LAYOUT",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "visual",
+      "name": "selectRailCategories",
+      "pattern": "selectRailCategories",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "useCommerceActions",
+      "pattern": "useCommerceActions",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "cart",
+      "pattern": "/cart",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "favorites",
+      "pattern": "favorites",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "commerce",
+      "name": "resolveImageUrl",
+      "pattern": "resolveImageUrl",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "CommerceHeader",
+      "pattern": "CommerceHeader",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "searchEntry",
+      "pattern": "focusSearch",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "messagesEntry",
+      "pattern": "/messages",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "cartEntry",
+      "pattern": "/cart",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "header",
+      "name": "useMessagesBadge",
+      "pattern": "useMessagesBadge",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "messagesRoute",
+      "pattern": "/messages",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "conversationScreen",
+      "pattern": "conversations",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "sendMessage",
+      "pattern": "sendConversationMessage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "chat",
+      "name": "unreadHandling",
+      "pattern": "fetchConversationsUnread",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "fetchSellerOrders",
+      "pattern": "fetchSellerOrders",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "sellerSalesScreen",
+      "pattern": "seller-sales",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "openWebHandoff",
+      "pattern": "openWebHandoff",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "buildBuyerOrderTimeline",
+      "pattern": "buildBuyerOrderTimeline",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "orderDetailRoute",
+      "pattern": "/order/",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "useCheckoutReturnRefresh",
+      "pattern": "useCheckoutReturnRefresh",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "checkoutSuccessParam",
+      "pattern": "checkoutSuccess=1",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "formatBuyerOrderStatus",
+      "pattern": "formatBuyerOrderStatus",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "orderSuccessBanner",
+      "pattern": "successCard",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "sellerTrustBlock",
+      "pattern": "trustBlock",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "updateRoute",
+      "pattern": "/update",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "useUpdateCheckFlow",
+      "pattern": "useUpdateCheckFlow",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "fetchMobileUpdate",
+      "pattern": "fetchMobileUpdate",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "startApkDownload",
+      "pattern": "startApkDownload",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}

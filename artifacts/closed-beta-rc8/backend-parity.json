@@ -1,0 +1,209 @@
+{
+  "generatedAt": "2026-08-23T20:35:13.011Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "railwaySha": "4cf3b19",
+  "catalogProductCountRuntime": "PASS",
+  "visibleCategoryCount": 30,
+  "totalCategoryCount": 51,
+  "results": [
+    {
+      "name": "railway_health",
+      "ok": true,
+      "railwaySha": "4cf3b19"
+    },
+    {
+      "name": "buyer_session",
+      "ok": true
+    },
+    {
+      "name": "seller_session",
+      "ok": true
+    },
+    {
+      "name": "bootstrap",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "catalogProductCount_present",
+      "ok": true
+    },
+    {
+      "name": "category_rail_visible_min_3",
+      "ok": true,
+      "visible": 30,
+      "total": 51
+    },
+    {
+      "name": "populated_categories_return_products",
+      "ok": true,
+      "populatedChecks": [
+        {
+          "category": "Климатическая техника",
+          "count": 5,
+          "ok": true
+        },
+        {
+          "category": "Компьютеры",
+          "count": 1,
+          "ok": true
+        },
+        {
+          "category": "Мебель",
+          "count": 1,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "name": "filter_matrix",
+      "ok": true,
+      "filterResults": [
+        {
+          "id": "baseline",
+          "path": "/api/mobile/catalog/products?limit=20",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "id": "category",
+          "path": "/api/mobile/catalog/products?categoryId=cmsnia09yci7qzw77&limit=20",
+          "ok": true,
+          "count": 16
+        },
+        {
+          "id": "stock",
+          "path": "/api/mobile/catalog/products?inStock=1&limit=20",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "id": "search",
+          "path": "/api/mobile/catalog/products?q=дрель&limit=20",
+          "ok": true,
+          "count": 2
+        }
+      ]
+    },
+    {
+      "name": "epic154_seller_trust_block",
+      "ok": true,
+      "sellerId": "cmsmzrxgj0005y0w6jhe5qqle",
+      "status": 200
+    },
+    {
+      "name": "epic152_seller_orders_list",
+      "ok": true,
+      "status": 200,
+      "count": 8
+    },
+    {
+      "name": "epic152_web_handoff_url",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "seller_catalog",
+      "ok": true,
+      "sellerId": "cmsmzrxgj0005y0w6jhe5qqle"
+    },
+    {
+      "name": "chat_create",
+      "ok": true,
+      "conversationId": "cmsnjx6hw0005l81mvb8n2t9k"
+    },
+    {
+      "name": "chat_send",
+      "ok": true
+    },
+    {
+      "name": "chat_seller_reply",
+      "ok": true
+    },
+    {
+      "name": "chat_buyer_receives_reply",
+      "ok": true
+    },
+    {
+      "name": "android_update_api",
+      "ok": true,
+      "status": 200
+    }
+  ],
+  "featureMatrix": {
+    "Session": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "CategoryRail": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Filters": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Seller": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Seller orders (EPIC 152)": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Seller trust (EPIC 154)": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Chat": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Checkout return (EPIC 154)": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Buyer order timeline": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "NOT_RUN",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    },
+    "Update": {
+      "source": "PASS",
+      "integration": "PASS",
+      "staging": "PASS",
+      "apk": "PENDING",
+      "physical": "NOT_RUN"
+    }
+  },
+  "sellerLoop": "PASS",
+  "buyerLoop": "PASS",
+  "failed": [],
+  "verdict": "PASS"
+}

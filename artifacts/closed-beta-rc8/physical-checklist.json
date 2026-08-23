@@ -1,0 +1,14 @@
+{
+  "candidate": "RC8",
+  "generatedAt": "2026-08-23T20:35:00Z",
+  "status": "NOT_RUN",
+  "operator": null,
+  "scenarios": [
+    { "id": "0", "name": "Identity", "expected": "0.1.13-beta.1, code 13, RC8, CLOSED_BETA, staging", "status": "NOT_RUN" },
+    { "id": "1", "name": "Buyer catalog", "expected": "products, categories, filters", "status": "NOT_RUN" },
+    { "id": "2", "name": "Buyer purchase", "expected": "cart → checkout, no duplicate order", "status": "NOT_RUN" },
+    { "id": "3", "name": "Checkout return", "expected": "return to app, order detail, success banner", "status": "NOT_RUN" },
+    { "id": "4", "name": "Seller sales loop", "expected": "Новые → Принять → В работе → Завершенные", "status": "NOT_RUN" },
+    { "id": "5", "name": "Chat", "expected": "buyer↔seller messaging on order", "status": "NOT_RUN" }
+  ]
+}
