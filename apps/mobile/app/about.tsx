@@ -16,7 +16,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 export default function AboutScreen() {
   const build = getBuildInfo();
-  const rcLabel = process.env.EXPO_PUBLIC_RC_LABEL ?? "RC6";
+  const rcLabel = process.env.EXPO_PUBLIC_RC_LABEL ?? "RC8";
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
