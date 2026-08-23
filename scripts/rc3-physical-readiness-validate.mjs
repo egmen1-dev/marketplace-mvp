@@ -35,6 +35,32 @@ async function fetchJson(path) {
   return { url, status: res.status, ok: res.ok, body };
 }
 
+async function fetchDebugSnapshot() {
+  const res = await fetch(`${STAGING_URL}/?debug=marketplace`, { cache: "no-store" });
+  const html = await res.text();
+  const match = html.match(
+    /\\"activeModules\\":(\[[^\]]*\]),\\"inactiveModules\\":(\[[^\]]*\])/,
+  );
+  if (!match) {
+    return { found: false, activeModules: [], inactiveModules: [] };
+  }
+
+  const parse = (raw) => JSON.parse(raw.replace(/\\"/g, '"'));
+  const activeModules = parse(match[1]);
+  const inactiveModules = parse(match[2]);
+  return { found: true, activeModules, inactiveModules };
+}
+
+function productFields(body) {
+  const product = body?.product ?? body;
+  if (!product || typeof product !== "object") return null;
+  return {
+    averageRating: product.averageRating ?? null,
+    reviewsCount: product.reviewsCount ?? 0,
+    title: product.title ?? null,
+  };
+}
+
 function sha256File(path) {
   const buf = readFileSync(path);
   return createHash("sha256").update(buf).digest("hex");
@@ -69,11 +95,16 @@ async function main() {
   const originMain = safeGit("git rev-parse origin/main");
   const headSha = safeGit("git rev-parse HEAD");
 
-  const [health, version, catalog, productOps] = await Promise.all([
+  const operatorActionCompleted =
+    process.argv.includes("--operator-action-completed") ||
+    process.env.RC3_OPERATOR_ACTION_COMPLETED === "true";
+
+  const [health, version, catalog, productOps, debugSnapshot] = await Promise.all([
     fetchJson("/api/health"),
     fetchJson("/api/version"),
-    fetchJson("/api/mobile/catalog/products?limit=20"),
+    fetchJson("/api/mobile/catalog/products?limit=100"),
     fetchJson("/api/product-ops/config?surface=mobile"),
+    fetchDebugSnapshot(),
   ]);
 
   const catalogItems = catalog.body?.items ?? [];
@@ -111,11 +142,14 @@ async function main() {
   }
 
   const trustLoopProductOps = (productOps.body?.flags ?? []).find((f) => f.key === "trust_loop");
-  const trustLoopEnvInferredOff =
-    catalogItems.length > 0 &&
-    catalogItems.every((i) => i.averageRating == null) &&
-    (reviewsWith?.body?.items?.length ?? 0) === 0 &&
-    reviewsWith?.body?.rating == null;
+  const trustLoopDebugActive = debugSnapshot.activeModules.includes("Trust Loop");
+  const trustLoopDebugInactive = debugSnapshot.inactiveModules.includes("Trust Loop");
+  const trustLoopEnabled = trustLoopDebugActive && !trustLoopDebugInactive;
+  const legacyProductId = "cmssvqoas000ajsf24b4e59hj";
+  const [legacyPdp, legacyReviews] = await Promise.all([
+    fetchJson(`/api/products/${legacyProductId}`),
+    fetchJson(`/api/mobile/products/${legacyProductId}/reviews?limit=5`),
+  ]);
 
   const apkBytes = readFileSync(APK_PATH);
   const apkSha = sha256File(APK_PATH);
@@ -131,28 +165,37 @@ async function main() {
     envVar: "MARKETPLACE_TRUST_LOOP_ENABLED",
     envVarDirectAccess: false,
     envVarDirectAccessReason: "No Railway credentials in cloud agent environment",
-    runtimeValueInferred: trustLoopEnvInferredOff ? "false" : "unknown",
-    envVarUnsetVsFalse: "Cannot distinguish unset vs false without Railway variable inspection",
+    runtimeValue: trustLoopEnabled ? "true" : "false",
+    runtimeEvidence: {
+      marketplaceDebugBanner: debugSnapshot,
+      trustLoopInActiveModules: trustLoopDebugActive,
+      trustLoopInInactiveModules: trustLoopDebugInactive,
+      probeUrl: `${STAGING_URL}/?debug=marketplace`,
+    },
     productOpsConfig: trustLoopProductOps ?? null,
     productOpsNote:
       "product-ops/config may show trust_loop enabled via DB override; runtime reviews use process.env.MARKETPLACE_TRUST_LOOP_ENABLED only (lib/marketplace-trust-loop/flags.ts)",
-    enableAttempted: false,
-    enableBlocked: true,
-    enableBlockedReason:
-      "Railway CLI unauthorized (npx @railway/cli whoami → Unauthorized). Operator must set MARKETPLACE_TRUST_LOOP_ENABLED=true on Railway web-v2 staging and redeploy.",
+    operatorActionCompleted,
+    operatorActionVerified: trustLoopEnabled,
+    enableBlocked: !trustLoopEnabled,
+    enableBlockedReason: trustLoopEnabled
+      ? null
+      : operatorActionCompleted
+        ? "Operator marked Railway variable update complete, but staging debug banner still lists Trust Loop inactive — verify exact value `true` on service web-v2 and confirm redeploy completed."
+        : "MARKETPLACE_TRUST_LOOP_ENABLED is not active on staging runtime.",
     operatorSteps: [
       "Railway → project marketplace-mvp-backup → service web-v2 → Variables",
-      "Set MARKETPLACE_TRUST_LOOP_ENABLED=true (staging only)",
+      "Set MARKETPLACE_TRUST_LOOP_ENABLED=true (staging only, lowercase true)",
       "Trigger redeploy / wait for health 200",
-      "Re-run: node scripts/rc3-physical-readiness-validate.mjs",
-      "Verify /admin/system-flags shows Trust Loop ACTIVE (ON)",
+      "Re-run: npm run mobile:closed-beta:rc3-physical-readiness -- --operator-action-completed",
+      "Verify /?debug=marketplace lists Trust Loop under activeModules",
     ],
     postEnableExpectation: "Catalog averageRating/reviewsCount populated for products with approved reviews",
   };
 
   const reviewsApiValidation = {
     checkedAt,
-    trustLoopEnabled: !trustLoopEnvInferredOff,
+    trustLoopEnabled,
     contract: {
       catalogHasRatingFields: catalogItems.length > 0 && "averageRating" in catalogItems[0],
       reviewsEndpointRegistered: true,
@@ -179,7 +222,16 @@ async function main() {
           }
         : null,
     },
-    verdict: trustLoopEnvInferredOff
+    legacyProductProbe: {
+      productId: legacyProductId,
+      pdp: productFields(legacyPdp.body),
+      reviews: {
+        status: legacyReviews.status,
+        rating: legacyReviews.body?.rating ?? null,
+        itemCount: legacyReviews.body?.items?.length ?? 0,
+      },
+    },
+    verdict: !trustLoopEnabled
       ? "CONTRACT_PASS_DATA_EMPTY_FLAG_OFF"
       : withRatings.length > 0
         ? "PASS"
@@ -188,7 +240,7 @@ async function main() {
 
   const reviewDataReport = {
     checkedAt,
-    trustLoopEnabled: !trustLoopEnvInferredOff,
+    trustLoopEnabled,
     productWithReviews: sampleWithReviews
       ? {
           id: sampleWithReviews.id,
@@ -198,12 +250,7 @@ async function main() {
             averageRating: sampleWithReviews.averageRating,
             reviewsCount: sampleWithReviews.reviewsCount,
           },
-          pdp: pdpWith?.body?.product
-            ? {
-                averageRating: pdpWith.body.product.averageRating,
-                reviewsCount: pdpWith.body.product.reviewsCount,
-              }
-            : null,
+          pdp: productFields(pdpWith?.body),
           reviewsApi: reviewsWith?.body ?? null,
         }
       : null,
@@ -216,12 +263,7 @@ async function main() {
             averageRating: sampleWithoutReviews.averageRating,
             reviewsCount: sampleWithoutReviews.reviewsCount,
           },
-          pdp: pdpWithout?.body?.product
-            ? {
-                averageRating: pdpWithout.body.product.averageRating,
-                reviewsCount: pdpWithout.body.product.reviewsCount,
-              }
-            : null,
+          pdp: productFields(pdpWithout?.body),
           reviewsApi: reviewsWithout?.body ?? null,
           fakeRatingAbsent:
             sampleWithoutReviews.averageRating == null &&
@@ -233,12 +275,16 @@ async function main() {
       withRatings: withRatings.length,
       withoutRatings: withoutRatings.length,
     },
-    dataVerdict:
-      trustLoopEnvInferredOff
-        ? "FLAG_OFF_CANNOT_VERIFY_LIVE_REVIEWS"
-        : withRatings.length === 0
-          ? "NO_REVIEW_FIXTURE_DATA"
-          : "LIVE_REVIEW_DATA_PRESENT",
+    legacyAcceptanceProduct: {
+      productId: legacyProductId,
+      pdp: productFields(legacyPdp.body),
+      reviewsApi: legacyReviews.body ?? null,
+    },
+    dataVerdict: !trustLoopEnabled
+      ? "FLAG_OFF_CANNOT_VERIFY_LIVE_REVIEWS"
+      : withRatings.length === 0
+        ? "NO_REVIEW_FIXTURE_DATA"
+        : "LIVE_REVIEW_DATA_PRESENT",
   };
 
   const backendParity = {
@@ -358,11 +404,15 @@ async function main() {
   if (!integrityPass) {
     finalVerdict = "RC3_ARTIFACT_INTEGRITY_FAILED";
     blockers.push("APK SHA256 or size mismatch");
-  } else if (trustLoopStatus.enableBlocked && trustLoopEnvInferredOff) {
+  } else if (!trustLoopEnabled) {
     finalVerdict = "BLOCKED_BY_STAGING_CONFIGURATION";
     blockers.push(
-      "MARKETPLACE_TRUST_LOOP_ENABLED not true on Railway staging — cannot verify live review/rating data before physical test",
+      operatorActionCompleted
+        ? "Operator action completed but Trust Loop still inactive on staging runtime — verify Railway variable + redeploy"
+        : "MARKETPLACE_TRUST_LOOP_ENABLED not true on Railway staging — cannot verify live review/rating data before physical test",
     );
+  } else if (withRatings.length === 0) {
+    blockers.push("NO_REVIEW_FIXTURE_DATA — Trust Loop ON but staging has no products with approved review aggregates");
   }
 
   const finalReport = {
@@ -372,11 +422,20 @@ async function main() {
     staging: {
       railwayHealth: health.ok ? "PASS" : "FAIL",
       mainRailwayParity: parityAligned ? "PASS" : "MISMATCH",
-      trustLoop: trustLoopEnvInferredOff ? "OFF (inferred)" : "ON (inferred)",
+      trustLoop: trustLoopEnabled ? "ON" : "OFF",
+      trustLoopEvidence: "marketplace debug banner activeModules/inactiveModules",
+      operatorActionCompleted,
+      operatorActionVerified: trustLoopEnabled,
       trustLoopEnableBlocked: trustLoopStatus.enableBlocked,
       reviewsApi: reviewsApiValidation.verdict,
-      catalogRatings: trustLoopEnvInferredOff ? "FIELDS_PRESENT_VALUES_NULL" : "LIVE",
-      pdpRatings: trustLoopEnvInferredOff ? "FIELDS_PRESENT_VALUES_NULL" : "LIVE",
+      catalogRatings:
+        !trustLoopEnabled || withRatings.length === 0
+          ? "FIELDS_PRESENT_VALUES_NULL"
+          : "LIVE",
+      pdpRatings:
+        !trustLoopEnabled || withRatings.length === 0
+          ? "FIELDS_PRESENT_VALUES_NULL"
+          : "LIVE",
       noNPlusOne: "PASS",
     },
     apk: {
