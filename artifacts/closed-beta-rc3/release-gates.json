@@ -1,0 +1,53 @@
+{
+  "candidate": "RC3",
+  "generatedAt": "2026-08-23T13:10:00Z",
+  "preconditions": {
+    "pr137Merged": "PASS",
+    "mainSynced": "PASS",
+    "worktreeCleanBeforeBump": "PASS",
+    "railwayParity": "PASS"
+  },
+  "mobile": {
+    "typecheck": "PASS",
+    "regressionTests": "PASS",
+    "testCount": 20,
+    "suites": [
+      "mobile-session-resilience",
+      "mobile-reviews",
+      "mobile-post-auth-navigation",
+      "mobile-bootstrap-diagnostics",
+      "mobile-refresh",
+      "mobile-refresh-replay"
+    ]
+  },
+  "root": {
+    "build": "PASS",
+    "mobileReleaseGate": "PASS",
+    "releasePipelineVerify": "PASS"
+  },
+  "p0": {
+    "persistentSession": "PASS",
+    "dnsResilience": "PASS",
+    "timeoutResilience": "PASS",
+    "http5xxResilience": "PASS",
+    "invalidRefreshLogout": "PASS",
+    "degradedBootstrap": "PASS",
+    "postAuthNativeNavigation": "PASS"
+  },
+  "commerceUx": {
+    "unifiedHome": "PASS",
+    "buyerToHome": "PASS",
+    "sellerToHome": "PASS",
+    "unifiedNavigation": "PASS",
+    "sellerCapabilitiesPreserved": "PASS"
+  },
+  "reviews": {
+    "catalogRatingFields": "PASS",
+    "reviewsApiContract": "PASS",
+    "paginationContract": "PASS",
+    "noN1OnHome": "PASS",
+    "liveRatingsOnStaging": "BLOCKED",
+    "trustLoopFlag": "MARKETPLACE_TRUST_LOOP_ENABLED=false"
+  },
+  "apkVerification": "PASS"
+}

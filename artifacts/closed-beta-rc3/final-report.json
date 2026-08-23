@@ -1,0 +1,48 @@
+{
+  "candidate": "RC3",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "verificationResult": "PASS",
+  "pr": "#137",
+  "mergeCommitSha": "ccf2c9914cad99ca7d67da0a966533add4612acb",
+  "releaseCommitSha": "31e91aaece3a7b1fc7a92e9c6591011a4789f36e",
+  "railwaySha": "31e91aa",
+  "apkPath": "artifacts/closed-beta-rc3/lot_android_closed_beta_0.1.8_beta.1.apk",
+  "apkSizeBytes": 41902546,
+  "sha256": "e45193be6089f4eecd26d31f584784195b60a48f9d4afadd6f82ce913c685824",
+  "package": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.8-beta.1",
+  "versionCode": 7,
+  "minSdk": 24,
+  "targetSdk": 36,
+  "abi": ["arm64-v8a"],
+  "signing": "debug.keystore (internal Closed Beta install only)",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "physicalAndroid": "NOT_RUN",
+  "trustLoop": {
+    "MARKETPLACE_TRUST_LOOP_ENABLED": false,
+    "catalogRatings": "API fields present; values null until flag enabled",
+    "reviewsApi": "PASS (contract); empty data on staging",
+    "pagination": "PASS (contract)",
+    "noN1": "PASS (batch enrichment)"
+  },
+  "knownLimitations": [
+    "Write-review flow is not yet connected in mobile.",
+    "MARKETPLACE_TRUST_LOOP_ENABLED=false on staging — physical review/rating UI will show empty states until flag is enabled.",
+    "APK signed with debug keystore (internal testing only).",
+    "newArchEnabled=false in RC3 build (RC2 used true); required for native build compatibility with pinned worklets.",
+    "arm64-v8a only (smaller APK than RC2 multi-ABI build)."
+  ],
+  "deliverables": [
+    "artifacts/closed-beta-rc3/lot_android_closed_beta_0.1.8_beta.1.apk",
+    "artifacts/closed-beta-rc3/sha256.txt",
+    "artifacts/closed-beta-rc3/build-manifest.json",
+    "artifacts/closed-beta-rc3/aapt-badging.txt",
+    "artifacts/closed-beta-rc3/apkanalyzer-manifest.xml",
+    "artifacts/closed-beta-rc3/backend-parity.json",
+    "artifacts/closed-beta-rc3/release-gates.json",
+    "artifacts/closed-beta-rc3/final-report.json"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-08-23T13:10:00Z",
+  "mergeCommitSha": "ccf2c9914cad99ca7d67da0a966533add4612acb",
+  "releaseCommitSha": "31e91aaece3a7b1fc7a92e9c6591011a4789f36e",
+  "railwayStagingCommit": "31e91aa",
+  "mobileApkEmbeddedCommit": "31e91aa",
+  "stagingApiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "parityAssessment": "ALIGNED",
+  "parityNote": "Railway staging matches release commit 31e91aa (EPIC #137 merge ccf2c99 + RC3 version bump).",
+  "routeProbes": [
+    { "path": "/api/health", "status": 200, "ok": true },
+    { "path": "/api/version", "status": 200, "ok": true, "commit": "31e91aa" },
+    { "path": "/api/mobile/bootstrap", "status": 200, "ok": true },
+    { "path": "/api/mobile/catalog/products", "status": 200, "ok": true, "hasRatingFields": true },
+    { "path": "/api/mobile/products/:id/reviews", "status": 200, "ok": true },
+    { "path": "/api/mobile/auth/refresh", "status": 400, "ok": true, "note": "route registered; 400 without body" }
+  ],
+  "trustLoop": {
+    "MARKETPLACE_TRUST_LOOP_ENABLED": false,
+    "evidence": "Reviews API returns rating:null and items:[] for products; catalog averageRating null. Flag not exposed on public readiness endpoint; inferred from empty review data despite EPIC API deployed.",
+    "actionRequired": "Enable MARKETPLACE_TRUST_LOOP_ENABLED=true on Railway staging for physical review testing with real ratings."
+  }
+}

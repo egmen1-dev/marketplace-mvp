@@ -1,0 +1,45 @@
+{
+  "candidate": "RC3",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.8-beta.1",
+  "versionCode": 7,
+  "commitSha": "31e91aaece3a7b1fc7a92e9c6591011a4789f36e",
+  "mergeCommitSha": "ccf2c9914cad99ca7d67da0a966533add4612acb",
+  "railwaySha": "31e91aa",
+  "buildTime": "2026-08-23T13:09:00Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "startupVerbose": true,
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.8_beta.1.apk",
+    "path": "artifacts/closed-beta-rc3/lot_android_closed_beta_0.1.8_beta.1.apk",
+    "sha256": "e45193be6089f4eecd26d31f584784195b60a48f9d4afadd6f82ce913c685824",
+    "sizeBytes": 41902546
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "buildType": "release",
+    "signedWith": "debug.keystore (internal install only)",
+    "abi": ["arm64-v8a"],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "commitShaVerifiedInBundle": true,
+    "buildTimeVerifiedInBundle": true,
+    "versionNameVerifiedInBundle": true,
+    "apiHostVerifiedInBundle": true,
+    "betaChannelVerifiedInBundle": true,
+    "epicSessionFixVerifiedInBundle": true,
+    "epicNetworkRetryVerifiedInBundle": true,
+    "epicReviewsUiVerifiedInBundle": true,
+    "epicUnifiedNavVerifiedInBundle": true
+  },
+  "buildNotes": {
+    "workletsDependency": "Pinned react-native-worklets@0.10.1 for expo-modules-core native link compatibility",
+    "newArchDisabled": "newArchEnabled=false required for successful native build in this environment"
+  }
+}

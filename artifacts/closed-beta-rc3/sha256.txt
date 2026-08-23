@@ -1,0 +1,1 @@
+e45193be6089f4eecd26d31f584784195b60a48f9d4afadd6f82ce913c685824  /workspace/artifacts/closed-beta-rc3/lot_android_closed_beta_0.1.8_beta.1.apk
