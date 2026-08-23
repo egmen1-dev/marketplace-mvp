@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-08-23T20:37:18.080Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "probes": [
+    {
+      "installedVersionCode": 7,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 13,
+      "targetVersionName": "0.1.13-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 8,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 13,
+      "targetVersionName": "0.1.13-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 9,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 13,
+      "targetVersionName": "0.1.13-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 10,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 13,
+      "targetVersionName": "0.1.13-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 11,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 13,
+      "targetVersionName": "0.1.13-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 12,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 13,
+      "targetVersionName": "0.1.13-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 13,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 5,
+      "targetVersionName": "0.1.4-alpha",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 14,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 5,
+      "targetVersionName": "0.1.4-alpha",
+      "verdict": "PASS"
+    }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc8/lot_android_closed_beta_0.1.13_beta.1.apk",
+    "httpOk": true,
+    "expectedSha256": "acbb09c86c2ff038bc11135bbb28606ed08d9e136c33a5f897222e69570991e1",
+    "actualSha256": "acbb09c86c2ff038bc11135bbb28606ed08d9e136c33a5f897222e69570991e1",
+    "sizeBytes": 43543214,
+    "verdict": "PASS"
+  },
+  "verdict": "PASS"
+}
