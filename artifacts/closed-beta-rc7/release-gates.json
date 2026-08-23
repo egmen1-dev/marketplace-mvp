@@ -36,7 +36,7 @@
     "updateRoute": "PASS",
     "useUpdateCheckFlow": "PASS"
   },
-  "mrpPublish": "PENDING_MERGE",
-  "updateApiVerification": "PENDING_MERGE",
+  "mrpPublish": "PASS",
+  "updateApiVerification": "PASS",
   "physicalAndroid": "NOT_RUN"
 }
