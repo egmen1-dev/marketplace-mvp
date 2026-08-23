@@ -56,11 +56,11 @@ export default function TabsLayout() {
       />
       <Tabs.Screen name="profile" options={{ title: "Профиль", tabBarIcon: tabIcon("profile") }} />
 
-      <Tabs.Screen name="favorites" options={{ href: null }} />
-      <Tabs.Screen name="seller-home" options={{ href: null }} />
-      <Tabs.Screen name="seller-products" options={{ href: null }} />
-      <Tabs.Screen name="seller-sales" options={{ href: null }} />
-      <Tabs.Screen name="wallet" options={{ href: null }} />
+      <Tabs.Screen name="favorites" options={{ href: null, title: "Избранное" }} />
+      <Tabs.Screen name="seller-home" options={{ href: null, title: "Панель продавца" }} />
+      <Tabs.Screen name="seller-products" options={{ href: null, title: "Мои товары" }} />
+      <Tabs.Screen name="seller-sales" options={{ href: null, title: "Продажи" }} />
+      <Tabs.Screen name="wallet" options={{ href: null, title: "Кошелёк" }} />
     </Tabs>
   );
 }

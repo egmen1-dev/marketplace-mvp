@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 
 import { fetchOrders, fetchWallet } from "../../src/api/endpoints";
+import { showCommerceToast } from "../../src/commerce/commerce-toast-store";
 import {
   EmptyState,
   PageScroll,
@@ -48,8 +49,18 @@ export default function WalletScreen() {
         <WalletCard balance={data.spendable} withdrawable={data.withdrawable} pending={data.pending} />
 
         <View style={styles.actions}>
-          <PrimaryButton label="Пополнение" fullWidth disabled onPress={() => {}} />
-          <SecondaryButton label="Вывод" fullWidth disabled onPress={() => {}} />
+          <PrimaryButton
+            label="Пополнение"
+            fullWidth
+            disabled
+            onPress={() => showCommerceToast("Пополнение скоро будет доступно", "info")}
+          />
+          <SecondaryButton
+            label="Вывод"
+            fullWidth
+            disabled
+            onPress={() => showCommerceToast("Вывод скоро будет доступно", "info")}
+          />
         </View>
 
         <SectionHeader title="Ожидающие выплаты" />

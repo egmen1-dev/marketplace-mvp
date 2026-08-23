@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { formatPrice } from "../../utils/format";
 import { colors, radii, shadows, spacing, typography } from "../../theme/tokens";
@@ -68,9 +68,17 @@ export function InfoCard({ title, body }: { title: string; body: string }) {
   );
 }
 
-export function SellerCard({ storeName, subtitle }: { storeName: string; subtitle?: string }) {
-  return (
-    <View style={styles.sellerCard}>
+export function SellerCard({
+  storeName,
+  subtitle,
+  onPress,
+}: {
+  storeName: string;
+  subtitle?: string;
+  onPress?: () => void;
+}) {
+  const content = (
+    <>
       <View style={styles.sellerAvatar}>
         <Text style={styles.sellerAvatarText}>{storeName.slice(0, 1).toUpperCase()}</Text>
       </View>
@@ -78,7 +86,22 @@ export function SellerCard({ storeName, subtitle }: { storeName: string; subtitl
         <Text style={styles.sellerName}>{storeName}</Text>
         {subtitle ? <Text style={styles.sellerSubtitle}>{subtitle}</Text> : null}
       </View>
-    </View>
+    </>
+  );
+
+  if (!onPress) {
+    return <View style={styles.sellerCard}>{content}</View>;
+  }
+
+  return (
+    <Pressable
+      style={styles.sellerCard}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Перейти к продавцу ${storeName}`}
+    >
+      {content}
+    </Pressable>
   );
 }
 

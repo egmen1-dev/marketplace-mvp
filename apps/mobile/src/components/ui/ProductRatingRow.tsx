@@ -20,8 +20,11 @@ export function ProductRatingRow({
   reviewsCount?: number;
   compact?: boolean;
 }) {
-  if (!averageRating || reviewsCount <= 0) {
-    if (compact) return null;
+  if (compact) {
+    if (!averageRating || reviewsCount <= 0) {
+      return <View style={styles.compactPlaceholder} />;
+    }
+  } else if (!averageRating || reviewsCount <= 0) {
     return <Text style={styles.empty}>Отзывов пока нет</Text>;
   }
 
@@ -42,5 +45,6 @@ const styles = StyleSheet.create({
   valueCompact: { fontSize: 11 },
   count: { ...typography.caption, color: colors.gray500 },
   countCompact: { fontSize: 11 },
-  empty: { ...typography.caption, color: colors.gray500 },
+  compactPlaceholder: { minHeight: 14 },
+  empty: { ...typography.caption, color: colors.gray500, minHeight: 18 },
 });

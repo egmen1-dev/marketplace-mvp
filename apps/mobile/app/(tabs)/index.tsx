@@ -3,11 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
-  addToCart,
   fetchBuyerHome,
   fetchCatalog,
   fetchCategories,
-  toggleFavorite,
   type MobileProductListItem,
 } from "../../src/api/endpoints";
 import {
@@ -22,11 +20,14 @@ import {
   SectionHeader,
   SkeletonGrid,
 } from "../../src/components/ui";
+import { CommerceHeaderActions } from "../../src/components/CommerceHeaderActions";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
+import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { loadSearchHistory, pushSearchHistory } from "../../src/storage/search-history";
 import { loadRecentViews } from "../../src/storage/recent-views";
 import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
 import { discountPercent } from "../../src/utils/format";
+import { openSellerStorefront } from "../../src/navigation/seller-routes";
 import { useAppStore } from "../../src/store/app-store";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
@@ -42,6 +43,7 @@ const QUICK_FILTERS: Array<{ id: QuickFilter; label: string }> = [
 export default function BuyerHomeScreen() {
   const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
+  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const [summary, setSummary] = useState(() => readSnapshot<Record<string, unknown>>("buyer-home")?.payload ?? null);
   const [recommended, setRecommended] = useState<MobileProductListItem[]>([]);
   const [popular, setPopular] = useState<MobileProductListItem[]>([]);
@@ -100,7 +102,7 @@ export default function BuyerHomeScreen() {
   function openQuickFilter(filter: QuickFilter) {
     setActiveFilter(filter);
     if (filter === "deals") {
-      router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } });
+      router.push({ pathname: "/(tabs)/catalog", params: { deals: "1", sort: "popular" } });
       return;
     }
     if (filter === "new") {
@@ -127,7 +129,11 @@ export default function BuyerHomeScreen() {
   return (
     <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
-        <AppHeader title="ЛОТ" subtitle="Товары рядом с вами — покупайте и продавайте" />
+        <AppHeader
+          title="ЛОТ"
+          subtitle="Товары рядом с вами — покупайте и продавайте"
+          right={<CommerceHeaderActions />}
+        />
 
         <CommerceSearchBar
           placeholder="Искать товары, бренды, категории"
@@ -175,11 +181,40 @@ export default function BuyerHomeScreen() {
           </ScrollView>
         </View>
 
-        <ProductSection title="Рекомендуем" items={featuredItems.slice(0, 4)} onMore={() => router.push("/(tabs)/catalog")} />
-        <ProductSection title="Популярное" items={popular.slice(0, 4)} horizontal={false} />
-        <ProductSection title="Новинки" items={newest} horizontal />
-        <ProductSection title="Продолжить просмотр" items={recent} horizontal emptyPreset="catalog" />
-        <ProductSection title="Выгодные предложения" items={promo} horizontal badge="Скидки" />
+        <ProductSection
+          title="Рекомендуем"
+          items={featuredItems.slice(0, 4)}
+          onMore={() => router.push("/(tabs)/catalog")}
+          isFavorite={isFavorite}
+          onFavorite={toggleProductFavorite}
+          onAddToCart={addProductToCart}
+        />
+        <ProductSection
+          title="Популярное"
+          items={popular.slice(0, 4)}
+          horizontal={false}
+          isFavorite={isFavorite}
+          onFavorite={toggleProductFavorite}
+          onAddToCart={addProductToCart}
+        />
+        <ProductSection
+          title="Новинки"
+          items={newest}
+          horizontal
+          isFavorite={isFavorite}
+          onFavorite={toggleProductFavorite}
+          onAddToCart={addProductToCart}
+        />
+        <ProductSection title="Продолжить просмотр" items={recent} horizontal emptyPreset="catalog" isFavorite={isFavorite} onFavorite={toggleProductFavorite} onAddToCart={addProductToCart} />
+        <ProductSection
+          title="Выгодные предложения"
+          items={promo}
+          horizontal
+          badge="Скидки"
+          isFavorite={isFavorite}
+          onFavorite={toggleProductFavorite}
+          onAddToCart={addProductToCart}
+        />
       </Animated.View>
     </PageScroll>
   );
@@ -192,6 +227,9 @@ function ProductSection({
   onMore,
   emptyPreset,
   badge,
+  isFavorite,
+  onFavorite,
+  onAddToCart,
 }: {
   title: string;
   items: MobileProductListItem[];
@@ -199,6 +237,9 @@ function ProductSection({
   onMore?: () => void;
   emptyPreset?: "catalog";
   badge?: string;
+  isFavorite: (id: string) => boolean;
+  onFavorite: (id: string) => void;
+  onAddToCart: (id: string, qty?: number) => Promise<void>;
 }) {
   return (
     <View style={styles.section}>
@@ -215,9 +256,11 @@ function ProductSection({
               key={`${title}-${item.id}`}
               product={item}
               compact
+              isFavorite={isFavorite(item.id)}
               onPress={() => router.push(`/product/${item.id}`)}
-              onFavorite={() => toggleFavorite(item.id)}
-              onAddToCart={() => addToCart(item.id, 1)}
+              onFavorite={() => onFavorite(item.id)}
+              onAddToCart={() => onAddToCart(item.id, 1)}
+              onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
             />
           ))}
         </ScrollView>
@@ -227,9 +270,11 @@ function ProductSection({
             <ProductCard
               key={`${title}-${item.id}`}
               product={item}
+              isFavorite={isFavorite(item.id)}
               onPress={() => router.push(`/product/${item.id}`)}
-              onFavorite={() => toggleFavorite(item.id)}
-              onAddToCart={() => addToCart(item.id, 1)}
+              onFavorite={() => onFavorite(item.id)}
+              onAddToCart={() => onAddToCart(item.id, 1)}
+              onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
             />
           ))}
         </View>

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { fetchMobileUpdate, postTelemetry, type MobileUpdateInfo } from "../api/endpoints";
+import { loadAppConfig } from "../config/env";
+import { isUpdateEligibleForInstall } from "../utils/update-eligibility";
 import { emitStartupEvent, STARTUP_EVENTS } from "../boot/startup-telemetry";
 import { shouldShowUpdatePrompt } from "./update-defer-storage";
 import { UPDATE_ANALYTICS } from "./types";
@@ -65,7 +67,9 @@ export function useUpdateCheck(autoCheck = false, pendingUpdate: MobileUpdateInf
     setVisible,
     loading,
     error,
-    hasUpdate: info != null && info.updateState !== "NO_UPDATE" && Boolean(info.downloadUrl),
+    hasUpdate:
+      info != null &&
+      isUpdateEligibleForInstall(info, Number(loadAppConfig().buildNumber) || 1),
     check,
   };
 }
