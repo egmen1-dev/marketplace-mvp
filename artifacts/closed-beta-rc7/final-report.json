@@ -1,0 +1,80 @@
+{
+  "candidate": "RC7",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "pr148": {
+    "status": "MERGED",
+    "mergeSha": "3fdd3bf4b42f390134cd86d15c262a22573683ba"
+  },
+  "pr149": {
+    "status": "MERGED",
+    "mergeSha": "8856bcc237dd2238e644ecde79ef661480010603",
+    "buildCommitSha": "36f2c73"
+  },
+  "mainSha": "8856bcc237dd2238e644ecde79ef661480010603",
+  "provenance": {
+    "sourceMainSha": "3fdd3bf4b42f390134cd86d15c262a22573683ba",
+    "buildSha": "46567b1",
+    "apkEmbeddedSha": "46567b1",
+    "mergeSha": "8856bcc237dd2238e644ecde79ef661480010603",
+    "railwaySha": "3fdd3bf",
+    "buildTime": "2026-08-23T19:25:00Z"
+  },
+  "railway": {
+    "deploymentStatus": "HEALTHY",
+    "catalogProductCountRuntime": "PASS",
+    "visibleCategories": 30,
+    "totalCategories": 51
+  },
+  "build": "SUCCESS",
+  "apk": {
+    "path": "artifacts/closed-beta-rc7/lot_android_closed_beta_0.1.12_beta.1.apk",
+    "sizeBytes": 43521738,
+    "sha256": "8f511ded742b1b82a1847fbf680c9c30cde510418298bee1acb1ce67383fe8de",
+    "versionName": "0.1.12-beta.1",
+    "versionCode": 12,
+    "package": "ru.lot.marketplace.alpha",
+    "abi": ["arm64-v8a"],
+    "minSdk": 24,
+    "targetSdk": 36,
+    "environment": "staging",
+    "releaseChannel": "CLOSED_BETA",
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app"
+  },
+  "mrp": {
+    "publishStatus": "PUBLISHED",
+    "versionName": "0.1.12-beta.1",
+    "versionCode": 12,
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc7/lot_android_closed_beta_0.1.12_beta.1.apk",
+    "code7": "OPTIONAL_UPDATE → 12",
+    "code8": "OPTIONAL_UPDATE → 12",
+    "code9": "OPTIONAL_UPDATE → 12",
+    "code10": "OPTIONAL_UPDATE → 12",
+    "code11": "OPTIONAL_UPDATE → 12",
+    "code12": "NO_UPDATE",
+    "code13": "NO_UPDATE",
+    "apkSha256Match": "PASS",
+    "downloadHttp200": "PASS"
+  },
+  "featureMatrix": {
+    "Session": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "BootSplash": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "CategoryRail": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Category filtering": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Filters": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "ProductCard": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "Favorites": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Cart": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Cart images": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Seller": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "CommerceHeader": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "Search": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "Chat": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Message badge": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Cart badge": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "Update": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" }
+  },
+  "physical": "NOT_RUN",
+  "categoryFixtureStrategy": "hide_empty_from_rail_via_catalogProductCount (single /api/categories, no N+1)",
+  "visibleCategoryCount": 30
+}

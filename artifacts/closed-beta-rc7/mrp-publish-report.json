@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-08-23T19:28:31.610Z",
+  "publishMethod": "staging_admin_api",
+  "versionName": "0.1.12-beta.1",
+  "versionCode": 12,
+  "sha256": "8f511ded742b1b82a1847fbf680c9c30cde510418298bee1acb1ce67383fe8de",
+  "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc7/lot_android_closed_beta_0.1.12_beta.1.apk",
+  "status": "PUBLISHED",
+  "updatePath": {
+    "code7": "OPTIONAL_UPDATE→12",
+    "code8": "OPTIONAL_UPDATE→12",
+    "code9": "OPTIONAL_UPDATE→12",
+    "code10": "OPTIONAL_UPDATE→12",
+    "code11": "OPTIONAL_UPDATE→12",
+    "code12": "NO_UPDATE",
+    "code13": "NO_UPDATE"
+  },
+  "verdict": "PASS"
+}

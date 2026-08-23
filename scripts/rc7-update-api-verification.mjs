@@ -14,8 +14,8 @@ async function probe(versionCode) {
   });
   const body = await res.json().catch(() => ({}));
   const updateState = body.updateState ?? body.state ?? "UNKNOWN";
-  const targetCode = body.release?.versionCode ?? body.targetVersionCode ?? null;
-  const targetName = body.release?.versionName ?? body.targetVersionName ?? null;
+  const targetCode = body.versionCode ?? body.release?.versionCode ?? body.targetVersionCode ?? null;
+  const targetName = body.versionName ?? body.release?.versionName ?? body.targetVersionName ?? null;
   let verdict = "FAIL";
   if ([7, 8, 9, 10, 11].includes(versionCode)) {
     verdict = updateState === "OPTIONAL_UPDATE" && targetCode === 12 ? "PASS" : "FAIL";
