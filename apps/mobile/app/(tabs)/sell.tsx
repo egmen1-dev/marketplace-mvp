@@ -1,38 +1,59 @@
 import { router } from "expo-router";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { PrimaryButton, SecondaryButton, SectionHeader } from "../../src/components/ui";
+import { openWebHandoff } from "../../src/navigation/web-handoff";
 import { useAppStore } from "../../src/store/app-store";
-import { colors, spacing, typography } from "../../src/theme/tokens";
+import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 export default function SellScreen() {
   const sellerCapable = useAppStore((s) => s.sellerCapable);
+  const [opening, setOpening] = useState(false);
+
+  async function onCreateStore() {
+    setOpening(true);
+    try {
+      await openWebHandoff("/account/seller-start");
+    } finally {
+      setOpening(false);
+    }
+  }
+
+  async function onAddProduct() {
+    setOpening(true);
+    try {
+      await openWebHandoff("/account/products/new");
+    } finally {
+      setOpening(false);
+    }
+  }
 
   return (
     <View style={styles.container}>
-      <SectionHeader title="Продать на ЛОТ" />
-      <Text style={styles.lead}>
-        Размещайте товары, управляйте остатками и отслеживайте продажи в одном аккаунте.
-      </Text>
+      <SectionHeader title="Продать" />
 
       {sellerCapable ? (
-        <View style={styles.actions}>
-          <PrimaryButton label="Мои товары" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />
-          <SecondaryButton label="Панель продавца" fullWidth onPress={() => router.push("/(tabs)/seller-home")} />
-          <SecondaryButton label="Продажи и заказы" fullWidth onPress={() => router.push("/(tabs)/seller-sales")} />
+        <View style={styles.sellerHub}>
+          <Text style={styles.hubTitle}>Мои продажи</Text>
+          <View style={styles.actions}>
+            <PrimaryButton label="Добавить товар" fullWidth loading={opening} onPress={() => void onAddProduct()} />
+            <SecondaryButton label="Мои товары" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />
+            <SecondaryButton label="Заказы" fullWidth onPress={() => router.push("/(tabs)/seller-sales")} />
+            <SecondaryButton label="Сообщения" fullWidth onPress={() => router.push("/messages")} />
+          </View>
         </View>
       ) : (
         <View style={styles.card}>
           <MaterialCommunityIcons name="store-plus-outline" size={40} color={colors.orange} />
-          <Text style={styles.cardTitle}>Станьте продавцом</Text>
-          <Text style={styles.cardText}>
-            Подключите продавца в веб-кабинете, чтобы публиковать товары и получать заказы.
-          </Text>
+          <Text style={styles.cardTitle}>Начните продавать</Text>
+          <Text style={styles.cardText}>Разместите первый товар за несколько минут</Text>
           <PrimaryButton
-            label="Подключить продавца"
+            label="Создать магазин"
             fullWidth
-            onPress={() => router.push("/(tabs)/profile")}
+            loading={opening}
+            onPress={() => void onCreateStore()}
           />
         </View>
       )}
@@ -42,11 +63,12 @@ export default function SellScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.lg, gap: spacing.lg, backgroundColor: colors.white },
-  lead: { ...typography.body, color: colors.gray700 },
+  sellerHub: { gap: spacing.lg },
+  hubTitle: { ...typography.h2, color: colors.black },
   actions: { gap: spacing.md },
   card: {
     backgroundColor: colors.gray100,
-    borderRadius: 16,
+    borderRadius: radii.lg,
     padding: spacing.xl,
     alignItems: "center",
     gap: spacing.md,

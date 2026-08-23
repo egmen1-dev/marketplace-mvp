@@ -140,6 +140,7 @@ export async function fetchSellerHome() {
     products: { active: number; needAttention: number };
     promotion: { active: number };
     intelligence: { topAction: string | null; productId: string | null; confidence?: number; reason?: string };
+    sales: { todayCount: number; awaitingCount: number; messagesUnread: number };
   }>("/api/mobile/seller/home");
 }
 
@@ -402,4 +403,40 @@ export async function markConversationRead(conversationId: string) {
 
 export async function fetchOrder(orderId: string) {
   return apiRequest<Record<string, unknown>>(`/api/orders/${encodeURIComponent(orderId)}`);
+}
+
+export type MobileSellerOrderTab = "new" | "in_progress" | "completed";
+
+export type MobileSellerOrder = {
+  id: string;
+  orderNumber: string;
+  status: "NEW" | "CONFIRMED" | "SHIPPED" | "COMPLETED" | "CANCELLED";
+  rawStatus: string;
+  product: { id: string | null; title: string; imageUrl: string | null };
+  quantity: number;
+  amount: number;
+  currency: string;
+  buyer: { name: string | null; email: string };
+  createdAt: string;
+  fulfillmentType: "DELIVERY" | "SELLER_PICKUP";
+};
+
+export async function fetchSellerOrders(tab: MobileSellerOrderTab = "new") {
+  return apiRequest<{ orders: MobileSellerOrder[]; tab: MobileSellerOrderTab; total: number }>(
+    `/api/mobile/seller/orders?tab=${encodeURIComponent(tab)}`,
+  );
+}
+
+export async function patchSellerOrderStatus(orderId: string, status: string) {
+  return apiRequest<{ id: string; status: string; rawStatus: string }>(
+    `/api/mobile/seller/orders/${encodeURIComponent(orderId)}/status`,
+    { method: "PATCH", body: JSON.stringify({ status }) },
+  );
+}
+
+export async function fetchWebHandoffUrl(dest: string) {
+  const qs = new URLSearchParams({ dest });
+  return apiRequest<{ handoffUrl: string; destination: string; returnDeepLink: string; expiresInSec: number }>(
+    `/api/mobile/web-handoff/url?${qs.toString()}`,
+  );
 }

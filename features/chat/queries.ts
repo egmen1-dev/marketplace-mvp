@@ -586,9 +586,32 @@ export async function notifyOrderCreated(opts: {
   orderId: string;
   orderNumber: string;
 }): Promise<void> {
+  const order = await prisma.order.findUnique({
+    where: { id: opts.orderId },
+    select: {
+      items: {
+        select: {
+          productName: true,
+          quantity: true,
+        },
+        take: 3,
+      },
+    },
+  });
+
+  const lines = [`Создан новый заказ #${opts.orderNumber}`];
+  if (order?.items.length) {
+    const primary = order.items[0];
+    lines.push(`Товар:\n${primary.productName}`);
+    lines.push(`Количество:\n${primary.quantity}`);
+    if (order.items.length > 1) {
+      lines.push(`И ещё ${order.items.length - 1} поз.`);
+    }
+  }
+
   await notifyOrderLifecycleMessage({
     orderId: opts.orderId,
-    body: `Создан заказ №${opts.orderNumber}`,
+    body: lines.join("\n\n"),
   });
 }
 

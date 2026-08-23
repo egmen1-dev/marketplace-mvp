@@ -31,6 +31,7 @@ const allowedPatterns = [
   "download-apk.ts",
   "UnsupportedClientScreen.tsx",
   "legal-links.ts",
+  "web-handoff.ts",
 ];
 
 describe("mobile web fallback audit", () => {

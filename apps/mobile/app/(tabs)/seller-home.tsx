@@ -28,6 +28,7 @@ type SellerHomeData = {
   products?: { active: number; needAttention: number };
   promotion?: { active: number };
   intelligence?: { topAction: string | null; productId: string | null; confidence?: number; reason?: string };
+  sales?: { todayCount: number; awaitingCount: number; messagesUnread: number };
 };
 
 export default function SellerHomeScreen() {
@@ -86,10 +87,11 @@ export default function SellerHomeScreen() {
   const products = data?.products;
   const promotion = data?.promotion;
   const intelligence = data?.intelligence;
+  const sales = data?.sales;
   const todayTasks = [
+    sales?.awaitingCount ? `Принять ${sales.awaitingCount} новых заказ(ов)` : null,
     orders?.needAction ? `Обработать ${orders.needAction} заказ(ов)` : null,
     products?.needAttention ? `Проверить ${products.needAttention} товар(ов) с нулевым остатком` : null,
-    promotion?.active === 0 ? "Запустить продвижение для роста продаж" : null,
   ].filter(Boolean) as string[];
 
   return (
@@ -110,6 +112,23 @@ export default function SellerHomeScreen() {
           ) : (
             <Text style={styles.todayItem}>• Все задачи на сегодня выполнены</Text>
           )}
+        </View>
+
+        <SectionHeader title="Продажи" />
+        <View style={styles.metricsGrid}>
+          <MetricCard label="Сегодня" value={String(sales?.todayCount ?? 0)} hint="заказов" tone="neutral" />
+          <MetricCard
+            label="Ожидают"
+            value={String(sales?.awaitingCount ?? 0)}
+            hint="подтверждения"
+            tone={(sales?.awaitingCount ?? 0) > 0 ? "warning" : "neutral"}
+          />
+          <MetricCard
+            label="Сообщения"
+            value={String(sales?.messagesUnread ?? 0)}
+            hint="непрочитанных"
+            tone={(sales?.messagesUnread ?? 0) > 0 ? "danger" : "neutral"}
+          />
         </View>
 
         <SectionHeader title="Заказы" />
