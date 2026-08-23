@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Animated, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
@@ -28,6 +28,7 @@ import { loadSearchHistory, pushSearchHistory } from "../../src/storage/search-h
 import { loadRecentViews } from "../../src/storage/recent-views";
 import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
 import { discountPercent } from "../../src/utils/format";
+import { selectRailCategories } from "../../src/catalog/rail-categories";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
 import { useAppStore } from "../../src/store/app-store";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
@@ -51,7 +52,8 @@ export default function BuyerHomeScreen() {
   const [newest, setNewest] = useState<MobileProductListItem[]>([]);
   const [promo, setPromo] = useState<MobileProductListItem[]>([]);
   const [recent, setRecent] = useState<MobileProductListItem[]>([]);
-  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; catalogProductCount?: number; productCount?: number }>>([]);
+  const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
   const [history, setHistory] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -81,7 +83,7 @@ export default function BuyerHomeScreen() {
       setNewest(newestRes.items.slice(0, 8));
       setPromo(popularRes.items.filter((p) => discountPercent(p.price, p.compareAt)).slice(0, 8));
       setRecent(recentViews);
-      setCategories(categoriesRes.items);
+      setAllCategories(categoriesRes.items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ошибка загрузки");
     } finally {
@@ -163,7 +165,7 @@ export default function BuyerHomeScreen() {
         <View style={styles.section}>
           <SectionHeader title="Категории" actionLabel="Все" onAction={() => router.push("/(tabs)/catalog")} />
           <CategoryRail
-            categories={categories}
+            categories={railCategories}
             activeId={null}
             onSelect={(cat) => {
               if (!cat) {

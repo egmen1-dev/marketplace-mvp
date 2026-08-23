@@ -1,0 +1,167 @@
+{
+  "generatedAt": "2026-08-23T19:07:42.985Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "categoryFixtureStrategy": "hide_empty_from_rail_via_catalogProductCount (single /api/categories, no N+1)",
+  "visibleCategoryCount": 23,
+  "totalCategoryCount": 51,
+  "visibleCategoriesSample": [
+    {
+      "name": "Климатическая техника",
+      "catalogProductCount": 16
+    },
+    {
+      "name": "Компьютеры",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Мебель",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Обогреватели",
+      "catalogProductCount": 8
+    },
+    {
+      "name": "Электроинструмент",
+      "catalogProductCount": 4
+    },
+    {
+      "name": "Бег",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Верхняя одежда",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Ключи",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Крепёж",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Мебель",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Смартфоны",
+      "catalogProductCount": 1
+    },
+    {
+      "name": "Уход за кожей",
+      "catalogProductCount": 2
+    }
+  ],
+  "results": [
+    {
+      "name": "category_catalogProductCount_source",
+      "ok": true
+    },
+    {
+      "name": "category_rail_min_3_visible",
+      "ok": true,
+      "count": 23
+    },
+    {
+      "name": "category_empty_hidden_from_rail",
+      "ok": true,
+      "hiddenExamples": [
+        "Женская одежда",
+        "Автоаксессуары"
+      ]
+    },
+    {
+      "name": "chip_no_aspect_ratio_1",
+      "ok": true
+    },
+    {
+      "name": "chip_height_38_42",
+      "ok": true
+    },
+    {
+      "name": "cart_image_http_200_x3",
+      "ok": true,
+      "cartChecks": [
+        {
+          "productId": "cmsmzsjx0002xy0w60fa73kqf",
+          "rel": "/images/seed/photo-1572981779307-38b8cabb2407.jpg",
+          "abs": "https://web-production-e56fb.up.railway.app/images/seed/photo-1572981779307-38b8cabb2407.jpg",
+          "httpOk": true
+        },
+        {
+          "productId": "cmssvqouc000ijsf23cbho4ln",
+          "rel": "/images/seed/photo-1505740420928-5e560c06d30e.jpg",
+          "abs": "https://web-production-e56fb.up.railway.app/images/seed/photo-1505740420928-5e560c06d30e.jpg",
+          "httpOk": true
+        },
+        {
+          "productId": "cmsmzt6lr004fy0w6wzhy1t32",
+          "rel": "/images/seed/photo-1498049794561-7780e7231661.jpg",
+          "abs": "https://web-production-e56fb.up.railway.app/images/seed/photo-1498049794561-7780e7231661.jpg",
+          "httpOk": true
+        }
+      ]
+    },
+    {
+      "name": "filter_baseline_has_items",
+      "ok": true,
+      "baselineCount": 5
+    },
+    {
+      "name": "filter_category_applies",
+      "ok": true
+    },
+    {
+      "name": "rc6_chat_conversations",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "rc6_chat_unread",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "rc6_mobile_bootstrap",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "rc6_android_update",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "rc6_commerce_header",
+      "ok": true
+    },
+    {
+      "name": "rc6_messages_route",
+      "ok": true
+    },
+    {
+      "name": "rc6_cart_resolve_image",
+      "ok": true
+    },
+    {
+      "name": "boot_indeterminate",
+      "ok": true
+    },
+    {
+      "name": "boot_no_fake_percent",
+      "ok": true
+    },
+    {
+      "name": "beta_compact",
+      "ok": true
+    },
+    {
+      "name": "selectRailCategories_used",
+      "ok": true
+    }
+  ],
+  "failed": 0,
+  "verdict": "READY_FOR_RELEASE_BUILD"
+}

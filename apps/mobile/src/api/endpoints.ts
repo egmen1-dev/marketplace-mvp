@@ -167,7 +167,9 @@ export async function fetchSellerProducts(params?: { cursor?: string | null }) {
 }
 
 export async function fetchCategories() {
-  return apiRequest<{ items: Array<{ id: string; name: string; slug: string; productCount?: number }> }>("/api/categories");
+  return apiRequest<{
+    items: Array<{ id: string; name: string; slug: string; productCount?: number; catalogProductCount?: number; level?: number }>;
+  }>("/api/categories");
 }
 
 export async function fetchProductSuggest(q: string) {

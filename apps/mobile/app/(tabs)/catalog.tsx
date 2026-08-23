@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
 
 import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../src/api/endpoints";
+import { selectRailCategories } from "../../src/catalog/rail-categories";
 import { CommerceHeader } from "../../src/components/CommerceHeader";
 import {
   CatalogToolbar,
@@ -65,7 +66,8 @@ export default function CatalogScreen() {
       ? { id: params.sellerId, name: typeof params.sellerName === "string" ? params.sellerName : "Продавец" }
       : null,
   );
-  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; catalogProductCount?: number; productCount?: number }>>([]);
+  const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
   const [history, setHistory] = useState<string[]>([]);
   const [searchFocused, setSearchFocused] = useState(false);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
@@ -78,7 +80,7 @@ export default function CatalogScreen() {
     fetchCategories()
       .then((res) => {
         const list = res.items;
-        setCategories(list);
+        setAllCategories(list);
         if (typeof params.categoryId === "string") {
           setCategory(resolveCategoryFromList(params.categoryId, list));
         }
@@ -90,7 +92,7 @@ export default function CatalogScreen() {
     useCallback(() => {
       if (typeof params.categoryId === "string") {
         setCategory((prev) => {
-          const resolved = resolveCategoryFromList(params.categoryId!, categories);
+          const resolved = resolveCategoryFromList(params.categoryId!, allCategories);
           if (prev?.id === resolved.id && prev?.name === resolved.name) return prev;
           return resolved;
         });
@@ -111,7 +113,7 @@ export default function CatalogScreen() {
         setCategory(null);
         setQ("");
       }
-    }, [params.categoryId, params.q, params.sort, params.deals, params.sellerId, params.sellerName, categories]),
+    }, [params.categoryId, params.q, params.sort, params.deals, params.sellerId, params.sellerName, allCategories]),
   );
 
   useEffect(() => {
@@ -200,7 +202,7 @@ export default function CatalogScreen() {
         />
 
         <CategoryRail
-          categories={categories}
+          categories={railCategories}
           activeId={category?.id ?? null}
           onSelect={(cat) => {
             setCategory(cat);

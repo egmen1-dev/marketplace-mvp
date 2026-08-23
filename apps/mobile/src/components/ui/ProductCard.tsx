@@ -7,6 +7,7 @@ import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
 import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
+import { PRODUCT_CARD_LAYOUT } from "./product-card-layout";
 import { Badge } from "./primitives";
 import { ProductRatingRow } from "./ProductRatingRow";
 
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     ...shadows.card,
   },
   cardCompact: {},
-  imageWrap: { aspectRatio: 0.92, backgroundColor: colors.gray100, position: "relative" },
+  imageWrap: { aspectRatio: PRODUCT_CARD_LAYOUT.imageAspectRatio, backgroundColor: colors.gray100, position: "relative" },
   imageWrapCompact: { height: 156 },
   image: { width: "100%", height: "100%" },
   imageFallback: { flex: 1, alignItems: "center", justifyContent: "center" },
@@ -202,19 +203,19 @@ const styles = StyleSheet.create({
     ...shadows.card,
   },
   body: { flex: 1, padding: spacing.md, gap: spacing.xs, justifyContent: "flex-start" },
-  priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap", minHeight: 24 },
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap", minHeight: PRODUCT_CARD_LAYOUT.priceRowMinHeight },
   price: { ...typography.price, color: colors.black },
   compareAt: { ...typography.caption, color: colors.gray500, textDecorationLine: "line-through" },
   compareAtHidden: { opacity: 0 },
-  title: { ...typography.caption, color: colors.gray900, minHeight: 36, lineHeight: 18 },
-  ratingSlot: { minHeight: 18, justifyContent: "center" },
-  sellerSlot: { minHeight: 18, justifyContent: "center" },
+  title: { ...typography.caption, color: colors.gray900, minHeight: PRODUCT_CARD_LAYOUT.titleMinHeight, lineHeight: 18 },
+  ratingSlot: { minHeight: PRODUCT_CARD_LAYOUT.ratingSlotMinHeight, justifyContent: "center" },
+  sellerSlot: { minHeight: PRODUCT_CARD_LAYOUT.sellerSlotMinHeight, justifyContent: "center" },
   seller: { ...typography.caption, color: colors.gray500 },
   sellerLink: { color: colors.orange, fontWeight: "600" },
   sellerHidden: { ...typography.caption, opacity: 0 },
   location: { ...typography.caption, color: colors.gray500 },
   locationHidden: { opacity: 0 },
-  metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: 18 },
+  metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: PRODUCT_CARD_LAYOUT.metaRowMinHeight },
   social: { ...typography.caption, color: colors.gray700, fontWeight: "600", flex: 1 },
   views: { ...typography.caption, color: colors.gray500, textAlign: "right", minWidth: 56 },
   cta: {

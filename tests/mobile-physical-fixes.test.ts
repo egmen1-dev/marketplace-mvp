@@ -20,8 +20,9 @@ describe("mobile physical fixes — category UI contract", () => {
     expect(chipSource).not.toMatch(/width:\s*88/);
   });
 
-  it("catalog loads full category list for rail (not sliced)", () => {
-    expect(catalogSource).toContain("setCategories(list)");
+  it("catalog loads full category list and filters rail client-side", () => {
+    expect(catalogSource).toContain("selectRailCategories");
+    expect(catalogSource).toContain("setAllCategories(list)");
     expect(catalogSource).not.toMatch(/slice\(0,\s*12\)/);
   });
 
@@ -50,7 +51,7 @@ describe("mobile physical fixes — cart image data flow", () => {
 
 describe("mobile physical fixes — product card layout invariant", () => {
   it("reserves stable meta row slots for social and views", () => {
-    expect(productCardSource).toContain("minHeight: 18");
+    expect(productCardSource).toContain("PRODUCT_CARD_LAYOUT.metaRowMinHeight");
     expect(productCardSource).toContain("flex: 1");
     expect(productCardSource).toContain("numberOfLines={1}");
     expect(productCardSource).toContain("просм.");

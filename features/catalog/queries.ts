@@ -23,6 +23,8 @@ export type CategoryListItem = {
   level: number;
   /** ACTIVE products in this category only (direct). */
   productCount: number;
+  /** ACTIVE products in this category and descendants (matches mobile catalog filter). */
+  catalogProductCount: number;
   /** Label with parent path for selects, e.g. «Дом / Мебель». */
   pathLabel?: string;
 };
@@ -128,6 +130,11 @@ export async function listCategories(options?: {
   const { rows, countById } = await loadCategoryGraph(activeOnly);
   const countMap = new Map(countById.map((c) => [c.id, c.count]));
   const byId = new Map(rows.map((r) => [r.id, r]));
+  const treeNodes = rows.map((r) => ({
+    id: r.id,
+    parentId: r.parentId,
+    isActive: r.isActive,
+  }));
 
   return rows.map((row) => ({
     id: row.id,
@@ -138,6 +145,12 @@ export async function listCategories(options?: {
     parentId: row.parentId,
     level: row.level,
     productCount: countMap.get(row.id) ?? 0,
+    catalogProductCount: productCountWithDescendants(
+      treeNodes,
+      row.id,
+      countById,
+      { activeOnly },
+    ),
     pathLabel: pathLabelFor(row, byId),
   }));
 }
@@ -156,21 +169,25 @@ export async function listRootCategories(options?: {
 
   return rows
     .filter((r) => r.parentId == null)
-    .map((row) => ({
-      id: row.id,
-      name: row.name,
-      slug: row.slug,
-      description: row.description,
-      imageUrl: resolvePublicImageUrl(row.imageUrl),
-      parentId: row.parentId,
-      level: row.level,
-      productCount: productCountWithDescendants(
+    .map((row) => {
+      const catalogProductCount = productCountWithDescendants(
         treeNodes,
         row.id,
         countById,
         { activeOnly },
-      ),
-    }));
+      );
+      return {
+        id: row.id,
+        name: row.name,
+        slug: row.slug,
+        description: row.description,
+        imageUrl: resolvePublicImageUrl(row.imageUrl),
+        parentId: row.parentId,
+        level: row.level,
+        productCount: catalogProductCount,
+        catalogProductCount,
+      };
+    });
 }
 
 /** Nested tree for mega menu / filters. */
