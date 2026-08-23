@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
 import { loadAppConfig } from "../src/config/env";
 import { refreshTabBadges } from "../src/commerce/refresh-tab-badges";
+import { useCartStore } from "../src/commerce/cart-store";
 import { EmptyState, PrimaryButton, SkeletonGrid } from "../src/components/ui";
 import { useFadeIn } from "../src/hooks/useFadeIn";
 import { useAppStore } from "../src/store/app-store";
@@ -41,6 +42,9 @@ export default function CartScreen() {
       const cartItems = (cart.items ?? []) as CartItem[];
       setItems(cartItems);
       setTotal(Number(cart.subtotal ?? 0));
+      useCartStore.getState().applyFromCart(
+        cartItems.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ошибка корзины");
     } finally {
@@ -61,7 +65,11 @@ export default function CartScreen() {
 
   async function onQty(productId: string, quantity: number) {
     if (offline) return;
-    await updateCartQuantity(productId, quantity);
+    if (quantity <= 0) {
+      await removeCartItem(productId);
+    } else {
+      await updateCartQuantity(productId, quantity);
+    }
     await load();
     await refreshTabBadges();
   }
@@ -97,7 +105,7 @@ export default function CartScreen() {
                 <Text style={styles.itemTitle}>{item.product?.title ?? "Товар"}</Text>
                 <Text style={styles.itemPrice}>{formatPrice(item.product?.price ?? 0)}</Text>
               </View>
-              <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, Math.max(1, item.quantity - 1))}>
+              <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, item.quantity - 1)}>
                 <Text>−</Text>
               </Pressable>
               <Text style={styles.qty}>{item.quantity}</Text>

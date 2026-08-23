@@ -1,6 +1,11 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { PRODUCT_CARD_LAYOUT, productCardBodyMinHeight } from "../apps/mobile/src/components/ui/product-card-layout";
+
+const productCardSource = readFileSync("apps/mobile/src/components/ui/ProductCard.tsx", "utf8");
+const ctaSource = readFileSync("apps/mobile/src/components/ui/ProductCardCartCta.tsx", "utf8");
+const tokensSource = readFileSync("apps/mobile/src/theme/tokens.ts", "utf8");
 
 /** Release gate variants — grid contract must stay constant across all combinations. */
 const VARIANTS = [
@@ -43,5 +48,24 @@ describe("ProductCard layout contract", () => {
 
   it("image aspect ratio is not square (no circle-like tiles)", () => {
     expect(PRODUCT_CARD_LAYOUT.imageAspectRatio).not.toBe(1);
+  });
+
+  it("CTA slot height invariant for add vs quantity states", () => {
+    expect(ctaSource).toContain("PRODUCT_CARD_LAYOUT.ctaMinHeight");
+    expect(ctaSource).toContain("stepper");
+    expect(ctaSource).toContain("addBtn");
+    expect(productCardSource).toContain("ProductCardCartCta");
+    expect(productCardSource).toContain("ctaPlaceholder");
+  });
+
+  it("default cart CTA uses semantic orange tokens", () => {
+    expect(tokensSource).toContain("ctaPrimary");
+    expect(tokensSource).toContain("ctaPrimaryPressed");
+    expect(tokensSource).toContain("ctaPrimaryDisabled");
+    expect(ctaSource).toContain("colors.ctaPrimary");
+    expect(ctaSource).toContain("colors.white");
+    expect(ctaSource).toContain("addBtnPressed");
+    expect(ctaSource).toContain("addBtnDisabled");
+    expect(ctaSource).toContain("ActivityIndicator");
   });
 });

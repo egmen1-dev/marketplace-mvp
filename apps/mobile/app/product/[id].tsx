@@ -10,7 +10,7 @@ import { loadAppConfig } from "../../src/config/env";
 import {
   Badge,
   PrimaryButton,
-  ProductCard,
+  ConnectedProductCard,
   ProductRatingRow,
   ProductReviewsSection,
   SecondaryButton,
@@ -213,14 +213,13 @@ export default function ProductScreen() {
                 <SectionHeader title="Похожие товары" />
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.similarRow}>
                   {similar.map((item) => (
-                    <ProductCard
+                    <ConnectedProductCard
                       key={item.id}
                       product={item}
                       compact
                       isFavorite={isFavorite(item.id)}
                       onPress={() => router.push(`/product/${item.id}`)}
                       onFavorite={() => toggleProductFavorite(item.id)}
-                      onAddToCart={() => addProductToCart(item.id, 1)}
                       onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
                     />
                   ))}

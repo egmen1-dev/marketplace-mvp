@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Animated, FlatList, RefreshControl, StyleSheet } from "react-native";
 
 import { fetchFavorites, type MobileProductListItem } from "../../src/api/endpoints";
-import { EmptyState, PageContainer, ProductCard, SkeletonGrid } from "../../src/components/ui";
+import { EmptyState, PageContainer, ConnectedProductCard, SkeletonGrid } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
@@ -12,7 +12,7 @@ import { spacing } from "../../src/theme/tokens";
 
 export default function FavoritesScreen() {
   const fade = useFadeIn();
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { toggleProductFavorite, isFavorite } = useCommerceActions();
   const setAll = useFavoritesStore((s) => s.setAll);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,13 +53,12 @@ export default function FavoritesScreen() {
             <EmptyState preset="favorites" actionLabel="В каталог" onAction={() => router.push("/(tabs)/catalog")} />
           }
           renderItem={({ item }) => (
-            <ProductCard
+            <ConnectedProductCard
               product={item}
               width="48%"
               isFavorite={isFavorite(item.id)}
               onPress={() => router.push(`/product/${item.id}`)}
               onFavorite={() => toggleProductFavorite(item.id).then(load)}
-              onAddToCart={() => addProductToCart(item.id, 1)}
               onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
             />
           )}

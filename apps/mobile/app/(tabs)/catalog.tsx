@@ -13,6 +13,7 @@ import {
   PageContainer,
   POPULAR_SEARCHES,
   ProductCard,
+  ConnectedProductCard,
   SkeletonGrid,
   type CatalogSort,
 } from "../../src/components/ui";
@@ -53,7 +54,7 @@ export default function CatalogScreen() {
   }>();
   const searchInputRef = useRef<TextInput>(null);
   const fade = useFadeIn();
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { toggleProductFavorite, isFavorite } = useCommerceActions();
   const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
   const [sort, setSort] = useState<CatalogSort>(parseSort(params.sort));
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -237,13 +238,12 @@ export default function CatalogScreen() {
             refreshControl={<RefreshControl refreshing={loading} onRefresh={() => load(true)} />}
             renderItem={({ item }) => (
               <View style={styles.cardCell}>
-                <ProductCard
+                <ConnectedProductCard
                   product={item}
                   width="100%"
                   isFavorite={isFavorite(item.id)}
                   onPress={() => router.push(`/product/${item.id}`)}
                   onFavorite={() => toggleProductFavorite(item.id)}
-                  onAddToCart={() => addProductToCart(item.id, 1)}
                   onSellerPress={
                     item.seller?.id
                       ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName)
@@ -266,7 +266,7 @@ export default function CatalogScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
+  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: 0 },
   list: { paddingBottom: spacing.xxl, gap: spacing.md },
   row: { justifyContent: "space-between", alignItems: "stretch", marginBottom: spacing.md },
   cardCell: { width: "48%" },
