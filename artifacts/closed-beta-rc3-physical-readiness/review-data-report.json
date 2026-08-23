@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-08-23T13:20:36.446Z",
+  "trustLoopEnabled": false,
+  "productWithReviews": null,
+  "productWithoutReviews": {
+    "id": "cmsmzsjx0002xy0w60fa73kqf",
+    "title": "Дрель ударная Drill Pro 750",
+    "slug": "drill-pro-750",
+    "catalog": {
+      "averageRating": null,
+      "reviewsCount": 0
+    },
+    "pdp": null,
+    "reviewsApi": {
+      "rating": null,
+      "items": [],
+      "nextCursor": null,
+      "hasMore": false,
+      "apiVersion": "mobile-api-v1",
+      "schemaVersion": "mobile-schema-v1",
+      "syncVersion": "reviews-cmsmzsjx0002xy0w60fa73kqf",
+      "advisoryOnly": true
+    },
+    "fakeRatingAbsent": true
+  },
+  "catalogScan": {
+    "scanned": 20,
+    "withRatings": 0,
+    "withoutRatings": 20
+  },
+  "dataVerdict": "FLAG_OFF_CANNOT_VERIFY_LIVE_REVIEWS"
+}

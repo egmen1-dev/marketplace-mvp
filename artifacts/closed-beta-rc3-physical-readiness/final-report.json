@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-08-23T13:20:36.446Z",
+  "candidate": "RC3",
+  "title": "RC3 — Staging & Physical Validation Readiness",
+  "staging": {
+    "railwayHealth": "PASS",
+    "mainRailwayParity": "PASS",
+    "trustLoop": "OFF (inferred)",
+    "trustLoopEnableBlocked": true,
+    "reviewsApi": "CONTRACT_PASS_DATA_EMPTY_FLAG_OFF",
+    "catalogRatings": "FIELDS_PRESENT_VALUES_NULL",
+    "pdpRatings": "FIELDS_PRESENT_VALUES_NULL",
+    "noNPlusOne": "PASS"
+  },
+  "apk": {
+    "version": "0.1.8-beta.1",
+    "versionCode": 7,
+    "sha256": "e45193be6089f4eecd26d31f584784195b60a48f9d4afadd6f82ce913c685824",
+    "integrity": "PASS",
+    "rebuildRequired": "NO"
+  },
+  "physicalValidation": "NOT_RUN",
+  "physicalChecklistScenarios": 13,
+  "blockers": [
+    "MARKETPLACE_TRUST_LOOP_ENABLED not true on Railway staging — cannot verify live review/rating data before physical test"
+  ],
+  "finalVerdict": "BLOCKED_BY_STAGING_CONFIGURATION",
+  "maxVerdictBeforeDeviceTest": "READY_FOR_PHYSICAL_VALIDATION",
+  "note": "Cannot declare READY_FOR_CLOSED_BETA until Physical Android completes."
+}

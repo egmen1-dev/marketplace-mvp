@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-08-23T13:20:36.446Z",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "envVar": "MARKETPLACE_TRUST_LOOP_ENABLED",
+  "envVarDirectAccess": false,
+  "envVarDirectAccessReason": "No Railway credentials in cloud agent environment",
+  "runtimeValueInferred": "false",
+  "envVarUnsetVsFalse": "Cannot distinguish unset vs false without Railway variable inspection",
+  "productOpsConfig": {
+    "key": "trust_loop",
+    "stage": "PRODUCTION",
+    "enabled": true
+  },
+  "productOpsNote": "product-ops/config may show trust_loop enabled via DB override; runtime reviews use process.env.MARKETPLACE_TRUST_LOOP_ENABLED only (lib/marketplace-trust-loop/flags.ts)",
+  "enableAttempted": false,
+  "enableBlocked": true,
+  "enableBlockedReason": "Railway CLI unauthorized (npx @railway/cli whoami → Unauthorized). Operator must set MARKETPLACE_TRUST_LOOP_ENABLED=true on Railway web-v2 staging and redeploy.",
+  "operatorSteps": [
+    "Railway → project marketplace-mvp-backup → service web-v2 → Variables",
+    "Set MARKETPLACE_TRUST_LOOP_ENABLED=true (staging only)",
+    "Trigger redeploy / wait for health 200",
+    "Re-run: node scripts/rc3-physical-readiness-validate.mjs",
+    "Verify /admin/system-flags shows Trust Loop ACTIVE (ON)"
+  ],
+  "postEnableExpectation": "Catalog averageRating/reviewsCount populated for products with approved reviews"
+}

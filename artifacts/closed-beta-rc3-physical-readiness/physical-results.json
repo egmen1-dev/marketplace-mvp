@@ -1,0 +1,100 @@
+{
+  "checkedAt": "2026-08-23T13:20:36.446Z",
+  "physicalAndroid": "NOT_RUN",
+  "operator": null,
+  "device": null,
+  "results": [
+    {
+      "id": "A",
+      "name": "INSTALL",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "B",
+      "name": "FIRST_START",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "C",
+      "name": "LOGIN",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "D",
+      "name": "SESSION_PERSISTENCE",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "E",
+      "name": "OFFLINE_DNS",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "F",
+      "name": "COMMERCE_FIRST_HOME",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "G",
+      "name": "NAVIGATION",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "H",
+      "name": "SELLER_CAPABILITIES",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "I",
+      "name": "RATINGS_ON_HOME",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "J",
+      "name": "REVIEWS_ON_PDP",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "K",
+      "name": "PRODUCT_WITHOUT_REVIEWS",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "L",
+      "name": "RESTART_AFTER_NORMAL_USAGE",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    },
+    {
+      "id": "M",
+      "name": "GENERAL_SMOKE",
+      "result": "NOT_RUN",
+      "notes": null,
+      "evidence": null
+    }
+  ],
+  "issues": []
+}

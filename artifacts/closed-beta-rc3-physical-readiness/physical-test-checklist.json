@@ -1,0 +1,104 @@
+{
+  "checkedAt": "2026-08-23T13:20:36.446Z",
+  "candidate": "RC3",
+  "version": "0.1.8-beta.1",
+  "versionCode": 7,
+  "apkPath": "artifacts/closed-beta-rc3/lot_android_closed_beta_0.1.8_beta.1.apk",
+  "apkSha256": "e45193be6089f4eecd26d31f584784195b60a48f9d4afadd6f82ce913c685824",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "operatorNote": "All scenarios start NOT_RUN. Operator executes on physical Android device and records results in physical-results.json.",
+  "scenarios": [
+    {
+      "id": "A",
+      "name": "INSTALL",
+      "result": "NOT_RUN",
+      "steps": 4
+    },
+    {
+      "id": "B",
+      "name": "FIRST_START",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "C",
+      "name": "LOGIN",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "D",
+      "name": "SESSION_PERSISTENCE",
+      "result": "NOT_RUN",
+      "severity": "P0"
+    },
+    {
+      "id": "E",
+      "name": "OFFLINE_DNS",
+      "result": "NOT_RUN",
+      "severity": "P0"
+    },
+    {
+      "id": "F",
+      "name": "COMMERCE_FIRST_HOME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "G",
+      "name": "NAVIGATION",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "H",
+      "name": "SELLER_CAPABILITIES",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "I",
+      "name": "RATINGS_ON_HOME",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "J",
+      "name": "REVIEWS_ON_PDP",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "K",
+      "name": "PRODUCT_WITHOUT_REVIEWS",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "L",
+      "name": "RESTART_AFTER_NORMAL_USAGE",
+      "result": "NOT_RUN"
+    },
+    {
+      "id": "M",
+      "name": "GENERAL_SMOKE",
+      "result": "NOT_RUN"
+    }
+  ],
+  "scenarioCount": 13,
+  "evidenceFormat": {
+    "requiredFields": [
+      "device",
+      "androidVersion",
+      "apkVersion",
+      "apkVersionCode",
+      "screen",
+      "role",
+      "networkState",
+      "stepsToReproduce",
+      "expected",
+      "actual",
+      "screenshotOrVideo",
+      "bootDiagnosticsIfApplicable",
+      "timestamp",
+      "severity"
+    ]
+  },
+  "issueClassification": {
+    "P0": "Closed Beta blocker (install, boot, login, session loss, fatal bootstrap, critical flow inaccessible)",
+    "P1": "Serious experience break (reviews not loading with working backend, broken navigation, seller capability lost)",
+    "P2": "UX/visual (spacing, copy, layout, non-critical empty state)"
+  }
+}
