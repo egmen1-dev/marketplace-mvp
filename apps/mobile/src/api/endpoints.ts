@@ -440,3 +440,17 @@ export async function fetchWebHandoffUrl(dest: string) {
     `/api/mobile/web-handoff/url?${qs.toString()}`,
   );
 }
+
+export type MobileSellerStorefront = {
+  id: string;
+  storeName: string;
+  kindLabel: string;
+  badges: string[];
+  activeProducts: number;
+  joinedLabel: string | null;
+  respondsInChat: boolean;
+};
+
+export async function fetchSellerStorefront(sellerId: string) {
+  return apiRequest<MobileSellerStorefront>(`/api/mobile/seller/${encodeURIComponent(sellerId)}`);
+}

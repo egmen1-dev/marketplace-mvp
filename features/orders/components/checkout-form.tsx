@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { Lock, ShoppingBag } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,11 @@ export function CheckoutForm({
 }: CheckoutFormProps) {
   const router = useRouter();
   const { refresh } = useCart();
+  const idempotencyKeyRef = useRef(
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `checkout-${Date.now()}`,
+  );
   const [state, formAction, pending] = useActionState(
     createOrderFromCartAction,
     initialState,
@@ -174,6 +179,7 @@ export function CheckoutForm({
       <input type="hidden" name="paymentMethod" value={paymentMethod} />
       <input type="hidden" name="fulfillmentType" value={fulfillmentType} />
       <input type="hidden" name="sellerPickupPointId" value={sellerPointId} />
+      <input type="hidden" name="checkoutIdempotencyKey" value={idempotencyKeyRef.current} />
 
       <div className="flex flex-col gap-6">
         {canceled ? (
@@ -515,10 +521,10 @@ export function CheckoutForm({
           type="submit"
           size="cta"
           className="mt-6 w-full"
-          disabled={!canPay || walletInsufficient}
+          disabled={!canPay || walletInsufficient || pending}
         >
           {pending
-            ? "Оформляем…"
+            ? "Создание заказа…"
             : paymentMethod === "wallet"
               ? `Оплатить ${formatPrice(orderTotal, cart.currency)}`
               : fulfillmentType === "SELLER_PICKUP"

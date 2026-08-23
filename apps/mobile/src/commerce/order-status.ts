@@ -1,40 +1,66 @@
-import type { OrderStatus } from "@prisma/client";
+export type MobileBuyerOrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "SHIPPED"
+  | "COMPLETED"
+  | "CANCELLED";
 
-const NEW_STATUSES: OrderStatus[] = ["NEW", "AWAITING_SELLER_CONFIRMATION", "PAID"];
+const PENDING = ["NEW", "AWAITING_SELLER_CONFIRMATION", "PAID"];
+const CONFIRMED = ["CONFIRMED", "PROCESSING", "READY_FOR_SHIPMENT", "READY_FOR_PICKUP"];
+const SHIPPED = ["SHIPPED", "IN_TRANSIT", "ARRIVED"];
+const COMPLETED = ["DELIVERED", "PICKED_UP", "COMPLETED"];
+
+export function toMobileBuyerOrderStatus(status: string): MobileBuyerOrderStatus {
+  const s = status.toUpperCase();
+  if (s === "CANCELLED" || s === "REJECTED") return "CANCELLED";
+  if (PENDING.includes(s)) return "PENDING";
+  if (CONFIRMED.includes(s)) return "CONFIRMED";
+  if (SHIPPED.includes(s)) return "SHIPPED";
+  if (COMPLETED.includes(s)) return "COMPLETED";
+  return "PENDING";
+}
+
+export const BUYER_ORDER_STATUS_LABELS: Record<MobileBuyerOrderStatus, string> = {
+  PENDING: "Ожидает подтверждения",
+  CONFIRMED: "Продавец принял заказ",
+  SHIPPED: "Передан в доставку",
+  COMPLETED: "Заказ завершён",
+  CANCELLED: "Заказ отменён",
+};
+
+export function formatBuyerOrderStatus(status: string): string {
+  return BUYER_ORDER_STATUS_LABELS[toMobileBuyerOrderStatus(status)];
+}
 
 export type BuyerOrderTimelineStep = {
   key: string;
   label: string;
-  emoji: string;
-  reached: boolean;
-  current: boolean;
+  marker: "done" | "current" | "todo";
 };
 
 export function buildBuyerOrderTimeline(status: string): BuyerOrderTimelineStep[] {
-  const normalized = status.toUpperCase() as OrderStatus;
-  const steps: BuyerOrderTimelineStep[] = [
-    { key: "awaiting", label: "Ожидает подтверждения", emoji: "🟠", reached: false, current: false },
-    { key: "confirmed", label: "Принят продавцом", emoji: "🟢", reached: false, current: false },
-    { key: "shipped", label: "Отправлен", emoji: "🚚", reached: false, current: false },
-    { key: "completed", label: "Завершён", emoji: "✅", reached: false, current: false },
-  ];
+  const bucket = toMobileBuyerOrderStatus(status);
 
-  if (normalized === "CANCELLED") {
-    return [
-      { key: "cancelled", label: "Отменён", emoji: "⚫", reached: true, current: true },
-    ];
+  if (bucket === "CANCELLED") {
+    return [{ key: "cancelled", label: "Заказ отменён", marker: "current" }];
   }
 
   const stage =
-    NEW_STATUSES.includes(normalized) ? 0
-    : ["CONFIRMED", "PROCESSING", "READY_FOR_SHIPMENT", "READY_FOR_PICKUP"].includes(normalized) ? 1
-    : ["SHIPPED", "IN_TRANSIT", "ARRIVED"].includes(normalized) ? 2
+    bucket === "PENDING" ? 1
+    : bucket === "CONFIRMED" ? 1
+    : bucket === "SHIPPED" ? 2
     : 3;
+
+  const steps: BuyerOrderTimelineStep[] = [
+    { key: "created", label: "Заказ создан", marker: "todo" },
+    { key: "confirm", label: "Продавец подтверждает", marker: "todo" },
+    { key: "delivery", label: "Доставка", marker: "todo" },
+    { key: "received", label: "Получение", marker: "todo" },
+  ];
 
   return steps.map((step, index) => ({
     ...step,
-    reached: index <= stage,
-    current: index === stage,
+    marker: index < stage ? "done" : index === stage ? "current" : "todo",
   }));
 }
 
@@ -50,14 +76,8 @@ export function sellerOrderActionLabel(status: string): string {
       return "Передать в доставку";
     case "READY_FOR_PICKUP":
       return "Готов к выдаче";
-    case "PICKED_UP":
-      return "Выдан";
-    case "DELIVERED":
-      return "Доставлен";
     case "CANCELLED":
       return "Отменить";
-    case "REJECTED":
-      return "Отклонить";
     default:
       return "Обновить статус";
   }

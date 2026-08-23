@@ -38,7 +38,9 @@ export function mapLotDeepLinkToHref(uri: string): string | null {
     case "brainProduct":
       return `/product/${parsed.productId}`;
     case "order":
-      return "/(tabs)/orders";
+      return parsed.orderId
+        ? `/order/${parsed.orderId}?checkoutSuccess=1`
+        : "/(tabs)/orders?checkoutSuccess=1";
     case "seller":
       return parsed.sellerId
         ? `/seller/${parsed.sellerId}`
@@ -64,8 +66,8 @@ export function mapWebPathToNativeHref(input: string): string | null {
   const product = path.match(/^\/products\/([^/?#]+)/i);
   if (product) return `/product/${product[1]}`;
 
-  const order = path.match(/^\/account\/orders\/([^/?#]+)/i);
-  if (order) return "/(tabs)/orders";
+  const accountOrder = path.match(/^\/account\/orders\/([^/?#]+)/i);
+  if (accountOrder) return `/order/${accountOrder[1]}`;
 
   if (/^\/seller\/products\/?$/i.test(path)) return "/(tabs)/seller-products";
   if (/^\/seller\/orders\/?$/i.test(path)) return "/(tabs)/seller-sales";

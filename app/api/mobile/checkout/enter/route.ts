@@ -3,6 +3,7 @@ import { encode } from "next-auth/jwt";
 import type { UserRole } from "@prisma/client";
 
 import { verifyCheckoutHandoffToken, hashHandoffForLog } from "@/lib/mobile/checkout-handoff";
+import { MOBILE_RETURN_COOKIE } from "@/lib/mobile/checkout-return-cookie";
 import { getCanonicalAppUrl } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { ROUTES } from "@/lib/constants";
@@ -89,6 +90,13 @@ export async function GET(request: Request) {
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 14,
+  });
+  response.cookies.set(MOBILE_RETURN_COOKIE, returnDeepLink, {
+    httpOnly: false,
+    secure,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60,
   });
 
   return response;

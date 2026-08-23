@@ -27,6 +27,7 @@ export default function CartScreen() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const load = useCallback(async () => {
     if (offline) {
@@ -114,7 +115,17 @@ export default function CartScreen() {
         {items.length > 0 ? (
           <>
             <Text style={styles.total}>Итого: {formatPrice(total)}</Text>
-            <PrimaryButton label="Оформить заказ" fullWidth onPress={() => router.push("/checkout")} />
+            <PrimaryButton
+              label={checkoutLoading ? "Создание заказа…" : "Оформить заказ"}
+              fullWidth
+              loading={checkoutLoading}
+              disabled={checkoutLoading}
+              onPress={() => {
+                setCheckoutLoading(true);
+                router.push("/checkout");
+                setTimeout(() => setCheckoutLoading(false), 1500);
+              }}
+            />
           </>
         ) : null}
       </Animated.View>
