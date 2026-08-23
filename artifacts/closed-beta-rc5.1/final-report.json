@@ -17,10 +17,13 @@
   "releaseChannel": "CLOSED_BETA",
   "physicalAndroid": "NOT_RUN",
   "provenance": {
-    "mainSha": "a356c5f",
-    "buildSha": "64b5717",
+    "mainSha": "0adf9d3",
+    "pr144MergeSha": "a356c5f",
+    "rc51MergeSha": "0adf9d3",
+    "buildSha": "977e126",
     "railwaySha": "6e4e97c",
-    "buildTime": "2026-08-23T16:05:00Z"
+    "buildTime": "2026-08-23T16:05:00Z",
+    "mergedAt": "2026-08-23T16:08:53Z"
   },
   "mrp": {
     "publishedVersion": "0.1.10-beta.2",

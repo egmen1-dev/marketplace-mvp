@@ -9,8 +9,12 @@
     { "installedVersionCode": 11, "updateState": "NO_UPDATE", "targetVersionCode": 10, "verdict": "PASS" }
   ],
   "apkIntegrityFromMrpUrl": {
-    "note": "URL resolves after artifacts merged to main",
-    "expectedSha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59"
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc5.1/lot_android_closed_beta_0.1.10_beta.2.apk",
+    "expectedSha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59",
+    "actualSha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59",
+    "sizeBytes": 43492622,
+    "verifiedAt": "2026-08-23T16:09:00Z",
+    "verdict": "PASS"
   },
   "verdict": "PASS"
 }
