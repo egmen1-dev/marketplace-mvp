@@ -11,12 +11,19 @@ type TabBadges = {
   messages: number;
 };
 
+export type CheckoutSuccessState = {
+  orderId: string;
+  orderNumber: string;
+  statusLabel: string;
+} | null;
+
 type AppState = {
   mode: AppMode;
   bootstrapped: boolean;
   bootDegraded: boolean;
   offline: boolean;
   pendingDeepLink: string | null;
+  checkoutSuccess: CheckoutSuccessState;
   remoteConfig: Record<string, unknown>;
   userRole: string | null;
   sellerCapable: boolean;
@@ -27,6 +34,8 @@ type AppState = {
   setBootDegraded: (value: boolean) => void;
   setOffline: (value: boolean) => void;
   setPendingDeepLink: (uri: string | null) => void;
+  setCheckoutSuccess: (state: CheckoutSuccessState) => void;
+  clearCheckoutSuccess: () => void;
   setRemoteConfig: (config: Record<string, unknown>) => void;
   setUserRole: (role: string | null) => void;
   setPendingUpdate: (update: MobileUpdateInfo | null) => void;
@@ -43,6 +52,7 @@ export const useAppStore = create<AppState>((set) => ({
   bootDegraded: false,
   offline: false,
   pendingDeepLink: null,
+  checkoutSuccess: null,
   remoteConfig: {},
   userRole: null,
   sellerCapable: false,
@@ -53,6 +63,8 @@ export const useAppStore = create<AppState>((set) => ({
   setBootDegraded: (bootDegraded) => set({ bootDegraded }),
   setOffline: (offline) => set({ offline }),
   setPendingDeepLink: (pendingDeepLink) => set({ pendingDeepLink }),
+  setCheckoutSuccess: (checkoutSuccess) => set({ checkoutSuccess }),
+  clearCheckoutSuccess: () => set({ checkoutSuccess: null }),
   setRemoteConfig: (remoteConfig) => set({ remoteConfig }),
   setUserRole: (role) =>
     set({

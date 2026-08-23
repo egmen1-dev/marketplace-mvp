@@ -10,6 +10,7 @@ import {
 } from "@prisma/client";
 
 import { generateOrderNumber } from "@/features/orders/lib/order-number";
+import { acquireUserCheckoutLock } from "@/features/orders/lib/checkout-lock";
 import type { CheckoutFormInput } from "@/features/orders/schemas";
 import type {
   CreateOrderResult,
@@ -369,6 +370,8 @@ async function createSellerPickupOrder(opts: {
 
   try {
     const order = await prisma.$transaction(async (tx) => {
+      await acquireUserCheckoutLock(tx, userId);
+
       for (const item of cart.items) {
         const product = await tx.product.findUnique({
           where: { id: item.productId },
@@ -675,6 +678,8 @@ export async function createOrderFromCart(
 
   try {
     const order = await prisma.$transaction(async (tx) => {
+      await acquireUserCheckoutLock(tx, userId);
+
       for (const item of cart.items) {
         const product = await tx.product.findUnique({
           where: { id: item.productId },

@@ -5,6 +5,6 @@ import { mapLotDeepLinkToHref } from "./native-route-map";
 export function routeDeepLink(uri: string): boolean {
   const href = mapLotDeepLinkToHref(uri);
   if (!href) return false;
-  router.push(href);
+  router.replace(href);
   return true;
 }

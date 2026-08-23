@@ -16,7 +16,7 @@ type CheckoutWebPayload = {
 };
 
 export default function CheckoutScreen() {
-  const [loading, setLoading] = useState(false);
+  const [opening, setOpening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payload, setPayload] = useState<CheckoutWebPayload | null>(null);
 
@@ -31,12 +31,13 @@ export default function CheckoutScreen() {
   }, []);
 
   useEffect(() => {
-    load();
+    void load();
   }, [load]);
 
   async function onOpenWebCheckout() {
-    if (!payload?.handoffUrl) return;
-    setLoading(true);
+    if (!payload?.handoffUrl || opening) return;
+    setOpening(true);
+    setError(null);
     trackButtonPress("checkout", "open_web_checkout");
     void trackEvent("checkout", "checkout_web_redirect_started", { strategy: payload.strategy });
     try {
@@ -44,7 +45,7 @@ export default function CheckoutScreen() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Не удалось открыть браузер");
     } finally {
-      setLoading(false);
+      setOpening(false);
     }
   }
 
@@ -56,25 +57,27 @@ export default function CheckoutScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Оформление заказа</Text>
       <Text style={styles.body}>
-        Закрытая бета использует безопасную веб-оплату (Mode A — Web Checkout Redirect). Нативная оплата не
-        имитируется.
+        Оплата проходит в защищённом браузере. После оплаты вернитесь в приложение — заказ появится в разделе
+        «Заказы».
       </Text>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       {payload ? (
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Стратегия: {payload.strategy}</Text>
+          <Text style={styles.cardTitle}>Безопасная веб-оплата</Text>
           <Text style={styles.hint}>
-            После оплаты в браузере вернитесь в приложение. Заказы обновятся автоматически при следующем открытии.
+            После успешной оплаты нажмите «Вернуться в приложение» на сайте или просто откройте ЛОТ снова.
           </Text>
           <PrimaryButton
-            label={loading ? "Открываем…" : "Перейти к оплате в браузере"}
-            onPress={onOpenWebCheckout}
+            label={opening ? "Создание заказа…" : "Перейти к оплате в браузере"}
+            onPress={() => void onOpenWebCheckout()}
+            loading={opening}
+            disabled={opening}
             fullWidth
           />
           <SecondaryButton label="Мои заказы" onPress={onReturnToOrders} fullWidth />
-          <Pressable onPress={() => Linking.openURL(payload.checkoutUrl)}>
+          <Pressable onPress={() => Linking.openURL(payload.checkoutUrl)} disabled={opening}>
             <Text style={styles.link}>Открыть checkout на сайте</Text>
           </Pressable>
         </View>
