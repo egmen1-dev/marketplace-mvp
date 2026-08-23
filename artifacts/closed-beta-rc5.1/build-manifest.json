@@ -1,0 +1,41 @@
+{
+  "candidate": "RC5.1",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.10-beta.2",
+  "versionCode": 10,
+  "commitSha": "64b5717",
+  "mergeCommitSha": "a356c5f",
+  "pr144MergeSha": "a356c5f",
+  "railwaySha": "a356c5f",
+  "buildTime": "2026-08-23T16:05:00Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.10_beta.2.apk",
+    "path": "artifacts/closed-beta-rc5.1/lot_android_closed_beta_0.1.10_beta.2.apk",
+    "sha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59",
+    "sizeBytes": 43492622
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": ["arm64-v8a"],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "useUpdateCheckFlow": true,
+    "profileMenu": true,
+    "updateRoute": true,
+    "fetchMobileUpdate": true,
+    "startApkDownload": true,
+    "bootSplash": true,
+    "catalogToolbar": true,
+    "useCommerceActions": true
+  },
+  "buildNotes": {
+    "release": "RC5.1 — visible /update screen from PR #144",
+    "previousRelease": "RC5 0.1.10-beta.1 (code 9)"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-08-23T16:06:45Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "probes": [
+    { "installedVersionCode": 7, "updateState": "OPTIONAL_UPDATE", "targetVersionCode": 10, "targetVersionName": "0.1.10-beta.2", "verdict": "PASS" },
+    { "installedVersionCode": 8, "updateState": "OPTIONAL_UPDATE", "targetVersionCode": 10, "targetVersionName": "0.1.10-beta.2", "verdict": "PASS" },
+    { "installedVersionCode": 9, "updateState": "OPTIONAL_UPDATE", "targetVersionCode": 10, "targetVersionName": "0.1.10-beta.2", "verdict": "PASS" },
+    { "installedVersionCode": 10, "updateState": "NO_UPDATE", "targetVersionCode": 10, "verdict": "PASS" },
+    { "installedVersionCode": 11, "updateState": "NO_UPDATE", "targetVersionCode": 10, "verdict": "PASS" }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "note": "URL resolves after artifacts merged to main",
+    "expectedSha256": "a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59"
+  },
+  "verdict": "PASS"
+}

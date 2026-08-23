@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-08-23T16:06:45Z",
+  "checkedAt": "2026-08-23T16:06:45Z",
+  "pr144MergeSha": "a356c5f",
+  "releaseCommitSha": "64b5717",
+  "railwayStagingCommit": "6e4e97c",
+  "stagingApiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "parityNote": "Railway behind main until next deploy; RC5.1 is mobile-only bump",
+  "commerceStaging": "PASS (inherited from RC5 gate)"
+}

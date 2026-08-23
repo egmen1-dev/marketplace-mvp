@@ -1,0 +1,1 @@
+a106399225678bb855c51b404d0d399a72a569aaedb8233afe83eab9f7601d59  /workspace/artifacts/closed-beta-rc5.1/lot_android_closed_beta_0.1.10_beta.2.apk
