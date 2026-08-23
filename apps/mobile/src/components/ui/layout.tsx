@@ -52,7 +52,7 @@ export function SectionHeader({ title, actionLabel, onAction }: { title: string;
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.white },
-  scrollContent: { padding: spacing.lg, gap: spacing.lg },
+  scrollContent: { padding: spacing.lg, gap: spacing.md },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   headerText: { flex: 1, gap: spacing.xs },
   headerTitle: { ...typography.h1, color: colors.black },

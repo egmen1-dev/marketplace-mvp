@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import { addToCart, toggleFavorite } from "../api/endpoints";
+import { addToCart, removeCartItem, toggleFavorite, updateCartQuantity } from "../api/endpoints";
 import { ApiClientError } from "../api/client";
+import { useCartQuantitiesStore } from "../commerce/cart-quantities-store";
 import { useAppStore } from "../store/app-store";
 import { showCommerceToast } from "../commerce/commerce-toast-store";
 import { handleCommerceAuthFailure, trackCommerceAction } from "../commerce/commerce-telemetry";
@@ -21,13 +22,17 @@ export function useCommerceActions() {
   const offline = useAppStore((s) => s.offline);
   const favoriteIds = useFavoritesStore((s) => s.ids);
   const hydrated = useFavoritesStore((s) => s.hydrated);
-  const hydrate = useFavoritesStore((s) => s.hydrate);
+  const hydrateFavorites = useFavoritesStore((s) => s.hydrate);
   const setFavorite = useFavoritesStore((s) => s.setFavorite);
+  const cartHydrated = useCartQuantitiesStore((s) => s.hydrated);
+  const hydrateCart = useCartQuantitiesStore((s) => s.hydrate);
+  const setCartQuantity = useCartQuantitiesStore((s) => s.setQuantity);
   const busyRef = useRef(new Set<string>());
 
   useEffect(() => {
-    if (!hydrated) void hydrate();
-  }, [hydrate, hydrated]);
+    if (!hydrated) void hydrateFavorites();
+    if (!cartHydrated) void hydrateCart();
+  }, [hydrateFavorites, hydrateCart, hydrated, cartHydrated]);
 
   const isFavorite = useCallback((productId: string) => favoriteIds.has(productId), [favoriteIds]);
 
@@ -43,6 +48,8 @@ export function useCommerceActions() {
       const startedAt = Date.now();
       try {
         await addToCart(productId, quantity);
+        const current = useCartQuantitiesStore.getState().quantities[productId] ?? 0;
+        setCartQuantity(productId, current + quantity);
         await refreshTabBadges();
         showCommerceToast("Добавлено в корзину", "success");
         await trackCommerceAction({
@@ -71,7 +78,55 @@ export function useCommerceActions() {
         busyRef.current.delete(key);
       }
     },
-    [offline],
+    [offline, setCartQuantity],
+  );
+
+  const changeProductCartQuantity = useCallback(
+    async (productId: string, nextQuantity: number) => {
+      const key = `cart:${productId}`;
+      if (busyRef.current.has(key)) return;
+      if (offline) {
+        showCommerceToast("Для этого действия требуется интернет", "error");
+        return;
+      }
+      busyRef.current.add(key);
+      try {
+        if (nextQuantity <= 0) {
+          await removeCartItem(productId);
+          setCartQuantity(productId, 0);
+        } else {
+          await updateCartQuantity(productId, nextQuantity);
+          setCartQuantity(productId, nextQuantity);
+        }
+        await refreshTabBadges();
+      } catch (err) {
+        if (handleCommerceAuthFailure(err)) {
+          showCommerceToast("Войдите в аккаунт для этого действия", "error");
+        } else {
+          showCommerceToast(formatCommerceError(err), "error");
+        }
+        throw err;
+      } finally {
+        busyRef.current.delete(key);
+      }
+    },
+    [offline, setCartQuantity],
+  );
+
+  const incrementProductCart = useCallback(
+    async (productId: string) => {
+      const current = useCartQuantitiesStore.getState().quantities[productId] ?? 0;
+      await changeProductCartQuantity(productId, current + 1);
+    },
+    [changeProductCartQuantity],
+  );
+
+  const decrementProductCart = useCallback(
+    async (productId: string) => {
+      const current = useCartQuantitiesStore.getState().quantities[productId] ?? 0;
+      await changeProductCartQuantity(productId, Math.max(0, current - 1));
+    },
+    [changeProductCartQuantity],
   );
 
   const toggleProductFavorite = useCallback(
@@ -124,7 +179,10 @@ export function useCommerceActions() {
   return {
     isFavorite,
     addProductToCart,
+    incrementProductCart,
+    decrementProductCart,
     toggleProductFavorite,
     favoritesHydrated: hydrated,
+    cartHydrated,
   };
 }

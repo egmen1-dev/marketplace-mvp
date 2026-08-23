@@ -13,7 +13,7 @@ export default function SellerStorefrontScreen() {
   const params = useLocalSearchParams<{ id?: string; name?: string }>();
   const sellerId = typeof params.id === "string" ? params.id : "";
   const fallbackName = typeof params.name === "string" ? params.name : "Продавец";
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [trust, setTrust] = useState<{
     storeName: string;
@@ -116,6 +116,8 @@ export default function SellerStorefrontScreen() {
               onPress={() => router.push(`/product/${item.id}`)}
               onFavorite={() => toggleProductFavorite(item.id)}
               onAddToCart={() => addProductToCart(item.id, 1)}
+              onIncrementCart={() => incrementProductCart(item.id)}
+              onDecrementCart={() => decrementProductCart(item.id)}
               onSellerPress={() => openSellerStorefront(item.seller?.id ?? sellerId, item.seller?.storeName)}
             />
           )}

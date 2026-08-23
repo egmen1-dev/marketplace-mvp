@@ -11,6 +11,7 @@ import {
   Badge,
   PrimaryButton,
   ProductCard,
+  ProductImageFallback,
   ProductRatingRow,
   ProductReviewsSection,
   SecondaryButton,
@@ -35,7 +36,7 @@ export default function ProductScreen() {
   const insets = useSafeAreaInsets();
   const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const config = loadAppConfig();
   const [product, setProduct] = useState<Record<string, unknown> | null>(null);
   const [similar, setSimilar] = useState<MobileProductListItem[]>([]);
@@ -121,9 +122,7 @@ export default function ProductScreen() {
             {imageUrl ? (
               <Image source={{ uri: imageUrl }} style={styles.heroImage} contentFit="cover" transition={200} />
             ) : (
-              <View style={styles.heroFallback}>
-                <Text style={styles.heroFallbackText}>ЛОТ</Text>
-              </View>
+              <ProductImageFallback />
             )}
             {discount ? <Badge label={`-${discount}%`} tone="brand" style={styles.discountBadge} /> : null}
             {gallery.length > 1 ? (
@@ -221,6 +220,8 @@ export default function ProductScreen() {
                       onPress={() => router.push(`/product/${item.id}`)}
                       onFavorite={() => toggleProductFavorite(item.id)}
                       onAddToCart={() => addProductToCart(item.id, 1)}
+                      onIncrementCart={() => incrementProductCart(item.id)}
+                      onDecrementCart={() => decrementProductCart(item.id)}
                       onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
                     />
                   ))}

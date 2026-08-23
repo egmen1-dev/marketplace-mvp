@@ -53,7 +53,7 @@ export default function CatalogScreen() {
   }>();
   const searchInputRef = useRef<TextInput>(null);
   const fade = useFadeIn();
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
   const [sort, setSort] = useState<CatalogSort>(parseSort(params.sort));
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -178,6 +178,12 @@ export default function CatalogScreen() {
     setCursor(null);
   }
 
+  function catalogEmptyPreset(): "catalog" | "catalogCategory" | "catalogSearch" {
+    if (q.trim()) return "catalogSearch";
+    if (category) return "catalogCategory";
+    return "catalog";
+  }
+
   return (
     <PageContainer style={styles.container}>
       <Animated.View style={{ opacity: fade, gap: spacing.sm, flex: 1 }}>
@@ -244,6 +250,8 @@ export default function CatalogScreen() {
                   onPress={() => router.push(`/product/${item.id}`)}
                   onFavorite={() => toggleProductFavorite(item.id)}
                   onAddToCart={() => addProductToCart(item.id, 1)}
+                  onIncrementCart={() => incrementProductCart(item.id)}
+                  onDecrementCart={() => decrementProductCart(item.id)}
                   onSellerPress={
                     item.seller?.id
                       ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName)
@@ -254,7 +262,7 @@ export default function CatalogScreen() {
             )}
             ListEmptyComponent={
               !loading ? (
-                <EmptyState preset="catalog" actionLabel="Сбросить фильтры" onAction={clearFilters} />
+                <EmptyState preset={catalogEmptyPreset()} actionLabel="Сбросить фильтры" onAction={clearFilters} />
               ) : null
             }
             onEndReached={() => hasMore && !loading && load(false)}
@@ -266,7 +274,7 @@ export default function CatalogScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
+  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: 0 },
   list: { paddingBottom: spacing.xxl, gap: spacing.md },
   row: { justifyContent: "space-between", alignItems: "stretch", marginBottom: spacing.md },
   cardCell: { width: "48%" },

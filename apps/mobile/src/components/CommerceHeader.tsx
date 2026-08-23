@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: spacing.md,
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.xs,
     backgroundColor: colors.white,
   },
   brand: { flex: 1, gap: 2, minHeight: 44, justifyContent: "center" },
