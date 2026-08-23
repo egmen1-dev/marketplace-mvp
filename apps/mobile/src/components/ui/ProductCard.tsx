@@ -5,9 +5,11 @@ import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
+import { useProductCardCommerce } from "../../hooks/useProductCardCommerce";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
-import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
+import { colors, radii, shadows, spacing, typography } from "../../theme/tokens";
 import { PRODUCT_CARD_LAYOUT } from "./product-card-layout";
+import { ProductCardCartCta, type ProductCardCartCtaProps } from "./ProductCardCartCta";
 import { Badge } from "./primitives";
 import { ProductRatingRow } from "./ProductRatingRow";
 
@@ -31,7 +33,7 @@ export function ProductCard({
   product,
   onPress,
   onFavorite,
-  onAddToCart,
+  commerce,
   onSellerPress,
   isFavorite,
   compact,
@@ -41,7 +43,7 @@ export function ProductCard({
   product: MobileProductCardData;
   onPress?: () => void;
   onFavorite?: () => void;
-  onAddToCart?: () => void;
+  commerce?: ProductCardCartCtaProps;
   onSellerPress?: () => void;
   isFavorite?: boolean;
   compact?: boolean;
@@ -143,19 +145,8 @@ export function ProductCard({
             </Text>
           </View>
 
-          {onAddToCart ? (
-            <Pressable
-              style={styles.cta}
-              onPress={(e) => {
-                e.stopPropagation?.();
-                onAddToCart();
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="В корзину"
-            >
-              <MaterialCommunityIcons name="cart-outline" size={16} color={colors.orange} />
-              <Text style={styles.ctaText}>В корзину</Text>
-            </Pressable>
+          {commerce ? (
+            <ProductCardCartCta {...commerce} />
           ) : (
             <View style={styles.ctaPlaceholder} />
           )}
@@ -167,6 +158,16 @@ export function ProductCard({
 
 export function ProductCardGrid({ children }: { children: ReactNode }) {
   return <View style={styles.grid}>{children}</View>;
+}
+
+type ConnectedProductCardProps = Omit<Parameters<typeof ProductCard>[0], "commerce"> & {
+  enableCart?: boolean;
+};
+
+/** ProductCard with cart quantity from shared store — no per-card API fetch. */
+export function ConnectedProductCard({ enableCart = true, ...props }: ConnectedProductCardProps) {
+  const commerce = useProductCardCommerce(props.product.id);
+  return <ProductCard {...props} commerce={enableCart ? commerce : undefined} />;
 }
 
 const styles = StyleSheet.create({
@@ -218,18 +219,5 @@ const styles = StyleSheet.create({
   metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: PRODUCT_CARD_LAYOUT.metaRowMinHeight },
   social: { ...typography.caption, color: colors.gray700, fontWeight: "600", flex: 1 },
   views: { ...typography.caption, color: colors.gray500, textAlign: "right", minWidth: 56 },
-  cta: {
-    marginTop: spacing.xs,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    minHeight: layout.buttonHeightSm,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.orangeSoft,
-    backgroundColor: colors.orangeSoft,
-  },
-  ctaPlaceholder: { minHeight: layout.buttonHeightSm + spacing.xs, marginTop: spacing.xs },
-  ctaText: { ...typography.buttonSm, color: colors.orange },
+  ctaPlaceholder: { minHeight: PRODUCT_CARD_LAYOUT.ctaMinHeight + spacing.xs, marginTop: spacing.xs },
 });

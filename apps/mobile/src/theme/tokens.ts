@@ -1,6 +1,10 @@
 export const colors = {
   orange: "#FF6B00",
   orangeSoft: "#FFF4EB",
+  orangeMuted: "#FFB380",
+  ctaPrimary: "#FF6B00",
+  ctaPrimaryPressed: "#FFB380",
+  ctaPrimaryDisabled: "#FFD4B3",
   black: "#111111",
   white: "#FFFFFF",
   gray100: "#F5F5F5",

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 
 import { fetchCatalog, type MobileProductListItem } from "../../src/api/endpoints";
-import { EmptyState, PageContainer, ProductCard, SecondaryButton, SkeletonGrid } from "../../src/components/ui";
+import { EmptyState, PageContainer, ConnectedProductCard, SecondaryButton, SkeletonGrid } from "../../src/components/ui";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { openSellerConversationFromStorefront } from "../../src/hooks/useChatActions";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
@@ -13,7 +13,7 @@ export default function SellerStorefrontScreen() {
   const params = useLocalSearchParams<{ id?: string; name?: string }>();
   const sellerId = typeof params.id === "string" ? params.id : "";
   const sellerName = typeof params.name === "string" ? params.name : "Продавец";
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { toggleProductFavorite, isFavorite } = useCommerceActions();
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -69,13 +69,12 @@ export default function SellerStorefrontScreen() {
             ) : null
           }
           renderItem={({ item }) => (
-            <ProductCard
+            <ConnectedProductCard
               product={item}
               width="48%"
               isFavorite={isFavorite(item.id)}
               onPress={() => router.push(`/product/${item.id}`)}
               onFavorite={() => toggleProductFavorite(item.id)}
-              onAddToCart={() => addProductToCart(item.id, 1)}
               onSellerPress={() => openSellerStorefront(item.seller?.id ?? sellerId, item.seller?.storeName)}
             />
           )}

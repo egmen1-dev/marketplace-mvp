@@ -12,11 +12,15 @@ export function PageContainer({ children, style, ...rest }: ViewProps) {
   );
 }
 
-export function PageScroll({ children, contentContainerStyle, ...rest }: ScrollViewProps) {
+export function PageScroll({ children, contentContainerStyle, compact, ...rest }: ScrollViewProps & { compact?: boolean }) {
   const insets = useSafeAreaInsets();
   return (
     <ScrollView
-      contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + spacing.xl }, contentContainerStyle]}
+      contentContainerStyle={[
+        compact ? styles.scrollContentCompact : styles.scrollContent,
+        { paddingBottom: insets.bottom + spacing.xl },
+        contentContainerStyle,
+      ]}
       showsVerticalScrollIndicator={false}
       {...rest}
     >
@@ -53,6 +57,7 @@ export function SectionHeader({ title, actionLabel, onAction }: { title: string;
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.white },
   scrollContent: { padding: spacing.lg, gap: spacing.lg },
+  scrollContentCompact: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.md },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.md },
   headerText: { flex: 1, gap: spacing.xs },
   headerTitle: { ...typography.h1, color: colors.black },

@@ -43,8 +43,8 @@ export default function TabsLayout() {
         animation: "fade",
       }}
     >
-      <Tabs.Screen name="index" options={{ title: "Главная", tabBarIcon: tabIcon("home") }} />
-      <Tabs.Screen name="catalog" options={{ title: "Каталог", tabBarIcon: tabIcon("catalog") }} />
+      <Tabs.Screen name="index" options={{ title: "Главная", headerShown: false, tabBarIcon: tabIcon("home") }} />
+      <Tabs.Screen name="catalog" options={{ title: "Каталог", headerShown: false, tabBarIcon: tabIcon("catalog") }} />
       <Tabs.Screen
         name="sell"
         options={{

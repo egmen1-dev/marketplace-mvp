@@ -46,7 +46,7 @@ export function CommerceHeader({ compact, subtitle }: CommerceHeaderProps) {
   const badges = useAppStore((s) => s.badges);
 
   return (
-    <View style={[styles.wrap, { paddingTop: Math.max(insets.top, spacing.sm) }]}>
+    <View style={[styles.wrap, compact ? styles.wrapCompact : null, { paddingTop: compact ? spacing.xs : Math.max(insets.top, spacing.xs) }]}>
       <Pressable
         style={styles.brand}
         onPress={() => router.push("/(tabs)")}
@@ -89,6 +89,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.sm,
     backgroundColor: colors.white,
+  },
+  wrapCompact: {
+    paddingBottom: spacing.xs,
   },
   brand: { flex: 1, gap: 2, minHeight: 44, justifyContent: "center" },
   brandText: { ...typography.h1, color: colors.orange, fontWeight: "800" },

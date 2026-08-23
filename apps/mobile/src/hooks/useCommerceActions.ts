@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import { addToCart, toggleFavorite } from "../api/endpoints";
+import { addToCart, removeCartItem, toggleFavorite, updateCartQuantity } from "../api/endpoints";
 import { ApiClientError } from "../api/client";
+import { useCartStore } from "../commerce/cart-store";
 import { useAppStore } from "../store/app-store";
 import { showCommerceToast } from "../commerce/commerce-toast-store";
 import { handleCommerceAuthFailure, trackCommerceAction } from "../commerce/commerce-telemetry";
@@ -21,38 +22,62 @@ export function useCommerceActions() {
   const offline = useAppStore((s) => s.offline);
   const favoriteIds = useFavoritesStore((s) => s.ids);
   const hydrated = useFavoritesStore((s) => s.hydrated);
-  const hydrate = useFavoritesStore((s) => s.hydrate);
+  const hydrateFavorites = useFavoritesStore((s) => s.hydrate);
   const setFavorite = useFavoritesStore((s) => s.setFavorite);
+  const cartHydrated = useCartStore((s) => s.hydrated);
+  const hydrateCart = useCartStore((s) => s.hydrate);
+  const getCartQuantity = useCartStore((s) => s.getQuantity);
+  const setQuantityLocal = useCartStore((s) => s.setQuantityLocal);
+  const setPending = useCartStore((s) => s.setPending);
   const busyRef = useRef(new Set<string>());
 
   useEffect(() => {
-    if (!hydrated) void hydrate();
-  }, [hydrate, hydrated]);
+    if (!hydrated) void hydrateFavorites();
+    if (!cartHydrated) void hydrateCart();
+  }, [hydrateFavorites, hydrateCart, hydrated, cartHydrated]);
 
   const isFavorite = useCallback((productId: string) => favoriteIds.has(productId), [favoriteIds]);
 
-  const addProductToCart = useCallback(
-    async (productId: string, quantity = 1) => {
+  const getProductCartQuantity = useCallback((productId: string) => getCartQuantity(productId), [getCartQuantity]);
+
+  const setProductCartQuantity = useCallback(
+    async (productId: string, nextQuantity: number) => {
       const key = `cart:${productId}`;
       if (busyRef.current.has(key)) return;
       if (offline) {
         showCommerceToast("Для этого действия требуется интернет", "error");
         return;
       }
+
+      const previous = getCartQuantity(productId);
+      if (nextQuantity === previous) return;
+
       busyRef.current.add(key);
+      setPending(productId, true);
+      setQuantityLocal(productId, nextQuantity);
+
       const startedAt = Date.now();
       try {
-        await addToCart(productId, quantity);
+        if (nextQuantity <= 0) {
+          await removeCartItem(productId);
+        } else if (previous <= 0) {
+          await addToCart(productId, nextQuantity);
+        } else {
+          await updateCartQuantity(productId, nextQuantity);
+        }
         await refreshTabBadges();
-        showCommerceToast("Добавлено в корзину", "success");
+        if (previous <= 0 && nextQuantity > 0) {
+          showCommerceToast("Добавлено в корзину", "success");
+        }
         await trackCommerceAction({
-          action: "add_to_cart",
+          action: nextQuantity <= 0 ? "add_to_cart" : "add_to_cart",
           productId,
           endpoint: "/api/cart",
           startedAt,
           success: true,
         });
       } catch (err) {
+        setQuantityLocal(productId, previous);
         if (handleCommerceAuthFailure(err)) {
           showCommerceToast("Войдите в аккаунт для этого действия", "error");
         } else {
@@ -69,9 +94,34 @@ export function useCommerceActions() {
         throw err;
       } finally {
         busyRef.current.delete(key);
+        setPending(productId, false);
       }
     },
-    [offline],
+    [getCartQuantity, offline, setPending, setQuantityLocal],
+  );
+
+  const addProductToCart = useCallback(
+    async (productId: string, quantity = 1) => {
+      const current = getCartQuantity(productId);
+      await setProductCartQuantity(productId, current > 0 ? current + quantity : quantity);
+    },
+    [getCartQuantity, setProductCartQuantity],
+  );
+
+  const incrementProductCart = useCallback(
+    async (productId: string) => {
+      const current = getCartQuantity(productId);
+      await setProductCartQuantity(productId, current + 1);
+    },
+    [getCartQuantity, setProductCartQuantity],
+  );
+
+  const decrementProductCart = useCallback(
+    async (productId: string) => {
+      const current = getCartQuantity(productId);
+      await setProductCartQuantity(productId, current - 1);
+    },
+    [getCartQuantity, setProductCartQuantity],
   );
 
   const toggleProductFavorite = useCallback(
@@ -123,8 +173,13 @@ export function useCommerceActions() {
 
   return {
     isFavorite,
+    getProductCartQuantity,
     addProductToCart,
+    incrementProductCart,
+    decrementProductCart,
+    setProductCartQuantity,
     toggleProductFavorite,
     favoritesHydrated: hydrated,
+    cartHydrated,
   };
 }
