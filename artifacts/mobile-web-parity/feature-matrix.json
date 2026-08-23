@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-08-23T17:30:00Z",
+  "baseline": "RC5.1 0.1.10-beta.2 (code 10)",
+  "methodology": "Source audit on main — UI→handler→API→persistence chains verified in code",
+  "features": [
+    { "feature": "home_discovery", "web": "app/page.tsx + cached-data", "mobile": "app/(tabs)/index.tsx", "backend": "/api/mobile/buyer/home, /api/mobile/catalog/products", "status": "PARITY", "severity": "P1", "action": "none", "evidence": "sections + category rail + quick filters" },
+    { "feature": "catalog_search", "web": "/catalog?q=", "mobile": "app/(tabs)/catalog.tsx + CommerceHeader search", "backend": "/api/mobile/catalog/products", "status": "PARITY", "severity": "P1", "action": "header search entry added", "evidence": "focusSearch param + CommerceSearchBar" },
+    { "feature": "catalog_filters_sort", "web": "catalog facets", "mobile": "CatalogToolbar", "backend": "/api/mobile/catalog/products", "status": "PARITY", "severity": "P0", "action": "none", "evidence": "sort + inStock + deals + categoryId" },
+    { "feature": "product_pdp", "web": "app/product/[id]", "mobile": "app/product/[id].tsx", "backend": "/api/products/[id]", "status": "PARITY", "severity": "P0", "action": "none", "evidence": "cart + favorites + reviews" },
+    { "feature": "cart", "web": "/cart + /api/cart", "mobile": "app/cart.tsx", "backend": "/api/cart", "status": "PARITY", "severity": "P0", "action": "header badge", "evidence": "refreshTabBadges cart count" },
+    { "feature": "favorites", "web": "server actions", "mobile": "app/(tabs)/favorites.tsx", "backend": "/api/mobile/favorites", "status": "PARITY", "severity": "P0", "action": "none", "evidence": "toggle + list" },
+    { "feature": "checkout", "web": "native checkout + Stripe", "mobile": "app/checkout.tsx", "backend": "/api/mobile/checkout/web-url", "status": "PARTIAL", "severity": "P1", "action": "intentional web handoff", "evidence": "Linking.openURL checkout — WEB_ONLY_INTENTIONAL" },
+    { "feature": "orders", "web": "/account/orders", "mobile": "app/(tabs)/orders.tsx", "backend": "/api/orders", "status": "PARTIAL", "severity": "P1", "action": "order detail screen deferred", "evidence": "list only; chat entry via order detail API" },
+    { "feature": "buyer_seller_chat", "web": "/account/messages + server actions", "mobile": "app/messages/* + CommerceHeader", "backend": "/api/mobile/conversations/*", "status": "PARITY", "severity": "P0", "action": "implemented this EPIC", "evidence": "reuses features/chat/queries.ts" },
+    { "feature": "seller_storefront", "web": "/seller/[id]", "mobile": "app/seller/[id].tsx", "backend": "/api/mobile/catalog/products?sellerId", "status": "PARITY", "severity": "P1", "action": "chat CTA added", "evidence": "storefront + write seller" },
+    { "feature": "seller_products_crud", "web": "/account/products", "mobile": "seller-products tab (read)", "backend": "/api/mobile/seller/products", "status": "PARTIAL", "severity": "P1", "action": "native editor deferred", "evidence": "list + local search; create/edit web" },
+    { "feature": "seller_analytics", "web": "/account/command-center", "mobile": "seller-home partial", "backend": "/api/mobile/seller/home", "status": "PARTIAL", "severity": "P2", "action": "defer", "evidence": "summary metrics only" },
+    { "feature": "wallet_payouts", "web": "/account/wallet", "mobile": "app/(tabs)/wallet.tsx", "backend": "/api/mobile/wallet", "status": "PARTIAL", "severity": "P1", "action": "profile links wallet", "evidence": "balance read; full finance web" },
+    { "feature": "reviews", "web": "trust loop", "mobile": "ProductReviewsSection", "backend": "/api/mobile/products/[id]/reviews", "status": "PARITY", "severity": "P1", "action": "none", "evidence": "read reviews on PDP" },
+    { "feature": "write_review", "web": "post-purchase review", "mobile": "missing", "backend": "web actions", "status": "MISSING_MOBILE", "severity": "P2", "action": "defer post-beta", "evidence": "no mobile write review API" },
+    { "feature": "addresses_profile", "web": "/account/settings", "mobile": "profile identity card only", "backend": "web", "status": "MISSING_MOBILE", "severity": "P2", "action": "defer", "evidence": "no native address book" },
+    { "feature": "notifications_inbox", "web": "/notifications", "mobile": "missing", "backend": "web", "status": "MISSING_MOBILE", "severity": "P2", "action": "defer", "evidence": "seller lifecycle alerts web-only" },
+    { "feature": "update_flow", "web": "n/a", "mobile": "app/update.tsx + ProfileMenu", "backend": "/api/mobile/update", "status": "PARITY", "severity": "P0", "action": "none", "evidence": "RC5.1 update entry" },
+    { "feature": "auth_session", "web": "NextAuth", "mobile": "JWT refresh", "backend": "/api/mobile/auth/*", "status": "PARITY", "severity": "P0", "action": "none", "evidence": "warmSessionFromStorage" },
+    { "feature": "legal_pages", "web": "/privacy /terms", "mobile": "ProfileMenu legal section", "backend": "web static", "status": "WEB_ONLY_INTENTIONAL", "severity": "P2", "action": "legal-links.ts", "evidence": "intentional browser open" }
+  ],
+  "gaps": {
+    "P0": [],
+    "P1": [
+      "checkout_native",
+      "order_detail_screen",
+      "seller_product_editor_native"
+    ],
+    "P2": [
+      "write_review_mobile",
+      "address_book_mobile",
+      "notifications_inbox_mobile",
+      "seller_analytics_deep"
+    ]
+  },
+  "verificationLevels": {
+    "cart": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    "favorites": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    "catalog": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    "chat": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "NOT_BUILT", "physical": "NOT_RUN" },
+    "commerce_header": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "NOT_BUILT", "physical": "NOT_RUN" }
+  }
+}

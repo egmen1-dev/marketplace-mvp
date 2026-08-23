@@ -1,5 +1,6 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
+import type { Ref } from "react";
 
 import { colors, layout, radii, spacing, typography } from "../../theme/tokens";
 
@@ -10,6 +11,7 @@ type CommerceSearchBarProps = TextInputProps & {
   onSelectSuggestion?: (value: string) => void;
   onClearHistory?: () => void;
   showSuggestions?: boolean;
+  inputRef?: Ref<TextInput>;
 };
 
 export function CommerceSearchBar({
@@ -20,6 +22,7 @@ export function CommerceSearchBar({
   onSelectSuggestion,
   onClearHistory,
   showSuggestions,
+  inputRef,
   ...rest
 }: CommerceSearchBarProps) {
   const hasValue = typeof value === "string" && value.length > 0;
@@ -30,6 +33,7 @@ export function CommerceSearchBar({
       <View style={styles.inputWrap}>
         <MaterialCommunityIcons name="magnify" size={20} color={colors.gray500} />
         <TextInput
+          ref={inputRef}
           placeholderTextColor={colors.gray500}
           style={styles.input}
           value={value}

@@ -308,3 +308,96 @@ export type CheckoutWebUrlPayload = {
 export async function fetchCheckoutWebUrl(): Promise<CheckoutWebUrlPayload> {
   return apiRequest<CheckoutWebUrlPayload>("/api/mobile/checkout/web-url");
 }
+
+export type ConversationListItem = {
+  id: string;
+  status: string;
+  updatedAt: string;
+  createdAt: string;
+  unreadCount: number;
+  product: {
+    id: string;
+    title: string;
+    price: number;
+    currency: string;
+    imageUrl: string | null;
+  };
+  counterpart: { name: string; kind: "buyer" | "seller" };
+  lastMessage: {
+    text: string;
+    type: string;
+    createdAt: string;
+    senderId: string | null;
+  } | null;
+};
+
+export type ChatMessage = {
+  id: string;
+  conversationId: string;
+  text: string;
+  type: string;
+  isRead: boolean;
+  createdAt: string;
+  senderId: string | null;
+  sender: { id: string; name: string | null; email: string; image: string | null } | null;
+};
+
+export type ConversationDetail = {
+  id: string;
+  status: string;
+  product: ConversationListItem["product"];
+  buyer: { id: string; name: string | null; email: string; image: string | null };
+  seller: {
+    id: string;
+    storeName: string;
+    slug: string;
+    user: { id: string; name: string | null; email: string; image: string | null };
+  };
+  messages: ChatMessage[];
+};
+
+export async function fetchConversations() {
+  return apiRequest<{ items: ConversationListItem[]; unreadTotal: number }>("/api/mobile/conversations");
+}
+
+export async function fetchConversationsUnread() {
+  return apiRequest<{ unreadTotal: number }>("/api/mobile/conversations/unread");
+}
+
+export async function createConversation(productId: string) {
+  return apiRequest<{ conversationId: string; created: boolean }>("/api/mobile/conversations", {
+    method: "POST",
+    body: JSON.stringify({ productId }),
+  });
+}
+
+export async function fetchConversation(conversationId: string) {
+  return apiRequest<ConversationDetail>(`/api/mobile/conversations/${encodeURIComponent(conversationId)}`);
+}
+
+export async function fetchConversationMessages(conversationId: string, cursor?: string | null) {
+  const qs = new URLSearchParams();
+  if (cursor) qs.set("cursor", cursor);
+  const suffix = qs.toString();
+  return apiRequest<{ items: ChatMessage[]; nextCursor: string | null; hasMore: boolean }>(
+    `/api/mobile/conversations/${encodeURIComponent(conversationId)}/messages${suffix ? `?${suffix}` : ""}`,
+  );
+}
+
+export async function sendConversationMessage(conversationId: string, body: string) {
+  return apiRequest<{ message: ChatMessage }>(
+    `/api/mobile/conversations/${encodeURIComponent(conversationId)}/messages`,
+    { method: "POST", body: JSON.stringify({ body }) },
+  );
+}
+
+export async function markConversationRead(conversationId: string) {
+  return apiRequest<{ unreadCount: number }>(
+    `/api/mobile/conversations/${encodeURIComponent(conversationId)}/read`,
+    { method: "POST", body: JSON.stringify({}) },
+  );
+}
+
+export async function fetchOrder(orderId: string) {
+  return apiRequest<Record<string, unknown>>(`/api/orders/${encodeURIComponent(orderId)}`);
+}

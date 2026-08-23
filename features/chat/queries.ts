@@ -790,3 +790,58 @@ export async function adminDeleteConversation(
     log.info("admin_chat_close", { adminId, conversationId });
   }
 }
+
+/** Paginated message history for mobile API (does not mark read). */
+export async function listMessagesPaginated(opts: {
+  conversationId: string;
+  viewer: { id: string; role: UserRole; sellerProfileId: string | null };
+  cursor?: string | null;
+  limit?: number;
+}): Promise<{ items: ChatMessageDto[]; nextCursor: string | null; hasMore: boolean }> {
+  await assertConversationAccess(opts.conversationId, opts.viewer);
+  const limit = Math.min(Math.max(opts.limit ?? 40, 1), 100);
+
+  const rows = await prisma.message.findMany({
+    where: {
+      conversationId: opts.conversationId,
+      ...(opts.cursor ? { createdAt: { lt: new Date(opts.cursor) } } : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit + 1,
+    include: {
+      sender: {
+        select: { id: true, name: true, email: true, image: true },
+      },
+    },
+  });
+
+  const hasMore = rows.length > limit;
+  const slice = hasMore ? rows.slice(0, limit) : rows;
+  const oldestInPage = slice[slice.length - 1];
+  const items = [...slice].reverse().map(mapMessage);
+  const nextCursor = hasMore ? oldestInPage?.createdAt.toISOString() ?? null : null;
+
+  return { items, nextCursor, hasMore };
+}
+
+/** Mark counterpart messages as read for a participant. */
+export async function markConversationMessagesRead(opts: {
+  conversationId: string;
+  viewer: { id: string; role: UserRole; sellerProfileId: string | null };
+}): Promise<{ unreadCount: number }> {
+  const access = await assertConversationAccess(opts.conversationId, opts.viewer);
+  if (!access.isBuyer && !access.isSeller) {
+    throw new ChatError("Нет доступа к диалогу", "FORBIDDEN");
+  }
+
+  await prisma.message.updateMany({
+    where: {
+      conversationId: opts.conversationId,
+      isRead: false,
+      NOT: { senderId: opts.viewer.id },
+    },
+    data: { isRead: true },
+  });
+
+  return { unreadCount: await countUnreadMessagesForUser({ userId: opts.viewer.id }) };
+}

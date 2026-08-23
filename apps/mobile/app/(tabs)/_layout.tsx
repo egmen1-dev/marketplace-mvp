@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { TabBarBadge, TabBarIcon, type TabIconName } from "../../src/components/ui";
+import { useMessagesBadge } from "../../src/hooks/useMessagesBadge";
 import { useTabBadges } from "../../src/hooks/useTabBadges";
 import { useAppStore } from "../../src/store/app-store";
 import { colors } from "../../src/theme/tokens";
@@ -20,6 +21,7 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
   const badges = useAppStore((s) => s.badges);
   useTabBadges();
+  useMessagesBadge();
 
   const tabBarHeight = 56 + Math.max(insets.bottom, Platform.OS === "android" ? 8 : 0);
 

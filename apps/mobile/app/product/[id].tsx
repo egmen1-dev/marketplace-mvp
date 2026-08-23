@@ -21,6 +21,7 @@ import {
 } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+import { openProductConversation } from "../../src/hooks/useChatActions";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
 import { trackRecentView } from "../../src/storage/recent-views";
 import { discountPercent, resolveImageUrl } from "../../src/utils/format";
@@ -65,6 +66,15 @@ export default function ProductScreen() {
       setMessage("Добавлено в корзину");
     } catch {
       setMessage(null);
+    }
+  }
+
+  async function onWriteSeller() {
+    if (!id) return;
+    try {
+      await openProductConversation(id);
+    } catch {
+      setMessage("Войдите, чтобы написать продавцу");
     }
   }
 
@@ -164,6 +174,10 @@ export default function ProductScreen() {
                 subtitle="Продавец на ЛОТ"
                 onPress={seller.id ? () => openSellerStorefront(seller.id!, seller.storeName) : undefined}
               />
+            ) : null}
+
+            {seller?.id ? (
+              <SecondaryButton label="Написать продавцу" onPress={onWriteSeller} />
             ) : null}
 
             <View style={styles.section}>

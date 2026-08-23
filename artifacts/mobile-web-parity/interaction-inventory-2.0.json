@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-08-23T17:57:54.917Z",
+  "total": 12,
+  "inventory": [
+    {
+      "screen": "home",
+      "element": "CommerceHeader LOT",
+      "action": "navigate home",
+      "route": "/(tabs)",
+      "automated": "mobile-commerce-header.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "home",
+      "element": "CommerceHeader search",
+      "action": "open catalog search",
+      "route": "/(tabs)/catalog?focusSearch=1",
+      "automated": "mobile-search-entry.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "home",
+      "element": "CommerceHeader messages",
+      "action": "open inbox",
+      "route": "/messages",
+      "automated": "mobile-chat.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "home",
+      "element": "CommerceHeader cart",
+      "action": "open cart",
+      "route": "/cart",
+      "automated": "mobile-commerce-header.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "catalog",
+      "element": "search submit",
+      "action": "fetchCatalog q",
+      "route": "/api/mobile/catalog/products",
+      "automated": "mobile-commerce-integration.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "pdp",
+      "element": "Написать продавцу",
+      "action": "createConversation",
+      "route": "/api/mobile/conversations",
+      "automated": "mobile-chat.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "pdp",
+      "element": "add to cart",
+      "action": "POST /api/cart",
+      "route": "/api/cart",
+      "automated": "mobile-commerce-integration.test.ts",
+      "verdict": "PASS_STAGING"
+    },
+    {
+      "screen": "pdp",
+      "element": "toggle favorite",
+      "action": "POST /api/mobile/favorites",
+      "route": "/api/mobile/favorites",
+      "automated": "mobile-commerce-integration.test.ts",
+      "verdict": "PASS_STAGING"
+    },
+    {
+      "screen": "messages",
+      "element": "send message",
+      "action": "POST messages",
+      "route": "/api/mobile/conversations/:id/messages",
+      "automated": "mobile-chat-security.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "profile",
+      "element": "Проверить обновление",
+      "action": "open /update",
+      "route": "/update",
+      "automated": "mobile-update-entry.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "orders",
+      "element": "Написать продавцу",
+      "action": "order product chat",
+      "route": "/api/orders/:id",
+      "automated": "mobile-chat.test.ts",
+      "verdict": "PASS_AUTOMATED"
+    },
+    {
+      "screen": "checkout",
+      "element": "web handoff",
+      "action": "Linking.openURL",
+      "route": "staging web",
+      "automated": "mobile-web-fallback-audit.test.ts",
+      "verdict": "PHYSICAL_REQUIRED"
+    }
+  ]
+}

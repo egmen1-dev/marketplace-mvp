@@ -1,8 +1,9 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Animated, FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Animated, FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
 
 import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../src/api/endpoints";
+import { CommerceHeader } from "../../src/components/CommerceHeader";
 import {
   CatalogToolbar,
   CategoryRail,
@@ -39,7 +40,9 @@ export default function CatalogScreen() {
     sellerId?: string;
     sellerName?: string;
     deals?: string;
+    focusSearch?: string;
   }>();
+  const searchInputRef = useRef<TextInput>(null);
   const fade = useFadeIn();
   const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
@@ -86,6 +89,13 @@ export default function CatalogScreen() {
       });
     }
   }, [params.sort, params.deals, params.sellerId, params.sellerName]);
+
+  useEffect(() => {
+    if (params.focusSearch === "1") {
+      setSearchFocused(true);
+      requestAnimationFrame(() => searchInputRef.current?.focus());
+    }
+  }, [params.focusSearch]);
 
   const load = useCallback(
     async (reset = true) => {
@@ -140,7 +150,9 @@ export default function CatalogScreen() {
   return (
     <PageContainer style={styles.container}>
       <Animated.View style={{ opacity: fade, gap: spacing.sm, flex: 1 }}>
+        <CommerceHeader compact />
         <CommerceSearchBar
+          inputRef={searchInputRef}
           placeholder="Поиск товаров и категорий"
           value={q}
           onChangeText={setQ}

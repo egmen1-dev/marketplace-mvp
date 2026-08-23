@@ -8,6 +8,7 @@ type TabBadges = {
   cart: number;
   favorites: number;
   orders: number;
+  messages: number;
 };
 
 type AppState = {
@@ -46,7 +47,7 @@ export const useAppStore = create<AppState>((set) => ({
   userRole: null,
   sellerCapable: false,
   pendingUpdate: null,
-  badges: { cart: 0, favorites: 0, orders: 0 },
+  badges: { cart: 0, favorites: 0, orders: 0, messages: 0 },
   setMode: (mode) => set({ mode }),
   setBootstrapped: (bootstrapped) => set({ bootstrapped }),
   setBootDegraded: (bootDegraded) => set({ bootDegraded }),

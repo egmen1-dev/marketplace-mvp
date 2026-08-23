@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 
 import { fetchCatalog, type MobileProductListItem } from "../../src/api/endpoints";
-import { EmptyState, PageContainer, ProductCard, SkeletonGrid } from "../../src/components/ui";
+import { EmptyState, PageContainer, ProductCard, SecondaryButton, SkeletonGrid } from "../../src/components/ui";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+import { openSellerConversationFromStorefront } from "../../src/hooks/useChatActions";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
 import { spacing, typography, colors } from "../../src/theme/tokens";
 
@@ -44,6 +45,12 @@ export default function SellerStorefrontScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>{sellerName}</Text>
         <Text style={styles.subtitle}>Товары продавца</Text>
+        {items.length > 0 ? (
+          <SecondaryButton
+            label="Написать продавцу"
+            onPress={() => void openSellerConversationFromStorefront(items).catch(() => null)}
+          />
+        ) : null}
       </View>
 
       {loading && items.length === 0 ? (

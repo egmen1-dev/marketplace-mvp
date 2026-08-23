@@ -1,0 +1,38 @@
+{
+  "results": [
+    {
+      "name": "file:apps/mobile/src/components/CommerceHeader.tsx",
+      "ok": true
+    },
+    {
+      "name": "file:apps/mobile/app/messages/index.tsx",
+      "ok": true
+    },
+    {
+      "name": "file:app/api/mobile/conversations/route.ts",
+      "ok": true
+    },
+    {
+      "name": "file:docs/mobile/EPIC_WEB_MOBILE_PARITY_CHAT.md",
+      "ok": true
+    },
+    {
+      "name": "chat_source_pass",
+      "ok": true
+    },
+    {
+      "name": "chat_apk_not_built",
+      "ok": true
+    },
+    {
+      "name": "no_version_bump",
+      "ok": true
+    },
+    {
+      "name": "mobile_typecheck",
+      "ok": true
+    }
+  ],
+  "failed": 0,
+  "verdict": "READY_FOR_BUILD"
+}
