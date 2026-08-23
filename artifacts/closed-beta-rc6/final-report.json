@@ -1,0 +1,90 @@
+{
+  "candidate": "RC6",
+  "finalVerdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "buildResult": "SUCCESS",
+  "pr146": {
+    "status": "MERGED",
+    "headSha": "4f5ce740be1851bf38dc3d5456d7253d143ea5e2",
+    "mergeSha": "0be57c5b06fcac6ef728830b8b135b0bae0a4fb0",
+    "mainShaAfterMerge": "0be57c5b06fcac6ef728830b8b135b0bae0a4fb0"
+  },
+  "pr147": {
+    "status": "MERGED",
+    "mergeSha": "f1ed1ac",
+    "versionBumpCommit": "b774ebd"
+  },
+  "mainSha": "f1ed1ac",
+  "chatSecurity": {
+    "verdict": "PASS",
+    "mechanism": "staging_http_api",
+    "testsExecuted": 22,
+    "testsPassed": 22,
+    "skippedCount": 0,
+    "vitestPrismaSkipped": 5,
+    "note": "Prisma-direct vitest suites skipped without local DATABASE_URL; staging HTTP validates same backend on Railway DB"
+  },
+  "chatStaging": {
+    "create": true,
+    "send": true,
+    "receive": true,
+    "reply": true,
+    "read": true,
+    "unread": true,
+    "unauthorized": true,
+    "verdict": "PASS"
+  },
+  "commerceHeader": {
+    "search": "PASS (source)",
+    "messages": "PASS (source)",
+    "cart": "PASS (source)",
+    "badges": "PASS (source — real cart/unread, no polling)"
+  },
+  "build": "SUCCESS",
+  "apk": {
+    "path": "artifacts/closed-beta-rc6/lot_android_closed_beta_0.1.11_beta.1.apk",
+    "sizeBytes": 43519078,
+    "sha256": "128530437e73baf599e9a2db800a5c2f335d10252004437dc6e2effbb6723afe",
+    "versionName": "0.1.11-beta.1",
+    "versionCode": 11,
+    "package": "ru.lot.marketplace.alpha",
+    "abi": ["arm64-v8a"],
+    "minSdk": 24,
+    "targetSdk": 36,
+    "environment": "staging",
+    "releaseChannel": "CLOSED_BETA",
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "commitSha": "b774ebd",
+    "buildTime": "2026-08-23T18:15:00Z"
+  },
+  "mrp": {
+    "publishStatus": "PUBLISHED",
+    "versionName": "0.1.11-beta.1",
+    "versionCode": 11,
+    "code7": "OPTIONAL_UPDATE → 11",
+    "code8": "OPTIONAL_UPDATE → 11",
+    "code9": "OPTIONAL_UPDATE → 11",
+    "code10": "OPTIONAL_UPDATE → 11",
+    "code11": "NO_UPDATE",
+    "code12": "NO_UPDATE",
+    "apkSha256Match": "PASS"
+  },
+  "regression": {
+    "cart": "PASS (staging)",
+    "favorites": "PASS (staging)",
+    "catalog": "PASS (staging)",
+    "seller": "PASS (staging)",
+    "session": "PASS (staging)",
+    "update": "PASS (source + bundle)",
+    "visual": "PASS (bundle)"
+  },
+  "physical": "NOT_RUN",
+  "multiLevelGate": {
+    "Cart": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Favorites": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Catalog": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Seller": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "Chat": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" },
+    "CommerceHeader": { "source": "PASS", "integration": "PASS", "staging": "NOT_RUN", "apk": "PASS", "physical": "NOT_RUN" },
+    "Update": { "source": "PASS", "integration": "PASS", "staging": "PASS", "apk": "PASS", "physical": "NOT_RUN" }
+  }
+}
