@@ -4,6 +4,7 @@ export type MobileSellerHomePayload = {
   products: { active: number; needAttention: number };
   promotion: { active: number };
   intelligence: { topAction: string | null; productId: string | null };
+  sales: { todayCount: number; awaitingCount: number; messagesUnread: number };
   advisoryOnly: true;
 };
 
@@ -14,6 +15,7 @@ export function buildMobileSellerHomePayload(input?: Partial<MobileSellerHomePay
     products: input?.products ?? { active: 0, needAttention: 0 },
     promotion: input?.promotion ?? { active: 0 },
     intelligence: input?.intelligence ?? { topAction: null, productId: null },
+    sales: input?.sales ?? { todayCount: 0, awaitingCount: 0, messagesUnread: 0 },
     advisoryOnly: true,
   };
 }

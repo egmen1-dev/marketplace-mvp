@@ -1,18 +1,30 @@
 import { OrderStatus, ProductStatus } from "@prisma/client";
 
 import { resolveRequestUser, isSellerCapable } from "@/features/auth/resolve-request-user";
+import { countUnreadMessagesForUser } from "@/features/chat/queries";
 import { LOW_STOCK_THRESHOLD } from "@/features/orders/lib/inventory-sync";
 import { getWalletOverview, isLotWalletEnabled } from "@/lib/lot-wallet";
 import { prisma } from "@/lib/prisma";
 
 import { buildMobileSellerHomePayload, type MobileSellerHomePayload } from "./seller-home";
 
+function startOfTodayMoscow(): Date {
+  const now = new Date();
+  const moscow = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Moscow" }));
+  moscow.setHours(0, 0, 0, 0);
+  const offsetMs = now.getTime() - new Date(now.toLocaleString("en-US", { timeZone: "Europe/Moscow" })).getTime();
+  return new Date(moscow.getTime() + offsetMs);
+}
+
 export async function buildMobileSellerHomeForUser(userId: string, sellerProfileId: string | null): Promise<MobileSellerHomePayload> {
   if (!sellerProfileId) {
     return buildMobileSellerHomePayload();
   }
 
-  const [activeProducts, outOfStockCount, lowStockCount, needActionOrders, promotionActive, wallet] = await Promise.all([
+  const todayStart = startOfTodayMoscow();
+  const sellerOrderBase = { items: { some: { product: { sellerId: sellerProfileId } } } };
+
+  const [activeProducts, outOfStockCount, lowStockCount, needActionOrders, promotionActive, wallet, todayOrders, awaitingOrders, messagesUnread] = await Promise.all([
     prisma.product.count({ where: { sellerId: sellerProfileId, status: ProductStatus.ACTIVE } }),
     prisma.product.count({
       where: {
@@ -45,6 +57,25 @@ export async function buildMobileSellerHomeForUser(userId: string, sellerProfile
     isLotWalletEnabled()
       ? getWalletOverview({ userId, sellerProfileId }).catch(() => null)
       : Promise.resolve(null),
+    prisma.order.count({
+      where: {
+        ...sellerOrderBase,
+        createdAt: { gte: todayStart },
+      },
+    }),
+    prisma.order.count({
+      where: {
+        ...sellerOrderBase,
+        status: {
+          in: [
+            OrderStatus.NEW,
+            OrderStatus.AWAITING_SELLER_CONFIRMATION,
+            OrderStatus.PAID,
+          ],
+        },
+      },
+    }),
+    countUnreadMessagesForUser({ userId }).catch(() => 0),
   ]);
 
   return buildMobileSellerHomePayload({
@@ -56,6 +87,11 @@ export async function buildMobileSellerHomeForUser(userId: string, sellerProfile
     products: { active: activeProducts, needAttention: outOfStockCount + lowStockCount },
     promotion: { active: promotionActive },
     intelligence: { topAction: null, productId: null },
+    sales: {
+      todayCount: todayOrders,
+      awaitingCount: awaitingOrders,
+      messagesUnread,
+    },
   });
 }
 

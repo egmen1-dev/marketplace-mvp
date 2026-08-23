@@ -48,6 +48,7 @@ function RootShell() {
         <Stack.Screen name="seller/[id]" options={{ title: "Продавец" }} />
         <Stack.Screen name="cart" options={{ title: "Корзина" }} />
         <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
+        <Stack.Screen name="order/[id]" options={{ title: "Заказ" }} />
         <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />
         <Stack.Screen name="about" options={{ title: "О приложении" }} />
         <Stack.Screen name="update" options={{ title: "Проверить обновление" }} />
