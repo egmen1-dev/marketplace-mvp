@@ -149,6 +149,10 @@ export function useLotCreateForm() {
     () => Number(draft.price.replace(/\s/g, "").replace(",", ".")),
     [draft.price],
   );
+  const stockNumber = useMemo(() => {
+    const n = Number(draft.stock.replace(/\s/g, ""));
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
+  }, [draft.stock]);
 
   const canContinuePhotos = draft.images.length > 0;
   const canContinueDetails =
@@ -245,6 +249,7 @@ export function useLotCreateForm() {
       productTypeId: draft.productTypeId,
       categoryId: draft.categoryId,
       images,
+      stock: stockNumber,
       status,
       pickupEnabled: draft.pickupEnabled,
       pickupPointIds: draft.pickupPointIds,
@@ -330,6 +335,12 @@ export function useLotCreateForm() {
         setError(LOT_CREATE_COPY.uploadError);
       } else if (message.toLowerCase().includes("самовывоз") || message.toLowerCase().includes("точк")) {
         setError(LOT_CREATE_COPY.pickupSaveError);
+      } else if (
+        message.toLowerCase().includes("network") ||
+        message.toLowerCase().includes("fetch") ||
+        message.toLowerCase().includes("сеть")
+      ) {
+        setError(LOT_CREATE_COPY.networkError);
       } else {
         setError(message);
       }
@@ -359,6 +370,7 @@ export function useLotCreateForm() {
     error,
     info,
     priceNumber,
+    stockNumber,
     canContinuePhotos,
     canContinueDetails,
     persist,

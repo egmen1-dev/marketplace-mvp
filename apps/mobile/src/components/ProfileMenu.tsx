@@ -70,7 +70,7 @@ export function ProfileMenu({
   const sales: MenuItem[] = sellerCapable
     ? [
         { id: "products", label: "Мои ЛОТы", icon: "tag-outline", onPress: () => router.push("/(tabs)/seller-products") },
-        { id: "add-product", label: "Добавить товар", icon: "plus-circle-outline", onPress: () => router.push("/(tabs)/sell") },
+        { id: "add-product", label: "Создать ЛОТ", icon: "plus-circle-outline", onPress: () => router.push("/(tabs)/sell") },
         { id: "sales", label: "Продажи", icon: "chart-line", onPress: () => router.push("/(tabs)/seller-sales") },
         { id: "seller-home", label: "Кабинет продавца", icon: "store-outline", onPress: () => router.push("/(tabs)/seller-home") },
       ]

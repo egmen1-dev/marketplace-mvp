@@ -23,6 +23,7 @@ export type LotDraft = {
   pickupEnabled: boolean;
   pickupPointIds: string[];
   savedProductId: string | null;
+  stock: string;
   step: "photos" | "details" | "preview";
   updatedAt: string;
 };
@@ -41,6 +42,7 @@ export const EMPTY_LOT_DRAFT: LotDraft = {
   pickupEnabled: false,
   pickupPointIds: [],
   savedProductId: null,
+  stock: "1",
   step: "photos",
   updatedAt: new Date().toISOString(),
 };
@@ -94,6 +96,7 @@ function normalizeDraft(raw: Record<string, unknown>): LotDraft {
     pickupEnabled: Boolean(raw.pickupEnabled),
     pickupPointIds: Array.isArray(raw.pickupPointIds) ? (raw.pickupPointIds as string[]) : [],
     savedProductId: (raw.savedProductId as string | null) ?? null,
+    stock: String(raw.stock ?? "1"),
     step: (raw.step as LotDraft["step"]) ?? "photos",
     updatedAt: String(raw.updatedAt ?? new Date().toISOString()),
   };

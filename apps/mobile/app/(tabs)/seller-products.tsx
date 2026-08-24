@@ -101,9 +101,19 @@ export default function SellerProductsScreen() {
           )}
           ListEmptyComponent={
             <EmptyState
-              title={tab === "drafts" ? "Сохранённых ЛОТов пока нет" : tab === "sold" ? "Проданных ЛОТов пока нет" : "Активных ЛОТов пока нет"}
-              description="Создайте ЛОТ, чтобы покупатели могли его найти"
-              actionLabel="Создать ЛОТ"
+              title={
+                tab === "active"
+                  ? "У вас пока нет ЛОТов"
+                  : tab === "drafts"
+                    ? "Сохранённых ЛОТов пока нет"
+                    : "Проданных ЛОТов пока нет"
+              }
+              description={
+                tab === "active"
+                  ? "Создайте первый ЛОТ — покупатели увидят его в каталоге"
+                  : "Создайте ЛОТ, чтобы покупатели могли его найти"
+              }
+              actionLabel={tab === "active" ? "Создать первый ЛОТ" : "Создать ЛОТ"}
               onAction={() => router.push("/sell/create")}
             />
           }

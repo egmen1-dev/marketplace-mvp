@@ -158,7 +158,7 @@ export default function CreateLotScreen() {
 
         {form.productTypes.length > 0 ? (
           <>
-            <Text style={styles.label}>Тип товара</Text>
+            <Text style={styles.label}>{LOT_CREATE_COPY.productTypeLabel}</Text>
             {form.productTypes.map((pt) => (
               <Pressable
                 key={pt.id}
@@ -180,10 +180,19 @@ export default function CreateLotScreen() {
           onChangeText={(price) => form.persist({ ...form.draft, price, step: "details" })}
         />
 
+        <Text style={styles.label}>{LOT_CREATE_COPY.stockLabel}</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="1"
+          keyboardType="numeric"
+          value={form.draft.stock}
+          onChangeText={(stock) => form.persist({ ...form.draft, stock, step: "details" })}
+        />
+
         <Text style={styles.label}>Расскажите о ЛОТе</Text>
         <TextInput
           style={[styles.input, styles.textarea]}
-          placeholder="Описание товара"
+          placeholder={LOT_CREATE_COPY.descriptionPlaceholder}
           multiline
           value={form.draft.description}
           onChangeText={(description) => form.persist({ ...form.draft, description, step: "details" })}
