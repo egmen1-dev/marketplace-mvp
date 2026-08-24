@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-08-24T11:05:27.192Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "probes": [
+    {
+      "installedVersionCode": 7,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 8,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 9,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 10,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 11,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 12,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 13,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 14,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 15,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 16,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 16,
+      "targetVersionName": "0.1.15-beta.1",
+      "verdict": "PASS"
+    }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
+    "httpOk": false,
+    "expectedSha256": "8953ffe1002f362896dfb79af63f30078cede6c184e8a6ac73e59eab57664820",
+    "actualSha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
+    "sizeBytes": 14,
+    "verdict": "FAIL"
+  },
+  "verdict": "FAIL"
+}

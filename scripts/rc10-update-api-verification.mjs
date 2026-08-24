@@ -9,7 +9,7 @@ const OUT = resolve("artifacts/closed-beta-rc10/update-api-verification.json");
 const manifest = JSON.parse(readFileSync(resolve("artifacts/closed-beta-rc10/build-manifest.json"), "utf8"));
 
 async function probe(versionCode) {
-  const res = await fetch(`${STAGING}/api/mobile/android/update?versionCode=${versionCode}`, {
+  const res = await fetch(`${STAGING}/api/mobile/android/update?versionCode=${versionCode}&channel=BETA`, {
     signal: AbortSignal.timeout(20000),
   });
   const body = await res.json().catch(() => ({}));
