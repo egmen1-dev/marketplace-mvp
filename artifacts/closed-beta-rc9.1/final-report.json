@@ -1,0 +1,23 @@
+{
+  "candidate": "RC9.1",
+  "generatedAt": "2026-08-24T07:12:00Z",
+  "verdict": "READY_FOR_SELLER_PHYSICAL_TEST",
+  "versionName": "0.1.14-beta.2",
+  "versionCode": 15,
+  "commitSha": "00972cd",
+  "gates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "epic158": "PASS",
+    "epic158_1": "PASS",
+    "rc9_1StagingGate": "PASS",
+    "rc9_1ApkVerify": "PASS",
+    "releasePipeline": "PASS",
+    "physicalChecklist": "NOT_RUN"
+  },
+  "artifact": {
+    "path": "artifacts/closed-beta-rc9.1/lot_android_closed_beta_0.1.14_beta.2.apk",
+    "sha256": "fc5a0f1899f7f56066d07aecbd2d6d9ed9ee192249e9d8721b29fb99891a9fc2",
+    "sizeBytes": 43607582
+  }
+}

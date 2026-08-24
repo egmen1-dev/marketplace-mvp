@@ -27,7 +27,7 @@ export default function SellScreen() {
         <SectionHeader title="Продать" />
         <View style={styles.sellerHub}>
           <Text style={styles.hubTitle}>Выложите ЛОТ</Text>
-          <Text style={styles.hubBody}>Создайте карточку товара и опубликуйте её для покупателей</Text>
+          <Text style={styles.hubBody}>Создайте ЛОТ и опубликуйте его для покупателей</Text>
           <View style={styles.actions}>
             <PrimaryButton label="Создать ЛОТ" fullWidth onPress={() => router.push("/sell/create")} />
             <SecondaryButton label="Мои ЛОТы" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />

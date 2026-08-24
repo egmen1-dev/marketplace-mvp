@@ -1,0 +1,15 @@
+{
+  "candidate": "RC9.1",
+  "generatedAt": "2026-08-24T07:12:00Z",
+  "verdict": "PASS",
+  "gates": [
+    { "id": "build", "status": "PASS" },
+    { "id": "mobile:typecheck", "status": "PASS" },
+    { "id": "mobile:epic-158:gate", "status": "PASS" },
+    { "id": "mobile:epic-158-1:gate", "status": "PASS" },
+    { "id": "mobile:rc9.1:staging-gate", "status": "PASS" },
+    { "id": "mobile:rc9.1:apk-verify", "status": "PASS" },
+    { "id": "release:pipeline:verify", "status": "PASS" },
+    { "id": "physical-checklist", "status": "NOT_RUN" }
+  ]
+}

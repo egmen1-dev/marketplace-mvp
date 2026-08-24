@@ -1,0 +1,57 @@
+{
+  "candidate": "RC9.1",
+  "generatedAt": "2026-08-24T07:05:00Z",
+  "status": "NOT_RUN",
+  "operator": null,
+  "account": "seller@demo.lot",
+  "scenarios": [
+    {
+      "id": "0",
+      "name": "Identity",
+      "expected": "0.1.14-beta.2, code 15, RC9.1, CLOSED_BETA, staging",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "1",
+      "name": "SELLER HAPPY PATH — restore after app close",
+      "steps": [
+        "Продать → Создать ЛОТ",
+        "Заполнить фото, название, категорию, описание, цену, количество",
+        "Включить самовывоз, выбрать точку",
+        "Закрыть приложение",
+        "Открыть снова → «Вы начали создавать ЛОТ» → Продолжить",
+        "Все поля сохранены"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "2",
+      "name": "Error resilience — pickup/network",
+      "steps": [
+        "Создание ЛОТа → выбор точки самовывоза",
+        "Симулировать ошибку сети / API",
+        "Вернуться в форму",
+        "Ожидание: «Ваш ЛОТ сохранён. Можно продолжить позже.» — форма не очищена"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "3",
+      "name": "Publish LOT",
+      "steps": ["Предпросмотр → Опубликовать ЛОТ", "ЛОТ виден в каталоге и в Мои ЛОТы"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "4",
+      "name": "Buyer regression",
+      "steps": ["Каталог → PDP → чат → корзина → заказ"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "5",
+      "name": "Seller order loop",
+      "steps": ["Продавец получает заказ → меняет статус"],
+      "status": "NOT_RUN"
+    }
+  ]
+}

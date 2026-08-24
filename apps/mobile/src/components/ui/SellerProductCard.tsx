@@ -26,7 +26,7 @@ export function SellerProductCard({
   const tone = productStatusTone(product.status);
 
   function openMenu() {
-    Alert.alert(product.title, "Действия с товаром", [
+    Alert.alert(product.title, "Действия с ЛОТом", [
       { text: "Открыть карточку", onPress },
       { text: "Обновить список", onPress: onRefresh },
       { text: "Отмена", style: "cancel" },
