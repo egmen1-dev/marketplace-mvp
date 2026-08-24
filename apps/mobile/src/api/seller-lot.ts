@@ -108,6 +108,22 @@ export async function createSellerLot(payload: CreateLotPayload) {
   );
 }
 
+export async function updateSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
+  const pickupEnabled = payload.pickupEnabled ?? false;
+  const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
+  return apiRequest<{ product: { id: string }; message?: string }>(
+    `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        ...payload,
+        pickupEnabled,
+        pickupPointIds,
+      }),
+    },
+  );
+}
+
 export async function publishSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
   return apiRequest<{ product: { id: string }; message?: string }>(
     `/api/mobile/seller/products/${encodeURIComponent(productId)}`,

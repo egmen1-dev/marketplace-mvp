@@ -36,8 +36,9 @@ export const LOT_CREATE_COPY = {
   productTypeLabel: "Тип ЛОТа",
   validationDetails: "Заполните название, цену, город и категорию — затем откройте предпросмотр.",
   successTitle: "ЛОТ опубликован",
-  successBody: "Покупатели уже могут его увидеть",
+  successBody: "Ваш ЛОТ теперь виден покупателям",
+  successSavedTitle: "ЛОТ сохранён",
   viewLot: "Посмотреть ЛОТ",
-  createAnother: "Создать ещё один ЛОТ",
+  createAnother: "Создать ещё один",
   savedLocally: "ЛОТ сохранён. Вы можете продолжить позже.",
 } as const;

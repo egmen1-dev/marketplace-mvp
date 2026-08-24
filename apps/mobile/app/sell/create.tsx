@@ -71,12 +71,16 @@ export default function CreateLotScreen() {
   );
 
   if (form.step === "success") {
+    const savedForReview = form.info === LOT_CREATE_COPY.savedForReview;
     return (
       <View style={styles.successWrap}>
-        <Text style={styles.successEmoji}>🎉</Text>
-        <Text style={styles.successTitle}>{LOT_CREATE_COPY.successTitle}</Text>
-        <Text style={styles.successBody}>{LOT_CREATE_COPY.successBody}</Text>
-        {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
+        <Text style={styles.successEmoji}>{savedForReview ? "✅" : "🎉"}</Text>
+        <Text style={styles.successTitle}>
+          {savedForReview ? LOT_CREATE_COPY.successSavedTitle : LOT_CREATE_COPY.successTitle}
+        </Text>
+        <Text style={styles.successBody}>
+          {savedForReview ? LOT_CREATE_COPY.savedForReview : LOT_CREATE_COPY.successBody}
+        </Text>
         {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
         <View style={styles.actions}>
           {form.publishedId ? (

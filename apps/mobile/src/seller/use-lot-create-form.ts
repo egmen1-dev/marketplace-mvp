@@ -7,7 +7,9 @@ import {
   createSellerLot,
   fetchSellerPickupPoints,
   fetchTaxonomyBrowse,
+  publishSellerLot,
   suggestProductType,
+  updateSellerLot,
   uploadSellerLotImage,
   type SellerPickupPoint,
 } from "../api/seller-lot";
@@ -307,6 +309,44 @@ export function useLotCreateForm() {
     return images;
   }
 
+  async function persistServerDraft(images: Array<{ url: string; pathname?: string | null }>) {
+    const payload = buildPayload(images, "DRAFT");
+    if (draft.savedProductId) {
+      await updateSellerLot(draft.savedProductId, payload);
+      return draft.savedProductId;
+    }
+    const created = await createSellerLot(payload);
+    return created.product.id;
+  }
+
+  async function publishOnServer(images: Array<{ url: string; pathname?: string | null }>) {
+    const activePayload = buildPayload(images, "ACTIVE");
+    const draftPayload = buildPayload(images, "DRAFT");
+    let productId: string | null = draft.savedProductId;
+    let reviewNote: string | null = null;
+
+    if (productId) {
+      try {
+        await publishSellerLot(productId, activePayload);
+      } catch {
+        await updateSellerLot(productId, draftPayload);
+        reviewNote = LOT_CREATE_COPY.savedForReview;
+      }
+      return { productId, reviewNote };
+    }
+
+    try {
+      const created = await createSellerLot(activePayload);
+      productId = created.product.id;
+    } catch {
+      const created = await createSellerLot(draftPayload);
+      productId = created.product.id;
+      reviewNote = LOT_CREATE_COPY.savedForReview;
+    }
+
+    return { productId, reviewNote };
+  }
+
   async function saveLotLocallyAndServer() {
     setSavingLot(true);
     clearErrors();
@@ -317,8 +357,8 @@ export function useLotCreateForm() {
     try {
       await flushSave(draft);
       const images = await uploadImagesWithRecovery();
-      const created = await createSellerLot(buildPayload(images, "DRAFT"));
-      const saved = { ...draft, savedProductId: created.product.id };
+      const productId = await persistServerDraft(images);
+      const saved = { ...draft, savedProductId: productId };
       await flushSave(saved);
       setDraft(saved);
       setInfo(LOT_CREATE_COPY.savedLocally);
@@ -340,17 +380,7 @@ export function useLotCreateForm() {
     uploadFailedRef.current = false;
     try {
       const images = await uploadImagesWithRecovery();
-      let productId: string | null = draft.savedProductId;
-      let reviewNote: string | null = null;
-
-      try {
-        const created = await createSellerLot(buildPayload(images, "ACTIVE"));
-        productId = created.product.id;
-      } catch {
-        const created = await createSellerLot(buildPayload(images, "DRAFT"));
-        productId = created.product.id;
-        reviewNote = LOT_CREATE_COPY.savedForReview;
-      }
+      const { productId, reviewNote } = await publishOnServer(images);
 
       setPublishedId(productId);
       setInfo(reviewNote);
