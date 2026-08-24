@@ -70,6 +70,7 @@
     "mobile:epic-157:gate": "tsx scripts/epic-157-mobile-ux-polish-gate.ts",
     "mobile:epic-158:gate": "tsx scripts/epic-158-seller-lot-creation-gate.ts",
     "mobile:epic-158-1:gate": "tsx scripts/epic-158-1-seller-lot-ux-gate.ts",
+    "mobile:epic-158-2:gate": "tsx scripts/epic-158-2-seller-ux-simplify-gate.ts",
     "product:epic-103:beta-rc": "tsx scripts/epic-103-closed-beta-rc-gate.ts",
     "product:epic-104:closed-beta-readiness": "tsx scripts/epic-104-closed-beta-readiness-gate.ts",
     "product:epic-105:closed-beta-launch-validation": "tsx scripts/epic-105-closed-beta-launch-validation-gate.ts",

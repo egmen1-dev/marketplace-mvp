@@ -14,6 +14,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { PrimaryButton, SecondaryButton } from "../../src/components/ui";
 import { ProductImageFallback } from "../../src/components/ui/ProductImageFallback";
 import { LotAutosaveIndicator } from "../../src/seller/LotAutosaveIndicator";
+import { LotCreateStickyFooter } from "../../src/seller/LotCreateStickyFooter";
 import { LotRestorePrompt } from "../../src/seller/LotRestorePrompt";
 import { LOT_CONDITION_OPTIONS, emojiForCategoryName } from "../../src/seller/lot-create-constants";
 import { LOT_CREATE_COPY } from "../../src/seller/lot-create-copy";
@@ -21,6 +22,31 @@ import { EMPTY_LOT_DRAFT } from "../../src/seller/lot-draft-storage";
 import { useLotCreateForm } from "../../src/seller/use-lot-create-form";
 import { formatPrice } from "../../src/utils/format";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
+
+function LotCreateErrorBlock({
+  error,
+  detail,
+  canRetry,
+  onRetry,
+}: {
+  error: string | null;
+  detail: string | null;
+  canRetry: boolean;
+  onRetry: () => void;
+}) {
+  if (!error) return null;
+  return (
+    <View style={styles.errorBlock}>
+      <Text style={styles.errorText}>{error}</Text>
+      {detail ? <Text style={styles.errorDetail}>{detail}</Text> : null}
+      {canRetry ? (
+        <Pressable onPress={onRetry} accessibilityRole="button">
+          <Text style={styles.retryText}>{LOT_CREATE_COPY.retryLabel}</Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
 
 export default function CreateLotScreen() {
   const form = useLotCreateForm();
@@ -46,16 +72,20 @@ export default function CreateLotScreen() {
     return (
       <View style={styles.successWrap}>
         <Text style={styles.successEmoji}>🎉</Text>
-        <Text style={styles.successTitle}>ЛОТ опубликован</Text>
-        <Text style={styles.successBody}>Покупатели уже могут его увидеть</Text>
+        <Text style={styles.successTitle}>{LOT_CREATE_COPY.successTitle}</Text>
+        <Text style={styles.successBody}>{LOT_CREATE_COPY.successBody}</Text>
         {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
         {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
         <View style={styles.actions}>
           {form.publishedId ? (
-            <PrimaryButton label="Открыть ЛОТ" fullWidth onPress={() => router.replace(`/product/${form.publishedId}`)} />
+            <PrimaryButton
+              label={LOT_CREATE_COPY.viewLot}
+              fullWidth
+              onPress={() => router.replace(`/product/${form.publishedId}`)}
+            />
           ) : null}
           <SecondaryButton
-            label="Создать новый ЛОТ"
+            label={LOT_CREATE_COPY.createAnother}
             fullWidth
             onPress={() => {
               form.setDraft(EMPTY_LOT_DRAFT);
@@ -73,269 +103,277 @@ export default function CreateLotScreen() {
 
   if (form.step === "preview") {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        {header}
-        <Text style={styles.screenTitle}>{LOT_CREATE_COPY.previewTitle}</Text>
-        <Text style={styles.subtitle}>{LOT_CREATE_COPY.previewHint}</Text>
-        <View style={styles.previewCard}>
-          {form.draft.images[0]?.uri ? (
-            <Image source={{ uri: form.draft.images[0].uri }} style={styles.previewImage} />
-          ) : (
-            <View style={styles.previewImage}>
-              <ProductImageFallback />
-            </View>
-          )}
-          <Text style={styles.previewTitle}>{form.draft.title}</Text>
-          <Text style={styles.previewPrice}>{formatPrice(form.priceNumber)}</Text>
-          <Text style={styles.previewMeta}>{form.draft.city}</Text>
-          {form.draft.productTypeName ? <Text style={styles.previewMeta}>{form.draft.productTypeName}</Text> : null}
-          {form.draft.pickupEnabled && form.draft.pickupPointIds.length > 0 ? (
-            <Text style={styles.previewMeta}>Самовывоз: {form.draft.pickupPointIds.length} точек</Text>
-          ) : null}
-          {form.draft.description ? <Text style={styles.previewDescription}>{form.draft.description}</Text> : null}
-        </View>
-        {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
-        {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
-        <View style={styles.actions}>
-          <SecondaryButton label="Назад" fullWidth onPress={() => form.goToStep("details")} />
-          <SecondaryButton
-            label={LOT_CREATE_COPY.saveLot}
-            fullWidth
-            loading={form.savingLot}
-            onPress={() => void form.saveLotLocallyAndServer()}
+      <View style={styles.screen}>
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          {header}
+          <Text style={styles.screenTitle}>{LOT_CREATE_COPY.previewTitle}</Text>
+          <Text style={styles.subtitle}>{LOT_CREATE_COPY.previewHint}</Text>
+          <View style={styles.previewCard}>
+            {form.draft.images[0]?.uri ? (
+              <Image source={{ uri: form.draft.images[0].uri }} style={styles.previewImage} />
+            ) : (
+              <View style={styles.previewImage}>
+                <ProductImageFallback />
+              </View>
+            )}
+            <Text style={styles.previewTitle}>{form.draft.title}</Text>
+            <Text style={styles.previewPrice}>{formatPrice(form.priceNumber)}</Text>
+            <Text style={styles.previewMeta}>{form.draft.city}</Text>
+            {form.draft.productTypeName ? <Text style={styles.previewMeta}>{form.draft.productTypeName}</Text> : null}
+            {form.draft.pickupEnabled && form.draft.pickupPointIds.length > 0 ? (
+              <Text style={styles.previewMeta}>Самовывоз: {form.draft.pickupPointIds.length} точек</Text>
+            ) : null}
+            {form.draft.description ? <Text style={styles.previewDescription}>{form.draft.description}</Text> : null}
+          </View>
+          <LotCreateErrorBlock
+            error={form.error}
+            detail={form.errorDetail}
+            canRetry={form.canRetry}
+            onRetry={() => void form.retryLastAction()}
           />
-          <PrimaryButton
-            label="Опубликовать ЛОТ"
-            fullWidth
-            loading={form.publishing}
-            onPress={() => void form.publishLot()}
-          />
-        </View>
-      </ScrollView>
+          {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
+          <View style={styles.inlineActions}>
+            <SecondaryButton label="Назад" fullWidth onPress={() => form.goToStep("details")} />
+            <SecondaryButton
+              label={LOT_CREATE_COPY.continueLabel}
+              fullWidth
+              loading={form.savingLot}
+              onPress={() => void form.saveLotLocallyAndServer()}
+            />
+          </View>
+        </ScrollView>
+        <LotCreateStickyFooter
+          label={LOT_CREATE_COPY.publishLabel}
+          loading={form.publishing}
+          onPress={() => void form.publishLot()}
+        />
+      </View>
     );
   }
 
   if (form.step === "details") {
     return (
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        {header}
-        <Text style={styles.screenTitle}>{LOT_CREATE_COPY.detailsTitle}</Text>
-        <Text style={styles.subtitle}>{LOT_CREATE_COPY.detailsHint}</Text>
+      <View style={styles.screen}>
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          {header}
+          <Text style={styles.screenTitle}>{LOT_CREATE_COPY.detailsTitle}</Text>
+          <Text style={styles.subtitle}>{LOT_CREATE_COPY.detailsHint}</Text>
 
-        <Text style={styles.label}>Название ЛОТа</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Дрель ударная DeWalt"
-          value={form.draft.title}
-          onChangeText={(title) => form.persist({ ...form.draft, title, step: "details" })}
-        />
+          <Text style={styles.label}>Название</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Дрель ударная DeWalt"
+            value={form.draft.title}
+            onChangeText={(title) => form.persist({ ...form.draft, title, step: "details" })}
+          />
 
-        <Text style={styles.label}>Выберите категорию</Text>
-        <View style={styles.categoryGrid}>
-          {form.rootCategories.map((cat) => (
-            <Pressable
-              key={cat.id}
-              style={[styles.categoryCard, form.draft.categoryId === cat.id ? styles.categoryCardActive : null]}
-              onPress={() => void form.selectRootCategory(cat)}
-            >
-              <Text style={styles.categoryEmoji}>{emojiForCategoryName(cat.name)}</Text>
-              <Text style={styles.categoryName} numberOfLines={2}>
-                {cat.name}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        {form.subcategories.length > 0 ? (
-          <View style={styles.subList}>
-            {form.subcategories.map((sub) => (
-              <Pressable key={sub.id} style={styles.subRow} onPress={() => void form.selectRootCategory(sub)}>
-                <Text style={styles.subName}>{sub.name}</Text>
-              </Pressable>
-            ))}
-          </View>
-        ) : null}
-
-        {form.productTypes.length > 0 ? (
-          <>
-            <Text style={styles.label}>{LOT_CREATE_COPY.productTypeLabel}</Text>
-            {form.productTypes.map((pt) => (
+          <Text style={styles.label}>Выберите категорию</Text>
+          <View style={styles.categoryGrid}>
+            {form.rootCategories.map((cat) => (
               <Pressable
-                key={pt.id}
-                style={[styles.subRow, form.draft.productTypeId === pt.id ? styles.subRowActive : null]}
-                onPress={() => void form.selectProductType(pt)}
+                key={cat.id}
+                style={[styles.categoryCard, form.draft.categoryId === cat.id ? styles.categoryCardActive : null]}
+                onPress={() => void form.selectRootCategory(cat)}
               >
-                <Text style={styles.subName}>{pt.name}</Text>
+                <Text style={styles.categoryEmoji}>{emojiForCategoryName(cat.name)}</Text>
+                <Text style={styles.categoryName} numberOfLines={2}>
+                  {cat.name}
+                </Text>
               </Pressable>
             ))}
-          </>
-        ) : null}
-
-        <Text style={styles.label}>Цена</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="₽"
-          keyboardType="numeric"
-          value={form.draft.price}
-          onChangeText={(price) => form.persist({ ...form.draft, price, step: "details" })}
-        />
-
-        <Text style={styles.label}>{LOT_CREATE_COPY.stockLabel}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="1"
-          keyboardType="numeric"
-          value={form.draft.stock}
-          onChangeText={(stock) => form.persist({ ...form.draft, stock, step: "details" })}
-        />
-
-        <Text style={styles.label}>Расскажите о ЛОТе</Text>
-        <TextInput
-          style={[styles.input, styles.textarea]}
-          placeholder={LOT_CREATE_COPY.descriptionPlaceholder}
-          multiline
-          value={form.draft.description}
-          onChangeText={(description) => form.persist({ ...form.draft, description, step: "details" })}
-        />
-
-        <Text style={styles.label}>Состояние</Text>
-        <View style={styles.conditionRow}>
-          {LOT_CONDITION_OPTIONS.map((opt) => (
-            <Pressable
-              key={opt.id}
-              style={[styles.conditionChip, form.draft.condition === opt.id ? styles.conditionChipActive : null]}
-              onPress={() => form.persist({ ...form.draft, condition: opt.id, step: "details" })}
-            >
-              <Text style={[styles.conditionText, form.draft.condition === opt.id ? styles.conditionTextActive : null]}>
-                {opt.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        <Text style={styles.label}>Город</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Москва"
-          value={form.draft.city}
-          onChangeText={(city) => form.persist({ ...form.draft, city, step: "details" })}
-        />
-
-        <View style={styles.pickupHeader}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.label}>{LOT_CREATE_COPY.pickupTitle}</Text>
-            <Text style={styles.pickupHint}>{LOT_CREATE_COPY.pickupHint}</Text>
           </View>
-          <Switch
-            value={form.draft.pickupEnabled}
-            onValueChange={(value) => form.togglePickupEnabled(value)}
-            trackColor={{ true: colors.orangeSoft, false: colors.gray200 }}
-            thumbColor={form.draft.pickupEnabled ? colors.orange : colors.white}
-          />
-        </View>
 
-        {form.draft.pickupEnabled ? (
-          <View style={styles.pickupList}>
-            {form.pickupLoadError ? <Text style={styles.errorText}>{form.pickupLoadError}</Text> : null}
-            {form.pickupPoints.length === 0 && !form.pickupLoadError ? (
-              <Text style={styles.pickupHint}>Добавьте точку самовывоза в веб-кабинете продавца.</Text>
-            ) : null}
-            {form.pickupPoints.map((point) => {
-              const selected = form.draft.pickupPointIds.includes(point.id);
-              return (
-                <Pressable
-                  key={point.id}
-                  style={[styles.subRow, selected ? styles.subRowActive : null]}
-                  onPress={() => form.togglePickupPoint(point.id)}
-                >
-                  <Text style={styles.subName}>{point.name}</Text>
-                  <Text style={styles.pickupHint}>
-                    {point.city}, {point.address}
-                  </Text>
+          {form.subcategories.length > 0 ? (
+            <View style={styles.subList}>
+              {form.subcategories.map((sub) => (
+                <Pressable key={sub.id} style={styles.subRow} onPress={() => void form.selectRootCategory(sub)}>
+                  <Text style={styles.subName}>{sub.name}</Text>
                 </Pressable>
-              );
-            })}
-            {form.draft.pickupEnabled && form.draft.pickupPointIds.length === 0 && form.pickupPoints.length > 0 ? (
-              <Text style={styles.errorText}>Выберите хотя бы одну точку самовывоза.</Text>
-            ) : null}
+              ))}
+            </View>
+          ) : null}
+
+          {form.productTypes.length > 0 ? (
+            <>
+              <Text style={styles.label}>{LOT_CREATE_COPY.productTypeLabel}</Text>
+              {form.productTypes.map((pt) => (
+                <Pressable
+                  key={pt.id}
+                  style={[styles.subRow, form.draft.productTypeId === pt.id ? styles.subRowActive : null]}
+                  onPress={() => void form.selectProductType(pt)}
+                >
+                  <Text style={styles.subName}>{pt.name}</Text>
+                </Pressable>
+              ))}
+            </>
+          ) : null}
+
+          <Text style={styles.label}>{LOT_CREATE_COPY.priceLabel}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="₽"
+            keyboardType="numeric"
+            value={form.draft.price}
+            onChangeText={(price) => form.persist({ ...form.draft, price, step: "details" })}
+          />
+
+          <Text style={styles.label}>{LOT_CREATE_COPY.stockLabel}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="1"
+            keyboardType="numeric"
+            value={form.draft.stock}
+            onChangeText={(stock) => form.persist({ ...form.draft, stock, step: "details" })}
+          />
+
+          <Text style={styles.label}>{LOT_CREATE_COPY.descriptionTitle}</Text>
+          <TextInput
+            style={[styles.input, styles.textarea]}
+            placeholder={LOT_CREATE_COPY.descriptionPlaceholder}
+            multiline
+            value={form.draft.description}
+            onChangeText={(description) => form.persist({ ...form.draft, description, step: "details" })}
+          />
+
+          <Text style={styles.label}>Состояние</Text>
+          <View style={styles.conditionRow}>
+            {LOT_CONDITION_OPTIONS.map((opt) => (
+              <Pressable
+                key={opt.id}
+                style={[styles.conditionChip, form.draft.condition === opt.id ? styles.conditionChipActive : null]}
+                onPress={() => form.persist({ ...form.draft, condition: opt.id, step: "details" })}
+              >
+                <Text style={[styles.conditionText, form.draft.condition === opt.id ? styles.conditionTextActive : null]}>
+                  {opt.label}
+                </Text>
+              </Pressable>
+            ))}
           </View>
-        ) : null}
 
-        {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
-        {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
+          <Text style={styles.label}>Город</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Москва"
+            value={form.draft.city}
+            onChangeText={(city) => form.persist({ ...form.draft, city, step: "details" })}
+          />
 
-        <View style={styles.actions}>
+          <View style={styles.pickupHeader}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.label}>{LOT_CREATE_COPY.pickupTitle}</Text>
+              <Text style={styles.pickupHint}>{LOT_CREATE_COPY.pickupHint}</Text>
+            </View>
+            <Switch
+              value={form.draft.pickupEnabled}
+              onValueChange={(value) => form.togglePickupEnabled(value)}
+              trackColor={{ true: colors.orangeSoft, false: colors.gray200 }}
+              thumbColor={form.draft.pickupEnabled ? colors.orange : colors.white}
+            />
+          </View>
+
+          {form.draft.pickupEnabled ? (
+            <View style={styles.pickupList}>
+              {form.pickupLoadError ? <Text style={styles.errorText}>{form.pickupLoadError}</Text> : null}
+              {form.pickupPoints.length === 0 && !form.pickupLoadError ? (
+                <Text style={styles.pickupHint}>Добавьте точку самовывоза в веб-кабинете продавца.</Text>
+              ) : null}
+              {form.pickupPoints.map((point) => {
+                const selected = form.draft.pickupPointIds.includes(point.id);
+                return (
+                  <Pressable
+                    key={point.id}
+                    style={[styles.subRow, selected ? styles.subRowActive : null]}
+                    onPress={() => form.togglePickupPoint(point.id)}
+                  >
+                    <Text style={styles.subName}>{point.name}</Text>
+                    <Text style={styles.pickupHint}>
+                      {point.city}, {point.address}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+              {form.draft.pickupEnabled && form.draft.pickupPointIds.length === 0 && form.pickupPoints.length > 0 ? (
+                <Text style={styles.errorText}>Выберите хотя бы одну точку самовывоза.</Text>
+              ) : null}
+            </View>
+          ) : null}
+
+          <LotCreateErrorBlock
+            error={form.error}
+            detail={form.errorDetail}
+            canRetry={form.canRetry}
+            onRetry={() => void form.retryLastAction()}
+          />
+          {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
+
           <SecondaryButton label="Назад" fullWidth onPress={() => form.goToStep("photos")} />
-          <SecondaryButton
-            label={LOT_CREATE_COPY.saveLot}
-            fullWidth
-            loading={form.savingLot}
-            onPress={() => void form.saveLotLocallyAndServer()}
-          />
-          <PrimaryButton
-            label="Предпросмотр"
-            fullWidth
-            onPress={() => void form.goPreview()}
-            disabled={!form.canContinueDetails}
-          />
-        </View>
-      </ScrollView>
+        </ScrollView>
+        <LotCreateStickyFooter
+          label="Предпросмотр"
+          disabled={!form.canContinueDetails}
+          onPress={() => void form.goPreview()}
+        />
+      </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {header}
-      <Text style={styles.screenTitle}>{LOT_CREATE_COPY.photosTitle}</Text>
-      <Text style={styles.subtitle}>{LOT_CREATE_COPY.photosHint}</Text>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {header}
+        <Text style={styles.screenTitle}>{LOT_CREATE_COPY.photosTitle}</Text>
+        <Text style={styles.subtitle}>{LOT_CREATE_COPY.photosHint}</Text>
 
-      <View style={styles.photoGrid}>
-        {form.draft.images.map((img, index) => (
-          <View key={`${img.uri}-${index}`} style={styles.photoCell}>
-            <Image source={{ uri: img.uri }} style={styles.photo} />
-            <Pressable
-              style={styles.photoRemove}
-              onPress={() =>
-                void form.persist({
-                  ...form.draft,
-                  images: form.draft.images.filter((_, i) => i !== index),
-                  step: "photos",
-                })
-              }
-            >
-              <MaterialCommunityIcons name="close" size={16} color={colors.white} />
+        <View style={styles.photoGrid}>
+          {form.draft.images.map((img, index) => (
+            <View key={`${img.uri}-${index}`} style={styles.photoCell}>
+              <Image source={{ uri: img.uri }} style={styles.photo} />
+              <Pressable
+                style={styles.photoRemove}
+                onPress={() =>
+                  void form.persist({
+                    ...form.draft,
+                    images: form.draft.images.filter((_, i) => i !== index),
+                    step: "photos",
+                  })
+                }
+              >
+                <MaterialCommunityIcons name="close" size={16} color={colors.white} />
+              </Pressable>
+            </View>
+          ))}
+          {form.draft.images.length < 10 ? (
+            <Pressable style={styles.addPhoto} onPress={() => void form.pickImages(false)}>
+              <MaterialCommunityIcons name="plus" size={28} color={colors.orange} />
+              <Text style={styles.addPhotoText}>Добавить фото</Text>
             </Pressable>
-          </View>
-        ))}
-        {form.draft.images.length < 10 ? (
-          <Pressable style={styles.addPhoto} onPress={() => void form.pickImages(false)}>
-            <MaterialCommunityIcons name="plus" size={28} color={colors.orange} />
-            <Text style={styles.addPhotoText}>Добавить фото</Text>
-          </Pressable>
-        ) : null}
-      </View>
+          ) : null}
+        </View>
 
-      <View style={styles.photoActions}>
-        <SecondaryButton label="Камера" onPress={() => void form.pickImages(true)} />
-        <SecondaryButton label="Галерея" onPress={() => void form.pickImages(false)} />
-      </View>
+        <View style={styles.photoActions}>
+          <SecondaryButton label="Камера" onPress={() => void form.pickImages(true)} />
+          <SecondaryButton label="Галерея" onPress={() => void form.pickImages(false)} />
+        </View>
 
-      {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
-
-      <View style={styles.actions}>
-        <PrimaryButton
-          label={LOT_CREATE_COPY.photosNext}
-          fullWidth
-          disabled={!form.canContinuePhotos}
-          onPress={() => form.goToStep("details")}
+        <LotCreateErrorBlock
+          error={form.error}
+          detail={form.errorDetail}
+          canRetry={form.canRetry}
+          onRetry={() => void form.retryLastAction()}
         />
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <LotCreateStickyFooter
+        label={LOT_CREATE_COPY.photosNext}
+        disabled={!form.canContinuePhotos}
+        onPress={() => form.goToStep("details")}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
+  screen: { flex: 1, backgroundColor: colors.white },
+  scrollContent: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl },
   headerRow: { marginBottom: spacing.xs },
   headerText: { alignItems: "flex-end" },
   screenTitle: { ...typography.h1, color: colors.black },
@@ -379,6 +417,7 @@ const styles = StyleSheet.create({
   addPhotoText: { ...typography.caption, color: colors.orange, fontWeight: "600", textAlign: "center" },
   photoActions: { flexDirection: "row", gap: spacing.sm },
   actions: { gap: spacing.sm, marginTop: spacing.md },
+  inlineActions: { gap: spacing.sm },
   categoryGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   categoryCard: {
     width: "30%",
@@ -424,7 +463,10 @@ const styles = StyleSheet.create({
   previewPrice: { ...typography.price, color: colors.black },
   previewMeta: { ...typography.caption, color: colors.gray500 },
   previewDescription: { ...typography.body, color: colors.gray700 },
+  errorBlock: { gap: spacing.xs },
   errorText: { ...typography.caption, color: colors.danger },
+  errorDetail: { ...typography.caption, color: colors.gray700 },
+  retryText: { ...typography.caption, color: colors.orange, fontWeight: "700" },
   infoText: { ...typography.caption, color: colors.gray700 },
   successWrap: { flex: 1, padding: spacing.xl, alignItems: "center", justifyContent: "center", gap: spacing.md },
   successEmoji: { fontSize: 48 },

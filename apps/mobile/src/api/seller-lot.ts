@@ -52,15 +52,21 @@ export async function uploadSellerLotImage(localUri: string, fileName = "lot.jpg
     type: "image/jpeg",
   } as unknown as Blob);
 
-  const res = await fetch(`${config.apiBaseUrl}/api/mobile/seller/uploads`, {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: form,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${config.apiBaseUrl}/api/mobile/seller/uploads`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+  } catch {
+    throw new Error("Не удалось загрузить фото");
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error((body as { error?: string }).error ?? "Не удалось загрузить фото");
+    const serverError = (body as { error?: string }).error ?? "Не удалось загрузить фото";
+    throw new Error(serverError);
   }
 
   const data = (await res.json()) as { url: string; pathname?: string };
