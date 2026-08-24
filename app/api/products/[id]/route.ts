@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 
 import {
   AuthRequiredError,
-  getSessionUser,
   requireSellerSession,
   SellerRequiredError,
 } from "@/features/auth";
+import { resolveRequestUser } from "@/features/auth/resolve-request-user";
 import {
   deleteProduct,
   getProductById,
@@ -23,14 +23,14 @@ type RouteContext = {
  * GET /api/products/[id]
  * Product detail — ACTIVE for anonymous; owner seller / admin may see drafts etc.
  */
-export async function GET(_request: Request, context: RouteContext) {
+export async function GET(request: Request, context: RouteContext) {
   try {
     const { id } = await context.params;
     if (!id) {
       return NextResponse.json({ error: "id обязателен" }, { status: 400 });
     }
 
-    const session = await getSessionUser();
+    const session = await resolveRequestUser(request);
     const product = await getProductById(
       id,
       session

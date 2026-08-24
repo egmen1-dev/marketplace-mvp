@@ -5,7 +5,7 @@ import { Alert, Animated, Pressable, StyleSheet, Text, View } from "react-native
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { formatPrice, resolveImageUrl } from "../../utils/format";
-import { productStatusLabel, productStatusTone } from "../../theme/status-labels";
+import { productStatusLabel, productStatusTone, moderationStatusLabel } from "../../theme/status-labels";
 import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
 import type { MobileProductListItem } from "../../api/endpoints";
 import { Badge } from "./primitives";
@@ -24,6 +24,9 @@ export function SellerProductCard({
   const { scale, onPressIn, onPressOut } = usePressScale(0.98);
   const imageUrl = resolveImageUrl(product.primaryImage?.url ?? null, config.apiBaseUrl);
   const tone = productStatusTone(product.status);
+  const moderationLabel = moderationStatusLabel(
+    (product as MobileProductListItem & { moderationState?: string | null }).moderationState,
+  );
 
   function openMenu() {
     Alert.alert(product.title, "Действия с ЛОТом", [
@@ -45,7 +48,7 @@ export function SellerProductCard({
           </Text>
           <Text style={styles.price}>{formatPrice(product.price)}</Text>
           <View style={styles.meta}>
-            <Badge label={productStatusLabel(product.status)} tone={tone} />
+            <Badge label={moderationLabel ?? productStatusLabel(product.status)} tone={moderationLabel ? "warning" : tone} />
             <Text style={styles.metaText}>Остаток {product.stock ?? 0}</Text>
             <Text style={styles.metaText}>{product.views ?? 0} просм.</Text>
           </View>
