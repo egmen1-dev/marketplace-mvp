@@ -1,0 +1,18 @@
+{
+  "candidate": "RC10",
+  "generatedAt": "2026-08-24T11:05:00Z",
+  "verdict": "PASS",
+  "gates": [
+    { "id": "build", "status": "PASS" },
+    { "id": "mobile:typecheck", "status": "PASS" },
+    { "id": "mobile:epic-158:gate", "status": "PASS" },
+    { "id": "mobile:epic-158-1:gate", "status": "PASS" },
+    { "id": "mobile:epic-158-2:gate", "status": "PASS" },
+    { "id": "mobile:epic-158-3:gate", "status": "PASS" },
+    { "id": "mobile:epic-159:gate", "status": "PASS" },
+    { "id": "mobile:rc10:staging-gate", "status": "PASS" },
+    { "id": "mobile:rc10:apk-verify", "status": "PASS" },
+    { "id": "release:pipeline:verify", "status": "PASS" },
+    { "id": "physical-checklist", "status": "NOT_RUN" }
+  ]
+}

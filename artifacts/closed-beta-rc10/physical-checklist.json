@@ -1,0 +1,70 @@
+{
+  "candidate": "RC10",
+  "generatedAt": "2026-08-24T11:05:00Z",
+  "status": "NOT_RUN",
+  "operator": null,
+  "accounts": {
+    "seller": "seller@demo.lot",
+    "buyer": "buyer@demo.lot"
+  },
+  "scenarios": [
+    {
+      "id": "0",
+      "name": "Identity",
+      "expected": "0.1.15-beta.1, code 16, RC10, CLOSED_BETA, staging",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "1",
+      "name": "SELLER — create LOT with autosave restore",
+      "steps": [
+        "Продать → Создать ЛОТ",
+        "Добавить фото, название, категорию, описание, цену, количество",
+        "Включить самовывоз, выбрать точку",
+        "Закрыть приложение",
+        "Открыть снова → «Вы начали создавать ЛОТ» → Продолжить / Начать заново",
+        "Все поля сохранены"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "2",
+      "name": "SELLER — preview and publish",
+      "steps": [
+        "Предпросмотр → «Проверьте ЛОТ»",
+        "Опубликовать ЛОТ",
+        "«ЛОТ опубликован» + «Ваш ЛОТ теперь виден покупателям»"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "3",
+      "name": "BUYER — find LOT, chat, cart, order",
+      "steps": [
+        "Каталог → найти ЛОТ продавца",
+        "Открыть карточку → написать продавцу",
+        "Добавить в корзину → оформить заказ"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "4",
+      "name": "SELLER — order in Продажи",
+      "steps": [
+        "Продавец получил заказ",
+        "Заказ в Продажи → статус меняется"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "5",
+      "name": "UPDATE — optional from code 15",
+      "steps": [
+        "Установить RC9.1 (code 15)",
+        "Cold start → «Доступно обновление»",
+        "Profile → «Обновление доступно»"
+      ],
+      "status": "NOT_RUN"
+    }
+  ]
+}
