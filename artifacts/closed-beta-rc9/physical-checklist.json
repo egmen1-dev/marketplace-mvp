@@ -1,0 +1,15 @@
+{
+  "candidate": "RC9",
+  "generatedAt": "2026-08-24T06:30:00Z",
+  "status": "NOT_RUN",
+  "operator": null,
+  "scenarios": [
+    { "id": "0", "name": "Identity", "expected": "0.1.14-beta.1, code 14, RC9, CLOSED_BETA, staging", "status": "NOT_RUN" },
+    { "id": "1", "name": "Buyer catalog UX", "expected": "ProductCard fallback, cart stepper, category chips", "status": "NOT_RUN" },
+    { "id": "2", "name": "Seller create LOT", "expected": "Продать → Создать ЛОТ → photos → publish → catalog", "status": "NOT_RUN" },
+    { "id": "3", "name": "Мои ЛОТы", "expected": "Активные / Черновики / Проданные tabs", "status": "NOT_RUN" },
+    { "id": "4", "name": "Buyer purchase loop", "expected": "PDP → chat → cart → order", "status": "NOT_RUN" },
+    { "id": "5", "name": "Seller sales loop", "expected": "receive order → accept → complete", "status": "NOT_RUN" },
+    { "id": "6", "name": "LOT draft resume", "expected": "exit mid-create → resume draft prompt", "status": "NOT_RUN" }
+  ]
+}

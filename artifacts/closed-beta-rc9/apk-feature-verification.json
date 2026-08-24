@@ -1,0 +1,193 @@
+{
+  "generatedAt": "2026-08-24T06:47:58.635Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.14-beta.1",
+    "versionCode": "14",
+    "nativeCode": "arm64-v8a",
+    "sha256": "4778afadaddae4a9675c84f17fa60c473ac72894d7f153d9324a45cad1865304",
+    "sizeBytes": 43589106
+  },
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.14-beta.1",
+      "actual": "0.1.14-beta.1"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "14",
+      "actual": "14"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc9Label",
+      "ok": true,
+      "expected": "RC9 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "aa6c3aa"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "epic157_uxPolish",
+      "name": "ProductImageFallback",
+      "pattern": "ProductImageFallback",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic157_uxPolish",
+      "name": "ProductCartCta",
+      "pattern": "ProductCartCta",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic157_uxPolish",
+      "name": "catalogCategory",
+      "pattern": "catalogCategory",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic157_uxPolish",
+      "name": "incrementProductCart",
+      "pattern": "incrementProductCart",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic157_uxPolish",
+      "name": "catalogEmptyStates",
+      "pattern": "catalogCategory",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic158_sellerLotCreation",
+      "name": "createSellerLot",
+      "pattern": "createSellerLot",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic158_sellerLotCreation",
+      "name": "sellCreateRoute",
+      "pattern": "/sell/create",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic158_sellerLotCreation",
+      "name": "lotDraftStorage",
+      "pattern": "lot-draft-v1",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic158_sellerLotCreation",
+      "name": "uploadSellerLotImage",
+      "pattern": "uploadSellerLotImage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic158_sellerLotCreation",
+      "name": "sellerLotsDraftsTab",
+      "pattern": "drafts",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic158_sellerLotCreation",
+      "name": "myLotsRoute",
+      "pattern": "seller-products",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "fetchSellerOrders",
+      "pattern": "fetchSellerOrders",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "sellerSalesScreen",
+      "pattern": "seller-sales",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic152_sellerLoop",
+      "name": "buildBuyerOrderTimeline",
+      "pattern": "buildBuyerOrderTimeline",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "useCheckoutReturnRefresh",
+      "pattern": "useCheckoutReturnRefresh",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "epic154_criticalPath",
+      "name": "sellerTrustBlock",
+      "pattern": "trustBlock",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "updateRoute",
+      "pattern": "/update",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "update",
+      "name": "fetchMobileUpdate",
+      "pattern": "fetchMobileUpdate",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}
