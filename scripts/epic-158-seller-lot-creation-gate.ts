@@ -26,7 +26,7 @@ mustContain("apps/mobile/app/(tabs)/sell.tsx", 'router.push("/sell/create")', "s
 mustContain("apps/mobile/app/sell/create.tsx", "Опубликовать ЛОТ", "create_lot_wizard");
 mustContain("apps/mobile/app/(tabs)/seller-products.tsx", "Мои ЛОТы", "my_lots_screen");
 mustContain("apps/mobile/app/(tabs)/seller-products.tsx", "Черновики", "my_lots_tabs");
-mustContain("apps/mobile/src/seller/lot-draft-storage.ts", "lot-draft-v1", "local_draft_storage");
+mustContain("apps/mobile/src/seller/lot-draft-storage.ts", "lot-draft-v2", "local_draft_storage");
 mustContain("apps/mobile/src/components/ui/SellerProductCard.tsx", "ProductImageFallback", "seller_card_image_fallback");
 
 const failed = checks.filter((c) => !c.ok);

@@ -1,6 +1,6 @@
 const STATUS_LABELS: Record<string, string> = {
   ACTIVE: "Активный",
-  DRAFT: "Черновик",
+  DRAFT: "Сохранён",
   ARCHIVED: "В архиве",
   OUT_OF_STOCK: "Нет в наличии",
 };

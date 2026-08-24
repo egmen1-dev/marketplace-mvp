@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const sellSource = readFileSync("apps/mobile/app/(tabs)/sell.tsx", "utf8");
 const sellerProductsSource = readFileSync("apps/mobile/app/(tabs)/seller-products.tsx", "utf8");
 const createLotSource = readFileSync("apps/mobile/app/sell/create.tsx", "utf8");
+const hookSource = readFileSync("apps/mobile/src/seller/use-lot-create-form.ts", "utf8");
 const sellerLotApiSource = readFileSync("apps/mobile/src/api/seller-lot.ts", "utf8");
 const draftStorageSource = readFileSync("apps/mobile/src/seller/lot-draft-storage.ts", "utf8");
 const endpointsSource = readFileSync("apps/mobile/src/api/endpoints.ts", "utf8");
@@ -56,21 +57,20 @@ describe("EPIC 158 — sell entry and create flow", () => {
   });
 
   it("implements multi-step LOT wizard with preview and publish", () => {
-    expect(createLotSource).toContain("Создайте ЛОТ");
-    expect(createLotSource).toContain("Информация о ЛОТе");
-    expect(createLotSource).toContain("Ваш ЛОТ");
+    expect(createLotSource).toContain("LOT_CREATE_COPY.photosTitle");
+    expect(createLotSource).toContain("LOT_CREATE_COPY.detailsTitle");
     expect(createLotSource).toContain("Опубликовать ЛОТ");
     expect(createLotSource).toContain("ЛОТ опубликован");
-    expect(createLotSource).toContain("ImagePicker");
-    expect(createLotSource).toContain("fetchTaxonomyBrowse");
+    expect(createLotSource).toContain("useLotCreateForm");
     expect(rootLayoutSource).toContain('name="sell"');
   });
 
   it("persists local draft when seller exits mid-flow", () => {
-    expect(draftStorageSource).toContain("lot-draft-v1");
-    expect(createLotSource).toContain("Черновик ЛОТа");
-    expect(createLotSource).toContain("saveLotDraft");
-    expect(createLotSource).toContain("clearLotDraft");
+    expect(draftStorageSource).toContain("lot-draft-v2");
+    expect(draftStorageSource).toContain("isUnfinishedLot");
+    expect(createLotSource).toContain("LotRestorePrompt");
+    expect(hookSource).toContain("saveLotDraft");
+    expect(hookSource).toContain("clearLotDraft");
   });
 });
 
@@ -78,7 +78,7 @@ describe("EPIC 158 — Мои ЛОТы", () => {
   it("renames seller inventory screen and adds status tabs", () => {
     expect(sellerProductsSource).toContain("Мои ЛОТы");
     expect(sellerProductsSource).toContain("Активные");
-    expect(sellerProductsSource).toContain("Черновики");
+    expect(sellerProductsSource).toContain("Сохранённые");
     expect(sellerProductsSource).toContain("Проданные");
     expect(sellerProductsSource).toContain('fetchSellerProducts({ tab })');
     expect(sellerProductsSource).not.toContain("Мои товары");

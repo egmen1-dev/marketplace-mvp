@@ -5,6 +5,17 @@ import { apiRequest } from "./client";
 export type TaxonomyChild = { id: string; name: string; slug?: string };
 export type TaxonomyProductType = { id: string; name: string; slug?: string; categoryId?: string };
 
+export type SellerPickupPoint = {
+  id: string;
+  name: string;
+  city: string;
+  address: string;
+};
+
+export async function fetchSellerPickupPoints() {
+  return apiRequest<{ items: SellerPickupPoint[] }>("/api/mobile/seller/pickup-points");
+}
+
 export async function fetchTaxonomyBrowse(categoryId?: string | null) {
   const qs = new URLSearchParams();
   if (categoryId) qs.set("categoryId", categoryId);
@@ -67,9 +78,13 @@ export type CreateLotPayload = {
   images: Array<{ url: string; pathname?: string | null }>;
   stock?: number;
   status?: "ACTIVE" | "DRAFT";
+  pickupEnabled?: boolean;
+  pickupPointIds?: string[];
 };
 
 export async function createSellerLot(payload: CreateLotPayload) {
+  const pickupEnabled = payload.pickupEnabled ?? false;
+  const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
   return apiRequest<{ product: { id: string; title?: string; name?: string }; message?: string }>(
     "/api/mobile/seller/products",
     {
@@ -77,10 +92,10 @@ export async function createSellerLot(payload: CreateLotPayload) {
       body: JSON.stringify({
         ...payload,
         stock: payload.stock ?? 1,
-        pickupEnabled: false,
+        pickupEnabled,
         reservationEnabled: false,
         prepaymentPercent: 0,
-        pickupPointIds: [],
+        pickupPointIds,
         characteristics: [],
       }),
     },
