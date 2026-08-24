@@ -7,6 +7,7 @@ export * from "./ProductImageFallback";
 export * from "./ProductRatingRow";
 export * from "./ProductReviewsSection";
 export * from "./SellerProductCard";
+export * from "./ProductImageFallback";
 export * from "./primitives";
 export * from "./feedback";
 export * from "./TabBarIcon";

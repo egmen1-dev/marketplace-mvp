@@ -55,6 +55,7 @@ function RootShell() {
         <Stack.Screen name="about" options={{ title: "О приложении" }} />
         <Stack.Screen name="update" options={{ title: "Проверить обновление" }} />
         <Stack.Screen name="messages" options={{ headerShown: false }} />
+        <Stack.Screen name="sell" options={{ headerShown: false }} />
       </Stack>
     </>
   </ObservabilityProvider>

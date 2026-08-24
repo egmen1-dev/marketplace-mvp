@@ -2,7 +2,15 @@ import type { UserRole } from "@prisma/client";
 
 import { verifyAccessToken } from "@/lib/mobile/auth/tokens";
 
-import { getSessionUser, loadUserAuthFromDb, type SessionUser } from "./session";
+import {
+  AuthRequiredError,
+  getSessionUser,
+  loadUserAuthFromDb,
+  SellerRequiredError,
+  type SessionUser,
+} from "./session";
+
+export { AuthRequiredError, SellerRequiredError };
 
 /** Resolve authenticated user from mobile Bearer JWT or web Auth.js session. */
 export async function resolveRequestUser(request?: Request): Promise<SessionUser | null> {
@@ -32,4 +40,29 @@ export async function resolveRequestUser(request?: Request): Promise<SessionUser
 
 export function isSellerCapable(role: UserRole): boolean {
   return role === "SELLER" || role === "ADMIN";
+}
+
+/** Seller mutation auth for mobile Bearer JWT or web session (same checks as requireSellerSession). */
+export async function requireSellerFromRequest(request: Request): Promise<{
+  userId: string;
+  sellerProfileId: string;
+  email: string;
+  name: string | null;
+  role: UserRole;
+  storeName: string;
+}> {
+  const user = await resolveRequestUser(request);
+  if (!user) throw new AuthRequiredError();
+  const dbUser = await loadUserAuthFromDb(user.id);
+  if (!dbUser) throw new AuthRequiredError();
+  if (!isSellerCapable(dbUser.role)) throw new SellerRequiredError();
+  if (!dbUser.sellerProfileId) throw new SellerRequiredError();
+  return {
+    userId: dbUser.id,
+    sellerProfileId: dbUser.sellerProfileId,
+    email: dbUser.email,
+    name: dbUser.name,
+    role: dbUser.role,
+    storeName: dbUser.storeName ?? "Магазин",
+  };
 }

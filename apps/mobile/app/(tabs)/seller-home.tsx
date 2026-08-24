@@ -168,7 +168,7 @@ export default function SellerHomeScreen() {
 
         <SectionHeader title="Быстрые действия" />
         <View style={styles.actions}>
-          <PrimaryButton label="Мои товары" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />
+          <PrimaryButton label="Мои ЛОТы" fullWidth onPress={() => router.push("/(tabs)/seller-products")} />
           <SecondaryButton label="Заказы" fullWidth onPress={() => router.push("/(tabs)/seller-sales")} />
           <SecondaryButton label="Кошелёк" fullWidth onPress={() => router.push("/(tabs)/wallet")} />
         </View>
