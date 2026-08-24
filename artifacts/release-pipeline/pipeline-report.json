@@ -1,12 +1,12 @@
 {
   "epic": "EPIC-109",
-  "generatedAt": "2026-08-24T11:01:00.935Z",
-  "verdict": "COMPLETE",
-  "deploymentVerification": "PASS",
+  "generatedAt": "2026-08-24T13:25:19.574Z",
+  "verdict": "BLOCKED",
+  "deploymentVerification": "FAIL",
   "healthCheck": "PASS",
   "routeVerification": "PASS",
   "prPolicyAudit": {
-    "generatedAt": "2026-08-24T11:01:00.935Z",
+    "generatedAt": "2026-08-24T13:25:19.574Z",
     "creationPaths": {
       "cursorCloudAgentManagePullRequest": {
         "createsDraftByDefault": true,
@@ -29,12 +29,18 @@
   },
   "acceptanceCriteria": {
     "noProductionReadyDraftPr": true,
-    "deploymentVerifiedAgainstGitSha": true,
+    "deploymentVerifiedAgainstGitSha": false,
     "criticalRoutesAutomated": true,
     "railwayVerificationExists": true,
     "releaseDocumentationUpdated": true,
     "futureReleasesCannotSkipVerification": true
   },
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "sha_mismatch",
+      "severity": "P0",
+      "detail": "Railway SHA e309dbe !== origin/main 32d2e8d"
+    }
+  ],
   "releaseStatusPath": "artifacts/release-pipeline/release-status.json"
 }

@@ -1,0 +1,37 @@
+{
+  "candidate": "RC10.1",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.2",
+  "versionCode": 17,
+  "commitSha": "91a69b5",
+  "mergeCommitSha": "91a69b5",
+  "buildTime": "2026-08-24T11:02:16Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.2.apk",
+    "path": "artifacts/closed-beta-rc10.1/lot_android_closed_beta_0.1.15_beta.2.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.1/lot_android_closed_beta_0.1.15_beta.2.apk",
+    "sha256": "325ad7a83ca81a7fc8860d686a79624231dcd9be1e956bbf8510292db4788301",
+    "sizeBytes": 44296382
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "p0_sellerPhotoUploadFix": true,
+    "expoFileSystemUpload": true,
+    "previousRelease": "RC10 0.1.15-beta.1 (code 16)"
+  },
+  "buildNotes": {
+    "release": "RC10.1 — P0 Seller Photo Upload hotfix (expo-file-system File)",
+    "previousRelease": "RC10 0.1.15-beta.1 (code 16)"
+  }
+}

@@ -44,7 +44,7 @@ const symbolGroups = {
     { name: "uploadSellerLotImage", pattern: "uploadSellerLotImage" },
     { name: "normalizeImagePickerAsset", pattern: "normalizeImagePickerAsset" },
     { name: "defaultLotPhotoFileName", pattern: "defaultLotPhotoFileName" },
-    { name: "processUploadQueue", pattern: "processUploadQueue" },
+    { name: "uploadStatus", pattern: "uploadStatus" },
     { name: "uploadInProgress", pattern: "uploadInProgress" },
     { name: "uploadWaitPublish", pattern: "uploadWaitPublish" },
     { name: "mobileSellerUploadRoute", pattern: "/api/mobile/seller/uploads" },
