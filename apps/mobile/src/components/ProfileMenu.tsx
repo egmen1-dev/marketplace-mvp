@@ -12,6 +12,8 @@ type MenuItem = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   onPress: () => void;
   badge?: number;
+  highlight?: boolean;
+  subtitle?: string;
 };
 
 function ProfileMenuSection({ title, items }: { title: string; items: MenuItem[] }) {
@@ -27,8 +29,11 @@ function ProfileMenuSection({ title, items }: { title: string; items: MenuItem[]
             accessibilityRole="button"
             accessibilityLabel={item.label}
           >
-            <MaterialCommunityIcons name={item.icon} size={20} color={colors.gray700} />
-            <Text style={styles.rowText}>{item.label}</Text>
+            <MaterialCommunityIcons name={item.icon} size={20} color={item.highlight ? colors.orange : colors.gray700} />
+            <View style={styles.rowTextWrap}>
+              <Text style={[styles.rowText, item.highlight ? styles.rowTextHighlight : null]}>{item.label}</Text>
+              {item.subtitle ? <Text style={styles.rowSubtitle}>{item.subtitle}</Text> : null}
+            </View>
             {item.badge && item.badge > 0 ? (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{item.badge > 99 ? "99+" : item.badge}</Text>
@@ -45,6 +50,7 @@ function ProfileMenuSection({ title, items }: { title: string; items: MenuItem[]
 export function ProfileMenu({
   sellerCapable,
   messagesBadge = 0,
+  updateAvailableVersion,
   onSupport,
   onReportError,
   onAbout,
@@ -52,6 +58,7 @@ export function ProfileMenu({
 }: {
   sellerCapable: boolean;
   messagesBadge?: number;
+  updateAvailableVersion?: string | null;
   onSupport: () => void;
   onReportError: () => void;
   onAbout: () => void;
@@ -90,7 +97,15 @@ export function ProfileMenu({
 
   const app: MenuItem[] = [
     { id: "about", label: "О приложении", icon: "information-outline", onPress: onAbout },
-    { id: "update", label: "Проверить обновление", icon: "update", onPress: () => router.push("/update") },
+    {
+      id: "update",
+      label: updateAvailableVersion ? "Обновление доступно" : "Проверить обновление",
+      subtitle: updateAvailableVersion ? `Версия ${updateAvailableVersion}` : undefined,
+      icon: "update",
+      highlight: Boolean(updateAvailableVersion),
+      badge: updateAvailableVersion ? 1 : undefined,
+      onPress: () => router.push("/update"),
+    },
   ];
 
   const legal: MenuItem[] = [
@@ -122,6 +137,9 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.gray200 },
   rowText: { ...typography.body, color: colors.black, flex: 1 },
+  rowTextWrap: { flex: 1, gap: 2 },
+  rowTextHighlight: { color: colors.orange, fontWeight: "700" },
+  rowSubtitle: { ...typography.caption, color: colors.gray500 },
   rowChevron: { ...typography.h2, color: colors.gray500 },
   badge: {
     minWidth: 18,

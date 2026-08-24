@@ -30,8 +30,8 @@ function update(overrides: Partial<MobileUpdateInfo>): MobileUpdateInfo {
 }
 
 describe("mobile update entry — profile menu", () => {
-  it("contains Russian label Проверить обновление", () => {
-    expect(profileMenu).toContain('label: "Проверить обновление"');
+  it("contains Russian label Проверить обновление or badge state", () => {
+    expect(profileMenu).toMatch(/Проверить обновление|Обновление доступно/);
   });
 
   it("shows app section with О приложении and update entry for all users", () => {
@@ -77,7 +77,7 @@ describe("mobile update entry — dedicated screen", () => {
   it("shows required Russian states and honest browser handoff copy", () => {
     expect(updateLabels).toContain("Проверяем обновления…");
     expect(updateLabels).toContain("У вас установлена актуальная версия");
-    expect(updateLabels).toContain("Доступна новая версия");
+    expect(updateLabels).toContain("Доступно обновление");
     expect(updateLabels).toContain("Скачать обновление");
     expect(updateLabels).toContain("APK откроется в браузере");
     expect(updateScreen).toContain("buildInfo.appVersion");

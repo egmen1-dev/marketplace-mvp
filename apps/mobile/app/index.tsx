@@ -18,6 +18,7 @@ import { BootSplash } from "../src/components/BootSplash";
 import { PrimaryButton, SecondaryButton } from "../src/components/ui";
 import { UnsupportedClientScreen } from "../src/components/UnsupportedClientScreen";
 import type { MobileUpdateInfo } from "../src/api/endpoints";
+import { isInstallableUpdate } from "../src/update/update-availability";
 import { useAppStore } from "../src/store/app-store";
 import { colors, spacing, typography } from "../src/theme/tokens";
 
@@ -27,6 +28,7 @@ export default function BootScreen() {
   const setRemoteConfig = useAppStore((s) => s.setRemoteConfig);
   const setUserRole = useAppStore((s) => s.setUserRole);
   const setPendingUpdate = useAppStore((s) => s.setPendingUpdate);
+  const setUpdateAvailable = useAppStore((s) => s.setUpdateAvailable);
   const [error, setError] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [unsupported, setUnsupported] = useState<MobileUpdateInfo | null>(null);
@@ -49,12 +51,15 @@ export default function BootScreen() {
       setErrorDetails(null);
       if (result.remoteConfig) setRemoteConfig(result.remoteConfig);
       if (result.role) setUserRole(result.role);
-      if (result.update) setPendingUpdate(result.update);
+      if (result.update) {
+        setPendingUpdate(result.update);
+        setUpdateAvailable(isInstallableUpdate(result.update) ? result.update : null);
+      }
       setBootDegraded(Boolean(result.degraded));
       setBootstrapped(true);
       setReady(result.destination);
     },
-    [setBootstrapped, setBootDegraded, setPendingUpdate, setRemoteConfig, setUserRole],
+    [setBootstrapped, setBootDegraded, setPendingUpdate, setRemoteConfig, setUpdateAvailable, setUserRole],
   );
 
   useEffect(() => {

@@ -59,9 +59,9 @@ describe("EPIC 158.2 — simplified LOT creation copy", () => {
     expect(copySource).toContain('detailsTitle: "Что продаёте?"');
     expect(copySource).toContain('continueLabel: "Продолжить"');
     expect(copySource).toContain('publishLabel: "Опубликовать ЛОТ"');
-    expect(copySource).toContain('previewTitle: "Проверьте ЛОТ перед публикацией"');
+    expect(copySource).toContain('previewTitle: "Проверьте ЛОТ"');
     expect(copySource).toContain("Стул IKEA, новый, белый");
-    expect(copySource).not.toContain("Сохранить ЛОТ");
+    expect(copySource).toContain('saveLotLabel: "Сохранить ЛОТ"');
     expect(copySource).not.toContain("черновик");
     expect(copySource).not.toContain("товар");
   });

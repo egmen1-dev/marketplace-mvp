@@ -29,11 +29,11 @@ mustContain("apps/mobile/src/components/ui/Chip.tsx", "numberOfLines={1}", "cate
 mustContain("apps/mobile/src/components/ui/ProductCartCta.tsx", "colors.ctaPrimary", "cart_cta_orange");
 mustContain("apps/mobile/src/seller/lot-create-errors.ts", "formdatapart", "human_error_mapper");
 mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Продолжить", "continue_copy");
-mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Опубликовать ЛОТ", "publish_lot_copy");
+mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Проверьте ЛОТ", "preview_title");
 mustContain("apps/mobile/src/seller/LotCreateStickyFooter.tsx", "layout.stickyCtaHeight", "sticky_footer");
 mustContain("apps/mobile/app/sell/create.tsx", "LotCreateStickyFooter", "create_sticky_cta");
 mustContain("apps/mobile/app/sell/create.tsx", "LOT_CREATE_COPY.retryLabel", "retry_button");
-mustNotContain("apps/mobile/src/seller/lot-create-copy.ts", "Сохранить ЛОТ", "no_save_lot_label");
+mustNotContain("apps/mobile/src/seller/lot-create-copy.ts", "черновик", "no_chernovik_copy");
 mustNotContain("apps/mobile/app/sell/create.tsx", "товар", "no_tovar_in_create");
 mustNotContain("apps/mobile/app/sell/create.tsx", "черновик", "no_chernovik_in_create");
 

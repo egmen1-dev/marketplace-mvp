@@ -52,7 +52,7 @@ export function formatLotCreateError(
     }
     return {
       message: LOT_CREATE_COPY.publishError,
-      detail: null,
+      detail: LOT_CREATE_COPY.publishErrorBody,
       canRetry: true,
     };
   }
@@ -83,7 +83,7 @@ export function formatLotCreateError(
 
   return {
     message: raw || LOT_CREATE_COPY.publishError,
-    detail: null,
+    detail: context === "publish" || context === "save" ? LOT_CREATE_COPY.publishErrorBody : null,
     canRetry: context !== "save",
   };
 }

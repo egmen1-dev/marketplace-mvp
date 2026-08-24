@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import {
   Image,
   Pressable,
@@ -14,7 +14,9 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { PrimaryButton, SecondaryButton } from "../../src/components/ui";
 import { ProductImageFallback } from "../../src/components/ui/ProductImageFallback";
 import { LotAutosaveIndicator } from "../../src/seller/LotAutosaveIndicator";
+import { LotCreatePreviewFooter } from "../../src/seller/LotCreatePreviewFooter";
 import { LotCreateStickyFooter } from "../../src/seller/LotCreateStickyFooter";
+import { conditionPreviewLabel, formatPickupPreview } from "../../src/seller/lot-create-preview";
 import { LotRestorePrompt } from "../../src/seller/LotRestorePrompt";
 import { LOT_CONDITION_OPTIONS, emojiForCategoryName } from "../../src/seller/lot-create-constants";
 import { LOT_CREATE_COPY } from "../../src/seller/lot-create-copy";
@@ -102,26 +104,52 @@ export default function CreateLotScreen() {
   }
 
   if (form.step === "preview") {
+    const pickupPreview = formatPickupPreview(form.pickupPoints, form.draft.pickupPointIds);
+    const categoryLabel = form.draft.categoryName ?? form.draft.productTypeName;
+
     return (
       <View style={styles.screen}>
+        <Stack.Screen options={{ title: LOT_CREATE_COPY.previewTitle }} />
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {header}
           <Text style={styles.screenTitle}>{LOT_CREATE_COPY.previewTitle}</Text>
           <Text style={styles.subtitle}>{LOT_CREATE_COPY.previewHint}</Text>
           <View style={styles.previewCard}>
-            {form.draft.images[0]?.uri ? (
-              <Image source={{ uri: form.draft.images[0].uri }} style={styles.previewImage} />
-            ) : (
-              <View style={styles.previewImage}>
-                <ProductImageFallback />
+            <View style={styles.previewImageWrap}>
+              {form.draft.images[0]?.uri ? (
+                <Image source={{ uri: form.draft.images[0].uri }} style={styles.previewImage} resizeMode="cover" />
+              ) : (
+                <View style={styles.previewImage}>
+                  <ProductImageFallback />
+                </View>
+              )}
+            </View>
+            <View style={styles.previewRow}>
+              <Text style={styles.previewLabel}>Название</Text>
+              <Text style={styles.previewValue}>{form.draft.title}</Text>
+            </View>
+            <View style={styles.previewRow}>
+              <Text style={styles.previewLabel}>Цена</Text>
+              <Text style={styles.previewValue}>{formatPrice(form.priceNumber)}</Text>
+            </View>
+            <View style={styles.previewRow}>
+              <Text style={styles.previewLabel}>Город</Text>
+              <Text style={styles.previewValue}>{form.draft.city}</Text>
+            </View>
+            {categoryLabel ? (
+              <View style={styles.previewRow}>
+                <Text style={styles.previewLabel}>Категория</Text>
+                <Text style={styles.previewValue}>{categoryLabel}</Text>
               </View>
-            )}
-            <Text style={styles.previewTitle}>{form.draft.title}</Text>
-            <Text style={styles.previewPrice}>{formatPrice(form.priceNumber)}</Text>
-            <Text style={styles.previewMeta}>{form.draft.city}</Text>
-            {form.draft.productTypeName ? <Text style={styles.previewMeta}>{form.draft.productTypeName}</Text> : null}
-            {form.draft.pickupEnabled && form.draft.pickupPointIds.length > 0 ? (
-              <Text style={styles.previewMeta}>Самовывоз: {form.draft.pickupPointIds.length} точек</Text>
+            ) : null}
+            <View style={styles.previewRow}>
+              <Text style={styles.previewValue}>{conditionPreviewLabel(form.draft.condition)}</Text>
+            </View>
+            {form.draft.pickupEnabled ? (
+              <View style={styles.previewRow}>
+                <Text style={styles.previewLabel}>{pickupPreview.title}</Text>
+                <Text style={styles.previewValue}>{pickupPreview.detail ?? "Не выбрано"}</Text>
+              </View>
             ) : null}
             {form.draft.description ? <Text style={styles.previewDescription}>{form.draft.description}</Text> : null}
           </View>
@@ -132,20 +160,15 @@ export default function CreateLotScreen() {
             onRetry={() => void form.retryLastAction()}
           />
           {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
-          <View style={styles.inlineActions}>
-            <SecondaryButton label="Назад" fullWidth onPress={() => form.goToStep("details")} />
-            <SecondaryButton
-              label={LOT_CREATE_COPY.continueLabel}
-              fullWidth
-              loading={form.savingLot}
-              onPress={() => void form.saveLotLocallyAndServer()}
-            />
-          </View>
         </ScrollView>
-        <LotCreateStickyFooter
-          label={LOT_CREATE_COPY.publishLabel}
-          loading={form.publishing}
-          onPress={() => void form.publishLot()}
+        <LotCreatePreviewFooter
+          publishLabel={LOT_CREATE_COPY.publishLabel}
+          saveLabel={LOT_CREATE_COPY.saveLotLabel}
+          publishing={form.publishing}
+          saving={form.savingLot}
+          onPublish={() => void form.publishLot()}
+          onSave={() => void form.saveLotLocallyAndServer()}
+          onBack={() => form.goToStep("details")}
         />
       </View>
     );
@@ -457,8 +480,18 @@ const styles = StyleSheet.create({
   pickupHeader: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginTop: spacing.sm },
   pickupHint: { ...typography.caption, color: colors.gray500 },
   pickupList: { gap: spacing.sm },
-  previewCard: { gap: spacing.sm, padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.gray100 },
-  previewImage: { width: "100%", aspectRatio: 1, borderRadius: radii.md, overflow: "hidden" },
+  previewCard: { gap: spacing.md, padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.gray100 },
+  previewImageWrap: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: radii.md,
+    overflow: "hidden",
+    backgroundColor: colors.gray200,
+  },
+  previewImage: { width: "100%", height: "100%" },
+  previewRow: { gap: spacing.xs },
+  previewLabel: { ...typography.caption, color: colors.gray500, fontWeight: "600" },
+  previewValue: { ...typography.body, color: colors.black },
   previewTitle: { ...typography.h2, color: colors.black },
   previewPrice: { ...typography.price, color: colors.black },
   previewMeta: { ...typography.caption, color: colors.gray500 },
