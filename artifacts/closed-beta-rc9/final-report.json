@@ -25,7 +25,8 @@
     "versionCode": 14
   },
   "mrp": {
-    "status": "PENDING_MERGE",
-    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk"
+    "status": "PUBLISHED",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+    "updateVerify": "PASS"
   }
 }

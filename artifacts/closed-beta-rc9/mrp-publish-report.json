@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-08-24T06:49:20.974Z",
+  "publishMethod": "staging_admin_api",
+  "versionName": "0.1.14-beta.1",
+  "versionCode": 14,
+  "channel": "BETA",
+  "clientChannel": "CLOSED_BETA",
+  "sha256": "4778afadaddae4a9675c84f17fa60c473ac72894d7f153d9324a45cad1865304",
+  "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+  "status": "PUBLISHED",
+  "updatePath": {
+    "code7": "OPTIONAL_UPDATE→14",
+    "code13": "OPTIONAL_UPDATE→14",
+    "code14": "NO_UPDATE",
+    "code15": "NO_UPDATE"
+  },
+  "verdict": "PASS"
+}

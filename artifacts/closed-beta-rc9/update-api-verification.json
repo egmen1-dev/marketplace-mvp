@@ -1,0 +1,78 @@
+{
+  "generatedAt": "2026-08-24T06:49:25.989Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "probes": [
+    {
+      "installedVersionCode": 7,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 8,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 9,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 10,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 11,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 12,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 13,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 14,
+      "targetVersionName": "0.1.14-beta.1",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 14,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 5,
+      "targetVersionName": "0.1.4-alpha",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 15,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 5,
+      "targetVersionName": "0.1.4-alpha",
+      "verdict": "PASS"
+    }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+    "httpOk": true,
+    "expectedSha256": "4778afadaddae4a9675c84f17fa60c473ac72894d7f153d9324a45cad1865304",
+    "actualSha256": "4778afadaddae4a9675c84f17fa60c473ac72894d7f153d9324a45cad1865304",
+    "sizeBytes": 43589106,
+    "verdict": "PASS"
+  },
+  "verdict": "PASS"
+}
