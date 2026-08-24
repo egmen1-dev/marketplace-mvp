@@ -1,6 +1,6 @@
 {
   "candidate": "RC10.2",
-  "generatedAt": "2026-08-24T21:30:00Z",
+  "generatedAt": "2026-08-24T21:32:00Z",
   "gates": {
     "build": "PASS",
     "mobileTypecheck": "PASS",
@@ -8,14 +8,17 @@
     "publishTruthGate": "PASS",
     "postDeployStagingSmoke": "PASS",
     "apkVerify": "PASS",
-    "updateVerify": "PENDING",
-    "mrpPublish": "PENDING"
+    "updateVerify": "PASS",
+    "mrpPublish": "PASS"
   },
   "merge": {
     "pr170": "MERGED",
     "pr170HeadSha": "8062000",
     "pr170MergeSha": "e872ed8",
-    "mainSha": "e872ed8",
+    "pr171": "MERGED",
+    "pr171HeadSha": "90451f5",
+    "pr171MergeSha": "9769a65",
+    "mainSha": "9769a65",
     "railwaySha": "e872ed8"
   },
   "postDeployPublishTruth": {

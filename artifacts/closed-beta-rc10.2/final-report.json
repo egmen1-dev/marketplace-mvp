@@ -1,0 +1,67 @@
+{
+  "candidate": "RC10.2",
+  "generatedAt": "2026-08-24T21:32:00Z",
+  "verdict": "READY_FOR_PHYSICAL_PUBLISH_VALIDATION",
+  "versionName": "0.1.15-beta.3",
+  "versionCode": 18,
+  "merge": {
+    "pr170": "MERGED",
+    "pr170HeadSha": "8062000",
+    "pr170MergeSha": "e872ed8",
+    "pr171": "MERGED",
+    "pr171HeadSha": "90451f5",
+    "pr171MergeSha": "9769a65",
+    "mainSha": "9769a65",
+    "railwaySha": "e872ed8"
+  },
+  "postDeployPublishTruth": {
+    "deployVerified": "PASS",
+    "photoUpload": "PASS",
+    "create": "PASS",
+    "publishRequest": "PASS",
+    "branch": "PENDING_REVIEW",
+    "publishOutcome": "PENDING_REVIEW",
+    "moderationState": "PENDING_REVIEW",
+    "returnedStatus": "DRAFT",
+    "isPublic": false,
+    "sellerInventory": "PASS",
+    "sellerDetail": "PASS",
+    "buyerVisibilityMatchesState": "PASS",
+    "duplicateProtection": "PASS",
+    "sellerPublishPolicy": {
+      "requiresModeration": true,
+      "publishCtaLabel": "Отправить на проверку"
+    }
+  },
+  "apk": {
+    "path": "artifacts/closed-beta-rc10.2/lot_android_closed_beta_0.1.15_beta.3.apk",
+    "canonicalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.2/lot_android_closed_beta_0.1.15_beta.3.apk",
+    "sha256": "249e1125fbb7cf703b8837ec6daf251fd6954ed98a2bfa81973de8ab6c9eaede",
+    "sizeBytes": 44305458,
+    "canonicalDownload": "PASS"
+  },
+  "apkForensics": {
+    "publishTruthSymbols": "PASS",
+    "legacyFalseSuccessAbsent": "PASS"
+  },
+  "mrp": {
+    "status": "PUBLISHED",
+    "updateVerify": "PASS"
+  },
+  "updateMatrix": {
+    "code7to17": "OPTIONAL_UPDATE → 18",
+    "code18": "NO_UPDATE",
+    "code19": "NO_UPDATE"
+  },
+  "gates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "photoUploadGate": "PASS",
+    "publishTruthGate": "PASS",
+    "postDeployStagingSmoke": "PASS",
+    "apkVerify": "PASS",
+    "updateVerify": "PASS",
+    "mrpPublish": "PASS"
+  },
+  "physical": "NOT_RUN"
+}

@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-08-24T21:31:12.694Z",
+  "publishMethod": "staging_admin_api",
+  "versionName": "0.1.15-beta.3",
+  "versionCode": 18,
+  "channel": "BETA",
+  "clientChannel": "CLOSED_BETA",
+  "sha256": "249e1125fbb7cf703b8837ec6daf251fd6954ed98a2bfa81973de8ab6c9eaede",
+  "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.2/lot_android_closed_beta_0.1.15_beta.3.apk",
+  "status": "PUBLISHED",
+  "updatePath": {
+    "code7to16": "OPTIONAL_UPDATE→18",
+    "code17": "OPTIONAL_UPDATE→18",
+    "code18": "NO_UPDATE",
+    "code19": "NO_UPDATE"
+  },
+  "verdict": "PASS"
+}
