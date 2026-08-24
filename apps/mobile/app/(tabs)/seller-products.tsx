@@ -22,7 +22,7 @@ type SellerLotsTab = "active" | "drafts" | "sold";
 
 const TABS: Array<{ key: SellerLotsTab; label: string }> = [
   { key: "active", label: "Активные" },
-  { key: "drafts", label: "Черновики" },
+  { key: "drafts", label: "Сохранённые" },
   { key: "sold", label: "Проданные" },
 ];
 
@@ -101,7 +101,7 @@ export default function SellerProductsScreen() {
           )}
           ListEmptyComponent={
             <EmptyState
-              title={tab === "drafts" ? "Черновиков пока нет" : tab === "sold" ? "Проданных ЛОТов пока нет" : "Активных ЛОТов пока нет"}
+              title={tab === "drafts" ? "Сохранённых ЛОТов пока нет" : tab === "sold" ? "Проданных ЛОТов пока нет" : "Активных ЛОТов пока нет"}
               description="Создайте ЛОТ, чтобы покупатели могли его найти"
               actionLabel="Создать ЛОТ"
               onAction={() => router.push("/sell/create")}

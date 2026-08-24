@@ -754,7 +754,7 @@ export async function createProduct(
     if (isMarketplaceTrustLoopEnabled()) {
       throw new ProductServiceError(
         "MODERATION_REQUIRED",
-        "Сначала сохраните черновик и отправьте товар на модерацию.",
+        "Сначала сохраните ЛОТ и отправьте его на проверку.",
         400,
       );
     }
@@ -1015,7 +1015,7 @@ export async function updateProduct(
         await submitProductForModeration(productId);
         throw new ProductServiceError(
           "MODERATION_PENDING",
-          "Товар отправлен на проверку. После одобрения модерации можно опубликовать.",
+          "ЛОТ отправлен на проверку. После одобрения можно опубликовать.",
           400,
         );
       }
