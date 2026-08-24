@@ -1,6 +1,6 @@
-import { loadAppConfig } from "../config/env";
-import { getAccessToken } from "../storage/secure-session";
 import { apiRequest } from "./client";
+
+export { uploadSellerLotImage, type SellerLotUploadedImage } from "../seller/upload-seller-lot-image";
 
 export type TaxonomyChild = { id: string; name: string; slug?: string };
 export type TaxonomyProductType = { id: string; name: string; slug?: string; categoryId?: string };
@@ -40,37 +40,6 @@ export async function suggestProductType(title: string) {
     categoryId: result?.productTypeSuggestion?.categoryId ?? result?.categorySuggestion?.id ?? null,
     categoryName: result?.categorySuggestion?.name ?? null,
   };
-}
-
-export async function uploadSellerLotImage(localUri: string, fileName = "lot.jpg") {
-  const config = loadAppConfig();
-  const token = await getAccessToken();
-  const form = new FormData();
-  form.append("file", {
-    uri: localUri,
-    name: fileName,
-    type: "image/jpeg",
-  } as unknown as Blob);
-
-  let res: Response;
-  try {
-    res = await fetch(`${config.apiBaseUrl}/api/mobile/seller/uploads`, {
-      method: "POST",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      body: form,
-    });
-  } catch {
-    throw new Error("Не удалось загрузить фото");
-  }
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const serverError = (body as { error?: string }).error ?? "Не удалось загрузить фото";
-    throw new Error(serverError);
-  }
-
-  const data = (await res.json()) as { url: string; pathname?: string };
-  return { url: data.url, pathname: data.pathname ?? null };
 }
 
 export type CreateLotPayload = {

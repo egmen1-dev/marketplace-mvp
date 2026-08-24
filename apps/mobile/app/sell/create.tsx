@@ -354,7 +354,17 @@ export default function CreateLotScreen() {
         <View style={styles.photoGrid}>
           {form.draft.images.map((img, index) => (
             <View key={`${img.uri}-${index}`} style={styles.photoCell}>
-              <Image source={{ uri: img.uri }} style={styles.photo} />
+              <Image source={{ uri: img.uploadedUrl ?? img.uri }} style={styles.photo} />
+              {img.uploadStatus === "uploading" ? (
+                <View style={styles.photoOverlay}>
+                  <Text style={styles.photoOverlayText}>{LOT_CREATE_COPY.uploadInProgress}</Text>
+                </View>
+              ) : null}
+              {img.uploadStatus === "failed" ? (
+                <View style={[styles.photoOverlay, styles.photoOverlayError]}>
+                  <Text style={styles.photoOverlayText}>{LOT_CREATE_COPY.uploadErrorTitle}</Text>
+                </View>
+              ) : null}
               <Pressable
                 style={styles.photoRemove}
                 onPress={() =>
@@ -419,6 +429,19 @@ const styles = StyleSheet.create({
   photoGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   photoCell: { width: "30%", aspectRatio: 1, borderRadius: radii.md, overflow: "hidden" },
   photo: { width: "100%", height: "100%" },
+  photoOverlay: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xs,
+  },
+  photoOverlayError: { backgroundColor: "rgba(176,0,32,0.55)" },
+  photoOverlayText: { ...typography.caption, color: colors.white, textAlign: "center" },
   photoRemove: {
     position: "absolute",
     top: 4,
