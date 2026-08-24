@@ -1,0 +1,43 @@
+{
+  "candidate": "RC9",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.14-beta.1",
+  "versionCode": 14,
+  "commitSha": "aa6c3aa",
+  "mergeCommitSha": "aa6c3aa",
+  "buildTime": "2026-08-23T20:35:08Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.14_beta.1.apk",
+    "path": "artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+    "sha256": "4778afadaddae4a9675c84f17fa60c473ac72894d7f153d9324a45cad1865304",
+    "sizeBytes": 43589106
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "epic157_uxPolish": true,
+    "epic158_sellerLotCreation": true,
+    "productImageFallback": true,
+    "productCartCta": true,
+    "sellCreateRoute": true,
+    "sellerLotsTabs": true,
+    "epic152_sellerLoop": true,
+    "epic154_criticalPath": true,
+    "updateRoute": true
+  },
+  "buildNotes": {
+    "release": "RC9 — EPIC 157 UX Polish + EPIC 158 Seller LOT Creation",
+    "previousRelease": "RC8 0.1.13-beta.1 (code 13)"
+  }
+}

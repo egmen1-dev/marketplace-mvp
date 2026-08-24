@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-18T13:36:33.924Z",
+  "generatedAt": "2026-08-24T06:48:06.528Z",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
   "routes": [
     {
@@ -10,7 +10,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 103,
+      "latencyMs": 99,
       "verdict": "PASS"
     },
     {
@@ -21,7 +21,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 96,
+      "latencyMs": 86,
       "verdict": "PASS"
     },
     {
@@ -32,29 +32,43 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 124,
+      "latencyMs": 137,
       "verdict": "PASS"
     },
     {
       "id": "beta_dashboard",
       "path": "/api/product-ops/beta/dashboard",
-      "onOriginMain": false,
-      "verdict": "SKIP",
-      "reason": "Source app/api/product-ops/beta/dashboard/route.ts not on origin/main — route not required until merged"
+      "onOriginMain": true,
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 190,
+      "verdict": "PASS"
     },
     {
       "id": "beta_readiness",
       "path": "/api/product-ops/beta/readiness",
-      "onOriginMain": false,
-      "verdict": "SKIP",
-      "reason": "Source app/api/product-ops/beta/readiness/route.ts not on origin/main — route not required until merged"
+      "onOriginMain": true,
+      "httpStatus": 200,
+      "expectedStatus": [
+        200
+      ],
+      "latencyMs": 312,
+      "verdict": "PASS"
     },
     {
       "id": "checkout_web_url",
       "path": "/api/mobile/checkout/web-url",
-      "onOriginMain": false,
-      "verdict": "SKIP",
-      "reason": "Source app/api/mobile/checkout/web-url/route.ts not on origin/main — route not required until merged"
+      "onOriginMain": true,
+      "httpStatus": 401,
+      "expectedStatus": [
+        401,
+        403
+      ],
+      "latencyMs": 102,
+      "verdict": "PASS",
+      "note": "401/403 without auth proves route registered; 404 = not deployed"
     }
   ],
   "verdict": "PASS"

@@ -1,0 +1,31 @@
+{
+  "candidate": "RC9",
+  "generatedAt": "2026-08-24T06:48:30Z",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "versionName": "0.1.14-beta.1",
+  "versionCode": 14,
+  "commitSha": "aa6c3aa",
+  "gates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "epic157": "PASS",
+    "epic158": "PASS",
+    "epic152": "PASS",
+    "epic154": "PASS",
+    "releasePipeline": "PASS",
+    "rc9StagingGate": "PASS",
+    "rc9ApkVerify": "PASS",
+    "physicalChecklist": "NOT_RUN"
+  },
+  "artifact": {
+    "path": "artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk",
+    "sha256": "4778afadaddae4a9675c84f17fa60c473ac72894d7f153d9324a45cad1865304",
+    "sizeBytes": 43589106,
+    "versionName": "0.1.14-beta.1",
+    "versionCode": 14
+  },
+  "mrp": {
+    "status": "PENDING_MERGE",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc9/lot_android_closed_beta_0.1.14_beta.1.apk"
+  }
+}
