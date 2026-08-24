@@ -25,7 +25,7 @@ function mustNotContain(file: string, needle: string, id: string) {
 }
 
 mustContain("apps/mobile/src/seller/lot-draft-storage.ts", "lot-draft-v2", "draft_v2");
-mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Сохранить ЛОТ", "save_lot_copy");
+mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Продолжить", "continue_copy");
 mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Вы начали создавать ЛОТ", "restore_prompt");
 mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Сохранено", "autosave_indicator");
 mustContain("apps/mobile/src/seller/use-lot-create-form.ts", "useFocusEffect", "navigation_preserve");

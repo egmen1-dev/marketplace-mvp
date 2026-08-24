@@ -19,13 +19,16 @@ export function ProductCartCta({
   if (quantity <= 0) {
     return (
       <Pressable
-        style={[styles.addBtn, disabled ? styles.disabled : null]}
+        style={({ pressed }) => [
+          styles.addBtn,
+          disabled ? styles.disabled : pressed ? styles.addBtnPressed : null,
+        ]}
         onPress={onAdd}
         disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel="В корзину"
       >
-        <MaterialCommunityIcons name="cart-outline" size={16} color={colors.orange} />
+        <MaterialCommunityIcons name="cart-outline" size={16} color={colors.white} />
         <Text style={styles.addText}>В корзину</Text>
       </Pressable>
     );
@@ -68,11 +71,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     minHeight: layout.buttonHeightSm,
     borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.orangeSoft,
-    backgroundColor: colors.orangeSoft,
+    backgroundColor: colors.ctaPrimary,
   },
-  addText: { ...typography.buttonSm, color: colors.orange },
+  addBtnPressed: {
+    backgroundColor: colors.ctaPrimaryPressed,
+  },
+  addText: { ...typography.buttonSm, color: colors.white },
   disabled: { opacity: 0.5 },
   stepper: {
     flexDirection: "row",
@@ -81,7 +85,7 @@ const styles = StyleSheet.create({
     minHeight: layout.buttonHeightSm,
     borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: colors.orange,
+    borderColor: colors.ctaPrimary,
     backgroundColor: colors.orangeSoft,
     overflow: "hidden",
   },
@@ -91,6 +95,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  stepSymbol: { ...typography.button, color: colors.orange, fontSize: 18, lineHeight: 22 },
+  stepSymbol: { ...typography.button, color: colors.ctaPrimary, fontSize: 18, lineHeight: 22 },
   qty: { ...typography.buttonSm, color: colors.black, minWidth: 28, textAlign: "center" },
 });

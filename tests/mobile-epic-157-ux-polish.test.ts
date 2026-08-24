@@ -51,9 +51,10 @@ describe("EPIC 157 — product card polish", () => {
 });
 
 describe("EPIC 157 — category chips", () => {
-  it("uses readable two-line category chip variant in CategoryRail", () => {
+  it("uses single-line category chip variant in CategoryRail", () => {
     expect(chip).toContain('variant?: "default" | "category"');
-    expect(chip).toContain("numberOfLines={isCategory ? 2 : 1}");
+    expect(chip).toContain("numberOfLines={1}");
+    expect(chip).toContain('ellipsizeMode="tail"');
     expect(catalogToolbar).toContain('variant="category"');
   });
 });

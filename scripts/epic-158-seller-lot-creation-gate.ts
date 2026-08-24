@@ -23,7 +23,8 @@ mustContain("app/api/mobile/seller/products/route.ts", "POST", "seller_products_
 mustContain("app/api/mobile/seller/products/[id]/route.ts", "PATCH", "seller_products_patch");
 mustContain("app/api/mobile/seller/uploads/route.ts", "requireSellerFromRequest", "seller_uploads_route");
 mustContain("apps/mobile/app/(tabs)/sell.tsx", 'router.push("/sell/create")', "sell_entry_create_lot");
-mustContain("apps/mobile/app/sell/create.tsx", "Опубликовать ЛОТ", "create_lot_wizard");
+mustContain("apps/mobile/src/seller/lot-create-copy.ts", "Опубликовать ЛОТ", "create_lot_wizard");
+mustContain("apps/mobile/app/sell/create.tsx", "LotCreatePreviewFooter", "create_lot_preview_footer");
 mustContain("apps/mobile/app/(tabs)/seller-products.tsx", "Мои ЛОТы", "my_lots_screen");
 mustContain("apps/mobile/app/(tabs)/seller-products.tsx", "Сохранённые", "my_lots_tabs");
 mustContain("apps/mobile/src/seller/lot-draft-storage.ts", "lot-draft-v2", "local_draft_storage");

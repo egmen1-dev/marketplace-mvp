@@ -16,7 +16,7 @@ export function Chip({
   onPress?: () => void;
   icon?: ReactNode;
   style?: StyleProp<ViewStyle>;
-  /** Category chips use two-line readable labels in the horizontal rail. */
+  /** Category chips in horizontal rails: single-line with ellipsis. */
   variant?: "default" | "category";
 }) {
   const isCategory = variant === "category";
@@ -36,7 +36,7 @@ export function Chip({
       {icon}
       <Text
         style={[styles.label, isCategory ? styles.labelCategory : null, active ? styles.labelActive : null]}
-        numberOfLines={isCategory ? 2 : 1}
+        numberOfLines={1}
         ellipsizeMode="tail"
       >
         {label}
@@ -60,14 +60,13 @@ const styles = StyleSheet.create({
     maxWidth: 160,
   },
   chipCategory: {
-    minWidth: 92,
-    maxWidth: 132,
-    minHeight: 44,
-    maxHeight: 52,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    alignItems: "center",
-    justifyContent: "center",
+    height: 42,
+    minHeight: 42,
+    maxHeight: 42,
+    paddingHorizontal: 14,
+    paddingVertical: 0,
+    maxWidth: 180,
+    flexShrink: 0,
   },
   chipInactive: {
     backgroundColor: colors.white,
@@ -86,9 +85,8 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   labelCategory: {
-    fontSize: 12,
-    lineHeight: 16,
-    textAlign: "center",
+    fontSize: 13,
+    lineHeight: 18,
   },
   labelActive: {
     color: colors.white,

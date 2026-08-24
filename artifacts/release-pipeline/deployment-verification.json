@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-08-24T07:04:42.892Z",
+  "generatedAt": "2026-08-24T11:00:55.475Z",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
   "github": {
-    "originMain": "00972cd82cc98c4ffc2714b29253e4d03658f010",
-    "localMain": "00972cd82cc98c4ffc2714b29253e4d03658f010",
+    "originMain": "8dedc1fd6c15b57567f095c847a40642d10ea04c",
+    "localMain": "8dedc1fd6c15b57567f095c847a40642d10ea04c",
     "mainMatchesOrigin": true,
-    "shortSha": "00972cd"
+    "shortSha": "8dedc1f"
   },
   "railway": {
-    "commit": "00972cd",
-    "buildTime": "2026-08-24T07:02:12.768Z",
+    "commit": "8dedc1f",
+    "buildTime": "2026-08-24T07:13:26.736Z",
     "version": "0.1.0",
     "environment": "staging",
-    "shortSha": "00972cd",
+    "shortSha": "8dedc1f",
     "httpStatus": 200
   },
   "shaMatch": true,

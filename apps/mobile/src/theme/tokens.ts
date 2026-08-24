@@ -1,5 +1,8 @@
 export const colors = {
   orange: "#FF6B00",
+  /** Primary commerce CTA — matches LOT logo orange */
+  ctaPrimary: "#FF6B00",
+  ctaPrimaryPressed: "#E05E00",
   orangeSoft: "#FFF4EB",
   black: "#111111",
   white: "#FFFFFF",
@@ -66,4 +69,6 @@ export const layout = {
   buttonHeight: 44,
   buttonHeightSm: 36,
   buttonHeightLg: 48,
+  /** Sticky seller-create primary action (52–56dp) */
+  stickyCtaHeight: 54,
 } as const;

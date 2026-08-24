@@ -7,11 +7,14 @@ import {
   createSellerLot,
   fetchSellerPickupPoints,
   fetchTaxonomyBrowse,
+  publishSellerLot,
   suggestProductType,
+  updateSellerLot,
   uploadSellerLotImage,
   type SellerPickupPoint,
 } from "../api/seller-lot";
 import { LOT_CREATE_COPY } from "./lot-create-copy";
+import { formatLotCreateError, type LotCreateErrorContext } from "./lot-create-errors";
 import {
   EMPTY_LOT_DRAFT,
   clearLotDraft,
@@ -43,9 +46,27 @@ export function useLotCreateForm() {
   const [savingLot, setSavingLot] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
+  const [canRetry, setCanRetry] = useState(false);
   const [info, setInfo] = useState<string | null>(null);
+  const lastFailedActionRef = useRef<LotCreateErrorContext | null>(null);
+  const uploadFailedRef = useRef(false);
+  const retryIntentRef = useRef<"save" | "publish">("publish");
 
-  draftRef.current = draft;
+  const setHumanError = useCallback((err: unknown, context: LotCreateErrorContext) => {
+    const formatted = formatLotCreateError(err, context);
+    lastFailedActionRef.current = context;
+    setError(formatted.message);
+    setErrorDetail(formatted.detail);
+    setCanRetry(formatted.canRetry);
+  }, []);
+
+  const clearErrors = useCallback(() => {
+    setError(null);
+    setErrorDetail(null);
+    setCanRetry(false);
+    lastFailedActionRef.current = null;
+  }, []);
 
   const flushSave = useCallback(async (next: LotDraft) => {
     setAutosaveStatus("saving");
@@ -236,7 +257,7 @@ export function useLotCreateForm() {
     };
     persist(next, { immediate: true });
     setStep("preview");
-    setError(null);
+    clearErrors();
   }
 
   function buildPayload(images: Array<{ url: string; pathname?: string | null }>, status: "ACTIVE" | "DRAFT") {
@@ -277,6 +298,8 @@ export function useLotCreateForm() {
         const saved = { ...draft, images: nextDraftImages };
         await flushSave(saved);
         setDraft(saved);
+        lastFailedActionRef.current = "upload";
+        uploadFailedRef.current = true;
         throw err;
       }
     }
@@ -286,21 +309,63 @@ export function useLotCreateForm() {
     return images;
   }
 
+  async function persistServerDraft(images: Array<{ url: string; pathname?: string | null }>) {
+    const payload = buildPayload(images, "DRAFT");
+    if (draft.savedProductId) {
+      await updateSellerLot(draft.savedProductId, payload);
+      return draft.savedProductId;
+    }
+    const created = await createSellerLot(payload);
+    return created.product.id;
+  }
+
+  async function publishOnServer(images: Array<{ url: string; pathname?: string | null }>) {
+    const activePayload = buildPayload(images, "ACTIVE");
+    const draftPayload = buildPayload(images, "DRAFT");
+    let productId: string | null = draft.savedProductId;
+    let reviewNote: string | null = null;
+
+    if (productId) {
+      try {
+        await publishSellerLot(productId, activePayload);
+      } catch {
+        await updateSellerLot(productId, draftPayload);
+        reviewNote = LOT_CREATE_COPY.savedForReview;
+      }
+      return { productId, reviewNote };
+    }
+
+    try {
+      const created = await createSellerLot(activePayload);
+      productId = created.product.id;
+    } catch {
+      const created = await createSellerLot(draftPayload);
+      productId = created.product.id;
+      reviewNote = LOT_CREATE_COPY.savedForReview;
+    }
+
+    return { productId, reviewNote };
+  }
+
   async function saveLotLocallyAndServer() {
     setSavingLot(true);
-    setError(null);
+    clearErrors();
     setInfo(null);
+    lastFailedActionRef.current = "save";
+    retryIntentRef.current = "save";
+    uploadFailedRef.current = false;
     try {
       await flushSave(draft);
       const images = await uploadImagesWithRecovery();
-      const created = await createSellerLot(buildPayload(images, "DRAFT"));
-      const saved = { ...draft, savedProductId: created.product.id };
+      const productId = await persistServerDraft(images);
+      const saved = { ...draft, savedProductId: productId };
       await flushSave(saved);
       setDraft(saved);
-      setInfo("ЛОТ сохранён. Вы можете продолжить позже.");
+      setInfo(LOT_CREATE_COPY.savedLocally);
     } catch (err) {
       await flushSave(draft);
-      setError(err instanceof Error ? err.message : LOT_CREATE_COPY.publishError);
+      const context: LotCreateErrorContext = uploadFailedRef.current ? "upload" : "save";
+      setHumanError(err, context);
     } finally {
       setSavingLot(false);
     }
@@ -308,21 +373,14 @@ export function useLotCreateForm() {
 
   async function publishLot() {
     setPublishing(true);
-    setError(null);
+    clearErrors();
     setInfo(null);
+    lastFailedActionRef.current = "publish";
+    retryIntentRef.current = "publish";
+    uploadFailedRef.current = false;
     try {
       const images = await uploadImagesWithRecovery();
-      let productId: string | null = draft.savedProductId;
-      let reviewNote: string | null = null;
-
-      try {
-        const created = await createSellerLot(buildPayload(images, "ACTIVE"));
-        productId = created.product.id;
-      } catch {
-        const created = await createSellerLot(buildPayload(images, "DRAFT"));
-        productId = created.product.id;
-        reviewNote = LOT_CREATE_COPY.savedForReview;
-      }
+      const { productId, reviewNote } = await publishOnServer(images);
 
       setPublishedId(productId);
       setInfo(reviewNote);
@@ -330,23 +388,20 @@ export function useLotCreateForm() {
       setStep("success");
     } catch (err) {
       await flushSave(draft);
-      const message = err instanceof Error ? err.message : LOT_CREATE_COPY.publishError;
-      if (message.toLowerCase().includes("фото") || message.toLowerCase().includes("upload")) {
-        setError(LOT_CREATE_COPY.uploadError);
-      } else if (message.toLowerCase().includes("самовывоз") || message.toLowerCase().includes("точк")) {
-        setError(LOT_CREATE_COPY.pickupSaveError);
-      } else if (
-        message.toLowerCase().includes("network") ||
-        message.toLowerCase().includes("fetch") ||
-        message.toLowerCase().includes("сеть")
-      ) {
-        setError(LOT_CREATE_COPY.networkError);
-      } else {
-        setError(message);
-      }
+      const context: LotCreateErrorContext = uploadFailedRef.current ? "upload" : "publish";
+      setHumanError(err, context);
     } finally {
       setPublishing(false);
     }
+  }
+
+  async function retryLastAction() {
+    clearErrors();
+    if (retryIntentRef.current === "save") {
+      await saveLotLocallyAndServer();
+      return;
+    }
+    await publishLot();
   }
 
   function goToStep(next: LotWizardStep) {
@@ -368,6 +423,8 @@ export function useLotCreateForm() {
     savingLot,
     publishedId,
     error,
+    errorDetail,
+    canRetry,
     info,
     priceNumber,
     stockNumber,
@@ -385,6 +442,7 @@ export function useLotCreateForm() {
     goPreview,
     saveLotLocallyAndServer,
     publishLot,
+    retryLastAction,
     goToStep,
     setError,
     setInfo,

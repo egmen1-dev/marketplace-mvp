@@ -14,8 +14,8 @@ const pickupRouteSource = readFileSync("app/api/mobile/seller/pickup-points/rout
 
 describe("EPIC 158.1 — LOT terminology", () => {
   it("uses LOT language instead of черновик/модерация in create flow", () => {
-    expect(copySource).toContain("Сохранить ЛОТ");
-    expect(copySource).toContain("Отправить ЛОТ на проверку");
+    expect(copySource).toContain("Продолжить");
+    expect(copySource).toContain("Опубликовать ЛОТ");
     expect(copySource).not.toContain("черновик");
     expect(createLotSource).not.toContain("Черновик ЛОТа");
     expect(sellerProductsSource).toContain("Сохранённые");
@@ -56,8 +56,9 @@ describe("EPIC 158.1 — navigation and error preservation", () => {
   it("never clears draft on publish/upload errors", () => {
     expect(hookSource).toContain("await flushSave(draft)");
     expect(hookSource).toContain("uploadImagesWithRecovery");
-    expect(hookSource).toContain("LOT_CREATE_COPY.uploadError");
-    expect(hookSource).toContain("LOT_CREATE_COPY.pickupSaveError");
+    expect(hookSource).toContain("formatLotCreateError");
+    expect(hookSource).toContain("setHumanError");
+    expect(copySource).toContain("pickupSaveError");
     expect(copySource).toContain("Ваш ЛОТ сохранён");
   });
 

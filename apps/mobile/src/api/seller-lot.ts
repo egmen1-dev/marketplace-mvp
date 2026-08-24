@@ -52,15 +52,21 @@ export async function uploadSellerLotImage(localUri: string, fileName = "lot.jpg
     type: "image/jpeg",
   } as unknown as Blob);
 
-  const res = await fetch(`${config.apiBaseUrl}/api/mobile/seller/uploads`, {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: form,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${config.apiBaseUrl}/api/mobile/seller/uploads`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+  } catch {
+    throw new Error("Не удалось загрузить фото");
+  }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error((body as { error?: string }).error ?? "Не удалось загрузить фото");
+    const serverError = (body as { error?: string }).error ?? "Не удалось загрузить фото";
+    throw new Error(serverError);
   }
 
   const data = (await res.json()) as { url: string; pathname?: string };
@@ -97,6 +103,22 @@ export async function createSellerLot(payload: CreateLotPayload) {
         prepaymentPercent: 0,
         pickupPointIds,
         characteristics: [],
+      }),
+    },
+  );
+}
+
+export async function updateSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
+  const pickupEnabled = payload.pickupEnabled ?? false;
+  const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
+  return apiRequest<{ product: { id: string }; message?: string }>(
+    `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        ...payload,
+        pickupEnabled,
+        pickupPointIds,
       }),
     },
   );

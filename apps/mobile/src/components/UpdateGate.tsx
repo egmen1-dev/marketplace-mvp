@@ -7,6 +7,7 @@ import { PrimaryButton, SecondaryButton } from "../components/ui";
 import { colors, radii, spacing, typography } from "../theme/tokens";
 import { getUpdateErrorMessage, startApkDownload } from "../update/download-apk";
 import { saveUpdateDefer } from "../update/update-defer-storage";
+import { UPDATE_UI_LABELS } from "../update/update-ui-labels";
 import { UPDATE_ANALYTICS, type MobileUpdateState } from "../update/types";
 
 type Props = {
@@ -18,7 +19,14 @@ type Props = {
 function titleForState(state: MobileUpdateState, versionName: string) {
   if (state === "UNSUPPORTED_CLIENT") return "Эта версия ЛОТ больше не поддерживается";
   if (state === "REQUIRED_UPDATE") return "Эта версия ЛОТ больше не поддерживается";
-  return `Доступна новая версия ЛОТ\n\n${versionName}`;
+  return UPDATE_UI_LABELS.available;
+}
+
+function bodyForState(state: MobileUpdateState, versionName: string) {
+  if (state === "UNSUPPORTED_CLIENT" || state === "REQUIRED_UPDATE") {
+    return "Чтобы продолжить работу, обновите приложение.";
+  }
+  return `${UPDATE_UI_LABELS.availableBody}\n\nВерсия ${versionName}`;
 }
 
 export function UpdateGate({ info, visible, onDismiss }: Props) {
@@ -54,9 +62,10 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
         <View style={styles.sheet}>
           <Text style={styles.title}>{titleForState(info.updateState, info.versionName)}</Text>
           {required ? (
-            <Text style={styles.body}>Чтобы продолжить работу, обновите приложение.</Text>
+            <Text style={styles.body}>{bodyForState(info.updateState, info.versionName)}</Text>
           ) : (
             <>
+              <Text style={styles.body}>{bodyForState(info.updateState, info.versionName)}</Text>
               <Text style={styles.sectionLabel}>Что нового:</Text>
               <ScrollView style={styles.notesScroll} nestedScrollEnabled>
                 {(info.releaseNotes.length ? info.releaseNotes : ["Улучшения стабильности и UX"]).map((line) => (
@@ -80,8 +89,8 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <PrimaryButton label="Обновить" fullWidth onPress={onUpdate} loading={busy} />
-          {dismissible ? <SecondaryButton label="Позже" fullWidth onPress={onLater} /> : null}
+          <PrimaryButton label={UPDATE_UI_LABELS.updateNow} fullWidth onPress={onUpdate} loading={busy} />
+          {dismissible ? <SecondaryButton label={UPDATE_UI_LABELS.later} fullWidth onPress={onLater} /> : null}
           {!dismissible ? null : (
             <Pressable onPress={onDismiss} style={styles.dismissHit}>
               <Text style={styles.dismissText}> </Text>

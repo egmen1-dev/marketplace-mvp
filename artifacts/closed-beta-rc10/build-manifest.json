@@ -1,0 +1,44 @@
+{
+  "candidate": "RC10",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.1",
+  "versionCode": 16,
+  "commitSha": "e01d048",
+  "mergeCommitSha": "e01d048",
+  "buildTime": "2026-08-24T11:02:16Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.1.apk",
+    "path": "artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
+    "sha256": "8953ffe1002f362896dfb79af63f30078cede6c184e8a6ac73e59eab57664820",
+    "sizeBytes": 43623614
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "epic158_1_lotUxHardening": true,
+    "epic158_2_sellerUxSimplify": true,
+    "epic158_3_previewUpdate": true,
+    "epic159_sellerBetaAcceptance": true,
+    "lotAutosave": true,
+    "lotRestorePrompt": true,
+    "pickupPointsApi": true,
+    "epic152_sellerLoop": true,
+    "epic154_criticalPath": true,
+    "updateRoute": true
+  },
+  "buildNotes": {
+    "release": "RC10 — EPIC 158.1–158.3 + EPIC 159 Seller Beta Acceptance",
+    "previousRelease": "RC9.1 0.1.14-beta.2 (code 15)"
+  }
+}

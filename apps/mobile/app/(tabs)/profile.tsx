@@ -10,12 +10,14 @@ import { ProfileMenu } from "../../src/components/ProfileMenu";
 import { getSessionMeta } from "../../src/storage/secure-session";
 import { openSupportPage } from "../../src/navigation/legal-links";
 import { useAppStore } from "../../src/store/app-store";
+import { useUpdateAvailabilityBadge } from "../../src/update/use-update-availability-badge";
 import { buildErrorReport } from "../../src/telemetry/error-report";
 import { colors, spacing, typography } from "../../src/theme/tokens";
 
 export default function ProfileScreen() {
   const sellerCapable = useAppStore((s) => s.sellerCapable);
   const messagesBadge = useAppStore((s) => s.badges.messages);
+  const { updateAvailable } = useUpdateAvailabilityBadge();
   const [email, setEmail] = useState<string>("—");
   const buildInfo = getBuildInfo();
 
@@ -56,6 +58,7 @@ export default function ProfileScreen() {
       <ProfileMenu
         sellerCapable={sellerCapable}
         messagesBadge={messagesBadge}
+        updateAvailableVersion={updateAvailable?.versionName ?? null}
         onSupport={openSupportPage}
         onReportError={onReportError}
         onAbout={() => router.push("/about")}

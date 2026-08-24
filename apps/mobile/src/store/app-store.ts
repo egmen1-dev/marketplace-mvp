@@ -28,6 +28,7 @@ type AppState = {
   userRole: string | null;
   sellerCapable: boolean;
   pendingUpdate: MobileUpdateInfo | null;
+  updateAvailable: MobileUpdateInfo | null;
   badges: TabBadges;
   setMode: (mode: AppMode) => void;
   setBootstrapped: (value: boolean) => void;
@@ -39,6 +40,7 @@ type AppState = {
   setRemoteConfig: (config: Record<string, unknown>) => void;
   setUserRole: (role: string | null) => void;
   setPendingUpdate: (update: MobileUpdateInfo | null) => void;
+  setUpdateAvailable: (update: MobileUpdateInfo | null) => void;
   setBadges: (badges: Partial<TabBadges>) => void;
 };
 
@@ -57,6 +59,7 @@ export const useAppStore = create<AppState>((set) => ({
   userRole: null,
   sellerCapable: false,
   pendingUpdate: null,
+  updateAvailable: null,
   badges: { cart: 0, favorites: 0, orders: 0, messages: 0 },
   setMode: (mode) => set({ mode }),
   setBootstrapped: (bootstrapped) => set({ bootstrapped }),
@@ -73,5 +76,6 @@ export const useAppStore = create<AppState>((set) => ({
       mode: "buyer",
     }),
   setPendingUpdate: (pendingUpdate) => set({ pendingUpdate }),
+  setUpdateAvailable: (updateAvailable) => set({ updateAvailable }),
   setBadges: (badges) => set((state) => ({ badges: { ...state.badges, ...badges } })),
 }));
