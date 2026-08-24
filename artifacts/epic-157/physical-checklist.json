@@ -1,0 +1,14 @@
+{
+  "epic": "EPIC_157",
+  "candidate": "RC9-prep",
+  "generatedAt": "2026-08-23T21:00:00Z",
+  "status": "NOT_RUN",
+  "scenarios": [
+    { "id": "home", "name": "Home", "checks": ["no native Главная header", "compact spacing", "products visible without large gap"], "status": "NOT_RUN" },
+    { "id": "catalog", "name": "Catalog", "checks": ["readable category chips", "filters/sort", "stable product cards"], "status": "NOT_RUN" },
+    { "id": "product", "name": "Product", "checks": ["image or fallback", "seller", "chat", "add to cart"], "status": "NOT_RUN" },
+    { "id": "cart-cta", "name": "Cart CTA", "checks": ["В корзину → stepper", "consistent on Home/Catalog/Favorites/Seller"], "status": "NOT_RUN" },
+    { "id": "cart", "name": "Cart", "checks": ["quantity", "remove", "persist"], "status": "NOT_RUN" },
+    { "id": "seller", "name": "Seller", "checks": ["add product handoff", "orders", "chat"], "status": "NOT_RUN" }
+  ]
+}
