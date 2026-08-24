@@ -10,8 +10,6 @@ import {
   publishSellerLot,
   suggestProductType,
   updateSellerLot,
-  uploadSellerLotImage,
-  type SellerPickupPoint,
 } from "../api/seller-lot";
 import { LOT_CREATE_COPY } from "./lot-create-copy";
 import { formatLotCreateError, type LotCreateErrorContext } from "./lot-create-errors";
@@ -22,7 +20,11 @@ import {
   loadLotDraft,
   saveLotDraft,
   type LotDraft,
+  type LotDraftImage,
 } from "./lot-draft-storage";
+import { normalizeDraftImageAsset, normalizeImagePickerAsset } from "./normalize-image-picker-asset";
+import { uploadSellerLotImage } from "./upload-seller-lot-image";
+import type { SellerPickupPoint } from "../api/seller-lot";
 
 export type LotWizardStep = "photos" | "details" | "preview" | "success";
 export type AutosaveStatus = "idle" | "saving" | "saved";
@@ -82,6 +84,7 @@ export function useLotCreateForm() {
 
   const persist = useCallback(
     (next: LotDraft, options?: { immediate?: boolean }) => {
+      draftRef.current = next;
       setDraft(next);
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       if (options?.immediate) {
@@ -93,6 +96,82 @@ export function useLotCreateForm() {
       }, 400);
     },
     [flushSave],
+  );
+
+  const patchDraftImages = useCallback(
+    (updater: (images: LotDraftImage[]) => LotDraftImage[], options?: { immediate?: boolean }) => {
+      const next = { ...draftRef.current, images: updater(draftRef.current.images), step: draftRef.current.step };
+      persist(next, options);
+      return next;
+    },
+    [persist],
+  );
+
+  const uploadDraftImageAt = useCallback(
+    async (index: number) => {
+      const current = draftRef.current.images[index];
+      if (!current || current.uploadedUrl || current.uploadStatus === "uploading") return;
+
+      patchDraftImages((images) =>
+        images.map((img, i) => (i === index ? { ...img, uploadStatus: "uploading", uploadError: null } : img)),
+        { immediate: true },
+      );
+
+      try {
+        const uploaded = await uploadSellerLotImage(normalizeDraftImageAsset(current));
+        patchDraftImages((images) =>
+          images.map((img, i) =>
+            i === index
+              ? {
+                  ...img,
+                  uploadStatus: "uploaded",
+                  uploadError: null,
+                  uploadedUrl: uploaded.url,
+                  uploadedPathname: uploaded.pathname ?? undefined,
+                  uploadedId: uploaded.id,
+                  mimeType: uploaded.mimeType,
+                }
+              : img,
+          ),
+          { immediate: true },
+        );
+      } catch (err) {
+        const message = err instanceof Error ? err.message : LOT_CREATE_COPY.uploadErrorTitle;
+        patchDraftImages((images) =>
+          images.map((img, i) =>
+            i === index ? { ...img, uploadStatus: "failed", uploadError: message } : img,
+          ),
+          { immediate: true },
+        );
+        uploadFailedRef.current = true;
+        lastFailedActionRef.current = "upload";
+        throw err;
+      }
+    },
+    [patchDraftImages],
+  );
+
+  const processUploadQueue = useCallback(async () => {
+    const images = draftRef.current.images;
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      if (img.uploadedUrl || img.uploadStatus === "uploading") continue;
+      try {
+        await uploadDraftImageAt(i);
+      } catch {
+        break;
+      }
+    }
+  }, [uploadDraftImageAt]);
+
+  const imagesUploading = useMemo(
+    () => draft.images.some((img) => img.uploadStatus === "uploading"),
+    [draft.images],
+  );
+
+  const hasFailedUploads = useMemo(
+    () => draft.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl),
+    [draft.images],
   );
 
   const restoreTaxonomy = useCallback(async (saved: LotDraft) => {
@@ -149,13 +228,15 @@ export function useLotCreateForm() {
 
   const continueRestore = useCallback(async () => {
     if (!pendingRestore) return;
+    draftRef.current = pendingRestore;
     setDraft(pendingRestore);
     setStep(pendingRestore.step ?? "photos");
     setShowRestorePrompt(false);
     setPendingRestore(null);
     await restoreTaxonomy(pendingRestore);
     void loadPickupPoints();
-  }, [pendingRestore, restoreTaxonomy, loadPickupPoints]);
+    void processUploadQueue();
+  }, [pendingRestore, restoreTaxonomy, loadPickupPoints, processUploadQueue]);
 
   const discardRestore = useCallback(async () => {
     await clearLotDraft();
@@ -195,8 +276,23 @@ export function useLotCreateForm() {
       ? await ImagePicker.launchCameraAsync({ quality: 0.85 })
       : await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true, quality: 0.85, selectionLimit: 10 });
     if (result.canceled) return;
-    const nextImages = [...draft.images, ...result.assets.map((a) => ({ uri: a.uri }))].slice(0, 10);
-    persist({ ...draft, images: nextImages, step: "photos" });
+    const added = result.assets.map((asset) => {
+      const normalized = normalizeImagePickerAsset(asset);
+      return {
+        uri: normalized.uri,
+        fileName: normalized.fileName,
+        mimeType: normalized.mimeType,
+        width: normalized.width,
+        height: normalized.height,
+        fileSize: normalized.fileSize,
+        uploadStatus: "idle" as const,
+      };
+    });
+    const current = draftRef.current;
+    const nextImages = [...current.images, ...added].slice(0, 10);
+    persist({ ...current, images: nextImages, step: "photos" }, { immediate: true });
+    clearErrors();
+    void processUploadQueue();
   }
 
   async function selectRootCategory(cat: { id: string; name: string }) {
@@ -279,31 +375,33 @@ export function useLotCreateForm() {
 
   async function uploadImagesWithRecovery() {
     const images: Array<{ url: string; pathname?: string | null }> = [];
-    const nextDraftImages = [...draft.images];
-    for (let i = 0; i < draft.images.length; i++) {
-      const img = draft.images[i];
+    const nextDraftImages = [...draftRef.current.images];
+
+    for (let i = 0; i < nextDraftImages.length; i++) {
+      const img = nextDraftImages[i];
       if (img.uploadedUrl) {
         images.push({ url: img.uploadedUrl, pathname: img.uploadedPathname ?? null });
         continue;
       }
+
       try {
-        const uploaded = await uploadSellerLotImage(img.uri);
-        images.push({ url: uploaded.url, pathname: uploaded.pathname });
-        nextDraftImages[i] = {
-          ...img,
-          uploadedUrl: uploaded.url,
-          uploadedPathname: uploaded.pathname ?? undefined,
-        };
+        await uploadDraftImageAt(i);
+        const refreshed = draftRef.current.images[i];
+        if (!refreshed?.uploadedUrl) {
+          throw new Error(LOT_CREATE_COPY.uploadErrorTitle);
+        }
+        images.push({ url: refreshed.uploadedUrl, pathname: refreshed.uploadedPathname ?? null });
+        nextDraftImages[i] = refreshed;
       } catch (err) {
-        const saved = { ...draft, images: nextDraftImages };
-        await flushSave(saved);
-        setDraft(saved);
-        lastFailedActionRef.current = "upload";
+        await flushSave({ ...draftRef.current, images: nextDraftImages });
+        setDraft({ ...draftRef.current, images: nextDraftImages });
         uploadFailedRef.current = true;
+        lastFailedActionRef.current = "upload";
         throw err;
       }
     }
-    const saved = { ...draft, images: nextDraftImages };
+
+    const saved = { ...draftRef.current, images: nextDraftImages };
     await flushSave(saved);
     setDraft(saved);
     return images;
@@ -348,6 +446,17 @@ export function useLotCreateForm() {
   }
 
   async function saveLotLocallyAndServer() {
+    if (draftRef.current.images.some((img) => img.uploadStatus === "uploading")) {
+      setError(LOT_CREATE_COPY.uploadWaitPublish);
+      setErrorDetail(null);
+      setCanRetry(false);
+      return;
+    }
+    if (draftRef.current.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl)) {
+      setHumanError(new Error(LOT_CREATE_COPY.uploadErrorTitle), "upload");
+      return;
+    }
+
     setSavingLot(true);
     clearErrors();
     setInfo(null);
@@ -372,6 +481,17 @@ export function useLotCreateForm() {
   }
 
   async function publishLot() {
+    if (draftRef.current.images.some((img) => img.uploadStatus === "uploading")) {
+      setError(LOT_CREATE_COPY.uploadWaitPublish);
+      setErrorDetail(null);
+      setCanRetry(false);
+      return;
+    }
+    if (draftRef.current.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl)) {
+      setHumanError(new Error(LOT_CREATE_COPY.uploadErrorTitle), "upload");
+      return;
+    }
+
     setPublishing(true);
     clearErrors();
     setInfo(null);
@@ -397,6 +517,20 @@ export function useLotCreateForm() {
 
   async function retryLastAction() {
     clearErrors();
+    if (lastFailedActionRef.current === "upload" || hasFailedUploads) {
+      uploadFailedRef.current = false;
+      try {
+        await processUploadQueue();
+        if (retryIntentRef.current === "save") {
+          await saveLotLocallyAndServer();
+        } else if (!hasFailedUploads) {
+          await publishLot();
+        }
+      } catch (err) {
+        setHumanError(err, "upload");
+      }
+      return;
+    }
     if (retryIntentRef.current === "save") {
       await saveLotLocallyAndServer();
       return;
@@ -430,6 +564,8 @@ export function useLotCreateForm() {
     stockNumber,
     canContinuePhotos,
     canContinueDetails,
+    imagesUploading,
+    hasFailedUploads,
     persist,
     continueRestore,
     discardRestore,

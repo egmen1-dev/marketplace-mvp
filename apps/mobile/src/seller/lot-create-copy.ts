@@ -27,6 +27,9 @@ export const LOT_CREATE_COPY = {
   uploadErrorTitle: "Не удалось загрузить фото",
   uploadErrorBody: "Проверьте интернет и попробуйте ещё раз",
   uploadError: "Не удалось загрузить фото. Ваш ЛОТ сохранён — попробуйте ещё раз.",
+  uploadInProgress: "Загружаем фото…",
+  uploadWaitPublish: "Подождите, фото ещё загружается",
+  uriMissingOnRestore: "Фото нужно выбрать ещё раз",
   publishError: "Не получилось опубликовать ЛОТ",
   publishErrorBody: "Ваш ЛОТ сохранён. Можно попробовать ещё раз.",
   savedForReview:

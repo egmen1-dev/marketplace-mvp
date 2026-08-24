@@ -74,7 +74,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       withMobileApiContract(
-        { url: result.url, pathname: result.pathname, maxCount: PRODUCT_IMAGE_LIMITS.maxCount },
+        {
+          id: result.pathname,
+          url: result.url,
+          pathname: result.pathname,
+          mimeType: contentType,
+          maxCount: PRODUCT_IMAGE_LIMITS.maxCount,
+        },
         `seller-upload-${seller.sellerProfileId}`,
       ),
       { status: 201 },

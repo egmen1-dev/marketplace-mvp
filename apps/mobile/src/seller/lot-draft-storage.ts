@@ -5,8 +5,17 @@ const DRAFT_KEY_V1 = "lot-draft-v1";
 
 export type LotDraftImage = {
   uri: string;
+  fileName?: string;
+  mimeType?: string;
+  width?: number;
+  height?: number;
+  fileSize?: number;
+  uploadStatus?: "idle" | "uploading" | "uploaded" | "failed";
+  uploadError?: string | null;
+  uriMissing?: boolean;
   uploadedUrl?: string;
   uploadedPathname?: string;
+  uploadedId?: string;
 };
 
 export type LotDraft = {

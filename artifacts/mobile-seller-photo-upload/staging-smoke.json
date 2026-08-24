@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-24T12:59:54.907Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "fixture": {
+    "path": "/workspace/fixtures/mobile/seller-upload-fixture.jpg",
+    "bytes": 287,
+    "sha256": "efee1b685a44906e97d811daa4b7bfe7896ce0f818d1a87cdf9a44780b812846"
+  },
+  "upload": {
+    "status": 201,
+    "url": "https://li55azctt2x9unce.private.blob.vercel-storage.com/products/cmsmzrxgj0005y0w6jhe5qqle/399b4ea9-0069-40a9-ac2e-209553d697a0.jpg",
+    "mimeType": null,
+    "id": "products/cmsmzrxgj0005y0w6jhe5qqle/399b4ea9-0069-40a9-ac2e-209553d697a0.jpg",
+    "verdict": "PASS"
+  },
+  "imageGet": {
+    "status": 200,
+    "url": "https://web-production-e56fb.up.railway.app/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F399b4ea9-0069-40a9-ac2e-209553d697a0.jpg",
+    "verdict": "PASS"
+  },
+  "productPersistence": {
+    "productId": "cmt78txse0062pg01hpia5svm",
+    "verdict": "PASS"
+  },
+  "verdict": "PASS"
+}
