@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T12:59:54.907Z",
+  "generatedAt": "2026-08-24T13:25:12.119Z",
   "staging": "https://web-production-e56fb.up.railway.app",
   "fixture": {
     "path": "/workspace/fixtures/mobile/seller-upload-fixture.jpg",
@@ -8,18 +8,18 @@
   },
   "upload": {
     "status": 201,
-    "url": "https://li55azctt2x9unce.private.blob.vercel-storage.com/products/cmsmzrxgj0005y0w6jhe5qqle/399b4ea9-0069-40a9-ac2e-209553d697a0.jpg",
+    "url": "https://li55azctt2x9unce.private.blob.vercel-storage.com/products/cmsmzrxgj0005y0w6jhe5qqle/37891a7a-f589-46ed-91a7-b8bd41665cf3.jpg",
     "mimeType": null,
-    "id": "products/cmsmzrxgj0005y0w6jhe5qqle/399b4ea9-0069-40a9-ac2e-209553d697a0.jpg",
+    "id": "products/cmsmzrxgj0005y0w6jhe5qqle/37891a7a-f589-46ed-91a7-b8bd41665cf3.jpg",
     "verdict": "PASS"
   },
   "imageGet": {
     "status": 200,
-    "url": "https://web-production-e56fb.up.railway.app/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F399b4ea9-0069-40a9-ac2e-209553d697a0.jpg",
+    "url": "https://web-production-e56fb.up.railway.app/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F37891a7a-f589-46ed-91a7-b8bd41665cf3.jpg",
     "verdict": "PASS"
   },
   "productPersistence": {
-    "productId": "cmt78txse0062pg01hpia5svm",
+    "productId": "cmt79qgg9007fpg01xh9trrut",
     "verdict": "PASS"
   },
   "verdict": "PASS"

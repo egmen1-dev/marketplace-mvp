@@ -1,0 +1,165 @@
+{
+  "generatedAt": "2026-08-24T13:27:22.824Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.1/lot_android_closed_beta_0.1.15_beta.2.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.2",
+    "versionCode": "17",
+    "nativeCode": "arm64-v8a",
+    "sha256": "325ad7a83ca81a7fc8860d686a79624231dcd9be1e956bbf8510292db4788301",
+    "sizeBytes": 44296382
+  },
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.15-beta.2",
+      "actual": "0.1.15-beta.2"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "17",
+      "actual": "17"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc10_1Label",
+      "ok": true,
+      "expected": "RC10.1 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "91a69b5"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "p0_photoUpload",
+      "name": "uploadSellerLotImage",
+      "pattern": "uploadSellerLotImage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "normalizeImagePickerAsset",
+      "pattern": "normalizeImagePickerAsset",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "defaultLotPhotoFileName",
+      "pattern": "defaultLotPhotoFileName",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "uploadStatus",
+      "pattern": "uploadStatus",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "uploadInProgress",
+      "pattern": "uploadInProgress",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "uploadWaitPublish",
+      "pattern": "uploadWaitPublish",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "mobileSellerUploadRoute",
+      "pattern": "/api/mobile/seller/uploads",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "p0_photoUpload",
+      "name": "expoFileSystem",
+      "pattern": "expo-file-system",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "sellerLotFlow",
+      "name": "LotRestorePrompt",
+      "pattern": "LotRestorePrompt",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "sellerLotFlow",
+      "name": "LotCreatePreviewFooter",
+      "pattern": "LotCreatePreviewFooter",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "sellerLotFlow",
+      "name": "publishOnServer",
+      "pattern": "publishOnServer",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "sellerLotFlow",
+      "name": "updateSellerLot",
+      "pattern": "updateSellerLot",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "legacyAbsentChecks": [
+    {
+      "name": "legacyUriFormDataCast",
+      "pattern": "as unknown as Blob",
+      "present": false,
+      "ok": true
+    },
+    {
+      "name": "legacyUriLocalUri",
+      "pattern": "uri: localUri",
+      "present": false,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}

@@ -1,0 +1,72 @@
+{
+  "candidate": "RC10.1",
+  "generatedAt": "2026-08-24T13:30:00Z",
+  "status": "NOT_RUN",
+  "scope": "P0 photo upload validation only — not full marketplace regression",
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234"
+  },
+  "scenarios": [
+    {
+      "id": "P0-A",
+      "name": "UPDATE from RC10 code 16",
+      "steps": [
+        "Install RC10 (code 16) or use existing device",
+        "Cold start → «Доступно обновление»",
+        "Обновить сейчас → install RC10.1",
+        "Profile → О приложении: 0.1.15-beta.2, code 17, RC10.1, CLOSED_BETA, staging"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-B",
+      "name": "PHOTO PICK + upload",
+      "steps": [
+        "seller@demo.lot → Продать → Создать ЛОТ",
+        "Выбрать JPEG из галереи",
+        "Preview появляется, «Загружаем фото…», upload success, фото остаётся",
+        "FAIL if FormDataPart error or «Не удалось загрузить фото» or form reset"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-C",
+      "name": "PUBLISH",
+      "steps": [
+        "Заполнить поля → Проверьте ЛОТ → Опубликовать ЛОТ",
+        "Ожидание: «ЛОТ опубликован», без повторной потери фото"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-D",
+      "name": "BUYER IMAGE",
+      "steps": [
+        "buyer@demo.lot → найти ЛОТ",
+        "Catalog ProductCard + PDP показывают фото продавца (не placeholder)",
+        "Screenshot evidence"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-E",
+      "name": "RELAUNCH",
+      "steps": [
+        "Kill app → reopen → открыть ЛОТ",
+        "Фото продолжает отображаться (server image, not temp URI)"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-F",
+      "name": "INTERRUPTED CREATE",
+      "steps": [
+        "Новый ЛОТ → фото → upload success → заполнить поля",
+        "Kill app → reopen → Продолжить",
+        "Поля и фото сохранены → можно опубликовать"
+      ],
+      "status": "NOT_RUN"
+    }
+  ]
+}
