@@ -1,0 +1,45 @@
+{
+  "candidate": "RC10.1",
+  "generatedAt": "2026-08-24T13:29:00Z",
+  "verdict": "READY_FOR_PHYSICAL_PHOTO_VALIDATION",
+  "versionName": "0.1.15-beta.2",
+  "versionCode": 17,
+  "merge": {
+    "pr168": "MERGED",
+    "pr168HeadSha": "8d08fe2",
+    "pr168MergeSha": "32d2e8d",
+    "pr169": "MERGED",
+    "pr169MergeSha": "d10e014",
+    "mainSha": "d10e014",
+    "railwaySha": "32d2e8d"
+  },
+  "apk": {
+    "path": "artifacts/closed-beta-rc10.1/lot_android_closed_beta_0.1.15_beta.2.apk",
+    "canonicalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.1/lot_android_closed_beta_0.1.15_beta.2.apk",
+    "sha256": "325ad7a83ca81a7fc8860d686a79624231dcd9be1e956bbf8510292db4788301",
+    "sizeBytes": 44296382,
+    "canonicalDownload": "PASS"
+  },
+  "photoUploadStaging": {
+    "realJpegUpload": "PASS",
+    "returnedMedia": "PASS",
+    "productPersistence": "PASS"
+  },
+  "apkForensics": {
+    "newUploader": "PASS",
+    "legacyBrokenPathAbsent": "PASS"
+  },
+  "mrp": {
+    "status": "PUBLISHED",
+    "updateVerify": "PASS"
+  },
+  "updateMatrix": {
+    "code13": "OPTIONAL_UPDATE → 17",
+    "code14": "OPTIONAL_UPDATE → 17",
+    "code15": "OPTIONAL_UPDATE → 17",
+    "code16": "OPTIONAL_UPDATE → 17",
+    "code17": "NO_UPDATE",
+    "code18": "NO_UPDATE"
+  },
+  "physical": "NOT_RUN"
+}

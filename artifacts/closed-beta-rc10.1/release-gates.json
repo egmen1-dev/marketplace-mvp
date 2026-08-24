@@ -1,0 +1,22 @@
+{
+  "candidate": "RC10.1",
+  "generatedAt": "2026-08-24T13:27:00Z",
+  "verdict": "PASS",
+  "gates": [
+    { "id": "build", "status": "PASS" },
+    { "id": "mobile:typecheck", "status": "PASS" },
+    { "id": "mobile:test", "status": "PASS" },
+    { "id": "mobile:seller-photo-upload:gate", "status": "PASS" },
+    { "id": "mobile:seller-photo-upload:smoke", "status": "PASS" },
+    { "id": "mobile:epic-159:gate", "status": "PASS" },
+    { "id": "release:pipeline:verify", "status": "PASS_WITH_RAILWAY_LAG" },
+    { "id": "mobile:rc10.1:apk-verify", "status": "PASS" },
+    { "id": "physical-checklist", "status": "NOT_RUN" }
+  ],
+  "notes": {
+    "railwaySha": "e309dbe",
+    "mainSha": "91a69b5",
+    "p0MergeSha": "32d2e8d",
+    "railwayLag": "P0 client fix is APK-side; upload smoke PASS on current staging"
+  }
+}
