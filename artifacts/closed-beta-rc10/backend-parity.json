@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-08-24T11:00:54.811Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "railwaySha": "8dedc1f",
+  "results": [
+    {
+      "name": "railway_health",
+      "ok": true,
+      "railwaySha": "8dedc1f"
+    },
+    {
+      "name": "buyer_session",
+      "ok": true
+    },
+    {
+      "name": "seller_session",
+      "ok": true
+    },
+    {
+      "name": "bootstrap",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "category_rail_visible_min_3",
+      "ok": true,
+      "visible": 30
+    },
+    {
+      "name": "epic152_seller_orders_list",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "epic158_seller_products_list",
+      "ok": true,
+      "status": 200,
+      "count": 20
+    },
+    {
+      "name": "epic158_seller_drafts_tab",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "epic158_taxonomy_browse",
+      "ok": true,
+      "status": 200,
+      "count": 8
+    },
+    {
+      "name": "chat_create",
+      "ok": true
+    },
+    {
+      "name": "android_update_api",
+      "ok": true,
+      "status": 200,
+      "state": "OPTIONAL_UPDATE"
+    }
+  ],
+  "sellerLoop": "PASS",
+  "epic158Apis": "PASS",
+  "failed": [],
+  "verdict": "PASS"
+}
