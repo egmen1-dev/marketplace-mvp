@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T11:05:22.250Z",
+  "generatedAt": "2026-08-24T11:13:00Z",
   "publishMethod": "staging_admin_api",
   "versionName": "0.1.15-beta.1",
   "versionCode": 16,
@@ -8,11 +8,28 @@
   "sha256": "8953ffe1002f362896dfb79af63f30078cede6c184e8a6ac73e59eab57664820",
   "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
   "status": "PUBLISHED",
+  "mergeSha": "7c99e20f04a098da308610bf7b7eacae49bcee96",
+  "mainSha": "7c99e20f04a098da308610bf7b7eacae49bcee96",
+  "canonicalDownload": {
+    "httpOk": true,
+    "sizeBytes": 43623614,
+    "sha256Match": true,
+    "verdict": "PASS"
+  },
+  "mrpApiProbe": {
+    "installedVersionCode": 13,
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
+    "sha256": "8953ffe1002f362896dfb79af63f30078cede6c184e8a6ac73e59eab57664820",
+    "versionName": "0.1.15-beta.1",
+    "notRc9": true,
+    "verdict": "PASS"
+  },
   "updatePath": {
     "code13": "OPTIONAL_UPDATE→16",
     "code14": "OPTIONAL_UPDATE→16",
     "code15": "OPTIONAL_UPDATE→16",
-    "code16": "NO_UPDATE"
+    "code16": "NO_UPDATE",
+    "code17": "NO_UPDATE"
   },
   "verdict": "PASS"
 }

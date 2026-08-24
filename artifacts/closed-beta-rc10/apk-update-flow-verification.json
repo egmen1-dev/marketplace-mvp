@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-08-24T11:13:00Z",
+  "apkPath": "artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
+  "evidenceNote": "Bundle symbol/key presence in assembled APK — physical modal UX NOT_RUN",
+  "checks": [
+    { "id": "fetchInstallableUpdate", "pattern": "fetchInstallableUpdate", "present": true, "ok": true },
+    { "id": "useUpdateCheck", "pattern": "useUpdateCheck", "present": true, "ok": true },
+    { "id": "UpdateHost", "pattern": "UpdateHost", "present": true, "ok": true },
+    { "id": "useUpdateAvailabilityBadge", "pattern": "useUpdateAvailabilityBadge", "present": true, "ok": true },
+    { "id": "updateAvailableVersion", "pattern": "updateAvailableVersion", "present": true, "ok": true },
+    { "id": "foregroundRefresh", "pattern": "updateCheckStart", "present": true, "ok": true },
+    { "id": "shouldShowUpdatePrompt", "pattern": "shouldShowUpdatePrompt", "present": true, "ok": true },
+    { "id": "isInstallableUpdate", "pattern": "isInstallableUpdate", "present": true, "ok": true },
+    { "id": "updateUiLabels", "pattern": "UPDATE_UI_LABELS", "present": true, "ok": true },
+    { "id": "modalAvailableKey", "pattern": "available", "note": "maps to «Доступно обновление»", "present": true, "ok": true },
+    { "id": "modalUpdateNowKey", "pattern": "updateNow", "note": "maps to «Обновить сейчас»", "present": true, "ok": true },
+    { "id": "modalLaterKey", "pattern": "later", "note": "maps to «Позже»", "present": true, "ok": true },
+    { "id": "profileBadgeKey", "pattern": "profileBadge", "note": "maps to «Обновление доступно»", "present": true, "ok": true }
+  ],
+  "cyrillicLiteralNote": "Hermes bundle stores UPDATE_UI_LABELS keys; Russian literals are not grep-visible as UTF-8 strings in index.android.bundle",
+  "verdict": "PASS"
+}

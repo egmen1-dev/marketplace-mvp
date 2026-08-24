@@ -19,7 +19,7 @@ async function probe(versionCode) {
   let verdict = "FAIL";
   if ([7, 8, 9, 10, 11, 12, 13, 14, 15].includes(versionCode)) {
     verdict = updateState === "OPTIONAL_UPDATE" && targetCode === 16 ? "PASS" : "FAIL";
-  } else if (versionCode === 16) {
+  } else if ([16, 17].includes(versionCode)) {
     verdict = updateState === "NO_UPDATE" ? "PASS" : "FAIL";
   }
   return { installedVersionCode: versionCode, updateState, targetVersionCode: targetCode, targetVersionName: targetName, verdict };
@@ -27,7 +27,7 @@ async function probe(versionCode) {
 
 async function main() {
   const probes = [];
-  for (const code of [7, 8, 9, 10, 11, 12, 13, 14, 15, 16]) {
+  for (const code of [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]) {
     probes.push(await probe(code));
   }
 

@@ -1,14 +1,18 @@
 {
   "candidate": "RC10",
-  "generatedAt": "2026-08-24T11:06:00Z",
+  "generatedAt": "2026-08-24T11:13:00Z",
   "verdict": "READY_FOR_PHYSICAL_VALIDATION",
   "versionName": "0.1.15-beta.1",
   "versionCode": 16,
-  "commitSha": "717c6d6",
+  "mergeSha": "7c99e20f04a098da308610bf7b7eacae49bcee96",
+  "mainSha": "7c99e20f04a098da308610bf7b7eacae49bcee96",
+  "pr167": "MERGED",
   "apk": {
     "path": "artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
+    "canonicalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
     "sha256": "8953ffe1002f362896dfb79af63f30078cede6c184e8a6ac73e59eab57664820",
-    "sizeBytes": 43623614
+    "sizeBytes": 43623614,
+    "canonicalDownload": "PASS"
   },
   "gates": {
     "build": "PASS",
@@ -20,20 +24,22 @@
     "epic159": "PASS",
     "rc10StagingGate": "PASS",
     "rc10ApkVerify": "PASS",
+    "rc10UpdateVerify": "PASS",
+    "rc10ApkUpdateFlowVerify": "PASS",
     "releasePipeline": "PASS",
     "physicalChecklist": "NOT_RUN"
   },
   "mrp": {
     "status": "PUBLISHED",
     "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10/lot_android_closed_beta_0.1.15_beta.1.apk",
-    "updateVerifyProbes": "PASS",
-    "apkShaFromMrpUrl": "PENDING_MAIN_MERGE"
+    "updateVerify": "PASS",
+    "canonicalSha256": "PASS"
   },
   "updateMatrix": {
     "code13": "OPTIONAL_UPDATE → 16",
     "code14": "OPTIONAL_UPDATE → 16",
     "code15": "OPTIONAL_UPDATE → 16",
-    "code16": "NO_UPDATE"
-  },
-  "branchNote": "Built from cursor/closed-beta-rc10-build-12fd (includes EPIC 158.2/158.3/159 pending merge PRs #164–#166)"
+    "code16": "NO_UPDATE",
+    "code17": "NO_UPDATE"
+  }
 }
