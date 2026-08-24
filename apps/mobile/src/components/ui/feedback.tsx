@@ -15,7 +15,17 @@ const EMPTY_PRESETS = {
   products: { icon: "tag-outline" as IconName, title: "Нет товаров", description: "Создайте первый товар в веб-кабинете продавца." },
   wallet: { icon: "wallet-outline" as IconName, title: "Операций пока нет", description: "История пополнений и выплат появится после первых транзакций." },
   history: { icon: "history" as IconName, title: "История пуста", description: "Здесь будут последние действия и переводы." },
-  catalog: { icon: "magnify" as IconName, title: "Ничего не найдено", description: "Измените запрос или сбросьте фильтры." },
+  catalog: { icon: "magnify" as IconName, title: "Ничего не найдено", description: "Попробуйте изменить фильтры или поисковый запрос." },
+  catalogCategory: {
+    icon: "shape-outline" as IconName,
+    title: "В этой категории пока нет товаров",
+    description: "Выберите другую категорию или сбросьте фильтры.",
+  },
+  catalogSearch: {
+    icon: "text-search" as IconName,
+    title: "По запросу ничего не найдено",
+    description: "Проверьте написание или попробуйте другие слова.",
+  },
 } as const;
 
 export type EmptyPreset = keyof typeof EMPTY_PRESETS;

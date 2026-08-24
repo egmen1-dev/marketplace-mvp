@@ -143,9 +143,9 @@ export function CategoryRail({
 }) {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rail}>
-      <Chip label="Все" active={!activeId} onPress={() => onSelect(null)} />
+      <Chip label="Все" active={!activeId} variant="category" onPress={() => onSelect(null)} />
       {categories.map((cat) => (
-        <Chip key={cat.id} label={cat.name} active={activeId === cat.id} onPress={() => onSelect(cat)} />
+        <Chip key={cat.id} label={cat.name} active={activeId === cat.id} variant="category" onPress={() => onSelect(cat)} />
       ))}
     </ScrollView>
   );

@@ -3,12 +3,15 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Image } from "expo-image";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { useCartQuantitiesStore } from "../../commerce/cart-quantities-store";
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { discountPercent, formatPrice, resolveImageUrl } from "../../utils/format";
-import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
+import { colors, radii, shadows, spacing, typography } from "../../theme/tokens";
 import { PRODUCT_CARD_LAYOUT } from "./product-card-layout";
 import { Badge } from "./primitives";
+import { ProductCartCta } from "./ProductCartCta";
+import { ProductImageFallback } from "./ProductImageFallback";
 import { ProductRatingRow } from "./ProductRatingRow";
 
 export type MobileProductCardData = {
@@ -32,22 +35,28 @@ export function ProductCard({
   onPress,
   onFavorite,
   onAddToCart,
+  onIncrementCart,
+  onDecrementCart,
   onSellerPress,
   isFavorite,
   compact,
   width,
   reserveFavoriteSlot = true,
+  cartQuantity,
 }: {
   product: MobileProductCardData;
   onPress?: () => void;
   onFavorite?: () => void;
   onAddToCart?: () => void;
+  onIncrementCart?: () => void;
+  onDecrementCart?: () => void;
   onSellerPress?: () => void;
   isFavorite?: boolean;
   compact?: boolean;
   width?: number | `${number}%`;
-  /** Keeps grid alignment when favorite handler is absent. */
   reserveFavoriteSlot?: boolean;
+  /** When omitted, reads from cart quantities store. */
+  cartQuantity?: number;
 }) {
   const config = loadAppConfig();
   const { scale, onPressIn, onPressOut } = usePressScale(0.97);
@@ -56,6 +65,10 @@ export function ProductCard({
   const cardWidth = width ?? (compact ? 156 : "48%");
   const socialCount = product.favoritesCount ?? 0;
   const showFavorite = reserveFavoriteSlot || Boolean(onFavorite);
+  const storedQty = useCartQuantitiesStore((s) => s.quantities[product.id] ?? 0);
+  const quantity = cartQuantity ?? storedQty;
+  const hasRating = (product.averageRating ?? 0) > 0 || (product.reviewsCount ?? 0) > 0;
+  const showCommerceCta = Boolean(onAddToCart);
 
   return (
     <Animated.View style={[{ width: cardWidth, flexGrow: 1 }, { transform: [{ scale }] }]}>
@@ -64,9 +77,7 @@ export function ProductCard({
           {imageUrl ? (
             <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" transition={200} />
           ) : (
-            <View style={styles.imageFallback}>
-              <Text style={styles.imageFallbackText}>ЛОТ</Text>
-            </View>
+            <ProductImageFallback compact={compact} />
           )}
 
           {discount ? <Badge label={`-${discount}%`} tone="brand" style={styles.discountBadge} /> : null}
@@ -97,22 +108,22 @@ export function ProductCard({
         </View>
 
         <View style={styles.body}>
-          <View style={styles.priceRow}>
-            <Text style={styles.price}>{formatPrice(product.price)}</Text>
-            <Text style={[styles.compareAt, product.compareAt && product.compareAt > product.price ? null : styles.compareAtHidden]}>
-              {product.compareAt && product.compareAt > product.price ? formatPrice(product.compareAt) : " "}
+          <View style={styles.content}>
+            <View style={styles.priceRow}>
+              <Text style={styles.price}>{formatPrice(product.price)}</Text>
+              {product.compareAt && product.compareAt > product.price ? (
+                <Text style={styles.compareAt}>{formatPrice(product.compareAt)}</Text>
+              ) : null}
+            </View>
+
+            <Text style={styles.title} numberOfLines={PRODUCT_CARD_LAYOUT.titleLines}>
+              {product.title}
             </Text>
-          </View>
 
-          <Text style={styles.title} numberOfLines={2}>
-            {product.title}
-          </Text>
+            {hasRating ? (
+              <ProductRatingRow averageRating={product.averageRating} reviewsCount={product.reviewsCount} compact />
+            ) : null}
 
-          <View style={styles.ratingSlot}>
-            <ProductRatingRow averageRating={product.averageRating} reviewsCount={product.reviewsCount} compact />
-          </View>
-
-          <View style={styles.sellerSlot}>
             {product.seller?.storeName ? (
               onSellerPress ? (
                 <Pressable onPress={(e) => { e.stopPropagation?.(); onSellerPress(); }} hitSlop={4}>
@@ -125,39 +136,35 @@ export function ProductCard({
                   {product.seller.storeName}
                 </Text>
               )
-            ) : (
-              <Text style={styles.sellerHidden}> </Text>
-            )}
+            ) : null}
+
+            {product.city ? (
+              <Text style={styles.location} numberOfLines={1}>
+                {product.city}
+              </Text>
+            ) : null}
+
+            {(socialCount > 0 || (product.views ?? 0) > 0) ? (
+              <View style={styles.metaRow}>
+                <Text style={styles.social} numberOfLines={1}>
+                  {socialCount > 0 ? `♥ ${socialCount} в избранном` : ""}
+                </Text>
+                <Text style={styles.views} numberOfLines={1}>
+                  {(product.views ?? 0) > 0 ? `${product.views} просм.` : ""}
+                </Text>
+              </View>
+            ) : null}
           </View>
 
-          <Text style={[styles.location, product.city ? null : styles.locationHidden]} numberOfLines={1}>
-            {product.city ?? " "}
-          </Text>
-
-          <View style={styles.metaRow}>
-            <Text style={styles.social} numberOfLines={1}>
-              {socialCount > 0 ? `♥ ${socialCount} в избранном` : " "}
-            </Text>
-            <Text style={styles.views} numberOfLines={1}>
-              {(product.views ?? 0) > 0 ? `${product.views} просм.` : " "}
-            </Text>
-          </View>
-
-          {onAddToCart ? (
-            <Pressable
-              style={styles.cta}
-              onPress={(e) => {
-                e.stopPropagation?.();
-                onAddToCart();
-              }}
-              accessibilityRole="button"
-              accessibilityLabel="В корзину"
-            >
-              <MaterialCommunityIcons name="cart-outline" size={16} color={colors.orange} />
-              <Text style={styles.ctaText}>В корзину</Text>
-            </Pressable>
+          {showCommerceCta ? (
+            <ProductCartCta
+              quantity={quantity}
+              onAdd={() => onAddToCart?.()}
+              onIncrement={() => onIncrementCart?.()}
+              onDecrement={() => onDecrementCart?.()}
+            />
           ) : (
-            <View style={styles.ctaPlaceholder} />
+            <View style={styles.ctaSpacer} />
           )}
         </View>
       </Pressable>
@@ -182,8 +189,6 @@ const styles = StyleSheet.create({
   imageWrap: { aspectRatio: PRODUCT_CARD_LAYOUT.imageAspectRatio, backgroundColor: colors.gray100, position: "relative" },
   imageWrapCompact: { height: 156 },
   image: { width: "100%", height: "100%" },
-  imageFallback: { flex: 1, alignItems: "center", justifyContent: "center" },
-  imageFallbackText: { ...typography.caption, color: colors.orange, fontWeight: "700" },
   discountBadge: { position: "absolute", top: spacing.sm, left: spacing.sm },
   deliveryBadge: { position: "absolute", bottom: spacing.sm, left: spacing.sm },
   favoriteSlot: {
@@ -202,34 +207,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     ...shadows.card,
   },
-  body: { flex: 1, padding: spacing.md, gap: spacing.xs, justifyContent: "flex-start" },
-  priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap", minHeight: PRODUCT_CARD_LAYOUT.priceRowMinHeight },
+  body: {
+    flex: 1,
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
+    justifyContent: "space-between",
+    gap: spacing.sm,
+    minHeight: PRODUCT_CARD_LAYOUT.bodyMinHeight,
+  },
+  content: { gap: 2 },
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: spacing.sm, flexWrap: "wrap" },
   price: { ...typography.price, color: colors.black },
   compareAt: { ...typography.caption, color: colors.gray500, textDecorationLine: "line-through" },
-  compareAtHidden: { opacity: 0 },
   title: { ...typography.caption, color: colors.gray900, minHeight: PRODUCT_CARD_LAYOUT.titleMinHeight, lineHeight: 18 },
-  ratingSlot: { minHeight: PRODUCT_CARD_LAYOUT.ratingSlotMinHeight, justifyContent: "center" },
-  sellerSlot: { minHeight: PRODUCT_CARD_LAYOUT.sellerSlotMinHeight, justifyContent: "center" },
-  seller: { ...typography.caption, color: colors.gray500 },
+  seller: { ...typography.caption, color: colors.gray500, marginTop: 2 },
   sellerLink: { color: colors.orange, fontWeight: "600" },
-  sellerHidden: { ...typography.caption, opacity: 0 },
   location: { ...typography.caption, color: colors.gray500 },
-  locationHidden: { opacity: 0 },
-  metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, minHeight: PRODUCT_CARD_LAYOUT.metaRowMinHeight },
+  metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: spacing.sm, marginTop: 2 },
   social: { ...typography.caption, color: colors.gray700, fontWeight: "600", flex: 1 },
   views: { ...typography.caption, color: colors.gray500, textAlign: "right", minWidth: 56 },
-  cta: {
-    marginTop: spacing.xs,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    minHeight: layout.buttonHeightSm,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.orangeSoft,
-    backgroundColor: colors.orangeSoft,
-  },
-  ctaPlaceholder: { minHeight: layout.buttonHeightSm + spacing.xs, marginTop: spacing.xs },
-  ctaText: { ...typography.buttonSm, color: colors.orange },
+  ctaSpacer: { minHeight: PRODUCT_CARD_LAYOUT.ctaMinHeight },
 });

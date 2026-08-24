@@ -57,6 +57,7 @@
     "mobile:epic-102:gate": "tsx scripts/epic-102-closed-beta-program-gate.ts",
     "mobile:epic-152:gate": "tsx scripts/epic-152-seller-transaction-loop-gate.ts",
     "mobile:epic-154:gate": "tsx scripts/epic-154-closed-beta-critical-path-gate.ts",
+    "mobile:epic-157:gate": "tsx scripts/epic-157-mobile-ux-polish-gate.ts",
     "product:epic-103:beta-rc": "tsx scripts/epic-103-closed-beta-rc-gate.ts",
     "product:epic-104:closed-beta-readiness": "tsx scripts/epic-104-closed-beta-readiness-gate.ts",
     "product:epic-105:closed-beta-launch-validation": "tsx scripts/epic-105-closed-beta-launch-validation-gate.ts",

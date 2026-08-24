@@ -12,7 +12,7 @@ import { spacing } from "../../src/theme/tokens";
 
 export default function FavoritesScreen() {
   const fade = useFadeIn();
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const setAll = useFavoritesStore((s) => s.setAll);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,6 +60,8 @@ export default function FavoritesScreen() {
               onPress={() => router.push(`/product/${item.id}`)}
               onFavorite={() => toggleProductFavorite(item.id).then(load)}
               onAddToCart={() => addProductToCart(item.id, 1)}
+              onIncrementCart={() => incrementProductCart(item.id)}
+              onDecrementCart={() => decrementProductCart(item.id)}
               onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
             />
           )}

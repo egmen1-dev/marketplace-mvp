@@ -45,7 +45,7 @@ const QUICK_FILTERS: Array<{ id: QuickFilter; label: string }> = [
 export default function BuyerHomeScreen() {
   const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
-  const { addProductToCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const [summary, setSummary] = useState(() => readSnapshot<Record<string, unknown>>("buyer-home")?.payload ?? null);
   const [recommended, setRecommended] = useState<MobileProductListItem[]>([]);
   const [popular, setPopular] = useState<MobileProductListItem[]>([]);
@@ -131,8 +131,9 @@ export default function BuyerHomeScreen() {
 
   return (
     <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
-      <Animated.View style={{ opacity: fade, gap: spacing.lg }}>
-        <CommerceHeader subtitle="Товары рядом с вами — покупайте и продавайте" />
+      <Animated.View style={{ opacity: fade, gap: spacing.md }}>
+        <CommerceHeader compact />
+        <Text style={styles.tagline}>Товары рядом с вами — покупайте и продавайте</Text>
 
         <CommerceSearchBar
           placeholder="Искать товары, бренды, категории"
@@ -187,6 +188,8 @@ export default function BuyerHomeScreen() {
           isFavorite={isFavorite}
           onFavorite={toggleProductFavorite}
           onAddToCart={addProductToCart}
+          onIncrementCart={incrementProductCart}
+          onDecrementCart={decrementProductCart}
         />
         <ProductSection
           title="Популярное"
@@ -195,6 +198,8 @@ export default function BuyerHomeScreen() {
           isFavorite={isFavorite}
           onFavorite={toggleProductFavorite}
           onAddToCart={addProductToCart}
+          onIncrementCart={incrementProductCart}
+          onDecrementCart={decrementProductCart}
         />
         <ProductSection
           title="Новинки"
@@ -203,8 +208,10 @@ export default function BuyerHomeScreen() {
           isFavorite={isFavorite}
           onFavorite={toggleProductFavorite}
           onAddToCart={addProductToCart}
+          onIncrementCart={incrementProductCart}
+          onDecrementCart={decrementProductCart}
         />
-        <ProductSection title="Продолжить просмотр" items={recent} horizontal emptyPreset="catalog" isFavorite={isFavorite} onFavorite={toggleProductFavorite} onAddToCart={addProductToCart} />
+        <ProductSection title="Продолжить просмотр" items={recent} horizontal emptyPreset="catalog" isFavorite={isFavorite} onFavorite={toggleProductFavorite} onAddToCart={addProductToCart} onIncrementCart={incrementProductCart} onDecrementCart={decrementProductCart} />
         <ProductSection
           title="Выгодные предложения"
           items={promo}
@@ -213,6 +220,8 @@ export default function BuyerHomeScreen() {
           isFavorite={isFavorite}
           onFavorite={toggleProductFavorite}
           onAddToCart={addProductToCart}
+          onIncrementCart={incrementProductCart}
+          onDecrementCart={decrementProductCart}
         />
       </Animated.View>
     </PageScroll>
@@ -229,6 +238,8 @@ function ProductSection({
   isFavorite,
   onFavorite,
   onAddToCart,
+  onIncrementCart,
+  onDecrementCart,
 }: {
   title: string;
   items: MobileProductListItem[];
@@ -239,6 +250,8 @@ function ProductSection({
   isFavorite: (id: string) => boolean;
   onFavorite: (id: string) => void;
   onAddToCart: (id: string, qty?: number) => Promise<void>;
+  onIncrementCart: (id: string) => Promise<void>;
+  onDecrementCart: (id: string) => Promise<void>;
 }) {
   return (
     <View style={styles.section}>
@@ -259,6 +272,8 @@ function ProductSection({
               onPress={() => router.push(`/product/${item.id}`)}
               onFavorite={() => onFavorite(item.id)}
               onAddToCart={() => onAddToCart(item.id, 1)}
+              onIncrementCart={() => onIncrementCart(item.id)}
+              onDecrementCart={() => onDecrementCart(item.id)}
               onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
             />
           ))}
@@ -274,6 +289,8 @@ function ProductSection({
                 onPress={() => router.push(`/product/${item.id}`)}
                 onFavorite={() => onFavorite(item.id)}
                 onAddToCart={() => onAddToCart(item.id, 1)}
+                onIncrementCart={() => onIncrementCart(item.id)}
+                onDecrementCart={() => onDecrementCart(item.id)}
                 onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
               />
             </View>
@@ -285,8 +302,9 @@ function ProductSection({
 }
 
 const styles = StyleSheet.create({
+  tagline: { ...typography.caption, color: colors.gray500, marginTop: -spacing.xs },
   offline: { ...typography.caption, color: colors.gray500 },
-  section: { gap: spacing.md },
+  section: { gap: spacing.sm },
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   promoBadge: { ...typography.caption, color: colors.white, backgroundColor: colors.orange, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill, overflow: "hidden" },
   chipsRow: { gap: spacing.sm, paddingVertical: spacing.xs },
