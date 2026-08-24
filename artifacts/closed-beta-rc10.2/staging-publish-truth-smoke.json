@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-08-24T21:26:55.318Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "title": "RC10_2_PHYSICAL_READY_1787606809329",
+  "expectedRailwaySha": "e872ed8",
+  "railwaySha": "e872ed8",
+  "deployVerified": "PASS",
+  "sellerPublishPolicy": {
+    "requiresModeration": true,
+    "directPublishEnabled": false,
+    "publishCtaLabel": "Отправить на проверку"
+  },
+  "createdId": "cmt7qxvk40005ru01pj15p9s4",
+  "characteristicsCount": 2,
+  "photoUpload": "PASS",
+  "create": "PASS",
+  "publishRequest": "PASS",
+  "publishStatus": 200,
+  "publishErrorCode": null,
+  "returnedStatus": "DRAFT",
+  "publishOutcome": "PENDING_REVIEW",
+  "moderationState": "PENDING_REVIEW",
+  "isPublic": false,
+  "sellerInventory": "PASS",
+  "sellerLists": {
+    "active": false,
+    "pending": true,
+    "drafts": false,
+    "sold": false
+  },
+  "sellerDetail": "PASS",
+  "sellerDetailEndpoint": 200,
+  "buyerVisibilityMatchesState": "PASS",
+  "buyerCatalogHit": false,
+  "publicPdpBuyerStatus": 404,
+  "publicPdpSellerBearerStatus": 200,
+  "duplicateProtection": "PASS",
+  "duplicateIds": [
+    "cmt7qxvk40005ru01pj15p9s4"
+  ],
+  "duplicateSaveStatus": 200,
+  "branch": "PENDING_REVIEW",
+  "verdict": "PASS"
+}

@@ -1,0 +1,165 @@
+{
+  "generatedAt": "2026-08-24T21:29:17.875Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.2/lot_android_closed_beta_0.1.15_beta.3.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.3",
+    "versionCode": "18",
+    "nativeCode": "arm64-v8a",
+    "sha256": "249e1125fbb7cf703b8837ec6daf251fd6954ed98a2bfa81973de8ab6c9eaede",
+    "sizeBytes": 44305458
+  },
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.15-beta.3",
+      "actual": "0.1.15-beta.3"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "18",
+      "actual": "18"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc10_2Label",
+      "ok": true,
+      "expected": "RC10.2 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "e872ed8"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "publishTruth",
+      "name": "resolveLotPublishOutcome",
+      "pattern": "resolveLotPublishOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "PUBLISHED",
+      "pattern": "PUBLISHED",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "PENDING_REVIEW",
+      "pattern": "PENDING_REVIEW",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "publishOutcome",
+      "pattern": "publishOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "pendingReviewTitle",
+      "pattern": "pendingReviewTitle",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "sellerLotDetailRoute",
+      "pattern": "sellerLotDetailRoute",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "sellerLotsTabForOutcome",
+      "pattern": "sellerLotsTabForOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "publishReviewLabel",
+      "pattern": "publishReviewLabel",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "fetchSellerLot",
+      "pattern": "fetchSellerLot",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "mapMutationOutcome",
+      "pattern": "mapMutationOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoUpload",
+      "name": "uploadSellerLotImage",
+      "pattern": "uploadSellerLotImage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoUpload",
+      "name": "expo-file-system",
+      "pattern": "expo-file-system",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "legacyAbsentChecks": [
+    {
+      "name": "savedForReviewFallback",
+      "pattern": "reviewNote = LOT_CREATE_COPY.savedForReview",
+      "present": false,
+      "ok": true
+    },
+    {
+      "name": "successFromReviewNote",
+      "pattern": "setInfo(reviewNote)",
+      "present": false,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}

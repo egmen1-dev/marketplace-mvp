@@ -1,0 +1,29 @@
+{
+  "candidate": "RC10.2",
+  "generatedAt": "2026-08-24T21:30:00Z",
+  "gates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "photoUploadGate": "PASS",
+    "publishTruthGate": "PASS",
+    "postDeployStagingSmoke": "PASS",
+    "apkVerify": "PASS",
+    "updateVerify": "PENDING",
+    "mrpPublish": "PENDING"
+  },
+  "merge": {
+    "pr170": "MERGED",
+    "pr170HeadSha": "8062000",
+    "pr170MergeSha": "e872ed8",
+    "mainSha": "e872ed8",
+    "railwaySha": "e872ed8"
+  },
+  "postDeployPublishTruth": {
+    "branch": "PENDING_REVIEW",
+    "publishOutcome": "PENDING_REVIEW",
+    "sellerInventory": "PASS",
+    "sellerDetail": "PASS",
+    "buyerVisibility": "PASS",
+    "duplicateProtection": "PASS"
+  }
+}

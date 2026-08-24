@@ -1,0 +1,93 @@
+{
+  "candidate": "RC10.2",
+  "generatedAt": "2026-08-24T21:30:00Z",
+  "status": "NOT_RUN",
+  "scope": "P0 LOT publish state truth — focused physical validation",
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234"
+  },
+  "expectedStagingPolicy": {
+    "requiresModeration": true,
+    "publishCtaLabel": "Отправить на проверку",
+    "expectedOutcome": "PENDING_REVIEW"
+  },
+  "scenarios": [
+    {
+      "id": "P0-A",
+      "name": "UPDATE from RC10.1 code 17",
+      "steps": [
+        "Start from RC10.1 (code 17) or install RC10.2 fresh",
+        "Cold start → «Доступно обновление»",
+        "Обновить сейчас → install RC10.2",
+        "Profile → О приложении: 0.1.15-beta.3, code 18, RC10.2, CLOSED_BETA, staging"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-B",
+      "name": "CREATE LOT",
+      "steps": [
+        "seller@demo.lot → Продать → Создать ЛОТ",
+        "Новое фото, уникальное название, категория, обязательные характеристики",
+        "Цена, количество, описание, состояние, город",
+        "Фото видно в предпросмотре"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-C",
+      "name": "FINAL CTA TRUTH",
+      "steps": [
+        "На шаге предпросмотра проверить текст CTA",
+        "Ожидание при moderation: «Отправить на проверку»",
+        "Ожидание при direct publish: «Опубликовать ЛОТ»"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-D",
+      "name": "RESULT SCREEN",
+      "steps": [
+        "Нажать CTA один раз",
+        "При pending: «ЛОТ отправлен на проверку» (НЕ «ЛОТ опубликован»)",
+        "При published: «ЛОТ опубликован» + «Ваш ЛОТ теперь виден покупателям»",
+        "Без противоречивого copy"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-E",
+      "name": "MY LOTS",
+      "steps": [
+        "Сразу открыть «Мои ЛОТы»",
+        "LOT должен быть виден",
+        "Pending → вкладка «На проверке»",
+        "Published → «Активные»",
+        "Saved → «Сохранённые»",
+        "FAIL если LOT исчез"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-F",
+      "name": "OPEN LOT AS SELLER",
+      "steps": [
+        "Открыть созданный LOT",
+        "Seller detail открывается с фото, названием, ценой, статусом",
+        "FAIL если «Товар не найден» для своего LOT"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "P0-G",
+      "name": "BUYER VISIBILITY",
+      "steps": [
+        "buyer@demo.lot → поиск по точному названию",
+        "Если PUBLISHED: LOT найден, PDP открывается, фото видно",
+        "Если PENDING_REVIEW: buyer НЕ видит LOT (ожидаемо, PASS)"
+      ],
+      "status": "NOT_RUN"
+    }
+  ]
+}
