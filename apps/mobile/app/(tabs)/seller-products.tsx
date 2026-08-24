@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { Animated, FlatList, RefreshControl, ScrollView, StyleSheet } from "react-native";
 
@@ -15,22 +15,31 @@ import {
   SkeletonGrid,
 } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
+import { isSellerProductPublic } from "../../src/seller/resolve-lot-publish-outcome";
 import { useAppStore } from "../../src/store/app-store";
 import { spacing } from "../../src/theme/tokens";
 
-type SellerLotsTab = "active" | "drafts" | "sold";
+type SellerLotsTab = "active" | "pending" | "drafts" | "sold";
 
 const TABS: Array<{ key: SellerLotsTab; label: string }> = [
   { key: "active", label: "Активные" },
+  { key: "pending", label: "На проверке" },
   { key: "drafts", label: "Сохранённые" },
   { key: "sold", label: "Проданные" },
 ];
 
+function resolveInitialTab(value: string | string[] | undefined): SellerLotsTab {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (raw === "pending" || raw === "drafts" || raw === "sold") return raw;
+  return "active";
+}
+
 export default function SellerProductsScreen() {
   const fade = useFadeIn();
+  const params = useLocalSearchParams<{ tab?: string }>();
   const offline = useAppStore((s) => s.offline);
   const sellerCapable = useAppStore((s) => s.sellerCapable);
-  const [tab, setTab] = useState<SellerLotsTab>("active");
+  const [tab, setTab] = useState<SellerLotsTab>(() => resolveInitialTab(params.tab));
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,8 +64,10 @@ export default function SellerProductsScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      const nextTab = resolveInitialTab(params.tab);
+      setTab((current) => (current === nextTab ? current : nextTab));
       void load();
-    }, [load]),
+    }, [load, params.tab]),
   );
 
   const filtered = query ? items.filter((item) => item.title.toLowerCase().includes(query.toLowerCase())) : items;
@@ -97,23 +108,38 @@ export default function SellerProductsScreen() {
           refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
-            <SellerProductCard product={item} onPress={() => router.push(`/product/${item.id}`)} onRefresh={load} />
+            <SellerProductCard
+              product={item}
+              onPress={() => {
+                const isPublic = isSellerProductPublic(
+                  item.status ?? "DRAFT",
+                  (item as { isPublic?: boolean }).isPublic,
+                );
+                const href = isPublic ? `/product/${item.id}` : `/sell/lot/${item.id}`;
+                router.push(href as `/product/${string}` | `/sell/lot/${string}`);
+              }}
+              onRefresh={load}
+            />
           )}
           ListEmptyComponent={
             <EmptyState
               title={
                 tab === "active"
                   ? "У вас пока нет ЛОТов"
-                  : tab === "drafts"
-                    ? "Сохранённых ЛОТов пока нет"
-                    : "Проданных ЛОТов пока нет"
+                  : tab === "pending"
+                    ? "ЛОТов на проверке пока нет"
+                    : tab === "drafts"
+                      ? "Сохранённых ЛОТов пока нет"
+                      : "Проданных ЛОТов пока нет"
               }
               description={
                 tab === "active"
                   ? "Создайте первый ЛОТ — покупатели увидят его в каталоге"
-                  : "Создайте ЛОТ, чтобы покупатели могли его найти"
+                  : tab === "pending"
+                    ? "Отправьте ЛОТ на проверку — он появится здесь"
+                    : "Создайте ЛОТ, чтобы покупатели могли его найти"
               }
-              actionLabel={tab === "active" ? "Создать первый ЛОТ" : "Создать ЛОТ"}
+              actionLabel={tab === "sold" ? "Создать ЛОТ" : tab === "active" ? "Создать первый ЛОТ" : "Создать ЛОТ"}
               onAction={() => router.push("/sell/create")}
             />
           }

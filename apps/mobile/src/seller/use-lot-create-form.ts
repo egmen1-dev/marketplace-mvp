@@ -10,9 +10,15 @@ import {
   publishSellerLot,
   suggestProductType,
   updateSellerLot,
+  type SellerLotMutationResponse,
 } from "../api/seller-lot";
+import { loadAppConfig } from "../config/env";
 import { LOT_CREATE_COPY } from "./lot-create-copy";
 import { formatLotCreateError, type LotCreateErrorContext } from "./lot-create-errors";
+import {
+  resolveLotPublishOutcome,
+  type LotPublishOutcome,
+} from "./resolve-lot-publish-outcome";
 import {
   EMPTY_LOT_DRAFT,
   clearLotDraft,
@@ -47,6 +53,8 @@ export function useLotCreateForm() {
   const [publishing, setPublishing] = useState(false);
   const [savingLot, setSavingLot] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
+  const [publishOutcome, setPublishOutcome] = useState<LotPublishOutcome | null>(null);
+  const [publishCtaLabel, setPublishCtaLabel] = useState<string>(LOT_CREATE_COPY.publishLabel);
   const [error, setError] = useState<string | null>(null);
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [canRetry, setCanRetry] = useState(false);
@@ -173,6 +181,21 @@ export function useLotCreateForm() {
     () => draft.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl),
     [draft.images],
   );
+
+  useEffect(() => {
+    const config = loadAppConfig();
+    fetch(`${config.apiBaseUrl}/api/mobile/bootstrap`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((payload) => {
+        const label = payload?.sellerPublish?.publishCtaLabel;
+        if (typeof label === "string" && label.trim()) {
+          setPublishCtaLabel(label);
+        }
+      })
+      .catch(() => {
+        // keep default CTA
+      });
+  }, []);
 
   const restoreTaxonomy = useCallback(async (saved: LotDraft) => {
     const browse = await fetchTaxonomyBrowse("root").catch(() => ({ children: [], productTypes: [] }));
@@ -417,32 +440,31 @@ export function useLotCreateForm() {
     return created.product.id;
   }
 
+  function mapMutationOutcome(response: SellerLotMutationResponse): LotPublishOutcome {
+    if (response.publishOutcome) return response.publishOutcome;
+    return resolveLotPublishOutcome({
+      id: response.id,
+      status: response.status ?? response.product.status ?? "DRAFT",
+      moderationState: response.moderationState ?? null,
+      isPublic: response.isPublic,
+    });
+  }
+
   async function publishOnServer(images: Array<{ url: string; pathname?: string | null }>) {
-    const activePayload = buildPayload(images, "ACTIVE");
     const draftPayload = buildPayload(images, "DRAFT");
+    const activePayload = buildPayload(images, "ACTIVE");
     let productId: string | null = draft.savedProductId;
-    let reviewNote: string | null = null;
 
     if (productId) {
-      try {
-        await publishSellerLot(productId, activePayload);
-      } catch {
-        await updateSellerLot(productId, draftPayload);
-        reviewNote = LOT_CREATE_COPY.savedForReview;
-      }
-      return { productId, reviewNote };
-    }
-
-    try {
-      const created = await createSellerLot(activePayload);
-      productId = created.product.id;
-    } catch {
+      await updateSellerLot(productId, draftPayload);
+    } else {
       const created = await createSellerLot(draftPayload);
       productId = created.product.id;
-      reviewNote = LOT_CREATE_COPY.savedForReview;
     }
 
-    return { productId, reviewNote };
+    const published = await publishSellerLot(productId, activePayload);
+    const outcome = mapMutationOutcome(published);
+    return { productId, outcome, response: published };
   }
 
   async function saveLotLocallyAndServer() {
@@ -495,15 +517,17 @@ export function useLotCreateForm() {
     setPublishing(true);
     clearErrors();
     setInfo(null);
+    setPublishOutcome(null);
     lastFailedActionRef.current = "publish";
     retryIntentRef.current = "publish";
     uploadFailedRef.current = false;
     try {
       const images = await uploadImagesWithRecovery();
-      const { productId, reviewNote } = await publishOnServer(images);
+      const { productId, outcome } = await publishOnServer(images);
 
       setPublishedId(productId);
-      setInfo(reviewNote);
+      setPublishOutcome(outcome);
+      setInfo(null);
       await clearLotDraft();
       setStep("success");
     } catch (err) {
@@ -556,6 +580,8 @@ export function useLotCreateForm() {
     publishing,
     savingLot,
     publishedId,
+    publishOutcome,
+    publishCtaLabel,
     error,
     errorDetail,
     canRetry,

@@ -84,6 +84,8 @@
     "mobile:epic-159:gate": "tsx scripts/epic-159-seller-beta-acceptance-gate.ts",
     "mobile:seller-photo-upload:smoke": "node scripts/mobile-seller-photo-upload-staging-smoke.mjs",
     "mobile:seller-photo-upload:gate": "tsx scripts/mobile-seller-photo-upload-gate.ts",
+    "mobile:lot-publish-truth:smoke": "node scripts/mobile-lot-publish-truth-staging-smoke.mjs",
+    "mobile:lot-publish-truth:gate": "tsx scripts/mobile-lot-publish-truth-gate.ts",
     "product:epic-103:beta-rc": "tsx scripts/epic-103-closed-beta-rc-gate.ts",
     "product:epic-104:closed-beta-readiness": "tsx scripts/epic-104-closed-beta-readiness-gate.ts",
     "product:epic-105:closed-beta-launch-validation": "tsx scripts/epic-105-closed-beta-launch-validation-gate.ts",

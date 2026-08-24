@@ -26,7 +26,7 @@ import {
   CLOSED_ALPHA_MINIMUM_SUPPORTED_VERSION_NAME,
 } from "@/lib/mobile-release-platform/baseline";
 import { KNOWLEDGE_GRAPH_CONTRACT_VERSION } from "@/lib/ccos/graph/types";
-import { TWIN_CONTRACT_VERSION } from "@/lib/ccos/twin/types";
+import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 
 export type MobileBootstrapPayload = {
   apiVersion: typeof MOBILE_API_VERSION;
@@ -71,6 +71,11 @@ export type MobileBootstrapPayload = {
     twinMobile: string;
   };
   advisoryOnly: true;
+  sellerPublish: {
+    requiresModeration: boolean;
+    directPublishEnabled: boolean;
+    publishCtaLabel: string;
+  };
 };
 
 function resolveReleaseChannel(): "dev" | "staging" | "prod" {
@@ -135,5 +140,12 @@ export function buildMobileBootstrapPayload(): MobileBootstrapPayload {
       twinMobile: "/api/ccos/twin/mobile",
     },
     advisoryOnly: true,
+    sellerPublish: {
+      requiresModeration: isMarketplaceTrustLoopEnabled(),
+      directPublishEnabled: !isMarketplaceTrustLoopEnabled(),
+      publishCtaLabel: isMarketplaceTrustLoopEnabled()
+        ? "Отправить на проверку"
+        : "Опубликовать ЛОТ",
+    },
   };
 }

@@ -21,6 +21,7 @@ import { LotRestorePrompt } from "../../src/seller/LotRestorePrompt";
 import { LOT_CONDITION_OPTIONS, emojiForCategoryName } from "../../src/seller/lot-create-constants";
 import { LOT_CREATE_COPY } from "../../src/seller/lot-create-copy";
 import { EMPTY_LOT_DRAFT } from "../../src/seller/lot-draft-storage";
+import { sellerLotDetailRoute, sellerLotsTabForOutcome } from "../../src/seller/resolve-lot-publish-outcome";
 import { useLotCreateForm } from "../../src/seller/use-lot-create-form";
 import { formatPrice } from "../../src/utils/format";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
@@ -71,37 +72,78 @@ export default function CreateLotScreen() {
   );
 
   if (form.step === "success") {
-    const savedForReview = form.info === LOT_CREATE_COPY.savedForReview;
+    const outcome = form.publishOutcome ?? "SAVED";
+    const successCopy =
+      outcome === "PUBLISHED"
+        ? {
+            emoji: "🎉",
+            title: LOT_CREATE_COPY.successTitle,
+            body: LOT_CREATE_COPY.successBody,
+            primary: LOT_CREATE_COPY.viewLot,
+            secondary: LOT_CREATE_COPY.createAnother,
+            showMyLots: true,
+          }
+        : outcome === "PENDING_REVIEW"
+          ? {
+              emoji: "🕒",
+              title: LOT_CREATE_COPY.pendingReviewTitle,
+              body: LOT_CREATE_COPY.pendingReviewBody,
+              primary: LOT_CREATE_COPY.viewLot,
+              secondary: null,
+              showMyLots: true,
+            }
+          : {
+              emoji: "✅",
+              title: LOT_CREATE_COPY.savedDraftTitle,
+              body: LOT_CREATE_COPY.savedDraftBody,
+              primary: LOT_CREATE_COPY.continueLot,
+              secondary: null,
+              showMyLots: true,
+            };
+
     return (
       <View style={styles.successWrap}>
-        <Text style={styles.successEmoji}>{savedForReview ? "✅" : "🎉"}</Text>
-        <Text style={styles.successTitle}>
-          {savedForReview ? LOT_CREATE_COPY.successSavedTitle : LOT_CREATE_COPY.successTitle}
-        </Text>
-        <Text style={styles.successBody}>
-          {savedForReview ? LOT_CREATE_COPY.savedForReview : LOT_CREATE_COPY.successBody}
-        </Text>
+        <Text style={styles.successEmoji}>{successCopy.emoji}</Text>
+        <Text style={styles.successTitle}>{successCopy.title}</Text>
+        <Text style={styles.successBody}>{successCopy.body}</Text>
         {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
         <View style={styles.actions}>
           {form.publishedId ? (
             <PrimaryButton
-              label={LOT_CREATE_COPY.viewLot}
+              label={successCopy.primary}
               fullWidth
-              onPress={() => router.replace(`/product/${form.publishedId}`)}
+              onPress={() =>
+                router.replace(
+                  sellerLotDetailRoute(form.publishedId!, outcome) as `/product/${string}` | `/sell/lot/${string}`,
+                )
+              }
             />
           ) : null}
-          <SecondaryButton
-            label={LOT_CREATE_COPY.createAnother}
-            fullWidth
-            onPress={() => {
-              form.setDraft(EMPTY_LOT_DRAFT);
-              form.setStep("photos");
-              form.setPublishedId(null);
-              form.setError(null);
-              form.setInfo(null);
-            }}
-          />
-          <SecondaryButton label="Мои ЛОТы" fullWidth onPress={() => router.replace("/(tabs)/seller-products")} />
+          {successCopy.secondary ? (
+            <SecondaryButton
+              label={successCopy.secondary}
+              fullWidth
+              onPress={() => {
+                form.setDraft(EMPTY_LOT_DRAFT);
+                form.setStep("photos");
+                form.setPublishedId(null);
+                form.setError(null);
+                form.setInfo(null);
+              }}
+            />
+          ) : null}
+          {successCopy.showMyLots ? (
+            <SecondaryButton
+              label="Мои ЛОТы"
+              fullWidth
+              onPress={() =>
+                router.replace({
+                  pathname: "/(tabs)/seller-products",
+                  params: { tab: sellerLotsTabForOutcome(outcome) },
+                })
+              }
+            />
+          ) : null}
         </View>
       </View>
     );
@@ -166,7 +208,7 @@ export default function CreateLotScreen() {
           {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
         </ScrollView>
         <LotCreatePreviewFooter
-          publishLabel={LOT_CREATE_COPY.publishLabel}
+          publishLabel={form.publishCtaLabel}
           saveLabel={LOT_CREATE_COPY.saveLotLabel}
           publishing={form.publishing}
           saving={form.savingLot}

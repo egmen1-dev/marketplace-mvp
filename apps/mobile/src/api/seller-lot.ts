@@ -12,6 +12,36 @@ export type SellerPickupPoint = {
   address: string;
 };
 
+export type SellerLotPublishContract = {
+  id: string;
+  status: string;
+  isPublic: boolean;
+  moderationState: string | null;
+  publicProductId: string;
+  publishOutcome: "PUBLISHED" | "PENDING_REVIEW" | "SAVED" | "FAILED";
+};
+
+export type SellerLotMutationResponse = {
+  product: { id: string; title?: string; name?: string; status?: string };
+  message?: string;
+} & SellerLotPublishContract;
+
+export type SellerLotDetail = {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  city: string | null;
+  condition: string;
+  status: string;
+  stock: number;
+  pickupEnabled: boolean;
+  category: { id: string; name: string; slug: string } | null;
+  productType: { id: string; name: string } | null;
+  images: Array<{ id: string; url: string; alt: string | null; sortOrder: number; isPrimary: boolean }>;
+  pickupPoints: Array<{ id: string; name: string; city: string; address: string }>;
+} & SellerLotPublishContract;
+
 export async function fetchSellerPickupPoints() {
   return apiRequest<{ items: SellerPickupPoint[] }>("/api/mobile/seller/pickup-points");
 }
@@ -60,27 +90,24 @@ export type CreateLotPayload = {
 export async function createSellerLot(payload: CreateLotPayload) {
   const pickupEnabled = payload.pickupEnabled ?? false;
   const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
-  return apiRequest<{ product: { id: string; title?: string; name?: string }; message?: string }>(
-    "/api/mobile/seller/products",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        ...payload,
-        stock: payload.stock ?? 1,
-        pickupEnabled,
-        reservationEnabled: false,
-        prepaymentPercent: 0,
-        pickupPointIds,
-        characteristics: [],
-      }),
-    },
-  );
+  return apiRequest<SellerLotMutationResponse>("/api/mobile/seller/products", {
+    method: "POST",
+    body: JSON.stringify({
+      ...payload,
+      stock: payload.stock ?? 1,
+      pickupEnabled,
+      reservationEnabled: false,
+      prepaymentPercent: 0,
+      pickupPointIds,
+      characteristics: [],
+    }),
+  });
 }
 
 export async function updateSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
   const pickupEnabled = payload.pickupEnabled ?? false;
   const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
-  return apiRequest<{ product: { id: string }; message?: string }>(
+  return apiRequest<SellerLotMutationResponse>(
     `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
     {
       method: "PATCH",
@@ -94,11 +121,15 @@ export async function updateSellerLot(productId: string, payload: Partial<Create
 }
 
 export async function publishSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
-  return apiRequest<{ product: { id: string }; message?: string }>(
+  return apiRequest<SellerLotMutationResponse>(
     `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
     {
       method: "PATCH",
       body: JSON.stringify({ ...payload, status: "ACTIVE" }),
     },
   );
+}
+
+export async function fetchSellerLot(productId: string) {
+  return apiRequest<SellerLotDetail>(`/api/mobile/seller/products/${encodeURIComponent(productId)}`);
 }
