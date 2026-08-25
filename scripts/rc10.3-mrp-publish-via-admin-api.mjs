@@ -123,10 +123,11 @@ async function main() {
     downloadUrl: RELEASE.downloadUrl,
     status,
     updatePath: {
-      code7to16: "OPTIONAL_UPDATE→18",
-      code17: "OPTIONAL_UPDATE→18",
-      code18: "NO_UPDATE",
+      code7to16: "OPTIONAL_UPDATE→19",
+      code17: "OPTIONAL_UPDATE→19",
+      code18: "OPTIONAL_UPDATE→19",
       code19: "NO_UPDATE",
+      code20: "NO_UPDATE",
     },
     verdict: status === "PUBLISHED" ? "PASS" : "FAIL",
   };

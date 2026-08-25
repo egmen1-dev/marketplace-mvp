@@ -13,14 +13,15 @@
     "publishTruthGate": "PASS",
     "dynamicCharacteristicsGate": "PASS",
     "apkVerify": "PASS",
-    "mrpPublish": "PENDING",
-    "updateVerify": "PENDING"
+    "mrpPublish": "PASS",
+    "updateVerify": "PASS"
   },
   "merge": {
     "pr172": "MERGED",
     "pr172HeadSha": "94c3ca80938ca18f13a7a71a3b72de9acb5cc228",
     "pr172MergeSha": "08dea771829ec3d05d91123c1cbd48e366f5e84e",
-    "mainSha": "08dea771829ec3d05d91123c1cbd48e366f5e84e",
+    "pr173MergeSha": "06b2310",
+    "mainSha": "06b2310",
     "railwaySha": "08dea77"
   },
   "postDeployCharacteristics": {

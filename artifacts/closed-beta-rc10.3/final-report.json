@@ -1,0 +1,77 @@
+{
+  "candidate": "RC10.3",
+  "generatedAt": "2026-08-25T08:08:00Z",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "versionName": "0.1.15-beta.4",
+  "versionCode": 19,
+  "releaseChannel": "CLOSED_BETA",
+  "environment": "staging",
+  "merge": {
+    "pr172": "MERGED",
+    "pr172HeadSha": "94c3ca80938ca18f13a7a71a3b72de9acb5cc228",
+    "pr172MergeSha": "08dea771829ec3d05d91123c1cbd48e366f5e84e",
+    "pr173": "MERGED",
+    "pr173HeadSha": "0d6915c",
+    "pr173MergeSha": "06b2310",
+    "mainSha": "06b2310"
+  },
+  "deploy": {
+    "railwaySha": "08dea77",
+    "stagingUrl": "https://web-production-e56fb.up.railway.app",
+    "characteristicsEndpoint": {
+      "path": "/api/mobile/seller/product-types/cmsoz1oa9vw8rphtp/characteristics",
+      "httpStatus": 200,
+      "requiredFields": ["Мощность", "Тип питания"]
+    }
+  },
+  "postDeploySmoke": {
+    "dynamicCharacteristics": "PASS",
+    "characteristicsPayload": "PASS",
+    "artifacts": [
+      "artifacts/closed-beta-rc10.3/staging-dynamic-characteristics-smoke.json",
+      "artifacts/closed-beta-rc10.3/staging-characteristics-payload-smoke.json"
+    ]
+  },
+  "regressionGates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "photoUploadGate": "PASS",
+    "publishTruthGate": "PASS",
+    "dynamicCharacteristicsGate": "PASS"
+  },
+  "apk": {
+    "path": "artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "canonicalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "sha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea",
+    "sizeBytes": 44322982,
+    "canonicalDownload": "PASS"
+  },
+  "apkForensics": {
+    "dynamicCharacteristicsSymbols": "PASS",
+    "publishTruthSymbols": "PASS",
+    "legacyEmptyCharacteristicsAbsent": "PASS",
+    "artifact": "artifacts/closed-beta-rc10.3/apk-feature-verification.json"
+  },
+  "mrp": {
+    "status": "PUBLISHED",
+    "artifact": "artifacts/closed-beta-rc10.3/mrp-publish-report.json",
+    "updateVerify": "PASS"
+  },
+  "updateMatrix": {
+    "code7to17": "OPTIONAL_UPDATE → 19",
+    "code18": "OPTIONAL_UPDATE → 19",
+    "code19": "NO_UPDATE",
+    "code20plus": "NO_UPDATE",
+    "artifact": "artifacts/closed-beta-rc10.3/update-api-verification.json"
+  },
+  "physical": {
+    "status": "NOT_RUN",
+    "checklist": "artifacts/closed-beta-rc10.3/physical-checklist.json",
+    "scenarios": ["TEST-A", "TEST-B", "TEST-C", "TEST-D", "TEST-E", "TEST-F", "TEST-G"]
+  },
+  "policy": {
+    "rc102": "BLOCKED_FOR_BETA",
+    "afterPhysicalPass": "READY_FOR_BETA",
+    "onPhysicalFail": "BLOCKED_FOR_BETA"
+  }
+}

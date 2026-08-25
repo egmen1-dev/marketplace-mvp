@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-25T08:08:02.964Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "probes": [
+    {
+      "installedVersionCode": 7,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 19,
+      "targetVersionName": "0.1.15-beta.4",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 13,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 19,
+      "targetVersionName": "0.1.15-beta.4",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 16,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 19,
+      "targetVersionName": "0.1.15-beta.4",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 17,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 19,
+      "targetVersionName": "0.1.15-beta.4",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 18,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 19,
+      "targetVersionName": "0.1.15-beta.4",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 19,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 19,
+      "targetVersionName": "0.1.15-beta.4",
+      "verdict": "PASS"
+    }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "httpOk": true,
+    "expectedSha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea",
+    "actualSha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea",
+    "sizeBytes": 44322982,
+    "verdict": "PASS"
+  },
+  "verdict": "PASS"
+}
