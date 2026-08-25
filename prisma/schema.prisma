@@ -546,6 +546,10 @@ model Product {
   city           String?
   condition      ProductCondition @default(NEW)
   status         ProductStatus    @default(DRAFT)
+  /// Monotonic content version for moderation invalidation
+  contentVersion Int              @default(1)
+  /// First publication timestamp when ACTIVE
+  publishedAt    DateTime?
   /// PDP / listing popularity signal
   views          Int              @default(0)
   /// Soft counter for hit badge / popular sort — kept in sync with Favorite rows
@@ -1610,13 +1614,58 @@ model ProductModeration {
   reviewedById    String?
   reviewedAt      DateTime?
   notes           String?
+  submittedAt     DateTime?
+  reviewStartedAt DateTime?
+  needsChangesAt  DateTime?
+  rejectedAt      DateTime?
+  riskScore       Int?
+  policyVersion   String?
+  reviewMode      String?
+  stage           String?
+  reasonCodes     Json?
+  rulesTriggered  Json?
+  systemRecommendation String?
+  contentVersionAtSubmit Int?
+  contentVersionHash     String?
+  moderatedContentVersion Int?
+  moderatedContentVersionHash String?
+  decisionVersion Int              @default(0)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  auditEvents ProductModerationAuditEvent[]
 
   @@index([status])
+  @@index([submittedAt])
+  @@index([riskScore])
   @@map("product_moderations")
+}
+
+model ProductModerationAuditEvent {
+  id              String            @id @default(cuid())
+  productId       String
+  moderationId    String
+  sellerId        String
+  previousStatus  ModerationStatus?
+  newStatus       ModerationStatus
+  decision        String
+  reasonCodes     Json              @default("[]")
+  rulesTriggered  Json              @default("[]")
+  riskScore       Int?
+  policyVersion   String?
+  reviewerType    String
+  reviewerId      String?
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+
+  moderation ProductModeration @relation(fields: [moderationId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([moderationId])
+  @@index([sellerId])
+  @@index([createdAt])
+  @@map("product_moderation_audit_events")
 }
 
 /// Unified moderation queue for admin.

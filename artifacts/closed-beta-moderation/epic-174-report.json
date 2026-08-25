@@ -1,0 +1,76 @@
+{
+  "epic": "EPIC 174",
+  "generatedAt": "2026-08-25T09:32:00Z",
+  "verdict": "READY_FOR_STAGING_RETEST",
+  "architectureAudit": "docs/product/EPIC_174_MODERATION_ARCHITECTURE_AUDIT.md",
+  "rootGaps": [
+    "PENDING_REVIEW was terminal without guaranteed human decision",
+    "Admin approve did not publish ACTIVE",
+    "No content version invalidation after approval",
+    "No structured reason codes / audit trail",
+    "Regex auto-reject without manual review path",
+    "Image/OCR falsely absent — now NOT_EVALUATED"
+  ],
+  "dataModel": {
+    "product": ["contentVersion", "publishedAt"],
+    "productModeration": [
+      "submittedAt",
+      "riskScore",
+      "policyVersion",
+      "reviewMode",
+      "stage",
+      "reasonCodes",
+      "systemRecommendation",
+      "contentVersionHash",
+      "decisionVersion"
+    ],
+    "productModerationAuditEvent": "append-only audit log"
+  },
+  "stateMachine": {
+    "submit": "DRAFT → PENDING_REVIEW (SHADOW: always manual queue)",
+    "approve": "PENDING_REVIEW → APPROVED + ACTIVE + publishedAt",
+    "needsChanges": "→ NEEDS_FIX (seller edits + resubmit)",
+    "reject": "→ REJECTED",
+    "contentEdit": "APPROVED → invalidate → PENDING_REVIEW"
+  },
+  "policyEngine": {
+    "version": "LOT_POLICY_V1",
+    "rules": "lib/moderation/policies/registry.ts",
+    "signals": ["text", "prohibited", "price", "structural", "image NOT_EVALUATED"]
+  },
+  "imageOcr": {
+    "imageModeration": "NOT_IMPLEMENTED",
+    "ocr": "NOT_IMPLEMENTED",
+    "evaluation": "NOT_EVALUATED"
+  },
+  "automationMode": "SHADOW",
+  "adminModeration": {
+    "queue": "/admin/moderation",
+    "detail": "/admin/moderation/[id]",
+    "api": "/api/admin/moderation",
+    "actions": ["APPROVE", "NEEDS_CHANGES", "REJECT", "ESCALATE"]
+  },
+  "sellerUx": {
+    "pendingCopy": "Проверяем ЛОТ",
+    "statusLabels": ["На проверке", "Нужно исправить", "Отклонён", "Опубликован"],
+    "moderationApi": "/api/mobile/seller/products/:id/moderation",
+    "lotDetailBanners": "apps/mobile/app/sell/lot/[id].tsx"
+  },
+  "audit": "product_moderation_audit_events",
+  "tests": {
+    "unit": "tests/mobile-lot-moderation.test.ts — PASS",
+    "gate": "npm run mobile:lot-moderation:gate — PASS",
+    "build": "npm run build — PASS"
+  },
+  "stagingE2E": "NOT_RUN — deploy EPIC 174 then run scripts/mobile-lot-moderation-staging-smoke.mjs",
+  "pendingLotMigration": "Existing PENDING_REVIEW rows preserved; no auto-publish",
+  "remainingLimitations": [
+    "Full A-H staging lifecycle smoke pending deploy",
+    "In-app notifications adapter logs only (no notifications table)",
+    "Duplicate detection soft signal only",
+    "Category mismatch heuristic not fully implemented",
+    "Physical Android + admin acceptance NOT_RUN",
+    "APK not built in this EPIC"
+  ],
+  "rc103Status": "BLOCKED_FOR_BETA — moderation lifecycle incomplete until staging E2E PASS"
+}

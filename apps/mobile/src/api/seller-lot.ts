@@ -181,3 +181,23 @@ export async function publishSellerLot(productId: string, payload: Partial<Creat
 export async function fetchSellerLot(productId: string) {
   return apiRequest<SellerLotDetail>(`/api/mobile/seller/products/${encodeURIComponent(productId)}`);
 }
+
+export type SellerLotModeration = {
+  productId: string;
+  status: string | null;
+  moderationState: string | null;
+  riskScore: number | null;
+  systemRecommendation: string | null;
+  submittedAt: string | null;
+  reviewedAt: string | null;
+  notes: string | null;
+  reasonCodes: string[];
+  issues: Array<{ code: string | null; message: string | null; remediation: string | null }>;
+  sellerLabel: string | null;
+};
+
+export async function fetchSellerLotModeration(productId: string) {
+  return apiRequest<SellerLotModeration>(
+    `/api/mobile/seller/products/${encodeURIComponent(productId)}/moderation`,
+  );
+}
