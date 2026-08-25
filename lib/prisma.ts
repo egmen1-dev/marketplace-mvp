@@ -10,7 +10,14 @@ const globalForPrisma = globalThis as unknown as {
  * reconnect on the next query instead of leaking pools.
  */
 function createPrismaClient() {
+  const url = process.env.DATABASE_URL;
+  const pooledUrl =
+    url && !url.includes("connection_limit=")
+      ? `${url}${url.includes("?") ? "&" : "?"}connection_limit=5&pool_timeout=30`
+      : url;
+
   return new PrismaClient({
+    datasources: pooledUrl ? { db: { url: pooledUrl } } : undefined,
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]

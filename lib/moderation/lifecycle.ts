@@ -1,5 +1,6 @@
 import { ModerationStatus, ProductStatus, Prisma } from "@prisma/client";
 
+import { log } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 
 import { appendModerationAuditEvent } from "./audit";
@@ -70,28 +71,44 @@ export async function submitLotForModeration(productId: string): Promise<void> {
     },
   });
 
-  await upsertModerationQueueItem({
-    productId,
-    sellerId: product.sellerId,
-    status,
-    riskLevel: result.riskLevel.toLowerCase(),
-    summary: `${product.name} · risk ${result.riskScore}`,
-  });
+  try {
+    await upsertModerationQueueItem({
+      productId,
+      sellerId: product.sellerId,
+      status,
+      riskLevel: result.riskLevel.toLowerCase(),
+      summary: `${product.name} · risk ${result.riskScore}`,
+    });
+  } catch (err) {
+    log.error("moderation_queue_upsert_failed", {
+      productId,
+      phase: "submit",
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 
-  await appendModerationAuditEvent({
-    productId,
-    moderationId: moderation.id,
-    sellerId: product.sellerId,
-    previousStatus: null,
-    newStatus: status,
-    decision: result.decision,
-    reasonCodes: result.reasons.map((r) => r.code),
-    rulesTriggered: result.rulesTriggered,
-    riskScore: result.riskScore,
-    policyVersion: result.policyVersion,
-    reviewerType: "SYSTEM",
-    metadata: { imageEvaluation: result.imageSignals.evaluation },
-  });
+  try {
+    await appendModerationAuditEvent({
+      productId,
+      moderationId: moderation.id,
+      sellerId: product.sellerId,
+      previousStatus: null,
+      newStatus: status,
+      decision: result.decision,
+      reasonCodes: result.reasons.map((r) => r.code),
+      rulesTriggered: result.rulesTriggered,
+      riskScore: result.riskScore,
+      policyVersion: result.policyVersion,
+      reviewerType: "SYSTEM",
+      metadata: { imageEvaluation: result.imageSignals.evaluation },
+    });
+  } catch (err) {
+    log.error("moderation_audit_append_failed", {
+      productId,
+      phase: "submit",
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 }
 
 export async function applyAdminModerationDecision(input: {
@@ -178,36 +195,60 @@ export async function applyAdminModerationDecision(input: {
 
   if (!result.ok) return result;
 
-  await upsertModerationQueueItem({
-    productId: input.productId,
-    sellerId: moderation.product.sellerId,
-    status,
-    riskLevel: moderation.riskScore && moderation.riskScore >= 70 ? "high" : "low",
-    summary: `Admin ${input.decision}`,
-  });
+  try {
+    await upsertModerationQueueItem({
+      productId: input.productId,
+      sellerId: moderation.product.sellerId,
+      status,
+      riskLevel: moderation.riskScore && moderation.riskScore >= 70 ? "high" : "low",
+      summary: `Admin ${input.decision}`,
+    });
+  } catch (err) {
+    log.error("moderation_queue_upsert_failed", {
+      productId: input.productId,
+      decision: input.decision,
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 
-  await appendModerationAuditEvent({
-    productId: input.productId,
-    moderationId: moderation.id,
-    sellerId: moderation.product.sellerId,
-    previousStatus,
-    newStatus: status,
-    decision: input.decision,
-    reasonCodes:
-      input.reasonCodes ?? jsonStringArray(moderation.reasonCodes),
-    rulesTriggered: jsonStringArray(moderation.rulesTriggered),
-    riskScore: moderation.riskScore,
-    policyVersion: moderation.policyVersion,
-    reviewerType: "ADMIN",
-    reviewerId: input.adminUserId,
-    metadata: { comment: input.comment ?? null },
-  });
+  try {
+    await appendModerationAuditEvent({
+      productId: input.productId,
+      moderationId: moderation.id,
+      sellerId: moderation.product.sellerId,
+      previousStatus,
+      newStatus: status,
+      decision: input.decision,
+      reasonCodes:
+        input.reasonCodes ?? jsonStringArray(moderation.reasonCodes),
+      rulesTriggered: jsonStringArray(moderation.rulesTriggered),
+      riskScore: moderation.riskScore,
+      policyVersion: moderation.policyVersion,
+      reviewerType: "ADMIN",
+      reviewerId: input.adminUserId,
+      metadata: { comment: input.comment ?? null },
+    });
+  } catch (err) {
+    log.error("moderation_audit_append_failed", {
+      productId: input.productId,
+      decision: input.decision,
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 
-  await notifyModerationDecision({
-    productId: input.productId,
-    sellerId: moderation.product.sellerId,
-    decision: input.decision,
-  });
+  try {
+    await notifyModerationDecision({
+      productId: input.productId,
+      sellerId: moderation.product.sellerId,
+      decision: input.decision,
+    });
+  } catch (err) {
+    log.error("moderation_notify_failed", {
+      productId: input.productId,
+      decision: input.decision,
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 
   return { ok: true };
 }

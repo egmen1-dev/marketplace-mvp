@@ -14,7 +14,7 @@ const BUYER = process.env.MOBILE_BUYER_EMAIL ?? "buyer@demo.lot";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@demo.lot";
 const PASSWORD = process.env.MOBILE_TEST_PASSWORD ?? "demo1234";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? PASSWORD;
-const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "e202f55").slice(0, 7);
+const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "c02c114").slice(0, 7);
 const RUN_ID = process.env.RC10_4_ACCEPTANCE_RUN_ID ?? randomUUID().slice(0, 8);
 const OUT = resolve("artifacts/closed-beta-rc10.4/staging-moderation-acceptance.json");
 const server500Events = [];
@@ -183,7 +183,7 @@ async function createAndSubmitLot(
     );
   }
 
-  const resolvedUpload = uploadBody ?? (await getUpload(token, false));
+  const resolvedUpload = uploadBody ?? (await getUpload(token, true));
   if (!resolvedUpload?.url) throw new Error("upload unavailable for createAndSubmitLot");
 
   const resolvedCharacteristics =
@@ -280,12 +280,43 @@ async function adminQueue(cookie) {
   return json("/api/admin/moderation", {}, null, cookie);
 }
 
+const SCENARIO_DELAY_MS = Number(process.env.RC10_4_SCENARIO_DELAY_MS ?? 800);
+
 function scenario(id, status, extra = {}) {
   return { scenario: id, status, ...extra };
 }
 
+async function betweenScenarios() {
+  if (SCENARIO_DELAY_MS > 0) await sleep(SCENARIO_DELAY_MS);
+}
+
+async function runAcceptanceCleanup() {
+  try {
+    const { spawnSync } = await import("node:child_process");
+    const db = spawnSync("npx", ["tsx", "scripts/rc10.4-cleanup-acceptance.ts"], {
+      stdio: "pipe",
+      encoding: "utf8",
+      env: process.env,
+    });
+    if (db.status === 0) {
+      console.log(`[cleanup] db ok: ${db.stdout.trim().split("\n").pop()}`);
+      return;
+    }
+    const http = spawnSync("node", ["scripts/rc10.4-cleanup-acceptance-http.mjs"], {
+      stdio: "pipe",
+      encoding: "utf8",
+      env: process.env,
+    });
+    console.log(`[cleanup] http: ${http.stdout.trim().split("\n").pop() ?? http.stderr?.trim() ?? "done"}`);
+  } catch (err) {
+    console.warn("[cleanup] skipped:", err);
+  }
+}
+
 async function main() {
   mkdirSync(resolve("artifacts/closed-beta-rc10.4"), { recursive: true });
+  await runAcceptanceCleanup();
+  await sleep(1500);
   const scenarios = [];
   const sellerToken = await mobileLogin(SELLER);
   const sellerBToken = await mobileLogin(SELLER_B);
@@ -376,6 +407,8 @@ async function main() {
     auditVerified: false,
   }));
 
+  await betweenScenarios();
+
   // B — admin APPROVE → buyer visible
   const approveB = await adminDecision(lotA.productId, "APPROVE", adminCookie);
   const detailB = await adminDetail(lotA.productId, adminCookie);
@@ -400,6 +433,8 @@ async function main() {
     buyerVisibility: visB,
     auditVerified: (pmB?.auditEvents?.length ?? 0) > 0,
   }));
+
+  await betweenScenarios();
 
   // C — NEEDS_CHANGES → edit → resubmit → approve
   await sleep(2000);
@@ -444,6 +479,8 @@ async function main() {
     auditVerified: true,
   }));
 
+  await betweenScenarios();
+
   // D — REJECT
   const titleD = `rc104-${RUN_ID}-D reject flow`;
   const lotD = await createAndSubmitLot(sellerToken, {
@@ -464,6 +501,8 @@ async function main() {
     !visD.pdpOk;
   scenarios.push(scenario("D", passD ? "PASS" : "FAIL", { productId: lotD.productId, buyerVisibility: visD, auditVerified: true }));
 
+  await betweenScenarios();
+
   // E — ambiguous signal → manual review (soft prohibited / contact)
   const titleE = `rc104-${RUN_ID}-E manual review`;
   const lotE = await createAndSubmitLot(sellerToken, {
@@ -482,6 +521,8 @@ async function main() {
     serverState: { moderationStatus: pmE?.status, systemRecommendation: pmE?.systemRecommendation, riskScore: pmE?.riskScore },
     auditVerified: true,
   }));
+
+  await betweenScenarios();
 
   // F — content version security after approve
   const titleF = `rc104-${RUN_ID}-F content-version`;
@@ -520,6 +561,8 @@ async function main() {
     auditVerified: true,
   }));
 
+  await betweenScenarios();
+
   // G — authorization
   const buyerApprove = await json(`/api/admin/moderation/${lotE.productId}/decision`, {
     method: "POST",
@@ -548,6 +591,8 @@ async function main() {
     sellerBypassStatus: sellerBypass.status,
     crossSellerStatus: crossSeller.status,
   }));
+
+  await betweenScenarios();
 
   // H — idempotency / concurrency
   const titleH = `rc104-${RUN_ID}-H idempotency`;
