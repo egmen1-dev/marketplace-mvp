@@ -1,7 +1,90 @@
 {
-  "generatedAt": "2026-08-25T10:43:00Z",
-  "physical": "NOT_RUN",
-  "updateInstallTest": "NOT_RUN",
-  "moderationPhysicalTest": "NOT_RUN",
-  "note": "No physical Android device in cloud environment"
+  "candidate": "RC10.4",
+  "generatedAt": "2026-08-25T19:50:00Z",
+  "status": "NOT_RUN",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "scope": "RC10.3→RC10.4 in-app updater + seller/moderation/buyer lifecycle",
+  "apk": {
+    "versionName": "0.1.15-beta.5",
+    "versionCode": 20,
+    "path": "artifacts/closed-beta-rc10.4/lot_android_closed_beta_0.1.15_beta.5.apk",
+    "sha256": "e2f54e646e70575ff8cc419c697f6708127cb03536868ac094471c9674eeca44"
+  },
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234",
+    "admin": "admin@demo.lot / demo1234"
+  },
+  "environment": {
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "channel": "CLOSED_BETA",
+    "deployedSha": "c078c3a"
+  },
+  "scenarios": [
+    {
+      "id": "A",
+      "name": "UPDATE RC10.3 → RC10.4",
+      "startingState": "About: 0.1.15-beta.4 / code 19 / RC10.3",
+      "steps": [
+        "Tap Обновить сейчас",
+        "APK downloads once (no browser Downloads as canonical path)",
+        "If permission required: LOT explains permission",
+        "Android native installer opens",
+        "User taps Install; package replaces old LOT",
+        "Reopen LOT; About shows 0.1.15-beta.5 / code 20 / RC10.4"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "B",
+      "name": "CREATE LOT",
+      "steps": ["Photo, category/ProductType, required characteristics, price, description, pickup", "Preview works"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "C",
+      "name": "SUBMIT",
+      "steps": ["Отправить на проверку → Проверяем ЛОТ", "Мои ЛОТы → На проверке; LOT exists and opens"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "D",
+      "name": "ADMIN APPROVE",
+      "steps": ["Admin approves LOT", "Seller sees published/active state"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "E",
+      "name": "BUYER",
+      "steps": ["Catalog, search, PDP show approved LOT"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "F",
+      "name": "NEEDS CHANGES",
+      "steps": ["Admin Попросить исправить", "Seller sees Нужно исправить + reason + CTA", "Edit → resubmit"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "G",
+      "name": "EDIT AFTER APPROVAL",
+      "steps": ["Seller edits moderation-sensitive content", "Previous approval invalidated per contract"],
+      "status": "NOT_RUN"
+    }
+  ],
+  "screenshotsRequested": [
+    "About BEFORE update",
+    "Android installer screen",
+    "About AFTER update",
+    "LOT pending screen",
+    "My LOTs → На проверке",
+    "Admin approval result",
+    "Buyer search/PDP result",
+    "Needs changes screen"
+  ],
+  "promotionPolicy": {
+    "afterAllPass": "READY_FOR_CLOSED_BETA",
+    "onPhysicalUpdaterFail": "BLOCKED_FOR_BETA",
+    "onLifecycleFail": "BLOCKED_FOR_BETA"
+  }
 }

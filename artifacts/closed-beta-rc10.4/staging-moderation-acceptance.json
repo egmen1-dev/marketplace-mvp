@@ -1,59 +1,13 @@
 {
-  "generatedAt": "2026-08-25T16:38:35.589Z",
+  "generatedAt": "2026-08-25T19:44:45.340Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "runId": "final-cooldown",
-  "deployedSha": "865a180",
-  "server500Events": [
-    {
-      "runId": "final-cooldown",
-      "path": "/api/mobile/catalog/products?q=rc104-final-cooldown-C",
-      "method": "GET",
-      "status": 500,
-      "body": {
-        "error": {
-          "code": "CATALOG_ERROR",
-          "message": "Не удалось загрузить каталог",
-          "retryable": true
-        }
-      },
-      "at": "2026-08-25T16:38:08.014Z"
-    },
-    {
-      "runId": "final-cooldown",
-      "path": "/api/products/cmt8w2acp00ftrx01esc6s284",
-      "method": "GET",
-      "status": 500,
-      "body": {
-        "error": "Не удалось получить товар"
-      },
-      "at": "2026-08-25T16:38:08.096Z"
-    },
-    {
-      "runId": "final-cooldown",
-      "path": "/api/mobile/catalog/products?q=rc104-final-cooldown-F",
-      "method": "GET",
-      "status": 500,
-      "body": {
-        "error": {
-          "code": "CATALOG_ERROR",
-          "message": "Не удалось загрузить каталог",
-          "retryable": true
-        }
-      },
-      "at": "2026-08-25T16:38:28.539Z"
-    },
-    {
-      "runId": "final-cooldown",
-      "path": "/api/products/cmt8w2q3000hnrx01mf3fiz6v",
-      "method": "GET",
-      "status": 500,
-      "body": {
-        "error": "Не удалось получить товар"
-      },
-      "at": "2026-08-25T16:38:28.624Z"
-    }
-  ],
-  "unexplainedServer500Count": 4,
+  "runId": "d5e1d0f2",
+  "deployedSha": "c078c3a",
+  "server500Events": [],
+  "transportErrors": [],
+  "unexplainedServer500Count": 0,
+  "transportErrorCount": 0,
+  "application500Count": 0,
   "effectiveConfig": {
     "note": "Runtime env inferred from moderation behavior; secrets not logged",
     "trustLoopInferred": true,
@@ -63,8 +17,8 @@
     {
       "scenario": "deploy",
       "status": "PASS",
-      "deployedSha": "865a180",
-      "expectedSha": "865a180",
+      "deployedSha": "c078c3a",
+      "expectedSha": "c078c3a",
       "databaseOk": true
     },
     {
@@ -72,9 +26,9 @@
       "status": "PASS",
       "adminModerationStatus": 200,
       "counters": {
-        "pending": 132,
-        "needsFix": 5,
-        "rejected": 9,
+        "pending": 147,
+        "needsFix": 7,
+        "rejected": 14,
         "highRisk": 0,
         "overdue": 0
       }
@@ -82,8 +36,8 @@
     {
       "scenario": "A",
       "status": "PASS",
-      "productId": "cmt8w1xvr00farx01oce3ag8x",
-      "moderationId": "cmt8w1y3500fkrx01ukifoamy",
+      "productId": "cmt92pxsl00c2ly01cn140we4",
+      "moderationId": "cmt92pxww00ccly01vppe53e7",
       "serverState": {
         "productStatus": "DRAFT",
         "moderationStatus": "PENDING_REVIEW",
@@ -103,13 +57,13 @@
     {
       "scenario": "B",
       "status": "PASS",
-      "productId": "cmt8w1xvr00farx01oce3ag8x",
+      "productId": "cmt92pxsl00c2ly01cn140we4",
       "approveStatus": 200,
       "approveBody": true,
       "serverState": {
         "moderationStatus": "APPROVED",
         "productStatus": "ACTIVE",
-        "publishedAt": "2026-08-25T16:37:52.130Z"
+        "publishedAt": "2026-08-25T19:44:25.238Z"
       },
       "buyerVisibility": {
         "catalogHit": true,
@@ -120,8 +74,8 @@
     },
     {
       "scenario": "C",
-      "status": "FAIL",
-      "productId": "cmt8w2acp00ftrx01esc6s284",
+      "status": "PASS",
+      "productId": "cmt92q3vc00clly01fpf3pp03",
       "serverState": {
         "contentVersionBefore": 1,
         "contentVersionAfter": 2,
@@ -134,9 +88,9 @@
           "pdpStatus": 404
         },
         "after": {
-          "catalogHit": false,
-          "pdpOk": false,
-          "pdpStatus": 500
+          "catalogHit": true,
+          "pdpOk": true,
+          "pdpStatus": 200
         }
       },
       "auditVerified": true
@@ -144,7 +98,7 @@
     {
       "scenario": "D",
       "status": "PASS",
-      "productId": "cmt8w2hn100gnrx016sxvkkdq",
+      "productId": "cmt92q6z300dfly01us53yg0a",
       "buyerVisibility": {
         "catalogHit": false,
         "pdpOk": false,
@@ -155,7 +109,7 @@
     {
       "scenario": "E",
       "status": "PASS",
-      "productId": "cmt8w2nds00h6rx01zjnj3e5r",
+      "productId": "cmt92q95q00dyly01epwn2ikx",
       "serverState": {
         "moderationStatus": "PENDING_REVIEW",
         "systemRecommendation": "MANUAL_REVIEW",
@@ -166,7 +120,7 @@
     {
       "scenario": "F",
       "status": "PASS",
-      "productId": "cmt8w2q3000hnrx01mf3fiz6v",
+      "productId": "cmt92qan100efly01xq2pthgt",
       "serverState": {
         "beforeStatus": "ACTIVE",
         "afterStatus": "DRAFT",
@@ -183,7 +137,7 @@
         "after": {
           "catalogHit": false,
           "pdpOk": false,
-          "pdpStatus": 500
+          "pdpStatus": 404
         }
       },
       "auditVerified": true
@@ -199,7 +153,7 @@
     {
       "scenario": "H",
       "status": "PASS",
-      "productId": "cmt8w2zuv00ihrx01al35ueu4",
+      "productId": "cmt92qep300f9ly013okngzbo",
       "decisions": {
         "first": 200,
         "secondApprove": 409,
@@ -213,13 +167,13 @@
     "queueLoads": true,
     "detailLoads": true,
     "counters": {
-      "pending": 132,
-      "needsFix": 5,
-      "rejected": 9,
+      "pending": 147,
+      "needsFix": 7,
+      "rejected": 14,
       "highRisk": 0,
       "overdue": 0
     },
     "verdict": "PASS"
   },
-  "verdict": "BLOCKED_FOR_RC10_4_BUILD"
+  "verdict": "READY_FOR_RC10_4_BUILD"
 }

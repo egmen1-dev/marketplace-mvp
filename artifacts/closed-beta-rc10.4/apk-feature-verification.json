@@ -1,5 +1,249 @@
 {
-  "generatedAt": "2026-08-25T10:43:00Z",
-  "built": false,
-  "reason": "Staging migration + moderation E2E not PASS"
+  "generatedAt": "2026-08-25T19:51:11.035Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.4/lot_android_closed_beta_0.1.15_beta.5.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.5",
+    "versionCode": "20",
+    "nativeCode": "arm64-v8a",
+    "sha256": "e2f54e646e70575ff8cc419c697f6708127cb03536868ac094471c9674eeca44",
+    "sizeBytes": 43736602
+  },
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.15-beta.5",
+      "actual": "0.1.15-beta.5"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "20",
+      "actual": "20"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc10_4Label",
+      "ok": true,
+      "expected": "RC10.4 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "c078c3a"
+    },
+    {
+      "name": "signerSha256",
+      "ok": true,
+      "expected": "fac61745…",
+      "actual": "fac61745dc090378…"
+    }
+  ],
+  "manifestChecks": [
+    {
+      "name": "requestInstallPackages",
+      "ok": true,
+      "expected": "REQUEST_INSTALL_PACKAGES"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "androidUpdater",
+      "name": "downloadVerifiedApk",
+      "pattern": "downloadVerifiedApk",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "apkCache",
+      "pattern": "findVerifiedCachedApk",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "readyToInstall",
+      "pattern": "READY_TO_INSTALL",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "installerOpened",
+      "pattern": "INSTALLER_OPENED",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "openApkInstaller",
+      "pattern": "openApkInstall",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "intentLauncher",
+      "pattern": "IntentLauncher",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "getContentUri",
+      "pattern": "getContentUri",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "LotCharacteristicsSection",
+      "pattern": "LotCharacteristicsSection",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "fetchProductTypeCharacteristics",
+      "pattern": "fetchProductTypeCharacteristics",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "validateLotCharacteristicForm",
+      "pattern": "validateLotCharacteristicForm",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "serializeLotCharacteristicPayload",
+      "pattern": "serializeLotCharacteristicPayload",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "characteristicValues",
+      "pattern": "characteristicValues",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "resolveLotPublishOutcome",
+      "pattern": "resolveLotPublishOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "PENDING_REVIEW",
+      "pattern": "PENDING_REVIEW",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "pendingReviewTitle",
+      "pattern": "pendingReviewTitle",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "sellerLotDetailRoute",
+      "pattern": "sellerLotDetailRoute",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "pendingReviewTab",
+      "pattern": "На проверке",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "needsChanges",
+      "pattern": "Нужно исправить",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "rejected",
+      "pattern": "Отклонён",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "checkingLot",
+      "pattern": "Проверяем ЛОТ",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "moderationState",
+      "pattern": "moderationState",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "resubmit",
+      "pattern": "NEEDS_FIX",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoUpload",
+      "name": "uploadSellerLotImage",
+      "pattern": "uploadSellerLotImage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoUpload",
+      "name": "expo-file-system",
+      "pattern": "expo-file-system",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
 }

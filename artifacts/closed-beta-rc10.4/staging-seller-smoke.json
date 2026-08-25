@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-08-25T19:44:45.340Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "deployedSha": "c078c3a",
+  "runId": "d5e1d0f2",
+  "verdict": "PASS",
+  "application500Count": 0,
+  "transportErrorCount": 0,
+  "flows": {
+    "create": "PASS",
+    "photoUpload": "PASS",
+    "characteristics": "PASS",
+    "submit": "PASS",
+    "adminApprove": "PASS",
+    "buyerCatalog": "PASS",
+    "buyerSearch": "PASS",
+    "buyerPdp": "PASS"
+  },
+  "moderationSafety": {
+    "shadowMode": "PASS",
+    "duplicateApprove409": "PASS",
+    "authBypass403": "PASS",
+    "editAfterApprovalInvalidation": "PASS"
+  },
+  "artifacts": [
+    "artifacts/closed-beta-rc10.4/staging-moderation-acceptance.json",
+    "artifacts/mobile-lot-dynamic-characteristics/staging-smoke.json",
+    "artifacts/mobile-lot-publish-truth/staging-smoke.json"
+  ]
+}

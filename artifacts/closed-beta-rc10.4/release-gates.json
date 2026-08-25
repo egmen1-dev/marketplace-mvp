@@ -1,15 +1,44 @@
 {
-  "generatedAt": "2026-08-25T10:43:00Z",
-  "gates": [
-    { "command": "npm run build", "status": "PASS" },
-    { "command": "cd apps/mobile && npm run typecheck", "status": "PASS" },
-    { "command": "npm run mobile:seller-photo-upload:gate", "status": "PASS" },
-    { "command": "npm run mobile:lot-publish-truth:gate", "status": "FAIL", "detail": "staging smoke create 500" },
-    { "command": "npm run mobile:lot-dynamic-characteristics:gate", "status": "PASS" },
-    { "command": "npm run mobile:lot-moderation:gate", "status": "PASS" },
-    { "command": "npm run mobile:android-update-install:gate", "status": "PASS" },
-    { "command": "npm run release:migration:verify", "status": "FAIL", "detail": "schema incompatible on staging" },
-    { "command": "npm test -- tests/schema-compatibility.test.ts", "status": "PASS" }
+  "generatedAt": "2026-08-25T19:50:00Z",
+  "candidate": "RC10.4",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "mainSha": "c078c3a",
+  "railwaySha": "c078c3a",
+  "gates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "photoUploadGate": "PASS",
+    "publishTruthGate": "PASS",
+    "dynamicCharacteristicsGate": "PASS",
+    "lotModerationGate": "PASS",
+    "androidUpdateInstallGate": "PASS",
+    "backendStabilityGate": "PASS",
+    "releaseRailwayRuntimeVerify": "PASS",
+    "releaseMigrationVerify": "PASS",
+    "releasePipelineVerify": "PASS",
+    "moderationAcceptanceAH": "PASS",
+    "apkVerify": "PASS"
+  },
+  "commands": [
+    "npm run build",
+    "cd apps/mobile && npm run typecheck",
+    "npm run mobile:seller-photo-upload:gate",
+    "npm run mobile:lot-publish-truth:gate",
+    "npm run mobile:lot-dynamic-characteristics:gate",
+    "npm run mobile:lot-moderation:gate",
+    "npm run mobile:android-update-install:gate",
+    "EXPECTED_RAILWAY_SHA=c078c3a npm run staging:backend-stability:gate",
+    "npm run release:railway-runtime:verify",
+    "npm run release:migration:verify",
+    "npm run release:pipeline:verify",
+    "EXPECTED_RAILWAY_SHA=c078c3a npm run mobile:rc10.4:moderation-acceptance"
   ],
-  "verdict": "BLOCKED_FOR_RC10_4_BUILD"
+  "apk": {
+    "versionName": "0.1.15-beta.5",
+    "versionCode": 20,
+    "path": "artifacts/closed-beta-rc10.4/lot_android_closed_beta_0.1.15_beta.5.apk",
+    "sha256": "e2f54e646e70575ff8cc419c697f6708127cb03536868ac094471c9674eeca44",
+    "sizeBytes": 43736602,
+    "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+  }
 }
