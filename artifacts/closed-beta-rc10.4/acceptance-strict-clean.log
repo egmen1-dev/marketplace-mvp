@@ -1,0 +1,8 @@
+
+> marketplace-mvp@0.1.0 mobile:rc10.4:moderation-acceptance
+> node scripts/rc10.4-moderation-staging-acceptance.mjs
+
+Error: create failed for "rc104-strict-clean-C needs-fix flow" 500 {"error":"Ошибка базы данных","code":"DATABASE_ERROR"}
+    at createAndSubmitLot (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:238:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:407:16)

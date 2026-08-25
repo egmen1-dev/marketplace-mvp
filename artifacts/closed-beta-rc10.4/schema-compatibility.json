@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-25T13:05:40.300Z",
+  "generatedAt": "2026-08-25T15:58:09.204Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "mainSha": "5829b8a",
-  "deployedSha": "5829b8a",
-  "shaMatch": true,
+  "mainSha": "c02c114",
+  "deployedSha": "e202f55",
+  "shaMatch": false,
   "database": {
     "reachable": true,
     "schemaCompatible": true,
@@ -14,6 +14,6 @@
     "epic174MigrationApplied": true
   },
   "healthStatus": 200,
-  "verdict": "PASS",
+  "verdict": "BLOCKED_FOR_RC10_4_BUILD",
   "invariant": "Deployment is not release-ready when application schema and database migration state are incompatible."
 }

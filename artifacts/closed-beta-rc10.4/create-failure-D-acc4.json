@@ -1,0 +1,39 @@
+{
+  "runId": "acc4",
+  "scenarioTag": "D",
+  "title": "rc104-acc4-D reject flow",
+  "status": 500,
+  "body": {
+    "error": "Ошибка базы данных",
+    "code": "DATABASE_ERROR"
+  },
+  "payload": {
+    "title": "rc104-acc4-D reject flow",
+    "description": "Тестовый fixture для reject",
+    "price": 2500,
+    "city": "Москва",
+    "condition": "NEW",
+    "categoryId": "cmsmzs3hp000vy0w6q7fuponx",
+    "productTypeId": "cmsoz1oa9vw8rphtp",
+    "images": [
+      {
+        "url": "https://li55azctt2x9unce.private.blob.vercel-storage.com/products/cmsmzrxgj0005y0w6jhe5qqle/9ef19367-d91d-465a-8cd0-d7ae5e6bff6c.jpg",
+        "pathname": "products/cmsmzrxgj0005y0w6jhe5qqle/9ef19367-d91d-465a-8cd0-d7ae5e6bff6c.jpg"
+      }
+    ],
+    "stock": 1,
+    "status": "DRAFT",
+    "pickupEnabled": false,
+    "pickupPointIds": [],
+    "characteristics": [
+      {
+        "definitionId": "cmsoz1onq5rawsgev",
+        "valueNumber": 800
+      },
+      {
+        "definitionId": "cmsoz1os44qhwxggg",
+        "valueText": "сеть"
+      }
+    ]
+  }
+}

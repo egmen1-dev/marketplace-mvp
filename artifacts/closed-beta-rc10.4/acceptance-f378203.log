@@ -1,0 +1,334 @@
+
+> marketplace-mvp@0.1.0 mobile:rc10.4:moderation-acceptance
+> node scripts/rc10.4-moderation-staging-acceptance.mjs
+
+[cleanup] http: }
+{
+  "generatedAt": "2026-08-25T16:22:51.781Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "runId": "final-f378203",
+  "deployedSha": "f378203",
+  "server500Events": [
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-A%20sofa%20acceptance",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:24.873Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vi4c60009o401tjj3ac38",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:24.961Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-A%20sofa%20acceptance",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:26.314Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vi4c60009o401tjj3ac38",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:26.399Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/seller/products/cmt8vib5p000so401m02erdzn",
+      "method": "PATCH",
+      "status": 500,
+      "body": {
+        "error": "Не удалось обновить ЛОТ"
+      },
+      "at": "2026-08-25T16:22:29.984Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-C%20needs-fix%20flow",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:30.319Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vib5p000so401m02erdzn",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:30.402Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-C%20needs-fix%20flow",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:34.619Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vib5p000so401m02erdzn",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:34.705Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-D%20reject%20flow",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:40.446Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vig50001mo4017ivzu0lb",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:40.531Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-F%20content-version",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:47.740Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vilzs002mo401epr03pun",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:47.826Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/seller/products/cmt8vilzs002mo401epr03pun",
+      "method": "PATCH",
+      "status": 500,
+      "body": {
+        "error": "Не удалось обновить ЛОТ"
+      },
+      "at": "2026-08-25T16:22:47.963Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/admin/moderation/cmt8vilzs002mo401epr03pun/decision",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось загрузить карточку модерации"
+      },
+      "at": "2026-08-25T16:22:48.077Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/mobile/catalog/products?q=rc104-final-f378203-F%20content-version%20%D0%98%D0%97%D0%9C%D0%95%D0%9D%D0%95%D0%9D%D0%9E",
+      "method": "GET",
+      "status": 500,
+      "body": {},
+      "at": "2026-08-25T16:22:48.182Z"
+    },
+    {
+      "runId": "final-f378203",
+      "path": "/api/products/cmt8vilzs002mo401epr03pun",
+      "method": "GET",
+      "status": 500,
+      "body": {
+        "error": "Не удалось получить товар"
+      },
+      "at": "2026-08-25T16:22:48.288Z"
+    }
+  ],
+  "unexplainedServer500Count": 17,
+  "effectiveConfig": {
+    "note": "Runtime env inferred from moderation behavior; secrets not logged",
+    "trustLoopInferred": true,
+    "moderationAutomationModeInferred": "SHADOW"
+  },
+  "scenarios": [
+    {
+      "scenario": "deploy",
+      "status": "PASS",
+      "deployedSha": "f378203",
+      "expectedSha": "f378203",
+      "databaseOk": true
+    },
+    {
+      "scenario": "migration-api",
+      "status": "PASS",
+      "adminModerationStatus": 200,
+      "counters": {
+        "pending": 122,
+        "needsFix": 5,
+        "rejected": 4,
+        "highRisk": 0,
+        "overdue": 0
+      }
+    },
+    {
+      "scenario": "A",
+      "status": "PASS",
+      "productId": "cmt8vi4c60009o401tjj3ac38",
+      "moderationId": "cmt8vi4jo000jo401d2btz53w",
+      "serverState": {
+        "productStatus": "DRAFT",
+        "moderationStatus": "PENDING_REVIEW",
+        "reviewMode": "MANUAL",
+        "stage": "MANUAL_REVIEW",
+        "contentVersion": 1,
+        "systemRecommendation": "MANUAL_REVIEW",
+        "isPublic": false
+      },
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": false
+    },
+    {
+      "scenario": "B",
+      "status": "FAIL",
+      "productId": "cmt8vi4c60009o401tjj3ac38",
+      "approveStatus": 200,
+      "approveBody": true,
+      "serverState": {
+        "moderationStatus": "APPROVED",
+        "productStatus": "ACTIVE",
+        "publishedAt": "2026-08-25T16:22:25.951Z"
+      },
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": false
+    },
+    {
+      "scenario": "C",
+      "status": "FAIL",
+      "productId": "cmt8vib5p000so401m02erdzn",
+      "serverState": {
+        "contentVersionBefore": 1,
+        "contentVersionAfter": 2,
+        "resubmitOutcome": "PENDING_REVIEW"
+      },
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        }
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "D",
+      "status": "PASS",
+      "productId": "cmt8vig50001mo4017ivzu0lb",
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "E",
+      "status": "PASS",
+      "productId": "cmt8viklx0025o401dgvcinvj",
+      "serverState": {
+        "moderationStatus": "PENDING_REVIEW",
+        "systemRecommendation": "MANUAL_REVIEW",
+        "riskScore": 0
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "F",
+      "status": "FAIL",
+      "productId": "cmt8vilzs002mo401epr03pun",
+      "serverState": {
+        "beforeStatus": "ACTIVE"
+      },
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        }
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "G",
+      "status": "PASS",
+      "buyerApproveStatus": 403,
+      "sellerApproveStatus": 403,
+      "sellerBypassStatus": 200,
+      "crossSellerStatus": 404
+    },
+    {
+      "scenario": "H",
+      "status": "PASS",
+      "productId": "cmt8virmt003ao401r2rodwyp",
+      "decisions": {
+        "first": 200,
+        "secondApprove": 409,
+        "rejectAfter": 409
+      },
+      "auditEventCount": 0,
+      "auditVerified": false
+    }
+  ],
+  "adminAcceptance": {
+    "queueLoads": true,
+    "detailLoads": true,
+    "counters": {
+      "pending": 122,
+      "needsFix": 5,
+      "rejected": 4,
+      "highRisk": 0,
+      "overdue": 0
+    },
+    "verdict": "PASS"
+  },
+  "verdict": "BLOCKED_FOR_RC10_4_BUILD"
+}

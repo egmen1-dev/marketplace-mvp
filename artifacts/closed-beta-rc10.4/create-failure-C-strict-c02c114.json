@@ -1,0 +1,39 @@
+{
+  "runId": "strict-c02c114",
+  "scenarioTag": "C",
+  "title": "rc104-strict-c02c114-C needs-fix flow",
+  "status": 500,
+  "body": {
+    "error": "Ошибка базы данных",
+    "code": "DATABASE_ERROR"
+  },
+  "payload": {
+    "title": "rc104-strict-c02c114-C needs-fix flow",
+    "description": "Звоните 8-999-123-45-67 за деталями",
+    "price": 2500,
+    "city": "Москва",
+    "condition": "NEW",
+    "categoryId": "cmsmzs3hp000vy0w6q7fuponx",
+    "productTypeId": "cmsoz1oa9vw8rphtp",
+    "images": [
+      {
+        "url": "https://li55azctt2x9unce.private.blob.vercel-storage.com/products/cmsmzrxgj0005y0w6jhe5qqle/388a5365-284d-4b0c-8506-e34d02b48cef.jpg",
+        "pathname": "products/cmsmzrxgj0005y0w6jhe5qqle/388a5365-284d-4b0c-8506-e34d02b48cef.jpg"
+      }
+    ],
+    "stock": 1,
+    "status": "DRAFT",
+    "pickupEnabled": false,
+    "pickupPointIds": [],
+    "characteristics": [
+      {
+        "definitionId": "cmsoz1onq5rawsgev",
+        "valueNumber": 800
+      },
+      {
+        "definitionId": "cmsoz1os44qhwxggg",
+        "valueText": "сеть"
+      }
+    ]
+  }
+}

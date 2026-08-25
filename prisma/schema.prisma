@@ -1683,6 +1683,7 @@ model ModerationQueueItem {
   seller SellerProfile? @relation(fields: [sellerId], references: [id], onDelete: SetNull)
 
   @@index([type, status])
+  @@index([type, entityId])
   @@index([entityId])
   @@index([sellerId])
   @@map("moderation_queue_items")

@@ -18,6 +18,7 @@ const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "c02c114").slice(0, 7)
 const RUN_ID = process.env.RC10_4_ACCEPTANCE_RUN_ID ?? randomUUID().slice(0, 8);
 const OUT = resolve("artifacts/closed-beta-rc10.4/staging-moderation-acceptance.json");
 const server500Events = [];
+const transportErrors = [];
 
 const JPEG_BASE64 =
   "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=";
@@ -41,19 +42,34 @@ async function json(path, init = {}, token, cookie = "", requestId = RUN_ID) {
   if (token) headers.Authorization = `Bearer ${token}`;
   if (cookie) headers.Cookie = cookie;
   if (requestId) headers["x-acceptance-run-id"] = requestId;
-  const res = await fetch(`${STAGING}${path}`, { ...init, headers, signal: AbortSignal.timeout(45000) });
-  const body = await res.json().catch(() => ({}));
-  if (res.status >= 500) {
-    server500Events.push({
+  const started = performance.now();
+  try {
+    const res = await fetch(`${STAGING}${path}`, { ...init, headers, signal: AbortSignal.timeout(45000) });
+    const durationMs = Math.round(performance.now() - started);
+    const body = await res.json().catch(() => ({}));
+    if (res.status >= 500) {
+      server500Events.push({
+        runId: RUN_ID,
+        path,
+        method: init.method ?? "GET",
+        status: res.status,
+        durationMs,
+        body,
+        at: new Date().toISOString(),
+      });
+    }
+    return { ok: res.ok, status: res.status, body, headers: res.headers, durationMs };
+  } catch (err) {
+    transportErrors.push({
       runId: RUN_ID,
       path,
       method: init.method ?? "GET",
-      status: res.status,
-      body,
+      durationMs: Math.round(performance.now() - started),
+      error: err instanceof Error ? err.message : String(err),
       at: new Date().toISOString(),
     });
+    throw err;
   }
-  return { ok: res.ok, status: res.status, body, headers: res.headers };
 }
 
 async function sleep(ms) {
@@ -622,7 +638,10 @@ async function main() {
     runId: RUN_ID,
     deployedSha,
     server500Events,
+    transportErrors,
     unexplainedServer500Count: server500Events.length,
+    transportErrorCount: transportErrors.length,
+    application500Count: server500Events.length,
     effectiveConfig: {
       note: "Runtime env inferred from moderation behavior; secrets not logged",
       trustLoopInferred: passA,

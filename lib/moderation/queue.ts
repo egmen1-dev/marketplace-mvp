@@ -53,10 +53,30 @@ export async function upsertModerationQueueItem(input: {
 
 export async function getModerationQueueCounters() {
   const threshold = new Date(Date.now() - MODERATION_STUCK_THRESHOLD_HOURS * 60 * 60 * 1000);
-  const [pending, needsFix, rejected, highRisk, overdue] = await Promise.all([
-    prisma.productModeration.count({ where: { status: ModerationStatus.PENDING_REVIEW } }),
-    prisma.productModeration.count({ where: { status: ModerationStatus.NEEDS_FIX } }),
-    prisma.productModeration.count({ where: { status: ModerationStatus.REJECTED } }),
+
+  const grouped = await prisma.productModeration.groupBy({
+    by: ["status"],
+    _count: { _all: true },
+    where: {
+      status: {
+        in: [
+          ModerationStatus.PENDING_REVIEW,
+          ModerationStatus.NEEDS_FIX,
+          ModerationStatus.REJECTED,
+        ],
+      },
+    },
+  });
+
+  const countByStatus = new Map(
+    grouped.map((row) => [row.status, row._count._all]),
+  );
+
+  const pending = countByStatus.get(ModerationStatus.PENDING_REVIEW) ?? 0;
+  const needsFix = countByStatus.get(ModerationStatus.NEEDS_FIX) ?? 0;
+  const rejected = countByStatus.get(ModerationStatus.REJECTED) ?? 0;
+
+  const [highRisk, overdue] = await Promise.all([
     prisma.productModeration.count({
       where: { status: ModerationStatus.PENDING_REVIEW, riskScore: { gte: 70 } },
     }),
@@ -74,14 +94,17 @@ export async function getModerationQueueCounters() {
 export async function listModerationQueueItems(input?: {
   status?: ModerationStatus;
   limit?: number;
+  offset?: number;
 }) {
-  const limit = input?.limit ?? 50;
+  const limit = Math.min(Math.max(input?.limit ?? 50, 1), 50);
+  const offset = Math.max(input?.offset ?? 0, 0);
   return prisma.moderationQueueItem.findMany({
     where: {
       type: ModerationItemType.PRODUCT,
       ...(input?.status ? { status: input.status } : {}),
     },
     orderBy: [{ riskLevel: "desc" }, { createdAt: "asc" }],
+    skip: offset,
     take: limit,
     include: {
       seller: { select: { storeName: true, id: true } },

@@ -1,20 +1,21 @@
 {
-  "generatedAt": "2026-08-25T13:05:43.084Z",
+  "generatedAt": "2026-08-25T15:58:12.045Z",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
   "github": {
-    "originMain": "5829b8aad1973f07d1ac00c4a110f64b8d956476",
-    "localMain": "5829b8aad1973f07d1ac00c4a110f64b8d956476",
+    "originMain": "c02c1145eee9f80f7ccee3e5222715bdc456afc3",
+    "localMain": "c02c1145eee9f80f7ccee3e5222715bdc456afc3",
     "mainMatchesOrigin": true,
-    "shortSha": "5829b8a"
+    "shortSha": "c02c114"
   },
   "railway": {
-    "commit": "5829b8a",
-    "buildTime": "2026-08-25T11:53:21.736Z",
+    "commit": "e202f55",
+    "buildTime": "2026-08-25T15:54:13.806Z",
     "version": "0.1.0",
     "environment": "staging",
-    "shortSha": "5829b8a",
+    "shortSha": "e202f55",
     "httpStatus": 200
   },
-  "shaMatch": true,
-  "verdict": "PASS"
+  "shaMatch": false,
+  "verdict": "FAIL",
+  "failReason": "Railway SHA e202f55 !== origin/main c02c114"
 }
