@@ -1,0 +1,19 @@
+
+> marketplace-mvp@0.1.0 mobile:rc10.4:moderation-acceptance
+> node scripts/rc10.4-moderation-staging-acceptance.mjs
+
+{
+  "generatedAt": "2026-08-25T16:03:28.683Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "verdict": "BLOCKED_FOR_RC10_4_BUILD",
+  "reason": "Staging deploy SHA does not include merged EPIC 174 + update hotfix",
+  "scenarios": [
+    {
+      "scenario": "deploy",
+      "status": "FAIL",
+      "deployedSha": "c02c114",
+      "expectedSha": "e202f55",
+      "databaseOk": true
+    }
+  ]
+}

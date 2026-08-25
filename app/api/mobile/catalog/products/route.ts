@@ -4,6 +4,8 @@ import { resolveRequestUser } from "@/features/auth/resolve-request-user";
 import { listProducts, resolveListStatusFilter } from "@/features/products/queries";
 import { listProductsQuerySchema } from "@/features/products/schemas";
 import { parseFacetQueryParams } from "@/lib/catalog-taxonomy/facets";
+import { mapPrismaError } from "@/lib/api/prisma-errors";
+import { requestIdFromHeaders, withRouteTiming } from "@/lib/api/route-timing";
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
 import { log } from "@/lib/logger";
 import { enrichItemsWithRatings, getProductRatingsMap } from "@/lib/marketplace-trust-loop/ratings/batch-ratings";
@@ -14,10 +16,13 @@ export async function GET(request: Request) {
   const blocked = ccosApiGuard();
   if (blocked) return blocked;
 
-  const requestId = request.headers.get("x-acceptance-run-id") ?? request.headers.get("x-request-id");
+  const requestId = requestIdFromHeaders(request);
 
-  try {
-    const { searchParams } = new URL(request.url);
+  return withRouteTiming(
+    { route: "/api/mobile/catalog/products", method: "GET", requestId },
+    async () => {
+      try {
+        const { searchParams } = new URL(request.url);
     const raw = Object.fromEntries(searchParams.entries());
     if (searchParams.get("cursor")) {
       raw.page = String(parseMobilePageCursor(searchParams.get("cursor")));
@@ -79,18 +84,30 @@ export async function GET(request: Request) {
       });
     }
 
-    const page = toMobilePagination({ ...result, items: enrichedItems });
-    return NextResponse.json(withMobileApiContract(page, `catalog-p${result.page}`));
-  } catch (err) {
-    log.error("catalog_products_unexpected", {
-      requestId: requestId ?? undefined,
-      errorName: err instanceof Error ? err.name : "unknown",
-      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
-    });
-    console.error("[GET /api/mobile/catalog/products]", err);
-    return NextResponse.json(
-      { error: { code: "CATALOG_ERROR", message: "Не удалось загрузить каталог", retryable: true } },
-      { status: 500 },
-    );
-  }
+        const page = toMobilePagination({ ...result, items: enrichedItems });
+        return NextResponse.json(withMobileApiContract(page, `catalog-p${result.page}`));
+      } catch (err) {
+        const prismaError = mapPrismaError(err);
+        log.error("catalog_products_unexpected", {
+          requestId: requestId ?? undefined,
+          errorName: err instanceof Error ? err.name : "unknown",
+          errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+          prismaCode: prismaError?.prismaCode,
+          errorCode: prismaError?.code,
+        });
+        console.error("[GET /api/mobile/catalog/products]", err);
+        return NextResponse.json(
+          {
+            error: {
+              code: prismaError?.code ?? "CATALOG_ERROR",
+              message: prismaError?.message ?? "Не удалось загрузить каталог",
+              retryable: true,
+              prismaCode: prismaError?.prismaCode,
+            },
+          },
+          { status: prismaError?.status ?? 500 },
+        );
+      }
+    },
+  );
 }

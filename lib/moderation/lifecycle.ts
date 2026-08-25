@@ -285,29 +285,45 @@ export async function invalidateModerationOnContentChange(productId: string): Pr
     }
   });
 
-  await upsertModerationQueueItem({
-    productId,
-    sellerId: moderation.product.sellerId,
-    status: ModerationStatus.PENDING_REVIEW,
-    riskLevel: moderation.riskScore && moderation.riskScore >= 70 ? "high" : "medium",
-    summary: `${moderation.product.name} · content changed, re-review`,
-  });
+  try {
+    await upsertModerationQueueItem({
+      productId,
+      sellerId: moderation.product.sellerId,
+      status: ModerationStatus.PENDING_REVIEW,
+      riskLevel: moderation.riskScore && moderation.riskScore >= 70 ? "high" : "medium",
+      summary: `${moderation.product.name} · content changed, re-review`,
+    });
+  } catch (err) {
+    log.error("moderation_queue_upsert_failed", {
+      productId,
+      phase: "invalidate",
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 
-  await appendModerationAuditEvent({
-    productId,
-    moderationId: moderation.id,
-    sellerId: moderation.product.sellerId,
-    previousStatus,
-    newStatus: ModerationStatus.PENDING_REVIEW,
-    decision: "MANUAL_REVIEW",
-    reasonCodes: ["OTHER"],
-    rulesTriggered: ["CONTENT_VERSION_INVALIDATED"],
-    riskScore: moderation.riskScore,
-    policyVersion: moderation.policyVersion,
-    reviewerType: "SYSTEM",
-    metadata: {
-      contentVersion: moderation.product.contentVersion,
-      moderatedContentVersion: moderation.moderatedContentVersion,
-    },
-  });
+  try {
+    await appendModerationAuditEvent({
+      productId,
+      moderationId: moderation.id,
+      sellerId: moderation.product.sellerId,
+      previousStatus,
+      newStatus: ModerationStatus.PENDING_REVIEW,
+      decision: "MANUAL_REVIEW",
+      reasonCodes: ["OTHER"],
+      rulesTriggered: ["CONTENT_VERSION_INVALIDATED"],
+      riskScore: moderation.riskScore,
+      policyVersion: moderation.policyVersion,
+      reviewerType: "SYSTEM",
+      metadata: {
+        contentVersion: moderation.product.contentVersion,
+        moderatedContentVersion: moderation.moderatedContentVersion,
+      },
+    });
+  } catch (err) {
+    log.error("moderation_audit_append_failed", {
+      productId,
+      phase: "invalidate",
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
+  }
 }

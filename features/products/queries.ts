@@ -374,16 +374,14 @@ export async function listProducts(
   const { skip, take, page, pageSize } = resolvePagination(filters);
   const orderBy = resolveOrderBy(filters.sort);
 
-  const [rows, total] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      include: listInclude,
-      orderBy,
-      skip,
-      take,
-    }),
-    prisma.product.count({ where }),
-  ]);
+  const rows = await prisma.product.findMany({
+    where,
+    include: listInclude,
+    orderBy,
+    skip,
+    take,
+  });
+  const total = await prisma.product.count({ where });
 
   return {
     items: rows.map(mapProductListItem),
