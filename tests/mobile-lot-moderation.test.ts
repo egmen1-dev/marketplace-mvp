@@ -91,4 +91,9 @@ describe("EPIC 174 — moderation engine", () => {
   it("records append-only audit events", () => {
     expect(lifecycle).toContain("appendModerationAuditEvent");
   });
+
+  it("unpublishes ACTIVE product when approved content changes", () => {
+    expect(lifecycle).toContain("status: ProductStatus.DRAFT");
+    expect(lifecycle).toContain("CONTENT_VERSION_INVALIDATED");
+  });
 });
