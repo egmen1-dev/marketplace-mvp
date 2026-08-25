@@ -36,11 +36,20 @@ async function main() {
   const url =
     manifest.artifact.downloadUrl ??
     `https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/${manifest.artifact.path}`;
-  const dl = await fetch(url, { signal: AbortSignal.timeout(120000) });
-  const buf = Buffer.from(await dl.arrayBuffer());
+  let buf = Buffer.alloc(0);
+  let httpOk = false;
+  try {
+    const { execFileSync } = await import("node:child_process");
+    buf = execFileSync("curl", ["-sL", url], { maxBuffer: 64 * 1024 * 1024 });
+    httpOk = buf.length > 1000;
+  } catch {
+    const dl = await fetch(url, { signal: AbortSignal.timeout(120000) });
+    httpOk = dl.ok;
+    buf = Buffer.from(await dl.arrayBuffer());
+  }
+
   const actualSha256 = createHash("sha256").update(buf).digest("hex");
   const expectedSha256 = manifest.artifact.sha256;
-  const httpOk = dl.ok;
 
   const report = {
     generatedAt: new Date().toISOString(),

@@ -1,5 +1,71 @@
 {
-  "generatedAt": "2026-08-25T10:43:00Z",
-  "status": "NOT_RUN",
-  "reason": "RC10.4 APK not built"
+  "generatedAt": "2026-08-25T19:54:35.862Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "probes": [
+    {
+      "installedVersionCode": 7,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 13,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 16,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 17,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 18,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 19,
+      "updateState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 20,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 21,
+      "updateState": "NO_UPDATE",
+      "targetVersionCode": 20,
+      "targetVersionName": "0.1.15-beta.5",
+      "verdict": "PASS"
+    }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.4/lot_android_closed_beta_0.1.15_beta.5.apk",
+    "httpOk": true,
+    "expectedSha256": "e2f54e646e70575ff8cc419c697f6708127cb03536868ac094471c9674eeca44",
+    "actualSha256": "e2f54e646e70575ff8cc419c697f6708127cb03536868ac094471c9674eeca44",
+    "sizeBytes": 43736602,
+    "verdict": "PASS"
+  },
+  "verdict": "PASS"
 }

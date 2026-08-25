@@ -1,36 +1,85 @@
 {
-  "generatedAt": "2026-08-25T10:58:30Z",
-  "epic": "RC10.4 WAIT FOR RAILWAY DEPLOY",
-  "verdict": "WAITING_FOR_RAILWAY_DEPLOY",
-  "deploy": {
-    "mainSha": "4eff371",
-    "railwaySha": "6059dc9",
-    "pr177Included": false,
-    "pr177MergeCommit": "bec966a",
-    "deployLagMinutes": 56,
-    "pollEvidence": "15 polls over 5 min — SHA unchanged, schemaCompatible field absent (pre-PR#177 health)"
+  "candidate": "RC10.4",
+  "generatedAt": "2026-08-25T19:55:00Z",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "versionName": "0.1.15-beta.5",
+  "versionCode": 20,
+  "releaseChannel": "CLOSED_BETA",
+  "environment": "staging",
+  "baseline": {
+    "mainSha": "1d7b660",
+    "railwaySha": "c078c3a",
+    "health": {
+      "databaseReachable": true,
+      "databaseSchemaCompatible": true,
+      "trustLoopEnabled": true,
+      "moderationAutomationMode": "SHADOW"
+    }
   },
-  "migration": {
-    "executed": false,
-    "migrationName": "20260825100000_epic_174_moderation_engine",
-    "result": "NOT_RUN — awaiting PR #177 deploy with docker-entrypoint.sh auto-migrate",
-    "schemaCompatible": false
+  "gates": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "photoUploadGate": "PASS",
+    "publishTruthGate": "PASS",
+    "dynamicCharacteristicsGate": "PASS",
+    "lotModerationGate": "PASS",
+    "androidUpdateInstallGate": "PASS",
+    "backendStabilityGate": "PASS",
+    "releaseRailwayRuntimeVerify": "PASS",
+    "releaseMigrationVerify": "PASS",
+    "releasePipelineVerify": "PASS",
+    "moderationAcceptanceAH": "PASS",
+    "apkVerify": "PASS",
+    "mrpPublish": "PASS",
+    "updateVerify": "PASS"
   },
-  "health": {
-    "httpStatus": 200,
-    "databaseReachable": true,
-    "schemaCompatible": null,
-    "note": "Legacy health on 6059dc9 does not expose schemaCompatible — cannot distinguish reachability from compatibility"
+  "finalSellerSmoke": {
+    "create": "PASS",
+    "photo": "PASS",
+    "characteristics": "PASS",
+    "submit": "PASS",
+    "approve": "PASS",
+    "buyerCatalog": "PASS",
+    "buyerSearch": "PASS",
+    "buyerPdp": "PASS",
+    "application500Count": 0
   },
-  "config": {
-    "trustLoopEnabled": "unknown",
-    "moderationAutomationMode": "unknown"
+  "apk": {
+    "built": true,
+    "path": "artifacts/closed-beta-rc10.4/lot_android_closed_beta_0.1.15_beta.5.apk",
+    "canonicalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.4/lot_android_closed_beta_0.1.15_beta.5.apk",
+    "sha256": "e2f54e646e70575ff8cc419c697f6708127cb03536868ac094471c9674eeca44",
+    "sizeBytes": 43736602,
+    "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "package": "ru.lot.marketplace.alpha",
+    "rc": "RC10.4"
   },
-  "moderationAH": "NOT_RUN",
-  "adminAcceptance": "NOT_RUN",
-  "sellerRegression": "NOT_RUN",
-  "gates": "NOT_RUN — blocked at Step 1",
-  "rc104": { "built": false },
-  "physical": "NOT_RUN",
-  "nextTrigger": "Re-run when Railway SHA >= bec966a and /api/health shows schemaCompatible"
+  "apkFeatures": {
+    "updater": "PASS",
+    "sellerCreation": "PASS",
+    "moderation": "PASS",
+    "artifact": "artifacts/closed-beta-rc10.4/apk-feature-verification.json"
+  },
+  "canonicalDownload": {
+    "http": 200,
+    "sizeBytes": 43736602,
+    "shaMatch": true,
+    "artifact": "artifacts/closed-beta-rc10.4/update-api-verification.json"
+  },
+  "mrp": {
+    "status": "PUBLISHED",
+    "artifact": "artifacts/closed-beta-rc10.4/mrp-publish-report.json"
+  },
+  "updateMatrix": {
+    "code17": "OPTIONAL_UPDATE → 20",
+    "code18": "OPTIONAL_UPDATE → 20",
+    "code19": "OPTIONAL_UPDATE → 20",
+    "code20": "NO_UPDATE",
+    "code21plus": "NO_UPDATE"
+  },
+  "physical": {
+    "status": "NOT_RUN",
+    "checklist": "artifacts/closed-beta-rc10.4/physical-checklist.json"
+  },
+  "pr": "https://github.com/egmen1-dev/marketplace-mvp/pull/187"
 }
