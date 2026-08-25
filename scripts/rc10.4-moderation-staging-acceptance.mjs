@@ -253,8 +253,9 @@ async function createAndSubmitLot(
   return { productId, payload, submitted, taxonomy, createDiagnostics: { status: created.status } };
 }
 
-async function buyerVisibility(title, productId, buyerToken) {
-  const catalog = await json(`/api/mobile/catalog/products?q=${encodeURIComponent(title)}`, {}, buyerToken);
+async function buyerVisibility(searchToken, productId, buyerToken) {
+  await sleep(500);
+  const catalog = await json(`/api/mobile/catalog/products?q=${encodeURIComponent(searchToken)}`, {}, buyerToken);
   const catalogHit = (catalog.body?.items ?? []).some((i) => i.id === productId);
   const pdp = await json(`/api/products/${productId}`, {}, buyerToken);
   return { catalogHit, pdpOk: pdp.ok, pdpStatus: pdp.status };
@@ -280,7 +281,7 @@ async function adminQueue(cookie) {
   return json("/api/admin/moderation", {}, null, cookie);
 }
 
-const SCENARIO_DELAY_MS = Number(process.env.RC10_4_SCENARIO_DELAY_MS ?? 800);
+const SCENARIO_DELAY_MS = Number(process.env.RC10_4_SCENARIO_DELAY_MS ?? 1200);
 
 function scenario(id, status, extra = {}) {
   return { scenario: id, status, ...extra };
@@ -381,7 +382,7 @@ async function main() {
   });
   const modA = await sellerModeration(lotA.productId, sellerToken);
   const detailA = await adminDetail(lotA.productId, adminCookie);
-  const visA = await buyerVisibility(titleA, lotA.productId, buyerToken);
+  const visA = await buyerVisibility(`rc104-${RUN_ID}-A`, lotA.productId, buyerToken);
   const pmA = detailA.body?.product?.productModeration ?? null;
   const passA =
     lotA.submitted.body?.publishOutcome === "PENDING_REVIEW" &&
@@ -411,8 +412,9 @@ async function main() {
 
   // B — admin APPROVE → buyer visible
   const approveB = await adminDecision(lotA.productId, "APPROVE", adminCookie);
+  await sleep(1000);
   const detailB = await adminDetail(lotA.productId, adminCookie);
-  const visB = await buyerVisibility(titleA, lotA.productId, buyerToken);
+  const visB = await buyerVisibility(`rc104-${RUN_ID}-A`, lotA.productId, buyerToken);
   const pmB = detailB.body?.product?.productModeration;
   const passB =
     approveB.ok &&
@@ -449,7 +451,7 @@ async function main() {
     comment: "Уберите контактные данные",
   });
   const modC1 = await sellerModeration(lotC.productId, sellerToken);
-  const visC1 = await buyerVisibility(titleC, lotC.productId, buyerToken);
+  const visC1 = await buyerVisibility(`rc104-${RUN_ID}-C`, lotC.productId, buyerToken);
   const cvBefore = (await adminDetail(lotC.productId, adminCookie)).body?.product?.contentVersion;
   const editC = await json(`/api/mobile/seller/products/${lotC.productId}`, {
     method: "PATCH",
@@ -463,7 +465,7 @@ async function main() {
     body: JSON.stringify({ ...lotC.payload, description: "Описание без контактов", status: "ACTIVE" }),
   }, sellerToken);
   await adminDecision(lotC.productId, "APPROVE", adminCookie);
-  const visC2 = await buyerVisibility(titleC, lotC.productId, buyerToken);
+  const visC2 = await buyerVisibility(`rc104-${RUN_ID}-C`, lotC.productId, buyerToken);
   const passC =
     modC1.body?.sellerLabel === "Нужно исправить" &&
     modC1.body?.issues?.length > 0 &&
@@ -493,7 +495,7 @@ async function main() {
     comment: "Тестовый reject fixture",
   });
   const modD = await sellerModeration(lotD.productId, sellerToken);
-  const visD = await buyerVisibility(titleD, lotD.productId, buyerToken);
+  const visD = await buyerVisibility(`rc104-${RUN_ID}-D`, lotD.productId, buyerToken);
   const passD =
     modD.body?.status === "REJECTED" &&
     modD.body?.sellerLabel === "Отклонён" &&
@@ -533,14 +535,14 @@ async function main() {
   });
   await adminDecision(lotF.productId, "APPROVE", adminCookie);
   const beforeF = await adminDetail(lotF.productId, adminCookie);
-  const visF1 = await buyerVisibility(titleF, lotF.productId, buyerToken);
+  const visF1 = await buyerVisibility(`rc104-${RUN_ID}-F`, lotF.productId, buyerToken);
   await json(`/api/mobile/seller/products/${lotF.productId}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title: `${titleF} ИЗМЕНЕНО`, status: "DRAFT" }),
   }, sellerToken);
   const afterF = await adminDetail(lotF.productId, adminCookie);
-  const visF2 = await buyerVisibility(`${titleF} ИЗМЕНЕНО`, lotF.productId, buyerToken);
+  const visF2 = await buyerVisibility(`rc104-${RUN_ID}-F`, lotF.productId, buyerToken);
   const pmF = afterF.body?.product?.productModeration;
   const passF =
     visF1.catalogHit &&
