@@ -1,0 +1,186 @@
+{
+  "generatedAt": "2026-08-25T08:05:48.548Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.4",
+    "versionCode": "19",
+    "nativeCode": "arm64-v8a",
+    "sha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea",
+    "sizeBytes": 44322982
+  },
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.15-beta.4",
+      "actual": "0.1.15-beta.4"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "19",
+      "actual": "19"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc10_3Label",
+      "ok": true,
+      "expected": "RC10.3 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "08dea77"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "dynamicCharacteristics",
+      "name": "LotCharacteristicsSection",
+      "pattern": "LotCharacteristicsSection",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "fetchProductTypeCharacteristics",
+      "pattern": "fetchProductTypeCharacteristics",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "validateLotCharacteristicForm",
+      "pattern": "validateLotCharacteristicForm",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "serializeLotCharacteristicPayload",
+      "pattern": "serializeLotCharacteristicPayload",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "characteristicValues",
+      "pattern": "characteristicValues",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "characteristicsTitle",
+      "pattern": "characteristicsTitle",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "humanCharacteristicPrompt",
+      "pattern": "humanCharacteristicPrompt",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "handleCharacteristicRejection",
+      "pattern": "handleCharacteristicRejection",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "dynamicCharacteristics",
+      "name": "addCharacteristics",
+      "pattern": "addCharacteristics",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "resolveLotPublishOutcome",
+      "pattern": "resolveLotPublishOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "PENDING_REVIEW",
+      "pattern": "PENDING_REVIEW",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "pendingReviewTitle",
+      "pattern": "pendingReviewTitle",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "publishTruth",
+      "name": "sellerLotDetailRoute",
+      "pattern": "sellerLotDetailRoute",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoUpload",
+      "name": "uploadSellerLotImage",
+      "pattern": "uploadSellerLotImage",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoUpload",
+      "name": "expo-file-system",
+      "pattern": "expo-file-system",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "legacyAbsentChecks": [
+    {
+      "name": "emptyCharacteristicsAlways",
+      "pattern": "characteristics: []",
+      "present": false,
+      "ok": true
+    },
+    {
+      "name": "savedForReviewFallback",
+      "pattern": "reviewNote = LOT_CREATE_COPY.savedForReview",
+      "present": false,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}

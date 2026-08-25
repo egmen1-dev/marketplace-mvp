@@ -1,0 +1,40 @@
+{
+  "candidate": "RC10.3",
+  "generatedAt": "2026-08-25T08:06:00Z",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "gates": {
+    "pr172Merge": "PASS",
+    "stagingDeployVerified": "PASS",
+    "postDeployDynamicCharacteristicsSmoke": "PASS",
+    "postDeployCharacteristicsPayloadSmoke": "PASS",
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "photoUploadGate": "PASS",
+    "publishTruthGate": "PASS",
+    "dynamicCharacteristicsGate": "PASS",
+    "apkVerify": "PASS",
+    "mrpPublish": "PENDING",
+    "updateVerify": "PENDING"
+  },
+  "merge": {
+    "pr172": "MERGED",
+    "pr172HeadSha": "94c3ca80938ca18f13a7a71a3b72de9acb5cc228",
+    "pr172MergeSha": "08dea771829ec3d05d91123c1cbd48e366f5e84e",
+    "mainSha": "08dea771829ec3d05d91123c1cbd48e366f5e84e",
+    "railwaySha": "08dea77"
+  },
+  "postDeployCharacteristics": {
+    "endpoint": "GET /api/mobile/seller/product-types/:productTypeId/characteristics",
+    "httpStatus": 200,
+    "drillRequiredFields": ["Мощность", "Тип питания"],
+    "payloadDefinitionIdPersistence": "PASS",
+    "stagingSmokeVerdict": "PASS"
+  },
+  "apk": {
+    "versionName": "0.1.15-beta.4",
+    "versionCode": 19,
+    "path": "artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "sha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea",
+    "sizeBytes": 44322982
+  }
+}
