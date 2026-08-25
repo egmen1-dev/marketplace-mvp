@@ -13,6 +13,8 @@ import {
   updateProduct,
 } from "@/features/products/queries";
 import { getProductRatingsMap } from "@/lib/marketplace-trust-loop/ratings/batch-ratings";
+import { mapPrismaError } from "@/lib/api/prisma-errors";
+import { requestIdFromHeaders, withRouteTiming } from "@/lib/api/route-timing";
 import { updateProductSchema } from "@/features/products/schemas";
 import { log } from "@/lib/logger";
 
@@ -25,61 +27,72 @@ type RouteContext = {
  * Product detail — ACTIVE for anonymous; owner seller / admin may see drafts etc.
  */
 export async function GET(request: Request, context: RouteContext) {
-  const requestId = request.headers.get("x-acceptance-run-id") ?? request.headers.get("x-request-id");
-  try {
-    const { id } = await context.params;
-    if (!id) {
-      return NextResponse.json({ error: "id обязателен" }, { status: 400 });
-    }
+  const requestId = requestIdFromHeaders(request);
+  return withRouteTiming(
+    { route: "/api/products/:id", method: "GET", requestId },
+    async () => {
+      try {
+        const { id } = await context.params;
+        if (!id) {
+          return NextResponse.json({ error: "id обязателен" }, { status: 400 });
+        }
 
-    const session = await resolveRequestUser(request);
-    const product = await getProductById(
-      id,
-      session
-        ? {
-            userId: session.id,
-            role: session.role,
-            sellerProfileId: session.sellerProfileId,
-          }
-        : null,
-    );
-    if (!product) {
-      return NextResponse.json({ error: "Товар не найден" }, { status: 404 });
-    }
+        const session = await resolveRequestUser(request);
+        const product = await getProductById(
+          id,
+          session
+            ? {
+                userId: session.id,
+                role: session.role,
+                sellerProfileId: session.sellerProfileId,
+              }
+            : null,
+        );
+        if (!product) {
+          return NextResponse.json({ error: "Товар не найден" }, { status: 404 });
+        }
 
-    let averageRating: number | null = null;
-    let reviewsCount = 0;
-    try {
-      const ratingsMap = await getProductRatingsMap([product.id]);
-      const rating = ratingsMap.get(product.id);
-      averageRating = rating?.averageRating ?? null;
-      reviewsCount = rating?.reviewsCount ?? 0;
-    } catch (ratingErr) {
-      log.warn("product_pdp_ratings_failed", {
-        requestId: requestId ?? undefined,
-        productId: id,
-        errorMessage:
-          ratingErr instanceof Error ? ratingErr.message.slice(0, 160) : "unknown",
-      });
-    }
+        let averageRating: number | null = null;
+        let reviewsCount = 0;
+        try {
+          const ratingsMap = await getProductRatingsMap([product.id]);
+          const rating = ratingsMap.get(product.id);
+          averageRating = rating?.averageRating ?? null;
+          reviewsCount = rating?.reviewsCount ?? 0;
+        } catch (ratingErr) {
+          log.warn("product_pdp_ratings_failed", {
+            requestId: requestId ?? undefined,
+            productId: id,
+            errorMessage:
+              ratingErr instanceof Error ? ratingErr.message.slice(0, 160) : "unknown",
+          });
+        }
 
-    return NextResponse.json({
-      ...product,
-      averageRating,
-      reviewsCount,
-    });
-  } catch (err) {
-    log.error("product_pdp_unexpected", {
-      requestId: requestId ?? undefined,
-      errorName: err instanceof Error ? err.name : "unknown",
-      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
-    });
-    console.error("[GET /api/products/:id]", err);
-    return NextResponse.json(
-      { error: "Не удалось получить товар" },
-      { status: 500 },
-    );
-  }
+        return NextResponse.json({
+          ...product,
+          averageRating,
+          reviewsCount,
+        });
+      } catch (err) {
+        const prismaError = mapPrismaError(err);
+        log.error("product_pdp_unexpected", {
+          requestId: requestId ?? undefined,
+          errorName: err instanceof Error ? err.name : "unknown",
+          errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+          prismaCode: prismaError?.prismaCode,
+        });
+        console.error("[GET /api/products/:id]", err);
+        return NextResponse.json(
+          {
+            error: prismaError?.message ?? "Не удалось получить товар",
+            code: prismaError?.code,
+            prismaCode: prismaError?.prismaCode,
+          },
+          { status: prismaError?.status ?? 500 },
+        );
+      }
+    },
+  );
 }
 
 /**
