@@ -111,7 +111,12 @@ export async function POST(request: Request) {
         constraint: prismaError.constraint,
       });
       return NextResponse.json(
-        { error: prismaError.message, code: prismaError.code },
+        {
+          error: prismaError.message,
+          code: prismaError.code,
+          prismaCode: prismaError.prismaCode,
+          constraint: prismaError.constraint,
+        },
         { status: prismaError.status },
       );
     }

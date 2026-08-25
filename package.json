@@ -100,7 +100,7 @@
     "mobile:lot-dynamic-characteristics:gate": "tsx scripts/mobile-lot-dynamic-characteristics-gate.ts",
     "mobile:lot-moderation:gate": "tsx scripts/mobile-lot-moderation-gate.ts",
     "mobile:rc10.4:moderation-acceptance": "node scripts/rc10.4-moderation-staging-acceptance.mjs",
-    "mobile:rc10.4:cleanup-acceptance": "tsx scripts/rc10.4-cleanup-acceptance.ts",
+    "mobile:rc10.4:cleanup-acceptance": "node scripts/rc10.4-cleanup-acceptance-http.mjs",
     "mobile:android-update-install:gate": "tsx scripts/mobile-android-update-install-gate.ts",
     "product:epic-103:beta-rc": "tsx scripts/epic-103-closed-beta-rc-gate.ts",
     "product:epic-104:closed-beta-readiness": "tsx scripts/epic-104-closed-beta-readiness-gate.ts",
