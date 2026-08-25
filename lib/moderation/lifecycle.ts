@@ -212,18 +212,60 @@ export async function applyAdminModerationDecision(input: {
 }
 
 export async function invalidateModerationOnContentChange(productId: string): Promise<void> {
-  const moderation = await prisma.productModeration.findUnique({ where: { productId } });
+  const moderation = await prisma.productModeration.findUnique({
+    where: { productId },
+    include: { product: { select: { sellerId: true, status: true, contentVersion: true, name: true } } },
+  });
   if (!moderation) return;
   if (moderation.status !== ModerationStatus.APPROVED) return;
 
-  await prisma.productModeration.update({
-    where: { productId },
-    data: {
-      status: ModerationStatus.PENDING_REVIEW,
-      systemRecommendation: "MANUAL_REVIEW",
-      reviewMode: "MANUAL",
-      stage: "MANUAL_REVIEW",
-      submittedAt: new Date(),
+  const previousStatus = moderation.status;
+  const now = new Date();
+
+  await prisma.$transaction(async (tx) => {
+    await tx.productModeration.update({
+      where: { productId },
+      data: {
+        status: ModerationStatus.PENDING_REVIEW,
+        systemRecommendation: "MANUAL_REVIEW",
+        reviewMode: "MANUAL",
+        stage: "MANUAL_REVIEW",
+        submittedAt: now,
+        reviewedAt: null,
+      },
+    });
+
+    if (moderation.product.status === ProductStatus.ACTIVE) {
+      await tx.product.update({
+        where: { id: productId },
+        data: { status: ProductStatus.DRAFT },
+      });
+    }
+  });
+
+  await upsertModerationQueueItem({
+    productId,
+    sellerId: moderation.product.sellerId,
+    status: ModerationStatus.PENDING_REVIEW,
+    riskLevel: moderation.riskScore && moderation.riskScore >= 70 ? "high" : "medium",
+    summary: `${moderation.product.name} · content changed, re-review`,
+  });
+
+  await appendModerationAuditEvent({
+    productId,
+    moderationId: moderation.id,
+    sellerId: moderation.product.sellerId,
+    previousStatus,
+    newStatus: ModerationStatus.PENDING_REVIEW,
+    decision: "MANUAL_REVIEW",
+    reasonCodes: ["OTHER"],
+    rulesTriggered: ["CONTENT_VERSION_INVALIDATED"],
+    riskScore: moderation.riskScore,
+    policyVersion: moderation.policyVersion,
+    reviewerType: "SYSTEM",
+    metadata: {
+      contentVersion: moderation.product.contentVersion,
+      moderatedContentVersion: moderation.moderatedContentVersion,
     },
   });
 }

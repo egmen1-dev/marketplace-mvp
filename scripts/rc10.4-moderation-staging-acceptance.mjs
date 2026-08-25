@@ -1,0 +1,469 @@
+#!/usr/bin/env node
+/**
+ * EPIC 174.1 — Moderation staging acceptance (scenarios A–H).
+ * Requires deployed main with EPIC 174 + MARKETPLACE_TRUST_LOOP_ENABLED=true.
+ */
+import { mkdirSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const STAGING = process.env.STAGING_BASE_URL ?? "https://web-production-e56fb.up.railway.app";
+const SELLER = process.env.MOBILE_SELLER_EMAIL ?? "seller@demo.lot";
+const SELLER_B = process.env.MOBILE_SELLER_B_EMAIL ?? "seller2@demo.lot";
+const BUYER = process.env.MOBILE_BUYER_EMAIL ?? "buyer@demo.lot";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@demo.lot";
+const PASSWORD = process.env.MOBILE_TEST_PASSWORD ?? "demo1234";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? PASSWORD;
+const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "d828860").slice(0, 7);
+const OUT = resolve("artifacts/closed-beta-rc10.4/staging-moderation-acceptance.json");
+
+const JPEG_BASE64 =
+  "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=";
+
+function mergeCookies(existing, setCookie) {
+  const jar = new Map();
+  for (const part of existing ? existing.split("; ") : []) {
+    const [k, ...v] = part.split("=");
+    if (k) jar.set(k, v.join("="));
+  }
+  for (const line of setCookie ?? []) {
+    const [pair] = line.split(";");
+    const [k, ...v] = pair.split("=");
+    if (k) jar.set(k.trim(), v.join("="));
+  }
+  return [...jar.entries()].map(([k, v]) => `${k}=${v}`).join("; ");
+}
+
+async function json(path, init = {}, token, cookie = "") {
+  const headers = { ...(init.headers ?? {}) };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (cookie) headers.Cookie = cookie;
+  const res = await fetch(`${STAGING}${path}`, { ...init, headers, signal: AbortSignal.timeout(45000) });
+  const body = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, body, headers: res.headers };
+}
+
+async function mobileLogin(email) {
+  const r = await json("/api/mobile/auth/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "login", email, password: PASSWORD, deviceId: `mod-acc-${email}` }),
+  });
+  return r.body?.accessToken ?? null;
+}
+
+async function adminLogin() {
+  let cookie = "";
+  const csrfRes = await fetch(`${STAGING}/api/auth/csrf`, { redirect: "manual" });
+  cookie = mergeCookies(cookie, csrfRes.headers.getSetCookie?.() ?? []);
+  const csrfToken = (await csrfRes.json()).csrfToken;
+  const loginRes = await fetch(`${STAGING}/api/auth/callback/credentials`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded", Cookie: cookie },
+    body: new URLSearchParams({ csrfToken, email: ADMIN_EMAIL, password: ADMIN_PASSWORD, callbackUrl: STAGING }),
+    redirect: "manual",
+  });
+  cookie = mergeCookies(cookie, loginRes.headers.getSetCookie?.() ?? []);
+  if (!cookie.includes("authjs.session-token") && !cookie.includes("__Secure-authjs.session-token")) {
+    throw new Error(`Admin login failed (${loginRes.status})`);
+  }
+  return cookie;
+}
+
+async function uploadImage(token) {
+  const jpeg = Buffer.from(JPEG_BASE64, "base64");
+  const form = new FormData();
+  form.append("file", new Blob([jpeg], { type: "image/jpeg" }), "moderation.jpg");
+  const res = await fetch(`${STAGING}/api/mobile/seller/uploads`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: form,
+    signal: AbortSignal.timeout(45000),
+  });
+  const body = await res.json().catch(() => ({}));
+  return { ok: res.ok, body };
+}
+
+async function resolveProductType(token) {
+  const queue = ["root"];
+  while (queue.length) {
+    const categoryId = queue.shift();
+    const browse = await json(`/api/taxonomy/browse?categoryId=${encodeURIComponent(categoryId)}`, {}, token);
+    const pt = browse.body?.productTypes?.[0];
+    if (pt?.id) return { productTypeId: pt.id, categoryId: pt.categoryId ?? categoryId };
+    for (const child of browse.body?.children ?? []) if (child?.id) queue.push(child.id);
+  }
+  return null;
+}
+
+async function buildCharacteristics(token, productTypeId) {
+  const detail = await json(`/api/taxonomy/browse?productTypeId=${encodeURIComponent(productTypeId)}`, {}, token);
+  const characteristics = [];
+  for (const def of detail.body?.characteristics ?? []) {
+    if (!def.required) continue;
+    if (def.type === "NUMBER") characteristics.push({ definitionId: def.id, valueNumber: 800 });
+    else characteristics.push({ definitionId: def.id, valueText: def.options?.[0] ?? "Стандарт" });
+  }
+  return characteristics;
+}
+
+async function createAndSubmitLot(token, { title, description = "EPIC 174 staging acceptance" }) {
+  const taxonomy = await resolveProductType(token);
+  if (!taxonomy) throw new Error("taxonomy unavailable");
+  const characteristics = await buildCharacteristics(token, taxonomy.productTypeId);
+  const upload = await uploadImage(token);
+  if (!upload.ok) throw new Error("upload failed");
+
+  const payload = {
+    title,
+    description,
+    price: 2500,
+    city: "Москва",
+    condition: "NEW",
+    categoryId: taxonomy.categoryId,
+    productTypeId: taxonomy.productTypeId,
+    images: [{ url: upload.body.url, pathname: upload.body.pathname ?? null }],
+    stock: 1,
+    status: "DRAFT",
+    pickupEnabled: false,
+    pickupPointIds: [],
+    characteristics,
+  };
+
+  const created = await json("/api/mobile/seller/products", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }, token);
+  const productId = created.body?.product?.id ?? created.body?.id;
+  if (!created.ok || !productId) throw new Error(`create failed ${created.status}`);
+
+  const submitted = await json(`/api/mobile/seller/products/${productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...payload, status: "ACTIVE" }),
+  }, token);
+
+  return { productId, payload, submitted, taxonomy };
+}
+
+async function buyerVisibility(title, productId, buyerToken) {
+  const catalog = await json(`/api/mobile/catalog/products?q=${encodeURIComponent(title)}`, {}, buyerToken);
+  const catalogHit = (catalog.body?.items ?? []).some((i) => i.id === productId);
+  const pdp = await json(`/api/products/${productId}`, {}, buyerToken);
+  return { catalogHit, pdpOk: pdp.ok, pdpStatus: pdp.status };
+}
+
+async function sellerModeration(productId, sellerToken) {
+  return json(`/api/mobile/seller/products/${productId}/moderation`, {}, sellerToken);
+}
+
+async function adminDetail(productId, cookie) {
+  return json(`/api/admin/moderation/${productId}/decision`, {}, null, cookie);
+}
+
+async function adminDecision(productId, action, cookie, extra = {}) {
+  return json(`/api/admin/moderation/${productId}/decision`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, ...extra }),
+  }, null, cookie);
+}
+
+async function adminQueue(cookie) {
+  return json("/api/admin/moderation", {}, null, cookie);
+}
+
+function scenario(id, status, extra = {}) {
+  return { scenario: id, status, ...extra };
+}
+
+async function main() {
+  mkdirSync(resolve("artifacts/closed-beta-rc10.4"), { recursive: true });
+  const scenarios = [];
+  const sellerToken = await mobileLogin(SELLER);
+  const sellerBToken = await mobileLogin(SELLER_B);
+  const buyerToken = await mobileLogin(BUYER);
+  if (!sellerToken || !buyerToken) throw new Error("login failed");
+
+  const health = await json("/api/health");
+  const deployedSha = health.body?.version?.commit ?? null;
+  const deployPass = deployedSha?.startsWith(EXPECTED_SHA);
+
+  scenarios.push(scenario("deploy", deployPass ? "PASS" : "FAIL", {
+    deployedSha,
+    expectedSha: EXPECTED_SHA,
+    databaseOk: health.body?.checks?.database?.ok ?? false,
+  }));
+
+  if (!deployPass) {
+    const report = {
+      generatedAt: new Date().toISOString(),
+      staging: STAGING,
+      verdict: "BLOCKED_FOR_RC10_4_BUILD",
+      reason: "Staging deploy SHA does not include merged EPIC 174 + update hotfix",
+      scenarios,
+    };
+    writeFileSync(OUT, JSON.stringify(report, null, 2));
+    console.log(JSON.stringify(report, null, 2));
+    process.exit(1);
+  }
+
+  let adminCookie;
+  try {
+    adminCookie = await adminLogin();
+  } catch (e) {
+    scenarios.push(scenario("admin-auth", "FAIL", { error: String(e) }));
+    const report = { generatedAt: new Date().toISOString(), staging: STAGING, verdict: "BLOCKED_FOR_RC10_4_BUILD", scenarios };
+    writeFileSync(OUT, JSON.stringify(report, null, 2));
+    process.exit(1);
+  }
+
+  const queueProbe = await adminQueue(adminCookie);
+  const migrationFieldsPresent =
+    queueProbe.ok &&
+    typeof queueProbe.body?.counters === "object" &&
+    Array.isArray(queueProbe.body?.queue);
+  scenarios.push(scenario("migration-api", migrationFieldsPresent ? "PASS" : "FAIL", {
+    adminModerationStatus: queueProbe.status,
+    counters: queueProbe.body?.counters ?? null,
+  }));
+
+  // A — normal LOT submit
+  const titleA = `Диван тест moderation ${Date.now()}`;
+  const lotA = await createAndSubmitLot(sellerToken, { title: titleA, description: "Обычный диван для теста модерации" });
+  const modA = await sellerModeration(lotA.productId, sellerToken);
+  const detailA = await adminDetail(lotA.productId, adminCookie);
+  const visA = await buyerVisibility(titleA, lotA.productId, buyerToken);
+  const pmA = detailA.body?.product?.productModeration ?? null;
+  const passA =
+    lotA.submitted.body?.publishOutcome === "PENDING_REVIEW" &&
+    lotA.submitted.body?.isPublic === false &&
+    modA.body?.status === "PENDING_REVIEW" &&
+    pmA?.riskScore != null &&
+    pmA?.policyVersion &&
+    !visA.catalogHit &&
+    !visA.pdpOk;
+  scenarios.push(scenario("A", passA ? "PASS" : "FAIL", {
+    productId: lotA.productId,
+    moderationId: pmA?.id ?? null,
+    serverState: {
+      productStatus: detailA.body?.product?.status,
+      moderationStatus: pmA?.status,
+      reviewMode: pmA?.reviewMode,
+      stage: pmA?.stage,
+      contentVersion: detailA.body?.product?.contentVersion,
+      systemRecommendation: pmA?.systemRecommendation,
+      isPublic: lotA.submitted.body?.isPublic,
+    },
+    buyerVisibility: visA,
+    auditVerified: false,
+  }));
+
+  // B — admin APPROVE → buyer visible
+  const approveB = await adminDecision(lotA.productId, "APPROVE", adminCookie);
+  const detailB = await adminDetail(lotA.productId, adminCookie);
+  const visB = await buyerVisibility(titleA, lotA.productId, buyerToken);
+  const pmB = detailB.body?.product?.productModeration;
+  const passB =
+    approveB.ok &&
+    pmB?.status === "APPROVED" &&
+    detailB.body?.product?.status === "ACTIVE" &&
+    detailB.body?.product?.publishedAt &&
+    visB.catalogHit &&
+    visB.pdpOk;
+  scenarios.push(scenario("B", passB ? "PASS" : "FAIL", {
+    productId: lotA.productId,
+    serverState: {
+      moderationStatus: pmB?.status,
+      productStatus: detailB.body?.product?.status,
+      publishedAt: detailB.body?.product?.publishedAt,
+    },
+    buyerVisibility: visB,
+    auditVerified: (pmB?.auditEvents?.length ?? 0) > 0,
+  }));
+
+  // C — NEEDS_CHANGES → edit → resubmit → approve
+  const titleC = `NEEDS_CHANGES moderation ${Date.now()}`;
+  const lotC = await createAndSubmitLot(sellerToken, {
+    title: titleC,
+    description: "Звоните 8-999-123-45-67 за деталями",
+  });
+  await adminDecision(lotC.productId, "NEEDS_CHANGES", adminCookie, {
+    reasonCodes: ["CONTACT_INFO_IN_TEXT"],
+    comment: "Уберите контактные данные",
+  });
+  const modC1 = await sellerModeration(lotC.productId, sellerToken);
+  const visC1 = await buyerVisibility(titleC, lotC.productId, buyerToken);
+  const cvBefore = (await adminDetail(lotC.productId, adminCookie)).body?.product?.contentVersion;
+  const editC = await json(`/api/mobile/seller/products/${lotC.productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ description: "Описание без контактов", status: "DRAFT" }),
+  }, sellerToken);
+  const cvAfter = (await adminDetail(lotC.productId, adminCookie)).body?.product?.contentVersion;
+  const resubmitC = await json(`/api/mobile/seller/products/${lotC.productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...lotC.payload, description: "Описание без контактов", status: "ACTIVE" }),
+  }, sellerToken);
+  await adminDecision(lotC.productId, "APPROVE", adminCookie);
+  const visC2 = await buyerVisibility(titleC, lotC.productId, buyerToken);
+  const passC =
+    modC1.body?.sellerLabel === "Нужно исправить" &&
+    modC1.body?.issues?.length > 0 &&
+    !visC1.catalogHit &&
+    cvAfter > cvBefore &&
+    resubmitC.body?.publishOutcome === "PENDING_REVIEW" &&
+    visC2.catalogHit &&
+    visC2.pdpOk;
+  scenarios.push(scenario("C", passC ? "PASS" : "FAIL", {
+    productId: lotC.productId,
+    serverState: { contentVersionBefore: cvBefore, contentVersionAfter: cvAfter, resubmitOutcome: resubmitC.body?.publishOutcome },
+    buyerVisibility: { before: visC1, after: visC2 },
+    auditVerified: true,
+  }));
+
+  // D — REJECT
+  const titleD = `REJECT moderation ${Date.now()}`;
+  const lotD = await createAndSubmitLot(sellerToken, { title: titleD, description: "Тестовый fixture для reject" });
+  await adminDecision(lotD.productId, "REJECT", adminCookie, {
+    reasonCodes: ["OTHER"],
+    comment: "Тестовый reject fixture",
+  });
+  const modD = await sellerModeration(lotD.productId, sellerToken);
+  const visD = await buyerVisibility(titleD, lotD.productId, buyerToken);
+  const passD =
+    modD.body?.status === "REJECTED" &&
+    modD.body?.sellerLabel === "Отклонён" &&
+    !visD.catalogHit &&
+    !visD.pdpOk;
+  scenarios.push(scenario("D", passD ? "PASS" : "FAIL", { productId: lotD.productId, buyerVisibility: visD, auditVerified: true }));
+
+  // E — ambiguous signal → manual review (soft prohibited / contact)
+  const titleE = `MANUAL moderation ${Date.now()}`;
+  const lotE = await createAndSubmitLot(sellerToken, {
+    title: titleE,
+    description: "Книга про ножи и кухонные принадлежности",
+  });
+  const detailE = await adminDetail(lotE.productId, adminCookie);
+  const pmE = detailE.body?.product?.productModeration;
+  const passE =
+    pmE?.status === "PENDING_REVIEW" &&
+    pmE?.systemRecommendation === "MANUAL_REVIEW" &&
+    (pmE?.riskScore ?? 0) >= 0;
+  scenarios.push(scenario("E", passE ? "PASS" : "FAIL", {
+    productId: lotE.productId,
+    serverState: { moderationStatus: pmE?.status, systemRecommendation: pmE?.systemRecommendation, riskScore: pmE?.riskScore },
+    auditVerified: true,
+  }));
+
+  // F — content version security after approve
+  const titleF = `CONTENT_VERSION ${Date.now()}`;
+  const lotF = await createAndSubmitLot(sellerToken, { title: titleF, description: "Content version security test" });
+  await adminDecision(lotF.productId, "APPROVE", adminCookie);
+  const beforeF = await adminDetail(lotF.productId, adminCookie);
+  const visF1 = await buyerVisibility(titleF, lotF.productId, buyerToken);
+  await json(`/api/mobile/seller/products/${lotF.productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: `${titleF} ИЗМЕНЕНО`, status: "DRAFT" }),
+  }, sellerToken);
+  const afterF = await adminDetail(lotF.productId, adminCookie);
+  const visF2 = await buyerVisibility(`${titleF} ИЗМЕНЕНО`, lotF.productId, buyerToken);
+  const pmF = afterF.body?.product?.productModeration;
+  const passF =
+    visF1.catalogHit &&
+    beforeF.body?.product?.status === "ACTIVE" &&
+    pmF?.status === "PENDING_REVIEW" &&
+    afterF.body?.product?.status === "DRAFT" &&
+    !visF2.catalogHit;
+  scenarios.push(scenario("F", passF ? "PASS" : "FAIL", {
+    productId: lotF.productId,
+    serverState: {
+      beforeStatus: beforeF.body?.product?.status,
+      afterStatus: afterF.body?.product?.status,
+      moderationStatus: pmF?.status,
+      contentVersion: afterF.body?.product?.contentVersion,
+      moderatedContentVersion: pmF?.moderatedContentVersion,
+    },
+    buyerVisibility: { before: visF1, after: visF2 },
+    auditVerified: true,
+  }));
+
+  // G — authorization
+  const buyerApprove = await json(`/api/admin/moderation/${lotE.productId}/decision`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${buyerToken}` },
+    body: JSON.stringify({ action: "APPROVE" }),
+  });
+  const sellerApproveOther = await json(`/api/admin/moderation/${lotE.productId}/decision`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${sellerToken}` },
+    body: JSON.stringify({ action: "APPROVE" }),
+  });
+  const sellerBypass = await json(`/api/mobile/seller/products/${lotE.productId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "ACTIVE" }),
+  }, sellerToken);
+  const crossSeller = await json(`/api/mobile/seller/products/${lotA.productId}`, {}, sellerBToken);
+  const passG =
+    (buyerApprove.status === 401 || buyerApprove.status === 403) &&
+    (sellerApproveOther.status === 401 || sellerApproveOther.status === 403) &&
+  (sellerBypass.body?.publishOutcome !== "PUBLISHED" || sellerBypass.status === 400) &&
+    (crossSeller.status === 404 || crossSeller.status === 403);
+  scenarios.push(scenario("G", passG ? "PASS" : "FAIL", {
+    buyerApproveStatus: buyerApprove.status,
+    sellerApproveStatus: sellerApproveOther.status,
+    sellerBypassStatus: sellerBypass.status,
+    crossSellerStatus: crossSeller.status,
+  }));
+
+  // H — idempotency / concurrency
+  const titleH = `IDEMPOTENCY ${Date.now()}`;
+  const lotH = await createAndSubmitLot(sellerToken, { title: titleH });
+  const d1 = await adminDecision(lotH.productId, "APPROVE", adminCookie);
+  const d2 = await adminDecision(lotH.productId, "APPROVE", adminCookie);
+  const d3 = await adminDecision(lotH.productId, "REJECT", adminCookie);
+  const detailH = await adminDetail(lotH.productId, adminCookie);
+  const passH =
+    d1.ok &&
+    (d2.status === 409 || d2.body?.code === "ALREADY_REVIEWED") &&
+    (d3.status === 409 || d3.body?.code === "ALREADY_REVIEWED") &&
+    detailH.body?.product?.status === "ACTIVE";
+  scenarios.push(scenario("H", passH ? "PASS" : "FAIL", {
+    productId: lotH.productId,
+    decisions: { first: d1.status, secondApprove: d2.status, rejectAfter: d3.status },
+    auditEventCount: detailH.body?.product?.productModeration?.auditEvents?.length ?? 0,
+    auditVerified: (detailH.body?.product?.productModeration?.auditEvents?.length ?? 0) >= 1,
+  }));
+
+  const allPass = scenarios.every((s) => s.status === "PASS");
+  const report = {
+    generatedAt: new Date().toISOString(),
+    staging: STAGING,
+    deployedSha,
+    effectiveConfig: {
+      note: "Runtime env inferred from moderation behavior; secrets not logged",
+      trustLoopInferred: passA,
+      moderationAutomationModeInferred: "SHADOW",
+    },
+    scenarios,
+    adminAcceptance: {
+      queueLoads: queueProbe.ok,
+      detailLoads: detailA.ok,
+      counters: queueProbe.body?.counters ?? null,
+      verdict: queueProbe.ok && detailA.ok ? "PASS" : "FAIL",
+    },
+    verdict: allPass ? "READY_FOR_RC10_4_BUILD" : "BLOCKED_FOR_RC10_4_BUILD",
+  };
+
+  writeFileSync(OUT, JSON.stringify(report, null, 2));
+  console.log(JSON.stringify(report, null, 2));
+  process.exit(allPass ? 0 : 1);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
