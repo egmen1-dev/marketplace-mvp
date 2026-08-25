@@ -79,7 +79,8 @@ describe("mobile update entry — dedicated screen", () => {
     expect(updateLabels).toContain("У вас установлена актуальная версия");
     expect(updateLabels).toContain("Доступно обновление");
     expect(updateLabels).toContain("Скачать обновление");
-    expect(updateLabels).toContain("APK откроется в браузере");
+    expect(updateLabels).toContain("Скачиваем обновление…");
+    expect(updateLabels).toContain("Подтвердите установку в окне Android");
     expect(updateScreen).toContain("buildInfo.appVersion");
     expect(updateFlow).toContain("getBuildInfo");
   });

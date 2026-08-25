@@ -18,9 +18,11 @@ describe("EPIC 158.3 — update modal UX", () => {
     expect(updateGate).toContain("UPDATE_UI_LABELS.availableBody");
   });
 
-  it("opens APK download URL on update CTA", () => {
+  it("starts in-app APK download and installer handoff on update CTA", () => {
     expect(updateGate).toContain("startApkDownload");
-    expect(downloadApk).toContain("Linking.openURL");
+    expect(downloadApk).toContain("File.downloadFileAsync");
+    expect(downloadApk).toContain("openApkInstaller");
+    expect(downloadApk).not.toContain("Linking.openURL");
   });
 
   it("shows profile badge when update is available", () => {
