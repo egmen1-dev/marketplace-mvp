@@ -46,6 +46,10 @@ async function main() {
     deployedSha.length > 0 &&
     (deployedSha === mainSha || (EXPECTED_SHA.length > 0 && deployedSha === EXPECTED_SHA));
 
+  const schemaCheckSupported = db.schemaCompatible !== undefined;
+  const legacyHealthWithoutSchemaProbe =
+    health.status === 200 && !schemaCheckSupported && deployedSha !== mainSha;
+
   const report = {
     generatedAt: new Date().toISOString(),
     staging: STAGING,
@@ -54,7 +58,8 @@ async function main() {
     shaMatch: shaOk,
     database: {
       reachable,
-      schemaCompatible,
+      schemaCompatible: schemaCheckSupported ? schemaCompatible : false,
+      legacyHealthWithoutSchemaProbe,
       detail: db.detail ?? null,
       missingColumns: db.missingColumns ?? null,
       missingTables: db.missingTables ?? null,
@@ -63,9 +68,10 @@ async function main() {
     healthStatus: health.status,
     verdict:
       health.ok &&
+      shaOk &&
       reachable &&
-      schemaCompatible &&
-      shaOk
+      schemaCheckSupported &&
+      schemaCompatible
         ? "PASS"
         : "BLOCKED_FOR_RC10_4_BUILD",
     invariant:
