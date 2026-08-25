@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-08-25T11:31:09.436Z",
+  "startCommand": "./docker-entrypoint.sh",
+  "checks": [
+    {
+      "id": "railway_toml_start_command",
+      "ok": true,
+      "detail": "startCommand=./docker-entrypoint.sh"
+    },
+    {
+      "id": "not_legacy_node_server",
+      "ok": true,
+      "detail": "startCommand is not legacy node server.js"
+    },
+    {
+      "id": "entrypoint_exists",
+      "ok": true,
+      "detail": "scripts/docker-entrypoint.sh runs prisma migrate deploy before node server.js"
+    },
+    {
+      "id": "entrypoint_exec_server",
+      "ok": true,
+      "detail": "Entrypoint exec node server.js after migration"
+    },
+    {
+      "id": "dockerfile_copies_entrypoint",
+      "ok": true,
+      "detail": "Dockerfile copies entrypoint to /app/docker-entrypoint.sh and uses it as CMD"
+    },
+    {
+      "id": "dockerfile_prisma_runtime",
+      "ok": true,
+      "detail": "Dockerfile runner stage includes Prisma schema, CLI, and client runtime"
+    }
+  ],
+  "verdict": "PASS",
+  "invariant": "Railway web-v2 must use ./docker-entrypoint.sh so prisma migrate deploy runs before Next.js."
+}

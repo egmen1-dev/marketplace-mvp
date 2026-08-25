@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T13:25:19.574Z",
+  "generatedAt": "2026-08-25T13:05:48.230Z",
   "steps": [
     {
       "id": "development",
@@ -42,6 +42,12 @@
       "automated": false
     },
     {
+      "id": "railway_runtime",
+      "label": "npm run release:railway-runtime:verify",
+      "automated": true,
+      "command": "npm run release:railway-runtime:verify"
+    },
+    {
       "id": "railway_deploy",
       "label": "Railway deploy from main",
       "automated": false
@@ -70,6 +76,7 @@
   ],
   "mandatoryBeforeComplete": [
     "No mergeable Draft PR blocking release train",
+    "Docker image includes complete Prisma CLI runtime (release:railway-runtime:verify)",
     "origin/main SHA === Railway /api/version commit",
     "Critical routes PASS for files present on origin/main",
     "/api/health and /api/version return 200"

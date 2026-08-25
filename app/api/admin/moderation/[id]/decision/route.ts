@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { AdminRequiredError, AuthRequiredError, requireAdminSession } from "@/features/auth";
+import {
+  AdminRequiredError,
+  AuthRequiredError,
+  requireAdminFromRequest,
+} from "@/features/auth/resolve-request-user";
 import { applyAdminModerationDecision } from "@/lib/moderation";
 import { log } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
@@ -13,11 +17,11 @@ const decisionSchema = z.object({
 });
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireAdminSession();
+    await requireAdminFromRequest(request);
     const { id: productId } = await context.params;
     const detail = await prisma.product.findUnique({
       where: { id: productId },
@@ -35,8 +39,11 @@ export async function GET(
     }
     return NextResponse.json({ product: detail });
   } catch (err) {
-    if (err instanceof AuthRequiredError || err instanceof AdminRequiredError) {
+    if (err instanceof AuthRequiredError) {
       return NextResponse.json({ error: "Требуется вход администратора" }, { status: 401 });
+    }
+    if (err instanceof AdminRequiredError) {
+      return NextResponse.json({ error: "Требуются права администратора" }, { status: 403 });
     }
     log.error("admin_moderation_detail_unexpected", {
       errorName: err instanceof Error ? err.name : "unknown",
@@ -55,7 +62,7 @@ export async function POST(
   let productId: string | undefined;
 
   try {
-    const admin = await requireAdminSession();
+    const admin = await requireAdminFromRequest(request);
     const params = await context.params;
     productId = params.id;
 
@@ -106,8 +113,11 @@ export async function POST(
 
     return NextResponse.json({ ok: true, product: detail });
   } catch (err) {
-    if (err instanceof AuthRequiredError || err instanceof AdminRequiredError) {
+    if (err instanceof AuthRequiredError) {
       return NextResponse.json({ error: "Требуется вход администратора" }, { status: 401 });
+    }
+    if (err instanceof AdminRequiredError) {
+      return NextResponse.json({ error: "Требуются права администратора" }, { status: 403 });
     }
     log.error("admin_moderation_decision_unexpected", {
       requestId: requestId ?? undefined,

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-08-24T13:25:19.574Z",
+  "generatedAt": "2026-08-25T13:05:48.230Z",
   "deploymentComplete": false,
-  "currentGitSha": "32d2e8d",
-  "railwaySha": "e309dbe",
-  "shaMatch": false,
-  "deploymentAgeHours": 2.2,
+  "currentGitSha": "5829b8a",
+  "railwaySha": "5829b8a",
+  "shaMatch": true,
+  "deploymentAgeHours": 1.2,
   "version": "0.1.0",
   "environment": "staging",
   "health": "ok",
@@ -43,9 +43,9 @@
   "openDraftPrCount": 36,
   "blockers": [
     {
-      "id": "sha_mismatch",
+      "id": "draft_pr",
       "severity": "P0",
-      "detail": "Railway SHA e309dbe !== origin/main 32d2e8d"
+      "detail": "5 mergeable Draft PR(s) on main: #67, #19, #15, #12, #10"
     }
   ]
 }

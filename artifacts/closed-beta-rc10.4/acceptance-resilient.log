@@ -1,0 +1,166 @@
+
+> marketplace-mvp@0.1.0 mobile:rc10.4:moderation-acceptance
+> node scripts/rc10.4-moderation-staging-acceptance.mjs
+
+{
+  "generatedAt": "2026-08-25T13:05:18.908Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "runId": "resilient",
+  "deployedSha": "5829b8a",
+  "effectiveConfig": {
+    "note": "Runtime env inferred from moderation behavior; secrets not logged",
+    "trustLoopInferred": true,
+    "moderationAutomationModeInferred": "SHADOW"
+  },
+  "scenarios": [
+    {
+      "scenario": "deploy",
+      "status": "PASS",
+      "deployedSha": "5829b8a",
+      "expectedSha": "5829b8a",
+      "databaseOk": true
+    },
+    {
+      "scenario": "migration-api",
+      "status": "PASS",
+      "adminModerationStatus": 200,
+      "counters": {
+        "pending": 106,
+        "needsFix": 2,
+        "rejected": 2,
+        "highRisk": 0,
+        "overdue": 0
+      }
+    },
+    {
+      "scenario": "A",
+      "status": "PASS",
+      "productId": "cmt8ofze901q5li01092m5xvt",
+      "moderationId": "cmt8ofzis01qfli013c6nn762",
+      "serverState": {
+        "productStatus": "DRAFT",
+        "moderationStatus": "PENDING_REVIEW",
+        "reviewMode": "MANUAL",
+        "stage": "MANUAL_REVIEW",
+        "contentVersion": 1,
+        "systemRecommendation": "MANUAL_REVIEW",
+        "isPublic": false
+      },
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": false
+    },
+    {
+      "scenario": "B",
+      "status": "FAIL",
+      "productId": "cmt8ofze901q5li01092m5xvt",
+      "approveStatus": 500,
+      "approveBody": null,
+      "serverState": {},
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": false
+    },
+    {
+      "scenario": "C",
+      "status": "FAIL",
+      "productId": "cmt8ogd2r01qmli01imh6tkeh",
+      "serverState": {},
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 404
+        }
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "D",
+      "status": "PASS",
+      "productId": "cmt8ogh0601r5li011fz562j5",
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "E",
+      "status": "PASS",
+      "productId": "cmt8oglpc01roli016in5vsse",
+      "serverState": {
+        "moderationStatus": "PENDING_REVIEW",
+        "systemRecommendation": "MANUAL_REVIEW",
+        "riskScore": 0
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "F",
+      "status": "FAIL",
+      "productId": "cmt8ogm0q01s5li0172cdcnbz",
+      "serverState": {
+        "beforeStatus": "ACTIVE"
+      },
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        }
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "G",
+      "status": "FAIL",
+      "buyerApproveStatus": 500,
+      "sellerApproveStatus": 500,
+      "sellerBypassStatus": 200,
+      "crossSellerStatus": 404
+    },
+    {
+      "scenario": "H",
+      "status": "FAIL",
+      "productId": "cmt8ogq2001stli0115vfkyfc",
+      "decisions": {
+        "first": 200,
+        "secondApprove": 200,
+        "rejectAfter": 409
+      },
+      "auditEventCount": 0,
+      "auditVerified": false
+    }
+  ],
+  "adminAcceptance": {
+    "queueLoads": true,
+    "detailLoads": true,
+    "counters": {
+      "pending": 106,
+      "needsFix": 2,
+      "rejected": 2,
+      "highRisk": 0,
+      "overdue": 0
+    },
+    "verdict": "PASS"
+  },
+  "verdict": "BLOCKED_FOR_RC10_4_BUILD"
+}

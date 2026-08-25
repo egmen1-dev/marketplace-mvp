@@ -1,0 +1,9 @@
+
+> marketplace-mvp@0.1.0 mobile:rc10.4:moderation-acceptance
+> node scripts/rc10.4-moderation-staging-acceptance.mjs
+
+Error: upload failed ({"error":"Не удалось загрузить изображение"})
+    at getUpload (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:145:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createAndSubmitLot (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:168:41)
+    at async main (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:387:16)
