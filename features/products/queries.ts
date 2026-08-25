@@ -1008,6 +1008,7 @@ export async function updateProduct(
     if (isMarketplaceTrustLoopEnabled()) {
       const { assertProductModerationApproved, submitProductForModeration } =
         await import("@/lib/marketplace-trust-loop/moderation/rules");
+      const { ModerationStatus } = await import("@prisma/client");
       const existingMod = await prisma.productModeration.findUnique({
         where: { productId },
       });
@@ -1019,7 +1020,35 @@ export async function updateProduct(
           400,
         );
       }
+      if (
+        existingMod.status === ModerationStatus.NEEDS_FIX ||
+        existingMod.status === ModerationStatus.REJECTED ||
+        existingMod.status === ModerationStatus.PENDING_REVIEW
+      ) {
+        await submitProductForModeration(productId);
+        throw new ProductServiceError(
+          "MODERATION_PENDING",
+          "ЛОТ отправлен на проверку. После одобрения можно опубликовать.",
+          400,
+        );
+      }
       await assertProductModerationApproved(productId);
+    }
+  }
+
+  const moderationSensitiveChange =
+    input.title !== undefined ||
+    input.description !== undefined ||
+    input.images !== undefined ||
+    input.categoryId !== undefined ||
+    input.productTypeId !== undefined ||
+    input.condition !== undefined ||
+    input.characteristics !== undefined;
+
+  if (moderationSensitiveChange) {
+    const { isLotModerationEngineEnabled } = await import("@/lib/moderation");
+    if (isLotModerationEngineEnabled()) {
+      data.contentVersion = { increment: 1 };
     }
   }
 
@@ -1115,6 +1144,16 @@ export async function updateProduct(
     where: { id: productId },
     include: detailInclude,
   });
+
+  if (moderationSensitiveChange) {
+    const { isLotModerationEngineEnabled, invalidateModerationOnContentChange } = await import(
+      "@/lib/moderation"
+    );
+    if (isLotModerationEngineEnabled()) {
+      await invalidateModerationOnContentChange(productId);
+    }
+  }
+
   return mapProductDetail(updated);
 }
 

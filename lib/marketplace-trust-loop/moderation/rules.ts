@@ -3,6 +3,7 @@ import {
   ModerationStatus,
 } from "@prisma/client";
 
+import { isLotModerationEngineEnabled, submitLotForModeration } from "@/lib/moderation";
 import { prisma } from "@/lib/prisma";
 
 import { analyzeProductContent } from "../content-quality/product-quality";
@@ -81,6 +82,12 @@ export async function runProductModerationChecks(productId: string): Promise<{
 }
 
 export async function submitProductForModeration(productId: string): Promise<void> {
+  if (isLotModerationEngineEnabled()) {
+    await submitLotForModeration(productId);
+    trackModerationItemCreated(productId);
+    return;
+  }
+
   const product = await prisma.product.findUnique({
     where: { id: productId },
     select: { sellerId: true, name: true },

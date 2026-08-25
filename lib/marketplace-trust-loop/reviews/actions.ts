@@ -12,8 +12,10 @@ import { isMarketplaceTrustLoopEnabled } from "../flags";
 import {
   approveProductModeration,
   approveReview,
+  escalateProductModeration,
   rejectProductModeration,
   rejectReview,
+  requestProductModerationChanges,
 } from "../moderation/decisions";
 import {
   assertProductModerationApproved,
@@ -128,6 +130,7 @@ export async function adminApproveProductAction(
   const admin = await requireAdminSession();
   await approveProductModeration({ productId, adminUserId: admin.id });
   revalidatePath(ROUTES.ADMIN_MODERATION);
+  revalidatePath(`${ROUTES.ADMIN_MODERATION}/${productId}`);
   return { ok: true };
 }
 
@@ -137,6 +140,34 @@ export async function adminRejectProductAction(
   const admin = await requireAdminSession();
   await rejectProductModeration({ productId, adminUserId: admin.id });
   revalidatePath(ROUTES.ADMIN_MODERATION);
+  revalidatePath(`${ROUTES.ADMIN_MODERATION}/${productId}`);
+  return { ok: true };
+}
+
+export async function adminNeedsChangesProductAction(
+  productId: string,
+  notes?: string,
+): Promise<TrustLoopActionState> {
+  const admin = await requireAdminSession();
+  await requestProductModerationChanges({
+    productId,
+    adminUserId: admin.id,
+    notes,
+    reasonCodes: ["OTHER"],
+  });
+  revalidatePath(ROUTES.ADMIN_MODERATION);
+  revalidatePath(`${ROUTES.ADMIN_MODERATION}/${productId}`);
+  return { ok: true };
+}
+
+export async function adminEscalateProductAction(
+  productId: string,
+  notes?: string,
+): Promise<TrustLoopActionState> {
+  const admin = await requireAdminSession();
+  await escalateProductModeration({ productId, adminUserId: admin.id, notes });
+  revalidatePath(ROUTES.ADMIN_MODERATION);
+  revalidatePath(`${ROUTES.ADMIN_MODERATION}/${productId}`);
   return { ok: true };
 }
 

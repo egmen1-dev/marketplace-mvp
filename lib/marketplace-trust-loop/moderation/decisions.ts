@@ -1,5 +1,6 @@
 import { ModerationItemType, ModerationStatus, ReviewStatus } from "@prisma/client";
 
+import { applyAdminModerationDecision } from "@/lib/moderation";
 import { prisma } from "@/lib/prisma";
 
 import { recalculateRatingsForReview } from "../ratings/aggregation";
@@ -13,24 +14,14 @@ export async function approveProductModeration(input: {
   productId: string;
   adminUserId: string;
 }): Promise<void> {
-  await prisma.productModeration.update({
-    where: { productId: input.productId },
-    data: {
-      status: ModerationStatus.APPROVED,
-      reviewedById: input.adminUserId,
-      reviewedAt: new Date(),
-    },
+  const result = await applyAdminModerationDecision({
+    productId: input.productId,
+    adminUserId: input.adminUserId,
+    decision: "APPROVE",
   });
-
-  await prisma.moderationQueueItem.updateMany({
-    where: {
-      type: ModerationItemType.PRODUCT,
-      entityId: input.productId,
-      status: ModerationStatus.PENDING_REVIEW,
-    },
-    data: { status: ModerationStatus.APPROVED },
-  });
-
+  if (!result.ok) {
+    throw new Error(result.code === "ALREADY_REVIEWED" ? "ЛОТ уже проверен другим модератором" : "ЛОТ не найден");
+  }
   trackModerationApproved(input.productId);
 }
 
@@ -39,25 +30,50 @@ export async function rejectProductModeration(input: {
   adminUserId: string;
   notes?: string;
 }): Promise<void> {
-  await prisma.productModeration.update({
-    where: { productId: input.productId },
-    data: {
-      status: ModerationStatus.REJECTED,
-      reviewedById: input.adminUserId,
-      reviewedAt: new Date(),
-      notes: input.notes,
-    },
+  const result = await applyAdminModerationDecision({
+    productId: input.productId,
+    adminUserId: input.adminUserId,
+    decision: "REJECT",
+    comment: input.notes,
   });
-
-  await prisma.moderationQueueItem.updateMany({
-    where: {
-      type: ModerationItemType.PRODUCT,
-      entityId: input.productId,
-    },
-    data: { status: ModerationStatus.REJECTED },
-  });
-
+  if (!result.ok) {
+    throw new Error(result.code === "ALREADY_REVIEWED" ? "ЛОТ уже проверен другим модератором" : "ЛОТ не найден");
+  }
   trackModerationRejected(input.productId);
+}
+
+export async function requestProductModerationChanges(input: {
+  productId: string;
+  adminUserId: string;
+  reasonCodes?: string[];
+  notes?: string;
+}): Promise<void> {
+  const result = await applyAdminModerationDecision({
+    productId: input.productId,
+    adminUserId: input.adminUserId,
+    decision: "NEEDS_CHANGES",
+    reasonCodes: input.reasonCodes,
+    comment: input.notes,
+  });
+  if (!result.ok) {
+    throw new Error(result.code === "ALREADY_REVIEWED" ? "ЛОТ уже проверен другим модератором" : "ЛОТ не найден");
+  }
+}
+
+export async function escalateProductModeration(input: {
+  productId: string;
+  adminUserId: string;
+  notes?: string;
+}): Promise<void> {
+  const result = await applyAdminModerationDecision({
+    productId: input.productId,
+    adminUserId: input.adminUserId,
+    decision: "ESCALATE",
+    comment: input.notes,
+  });
+  if (!result.ok) {
+    throw new Error(result.code === "ALREADY_REVIEWED" ? "ЛОТ уже проверен другим модератором" : "ЛОТ не найден");
+  }
 }
 
 export async function approveReview(reviewId: string): Promise<void> {

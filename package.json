@@ -98,6 +98,7 @@
     "mobile:lot-publish-truth:gate": "tsx scripts/mobile-lot-publish-truth-gate.ts",
     "mobile:lot-dynamic-characteristics:smoke": "node scripts/mobile-lot-dynamic-characteristics-staging-smoke.mjs",
     "mobile:lot-dynamic-characteristics:gate": "tsx scripts/mobile-lot-dynamic-characteristics-gate.ts",
+    "mobile:lot-moderation:gate": "tsx scripts/mobile-lot-moderation-gate.ts",
     "product:epic-103:beta-rc": "tsx scripts/epic-103-closed-beta-rc-gate.ts",
     "product:epic-104:closed-beta-readiness": "tsx scripts/epic-104-closed-beta-readiness-gate.ts",
     "product:epic-105:closed-beta-launch-validation": "tsx scripts/epic-105-closed-beta-launch-validation-gate.ts",

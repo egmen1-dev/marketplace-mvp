@@ -7,7 +7,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 const MODERATION_LABELS: Record<string, string> = {
   PENDING_REVIEW: "На проверке",
-  NEEDS_FIX: "Нужны правки",
+  NEEDS_FIX: "Нужно исправить",
   REJECTED: "Отклонён",
   APPROVED: "Одобрен",
 };
