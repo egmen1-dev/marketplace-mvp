@@ -1,0 +1,8 @@
+
+> marketplace-mvp@0.1.0 mobile:rc10.4:moderation-acceptance
+> node scripts/rc10.4-moderation-staging-acceptance.mjs
+
+Error: create failed for "NEEDS_CHANGES moderation 1787661482937" 500 {"error":"Не удалось создать ЛОТ"}
+    at createAndSubmitLot (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:182:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (file:///workspace/scripts/rc10.4-moderation-staging-acceptance.mjs:341:16)

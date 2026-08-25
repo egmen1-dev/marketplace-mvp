@@ -1,0 +1,38 @@
+{
+  "runId": "fullrun",
+  "scenarioTag": "C",
+  "title": "rc104-fullrun-C needs-fix flow",
+  "status": 500,
+  "body": {
+    "error": "Не удалось создать ЛОТ"
+  },
+  "payload": {
+    "title": "rc104-fullrun-C needs-fix flow",
+    "description": "Звоните 8-999-123-45-67 за деталями",
+    "price": 2500,
+    "city": "Москва",
+    "condition": "NEW",
+    "categoryId": "cmsmzs3hp000vy0w6q7fuponx",
+    "productTypeId": "cmsoz1oa9vw8rphtp",
+    "images": [
+      {
+        "url": "https://li55azctt2x9unce.private.blob.vercel-storage.com/products/cmsmzrxgj0005y0w6jhe5qqle/e6e033bf-7122-4713-8d77-425a5bdd46db.jpg",
+        "pathname": "products/cmsmzrxgj0005y0w6jhe5qqle/e6e033bf-7122-4713-8d77-425a5bdd46db.jpg"
+      }
+    ],
+    "stock": 1,
+    "status": "DRAFT",
+    "pickupEnabled": false,
+    "pickupPointIds": [],
+    "characteristics": [
+      {
+        "definitionId": "cmsoz1onq5rawsgev",
+        "valueNumber": 800
+      },
+      {
+        "definitionId": "cmsoz1os44qhwxggg",
+        "valueText": "сеть"
+      }
+    ]
+  }
+}

@@ -109,8 +109,7 @@ export async function applyAdminModerationDecision(input: {
 
   if (
     moderation.status === ModerationStatus.APPROVED &&
-    moderation.product.status === ProductStatus.ACTIVE &&
-    input.decision !== "APPROVE"
+    moderation.product.status === ProductStatus.ACTIVE
   ) {
     return { ok: false, code: "ALREADY_REVIEWED" };
   }

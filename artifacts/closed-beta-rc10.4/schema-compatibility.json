@@ -1,18 +1,19 @@
 {
-  "generatedAt": "2026-08-25T10:43:46.601Z",
+  "generatedAt": "2026-08-25T13:05:40.300Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "mainSha": "bec966a",
-  "deployedSha": "6059dc9",
+  "mainSha": "5829b8a",
+  "deployedSha": "5829b8a",
   "shaMatch": true,
   "database": {
     "reachable": true,
-    "schemaCompatible": false,
-    "detail": null,
-    "missingColumns": null,
-    "missingTables": null,
-    "epic174MigrationApplied": null
+    "schemaCompatible": true,
+    "legacyHealthWithoutSchemaProbe": false,
+    "detail": "compatible",
+    "missingColumns": [],
+    "missingTables": [],
+    "epic174MigrationApplied": true
   },
   "healthStatus": 200,
-  "verdict": "BLOCKED_FOR_RC10_4_BUILD",
+  "verdict": "PASS",
   "invariant": "Deployment is not release-ready when application schema and database migration state are incompatible."
 }

@@ -1,12 +1,13 @@
 {
   "epic": "EPIC-109",
-  "generatedAt": "2026-08-24T13:25:19.574Z",
+  "generatedAt": "2026-08-25T13:05:48.230Z",
   "verdict": "BLOCKED",
-  "deploymentVerification": "FAIL",
+  "railwayRuntime": "PASS",
+  "deploymentVerification": "PASS",
   "healthCheck": "PASS",
   "routeVerification": "PASS",
   "prPolicyAudit": {
-    "generatedAt": "2026-08-24T13:25:19.574Z",
+    "generatedAt": "2026-08-25T13:05:48.230Z",
     "creationPaths": {
       "cursorCloudAgentManagePullRequest": {
         "createsDraftByDefault": true,
@@ -24,12 +25,38 @@
       }
     },
     "openDraftPrCount": 36,
-    "mergeableCleanDraftPrs": [],
+    "mergeableCleanDraftPrs": [
+      {
+        "number": 67,
+        "title": "Stripe staging setup: webhook audit, health check, setup docs",
+        "headRefName": "cursor/stripe-staging-setup-001-d03e"
+      },
+      {
+        "number": 19,
+        "title": "docs(audit): MVP-AUDIT-001 staging reality audit report",
+        "headRefName": "cursor/mvp-audit-001-d03e"
+      },
+      {
+        "number": 15,
+        "title": "docs(devops): DEVOPS-001.3 Railway deployment trigger verification report",
+        "headRefName": "cursor/devops-001-3-d03e"
+      },
+      {
+        "number": 12,
+        "title": "DEVOPS-001.1: Document successful Railway verification cycle",
+        "headRefName": "cursor/devops-001-1-d03e"
+      },
+      {
+        "number": 10,
+        "title": "HOTFIX-UX-005.1: Railway analytics acceptance script",
+        "headRefName": "cursor/hotfix-ux-005-1-d03e"
+      }
+    ],
     "limitation": "Cursor cannot change global ManagePullRequest default; agents must set draft=false per AGENTS.md"
   },
   "acceptanceCriteria": {
-    "noProductionReadyDraftPr": true,
-    "deploymentVerifiedAgainstGitSha": false,
+    "noProductionReadyDraftPr": false,
+    "deploymentVerifiedAgainstGitSha": true,
     "criticalRoutesAutomated": true,
     "railwayVerificationExists": true,
     "releaseDocumentationUpdated": true,
@@ -37,9 +64,9 @@
   },
   "blockers": [
     {
-      "id": "sha_mismatch",
+      "id": "draft_pr",
       "severity": "P0",
-      "detail": "Railway SHA e309dbe !== origin/main 32d2e8d"
+      "detail": "5 mergeable Draft PR(s) on main: #67, #19, #15, #12, #10"
     }
   ],
   "releaseStatusPath": "artifacts/release-pipeline/release-status.json"

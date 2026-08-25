@@ -240,9 +240,9 @@ export function mapProductListItem(row: ListRow): ProductListItem {
 
 export function mapProductDetail(row: DetailRow): ProductDetail {
   const base = mapProductListItem(row);
-  const chars = [...(row.characteristicValues ?? [])].sort(
-    (a, b) => a.definition.sortOrder - b.definition.sortOrder,
-  );
+  const chars = [...(row.characteristicValues ?? [])]
+    .filter((value) => value.definition != null)
+    .sort((a, b) => (a.definition?.sortOrder ?? 0) - (b.definition?.sortOrder ?? 0));
   return {
     ...base,
     images: row.images.map(mapImage),

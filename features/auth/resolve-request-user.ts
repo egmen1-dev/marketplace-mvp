@@ -3,6 +3,7 @@ import type { UserRole } from "@prisma/client";
 import { verifyAccessToken } from "@/lib/mobile/auth/tokens";
 
 import {
+  AdminRequiredError,
   AuthRequiredError,
   getSessionUser,
   loadUserAuthFromDb,
@@ -10,7 +11,7 @@ import {
   type SessionUser,
 } from "./session";
 
-export { AuthRequiredError, SellerRequiredError };
+export { AuthRequiredError, SellerRequiredError, AdminRequiredError };
 
 /** Resolve authenticated user from mobile Bearer JWT or web Auth.js session. */
 export async function resolveRequestUser(request?: Request): Promise<SessionUser | null> {
@@ -64,5 +65,27 @@ export async function requireSellerFromRequest(request: Request): Promise<{
     name: dbUser.name,
     role: dbUser.role,
     storeName: dbUser.storeName ?? "Магазин",
+  };
+}
+
+/** Admin auth for web session cookie or mobile Bearer JWT. */
+export async function requireAdminFromRequest(request: Request): Promise<SessionUser> {
+  const user = await resolveRequestUser(request);
+  if (!user) throw new AuthRequiredError();
+
+  const dbUser = await loadUserAuthFromDb(user.id);
+  if (!dbUser) throw new AuthRequiredError();
+
+  if (dbUser.role !== "ADMIN") {
+    throw new AdminRequiredError();
+  }
+
+  return {
+    id: dbUser.id,
+    email: dbUser.email,
+    name: dbUser.name,
+    image: dbUser.image,
+    role: dbUser.role,
+    sellerProfileId: dbUser.sellerProfileId,
   };
 }

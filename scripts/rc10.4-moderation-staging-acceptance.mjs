@@ -14,9 +14,10 @@ const BUYER = process.env.MOBILE_BUYER_EMAIL ?? "buyer@demo.lot";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@demo.lot";
 const PASSWORD = process.env.MOBILE_TEST_PASSWORD ?? "demo1234";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? PASSWORD;
-const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "5829b8a").slice(0, 7);
+const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "e202f55").slice(0, 7);
 const RUN_ID = process.env.RC10_4_ACCEPTANCE_RUN_ID ?? randomUUID().slice(0, 8);
 const OUT = resolve("artifacts/closed-beta-rc10.4/staging-moderation-acceptance.json");
+const server500Events = [];
 
 const JPEG_BASE64 =
   "/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////2wBDAf//////////////////////////////////////////////////////////////////////////////////////wAARCAABAAEDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=";
@@ -42,6 +43,16 @@ async function json(path, init = {}, token, cookie = "", requestId = RUN_ID) {
   if (requestId) headers["x-acceptance-run-id"] = requestId;
   const res = await fetch(`${STAGING}${path}`, { ...init, headers, signal: AbortSignal.timeout(45000) });
   const body = await res.json().catch(() => ({}));
+  if (res.status >= 500) {
+    server500Events.push({
+      runId: RUN_ID,
+      path,
+      method: init.method ?? "GET",
+      status: res.status,
+      body,
+      at: new Date().toISOString(),
+    });
+  }
   return { ok: res.ok, status: res.status, body, headers: res.headers };
 }
 
@@ -196,7 +207,7 @@ async function createAndSubmitLot(
     characteristics: resolvedCharacteristics,
   };
 
-  let created = await json(
+  const created = await json(
     "/api/mobile/seller/products",
     {
       method: "POST",
@@ -205,27 +216,6 @@ async function createAndSubmitLot(
     },
     token,
   );
-
-  if (!created.ok && created.status >= 500) {
-    await sleep(1500);
-    const retryPayload = {
-      ...payload,
-      title: `${title} retry`,
-      characteristics: cloneCharacteristics(resolvedCharacteristics),
-    };
-    created = await json(
-      "/api/mobile/seller/products",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(retryPayload),
-      },
-      token,
-    );
-    if (created.ok) {
-      payload.title = retryPayload.title;
-    }
-  }
 
   const productId = created.body?.product?.id ?? created.body?.id;
   if (!created.ok || !productId) {
@@ -261,21 +251,6 @@ async function createAndSubmitLot(
   );
 
   return { productId, payload, submitted, taxonomy, createDiagnostics: { status: created.status } };
-}
-
-async function createAndSubmitLotResilient(token, options, attempts = 4) {
-  let lastError;
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const title =
-        attempt === 1 ? options.title : `${options.title} (attempt ${attempt})`;
-      return await createAndSubmitLot(token, { ...options, title });
-    } catch (error) {
-      lastError = error;
-      if (attempt < attempts) await sleep(2000 * attempt);
-    }
-  }
-  throw lastError;
 }
 
 async function buyerVisibility(title, productId, buyerToken) {
@@ -402,19 +377,12 @@ async function main() {
   }));
 
   // B — admin APPROVE → buyer visible
-  let approveB = await adminDecision(lotA.productId, "APPROVE", adminCookie);
-  if (!approveB.ok && approveB.status >= 500) {
-    await sleep(1500);
-    approveB = await adminDecision(lotA.productId, "APPROVE", adminCookie);
-  }
+  const approveB = await adminDecision(lotA.productId, "APPROVE", adminCookie);
   const detailB = await adminDetail(lotA.productId, adminCookie);
   const visB = await buyerVisibility(titleA, lotA.productId, buyerToken);
   const pmB = detailB.body?.product?.productModeration;
-  const moderationApproved =
-    pmB?.status === "APPROVED" ||
-    (await sellerModeration(lotA.productId, sellerToken)).body?.status === "APPROVED";
   const passB =
-    (approveB.ok || moderationApproved) &&
+    approveB.ok &&
     pmB?.status === "APPROVED" &&
     detailB.body?.product?.status === "ACTIVE" &&
     detailB.body?.product?.publishedAt &&
@@ -436,7 +404,7 @@ async function main() {
   // C — NEEDS_CHANGES → edit → resubmit → approve
   await sleep(2000);
   const titleC = `rc104-${RUN_ID}-C needs-fix flow`;
-  const lotC = await createAndSubmitLotResilient(sellerToken, {
+  const lotC = await createAndSubmitLot(sellerToken, {
     title: titleC,
     description: "Звоните 8-999-123-45-67 за деталями",
     scenarioTag: "C",
@@ -600,12 +568,14 @@ async function main() {
     auditVerified: (detailH.body?.product?.productModeration?.auditEvents?.length ?? 0) >= 1,
   }));
 
-  const allPass = scenarios.every((s) => s.status === "PASS");
+  const allPass = scenarios.every((s) => s.status === "PASS") && server500Events.length === 0;
   const report = {
     generatedAt: new Date().toISOString(),
     staging: STAGING,
     runId: RUN_ID,
     deployedSha,
+    server500Events,
+    unexplainedServer500Count: server500Events.length,
     effectiveConfig: {
       note: "Runtime env inferred from moderation behavior; secrets not logged",
       trustLoopInferred: passA,

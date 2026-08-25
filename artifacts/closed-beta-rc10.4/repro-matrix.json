@@ -1,0 +1,647 @@
+
+=== R1 C create alone ===
+{
+  "pass": true,
+  "createStatus": 201,
+  "body": {
+    "product": {
+      "id": "cmt8nh0cu00kmli019ehun25g",
+      "title": "rc104-1787661450054-R1-C",
+      "slug": "rc104-1787661450054-r1-c",
+      "description": "R1 isolated create",
+      "price": 2500,
+      "compareAt": null,
+      "currency": "RUB",
+      "stock": 1,
+      "city": "Москва",
+      "condition": "NEW",
+      "status": "DRAFT",
+      "views": 0,
+      "favoritesCount": 0,
+      "createdAt": "2026-08-25T12:37:32.047Z",
+      "category": {
+        "id": "cmsmzs3hp000vy0w6q7fuponx",
+        "name": "Электроинструмент",
+        "slug": "power-tools"
+      },
+      "primaryImage": {
+        "id": "cmt8nh0cu00knli019hfamzd1",
+        "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F98a7c86d-f6fe-41e4-bdf8-eb4b9e481c9f.jpg",
+        "alt": "rc104-1787661450054-R1-C",
+        "sortOrder": 0,
+        "isPrimary": true
+      },
+      "seller": {
+        "id": "cmsmzrxgj0005y0w6jhe5qqle",
+        "storeName": "RAIZZ",
+        "slug": "raizz",
+        "isVerified": true,
+        "user": {
+          "id": "cmsmzrv290000y0w639qwnitu",
+          "name": "Алексей",
+          "image": "https://i.pravatar.cc/150?u=seller@demo.lot"
+        }
+      },
+      "images": [
+        {
+          "id": "cmt8nh0cu00knli019hfamzd1",
+          "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F98a7c86d-f6fe-41e4-bdf8-eb4b9e481c9f.jpg",
+          "alt": "rc104-1787661450054-R1-C",
+          "sortOrder": 0,
+          "isPrimary": true
+        }
+      ],
+      "sku": null,
+      "weight": null,
+      "lengthCm": null,
+      "widthCm": null,
+      "heightCm": null,
+      "seoTitle": null,
+      "seoDescription": null,
+      "pickupEnabled": false,
+      "reservationEnabled": false,
+      "prepaymentPercent": 0,
+      "productType": {
+        "id": "cmsoz1oa9vw8rphtp",
+        "name": "Дрели",
+        "slug": "drills-type",
+        "categoryId": "cmsmzs3hp000vy0w6q7fuponx"
+      },
+      "brand": null,
+      "modelName": null,
+      "characteristics": [
+        {
+          "definitionId": "cmsoz1onq5rawsgev",
+          "name": "Мощность",
+          "slug": "power-w",
+          "unit": "Вт",
+          "displayValue": "800 Вт",
+          "formValue": "800"
+        },
+        {
+          "definitionId": "cmsoz1os44qhwxggg",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "unit": null,
+          "displayValue": "сеть",
+          "formValue": "сеть"
+        }
+      ],
+      "pickupPoints": []
+    },
+    "message": "Черновик ЛОТа сохранён",
+    "id": "cmt8nh0cu00kmli019ehun25g",
+    "status": "DRAFT",
+    "isPublic": false,
+    "moderationState": null,
+    "publicProductId": "cmt8nh0cu00kmli019ehun25g",
+    "publishOutcome": "SAVED",
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "seller-product-cmt8nh0cu00kmli019ehun25g",
+    "advisoryOnly": true
+  }
+}
+
+=== R2 A create -> C create (no approve) ===
+{
+  "pass": true,
+  "aStatus": 201,
+  "cStatus": 201,
+  "cBody": {
+    "product": {
+      "id": "cmt8nh14b00l6li01ntu73l9b",
+      "title": "rc104-1787661450054-R2-C",
+      "slug": "rc104-1787661450054-r2-c",
+      "description": "R2 lot C",
+      "price": 2500,
+      "compareAt": null,
+      "currency": "RUB",
+      "stock": 1,
+      "city": "Москва",
+      "condition": "NEW",
+      "status": "DRAFT",
+      "views": 0,
+      "favoritesCount": 0,
+      "createdAt": "2026-08-25T12:37:33.035Z",
+      "category": {
+        "id": "cmsmzs3hp000vy0w6q7fuponx",
+        "name": "Электроинструмент",
+        "slug": "power-tools"
+      },
+      "primaryImage": {
+        "id": "cmt8nh14b00l7li01fsm06o07",
+        "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2Fc5917101-84c4-45ad-bd54-6e50a3464c31.jpg",
+        "alt": "rc104-1787661450054-R2-C",
+        "sortOrder": 0,
+        "isPrimary": true
+      },
+      "seller": {
+        "id": "cmsmzrxgj0005y0w6jhe5qqle",
+        "storeName": "RAIZZ",
+        "slug": "raizz",
+        "isVerified": true,
+        "user": {
+          "id": "cmsmzrv290000y0w639qwnitu",
+          "name": "Алексей",
+          "image": "https://i.pravatar.cc/150?u=seller@demo.lot"
+        }
+      },
+      "images": [
+        {
+          "id": "cmt8nh14b00l7li01fsm06o07",
+          "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2Fc5917101-84c4-45ad-bd54-6e50a3464c31.jpg",
+          "alt": "rc104-1787661450054-R2-C",
+          "sortOrder": 0,
+          "isPrimary": true
+        }
+      ],
+      "sku": null,
+      "weight": null,
+      "lengthCm": null,
+      "widthCm": null,
+      "heightCm": null,
+      "seoTitle": null,
+      "seoDescription": null,
+      "pickupEnabled": false,
+      "reservationEnabled": false,
+      "prepaymentPercent": 0,
+      "productType": {
+        "id": "cmsoz1oa9vw8rphtp",
+        "name": "Дрели",
+        "slug": "drills-type",
+        "categoryId": "cmsmzs3hp000vy0w6q7fuponx"
+      },
+      "brand": null,
+      "modelName": null,
+      "characteristics": [
+        {
+          "definitionId": "cmsoz1onq5rawsgev",
+          "name": "Мощность",
+          "slug": "power-w",
+          "unit": "Вт",
+          "displayValue": "800 Вт",
+          "formValue": "800"
+        },
+        {
+          "definitionId": "cmsoz1os44qhwxggg",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "unit": null,
+          "displayValue": "сеть",
+          "formValue": "сеть"
+        }
+      ],
+      "pickupPoints": []
+    },
+    "message": "Черновик ЛОТа сохранён",
+    "id": "cmt8nh14b00l6li01ntu73l9b",
+    "status": "DRAFT",
+    "isPublic": false,
+    "moderationState": null,
+    "publicProductId": "cmt8nh14b00l6li01ntu73l9b",
+    "publishOutcome": "SAVED",
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "seller-product-cmt8nh14b00l6li01ntu73l9b",
+    "advisoryOnly": true
+  }
+}
+
+=== R3 A create -> APPROVE -> C create ===
+{
+  "pass": true,
+  "aCreate": 201,
+  "aSubmit": 200,
+  "aSubmitOutcome": "PENDING_REVIEW",
+  "approve": 200,
+  "cCreate": 201,
+  "cBody": {
+    "product": {
+      "id": "cmt8nh20k00lzli01eqa5gfwv",
+      "title": "rc104-1787661450054-R3-C",
+      "slug": "rc104-1787661450054-r3-c",
+      "description": "Звоните 8-999-123-45-67 за деталями",
+      "price": 2500,
+      "compareAt": null,
+      "currency": "RUB",
+      "stock": 1,
+      "city": "Москва",
+      "condition": "NEW",
+      "status": "DRAFT",
+      "views": 0,
+      "favoritesCount": 0,
+      "createdAt": "2026-08-25T12:37:34.197Z",
+      "category": {
+        "id": "cmsmzs3hp000vy0w6q7fuponx",
+        "name": "Электроинструмент",
+        "slug": "power-tools"
+      },
+      "primaryImage": {
+        "id": "cmt8nh20k00m0li01px97dyo5",
+        "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F68cdd2a9-bdf8-41df-b0d3-a7495755b88b.jpg",
+        "alt": "rc104-1787661450054-R3-C",
+        "sortOrder": 0,
+        "isPrimary": true
+      },
+      "seller": {
+        "id": "cmsmzrxgj0005y0w6jhe5qqle",
+        "storeName": "RAIZZ",
+        "slug": "raizz",
+        "isVerified": true,
+        "user": {
+          "id": "cmsmzrv290000y0w639qwnitu",
+          "name": "Алексей",
+          "image": "https://i.pravatar.cc/150?u=seller@demo.lot"
+        }
+      },
+      "images": [
+        {
+          "id": "cmt8nh20k00m0li01px97dyo5",
+          "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F68cdd2a9-bdf8-41df-b0d3-a7495755b88b.jpg",
+          "alt": "rc104-1787661450054-R3-C",
+          "sortOrder": 0,
+          "isPrimary": true
+        }
+      ],
+      "sku": null,
+      "weight": null,
+      "lengthCm": null,
+      "widthCm": null,
+      "heightCm": null,
+      "seoTitle": null,
+      "seoDescription": null,
+      "pickupEnabled": false,
+      "reservationEnabled": false,
+      "prepaymentPercent": 0,
+      "productType": {
+        "id": "cmsoz1oa9vw8rphtp",
+        "name": "Дрели",
+        "slug": "drills-type",
+        "categoryId": "cmsmzs3hp000vy0w6q7fuponx"
+      },
+      "brand": null,
+      "modelName": null,
+      "characteristics": [
+        {
+          "definitionId": "cmsoz1onq5rawsgev",
+          "name": "Мощность",
+          "slug": "power-w",
+          "unit": "Вт",
+          "displayValue": "800 Вт",
+          "formValue": "800"
+        },
+        {
+          "definitionId": "cmsoz1os44qhwxggg",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "unit": null,
+          "displayValue": "сеть",
+          "formValue": "сеть"
+        }
+      ],
+      "pickupPoints": []
+    },
+    "message": "Черновик ЛОТа сохранён",
+    "id": "cmt8nh20k00lzli01eqa5gfwv",
+    "status": "DRAFT",
+    "isPublic": false,
+    "moderationState": null,
+    "publicProductId": "cmt8nh20k00lzli01eqa5gfwv",
+    "publishOutcome": "SAVED",
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "seller-product-cmt8nh20k00lzli01eqa5gfwv",
+    "advisoryOnly": true
+  }
+}
+
+=== R4 A -> APPROVE -> immediate C (shared session upload) ===
+{
+  "pass": true,
+  "aCreate": 201,
+  "aSubmit": 200,
+  "approve": 200,
+  "cCreate": 201,
+  "cBody": {
+    "product": {
+      "id": "cmt8nh2my00msli01qi3dnvrw",
+      "title": "rc104-1787661450054-R4-C",
+      "slug": "rc104-1787661450054-r4-c",
+      "description": "Звоните 8-999-123-45-67 за деталями",
+      "price": 2500,
+      "compareAt": null,
+      "currency": "RUB",
+      "stock": 1,
+      "city": "Москва",
+      "condition": "NEW",
+      "status": "DRAFT",
+      "views": 0,
+      "favoritesCount": 0,
+      "createdAt": "2026-08-25T12:37:35.002Z",
+      "category": {
+        "id": "cmsmzs3hp000vy0w6q7fuponx",
+        "name": "Электроинструмент",
+        "slug": "power-tools"
+      },
+      "primaryImage": {
+        "id": "cmt8nh2my00mtli0179ksc3kw",
+        "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F8cc01cd4-619d-49ba-9484-ebe5eeabd598.jpg",
+        "alt": "rc104-1787661450054-R4-C",
+        "sortOrder": 0,
+        "isPrimary": true
+      },
+      "seller": {
+        "id": "cmsmzrxgj0005y0w6jhe5qqle",
+        "storeName": "RAIZZ",
+        "slug": "raizz",
+        "isVerified": true,
+        "user": {
+          "id": "cmsmzrv290000y0w639qwnitu",
+          "name": "Алексей",
+          "image": "https://i.pravatar.cc/150?u=seller@demo.lot"
+        }
+      },
+      "images": [
+        {
+          "id": "cmt8nh2my00mtli0179ksc3kw",
+          "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F8cc01cd4-619d-49ba-9484-ebe5eeabd598.jpg",
+          "alt": "rc104-1787661450054-R4-C",
+          "sortOrder": 0,
+          "isPrimary": true
+        }
+      ],
+      "sku": null,
+      "weight": null,
+      "lengthCm": null,
+      "widthCm": null,
+      "heightCm": null,
+      "seoTitle": null,
+      "seoDescription": null,
+      "pickupEnabled": false,
+      "reservationEnabled": false,
+      "prepaymentPercent": 0,
+      "productType": {
+        "id": "cmsoz1oa9vw8rphtp",
+        "name": "Дрели",
+        "slug": "drills-type",
+        "categoryId": "cmsmzs3hp000vy0w6q7fuponx"
+      },
+      "brand": null,
+      "modelName": null,
+      "characteristics": [
+        {
+          "definitionId": "cmsoz1onq5rawsgev",
+          "name": "Мощность",
+          "slug": "power-w",
+          "unit": "Вт",
+          "displayValue": "800 Вт",
+          "formValue": "800"
+        },
+        {
+          "definitionId": "cmsoz1os44qhwxggg",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "unit": null,
+          "displayValue": "сеть",
+          "formValue": "сеть"
+        }
+      ],
+      "pickupPoints": []
+    },
+    "message": "Черновик ЛОТа сохранён",
+    "id": "cmt8nh2my00msli01qi3dnvrw",
+    "status": "DRAFT",
+    "isPublic": false,
+    "moderationState": null,
+    "publicProductId": "cmt8nh2my00msli01qi3dnvrw",
+    "publishOutcome": "SAVED",
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "seller-product-cmt8nh2my00msli01qi3dnvrw",
+    "advisoryOnly": true
+  },
+  "sharedPathname": "products/cmsmzrxgj0005y0w6jhe5qqle/8cc01cd4-619d-49ba-9484-ebe5eeabd598.jpg"
+}
+
+=== R5 A -> APPROVE -> wait 10s -> C ===
+{
+  "pass": true,
+  "cCreate": 201,
+  "cBody": {
+    "product": {
+      "id": "cmt8nhbbl00nlli011gu52l1n",
+      "title": "rc104-1787661450054-R5-C",
+      "slug": "rc104-1787661450054-r5-c",
+      "description": "Звоните 8-999-123-45-67",
+      "price": 2500,
+      "compareAt": null,
+      "currency": "RUB",
+      "stock": 1,
+      "city": "Москва",
+      "condition": "NEW",
+      "status": "DRAFT",
+      "views": 0,
+      "favoritesCount": 0,
+      "createdAt": "2026-08-25T12:37:46.258Z",
+      "category": {
+        "id": "cmsmzs3hp000vy0w6q7fuponx",
+        "name": "Электроинструмент",
+        "slug": "power-tools"
+      },
+      "primaryImage": {
+        "id": "cmt8nhbbl00nmli01rs13q4hz",
+        "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2Fb576de2b-496a-4499-b493-d43195b07577.jpg",
+        "alt": "rc104-1787661450054-R5-C",
+        "sortOrder": 0,
+        "isPrimary": true
+      },
+      "seller": {
+        "id": "cmsmzrxgj0005y0w6jhe5qqle",
+        "storeName": "RAIZZ",
+        "slug": "raizz",
+        "isVerified": true,
+        "user": {
+          "id": "cmsmzrv290000y0w639qwnitu",
+          "name": "Алексей",
+          "image": "https://i.pravatar.cc/150?u=seller@demo.lot"
+        }
+      },
+      "images": [
+        {
+          "id": "cmt8nhbbl00nmli01rs13q4hz",
+          "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2Fb576de2b-496a-4499-b493-d43195b07577.jpg",
+          "alt": "rc104-1787661450054-R5-C",
+          "sortOrder": 0,
+          "isPrimary": true
+        }
+      ],
+      "sku": null,
+      "weight": null,
+      "lengthCm": null,
+      "widthCm": null,
+      "heightCm": null,
+      "seoTitle": null,
+      "seoDescription": null,
+      "pickupEnabled": false,
+      "reservationEnabled": false,
+      "prepaymentPercent": 0,
+      "productType": {
+        "id": "cmsoz1oa9vw8rphtp",
+        "name": "Дрели",
+        "slug": "drills-type",
+        "categoryId": "cmsmzs3hp000vy0w6q7fuponx"
+      },
+      "brand": null,
+      "modelName": null,
+      "characteristics": [
+        {
+          "definitionId": "cmsoz1onq5rawsgev",
+          "name": "Мощность",
+          "slug": "power-w",
+          "unit": "Вт",
+          "displayValue": "800 Вт",
+          "formValue": "800"
+        },
+        {
+          "definitionId": "cmsoz1os44qhwxggg",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "unit": null,
+          "displayValue": "сеть",
+          "formValue": "сеть"
+        }
+      ],
+      "pickupPoints": []
+    },
+    "message": "Черновик ЛОТа сохранён",
+    "id": "cmt8nhbbl00nlli011gu52l1n",
+    "status": "DRAFT",
+    "isPublic": false,
+    "moderationState": null,
+    "publicProductId": "cmt8nhbbl00nlli011gu52l1n",
+    "publishOutcome": "SAVED",
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "seller-product-cmt8nhbbl00nlli011gu52l1n",
+    "advisoryOnly": true
+  }
+}
+
+=== R6 acceptance-like A+B then C (session fixtures) ===
+{
+  "pass": true,
+  "aCreate": 201,
+  "aSubmit": 200,
+  "aSubmitOutcome": "PENDING_REVIEW",
+  "approve": 200,
+  "cCreate": 201,
+  "cBody": {
+    "product": {
+      "id": "cmt8nhd8100oeli01l1gjh7e8",
+      "title": "NEEDS_CHANGES moderation 1787661450054",
+      "slug": "needs-changes-moderation-1787661450054",
+      "description": "Звоните 8-999-123-45-67 за деталями",
+      "price": 2500,
+      "compareAt": null,
+      "currency": "RUB",
+      "stock": 1,
+      "city": "Москва",
+      "condition": "NEW",
+      "status": "DRAFT",
+      "views": 0,
+      "favoritesCount": 0,
+      "createdAt": "2026-08-25T12:37:48.721Z",
+      "category": {
+        "id": "cmsmzs3hp000vy0w6q7fuponx",
+        "name": "Электроинструмент",
+        "slug": "power-tools"
+      },
+      "primaryImage": {
+        "id": "cmt8nhd8100ofli01cx4mc4ge",
+        "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F03ec29d4-6d53-4417-b4e4-5ed95ee25f00.jpg",
+        "alt": "NEEDS_CHANGES moderation 1787661450054",
+        "sortOrder": 0,
+        "isPrimary": true
+      },
+      "seller": {
+        "id": "cmsmzrxgj0005y0w6jhe5qqle",
+        "storeName": "RAIZZ",
+        "slug": "raizz",
+        "isVerified": true,
+        "user": {
+          "id": "cmsmzrv290000y0w639qwnitu",
+          "name": "Алексей",
+          "image": "https://i.pravatar.cc/150?u=seller@demo.lot"
+        }
+      },
+      "images": [
+        {
+          "id": "cmt8nhd8100ofli01cx4mc4ge",
+          "url": "/api/media?url=https%3A%2F%2Fli55azctt2x9unce.private.blob.vercel-storage.com%2Fproducts%2Fcmsmzrxgj0005y0w6jhe5qqle%2F03ec29d4-6d53-4417-b4e4-5ed95ee25f00.jpg",
+          "alt": "NEEDS_CHANGES moderation 1787661450054",
+          "sortOrder": 0,
+          "isPrimary": true
+        }
+      ],
+      "sku": null,
+      "weight": null,
+      "lengthCm": null,
+      "widthCm": null,
+      "heightCm": null,
+      "seoTitle": null,
+      "seoDescription": null,
+      "pickupEnabled": false,
+      "reservationEnabled": false,
+      "prepaymentPercent": 0,
+      "productType": {
+        "id": "cmsoz1oa9vw8rphtp",
+        "name": "Дрели",
+        "slug": "drills-type",
+        "categoryId": "cmsmzs3hp000vy0w6q7fuponx"
+      },
+      "brand": null,
+      "modelName": null,
+      "characteristics": [
+        {
+          "definitionId": "cmsoz1onq5rawsgev",
+          "name": "Мощность",
+          "slug": "power-w",
+          "unit": "Вт",
+          "displayValue": "800 Вт",
+          "formValue": "800"
+        },
+        {
+          "definitionId": "cmsoz1os44qhwxggg",
+          "name": "Тип питания",
+          "slug": "power-source",
+          "unit": null,
+          "displayValue": "сеть",
+          "formValue": "сеть"
+        }
+      ],
+      "pickupPoints": []
+    },
+    "message": "Черновик ЛОТа сохранён",
+    "id": "cmt8nhd8100oeli01l1gjh7e8",
+    "status": "DRAFT",
+    "isPublic": false,
+    "moderationState": null,
+    "publicProductId": "cmt8nhd8100oeli01l1gjh7e8",
+    "publishOutcome": "SAVED",
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "seller-product-cmt8nhd8100oeli01l1gjh7e8",
+    "advisoryOnly": true
+  },
+  "sharedPathname": "products/cmsmzrxgj0005y0w6jhe5qqle/03ec29d4-6d53-4417-b4e4-5ed95ee25f00.jpg"
+}
+
+
+=== SUMMARY ===
+R1 C create alone: PASS
+R2 A create -> C create (no approve): PASS
+R3 A create -> APPROVE -> C create: PASS
+R4 A -> APPROVE -> immediate C (shared session upload): PASS
+R5 A -> APPROVE -> wait 10s -> C: PASS
+R6 acceptance-like A+B then C (session fixtures): PASS

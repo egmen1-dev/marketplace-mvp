@@ -82,7 +82,7 @@ describe("EPIC 174 — moderation engine", () => {
   });
 
   it("exposes admin and seller moderation APIs with auth", () => {
-    expect(adminRoute).toContain("requireAdminSession");
+    expect(adminRoute).toContain("requireAdminFromRequest");
     expect(adminRoute).toContain("applyAdminModerationDecision");
     expect(sellerModerationRoute).toContain("requireSellerFromRequest");
     expect(sellerModerationRoute).toContain("sellerLabel");
