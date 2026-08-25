@@ -45,6 +45,15 @@ export function mapPrismaError(err: unknown): MappedApiError | null {
     };
   }
 
+  if (err.code === "P1017" || err.code === "P1001" || err.code === "P2024") {
+    return {
+      code: "DATABASE_UNAVAILABLE",
+      message: "База данных временно недоступна",
+      status: 503,
+      prismaCode: err.code,
+    };
+  }
+
   return {
     code: "DATABASE_ERROR",
     message: "Ошибка базы данных",
