@@ -8,6 +8,8 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
+# Migration-aware boot — runs prisma migrate deploy before node server.js (see scripts/docker-entrypoint.sh).
+# Do NOT regress to "node server.js" — release:railway-config:verify enforces this.
 startCommand = "./docker-entrypoint.sh"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 180

@@ -86,7 +86,31 @@ railway run --service web-v2 -- npx prisma migrate deploy
 
 ## Ops notes
 
-- Active staging service: **`web-v2`** → `https://web-v2-production-d733.up.railway.app`
-- Legacy `web-staging` kept online temporarily; cut public domain `web-production-e56fb.up.railway.app` over after acceptance
+- Active staging service: **`web-v2`** → public domain `https://web-production-e56fb.up.railway.app`
+- Legacy `web-staging` kept online temporarily; cut public domain over after acceptance
 - Vercel production is unchanged
 - Do **not** use `railway up` for routine deploys
+
+### Railway UI start command vs `main`
+
+Railway **Settings → Deploy → Custom Start Command** reflects the **`railway.toml` from the active deployment revision**, not always `origin/main` HEAD.
+
+If staging is stuck on an old successful deploy (e.g. pre-PR #177 `6059dc9`), the UI may still show:
+
+```text
+node server.js
+```
+
+even though current `main` already has:
+
+```toml
+startCommand = "./docker-entrypoint.sh"
+```
+
+**Do not** hand-edit the Railway dashboard start command — fix repo config and redeploy. Gate:
+
+```bash
+npm run release:railway-config:verify
+```
+
+After a successful deploy, Railway UI must show `./docker-entrypoint.sh` and deploy logs must include `[entrypoint]` + `prisma migrate deploy`.

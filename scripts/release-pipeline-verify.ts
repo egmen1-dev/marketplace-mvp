@@ -8,6 +8,8 @@ import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { verifyRailwayStartConfig } from "@/lib/railway/start-config";
+
 const STAGING = process.env.STAGING_BASE_URL ?? "https://web-production-e56fb.up.railway.app";
 const OUT = join(process.cwd(), "artifacts/release-pipeline");
 const CRITICAL_ROUTES_PATH = join(process.cwd(), "release-pipeline/critical-routes.json");
@@ -59,6 +61,21 @@ function normalizeSha(raw: string): string {
 async function main() {
   mkdirSync(OUT, { recursive: true });
   sh("git fetch origin main 2>/dev/null || true");
+
+  const railwayConfig = verifyRailwayStartConfig();
+  writeFileSync(
+    join(OUT, "railway-config-verification.json"),
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        ...railwayConfig,
+        invariant:
+          "Railway config → migration-aware entrypoint → deploy → schema compatibility → staging acceptance",
+      },
+      null,
+      2,
+    ),
+  );
 
   const originMainFull = sh("git rev-parse origin/main");
   const localMainFull = sh("git rev-parse main");
@@ -273,6 +290,12 @@ async function main() {
       { id: "create_pr", label: "Create PR (draft=false)", automated: false, policy: "ManagePullRequest draft=false" },
       { id: "ready_for_review", label: "Mark PR Ready for review", automated: false, blocker: "Draft PRs block release completion" },
       { id: "merge", label: "Merge to main", automated: false },
+      {
+        id: "railway_config",
+        label: "npm run release:railway-config:verify",
+        automated: true,
+        command: "npm run release:railway-config:verify",
+      },
       { id: "railway_deploy", label: "Railway deploy from main", automated: false },
       { id: "verify_version", label: "npm run release:pipeline:verify", automated: true, command: "npm run release:pipeline:verify" },
       { id: "verify_staging", label: "SHA parity + critical routes", automated: true },
@@ -281,6 +304,7 @@ async function main() {
     ],
     mandatoryBeforeComplete: [
       "No mergeable Draft PR blocking release train",
+      "railway.toml startCommand === ./docker-entrypoint.sh (migration-aware boot)",
       "origin/main SHA === Railway /api/version commit",
       "Critical routes PASS for files present on origin/main",
       "/api/health and /api/version return 200",
@@ -289,6 +313,15 @@ async function main() {
   writeFileSync(join(OUT, "release-checklist.json"), JSON.stringify(releaseChecklist, null, 2));
 
   const blockers: Array<{ id: string; severity: string; detail: string }> = [];
+  if (railwayConfig.verdict !== "PASS") {
+    blockers.push({
+      id: "railway_start_config",
+      severity: "P0",
+      detail:
+        railwayConfig.checks.find((check) => !check.ok)?.detail ??
+        "railway.toml must use migration-aware ./docker-entrypoint.sh startCommand",
+    });
+  }
   if (!shaMatch) {
     blockers.push({
       id: "sha_mismatch",
@@ -357,6 +390,7 @@ async function main() {
     epic: "EPIC-109",
     generatedAt: new Date().toISOString(),
     verdict: deploymentComplete ? "COMPLETE" : "BLOCKED",
+    railwayConfig: railwayConfig.verdict,
     deploymentVerification: deploymentVerification.verdict,
     healthCheck: healthCheck.verdict,
     routeVerification: routeVerdict,
