@@ -13,7 +13,7 @@ const BUYER = process.env.MOBILE_BUYER_EMAIL ?? "buyer@demo.lot";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@demo.lot";
 const PASSWORD = process.env.MOBILE_TEST_PASSWORD ?? "demo1234";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? PASSWORD;
-const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "d828860").slice(0, 7);
+const EXPECTED_SHA = (process.env.EXPECTED_RAILWAY_SHA ?? "5829b8a").slice(0, 7);
 const OUT = resolve("artifacts/closed-beta-rc10.4/staging-moderation-acceptance.json");
 
 const JPEG_BASE64 =
@@ -84,10 +84,19 @@ async function uploadImage(token) {
 }
 
 async function resolveProductType(token) {
+  const template = await json("/api/products/cmsmzsjx0002xy0w60fa73kqf", {}, token);
+  if (template.body?.productType?.id) {
+    return {
+      productTypeId: template.body.productType.id,
+      categoryId: template.body.category?.id ?? template.body.productType.categoryId,
+    };
+  }
+
   const queue = ["root"];
   while (queue.length) {
     const categoryId = queue.shift();
     const browse = await json(`/api/taxonomy/browse?categoryId=${encodeURIComponent(categoryId)}`, {}, token);
+    if (!browse.ok) continue;
     const pt = browse.body?.productTypes?.[0];
     if (pt?.id) return { productTypeId: pt.id, categoryId: pt.categoryId ?? categoryId };
     for (const child of browse.body?.children ?? []) if (child?.id) queue.push(child.id);
@@ -106,12 +115,37 @@ async function buildCharacteristics(token, productTypeId) {
   return characteristics;
 }
 
-async function createAndSubmitLot(token, { title, description = "EPIC 174 staging acceptance" }) {
-  const taxonomy = await resolveProductType(token);
-  if (!taxonomy) throw new Error("taxonomy unavailable");
-  const characteristics = await buildCharacteristics(token, taxonomy.productTypeId);
+let sessionTaxonomy = null;
+let sessionCharacteristics = null;
+let sessionUpload = null;
+
+async function getUpload(token) {
+  if (sessionUpload) return sessionUpload;
   const upload = await uploadImage(token);
-  if (!upload.ok) throw new Error("upload failed");
+  if (!upload.ok) throw new Error(`upload failed (${JSON.stringify(upload.body).slice(0, 120)})`);
+  sessionUpload = upload.body;
+  return sessionUpload;
+}
+
+async function createAndSubmitLot(
+  token,
+  {
+    title,
+    description = "EPIC 174 staging acceptance",
+    taxonomy = sessionTaxonomy,
+    characteristics = sessionCharacteristics,
+    uploadBody = sessionUpload,
+  } = {},
+) {
+  if (!taxonomy) {
+    const probe = await json("/api/taxonomy/browse?categoryId=root", {}, token);
+    throw new Error(
+      `taxonomy unavailable (root browse status=${probe.status} body=${JSON.stringify(probe.body).slice(0, 120)})`,
+    );
+  }
+  if (!uploadBody?.url) throw new Error("upload unavailable for createAndSubmitLot");
+  const resolvedCharacteristics =
+    characteristics ?? (await buildCharacteristics(token, taxonomy.productTypeId));
 
   const payload = {
     title,
@@ -121,12 +155,12 @@ async function createAndSubmitLot(token, { title, description = "EPIC 174 stagin
     condition: "NEW",
     categoryId: taxonomy.categoryId,
     productTypeId: taxonomy.productTypeId,
-    images: [{ url: upload.body.url, pathname: upload.body.pathname ?? null }],
+    images: [{ url: uploadBody.url, pathname: uploadBody.pathname ?? null }],
     stock: 1,
     status: "DRAFT",
     pickupEnabled: false,
     pickupPointIds: [],
-    characteristics,
+    characteristics: resolvedCharacteristics,
   };
 
   const created = await json("/api/mobile/seller/products", {
@@ -134,8 +168,21 @@ async function createAndSubmitLot(token, { title, description = "EPIC 174 stagin
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   }, token);
-  const productId = created.body?.product?.id ?? created.body?.id;
-  if (!created.ok || !productId) throw new Error(`create failed ${created.status}`);
+  let createAttempt = created;
+  if (!createAttempt.ok) {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    createAttempt = await json("/api/mobile/seller/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }, token);
+  }
+  const productId = createAttempt.body?.product?.id ?? createAttempt.body?.id;
+  if (!createAttempt.ok || !productId) {
+    throw new Error(
+      `create failed for "${title}" ${createAttempt.status} ${JSON.stringify(createAttempt.body).slice(0, 200)}`,
+    );
+  }
 
   const submitted = await json(`/api/mobile/seller/products/${productId}`, {
     method: "PATCH",
@@ -228,6 +275,12 @@ async function main() {
     counters: queueProbe.body?.counters ?? null,
   }));
 
+  sessionTaxonomy = await resolveProductType(sellerToken);
+  if (!sessionTaxonomy) throw new Error("taxonomy unavailable at acceptance startup");
+  sessionCharacteristics = await buildCharacteristics(sellerToken, sessionTaxonomy.productTypeId);
+  sessionUpload = (await uploadImage(sellerToken)).body;
+  if (!sessionUpload?.url) throw new Error("upload unavailable at acceptance startup");
+
   // A — normal LOT submit
   const titleA = `Диван тест moderation ${Date.now()}`;
   const lotA = await createAndSubmitLot(sellerToken, { title: titleA, description: "Обычный диван для теста модерации" });
@@ -283,6 +336,7 @@ async function main() {
   }));
 
   // C — NEEDS_CHANGES → edit → resubmit → approve
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   const titleC = `NEEDS_CHANGES moderation ${Date.now()}`;
   const lotC = await createAndSubmitLot(sellerToken, {
     title: titleC,
