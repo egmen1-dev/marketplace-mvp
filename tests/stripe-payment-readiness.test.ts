@@ -35,6 +35,17 @@ describe("GET /api/health stripe check shape", () => {
   it("includes stripe.configured boolean", async () => {
     const prev = process.env.STRIPE_SECRET_KEY;
     delete process.env.STRIPE_SECRET_KEY;
+    vi.resetModules();
+    vi.doMock("@/lib/db/schema-compatibility", () => ({
+      checkSchemaCompatibility: vi.fn(async () => ({
+        compatible: true,
+        reachable: true,
+        missingColumns: [],
+        missingTables: [],
+        epic174MigrationApplied: true,
+        detail: "compatible",
+      })),
+    }));
     const { GET } = await import("@/app/api/health/route");
     const res = await GET();
     const json = (await res.json()) as {

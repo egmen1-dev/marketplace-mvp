@@ -106,6 +106,8 @@
     "product:epic-105:closed-beta-launch-validation": "tsx scripts/epic-105-closed-beta-launch-validation-gate.ts",
     "product:epic-108:release-candidate-final": "tsx scripts/epic-108-release-candidate-final-verification-gate.ts",
     "release:pipeline:verify": "tsx scripts/release-pipeline-verify.ts",
+    "release:migration:verify": "tsx scripts/release-migration-verify.ts",
+    "release:migration:preflight": "tsx scripts/migration-preflight-audit.ts",
     "release:pipeline:pr-audit": "tsx scripts/release-pipeline-pr-policy-audit.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",

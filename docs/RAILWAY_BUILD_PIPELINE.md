@@ -46,15 +46,43 @@ push main
 
 ## Migrations
 
-Boot does **not** run `prisma migrate deploy` (Prisma CLI is not in the slim standalone image).
+Container boot runs pending migrations before the app starts:
 
-Apply migrations explicitly when schema changes:
+```text
+./docker-entrypoint.sh
+  → prisma migrate deploy   # advisory lock — safe for multiple replicas
+  → node server.js
+```
+
+`Dockerfile` copies `prisma/` + Prisma CLI into the runner image. `railway.toml` uses `startCommand = "./docker-entrypoint.sh"`.
+
+**Invariant:** a deployment is not release-ready when application code requires schema changes but the database migration state is incompatible. `/api/health` reports:
+
+```json
+{
+  "checks": {
+    "database": {
+      "reachable": true,
+      "schemaCompatible": true
+    }
+  }
+}
+```
+
+When schema is incompatible, health returns **503** (not 200 with hidden breakage).
+
+Verify after deploy:
+
+```bash
+npm run release:migration:verify
+npm run release:pipeline:verify
+```
+
+Manual one-off (still supported):
 
 ```bash
 railway run --service web-v2 -- npx prisma migrate deploy
 ```
-
-(or a dedicated migrate job). Staging DB already has current migrations applied.
 
 ## Ops notes
 

@@ -110,6 +110,28 @@ async function main() {
     JSON.stringify(deploymentVerification, null, 2),
   );
 
+  const healthBody = healthProbe.body as {
+    ok?: boolean;
+    checks?: {
+      database?: {
+        reachable?: boolean;
+        schemaCompatible?: boolean;
+        detail?: string;
+        missingColumns?: string[];
+      };
+    };
+    runtime?: {
+      trustLoopEnabled?: boolean;
+      moderationAutomationMode?: string;
+    };
+  };
+  const dbReachable =
+    healthBody.checks?.database?.reachable === true ||
+    healthBody.checks?.database?.schemaCompatible !== undefined ||
+    healthProbe.status === 200;
+  const schemaCompatible = healthBody.checks?.database?.schemaCompatible === true;
+  const schemaCheckSupported = healthBody.checks?.database?.schemaCompatible !== undefined;
+
   const healthCheck = {
     generatedAt: new Date().toISOString(),
     endpoints: [
@@ -117,7 +139,17 @@ async function main() {
         path: "/api/health",
         httpStatus: healthProbe.status,
         latencyMs: healthProbe.latencyMs,
-        verdict: healthProbe.status === 200 ? "PASS" : "FAIL",
+        verdict:
+          healthProbe.status === 200 && (!schemaCheckSupported || schemaCompatible)
+            ? "PASS"
+            : "FAIL",
+        database: {
+          reachable: dbReachable,
+          schemaCompatible: schemaCheckSupported ? schemaCompatible : null,
+          detail: healthBody.checks?.database?.detail ?? null,
+          missingColumns: healthBody.checks?.database?.missingColumns ?? null,
+        },
+        runtime: healthBody.runtime ?? null,
       },
       {
         path: "/api/version",
@@ -127,7 +159,13 @@ async function main() {
       },
     ],
     verdict:
-      healthProbe.status === 200 && versionProbe.status === 200 ? "PASS" : "FAIL",
+      healthProbe.status === 200 &&
+      versionProbe.status === 200 &&
+      (!schemaCheckSupported || schemaCompatible)
+        ? "PASS"
+        : "FAIL",
+    migrationInvariant:
+      "Deployment not release-ready when DB schema incompatible with deployed application code.",
   };
 
   const criticalConfig = JSON.parse(readFileSync(CRITICAL_ROUTES_PATH, "utf8")) as {

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { checkSchemaCompatibility } from "@/lib/db/schema-compatibility";
 import { getBuildVersionInfo } from "@/lib/build-info";
+import { getModerationAutomationMode } from "@/lib/moderation/config";
+import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 import { isBlobConfigured } from "@/lib/storage";
-import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -12,16 +14,12 @@ type CheckResult = {
   optional?: boolean;
   detail?: string;
   configured?: boolean;
+  reachable?: boolean;
+  schemaCompatible?: boolean;
+  missingColumns?: string[];
+  missingTables?: string[];
+  epic174MigrationApplied?: boolean | null;
 };
-
-async function checkDatabase(): Promise<CheckResult> {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    return { ok: true };
-  } catch {
-    return { ok: false, detail: "unreachable" };
-  }
-}
 
 function checkAuth(): CheckResult {
   const ok = Boolean(process.env.AUTH_SECRET?.trim());
@@ -65,10 +63,21 @@ function checkStripe(): CheckResult {
  * Health check — safe for load balancers / Railway.
  * GET /api/health
  *
+ * Distinguishes DB reachability from schema compatibility.
  * Does not expose secrets or connection strings.
  */
 export async function GET() {
-  const [database] = await Promise.all([checkDatabase()]);
+  const schema = await checkSchemaCompatibility();
+
+  const database: CheckResult = {
+    ok: schema.reachable && schema.compatible,
+    reachable: schema.reachable,
+    schemaCompatible: schema.compatible,
+    detail: schema.detail,
+    missingColumns: schema.missingColumns,
+    missingTables: schema.missingTables,
+    epic174MigrationApplied: schema.epic174MigrationApplied,
+  };
 
   const checks = {
     database,
@@ -78,17 +87,23 @@ export async function GET() {
     stripe: checkStripe(),
   };
 
-  const requiredOk = checks.database.ok && checks.auth.ok;
-  const ok = requiredOk;
+  const requiredOk =
+    checks.database.reachable === true &&
+    checks.database.schemaCompatible === true &&
+    checks.auth.ok;
 
   return NextResponse.json(
     {
-      ok,
+      ok: requiredOk,
       service: "marketplace-mvp",
       timestamp: new Date().toISOString(),
       version: getBuildVersionInfo(),
+      runtime: {
+        trustLoopEnabled: isMarketplaceTrustLoopEnabled(),
+        moderationAutomationMode: getModerationAutomationMode(),
+      },
       checks,
     },
-    { status: ok ? 200 : 503 },
+    { status: requiredOk ? 200 : 503 },
   );
 }
