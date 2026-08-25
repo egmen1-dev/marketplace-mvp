@@ -1,0 +1,254 @@
+{
+  "generatedAt": "2026-08-25T10:14:34.477Z",
+  "migrationId": "20260825100000_epic_174_moderation_engine",
+  "provider": "PostgreSQL (Railway staging via web-v2)",
+  "backup": {
+    "automatedSnapshotAvailable": "UNKNOWN — operator must confirm Railway Postgres backup policy",
+    "actionBeforeMigration": "Verify Railway Postgres snapshot/backup if operational access permits"
+  },
+  "safetyAssessment": {
+    "canDropData": false,
+    "destructiveOperations": [],
+    "dataRewrite": false,
+    "notNullWithoutDefaultOnExisting": true,
+    "verdict": "SAFE_ADDITIVE",
+    "notes": [
+      "All column additions use IF NOT EXISTS or DEFAULT — existing Product/ProductModeration rows preserved",
+      "New audit table is append-only; no existing rows modified",
+      "No DROP TABLE or TRUNCATE",
+      "Do not use migrate reset or manual resolve without SQL execution"
+    ]
+  },
+  "operations": [
+    {
+      "type": "OTHER",
+      "line": "-- EPIC 174: Moderation & Trust Engine v1",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"products\" ADD COLUMN IF NOT EXISTS \"contentVersion\" INTEGER NOT NULL DEFAULT 1;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"products\" ADD COLUMN IF NOT EXISTS \"publishedAt\" TIMESTAMP(3);",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"submittedAt\" TIMESTAMP(3);",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"reviewStartedAt\" TIMESTAMP(3);",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"needsChangesAt\" TIMESTAMP(3);",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"rejectedAt\" TIMESTAMP(3);",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"riskScore\" INTEGER;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"policyVersion\" TEXT;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"reviewMode\" TEXT;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"stage\" TEXT;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"reasonCodes\" JSONB;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"rulesTriggered\" JSONB;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"systemRecommendation\" TEXT;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"contentVersionAtSubmit\" INTEGER;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"contentVersionHash\" TEXT;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"moderatedContentVersion\" INTEGER;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"moderatedContentVersionHash\" TEXT;",
+      "destructive": false
+    },
+    {
+      "type": "ADD_COLUMN",
+      "line": "ALTER TABLE \"product_moderations\" ADD COLUMN IF NOT EXISTS \"decisionVersion\" INTEGER NOT NULL DEFAULT 0;",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_INDEX",
+      "line": "CREATE INDEX IF NOT EXISTS \"product_moderations_submittedAt_idx\" ON \"product_moderations\"(\"submittedAt\");",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_INDEX",
+      "line": "CREATE INDEX IF NOT EXISTS \"product_moderations_riskScore_idx\" ON \"product_moderations\"(\"riskScore\");",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_TABLE",
+      "line": "CREATE TABLE IF NOT EXISTS \"product_moderation_audit_events\" (",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"id\" TEXT NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"productId\" TEXT NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"moderationId\" TEXT NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"sellerId\" TEXT NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"previousStatus\" \"ModerationStatus\",",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"newStatus\" \"ModerationStatus\" NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"decision\" TEXT NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"reasonCodes\" JSONB NOT NULL DEFAULT '[]',",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"rulesTriggered\" JSONB NOT NULL DEFAULT '[]',",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"riskScore\" INTEGER,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"policyVersion\" TEXT,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"reviewerType\" TEXT NOT NULL,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"reviewerId\" TEXT,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"metadata\" JSONB,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "\"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "CONSTRAINT \"product_moderation_audit_events_pkey\" PRIMARY KEY (\"id\")",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": ");",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_INDEX",
+      "line": "CREATE INDEX IF NOT EXISTS \"product_moderation_audit_events_productId_idx\" ON \"product_moderation_audit_events\"(\"productId\");",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_INDEX",
+      "line": "CREATE INDEX IF NOT EXISTS \"product_moderation_audit_events_moderationId_idx\" ON \"product_moderation_audit_events\"(\"moderationId\");",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_INDEX",
+      "line": "CREATE INDEX IF NOT EXISTS \"product_moderation_audit_events_sellerId_idx\" ON \"product_moderation_audit_events\"(\"sellerId\");",
+      "destructive": false
+    },
+    {
+      "type": "CREATE_INDEX",
+      "line": "CREATE INDEX IF NOT EXISTS \"product_moderation_audit_events_createdAt_idx\" ON \"product_moderation_audit_events\"(\"createdAt\");",
+      "destructive": false
+    },
+    {
+      "type": "OTHER",
+      "line": "ALTER TABLE \"product_moderation_audit_events\" DROP CONSTRAINT IF EXISTS \"product_moderation_audit_events_moderationId_fkey\";",
+      "destructive": false
+    },
+    {
+      "type": "FOREIGN_KEY",
+      "line": "ALTER TABLE \"product_moderation_audit_events\" ADD CONSTRAINT \"product_moderation_audit_events_moderationId_fkey\" FOREIGN KEY (\"moderationId\") REFERENCES \"product_moderations\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;",
+      "destructive": false
+    }
+  ],
+  "prismaMigrateStatus": {
+    "ran": false,
+    "state": "NOT_RUN",
+    "output": null
+  }
+}

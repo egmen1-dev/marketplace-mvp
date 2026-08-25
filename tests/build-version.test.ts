@@ -95,15 +95,27 @@ describe("GET /api/version", () => {
 describe("GET /api/health", () => {
   beforeEach(() => {
     writeGenerated({ commit: "58e681f", buildTime: "2026-08-12T19:00:00.000Z" });
+    vi.resetModules();
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.doUnmock("@/lib/db/schema-compatibility");
     __resetBuildInfoCacheForTests();
   });
 
   it("keeps legacy contract and adds version", async () => {
     vi.stubEnv("AUTH_SECRET", "test-secret-for-health");
+    vi.doMock("@/lib/db/schema-compatibility", () => ({
+      checkSchemaCompatibility: vi.fn(async () => ({
+        compatible: true,
+        reachable: true,
+        missingColumns: [],
+        missingTables: [],
+        epic174MigrationApplied: true,
+        detail: "compatible",
+      })),
+    }));
     const { GET } = await import("@/app/api/health/route");
     const res = await GET();
     const json = (await res.json()) as {
@@ -111,7 +123,10 @@ describe("GET /api/health", () => {
       service: string;
       timestamp: string;
       version: { commit: string; buildTime: string };
-      checks: Record<string, unknown>;
+      checks: {
+        database: { reachable?: boolean; schemaCompatible?: boolean };
+      };
+      runtime?: { trustLoopEnabled?: boolean; moderationAutomationMode?: string };
     };
     expect(json.service).toBe("marketplace-mvp");
     expect(typeof json.timestamp).toBe("string");
@@ -119,5 +134,8 @@ describe("GET /api/health", () => {
     expect(json.version.commit).toBe("58e681f");
     expect(json.version.buildTime).toBe("2026-08-12T19:00:00.000Z");
     expect(typeof json.ok).toBe("boolean");
+    expect(json.checks.database.reachable).toBe(true);
+    expect(json.checks.database.schemaCompatible).toBe(true);
+    expect(json.runtime?.moderationAutomationMode).toBeDefined();
   });
 });

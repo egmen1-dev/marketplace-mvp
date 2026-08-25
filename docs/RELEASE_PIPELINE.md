@@ -19,11 +19,13 @@ Ready for review     NOT Draft
   ↓
 Merge to main
   ↓
-Railway deploy       GitHub → main → Docker build
+Railway deploy       GitHub → main → Docker build → migrate deploy → server
   ↓
 Verify SHA           npm run release:pipeline:verify
   ↓
-Verify staging       critical routes + health
+Verify migrations    npm run release:migration:verify
+  ↓
+Verify staging       critical routes + health (schema compatible)
   ↓
 Release gate         npm run product:epic-108:release-candidate-final
   ↓
@@ -109,13 +111,26 @@ Override: `STAGING_BASE_URL=https://your-staging.example`
 - Branch: **`main`**
 - Root directory: **empty** (repository root)
 - Builder: **Dockerfile** (`railway.toml`)
-- After merge: confirm deploy finished, then run `npm run release:pipeline:verify`
+- After merge: confirm deploy finished, then run `npm run release:pipeline:verify` and `npm run release:migration:verify`
+
+## Migration release invariant
+
+> A deployment is not release-ready merely because `/api/health` can connect to PostgreSQL. The deployed application schema and database migration state must be compatible.
+
+Release order:
+
+```text
+CODE DEPLOY → MIGRATION → SCHEMA COMPATIBILITY → APPLICATION READINESS → STAGING E2E → APK BUILD → MRP → PHYSICAL
+```
+
+No APK release when backend schema changed until `release:migration:verify` PASS.
 
 ## Related gates
 
 | Gate | When |
 |------|------|
 | `npm run release:pipeline:verify` | After every staging deploy |
+| `npm run release:migration:verify` | After every staging deploy when schema may have changed |
 | `npm run product:epic-108:release-candidate-final` | Before Closed Beta invite |
 | `npm run mobile:staging-smoke` | Mobile integration smoke |
 

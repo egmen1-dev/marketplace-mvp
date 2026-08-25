@@ -39,6 +39,13 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 # Explicit copy in case standalone tree omitted it
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
+# Prisma migrate deploy on container boot (advisory lock — safe for replicas)
+COPY --from=builder /app/prisma ./prisma
+COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
+COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
+COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
 EXPOSE 8080
-CMD ["node", "server.js"]
+CMD ["./docker-entrypoint.sh"]
