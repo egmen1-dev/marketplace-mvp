@@ -60,6 +60,13 @@ async function main() {
   mkdirSync(OUT, { recursive: true });
   sh("git fetch origin main 2>/dev/null || true");
 
+  let railwayRuntimeVerdict: "PASS" | "FAIL" = "PASS";
+  try {
+    execSync("npm run release:railway-runtime:verify", { stdio: "pipe" });
+  } catch {
+    railwayRuntimeVerdict = "FAIL";
+  }
+
   const originMainFull = sh("git rev-parse origin/main");
   const localMainFull = sh("git rev-parse main");
   const githubMainSha = normalizeSha(originMainFull);
@@ -273,6 +280,12 @@ async function main() {
       { id: "create_pr", label: "Create PR (draft=false)", automated: false, policy: "ManagePullRequest draft=false" },
       { id: "ready_for_review", label: "Mark PR Ready for review", automated: false, blocker: "Draft PRs block release completion" },
       { id: "merge", label: "Merge to main", automated: false },
+      {
+        id: "railway_runtime",
+        label: "npm run release:railway-runtime:verify",
+        automated: true,
+        command: "npm run release:railway-runtime:verify",
+      },
       { id: "railway_deploy", label: "Railway deploy from main", automated: false },
       { id: "verify_version", label: "npm run release:pipeline:verify", automated: true, command: "npm run release:pipeline:verify" },
       { id: "verify_staging", label: "SHA parity + critical routes", automated: true },
@@ -281,6 +294,7 @@ async function main() {
     ],
     mandatoryBeforeComplete: [
       "No mergeable Draft PR blocking release train",
+      "Docker image includes complete Prisma CLI runtime (release:railway-runtime:verify)",
       "origin/main SHA === Railway /api/version commit",
       "Critical routes PASS for files present on origin/main",
       "/api/health and /api/version return 200",
@@ -289,6 +303,13 @@ async function main() {
   writeFileSync(join(OUT, "release-checklist.json"), JSON.stringify(releaseChecklist, null, 2));
 
   const blockers: Array<{ id: string; severity: string; detail: string }> = [];
+  if (railwayRuntimeVerdict !== "PASS") {
+    blockers.push({
+      id: "railway_runtime",
+      severity: "P0",
+      detail: "Prisma CLI runtime dependency closure missing from Docker image (npm run release:railway-runtime:verify)",
+    });
+  }
   if (!shaMatch) {
     blockers.push({
       id: "sha_mismatch",
@@ -357,6 +378,7 @@ async function main() {
     epic: "EPIC-109",
     generatedAt: new Date().toISOString(),
     verdict: deploymentComplete ? "COMPLETE" : "BLOCKED",
+    railwayRuntime: railwayRuntimeVerdict,
     deploymentVerification: deploymentVerification.verdict,
     healthCheck: healthCheck.verdict,
     routeVerification: routeVerdict,

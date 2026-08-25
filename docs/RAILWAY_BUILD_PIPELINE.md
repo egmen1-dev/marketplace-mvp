@@ -54,7 +54,7 @@ Container boot runs pending migrations before the app starts:
   → node server.js
 ```
 
-`Dockerfile` copies `prisma/` + Prisma CLI into the runner image. `railway.toml` uses `startCommand = "./docker-entrypoint.sh"`.
+`Dockerfile` copies `prisma/` plus the **complete Prisma CLI dependency closure** (via `scripts/collect-prisma-cli-runtime.mjs`) into the runner image. Do not cherry-pick individual `@prisma/*` packages — transitive deps like `effect` are required. `railway.toml` uses `startCommand = "./docker-entrypoint.sh"`.
 
 **Invariant:** a deployment is not release-ready when application code requires schema changes but the database migration state is incompatible. `/api/health` reports:
 
@@ -71,9 +71,10 @@ Container boot runs pending migrations before the app starts:
 
 When schema is incompatible, health returns **503** (not 200 with hidden breakage).
 
-Verify after deploy:
+Verify before/after deploy:
 
 ```bash
+npm run release:railway-runtime:verify
 npm run release:migration:verify
 npm run release:pipeline:verify
 ```

@@ -1,6 +1,6 @@
 # Railway staging image (does not affect Vercel production).
 # Strategy: GitHub → Railway DOCKERFILE + Next standalone.
-# Migrations: run via one-off `railway run` / CI (see docs/RAILWAY_BUILD_PIPELINE.md).
+# Migrations: prisma migrate deploy on container boot via docker-entrypoint.sh.
 
 FROM node:20-bookworm-slim AS base
 WORKDIR /app
@@ -12,6 +12,16 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 COPY prisma ./prisma
 RUN npm ci
+
+FROM base AS prisma-runtime
+COPY package.json package-lock.json ./
+COPY prisma ./prisma
+COPY scripts/collect-prisma-cli-runtime.mjs ./scripts/collect-prisma-cli-runtime.mjs
+# Full lockfile install ensures Prisma CLI transitive closure (effect, c12, …) is resolved.
+RUN npm ci --ignore-scripts \
+  && npx prisma generate \
+  && node scripts/collect-prisma-cli-runtime.mjs /app /prisma-cli-runtime \
+  && node /prisma-cli-runtime/node_modules/prisma/build/index.js --version
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
@@ -39,11 +49,9 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 # Explicit copy in case standalone tree omitted it
 COPY --from=builder /app/lib/build-info.generated.json ./lib/build-info.generated.json
-# Prisma migrate deploy on container boot (advisory lock — safe for replicas)
-COPY --from=builder /app/prisma ./prisma
-COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
-COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
+# Prisma migrate deploy on container boot — complete CLI closure, not cherry-picked packages
+COPY --from=prisma-runtime /prisma-cli-runtime/prisma ./prisma
+COPY --from=prisma-runtime /prisma-cli-runtime/node_modules/ ./node_modules/
 COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
