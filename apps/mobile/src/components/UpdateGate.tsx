@@ -1,11 +1,18 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { MobileUpdateInfo } from "../api/endpoints";
 import { postTelemetry } from "../api/endpoints";
 import { PrimaryButton, SecondaryButton } from "../components/ui";
 import { colors, radii, spacing, typography } from "../theme/tokens";
-import { getUpdateErrorMessage, startApkDownload } from "../update/download-apk";
+import { findVerifiedCachedApk } from "../update/apk-download-cache";
+import {
+  getUpdateErrorMessage,
+  installCachedApkUpdate,
+  openUnknownSourcesSettings,
+  startApkDownload,
+  type ApkUpdateFlowState,
+} from "../update/download-apk";
 import { saveUpdateDefer } from "../update/update-defer-storage";
 import { UPDATE_UI_LABELS } from "../update/update-ui-labels";
 import { UPDATE_ANALYTICS, type MobileUpdateState } from "../update/types";
@@ -29,21 +36,66 @@ function bodyForState(state: MobileUpdateState, versionName: string) {
   return `${UPDATE_UI_LABELS.availableBody}\n\nВерсия ${versionName}`;
 }
 
+function ctaForFlowState(flowState: ApkUpdateFlowState, hasCachedApk: boolean): string {
+  if (flowState === "DOWNLOADING") return UPDATE_UI_LABELS.downloading;
+  if (flowState === "READY_TO_INSTALL" || flowState === "INSTALLER_OPENED") return UPDATE_UI_LABELS.installCta;
+  if (hasCachedApk) return UPDATE_UI_LABELS.installCta;
+  return UPDATE_UI_LABELS.updateNow;
+}
+
+function statusForFlowState(flowState: ApkUpdateFlowState, hasCachedApk: boolean): string | null {
+  if (flowState === "DOWNLOADING") return UPDATE_UI_LABELS.downloading;
+  if (flowState === "READY_TO_INSTALL") return UPDATE_UI_LABELS.readyToInstall;
+  if (flowState === "INSTALLER_OPENED") return UPDATE_UI_LABELS.installerOpened;
+  if (hasCachedApk && flowState === "AVAILABLE") return UPDATE_UI_LABELS.alreadyDownloaded;
+  return null;
+}
+
 export function UpdateGate({ info, visible, onDismiss }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [flowState, setFlowState] = useState<ApkUpdateFlowState>("AVAILABLE");
+  const [hasCachedApk, setHasCachedApk] = useState(false);
+  const [needsUnknownSources, setNeedsUnknownSources] = useState(false);
   const required = info.updateState === "REQUIRED_UPDATE" || info.updateState === "UNSUPPORTED_CLIENT";
   const dismissible = !required;
+
+  useEffect(() => {
+    if (!visible) return;
+    void (async () => {
+      if (!info.sha256) {
+        setHasCachedApk(false);
+        return;
+      }
+      const cached = await findVerifiedCachedApk({
+        versionCode: info.versionCode,
+        sha256: info.sha256,
+      });
+      setHasCachedApk(Boolean(cached));
+      setFlowState(cached ? "READY_TO_INSTALL" : "AVAILABLE");
+    })();
+  }, [info.sha256, info.versionCode, visible]);
 
   async function onUpdate() {
     setBusy(true);
     setError(null);
-    const result = await startApkDownload(info);
+    setNeedsUnknownSources(false);
+
+    const runner = hasCachedApk && flowState !== "AVAILABLE" ? installCachedApkUpdate : startApkDownload;
+    const result = await runner(info, { onStateChange: setFlowState });
     setBusy(false);
+
     if (!result.ok) {
       setError(getUpdateErrorMessage(result.code));
+      setNeedsUnknownSources(Boolean(result.needsUnknownSources));
       return;
     }
+
+    setHasCachedApk(true);
+  }
+
+  async function onAllowInstall() {
+    await openUnknownSourcesSettings();
   }
 
   async function onLater() {
@@ -55,6 +107,9 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
     await saveUpdateDefer(info.versionCode);
     onDismiss();
   }
+
+  const statusLine = statusForFlowState(flowState, hasCachedApk);
+  const primaryDisabled = flowState === "DOWNLOADING" || flowState === "INSTALLER_OPENED";
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={dismissible ? onDismiss : undefined}>
@@ -81,6 +136,8 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
             Чтобы обновить ЛОТ, Android попросит разрешить установку обновления из этого источника.
           </Text>
 
+          {statusLine ? <Text style={styles.status}>{statusLine}</Text> : null}
+
           {info.sha256 ? (
             <Text style={styles.sha} selectable>
               SHA256: {info.sha256.slice(0, 16)}…
@@ -89,7 +146,16 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <PrimaryButton label={UPDATE_UI_LABELS.updateNow} fullWidth onPress={onUpdate} loading={busy} />
+          <PrimaryButton
+            label={ctaForFlowState(flowState, hasCachedApk)}
+            fullWidth
+            onPress={onUpdate}
+            loading={busy || flowState === "DOWNLOADING"}
+            disabled={primaryDisabled}
+          />
+          {needsUnknownSources ? (
+            <SecondaryButton label={UPDATE_UI_LABELS.allowInstallCta} fullWidth onPress={onAllowInstall} />
+          ) : null}
           {dismissible ? <SecondaryButton label={UPDATE_UI_LABELS.later} fullWidth onPress={onLater} /> : null}
           {!dismissible ? null : (
             <Pressable onPress={onDismiss} style={styles.dismissHit}>
@@ -122,6 +188,7 @@ const styles = StyleSheet.create({
   notesScroll: { maxHeight: 120 },
   noteLine: { ...typography.body, color: colors.gray700, marginBottom: spacing.xs },
   hint: { ...typography.caption, color: colors.gray500 },
+  status: { ...typography.subtitle, color: colors.gray900 },
   sha: { ...typography.caption, color: colors.gray500, fontFamily: "monospace" },
   error: { ...typography.caption, color: colors.danger },
   dismissHit: { height: 1 },

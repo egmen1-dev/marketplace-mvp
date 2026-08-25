@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2026-08-25T09:20:00Z",
+  "verdict": "READY_FOR_UPDATE_HOTFIX_BUILD",
+  "rc103Status": "BLOCKED_FOR_BETA",
+  "rootCause": {
+    "primary": "Case A + F — browser-only handoff via Linking.openURL(downloadUrl)",
+    "detail": "Update CTA opened the APK URL in the browser/download manager. Android never received an in-app installer intent, so repeated downloads did not replace the installed package. Tester reopened the old app and still saw the previous version.",
+    "ruledOut": [
+      "Case D — signature mismatch (all RC10.x share debug signer fac61745…)",
+      "Case G — version downgrade (18 < 19, monotonic versionCodes)"
+    ]
+  },
+  "signatureCheck": {
+    "package": "ru.lot.marketplace.alpha",
+    "rc10_1_signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "rc10_2_signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "rc10_3_signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "verdict": "PASS — same certificate across RC10.1/10.2/10.3"
+  },
+  "versionCompatibility": {
+    "rc10_2_versionCode": 18,
+    "rc10_3_versionCode": 19,
+    "packageName": "ru.lot.marketplace.alpha",
+    "verdict": "PASS"
+  },
+  "adbInstallR": {
+    "status": "NOT_RUN",
+    "reason": "No Android device/emulator connected in cloud agent",
+    "expected": "adb install -r RC10.3.apk → Success; dumpsys versionCode=19"
+  },
+  "currentUpdateFlowBeforeFix": [
+    "UpdateHost → fetchInstallableUpdate",
+    "UpdateGate «Обновить сейчас»",
+    "startApkDownload → Linking.openURL(downloadUrl)",
+    "Browser/download manager saves APK",
+    "No automatic package installer handoff",
+    "False-positive telemetry update_install_opened on URL open"
+  ],
+  "fix": {
+    "download": "File.downloadFileAsync into app cache",
+    "shaVerify": "SHA256 vs MRP metadata before install",
+    "cache": "SecureStore + verified file cache; skip re-download",
+    "installer": "IntentLauncher ACTION_VIEW + File.contentUri + package-archive MIME",
+    "permission": "REQUEST_INSTALL_PACKAGES + MANAGE_UNKNOWN_APP_SOURCES UX",
+    "stateTruth": "AVAILABLE → DOWNLOADING → READY_TO_INSTALL → INSTALLER_OPENED"
+  },
+  "repeatedDownloadProtection": "PASS",
+  "installerHandoff": "PASS (code-level; physical proof pending hotfix APK)",
+  "tests": {
+    "unit": "tests/mobile-android-update-install.test.ts",
+    "gate": "npm run mobile:android-update-install:gate"
+  },
+  "mrpChanged": false
+}
