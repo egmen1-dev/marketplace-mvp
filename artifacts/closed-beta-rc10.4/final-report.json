@@ -1,43 +1,36 @@
 {
-  "generatedAt": "2026-08-25T10:43:00Z",
-  "epic": "P0 STAGING DB MIGRATION RECOVERY + RC10.4 CONTINUE",
-  "verdict": "BLOCKED_FOR_RC10_4_BUILD",
-  "migration": {
-    "beforeState": "EPIC 174 code deployed (cd27534) but migration 20260825100000_epic_174_moderation_engine NOT applied",
-    "migrationExecuted": false,
-    "safetyAudit": "SAFE_ADDITIVE — see migration-preflight.json",
-    "recoveryMechanism": "PR #177 docker-entrypoint.sh auto-migrate on boot",
-    "schemaCompatible": false,
-    "operatorActionRequired": "Deploy PR #177 (bec966a) OR run railway run --service web-v2 -- npx prisma migrate deploy"
-  },
-  "staging": {
-    "mainSha": "bec966a",
+  "generatedAt": "2026-08-25T10:58:30Z",
+  "epic": "RC10.4 WAIT FOR RAILWAY DEPLOY",
+  "verdict": "WAITING_FOR_RAILWAY_DEPLOY",
+  "deploy": {
+    "mainSha": "4eff371",
     "railwaySha": "6059dc9",
-    "deployLag": true,
-    "dbReachable": true,
-    "dbSchemaCompatible": false,
-    "trustLoopEnabled": "unknown until migration + new health deployed",
-    "moderationAutomationMode": "unknown until migration + new health deployed"
+    "pr177Included": false,
+    "pr177MergeCommit": "bec966a",
+    "deployLagMinutes": 56,
+    "pollEvidence": "15 polls over 5 min — SHA unchanged, schemaCompatible field absent (pre-PR#177 health)"
   },
-  "pipelineHardening": {
-    "pr": "https://github.com/egmen1-dev/marketplace-mvp/pull/177",
-    "rootCause": "Railway deployed app code without prisma migrate deploy; /api/health only checked DB connectivity",
-    "implementation": [
-      "docker-entrypoint.sh runs prisma migrate deploy before server.js",
-      "lib/db/schema-compatibility.ts + /api/health schemaCompatible (503 when incompatible)",
-      "npm run release:migration:verify gate",
-      "release:pipeline:verify fails on schema mismatch"
-    ],
-    "newInvariant": "CODE DEPLOY → MIGRATION → SCHEMA COMPATIBILITY → APPLICATION READINESS → STAGING E2E → APK → MRP → PHYSICAL"
+  "migration": {
+    "executed": false,
+    "migrationName": "20260825100000_epic_174_moderation_engine",
+    "result": "NOT_RUN — awaiting PR #177 deploy with docker-entrypoint.sh auto-migrate",
+    "schemaCompatible": false
   },
-  "moderationE2H": "NOT_RUN — blocked by migration",
+  "health": {
+    "httpStatus": 200,
+    "databaseReachable": true,
+    "schemaCompatible": null,
+    "note": "Legacy health on 6059dc9 does not expose schemaCompatible — cannot distinguish reachability from compatibility"
+  },
+  "config": {
+    "trustLoopEnabled": "unknown",
+    "moderationAutomationMode": "unknown"
+  },
+  "moderationAH": "NOT_RUN",
+  "adminAcceptance": "NOT_RUN",
+  "sellerRegression": "NOT_RUN",
+  "gates": "NOT_RUN — blocked at Step 1",
   "rc104": { "built": false },
   "physical": "NOT_RUN",
-  "nextSteps": [
-    "Confirm Railway deploy of bec966a completes (auto-migrate on boot)",
-    "Verify /api/health returns schemaCompatible: true",
-    "npm run release:migration:verify",
-    "EXPECTED_RAILWAY_SHA=bec966a npm run mobile:rc10.4:moderation-acceptance",
-    "Then RC10.4 build if all PASS"
-  ]
+  "nextTrigger": "Re-run when Railway SHA >= bec966a and /api/health shows schemaCompatible"
 }
