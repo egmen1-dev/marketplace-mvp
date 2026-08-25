@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-08-25T10:01:00Z",
+  "epic": "EPIC 174.1",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "mainSha": "cd27534",
+  "deployedSha": "cd27534",
+  "deployVerified": true,
+  "migration": {
+    "status": "NOT_APPLIED",
+    "migrationId": "20260825100000_epic_174_moderation_engine",
+    "evidence": [
+      "POST /api/mobile/seller/products returns 500 after EPIC 174 deploy",
+      "GET /api/admin/moderation returns 500",
+      "mobile-lot-publish-truth-staging-smoke.mjs draft create failed 500 (regression)",
+      "Railway boot does not run prisma migrate deploy per docs/RAILWAY_BUILD_PIPELINE.md"
+    ],
+    "requiredAction": "railway run --service web-v2 -- npx prisma migrate deploy"
+  },
+  "effectiveConfig": {
+    "MARKETPLACE_TRUST_LOOP_ENABLED": "unknown — blocked before moderation probe",
+    "MODERATION_AUTOMATION_MODE": "unknown — blocked before moderation probe",
+    "note": "Runtime env not readable without secrets; infer after migration"
+  },
+  "scenarios": [
+    {
+      "scenario": "deploy",
+      "status": "PASS",
+      "deployedSha": "cd27534",
+      "expectedSha": "cd27534",
+      "databaseOk": true
+    },
+    {
+      "scenario": "migration-api",
+      "status": "FAIL",
+      "adminModerationStatus": 500,
+      "counters": null
+    },
+    {
+      "scenario": "A",
+      "status": "NOT_RUN",
+      "reason": "seller product create 500 — schema migration missing"
+    },
+    {
+      "scenario": "B",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    },
+    {
+      "scenario": "C",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    },
+    {
+      "scenario": "D",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    },
+    {
+      "scenario": "E",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    },
+    {
+      "scenario": "F",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    },
+    {
+      "scenario": "G",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    },
+    {
+      "scenario": "H",
+      "status": "NOT_RUN",
+      "reason": "blocked by A"
+    }
+  ],
+  "adminAcceptance": {
+    "queueLoads": false,
+    "detailLoads": false,
+    "counters": null,
+    "verdict": "FAIL"
+  },
+  "regressionGates": {
+    "npm run build": "PASS",
+    "cd apps/mobile && npm run typecheck": "PASS",
+    "npm run mobile:seller-photo-upload:gate": "PASS",
+    "npm run mobile:lot-publish-truth:gate": "PASS",
+    "npm run mobile:lot-dynamic-characteristics:gate": "PASS",
+    "npm run mobile:lot-moderation:gate": "PASS",
+    "npm run mobile:android-update-install:gate": "PASS",
+    "staging publish-truth smoke post-deploy": "FAIL (create 500)"
+  },
+  "rc104": {
+    "built": false,
+    "reason": "E2E A–H not PASS"
+  },
+  "physical": "NOT_RUN",
+  "verdict": "BLOCKED_FOR_RC10_4_BUILD"
+}
