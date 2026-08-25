@@ -3,8 +3,20 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 
+import type { LotCharacteristicDefinition, LotCharacteristicFormValue } from "./lot-characteristics";
+import {
+  formatCharacteristicPreviewValue,
+  humanCharacteristicMissingMessage,
+  mapServerCharacteristicRejection,
+  pruneCharacteristicValuesForSchema,
+  serializeLotCharacteristicPayload,
+  validateLotCharacteristicForm,
+} from "./lot-characteristics";
+
+import { ApiClientError } from "../api/client";
 import {
   createSellerLot,
+  fetchProductTypeCharacteristicsCompat,
   fetchSellerPickupPoints,
   fetchTaxonomyBrowse,
   publishSellerLot,
@@ -39,6 +51,7 @@ export function useLotCreateForm() {
   const draftRef = useRef<LotDraft>(EMPTY_LOT_DRAFT);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedFadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const characteristicsRequestRef = useRef(0);
 
   const [step, setStep] = useState<LotWizardStep>("photos");
   const [draft, setDraft] = useState<LotDraft>(EMPTY_LOT_DRAFT);
@@ -48,6 +61,9 @@ export function useLotCreateForm() {
   const [rootCategories, setRootCategories] = useState<Array<{ id: string; name: string }>>([]);
   const [subcategories, setSubcategories] = useState<Array<{ id: string; name: string }>>([]);
   const [productTypes, setProductTypes] = useState<Array<{ id: string; name: string }>>([]);
+  const [characteristicDefinitions, setCharacteristicDefinitions] = useState<LotCharacteristicDefinition[]>([]);
+  const [characteristicsLoading, setCharacteristicsLoading] = useState(false);
+  const [highlightedCharacteristicIds, setHighlightedCharacteristicIds] = useState<Set<string>>(new Set());
   const [pickupPoints, setPickupPoints] = useState<SellerPickupPoint[]>([]);
   const [pickupLoadError, setPickupLoadError] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
@@ -104,6 +120,46 @@ export function useLotCreateForm() {
       }, 400);
     },
     [flushSave],
+  );
+
+  const loadCharacteristicsForProductType = useCallback(
+    async (productTypeId: string | null, existingValues?: Record<string, LotCharacteristicFormValue>) => {
+      if (!productTypeId) {
+        setCharacteristicDefinitions([]);
+        return;
+      }
+
+      const requestId = ++characteristicsRequestRef.current;
+      setCharacteristicsLoading(true);
+      try {
+        const response = await fetchProductTypeCharacteristicsCompat(productTypeId);
+        if (requestId !== characteristicsRequestRef.current) return;
+
+        const defs = response.characteristics ?? [];
+        setCharacteristicDefinitions(defs);
+
+        const pruned = pruneCharacteristicValuesForSchema(defs, existingValues ?? draftRef.current.characteristicValues);
+        if (draftRef.current.productTypeId === productTypeId) {
+          persist(
+            {
+              ...draftRef.current,
+              characteristicsProductTypeId: productTypeId,
+              characteristicValues: pruned,
+            },
+            { immediate: true },
+          );
+        }
+      } catch {
+        if (requestId === characteristicsRequestRef.current) {
+          setCharacteristicDefinitions([]);
+        }
+      } finally {
+        if (requestId === characteristicsRequestRef.current) {
+          setCharacteristicsLoading(false);
+        }
+      }
+    },
+    [persist],
   );
 
   const patchDraftImages = useCallback(
@@ -182,6 +238,21 @@ export function useLotCreateForm() {
     [draft.images],
   );
 
+  const characteristicPreviewRows = useMemo(() => {
+    return characteristicDefinitions
+      .map((def) => {
+        const display = formatCharacteristicPreviewValue(def, draft.characteristicValues[def.id]);
+        if (!display) return null;
+        return { name: def.name, value: display };
+      })
+      .filter((row): row is { name: string; value: string } => Boolean(row));
+  }, [characteristicDefinitions, draft.characteristicValues]);
+
+  const requiredCharacteristicIssues = useMemo(
+    () => validateLotCharacteristicForm(characteristicDefinitions, draft.characteristicValues, { onlyRequired: true }),
+    [characteristicDefinitions, draft.characteristicValues],
+  );
+
   useEffect(() => {
     const config = loadAppConfig();
     fetch(`${config.apiBaseUrl}/api/mobile/bootstrap`)
@@ -197,6 +268,17 @@ export function useLotCreateForm() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!draft.productTypeId) {
+      setCharacteristicDefinitions([]);
+      return;
+    }
+    if (draft.characteristicsProductTypeId === draft.productTypeId && characteristicDefinitions.length > 0) {
+      return;
+    }
+    void loadCharacteristicsForProductType(draft.productTypeId, draft.characteristicValues);
+  }, [draft.productTypeId, draft.characteristicsProductTypeId, draft.characteristicValues, characteristicDefinitions.length, loadCharacteristicsForProductType]);
+
   const restoreTaxonomy = useCallback(async (saved: LotDraft) => {
     const browse = await fetchTaxonomyBrowse("root").catch(() => ({ children: [], productTypes: [] }));
     setRootCategories(browse.children ?? []);
@@ -208,7 +290,10 @@ export function useLotCreateForm() {
       setSubcategories(catBrowse.children ?? []);
       setProductTypes(catBrowse.productTypes ?? []);
     }
-  }, []);
+    if (saved.productTypeId) {
+      await loadCharacteristicsForProductType(saved.productTypeId, saved.characteristicValues);
+    }
+  }, [loadCharacteristicsForProductType]);
 
   const loadPickupPoints = useCallback(async () => {
     setPickupLoadError(null);
@@ -267,6 +352,7 @@ export function useLotCreateForm() {
     setStep("photos");
     setShowRestorePrompt(false);
     setPendingRestore(null);
+    setCharacteristicDefinitions([]);
     void loadPickupPoints();
   }, [loadPickupPoints]);
 
@@ -285,7 +371,26 @@ export function useLotCreateForm() {
     priceNumber > 0 &&
     draft.city.trim().length >= 2 &&
     Boolean(draft.productTypeId) &&
+    requiredCharacteristicIssues.length === 0 &&
     (!draft.pickupEnabled || draft.pickupPointIds.length > 0);
+
+  function updateCharacteristicValue(definitionId: string, value: LotCharacteristicFormValue) {
+    const nextValues = { ...draftRef.current.characteristicValues, [definitionId]: value };
+    persist({ ...draftRef.current, characteristicValues: nextValues, step: "details" });
+    if (highlightedCharacteristicIds.has(definitionId)) {
+      const nextHighlighted = new Set(highlightedCharacteristicIds);
+      nextHighlighted.delete(definitionId);
+      setHighlightedCharacteristicIds(nextHighlighted);
+    }
+  }
+
+  function toggleOptionalCharacteristics() {
+    persist({
+      ...draftRef.current,
+      showOptionalCharacteristics: !draftRef.current.showOptionalCharacteristics,
+      step: "details",
+    });
+  }
 
   async function pickImages(useCamera: boolean) {
     const permission = useCamera
@@ -322,77 +427,139 @@ export function useLotCreateForm() {
     const browse = await fetchTaxonomyBrowse(cat.id);
     setSubcategories(browse.children ?? []);
     setProductTypes(browse.productTypes ?? []);
+    setCharacteristicDefinitions([]);
+    setHighlightedCharacteristicIds(new Set());
     persist({
-      ...draft,
+      ...draftRef.current,
       categoryId: cat.id,
       categoryName: cat.name,
       productTypeId: null,
       productTypeName: null,
+      characteristicsProductTypeId: null,
+      characteristicValues: {},
+      showOptionalCharacteristics: false,
       step: "details",
     });
   }
 
   async function selectProductType(pt: { id: string; name: string }) {
+    setHighlightedCharacteristicIds(new Set());
     persist({
-      ...draft,
+      ...draftRef.current,
       productTypeId: pt.id,
       productTypeName: pt.name,
+      characteristicsProductTypeId: null,
       step: "details",
     });
+    await loadCharacteristicsForProductType(pt.id, draftRef.current.characteristicValues);
   }
 
   function togglePickupEnabled(enabled: boolean) {
     persist({
-      ...draft,
+      ...draftRef.current,
       pickupEnabled: enabled,
-      pickupPointIds: enabled ? draft.pickupPointIds : [],
+      pickupPointIds: enabled ? draftRef.current.pickupPointIds : [],
       step: "details",
     });
     if (enabled && pickupPoints.length === 0) void loadPickupPoints();
   }
 
   function togglePickupPoint(pointId: string) {
-    const has = draft.pickupPointIds.includes(pointId);
+    const has = draftRef.current.pickupPointIds.includes(pointId);
     const pickupPointIds = has
-      ? draft.pickupPointIds.filter((id) => id !== pointId)
-      : [...draft.pickupPointIds, pointId];
-    persist({ ...draft, pickupPointIds, step: "details" });
+      ? draftRef.current.pickupPointIds.filter((id) => id !== pointId)
+      : [...draftRef.current.pickupPointIds, pointId];
+    persist({ ...draftRef.current, pickupPointIds, step: "details" });
+  }
+
+  async function handleCharacteristicRejection(code: string | undefined, message: string) {
+    const productTypeId = draftRef.current.productTypeId;
+    let defs = characteristicDefinitions;
+    if (productTypeId) {
+      try {
+        const refreshed = await fetchProductTypeCharacteristicsCompat(productTypeId);
+        defs = refreshed.characteristics ?? [];
+        setCharacteristicDefinitions(defs);
+      } catch {
+        // keep current defs
+      }
+    }
+
+    const mapped = mapServerCharacteristicRejection(code, message, defs);
+    setHighlightedCharacteristicIds(new Set(mapped.issues.map((issue) => issue.definitionId)));
+    setError(mapped.userMessage);
+    setErrorDetail(null);
+    setCanRetry(true);
+    lastFailedActionRef.current = "publish";
+    setStep("details");
+    persist({ ...draftRef.current, step: "details" }, { immediate: true });
   }
 
   async function goPreview() {
-    if (!canContinueDetails) {
+    if (!draftRef.current.title.trim() || priceNumber <= 0 || !draftRef.current.city.trim() || !draftRef.current.productTypeId) {
       setError(LOT_CREATE_COPY.validationDetails);
-      await flushSave(draft);
+      await flushSave(draftRef.current);
       return;
     }
-    const suggestion = await suggestProductType(draft.title);
+
+    if (draftRef.current.pickupEnabled && draftRef.current.pickupPointIds.length === 0) {
+      setError(LOT_CREATE_COPY.pickupSaveError);
+      await flushSave(draftRef.current);
+      return;
+    }
+
+    const issues = validateLotCharacteristicForm(characteristicDefinitions, draftRef.current.characteristicValues, {
+      onlyRequired: true,
+    });
+    if (issues.length > 0) {
+      setHighlightedCharacteristicIds(new Set(issues.map((issue) => issue.definitionId)));
+      setError(humanCharacteristicMissingMessage(issues));
+      setErrorDetail(issues.length === 1 ? issues[0]!.message : null);
+      setCanRetry(false);
+      await flushSave(draftRef.current);
+      return;
+    }
+
+    const suggestion = await suggestProductType(draftRef.current.title);
+    const nextProductTypeId = draftRef.current.productTypeId ?? suggestion.productTypeId;
+    if (nextProductTypeId && nextProductTypeId !== draftRef.current.productTypeId) {
+      await loadCharacteristicsForProductType(nextProductTypeId, draftRef.current.characteristicValues);
+    }
+
     const next = {
-      ...draft,
-      productTypeId: draft.productTypeId ?? suggestion.productTypeId,
-      productTypeName: draft.productTypeName ?? suggestion.productTypeName,
-      categoryId: draft.categoryId ?? suggestion.categoryId,
-      categoryName: draft.categoryName ?? suggestion.categoryName,
+      ...draftRef.current,
+      productTypeId: nextProductTypeId,
+      productTypeName: draftRef.current.productTypeName ?? suggestion.productTypeName,
+      categoryId: draftRef.current.categoryId ?? suggestion.categoryId,
+      categoryName: draftRef.current.categoryName ?? suggestion.categoryName,
       step: "preview" as const,
     };
     persist(next, { immediate: true });
     setStep("preview");
     clearErrors();
+    setHighlightedCharacteristicIds(new Set());
   }
 
   function buildPayload(images: Array<{ url: string; pathname?: string | null }>, status: "ACTIVE" | "DRAFT") {
+    const current = draftRef.current;
+    const characteristics = serializeLotCharacteristicPayload(
+      characteristicDefinitions,
+      current.characteristicValues,
+    );
     return {
-      title: draft.title.trim(),
-      description: draft.description.trim() || null,
+      title: current.title.trim(),
+      description: current.description.trim() || null,
       price: priceNumber,
-      city: draft.city.trim(),
-      condition: draft.condition,
-      productTypeId: draft.productTypeId,
-      categoryId: draft.categoryId,
+      city: current.city.trim(),
+      condition: current.condition,
+      productTypeId: current.productTypeId,
+      categoryId: current.categoryId,
       images,
       stock: stockNumber,
       status,
-      pickupEnabled: draft.pickupEnabled,
-      pickupPointIds: draft.pickupPointIds,
+      pickupEnabled: current.pickupEnabled,
+      pickupPointIds: current.pickupPointIds,
+      characteristics,
     };
   }
 
@@ -432,9 +599,9 @@ export function useLotCreateForm() {
 
   async function persistServerDraft(images: Array<{ url: string; pathname?: string | null }>) {
     const payload = buildPayload(images, "DRAFT");
-    if (draft.savedProductId) {
-      await updateSellerLot(draft.savedProductId, payload);
-      return draft.savedProductId;
+    if (draftRef.current.savedProductId) {
+      await updateSellerLot(draftRef.current.savedProductId, payload);
+      return draftRef.current.savedProductId;
     }
     const created = await createSellerLot(payload);
     return created.product.id;
@@ -453,7 +620,7 @@ export function useLotCreateForm() {
   async function publishOnServer(images: Array<{ url: string; pathname?: string | null }>) {
     const draftPayload = buildPayload(images, "DRAFT");
     const activePayload = buildPayload(images, "ACTIVE");
-    let productId: string | null = draft.savedProductId;
+    let productId: string | null = draftRef.current.savedProductId;
 
     if (productId) {
       await updateSellerLot(productId, draftPayload);
@@ -462,9 +629,16 @@ export function useLotCreateForm() {
       productId = created.product.id;
     }
 
-    const published = await publishSellerLot(productId, activePayload);
-    const outcome = mapMutationOutcome(published);
-    return { productId, outcome, response: published };
+    try {
+      const published = await publishSellerLot(productId, activePayload);
+      const outcome = mapMutationOutcome(published);
+      return { productId, outcome, response: published };
+    } catch (err) {
+      if (err instanceof ApiClientError && err.code === "CHARACTERISTICS_REQUIRED") {
+        await handleCharacteristicRejection(err.code, err.message);
+      }
+      throw err;
+    }
   }
 
   async function saveLotLocallyAndServer() {
@@ -486,15 +660,19 @@ export function useLotCreateForm() {
     retryIntentRef.current = "save";
     uploadFailedRef.current = false;
     try {
-      await flushSave(draft);
+      await flushSave(draftRef.current);
       const images = await uploadImagesWithRecovery();
       const productId = await persistServerDraft(images);
-      const saved = { ...draft, savedProductId: productId };
+      const saved = { ...draftRef.current, savedProductId: productId };
       await flushSave(saved);
       setDraft(saved);
       setInfo(LOT_CREATE_COPY.savedLocally);
     } catch (err) {
-      await flushSave(draft);
+      if (err instanceof ApiClientError && err.code === "CHARACTERISTICS_REQUIRED") {
+        await handleCharacteristicRejection(err.code, err.message);
+        return;
+      }
+      await flushSave(draftRef.current);
       const context: LotCreateErrorContext = uploadFailedRef.current ? "upload" : "save";
       setHumanError(err, context);
     } finally {
@@ -531,7 +709,10 @@ export function useLotCreateForm() {
       await clearLotDraft();
       setStep("success");
     } catch (err) {
-      await flushSave(draft);
+      if (err instanceof ApiClientError && err.code === "CHARACTERISTICS_REQUIRED") {
+        return;
+      }
+      await flushSave(draftRef.current);
       const context: LotCreateErrorContext = uploadFailedRef.current ? "upload" : "publish";
       setHumanError(err, context);
     } finally {
@@ -564,7 +745,7 @@ export function useLotCreateForm() {
 
   function goToStep(next: LotWizardStep) {
     setStep(next);
-    persist({ ...draft, step: next === "success" ? draft.step : next }, { immediate: true });
+    persist({ ...draftRef.current, step: next === "success" ? draftRef.current.step : next }, { immediate: true });
   }
 
   return {
@@ -575,6 +756,10 @@ export function useLotCreateForm() {
     rootCategories,
     subcategories,
     productTypes,
+    characteristicDefinitions,
+    characteristicsLoading,
+    highlightedCharacteristicIds,
+    characteristicPreviewRows,
     pickupPoints,
     pickupLoadError,
     publishing,
@@ -600,6 +785,8 @@ export function useLotCreateForm() {
     selectProductType,
     togglePickupEnabled,
     togglePickupPoint,
+    updateCharacteristicValue,
+    toggleOptionalCharacteristics,
     loadPickupPoints,
     goPreview,
     saveLotLocallyAndServer,

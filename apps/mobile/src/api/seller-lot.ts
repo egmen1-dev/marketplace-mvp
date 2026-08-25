@@ -1,9 +1,29 @@
 import { apiRequest } from "./client";
+import type { LotCharacteristicPayload } from "../seller/lot-characteristics";
 
 export { uploadSellerLotImage, type SellerLotUploadedImage } from "../seller/upload-seller-lot-image";
 
 export type TaxonomyChild = { id: string; name: string; slug?: string };
 export type TaxonomyProductType = { id: string; name: string; slug?: string; categoryId?: string };
+
+export type ProductTypeCharacteristic = {
+  id: string;
+  name: string;
+  slug: string;
+  type: string;
+  required: boolean;
+  unit: string | null;
+  options: string[] | null;
+  sortOrder: number;
+  filterable: boolean;
+};
+
+export type ProductTypeCharacteristicsResponse = {
+  productTypeId: string;
+  categoryId: string;
+  name: string;
+  characteristics: ProductTypeCharacteristic[];
+};
 
 export type SellerPickupPoint = {
   id: string;
@@ -55,6 +75,32 @@ export async function fetchTaxonomyBrowse(categoryId?: string | null) {
   );
 }
 
+export async function fetchProductTypeCharacteristics(productTypeId: string) {
+  return apiRequest<ProductTypeCharacteristicsResponse>(
+    `/api/mobile/seller/product-types/${encodeURIComponent(productTypeId)}/characteristics`,
+  );
+}
+
+/** Fallback for environments before mobile characteristics route is deployed. */
+export async function fetchProductTypeCharacteristicsCompat(productTypeId: string) {
+  try {
+    return await fetchProductTypeCharacteristics(productTypeId);
+  } catch {
+    const legacy = await apiRequest<{
+      id: string;
+      categoryId: string;
+      name: string;
+      characteristics: ProductTypeCharacteristic[];
+    }>(`/api/taxonomy/browse?productTypeId=${encodeURIComponent(productTypeId)}`);
+    return {
+      productTypeId: legacy.id,
+      categoryId: legacy.categoryId,
+      name: legacy.name,
+      characteristics: legacy.characteristics ?? [],
+    };
+  }
+}
+
 export async function suggestProductType(title: string) {
   const result = await apiRequest<{
     productTypeSuggestion?: { id: string; name: string; categoryId: string } | null;
@@ -85,6 +131,7 @@ export type CreateLotPayload = {
   status?: "ACTIVE" | "DRAFT";
   pickupEnabled?: boolean;
   pickupPointIds?: string[];
+  characteristics?: LotCharacteristicPayload[];
 };
 
 export async function createSellerLot(payload: CreateLotPayload) {
@@ -99,7 +146,7 @@ export async function createSellerLot(payload: CreateLotPayload) {
       reservationEnabled: false,
       prepaymentPercent: 0,
       pickupPointIds,
-      characteristics: [],
+      characteristics: payload.characteristics ?? [],
     }),
   });
 }
@@ -115,6 +162,7 @@ export async function updateSellerLot(productId: string, payload: Partial<Create
         ...payload,
         pickupEnabled,
         pickupPointIds,
+        characteristics: payload.characteristics,
       }),
     },
   );

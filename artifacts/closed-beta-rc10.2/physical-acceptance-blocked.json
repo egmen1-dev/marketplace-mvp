@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-08-25T07:30:00.000Z",
+  "release": "RC10.2",
+  "version": "0.1.15-beta.3",
+  "versionCode": 18,
+  "physicalAcceptance": "BLOCKED_FOR_BETA",
+  "blocker": "P0.1 — mobile seller flow does not collect required ProductType characteristics before preview",
+  "physicalFinding": "Publish rejected with CHARACTERISTICS_REQUIRED (e.g. Мощность, Производительность) after preview",
+  "remediation": "P0.1 dynamic characteristics — merge, deploy, staging E2E, then RC10.3 build",
+  "nextStep": "READY_FOR_RC10.3_BUILD after P0.1 deploy + staging PASS"
+}

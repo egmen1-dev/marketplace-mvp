@@ -1,3 +1,8 @@
+import {
+  isForbiddenCharacteristicUiMessage,
+  sanitizeCharacteristicUiError,
+} from "./lot-characteristics";
+
 import { LOT_CREATE_COPY } from "./lot-create-copy";
 
 export type LotCreateErrorContext = "upload" | "publish" | "save" | "pickup";
@@ -78,6 +83,25 @@ export function formatLotCreateError(
       message: LOT_CREATE_COPY.networkError,
       detail: null,
       canRetry: true,
+    };
+  }
+
+  if (
+    lower.includes("characteristics_required") ||
+    lower.includes("обязательн") && lower.includes("характеристик")
+  ) {
+    return {
+      message: LOT_CREATE_COPY.characteristicsMissing,
+      detail: null,
+      canRetry: true,
+    };
+  }
+
+  if (isForbiddenCharacteristicUiMessage(raw)) {
+    return {
+      message: sanitizeCharacteristicUiError(raw),
+      detail: null,
+      canRetry: context !== "save",
     };
   }
 

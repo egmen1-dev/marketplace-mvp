@@ -85,6 +85,6 @@ describe("P0 lot publish truth — mobile wiring", () => {
 describe("EPIC 159 — duplicate protection preserved", () => {
   it("updates existing savedProductId before publish", () => {
     expect(hookSource).toContain("updateSellerLot(productId, draftPayload)");
-    expect(hookSource).toContain("draft.savedProductId");
+    expect(hookSource).toContain("draftRef.current.savedProductId");
   });
 });

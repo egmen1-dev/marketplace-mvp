@@ -1,3 +1,5 @@
+import type { LotCharacteristicFormValue } from "./lot-characteristics";
+
 import * as SecureStore from "expo-secure-store";
 
 const DRAFT_KEY_V2 = "lot-draft-v2";
@@ -29,6 +31,9 @@ export type LotDraft = {
   categoryName: string | null;
   productTypeId: string | null;
   productTypeName: string | null;
+  characteristicsProductTypeId: string | null;
+  characteristicValues: Record<string, LotCharacteristicFormValue>;
+  showOptionalCharacteristics: boolean;
   pickupEnabled: boolean;
   pickupPointIds: string[];
   savedProductId: string | null;
@@ -48,6 +53,9 @@ export const EMPTY_LOT_DRAFT: LotDraft = {
   categoryName: null,
   productTypeId: null,
   productTypeName: null,
+  characteristicsProductTypeId: null,
+  characteristicValues: {},
+  showOptionalCharacteristics: false,
   pickupEnabled: false,
   pickupPointIds: [],
   savedProductId: null,
@@ -66,6 +74,7 @@ export function isUnfinishedLot(draft: LotDraft | null | undefined): boolean {
     draft.city.trim().length > 0 ||
     Boolean(draft.categoryId) ||
     Boolean(draft.productTypeId) ||
+    Object.keys(draft.characteristicValues ?? {}).length > 0 ||
     draft.pickupEnabled ||
     draft.pickupPointIds.length > 0
   );
@@ -89,6 +98,24 @@ function migrateV1(raw: Record<string, unknown>): LotDraft {
   };
 }
 
+function normalizeCharacteristicValues(
+  raw: unknown,
+): Record<string, LotCharacteristicFormValue> {
+  if (!raw || typeof raw !== "object") return {};
+  const out: Record<string, LotCharacteristicFormValue> = {};
+  for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (!value || typeof value !== "object") continue;
+    const v = value as Record<string, unknown>;
+    out[id] = {
+      text: typeof v.text === "string" ? v.text : undefined,
+      number: typeof v.number === "string" ? v.number : undefined,
+      boolean: typeof v.boolean === "boolean" ? v.boolean : undefined,
+      multi: Array.isArray(v.multi) ? v.multi.map(String) : undefined,
+    };
+  }
+  return out;
+}
+
 function normalizeDraft(raw: Record<string, unknown>): LotDraft {
   return {
     ...EMPTY_LOT_DRAFT,
@@ -102,6 +129,9 @@ function normalizeDraft(raw: Record<string, unknown>): LotDraft {
     categoryName: (raw.categoryName as string | null) ?? null,
     productTypeId: (raw.productTypeId as string | null) ?? null,
     productTypeName: (raw.productTypeName as string | null) ?? null,
+    characteristicsProductTypeId: (raw.characteristicsProductTypeId as string | null) ?? null,
+    characteristicValues: normalizeCharacteristicValues(raw.characteristicValues),
+    showOptionalCharacteristics: Boolean(raw.showOptionalCharacteristics),
     pickupEnabled: Boolean(raw.pickupEnabled),
     pickupPointIds: Array.isArray(raw.pickupPointIds) ? (raw.pickupPointIds as string[]) : [],
     savedProductId: (raw.savedProductId as string | null) ?? null,

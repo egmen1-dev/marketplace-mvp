@@ -1,34 +1,34 @@
 {
-  "generatedAt": "2026-08-24T21:05:33.696Z",
+  "generatedAt": "2026-08-25T07:29:44.189Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "title": "RC10_1_PUBLISH_TRUTH_1787605529925",
-  "createdId": "cmt7q6fmj00acqy01vxy03gpn",
-  "returnedStatus": null,
-  "publishOutcome": "SAVED",
-  "moderationState": null,
+  "title": "RC10_1_PUBLISH_TRUTH_1787642979749",
+  "createdId": "cmt8ch4dj004tpa01zwwu4vgb",
+  "returnedStatus": "DRAFT",
+  "publishOutcome": "PENDING_REVIEW",
+  "moderationState": "PENDING_REVIEW",
   "isPublic": false,
   "moderationPending": false,
-  "publishErrorCode": "CHARACTERISTICS_REQUIRED",
-  "publishStatus": 400,
+  "publishErrorCode": null,
+  "publishStatus": 200,
   "create": "PASS",
   "publish": "PASS",
   "sellerVisibility": "PASS",
   "sellerLists": {
-    "pending": false,
-    "drafts": true,
+    "pending": true,
+    "drafts": false,
     "active": false
   },
   "buyerVisibilityMatchesStatus": "PASS",
   "buyerCatalogHit": false,
   "publicPdpBuyerStatus": 404,
-  "publicPdpSellerStatus": 404,
+  "publicPdpSellerStatus": 200,
   "sellerDetail": "PASS",
-  "sellerDetailEndpoint": "NOT_DEPLOYED",
+  "sellerDetailEndpoint": "PASS",
   "duplicateProtection": "PASS",
   "duplicateIds": [
-    "cmt7q6fmj00acqy01vxy03gpn"
+    "cmt8ch4dj004tpa01zwwu4vgb"
   ],
   "duplicateSaveStatus": 200,
-  "duplicatePublishStatus": 400,
+  "duplicatePublishStatus": 500,
   "verdict": "PASS"
 }
