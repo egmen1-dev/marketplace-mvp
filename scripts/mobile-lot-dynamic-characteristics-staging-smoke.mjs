@@ -18,35 +18,39 @@ const JPEG_BASE64 =
 const CASES = [
   {
     id: "clothing-dress",
-    categoryPath: ["cmsmzsb7i001zy0w6d5yk96de", "cmsoz1jxvu05pn2y8"],
-    productTypeMatch: /плать/i,
-    fill: (chars) => {
-      const size = chars.find((c) => c.name === "Размер" && c.required);
-      if (!size) return [];
-      const option = Array.isArray(size.options) && size.options.length ? String(size.options[0]) : "46";
-      return [{ definitionId: size.id, valueText: option }];
-    },
+    productTypeId: "cmsoz2l37b4srj0dg",
+    categoryId: "cmsoz1jxvu05pn2y8",
+    fill: (chars) => fillRequiredCharacteristics(chars),
     forbiddenRequired: ["Мощность", "Производительность"],
   },
   {
     id: "power-tools",
-    categoryPath: ["cmsmzs349000ty0w6q5ki81d9", "cmsmzs3hp000vy0w6q7fuponx"],
-    productTypeMatch: /дрел/i,
-    fill: (chars) => {
-      const power = chars.find((c) => c.name === "Мощность" && c.required);
-      if (!power) return [];
-      return [{ definitionId: power.id, valueNumber: 800 }];
-    },
+    productTypeId: "cmsoz1oa9vw8rphtp",
+    categoryId: "cmsmzs3hp000vy0w6q7fuponx",
+    fill: (chars) => fillRequiredCharacteristics(chars),
     forbiddenRequired: ["Производительность"],
   },
   {
     id: "auto-accessories-phone-mount",
-    categoryPath: ["cmsmzsa2t001ty0w66wulr4yb", "cmsoz1je6yofifqw0"],
-    productTypeMatch: /держател/i,
+    productTypeId: "cmsoz2hj73n1gu0pd",
+    categoryId: "cmsoz1je6yofifqw0",
     fill: () => [],
     forbiddenRequired: ["Мощность", "Производительность"],
   },
 ];
+
+function fillRequiredCharacteristics(chars) {
+  return chars
+    .filter((c) => c.required)
+    .map((def) => {
+      if (def.type === "NUMBER") {
+        const valueNumber = def.name === "Мощность" ? 800 : 1;
+        return { definitionId: def.id, valueNumber };
+      }
+      const option = Array.isArray(def.options) && def.options.length ? String(def.options[0]) : "46";
+      return { definitionId: def.id, valueText: option };
+    });
+}
 
 async function json(path, init = {}, token) {
   const headers = { ...(init.headers ?? {}) };
@@ -56,13 +60,17 @@ async function json(path, init = {}, token) {
   return { ok: res.ok, status: res.status, body };
 }
 
-async function login(email) {
-  const r = await json("/api/mobile/auth/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "login", email, password: PASSWORD, deviceId: `lot-chars-${email}` }),
-  });
-  return r.body?.accessToken;
+async function login(email, attempts = 4) {
+  for (let i = 0; i < attempts; i += 1) {
+    const r = await json("/api/mobile/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "login", email, password: PASSWORD, deviceId: `lot-chars-${email}` }),
+    });
+    if (r.body?.accessToken) return r.body.accessToken;
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, 500 * (i + 1)));
+  }
+  return null;
 }
 
 async function uploadImage(token) {
@@ -81,6 +89,19 @@ async function uploadImage(token) {
 
 async function resolveProductType(token, testCase) {
   if (testCase.productTypeId) {
+    const mobileSchema = await json(
+      `/api/mobile/seller/product-types/${encodeURIComponent(testCase.productTypeId)}/characteristics`,
+      {},
+      token,
+    );
+    if (mobileSchema.ok) {
+      return {
+        productTypeId: testCase.productTypeId,
+        categoryId: testCase.categoryId ?? mobileSchema.body?.categoryId,
+        productTypeName: mobileSchema.body?.productTypeName ?? testCase.productTypeId,
+        characteristics: mobileSchema.body?.characteristics ?? [],
+      };
+    }
     const detail = await json(
       `/api/taxonomy/browse?productTypeId=${encodeURIComponent(testCase.productTypeId)}`,
       {},
@@ -89,7 +110,7 @@ async function resolveProductType(token, testCase) {
     if (!detail.ok) return null;
     return {
       productTypeId: testCase.productTypeId,
-      categoryId: testCase.categoryId ?? detail.body?.categoryId ?? testCase.categoryPath.at(-1),
+      categoryId: testCase.categoryId ?? detail.body?.categoryId ?? testCase.categoryPath?.at(-1),
       productTypeName: detail.body?.name ?? testCase.productTypeId,
       characteristics: detail.body?.characteristics ?? [],
     };

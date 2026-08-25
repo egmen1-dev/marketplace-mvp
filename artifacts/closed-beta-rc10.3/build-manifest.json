@@ -1,0 +1,37 @@
+{
+  "candidate": "RC10.3",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.4",
+  "versionCode": 19,
+  "commitSha": "08dea77",
+  "mergeCommitSha": "08dea77",
+  "buildTime": "2026-08-25T07:59:02Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.4.apk",
+    "path": "artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "sha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea",
+    "sizeBytes": 44322982
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "p0DynamicCharacteristics": true,
+    "p0LotPublishTruthFix": true,
+    "previousRelease": "RC10.2 0.1.15-beta.3 (code 18)"
+  },
+  "buildNotes": {
+    "release": "RC10.3 — P0.1 dynamic LOT category characteristics",
+    "previousRelease": "RC10.2 0.1.15-beta.3 (code 18)"
+  }
+}

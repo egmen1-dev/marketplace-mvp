@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-08-25T08:06:19.814Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "cases": [
+    {
+      "id": "clothing-dress",
+      "productType": "cmsoz2l37b4srj0dg",
+      "requiredNames": [
+        "Размер"
+      ],
+      "forbiddenHit": [],
+      "characteristicsSent": 1,
+      "publishStatus": 200,
+      "publishOutcome": "PENDING_REVIEW",
+      "publishErrorCode": null,
+      "sellerPending": "PASS",
+      "buyerNotPublic": "PASS",
+      "taxonomyIsolation": "PASS",
+      "publish": "PASS",
+      "verdict": "PASS"
+    },
+    {
+      "id": "power-tools",
+      "productType": "cmsoz1oa9vw8rphtp",
+      "requiredNames": [
+        "Мощность",
+        "Тип питания"
+      ],
+      "forbiddenHit": [],
+      "characteristicsSent": 2,
+      "publishStatus": 200,
+      "publishOutcome": "PENDING_REVIEW",
+      "publishErrorCode": null,
+      "sellerPending": "PASS",
+      "buyerNotPublic": "PASS",
+      "taxonomyIsolation": "PASS",
+      "publish": "PASS",
+      "verdict": "PASS"
+    },
+    {
+      "id": "auto-accessories-phone-mount",
+      "productType": "cmsoz2hj73n1gu0pd",
+      "requiredNames": [],
+      "forbiddenHit": [],
+      "characteristicsSent": 0,
+      "publishStatus": 200,
+      "publishOutcome": "PENDING_REVIEW",
+      "publishErrorCode": null,
+      "sellerPending": "PASS",
+      "buyerNotPublic": "PASS",
+      "taxonomyIsolation": "PASS",
+      "publish": "PASS",
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "PASS",
+  "policy": {
+    "rc102": "BLOCKED_FOR_BETA",
+    "nextBuild": "READY_FOR_RC10.3_BUILD_AFTER_MERGE_DEPLOY"
+  }
+}

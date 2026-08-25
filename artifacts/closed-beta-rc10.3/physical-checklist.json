@@ -1,0 +1,113 @@
+{
+  "candidate": "RC10.3",
+  "generatedAt": "2026-08-25T08:06:00Z",
+  "status": "NOT_RUN",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "scope": "P0.1 dynamic LOT characteristics — focused physical Android validation",
+  "apk": {
+    "versionName": "0.1.15-beta.4",
+    "versionCode": 19,
+    "path": "artifacts/closed-beta-rc10.3/lot_android_closed_beta_0.1.15_beta.4.apk",
+    "sha256": "0f807037510aa949fdca30c8627d50a48aaed984e1e93c155f5a8f6b40794fea"
+  },
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234"
+  },
+  "environment": {
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "channel": "CLOSED_BETA",
+    "deployedSha": "08dea77"
+  },
+  "expectedStagingPolicy": {
+    "requiresModeration": true,
+    "publishCtaLabel": "Отправить на проверку",
+    "expectedOutcome": "PENDING_REVIEW"
+  },
+  "scenarios": [
+    {
+      "id": "TEST-A",
+      "name": "DRILL — required Мощность blocks preview",
+      "steps": [
+        "Seller: Продать → Создать ЛОТ → Электроинструмент → Дрели",
+        "Before preview: section «Характеристики» visible with required «Мощность»",
+        "Attempt continue without value → preview must NOT open",
+        "Human message such as «Укажите мощность» (no raw backend error)",
+        "Enter valid power → preview opens",
+        "Send for moderation → «ЛОТ отправлен на проверку»",
+        "Мои ЛОТы → На проверке → LOT exists and opens"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "TEST-B",
+      "name": "AUTO ACCESSORY — no Производительность false requirement",
+      "steps": [
+        "Create phone holder (Держатели для телефона) or similar auto accessory",
+        "No «Производительность» field",
+        "No Производительность validation error",
+        "Seller reaches preview normally"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "TEST-C",
+      "name": "CLOTHING — Размер when required",
+      "steps": [
+        "Create Одежда → Платья",
+        "Clothing-specific characteristics; «Размер» when required by taxonomy",
+        "No tool characteristics (Мощность, etc.)",
+        "Valid LOT reaches preview"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "TEST-D",
+      "name": "CATEGORY CHANGE — stale characteristics cleared",
+      "steps": [
+        "Start with drill; enter Мощность",
+        "Change ProductType/category to clothing",
+        "Tool-specific characteristic disappears",
+        "Stale Мощность not submitted for clothing",
+        "Clothing characteristics load; generic LOT fields remain"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "TEST-E",
+      "name": "RESTORE — draft persistence after relaunch",
+      "steps": [
+        "Start LOT with dynamic characteristic values",
+        "Close application; reopen",
+        "Restore prompt; LOT fields, photo, category/ProductType, characteristics, pickup remain"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "TEST-F",
+      "name": "PHOTO REGRESSION — real gallery upload",
+      "steps": [
+        "Select real Android gallery image",
+        "Upload succeeds; preview displays photo",
+        "No «Unsupported FormDataPart implementation»"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "TEST-G",
+      "name": "MODERATION TRUTH — PENDING_REVIEW end-to-end",
+      "steps": [
+        "Send valid LOT on staging",
+        "publishOutcome = PENDING_REVIEW",
+        "UI: «ЛОТ отправлен на проверку»",
+        "Seller: LOT under «На проверке»",
+        "Buyer: LOT not in public catalog/PDP until approved"
+      ],
+      "status": "NOT_RUN"
+    }
+  ],
+  "promotionPolicy": {
+    "afterAllPass": "READY_FOR_BETA",
+    "onAnyFail": "BLOCKED_FOR_BETA — report exact failure; do not auto-build another RC"
+  }
+}

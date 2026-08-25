@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-08-25T08:03:00.301Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "deployedEndpoint": "PASS",
+  "definitionIdUsed": "cmsoz1onq5rawsgev",
+  "sentPayload": [
+    {
+      "definitionId": "cmsoz1onq5rawsgev",
+      "valueNumber": 850
+    },
+    {
+      "definitionId": "cmsoz1os44qhwxggg",
+      "valueText": "сеть"
+    }
+  ],
+  "publishStatus": 200,
+  "publishOutcome": "PENDING_REVIEW",
+  "persistedCharacteristics": [
+    {
+      "definitionId": "cmsoz1onq5rawsgev",
+      "name": "Мощность",
+      "slug": "power-w",
+      "unit": "Вт",
+      "displayValue": "850 Вт",
+      "formValue": "850"
+    },
+    {
+      "definitionId": "cmsoz1os44qhwxggg",
+      "name": "Тип питания",
+      "slug": "power-source",
+      "unit": null,
+      "displayValue": "сеть",
+      "formValue": "сеть"
+    }
+  ],
+  "checks": {
+    "usesDefinitionId": true,
+    "numericValue": true,
+    "selectValue": true,
+    "powerPersisted": true,
+    "selectPersisted": true,
+    "noLabelOnlyPersistence": true,
+    "humanErrorsAbsent": true
+  },
+  "verdict": "PASS"
+}

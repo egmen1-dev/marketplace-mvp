@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+/** RC10.3 update API verification + canonical APK SHA256 match. */
+import { createHash } from "node:crypto";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { resolve } from "node:path";
+
+const STAGING = process.env.STAGING_BASE_URL ?? "https://web-production-e56fb.up.railway.app";
+const OUT = resolve("artifacts/closed-beta-rc10.3/update-api-verification.json");
+const manifest = JSON.parse(readFileSync(resolve("artifacts/closed-beta-rc10.3/build-manifest.json"), "utf8"));
+
+async function probe(versionCode) {
+  const res = await fetch(`${STAGING}/api/mobile/android/update?versionCode=${versionCode}&channel=BETA`, {
+    signal: AbortSignal.timeout(20000),
+  });
+  const body = await res.json().catch(() => ({}));
+  const updateState = body.updateState ?? body.state ?? "UNKNOWN";
+  const targetCode = body.versionCode ?? body.release?.versionCode ?? body.targetVersionCode ?? null;
+  const targetName = body.versionName ?? body.release?.versionName ?? body.targetVersionName ?? null;
+  let verdict = "FAIL";
+  if (versionCode <= 18) {
+    verdict = updateState === "OPTIONAL_UPDATE" && targetCode === 19 ? "PASS" : "FAIL";
+  } else if (versionCode === 19) {
+    verdict = updateState === "NO_UPDATE" ? "PASS" : "FAIL";
+  } else if (versionCode > 19) {
+    verdict = updateState === "NO_UPDATE" ? "PASS" : "FAIL";
+  }
+  return { installedVersionCode: versionCode, updateState, targetVersionCode: targetCode, targetVersionName: targetName, verdict };
+}
+
+async function main() {
+  const probes = [];
+  for (const code of [7, 13, 16, 17, 18, 19]) {
+    probes.push(await probe(code));
+  }
+
+  const url =
+    manifest.artifact.downloadUrl ??
+    `https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/${manifest.artifact.path}`;
+  const dl = await fetch(url, { signal: AbortSignal.timeout(120000) });
+  const buf = Buffer.from(await dl.arrayBuffer());
+  const actualSha256 = createHash("sha256").update(buf).digest("hex");
+  const expectedSha256 = manifest.artifact.sha256;
+  const httpOk = dl.ok;
+
+  const report = {
+    generatedAt: new Date().toISOString(),
+    staging: STAGING,
+    probes,
+    apkIntegrityFromMrpUrl: {
+      url,
+      httpOk,
+      expectedSha256,
+      actualSha256,
+      sizeBytes: buf.length,
+      verdict: httpOk && actualSha256 === expectedSha256 ? "PASS" : "FAIL",
+    },
+    verdict: probes.every((p) => p.verdict === "PASS") && httpOk && actualSha256 === expectedSha256 ? "PASS" : "FAIL",
+  };
+
+  mkdirSync(resolve("artifacts/closed-beta-rc10.3"), { recursive: true });
+  writeFileSync(OUT, JSON.stringify(report, null, 2));
+  console.log(JSON.stringify({ verdict: report.verdict, probes, shaMatch: actualSha256 === expectedSha256 }, null, 2));
+  if (report.verdict !== "PASS") process.exit(1);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
