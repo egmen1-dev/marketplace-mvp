@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-08-25T10:43:00Z",
+  "verdict": "NOT_RUN",
+  "reason": "GET /api/admin/moderation returns 500 until migration applied",
+  "queue": false,
+  "detail": false,
+  "actions": false,
+  "audit": false
+}

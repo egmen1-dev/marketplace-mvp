@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-08-25T10:43:00Z",
+  "gates": [
+    { "command": "npm run build", "status": "PASS" },
+    { "command": "cd apps/mobile && npm run typecheck", "status": "PASS" },
+    { "command": "npm run mobile:seller-photo-upload:gate", "status": "PASS" },
+    { "command": "npm run mobile:lot-publish-truth:gate", "status": "FAIL", "detail": "staging smoke create 500" },
+    { "command": "npm run mobile:lot-dynamic-characteristics:gate", "status": "PASS" },
+    { "command": "npm run mobile:lot-moderation:gate", "status": "PASS" },
+    { "command": "npm run mobile:android-update-install:gate", "status": "PASS" },
+    { "command": "npm run release:migration:verify", "status": "FAIL", "detail": "schema incompatible on staging" },
+    { "command": "npm test -- tests/schema-compatibility.test.ts", "status": "PASS" }
+  ],
+  "verdict": "BLOCKED_FOR_RC10_4_BUILD"
+}

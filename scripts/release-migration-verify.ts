@@ -42,7 +42,9 @@ async function main() {
   const reachable = db.reachable === true || db.ok === true;
   const schemaCompatible = db.schemaCompatible === true;
 
-  const shaOk = !EXPECTED_SHA || deployedSha === EXPECTED_SHA || deployedSha === mainSha;
+  const shaOk =
+    deployedSha.length > 0 &&
+    (deployedSha === mainSha || (EXPECTED_SHA.length > 0 && deployedSha === EXPECTED_SHA));
 
   const report = {
     generatedAt: new Date().toISOString(),

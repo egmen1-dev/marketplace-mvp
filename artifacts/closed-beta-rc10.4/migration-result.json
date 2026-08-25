@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-08-25T10:43:00Z",
+  "migrationId": "20260825100000_epic_174_moderation_engine",
+  "executed": false,
+  "method": "pending — auto-migrate via docker-entrypoint.sh on next Railway deploy (PR #177)",
+  "manualFallback": "railway run --service web-v2 -- npx prisma migrate deploy",
+  "exitCode": null,
+  "timestamp": null,
+  "prismaOutput": null,
+  "afterMigrateStatus": "NOT_RUN — cloud agent lacks DATABASE_URL/RAILWAY_TOKEN",
+  "note": "PR #177 merged to main (bec966a). Railway still serving 6059dc9 at time of report — deploy lag or pending build."
+}

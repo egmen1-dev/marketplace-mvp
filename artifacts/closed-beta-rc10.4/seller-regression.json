@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-08-25T10:43:00Z",
+  "verdict": "FAIL",
+  "reason": "POST /api/mobile/seller/products returns 500 — schema migration not applied",
+  "steps": {
+    "createLot": "FAIL",
+    "uploadPhoto": "PASS",
+    "characteristics": "NOT_RUN",
+    "pickup": "NOT_RUN",
+    "submitForReview": "NOT_RUN",
+    "sellerPendingTab": "NOT_RUN",
+    "sellerDetail": "NOT_RUN",
+    "buyerHiddenWhilePending": "NOT_RUN",
+    "adminApprove": "NOT_RUN",
+    "buyerVisibleAfterApprove": "NOT_RUN"
+  }
+}
