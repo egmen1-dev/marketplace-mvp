@@ -46,6 +46,25 @@ async function uploadImage(token) {
   return { ok: res.ok, body };
 }
 
+async function buildCharacteristicsForProductType(token, productTypeId) {
+  const detail = await json(
+    `/api/taxonomy/browse?productTypeId=${encodeURIComponent(productTypeId)}`,
+    {},
+    token,
+  );
+  const characteristics = [];
+  for (const def of detail.body?.characteristics ?? []) {
+    if (!def.required) continue;
+    if (def.type === "NUMBER") {
+      characteristics.push({ definitionId: def.id, valueNumber: 800 });
+      continue;
+    }
+    const option = Array.isArray(def.options) && def.options.length ? String(def.options[0]) : "Стандарт";
+    characteristics.push({ definitionId: def.id, valueText: option });
+  }
+  return characteristics;
+}
+
 async function resolveProductType(token) {
   const template = await json("/api/products/cmsmzsjx0002xy0w60fa73kqf", {}, token);
   if (template.body?.productType?.id) {
@@ -83,6 +102,7 @@ async function main() {
   const taxonomy = await resolveProductType(sellerToken);
   if (!taxonomy?.productTypeId) throw new Error("taxonomy productType unavailable for smoke");
   const { productTypeId, categoryId: categoryForCreate } = taxonomy;
+  const characteristics = await buildCharacteristicsForProductType(sellerToken, productTypeId);
 
   const upload = await uploadImage(sellerToken);
   if (!upload.ok || !upload.body.url) throw new Error("image upload failed");
@@ -102,7 +122,7 @@ async function main() {
     pickupPointIds: [],
     reservationEnabled: false,
     prepaymentPercent: 0,
-    characteristics: [],
+    characteristics,
   };
 
   const created = await json(
@@ -193,8 +213,7 @@ async function main() {
     publishOutcome === "PENDING_REVIEW" ||
     moderationPending ||
     effectiveOutcome === "PENDING_REVIEW" ||
-    effectiveOutcome === "PUBLISHED" ||
-    publishErrorCode === "CHARACTERISTICS_REQUIRED";
+    effectiveOutcome === "PUBLISHED";
 
   const report = {
     generatedAt: new Date().toISOString(),

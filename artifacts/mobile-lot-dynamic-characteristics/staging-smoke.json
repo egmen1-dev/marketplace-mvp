@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-08-25T07:34:28.866Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "cases": [
+    {
+      "id": "clothing-dress",
+      "productType": "Платья",
+      "requiredNames": [
+        "Размер"
+      ],
+      "forbiddenHit": [],
+      "characteristicsSent": 1,
+      "publishStatus": 200,
+      "publishOutcome": "PENDING_REVIEW",
+      "publishErrorCode": null,
+      "sellerPending": "PASS",
+      "buyerNotPublic": "PASS",
+      "taxonomyIsolation": "PASS",
+      "publish": "PASS",
+      "verdict": "PASS"
+    },
+    {
+      "id": "power-tools",
+      "productType": "Дрели",
+      "requiredNames": [
+        "Мощность"
+      ],
+      "forbiddenHit": [],
+      "characteristicsSent": 1,
+      "publishStatus": 200,
+      "publishOutcome": "PENDING_REVIEW",
+      "publishErrorCode": null,
+      "sellerPending": "PASS",
+      "buyerNotPublic": "PASS",
+      "taxonomyIsolation": "PASS",
+      "publish": "PASS",
+      "verdict": "PASS"
+    },
+    {
+      "id": "auto-accessories-phone-mount",
+      "productType": "Держатели для телефона",
+      "requiredNames": [],
+      "forbiddenHit": [],
+      "characteristicsSent": 0,
+      "publishStatus": 200,
+      "publishOutcome": "PENDING_REVIEW",
+      "publishErrorCode": null,
+      "sellerPending": "PASS",
+      "buyerNotPublic": "PASS",
+      "taxonomyIsolation": "PASS",
+      "publish": "PASS",
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "PASS",
+  "policy": {
+    "rc102": "BLOCKED_FOR_BETA",
+    "nextBuild": "READY_FOR_RC10.3_BUILD_AFTER_MERGE_DEPLOY"
+  }
+}

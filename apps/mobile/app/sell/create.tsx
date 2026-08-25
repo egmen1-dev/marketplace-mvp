@@ -14,6 +14,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { PrimaryButton, SecondaryButton } from "../../src/components/ui";
 import { ProductImageFallback } from "../../src/components/ui/ProductImageFallback";
 import { LotAutosaveIndicator } from "../../src/seller/LotAutosaveIndicator";
+import { LotCharacteristicsSection } from "../../src/seller/LotCharacteristicsSection";
 import { LotCreatePreviewFooter } from "../../src/seller/LotCreatePreviewFooter";
 import { LotCreateStickyFooter } from "../../src/seller/LotCreateStickyFooter";
 import { conditionPreviewLabel, formatPickupPreview } from "../../src/seller/lot-create-preview";
@@ -197,6 +198,12 @@ export default function CreateLotScreen() {
                 <Text style={styles.previewValue}>{pickupPreview.detail ?? "Не выбрано"}</Text>
               </View>
             ) : null}
+            {form.characteristicPreviewRows.map((row) => (
+              <View key={row.name} style={styles.previewRow}>
+                <Text style={styles.previewLabel}>{row.name}</Text>
+                <Text style={styles.previewValue}>{row.value}</Text>
+              </View>
+            ))}
             {form.draft.description ? <Text style={styles.previewDescription}>{form.draft.description}</Text> : null}
           </View>
           <LotCreateErrorBlock
@@ -275,6 +282,17 @@ export default function CreateLotScreen() {
                 </Pressable>
               ))}
             </>
+          ) : null}
+
+          {form.draft.productTypeId ? (
+            <LotCharacteristicsSection
+              definitions={form.characteristicDefinitions}
+              values={form.draft.characteristicValues}
+              showOptional={form.draft.showOptionalCharacteristics}
+              highlightedIds={form.highlightedCharacteristicIds}
+              onToggleOptional={() => form.toggleOptionalCharacteristics()}
+              onChange={(definitionId, value) => form.updateCharacteristicValue(definitionId, value)}
+            />
           ) : null}
 
           <Text style={styles.label}>{LOT_CREATE_COPY.priceLabel}</Text>
