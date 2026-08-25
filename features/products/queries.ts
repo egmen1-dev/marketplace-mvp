@@ -23,6 +23,7 @@ import { categoryPagePath } from "@/features/catalog/paths";
 import { syncProductPickupPoints } from "@/features/pickup/queries";
 import { setInventoryQuantity } from "@/features/orders/lib/inventory-sync";
 import {
+  isCatalogPhraseQuery,
   searchTokenVariants,
   tokenizeSearchQuery,
 } from "@/features/products/search-query";
@@ -302,12 +303,20 @@ async function buildWhere(
   }
 
   if (filters.query) {
-    const tokens = tokenizeSearchQuery(filters.query);
-    if (tokens.length === 1) {
-      where.OR = tokenMatchOr(tokens[0]);
-    } else if (tokens.length > 1) {
-      // Every token must match somewhere (title, description, category, seller).
-      where.AND = tokens.map((token) => ({ OR: tokenMatchOr(token) }));
+    const phrase = filters.query.trim();
+    if (isCatalogPhraseQuery(phrase)) {
+      where.OR = [
+        { name: { contains: phrase, mode: "insensitive" } },
+        { slug: { contains: phrase, mode: "insensitive" } },
+      ];
+    } else {
+      const tokens = tokenizeSearchQuery(phrase);
+      if (tokens.length === 1) {
+        where.OR = tokenMatchOr(tokens[0]);
+      } else if (tokens.length > 1) {
+        // Every token must match somewhere (title, description, category, seller).
+        where.AND = tokens.map((token) => ({ OR: tokenMatchOr(token) }));
+      }
     }
   }
 

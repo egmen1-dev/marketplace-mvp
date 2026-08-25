@@ -48,6 +48,15 @@ export function tokenizeSearchQuery(query: string): string[] {
 }
 
 /**
+ * Hyphenated reference/slug queries (e.g. rc104-run-A) should match as a phrase,
+ * not as per-token AND — the latter creates expensive multi-join OR explosions.
+ */
+export function isCatalogPhraseQuery(query: string): boolean {
+  const q = query.trim();
+  return q.length >= 4 && q.includes("-") && /^[a-z0-9][a-z0-9-]*$/i.test(q);
+}
+
+/**
  * Generate match variants for a token (original + stem prefixes).
  * Keeps variants ≥3 chars to avoid overly broad matches.
  */

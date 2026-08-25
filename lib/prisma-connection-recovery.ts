@@ -34,6 +34,11 @@ async function runWithConnectionRecovery<T>(
     const code =
       err instanceof Prisma.PrismaClientKnownRequestError ? err.code : "unknown";
     log.warn("prisma_connection_recover", { prismaCode: code });
+    try {
+      await client.$disconnect();
+    } catch {
+      // ignore disconnect errors during recovery
+    }
     await client.$connect();
     return operation();
   }

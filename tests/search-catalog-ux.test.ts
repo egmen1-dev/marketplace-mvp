@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  isCatalogPhraseQuery,
   searchTokenVariants,
   tokenizeSearchQuery,
 } from "@/features/products/search-query";
