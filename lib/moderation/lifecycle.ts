@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 import { appendModerationAuditEvent } from "./audit";
 import { moderationContentStale } from "./content-version";
+import { jsonStringArray } from "./json-coerce";
 import { mapDecisionToModerationStatus } from "./decision-engine";
 import { notifyModerationDecision } from "./notifications";
 import { upsertModerationQueueItem } from "./queue";
@@ -193,8 +194,9 @@ export async function applyAdminModerationDecision(input: {
     previousStatus,
     newStatus: status,
     decision: input.decision,
-    reasonCodes: input.reasonCodes ?? (moderation.reasonCodes as string[] | null) ?? [],
-    rulesTriggered: (moderation.rulesTriggered as string[] | null) ?? [],
+    reasonCodes:
+      input.reasonCodes ?? jsonStringArray(moderation.reasonCodes),
+    rulesTriggered: jsonStringArray(moderation.rulesTriggered),
     riskScore: moderation.riskScore,
     policyVersion: moderation.policyVersion,
     reviewerType: "ADMIN",

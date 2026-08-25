@@ -8,7 +8,9 @@ import {
 } from "@/features/auth/resolve-request-user";
 import { createProduct, ProductServiceError } from "@/features/products/queries";
 import { createProductSchema } from "@/features/products/schemas";
+import { mapPrismaError } from "@/lib/api/prisma-errors";
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
+import { log } from "@/lib/logger";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
 import { buildSellerProductPublishContract } from "@/lib/mobile/seller-product-publish";
 import { buildMobileSellerProductsFromRequest } from "@/lib/mobile/seller-products-data";
@@ -59,8 +61,12 @@ export async function POST(request: Request) {
   const blocked = ccosApiGuard();
   if (blocked) return blocked;
 
+  const requestId = request.headers.get("x-request-id") ?? request.headers.get("x-acceptance-run-id");
+  let sellerProfileId: string | undefined;
+
   try {
     const seller = await requireSellerFromRequest(request);
+    sellerProfileId = seller.sellerProfileId;
     let body: unknown;
     try {
       body = await request.json();
@@ -96,6 +102,25 @@ export async function POST(request: Request) {
     if (err instanceof ProductServiceError) {
       return NextResponse.json({ error: err.message, code: err.code }, { status: err.status });
     }
+    const prismaError = mapPrismaError(err);
+    if (prismaError) {
+      log.error("mobile_seller_product_create_prisma", {
+        requestId: requestId ?? undefined,
+        sellerProfileId,
+        code: prismaError.prismaCode,
+        constraint: prismaError.constraint,
+      });
+      return NextResponse.json(
+        { error: prismaError.message, code: prismaError.code },
+        { status: prismaError.status },
+      );
+    }
+    log.error("mobile_seller_product_create_unexpected", {
+      requestId: requestId ?? undefined,
+      sellerProfileId,
+      errorName: err instanceof Error ? err.name : "unknown",
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
     console.error("[POST /api/mobile/seller/products]", err);
     return NextResponse.json({ error: "Не удалось создать ЛОТ" }, { status: 500 });
   }

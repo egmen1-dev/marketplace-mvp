@@ -1,101 +1,162 @@
 {
-  "generatedAt": "2026-08-25T10:01:00Z",
-  "epic": "EPIC 174.1",
+  "generatedAt": "2026-08-25T13:05:18.908Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "mainSha": "cd27534",
-  "deployedSha": "cd27534",
-  "deployVerified": true,
-  "migration": {
-    "status": "NOT_APPLIED",
-    "migrationId": "20260825100000_epic_174_moderation_engine",
-    "evidence": [
-      "POST /api/mobile/seller/products returns 500 after EPIC 174 deploy",
-      "GET /api/admin/moderation returns 500",
-      "mobile-lot-publish-truth-staging-smoke.mjs draft create failed 500 (regression)",
-      "Railway boot does not run prisma migrate deploy per docs/RAILWAY_BUILD_PIPELINE.md"
-    ],
-    "requiredAction": "railway run --service web-v2 -- npx prisma migrate deploy"
-  },
+  "runId": "resilient",
+  "deployedSha": "5829b8a",
   "effectiveConfig": {
-    "MARKETPLACE_TRUST_LOOP_ENABLED": "unknown — blocked before moderation probe",
-    "MODERATION_AUTOMATION_MODE": "unknown — blocked before moderation probe",
-    "note": "Runtime env not readable without secrets; infer after migration"
+    "note": "Runtime env inferred from moderation behavior; secrets not logged",
+    "trustLoopInferred": true,
+    "moderationAutomationModeInferred": "SHADOW"
   },
   "scenarios": [
     {
       "scenario": "deploy",
       "status": "PASS",
-      "deployedSha": "cd27534",
-      "expectedSha": "cd27534",
+      "deployedSha": "5829b8a",
+      "expectedSha": "5829b8a",
       "databaseOk": true
     },
     {
       "scenario": "migration-api",
-      "status": "FAIL",
-      "adminModerationStatus": 500,
-      "counters": null
+      "status": "PASS",
+      "adminModerationStatus": 200,
+      "counters": {
+        "pending": 106,
+        "needsFix": 2,
+        "rejected": 2,
+        "highRisk": 0,
+        "overdue": 0
+      }
     },
     {
       "scenario": "A",
-      "status": "NOT_RUN",
-      "reason": "seller product create 500 — schema migration missing"
+      "status": "PASS",
+      "productId": "cmt8ofze901q5li01092m5xvt",
+      "moderationId": "cmt8ofzis01qfli013c6nn762",
+      "serverState": {
+        "productStatus": "DRAFT",
+        "moderationStatus": "PENDING_REVIEW",
+        "reviewMode": "MANUAL",
+        "stage": "MANUAL_REVIEW",
+        "contentVersion": 1,
+        "systemRecommendation": "MANUAL_REVIEW",
+        "isPublic": false
+      },
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": false
     },
     {
       "scenario": "B",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "FAIL",
+      "productId": "cmt8ofze901q5li01092m5xvt",
+      "approveStatus": 500,
+      "approveBody": null,
+      "serverState": {},
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": false
     },
     {
       "scenario": "C",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "FAIL",
+      "productId": "cmt8ogd2r01qmli01imh6tkeh",
+      "serverState": {},
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 404
+        }
+      },
+      "auditVerified": true
     },
     {
       "scenario": "D",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "PASS",
+      "productId": "cmt8ogh0601r5li011fz562j5",
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 500
+      },
+      "auditVerified": true
     },
     {
       "scenario": "E",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "PASS",
+      "productId": "cmt8oglpc01roli016in5vsse",
+      "serverState": {
+        "moderationStatus": "PENDING_REVIEW",
+        "systemRecommendation": "MANUAL_REVIEW",
+        "riskScore": 0
+      },
+      "auditVerified": true
     },
     {
       "scenario": "F",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "FAIL",
+      "productId": "cmt8ogm0q01s5li0172cdcnbz",
+      "serverState": {
+        "beforeStatus": "ACTIVE"
+      },
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 500
+        }
+      },
+      "auditVerified": true
     },
     {
       "scenario": "G",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "FAIL",
+      "buyerApproveStatus": 500,
+      "sellerApproveStatus": 500,
+      "sellerBypassStatus": 200,
+      "crossSellerStatus": 404
     },
     {
       "scenario": "H",
-      "status": "NOT_RUN",
-      "reason": "blocked by A"
+      "status": "FAIL",
+      "productId": "cmt8ogq2001stli0115vfkyfc",
+      "decisions": {
+        "first": 200,
+        "secondApprove": 200,
+        "rejectAfter": 409
+      },
+      "auditEventCount": 0,
+      "auditVerified": false
     }
   ],
   "adminAcceptance": {
-    "queueLoads": false,
-    "detailLoads": false,
-    "counters": null,
-    "verdict": "FAIL"
+    "queueLoads": true,
+    "detailLoads": true,
+    "counters": {
+      "pending": 106,
+      "needsFix": 2,
+      "rejected": 2,
+      "highRisk": 0,
+      "overdue": 0
+    },
+    "verdict": "PASS"
   },
-  "regressionGates": {
-    "npm run build": "PASS",
-    "cd apps/mobile && npm run typecheck": "PASS",
-    "npm run mobile:seller-photo-upload:gate": "PASS",
-    "npm run mobile:lot-publish-truth:gate": "PASS",
-    "npm run mobile:lot-dynamic-characteristics:gate": "PASS",
-    "npm run mobile:lot-moderation:gate": "PASS",
-    "npm run mobile:android-update-install:gate": "PASS",
-    "staging publish-truth smoke post-deploy": "FAIL (create 500)"
-  },
-  "rc104": {
-    "built": false,
-    "reason": "E2E A–H not PASS"
-  },
-  "physical": "NOT_RUN",
   "verdict": "BLOCKED_FOR_RC10_4_BUILD"
 }
