@@ -105,6 +105,8 @@
     "mobile:lot-moderation:gate": "tsx scripts/mobile-lot-moderation-gate.ts",
     "moderation:policy-v2:gate": "tsx scripts/moderation-policy-v2-gate.ts",
     "moderation:policy-v2:shadow": "tsx scripts/moderation-policy-v2-shadow-report.ts",
+    "moderation:staging-shadow": "tsx scripts/staging-policy-v2-shadow-eval.ts",
+    "moderation:staging-image-ocr-smoke": "tsx scripts/staging-image-ocr-smoke.ts",
     "moderation:policy-v2:generate": "node scripts/generate-lot-policy-v2.mjs",
     "moderation:image-ocr:gate": "tsx scripts/moderation-image-ocr-gate.ts",
     "moderation:image-fixtures:generate": "node scripts/generate-policy-v2-image-fixtures.mjs",

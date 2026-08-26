@@ -9,3 +9,4 @@ export {
 export { fetchImageBytes, fetchImageBytesFromPath, hashImageBytes } from "./fetch-image";
 export { TesseractOcrProvider, terminateTesseractWorker } from "./tesseract-ocr";
 export { PixelCompositeImageModerationProvider } from "./pixel-image-moderation";
+export * from "./capability-state";
