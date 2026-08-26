@@ -1,0 +1,41 @@
+{
+  "candidate": "RC10.5",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.6",
+  "versionCode": 21,
+  "commitSha": "08dea77",
+  "mergeCommitSha": "08dea77",
+  "buildTime": "2026-08-25T07:59:02Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.6.apk",
+    "path": "artifacts/closed-beta-rc10.5/lot_android_closed_beta_0.1.15_beta.6.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.5/lot_android_closed_beta_0.1.15_beta.6.apk",
+    "sha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db",
+    "sizeBytes": 43743134
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "myLotsConsistencyFix": true,
+    "createLotPreviewFix": true,
+    "sellerSectionCanonical": true,
+    "requestSequencing": true,
+    "serverBackedSearch": true,
+    "previousRelease": "RC10.4 0.1.15-beta.5 (code 20)"
+  },
+  "buildNotes": {
+    "release": "RC10.5 — My Lots tab consistency + create/preview P0 fixes (PR #188 + #193 reconciliation)",
+    "previousRelease": "RC10.4 0.1.15-beta.5 (code 20)",
+    "versionPolicy": "Closed Beta RC series increments versionCode monotonically (RC10.4=20 → RC10.5=21) and versionName beta patch (0.1.15-beta.5 → 0.1.15-beta.6)"
+  }
+}

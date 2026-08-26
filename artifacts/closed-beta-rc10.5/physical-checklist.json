@@ -1,0 +1,118 @@
+{
+  "candidate": "RC10.5",
+  "generatedAt": "2026-08-26T12:00:00Z",
+  "status": "NOT_RUN",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "scope": "RC10.4→RC10.5 in-app updater + My Lots P0 + create/preview P0",
+  "apk": {
+    "versionName": "0.1.15-beta.6",
+    "versionCode": 21,
+    "path": "artifacts/closed-beta-rc10.5/lot_android_closed_beta_0.1.15_beta.6.apk",
+    "sha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db"
+  },
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234",
+    "admin": "admin@demo.lot / demo1234"
+  },
+  "environment": {
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "channel": "CLOSED_BETA",
+    "deployedSha": "135fdf8",
+    "note": "Backend deploy pending — My Lots server search requires #188 backend on Railway"
+  },
+  "scenarios": [
+    {
+      "id": "A",
+      "name": "UPDATE RC10.4 → RC10.5",
+      "startingState": "About: 0.1.15-beta.5 / code 20 / RC10.4",
+      "steps": [
+        "Open app on device with RC10.4 installed",
+        "Receive update offer for RC10.5",
+        "Download APK; SHA verification passes",
+        "Android installer opens",
+        "Install over RC10.4 succeeds",
+        "Session preserved; About shows 0.1.15-beta.6 / code 21 / RC10.5"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "B",
+      "name": "CREATE SMARTPHONE",
+      "steps": [
+        "Title: Телефон самсунг a57",
+        "Category: Электроника → Смартфоны",
+        "Price 11000, quantity 1, valid city, >=1 photo",
+        "Preview opens"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "C",
+      "name": "VALIDATION UX",
+      "steps": [
+        "New draft; skip category/productType, city, price",
+        "Explicit Russian blocker messages shown",
+        "No silent disabled Preview button"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "D",
+      "name": "AUTOSAVE",
+      "steps": [
+        "Start smartphone draft; fill fields; exit app",
+        "Reopen; draft restored with category/productType/price/city/characteristics"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "E",
+      "name": "SUBMIT",
+      "steps": [
+        "Fill required characteristics; submit",
+        "LOT shows На проверке in pending tab only"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "F",
+      "name": "MY LOTS TABS",
+      "steps": [
+        "Rapid switch: Активные → На проверке → Сохранённые → Активные",
+        "No wrong-tab cards; no flicker from stale responses"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "G",
+      "name": "SEARCH",
+      "steps": [
+        "In На проверке search: самсунг",
+        "Correct LOT found; clear search restores full tab list"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "H",
+      "name": "MODERATOR APPROVE",
+      "steps": [
+        "Admin approves smartphone",
+        "Pending tab clears; Active tab shows LOT"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "I",
+      "name": "BUYER",
+      "steps": ["Catalog, search, PDP show approved smartphone"],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "J",
+      "name": "RELAUNCH",
+      "steps": ["Force-close app; reopen; seller state matches server"],
+      "status": "NOT_RUN"
+    }
+  ]
+}

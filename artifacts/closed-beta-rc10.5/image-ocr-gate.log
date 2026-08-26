@@ -1,0 +1,107 @@
+
+> marketplace-mvp@0.1.0 moderation:image-ocr:gate
+> tsx scripts/moderation-image-ocr-gate.ts
+
+{"ts":"2026-08-26T11:50:47.606Z","level":"info","event":"ocr_started","imageId":"gate-nicotine"}
+{"ts":"2026-08-26T11:50:48.027Z","level":"info","event":"ocr_completed","imageId":"gate-nicotine","status":"EVALUATED","latencyMs":421}
+{"ts":"2026-08-26T11:50:48.027Z","level":"info","event":"image_moderation_started","imageId":"gate-nicotine"}
+{"ts":"2026-08-26T11:50:48.103Z","level":"info","event":"image_moderation_completed","imageId":"gate-nicotine","status":"EVALUATED","latencyMs":76}
+[RUN] vitest moderation-image-ocr
+
+> marketplace-mvp@0.1.0 test
+> vitest run tests/moderation-image-ocr.test.ts
+
+
+ RUN  v3.2.7 /workspace
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > extracts Cyrillic/Latin text from packaging fixtures
+{"ts":"2026-08-26T11:50:49.536Z","level":"info","event":"ocr_started","imageId":"img-nicotine"}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > extracts Cyrillic/Latin text from packaging fixtures
+{"ts":"2026-08-26T11:50:49.656Z","level":"info","event":"ocr_completed","imageId":"img-nicotine","status":"EVALUATED","latencyMs":119}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > extracts Cyrillic/Latin text from packaging fixtures
+{"ts":"2026-08-26T11:50:49.656Z","level":"info","event":"image_moderation_started","imageId":"img-nicotine"}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > extracts Cyrillic/Latin text from packaging fixtures
+{"ts":"2026-08-26T11:50:49.738Z","level":"info","event":"image_moderation_completed","imageId":"img-nicotine","status":"EVALUATED","latencyMs":81}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > detects contact patterns from pixel OCR
+{"ts":"2026-08-26T11:50:49.776Z","level":"info","event":"ocr_started","imageId":"img-phone"}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > detects contact patterns from pixel OCR
+{"ts":"2026-08-26T11:50:49.869Z","level":"info","event":"ocr_completed","imageId":"img-phone","status":"EVALUATED","latencyMs":93}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > detects contact patterns from pixel OCR
+{"ts":"2026-08-26T11:50:49.869Z","level":"info","event":"image_moderation_started","imageId":"img-phone"}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — pixel OCR on fixtures > detects contact patterns from pixel OCR
+{"ts":"2026-08-26T11:50:49.909Z","level":"info","event":"image_moderation_completed","imageId":"img-phone","status":"EVALUATED","latencyMs":40}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — vape physical case with real OCR > Жидкость для вэйпа — MANUAL_REVIEW without fabricated nicotine
+{"ts":"2026-08-26T11:50:49.910Z","level":"info","event":"ocr_started","imageId":"vape-1"}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — vape physical case with real OCR > Жидкость для вэйпа — MANUAL_REVIEW without fabricated nicotine
+{"ts":"2026-08-26T11:50:49.963Z","level":"info","event":"ocr_completed","imageId":"vape-1","status":"EVALUATED","latencyMs":53}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — vape physical case with real OCR > Жидкость для вэйпа — MANUAL_REVIEW without fabricated nicotine
+{"ts":"2026-08-26T11:50:49.963Z","level":"info","event":"image_moderation_started","imageId":"vape-1"}
+
+stdout | tests/moderation-image-ocr.test.ts > EPIC 189.1 — vape physical case with real OCR > Жидкость для вэйпа — MANUAL_REVIEW without fabricated nicotine
+{"ts":"2026-08-26T11:50:49.995Z","level":"info","event":"image_moderation_completed","imageId":"vape-1","status":"EVALUATED","latencyMs":31}
+
+ ✓ tests/moderation-image-ocr.test.ts (6 tests) 894ms
+   ✓ EPIC 189.1 — provider contracts > provider interfaces return status fields  422ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  11:50:48
+   Duration  1.58s (transform 163ms, setup 0ms, collect 485ms, tests 894ms, environment 0ms, prepare 61ms)
+
+[RUN] moderation:policy-v2:gate
+
+> marketplace-mvp@0.1.0 moderation:policy-v2:gate
+> tsx scripts/moderation-policy-v2-gate.ts
+
+[RUN] vitest moderation-policy-v2
+
+> marketplace-mvp@0.1.0 test
+> vitest run tests/moderation-policy-v2.test.ts
+
+
+ RUN  v3.2.7 /workspace
+
+ ✓ tests/moderation-policy-v2.test.ts (14 tests) 216ms
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  11:50:51
+   Duration  580ms (transform 105ms, setup 0ms, collect 151ms, tests 216ms, environment 0ms, prepare 47ms)
+
+{
+  "verdict": "PASS",
+  "automationVerdict": "NOT_READY_FOR_AUTOMATION",
+  "policyVersion": "LOT_POLICY_V2_1",
+  "ruleCount": 49,
+  "fixtureCount": 131,
+  "falsePositives": 0,
+  "falseNegatives": 0,
+  "vapeCase": "MANUAL_REVIEW",
+  "imageEngine": "PIXEL_OCR_QR_OPERATIONAL",
+  "ocr": "TESSERACT_PIXEL",
+  "shadowMode": "LOT_POLICY_V2_SHADOW default enabled",
+  "rc105": "BLOCKED"
+}
+{
+  "verdict": "PASS",
+  "automationVerdict": "NOT_READY_FOR_AUTOMATION",
+  "ocrProvider": "tesseract",
+  "imageProvider": "pixel-composite",
+  "imageFixtures": 12,
+  "ocrStatus": "EVALUATED",
+  "imageStatus": "EVALUATED",
+  "multimodalDecision": "HARD_BLOCK",
+  "guardedAuto": "DISABLED",
+  "enforce": "DISABLED",
+  "rc105": "NOT_STARTED"
+}

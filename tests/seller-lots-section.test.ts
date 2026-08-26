@@ -67,4 +67,22 @@ describe("seller-lots-section — canonical mapping", () => {
     expect(sellerLotSectionTone("pending")).toBe("warning");
     expect(sellerLotSectionTone("active")).toBe("success");
   });
+
+  it("maps each standard state to exactly one seller tab", () => {
+    const snapshots = [
+      { status: ProductStatus.ACTIVE, moderationState: ModerationStatus.APPROVED },
+      { status: ProductStatus.DRAFT, moderationState: ModerationStatus.PENDING_REVIEW },
+      { status: ProductStatus.DRAFT, moderationState: ModerationStatus.NEEDS_FIX },
+      { status: ProductStatus.DRAFT, moderationState: null },
+      { status: ProductStatus.DRAFT, moderationState: ModerationStatus.REJECTED },
+      { status: ProductStatus.ARCHIVED, moderationState: null },
+    ];
+    for (const snapshot of snapshots) {
+      const section = resolveSellerLotSection(snapshot);
+      const matchingTabs = (["active", "pending", "drafts", "sold"] as const).filter((tab) =>
+        sellerLotSectionMatchesTab(section, tab),
+      );
+      expect(matchingTabs, JSON.stringify(snapshot)).toHaveLength(1);
+    }
+  });
 });

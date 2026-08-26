@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-08-26T11:52:00Z",
+  "candidate": "RC10.5",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "physicalAndroid": "NOT_RUN",
+  "results": [
+    { "id": "unit_mobile_lot_preview_validation", "verdict": "PASS" },
+    { "id": "unit_mobile_lot_draft_autosave", "verdict": "PASS" },
+    { "id": "unit_mobile_my_lots_consistency", "verdict": "PASS" },
+    { "id": "unit_seller_lots_section", "verdict": "PASS" },
+    { "id": "build", "verdict": "PASS" },
+    { "id": "mobile_typecheck", "verdict": "PASS" },
+    { "id": "create_lot_preview", "verdict": "PASS" },
+    { "id": "my_lots_consistency", "verdict": "PASS" },
+    { "id": "lot_publish_truth", "verdict": "PASS" },
+    { "id": "lot_dynamic_characteristics", "verdict": "PASS" },
+    { "id": "lot_moderation", "verdict": "PASS" },
+    { "id": "seller_photo_upload", "verdict": "PASS" },
+    { "id": "policy_v2", "verdict": "PASS" },
+    { "id": "image_ocr", "verdict": "PASS" },
+    { "id": "backend_stability", "verdict": "PASS" },
+    { "id": "railway_runtime", "verdict": "PASS" },
+    { "id": "migration_verify", "verdict": "BLOCKED", "detail": "SHA mismatch 135fdf8 vs 0d8deec" },
+    { "id": "release_pipeline", "verdict": "BLOCKED", "detail": "SHA mismatch" },
+    { "id": "apk_verify", "verdict": "PASS" },
+    { "id": "signer_verification", "verdict": "PASS" }
+  ],
+  "invariants": [
+    "smartphone_preview_reachable",
+    "preview_blockers_explicit",
+    "characteristics_submit_boundary",
+    "seller_section_exclusivity",
+    "request_sequencing",
+    "server_search_contract",
+    "policy_regression",
+    "autosave_roundtrip"
+  ]
+}
