@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { REPRESENTATIVE_CATEGORY_MATRIX } from "@/lib/mobile/lot-characteristics-category-matrix";
+import { evaluateLotPreviewValidation } from "@/lib/mobile/lot-preview-validation";
 import {
   humanCharacteristicPrompt,
   isForbiddenCharacteristicUiMessage,
@@ -46,11 +47,27 @@ describe("P0.1 lot dynamic characteristics — shared lib", () => {
     expect(isForbiddenCharacteristicUiMessage("Заполните обязательную характеристику «Мощность»")).toBe(true);
   });
 
-  it("blocks preview when required characteristics are missing", () => {
+  it("required characteristics block submit, not preview", () => {
     const schema = defs([{ name: "Мощность", type: "NUMBER" }]);
     const issues = validateLotCharacteristicForm(schema, {}, { onlyRequired: true });
     expect(issues).toHaveLength(1);
     expect(issues[0]?.message).toBe("Укажите мощность");
+
+    const preview = evaluateLotPreviewValidation({
+      title: "Дрель",
+      price: "1000",
+      stock: "1",
+      city: "Москва",
+      categoryId: "cat",
+      productTypeId: "pt",
+      imagesCount: 1,
+      pickupEnabled: false,
+      pickupPointIds: [],
+      characteristicDefinitions: schema,
+      characteristicValues: {},
+    });
+    expect(preview.canPreview).toBe(true);
+    expect(preview.canSubmit).toBe(false);
   });
 
   it("serializes stable definition ids for publish payload", () => {
@@ -127,7 +144,7 @@ describe("P0.1 lot dynamic characteristics — mobile wiring", () => {
   });
 
   it("validates before preview and reconciles server rejections", () => {
-    expect(hookSource).toContain("validateLotCharacteristicForm");
+    expect(hookSource).toContain("evaluateLotPreviewValidation");
     expect(hookSource).toContain("handleCharacteristicRejection");
     expect(hookSource).toContain("serializeLotCharacteristicPayload");
     expect(hookSource).toContain("CHARACTERISTICS_REQUIRED");
