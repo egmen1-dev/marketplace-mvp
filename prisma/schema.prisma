@@ -1630,6 +1630,9 @@ model ProductModeration {
   moderatedContentVersion Int?
   moderatedContentVersionHash String?
   decisionVersion Int              @default(0)
+  policyV2Snapshot Json?
+  evaluationCompleteness Json?
+  imageEvaluationSummary Json?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -1640,6 +1643,42 @@ model ProductModeration {
   @@index([submittedAt])
   @@index([riskScore])
   @@map("product_moderations")
+}
+
+/// Cached OCR / image moderation per content hash (EPIC 189.1).
+model ModerationImageEvaluationCache {
+  id                  String   @id @default(cuid())
+  imageContentHash    String
+  provider            String
+  providerVersion     String
+  kind                String
+  policyEngineVersion String?
+  resultJson          Json
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([imageContentHash, provider, providerVersion, kind])
+  @@index([imageContentHash])
+  @@map("moderation_image_evaluation_cache")
+}
+
+/// Async policy evaluation job (EPIC 189.1).
+model ModerationEvaluationJob {
+  id                 String    @id @default(cuid())
+  productId          String
+  contentVersionHash String
+  status             String    @default("PENDING")
+  attempts           Int       @default(0)
+  lastError          String?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([productId])
+  @@index([status])
+  @@index([contentVersionHash])
+  @@map("moderation_evaluation_jobs")
 }
 
 model ProductModerationAuditEvent {

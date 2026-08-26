@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 
 import { checkSchemaCompatibility } from "@/lib/db/schema-compatibility";
 import { getBuildVersionInfo } from "@/lib/build-info";
-import { getModerationAutomationMode } from "@/lib/moderation/config";
+import { getModerationAutomationMode, isLotPolicyV2ShadowEnabled } from "@/lib/moderation/config";
+import {
+  getImageModerationCapabilityState,
+  getOcrCapabilityState,
+  getPolicyV2CapabilityState,
+  getVisualObjectClassificationState,
+} from "@/lib/moderation/providers/capability-state";
 import { isMarketplaceTrustLoopEnabled } from "@/lib/marketplace-trust-loop/flags";
 import { isBlobConfigured } from "@/lib/storage";
 
@@ -101,6 +107,11 @@ export async function GET() {
       runtime: {
         trustLoopEnabled: isMarketplaceTrustLoopEnabled(),
         moderationAutomationMode: getModerationAutomationMode(),
+        policyV2Shadow: isLotPolicyV2ShadowEnabled(),
+        policyV2: getPolicyV2CapabilityState(),
+        ocr: getOcrCapabilityState(),
+        imageModeration: getImageModerationCapabilityState(),
+        visualObjectClassification: getVisualObjectClassificationState(),
       },
       checks,
     },

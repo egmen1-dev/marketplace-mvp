@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-08-26T07:55:00.000Z",
+  "mode": "SHADOW",
+  "status": "NOT_RUN",
+  "reason": "Staging deploy and DATABASE_URL required for real listing sample",
+  "fixtureShadow": {
+    "textFixtures": 121,
+    "imageFixtures": 12,
+    "agreementRate": 1,
+    "criticalFalseNegatives": 0,
+    "falsePositives": 0,
+    "ocrCoverage": "EVALUATED_ON_PIXEL_FIXTURES",
+    "imageCoverage": "OCR_QR_DERIVED_SIGNALS_OPERATIONAL",
+    "visualClassification": "UNAVAILABLE_WITHOUT_CLOUD_CV"
+  },
+  "stagingSample": {
+    "sampleSize": 0,
+    "decisionDistribution": {},
+    "humanAgreement": null,
+    "providerFailures": 0,
+    "notEvaluatedCount": null
+  },
+  "automationVerdict": "NOT_READY_FOR_AUTOMATION",
+  "guardedAuto": "DISABLED",
+  "enforce": "DISABLED",
+  "rc105": "NOT_STARTED"
+}

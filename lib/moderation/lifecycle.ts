@@ -10,6 +10,7 @@ import { mapDecisionToModerationStatus } from "./decision-engine";
 import { notifyModerationDecision } from "./notifications";
 import { upsertModerationQueueItem } from "./queue";
 import { runLotModerationEngine } from "./run-product-moderation";
+import { enqueuePolicyEvaluationJob, processPolicyEvaluationJob } from "./policy-evaluation-job";
 import type { ModerationDecision } from "./types";
 
 function reviewModeForDecision(decision: ModerationDecision): string {
@@ -49,6 +50,13 @@ export async function submitLotForModeration(productId: string): Promise<void> {
       systemRecommendation: result.decision,
       contentVersionAtSubmit: product.contentVersion,
       contentVersionHash: result.contentVersionHash,
+      policyV2Snapshot: result.policyV2 ? (result.policyV2 as object) : undefined,
+      evaluationCompleteness: result.policyV2?.evaluationCompleteness
+        ? (result.policyV2.evaluationCompleteness as object)
+        : undefined,
+      imageEvaluationSummary: result.policyV2?.imageEvaluationSummary
+        ? (result.policyV2.imageEvaluationSummary as object)
+        : undefined,
     },
     update: {
       status,
@@ -67,9 +75,31 @@ export async function submitLotForModeration(productId: string): Promise<void> {
       systemRecommendation: result.decision,
       contentVersionAtSubmit: product.contentVersion,
       contentVersionHash: result.contentVersionHash,
+      policyV2Snapshot: result.policyV2 ? (result.policyV2 as object) : undefined,
+      evaluationCompleteness: result.policyV2?.evaluationCompleteness
+        ? (result.policyV2.evaluationCompleteness as object)
+        : undefined,
+      imageEvaluationSummary: result.policyV2?.imageEvaluationSummary
+        ? (result.policyV2.imageEvaluationSummary as object)
+        : undefined,
       decisionVersion: { increment: 1 },
     },
   });
+
+  if (result.policyV2) {
+    try {
+      await enqueuePolicyEvaluationJob({
+        productId,
+        contentVersionHash: result.contentVersionHash,
+      });
+      void processPolicyEvaluationJob(productId).catch(() => {});
+    } catch (err) {
+      log.error("policy_evaluation_enqueue_failed", {
+        productId,
+        errorMessage: err instanceof Error ? err.message.slice(0, 200) : "unknown",
+      });
+    }
+  }
 
   try {
     await upsertModerationQueueItem({

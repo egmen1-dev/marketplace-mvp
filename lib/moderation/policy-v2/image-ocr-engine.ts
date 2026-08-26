@@ -1,12 +1,11 @@
 import type { PolicyEvidenceHit } from "./types";
+import type { LotImageEvaluationAggregate, PerImageEvaluation } from "../providers/types";
+import { matchPatterns } from "./text-engine";
 
-const IMAGE_ENGINE = "LOT_POLICY_V2_IMAGE_HEURISTIC/1.0.0";
-const OCR_ENGINE = "LOT_POLICY_V2_OCR_HEURISTIC/1.0.0";
+const PIXEL_OCR_ENGINE = "LOT_POLICY_V2_TESSERACT_OCR/1.0.0";
+const PIXEL_IMAGE_ENGINE = "LOT_POLICY_V2_PIXEL_IMAGE/1.0.0";
 
-const CONTACT_IN_URL = /(t\.me\/|telegram|whatsapp|wa\.me|viber|vk\.com\/)/i;
-const QR_HINT = /qr|qrcode|штрих/i;
-
-export type ImageOcrAnalysis = {
+export type PixelImageOcrAnalysis = {
   imageSignals: {
     evaluation: "NOT_EVALUATED" | "SAFE" | "FLAGGED";
     ocrAvailable: boolean;
@@ -16,97 +15,139 @@ export type ImageOcrAnalysis = {
   ocrText: string;
   evidence: PolicyEvidenceHit[];
   notEvaluatedReasons: string[];
+  perImage: PerImageEvaluation[];
+  aggregate?: LotImageEvaluationAggregate;
 };
 
-/** Heuristic image/OCR — uses alt text, URL paths, and fetch metadata. Full CV deferred to external provider. */
-export function analyzeImageAndOcrHeuristic(input: {
-  imageUrls: string[];
-  imageAltTexts: string[];
+const SIGNAL_TO_POLICY: Record<string, string> = {
+  nicotine_text_on_packaging: "LOT_NICOTINE_LIQUID_V2",
+  vape_text_on_packaging: "LOT_VAPE_LIQUID_AMBIGUOUS_V2",
+  alcohol_text_on_packaging: "LOT_ALCOHOL_REMOTE_V2",
+  weapon_text_on_packaging: "LOT_WEAPON_FIREARM_V2",
+  document_text_on_packaging: "LOT_OFFICIAL_DOCUMENTS_V2",
+  qr_code_detected: "LOT_QR_IN_IMAGE_V2",
+  contact_phone_in_image: "LOT_CONTACT_IN_IMAGE_V2",
+  contact_telegram_in_image: "LOT_CONTACT_IN_IMAGE_V2",
+  contact_whatsapp_in_image: "LOT_CONTACT_IN_IMAGE_V2",
+  contact_url_in_image: "LOT_CONTACT_IN_IMAGE_V2",
+};
+
+export function analyzePixelImageAndOcr(input: {
+  imageEvaluation: LotImageEvaluationAggregate | null;
   evaluatedAt: string;
-}): ImageOcrAnalysis {
+}): PixelImageOcrAnalysis {
   const evidence: PolicyEvidenceHit[] = [];
   const notEvaluatedReasons: string[] = [];
-  const ocrParts: string[] = [];
+  const agg = input.imageEvaluation;
 
-  for (let i = 0; i < input.imageUrls.length; i++) {
-    const url = input.imageUrls[i] ?? "";
-    const alt = input.imageAltTexts[i] ?? "";
-    if (alt) ocrParts.push(alt);
-    try {
-      const path = new URL(url).pathname;
-      ocrParts.push(path.replace(/[-_/]/g, " "));
-    } catch {
-      // relative url
-      ocrParts.push(url);
-    }
+  if (!agg || agg.perImage.length === 0) {
+    return {
+      imageSignals: {
+        evaluation: "NOT_EVALUATED",
+        ocrAvailable: false,
+        imageText: null,
+        engineVersion: `${PIXEL_IMAGE_ENGINE};no-images`,
+      },
+      ocrText: "",
+      evidence: [],
+      notEvaluatedReasons: [],
+      perImage: [],
+      aggregate: agg ?? undefined,
+    };
+  }
 
-    if (CONTACT_IN_URL.test(url)) {
+  for (const per of agg.perImage) {
+    for (const block of per.ocr.blocks) {
+      if (!block.text.trim()) continue;
       evidence.push({
-        source: "IMAGE_SIGNAL",
-        policyId: "LOT_CONTACT_IN_IMAGE_V2",
-        confidence: 0.9,
-        matchedValue: url,
-        detail: "contact pattern in image URL",
-        engineVersion: IMAGE_ENGINE,
+        source: "OCR_SIGNAL",
+        policyId: "LOT_PIXEL_OCR_V2",
+        confidence: block.confidence,
+        matchedValue: block.text.slice(0, 300),
+        detail: `imageId=${per.imageId}; normalized=${block.normalizedText.slice(0, 120)}`,
+        engineVersion: `${PIXEL_OCR_ENGINE};${per.ocr.provider}/${per.ocr.providerVersion}`,
         evaluatedAt: input.evaluatedAt,
       });
     }
-    if (QR_HINT.test(url) || QR_HINT.test(alt)) {
+
+    for (const sig of per.image.policySignals) {
+      const policyId = SIGNAL_TO_POLICY[sig.label] ?? "LOT_IMAGE_SIGNAL_V2";
       evidence.push({
         source: "IMAGE_SIGNAL",
-        policyId: "LOT_QR_IN_IMAGE_V2",
-        confidence: 0.75,
-        matchedValue: alt || url,
-        engineVersion: IMAGE_ENGINE,
+        policyId,
+        confidence: sig.confidence,
+        matchedValue: sig.label,
+        detail: `imageId=${per.imageId}; ${sig.detail ?? ""}`,
+        engineVersion: `${PIXEL_IMAGE_ENGINE};${per.image.provider}/${per.image.providerVersion}`,
         evaluatedAt: input.evaluatedAt,
       });
     }
+
+    if (per.ocr.status === "FAILED" || per.ocr.status === "TIMEOUT") {
+      notEvaluatedReasons.push(`OCR_${per.ocr.status}:${per.imageId}`);
+    }
+    if (per.image.status === "FAILED" || per.image.status === "TIMEOUT") {
+      notEvaluatedReasons.push(`IMAGE_${per.image.status}:${per.imageId}`);
+    }
   }
 
-  const ocrText = ocrParts.join("\n").trim();
-  const hasPixelOcr = false; // external CV provider not wired in v2 foundation
+  const ocrText = agg.combinedOcrText;
+  const hasPixelOcr = agg.ocrStatus === "EVALUATED";
+  const hasPixelImage = agg.imageStatus === "EVALUATED";
 
-  if (input.imageUrls.length === 0) {
-    // No images uploaded — not a missing safety dimension for text-only evaluation.
+  if (!hasPixelOcr) {
+    notEvaluatedReasons.push("PIXEL_OCR_NOT_EVALUATED");
   }
-  if (!hasPixelOcr && input.imageUrls.length > 0) {
-    notEvaluatedReasons.push("PIXEL_OCR_NOT_AVAILABLE");
-  }
-  if (!hasPixelOcr && input.imageUrls.length > 0) {
-    notEvaluatedReasons.push("PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE");
+  if (!hasPixelImage) {
+    notEvaluatedReasons.push("PIXEL_IMAGE_CLASSIFICATION_INCOMPLETE");
   }
 
-  if (ocrText) {
-    evidence.push({
-      source: "OCR_SIGNAL",
-      policyId: "LOT_OCR_HEURISTIC_V2",
-      confidence: 0.45,
-      matchedValue: ocrText.slice(0, 200),
-      detail: "heuristic from alt/url only — not pixel OCR",
-      engineVersion: OCR_ENGINE,
-      evaluatedAt: input.evaluatedAt,
-    });
-  }
+  const flagged = evidence.some(
+    (e) =>
+      e.policyId.startsWith("LOT_CONTACT") ||
+      e.policyId.startsWith("LOT_QR") ||
+      e.policyId === "LOT_NICOTINE_LIQUID_V2" ||
+      e.policyId === "LOT_ALCOHOL_REMOTE_V2" ||
+      e.policyId === "LOT_WEAPON_FIREARM_V2",
+  );
 
-  const flagged = evidence.some((e) => e.policyId.startsWith("LOT_CONTACT") || e.policyId.startsWith("LOT_QR"));
+  const nicotineInOcr = matchPatterns(ocrText, ["никотин", "nicotine", "mg/ml", "20mg"]).length > 0;
+
   const evaluation =
-    input.imageUrls.length === 0
-      ? "NOT_EVALUATED"
-      : flagged
-        ? "FLAGGED"
-        : hasPixelOcr
-          ? "SAFE"
-          : "NOT_EVALUATED";
+    flagged || nicotineInOcr ? "FLAGGED" : hasPixelOcr && hasPixelImage ? "SAFE" : "NOT_EVALUATED";
 
   return {
     imageSignals: {
       evaluation,
-      ocrAvailable: Boolean(ocrText),
+      ocrAvailable: hasPixelOcr,
       imageText: ocrText || null,
-      engineVersion: hasPixelOcr ? OCR_ENGINE : `${OCR_ENGINE};pixel=unavailable`,
+      engineVersion: `${PIXEL_OCR_ENGINE}+${PIXEL_IMAGE_ENGINE}`,
     },
     ocrText,
     evidence,
-    notEvaluatedReasons,
+    notEvaluatedReasons: [...new Set(notEvaluatedReasons)],
+    perImage: agg.perImage,
+    aggregate: agg,
+  };
+}
+
+/** @deprecated URL/alt heuristic only — not pixel OCR. Do not use for operational status. */
+export function analyzeImageAndOcrHeuristic(input: {
+  imageUrls: string[];
+  imageAltTexts: string[];
+  evaluatedAt: string;
+}): PixelImageOcrAnalysis {
+  void input;
+  return {
+    imageSignals: {
+      evaluation: "NOT_EVALUATED",
+      ocrAvailable: false,
+      imageText: null,
+      engineVersion: "HEURISTIC_DISABLED_EPIC_189_1",
+    },
+    ocrText: "",
+    evidence: [],
+    notEvaluatedReasons: input.imageUrls.length > 0 ? ["PIXEL_OCR_REQUIRED"] : [],
+    perImage: [],
   };
 }

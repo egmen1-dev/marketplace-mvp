@@ -1,9 +1,13 @@
 import type { PolicyDecisionClass, PolicyEvaluationResult } from "./types";
+import { isNeverAutoApprove } from "../evaluation-completeness";
 
-const CRITICAL_NOT_EVALUATED = new Set([
-  "PIXEL_OCR_NOT_AVAILABLE",
-  "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE",
-]);
+const CRITICAL_NOT_EVALUATED_PREFIXES = [
+  "PIXEL_OCR",
+  "PIXEL_IMAGE",
+  "IMAGE_EVALUATION_PENDING",
+  "OCR_",
+  "IMAGE_",
+];
 
 export type AutomationLevel = "SHADOW" | "GUARDED_AUTO" | "ENFORCE";
 
@@ -19,7 +23,15 @@ export function canAutoApprove(
   if (result.conflicts.length > 0) return false;
   if (result.humanReviewRequired) return false;
   if (result.confidence < confidenceThreshold) return false;
-  if (result.notEvaluatedDimensions.some((d) => CRITICAL_NOT_EVALUATED.has(d))) {
+  if (isNeverAutoApprove(result.rulesTriggered)) return false;
+  if (result.evaluationCompleteness && !result.evaluationCompleteness.allRequiredEvaluated) {
+    return false;
+  }
+  if (
+    result.notEvaluatedDimensions.some((d) =>
+      CRITICAL_NOT_EVALUATED_PREFIXES.some((p) => d.startsWith(p)),
+    )
+  ) {
     return false;
   }
   if (result.rulesTriggered.length > 0) return false;
@@ -30,13 +42,16 @@ export function automationVerdict(input: {
   policyResearchComplete: boolean;
   imageEngineOperational: boolean;
   ocrOperational: boolean;
+  /** Real staging listing shadow + human comparison (EPIC 189.1 PART 20–21). */
+  stagingShadowComplete?: boolean;
   shadowAgreementRate?: number;
   criticalFalseNegatives: number;
 }): "NOT_READY_FOR_AUTOMATION" | "READY_FOR_GUARDED_AUTO_REVIEW" | "READY_FOR_GUARDED_AUTO" {
   if (!input.policyResearchComplete) return "NOT_READY_FOR_AUTOMATION";
   if (!input.imageEngineOperational || !input.ocrOperational) return "NOT_READY_FOR_AUTOMATION";
   if (input.criticalFalseNegatives > 0) return "NOT_READY_FOR_AUTOMATION";
-  if (input.shadowAgreementRate == null) return "READY_FOR_GUARDED_AUTO_REVIEW";
+  if (!input.stagingShadowComplete) return "NOT_READY_FOR_AUTOMATION";
+  if (input.shadowAgreementRate == null) return "NOT_READY_FOR_AUTOMATION";
   if (input.shadowAgreementRate >= 0.92) return "READY_FOR_GUARDED_AUTO";
   return "READY_FOR_GUARDED_AUTO_REVIEW";
 }

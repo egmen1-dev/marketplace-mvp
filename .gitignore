@@ -67,3 +67,6 @@ next-env.d.ts
 # prisma generated (if custom output is used)
 /app/generated/prisma
 artifacts/*.apk
+
+# tesseract traineddata (downloaded at runtime / gate)
+*.traineddata
