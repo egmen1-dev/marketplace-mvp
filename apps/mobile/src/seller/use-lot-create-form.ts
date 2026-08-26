@@ -1,7 +1,10 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
+import { Alert, InteractionManager } from "react-native";
+
+import { buildPhotoStepUiContract } from "../../../../lib/mobile/seller-journey/photo-step-state";
+import { createClientActionId, createOneTapGuard } from "../../../../lib/mobile/seller-journey/one-tap-action";
 
 import type { LotCharacteristicDefinition, LotCharacteristicFormValue } from "./lot-characteristics";
 import {
@@ -49,6 +52,7 @@ import {
 import { normalizeDraftImageAsset, normalizeImagePickerAsset } from "./normalize-image-picker-asset";
 import { uploadSellerLotImage } from "./upload-seller-lot-image";
 import type { SellerPickupPoint } from "../api/seller-lot";
+import { recordSellerJourneyEvent } from "./journey-diagnostics";
 
 export type LotWizardStep = "photos" | "details" | "preview" | "success";
 export type AutosaveStatus = "idle" | "saving" | "saved";
@@ -58,6 +62,9 @@ export function useLotCreateForm() {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedFadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const characteristicsRequestRef = useRef(0);
+  const uploadQueueRef = useRef<Promise<void> | null>(null);
+  const continueGuardRef = useRef(createOneTapGuard());
+  const publishGuardRef = useRef(createOneTapGuard());
 
   const [step, setStep] = useState<LotWizardStep>("photos");
   const [draft, setDraft] = useState<LotDraft>(EMPTY_LOT_DRAFT);
@@ -81,6 +88,8 @@ export function useLotCreateForm() {
   const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [canRetry, setCanRetry] = useState(false);
   const [info, setInfo] = useState<string | null>(null);
+  const [pickerBusy, setPickerBusy] = useState(false);
+  const [continueInFlight, setContinueInFlight] = useState(false);
   const lastFailedActionRef = useRef<LotCreateErrorContext | null>(null);
   const uploadFailedRef = useRef(false);
   const retryIntentRef = useRef<"save" | "publish">("publish");
@@ -222,15 +231,27 @@ export function useLotCreateForm() {
   );
 
   const processUploadQueue = useCallback(async () => {
-    const images = draftRef.current.images;
-    for (let i = 0; i < images.length; i++) {
-      const img = images[i];
-      if (img.uploadedUrl || img.uploadStatus === "uploading") continue;
-      try {
-        await uploadDraftImageAt(i);
-      } catch {
-        break;
+    if (uploadQueueRef.current) {
+      await uploadQueueRef.current.catch(() => undefined);
+    }
+
+    const task = (async () => {
+      for (let i = 0; i < draftRef.current.images.length; i++) {
+        const img = draftRef.current.images[i];
+        if (!img || img.uploadedUrl || img.uploadStatus === "uploading") continue;
+        try {
+          await uploadDraftImageAt(i);
+        } catch {
+          break;
+        }
       }
+    })();
+
+    uploadQueueRef.current = task;
+    try {
+      await task;
+    } finally {
+      if (uploadQueueRef.current === task) uploadQueueRef.current = null;
     }
   }, [uploadDraftImageAt]);
 
@@ -242,6 +263,11 @@ export function useLotCreateForm() {
   const hasFailedUploads = useMemo(
     () => draft.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl),
     [draft.images],
+  );
+
+  const photoStepUi = useMemo(
+    () => buildPhotoStepUiContract(draft.images, { pickerBusy, continueInFlight }),
+    [draft.images, pickerBusy, continueInFlight],
   );
 
   const characteristicPreviewRows = useMemo(() => {
@@ -394,7 +420,7 @@ export function useLotCreateForm() {
     ],
   );
 
-  const canContinuePhotos = draft.images.length > 0;
+  const canContinuePhotos = photoStepUi.canContinue;
   const canContinueDetails = previewValidation.canPreview;
   const previewBlockersMessage = formatPreviewBlockersMessage(previewValidation.previewBlockers);
 
@@ -424,27 +450,81 @@ export function useLotCreateForm() {
       Alert.alert("Нужен доступ", useCamera ? "Разрешите камеру" : "Разрешите галерею");
       return;
     }
-    const result = useCamera
-      ? await ImagePicker.launchCameraAsync({ quality: 0.85 })
-      : await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true, quality: 0.85, selectionLimit: 10 });
-    if (result.canceled) return;
-    const added = result.assets.map((asset) => {
-      const normalized = normalizeImagePickerAsset(asset);
-      return {
-        uri: normalized.uri,
-        fileName: normalized.fileName,
-        mimeType: normalized.mimeType,
-        width: normalized.width,
-        height: normalized.height,
-        fileSize: normalized.fileSize,
-        uploadStatus: "idle" as const,
-      };
+
+    setPickerBusy(true);
+    try {
+      const result = useCamera
+        ? await ImagePicker.launchCameraAsync({ quality: 0.85 })
+        : await ImagePicker.launchImageLibraryAsync({ allowsMultipleSelection: true, quality: 0.85, selectionLimit: 10 });
+      if (result.canceled) return;
+      const added = result.assets.map((asset) => {
+        const normalized = normalizeImagePickerAsset(asset);
+        return {
+          uri: normalized.uri,
+          fileName: normalized.fileName,
+          mimeType: normalized.mimeType,
+          width: normalized.width,
+          height: normalized.height,
+          fileSize: normalized.fileSize,
+          uploadStatus: "idle" as const,
+        };
+      });
+      const current = draftRef.current;
+      const nextImages = [...current.images, ...added].slice(0, 10);
+      persist({ ...current, images: nextImages, step: "photos" }, { immediate: true });
+      clearErrors();
+      await new Promise<void>((resolve) => {
+        InteractionManager.runAfterInteractions(() => resolve());
+      });
+      void processUploadQueue();
+    } finally {
+      setPickerBusy(false);
+    }
+  }
+
+  async function continueFromPhotos() {
+    const actionId = createClientActionId("photo-continue");
+    const readyUi = buildPhotoStepUiContract(draftRef.current.images, {
+      pickerBusy,
+      continueInFlight: false,
     });
-    const current = draftRef.current;
-    const nextImages = [...current.images, ...added].slice(0, 10);
-    persist({ ...current, images: nextImages, step: "photos" }, { immediate: true });
-    clearErrors();
-    void processUploadQueue();
+    recordSellerJourneyEvent({
+      screen: "photos",
+      action: "continue",
+      actionId,
+      clientState: readyUi.phase,
+    });
+    if (!readyUi.canContinue || readyUi.ctaDisabled) {
+      recordSellerJourneyEvent({
+        screen: "photos",
+        action: "continue",
+        actionId,
+        outcome: "VISIBLE_ERROR",
+        errorCode: "NOT_READY",
+        clientState: readyUi.phase,
+      });
+      return;
+    }
+    if (!continueGuardRef.current.tryBegin()) return;
+
+    setContinueInFlight(true);
+    try {
+      await new Promise<void>((resolve) => {
+        InteractionManager.runAfterInteractions(() => resolve());
+      });
+      setStep("details");
+      persist({ ...draftRef.current, step: "details" }, { immediate: true });
+      recordSellerJourneyEvent({
+        screen: "photos",
+        action: "continue",
+        actionId,
+        outcome: "SUCCESS",
+        clientState: "details",
+      });
+    } finally {
+      setContinueInFlight(false);
+      continueGuardRef.current.finish();
+    }
   }
 
   async function selectRootCategory(cat: { id: string; name: string }) {
@@ -653,20 +733,30 @@ export function useLotCreateForm() {
     });
   }
 
-  async function publishOnServer(images: Array<{ url: string; pathname?: string | null }>) {
+  async function publishOnServer(
+    images: Array<{ url: string; pathname?: string | null }>,
+    actionId: string,
+  ) {
     const draftPayload = buildPayload(images, "DRAFT");
     const activePayload = buildPayload(images, "ACTIVE");
     let productId: string | null = draftRef.current.savedProductId;
 
-    if (productId) {
-      await updateSellerLot(productId, draftPayload);
-    } else {
-      const created = await createSellerLot(draftPayload);
-      productId = created.product.id;
+    try {
+      if (productId) {
+        await updateSellerLot(productId, draftPayload, `${actionId}-draft`);
+      } else {
+        const created = await createSellerLot(draftPayload, `${actionId}-create`);
+        productId = created.product.id;
+      }
+    } catch (err) {
+      if (err instanceof ApiClientError && err.code === "CHARACTERISTICS_REQUIRED") {
+        await handleCharacteristicRejection(err.code, err.message);
+      }
+      throw err;
     }
 
     try {
-      const published = await publishSellerLot(productId, activePayload);
+      const published = await publishSellerLot(productId, activePayload, `${actionId}-publish`);
       const outcome = mapMutationOutcome(published);
       return { productId, outcome, response: published };
     } catch (err) {
@@ -717,14 +807,44 @@ export function useLotCreateForm() {
   }
 
   async function publishLot() {
+    if (!publishGuardRef.current.tryBegin()) return;
+
+    const actionId = createClientActionId("lot-submit");
+    const startedAt = Date.now();
+    recordSellerJourneyEvent({
+      screen: "preview",
+      action: "submit",
+      actionId,
+      productId: draftRef.current.savedProductId,
+      clientState: "SUBMITTING",
+    });
+
     if (draftRef.current.images.some((img) => img.uploadStatus === "uploading")) {
       setError(LOT_CREATE_COPY.uploadWaitPublish);
       setErrorDetail(null);
       setCanRetry(false);
+      recordSellerJourneyEvent({
+        screen: "preview",
+        action: "submit",
+        actionId,
+        outcome: "VISIBLE_ERROR",
+        errorCode: "UPLOAD_IN_PROGRESS",
+        durationMs: Date.now() - startedAt,
+      });
+      publishGuardRef.current.finish();
       return;
     }
     if (draftRef.current.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl)) {
       setHumanError(new Error(LOT_CREATE_COPY.uploadErrorTitle), "upload");
+      recordSellerJourneyEvent({
+        screen: "preview",
+        action: "submit",
+        actionId,
+        outcome: "VISIBLE_ERROR",
+        errorCode: "UPLOAD_FAILED",
+        durationMs: Date.now() - startedAt,
+      });
+      publishGuardRef.current.finish();
       return;
     }
 
@@ -754,6 +874,15 @@ export function useLotCreateForm() {
       setCanRetry(false);
       setStep("details");
       persist({ ...draftRef.current, step: "details" }, { immediate: true });
+      recordSellerJourneyEvent({
+        screen: "preview",
+        action: "submit",
+        actionId,
+        outcome: "VISIBLE_ERROR",
+        errorCode: "CHARACTERISTIC_MISSING",
+        durationMs: Date.now() - startedAt,
+      });
+      publishGuardRef.current.finish();
       return;
     }
 
@@ -766,22 +895,50 @@ export function useLotCreateForm() {
     uploadFailedRef.current = false;
     try {
       const images = await uploadImagesWithRecovery();
-      const { productId, outcome } = await publishOnServer(images);
+      const { productId, outcome } = await publishOnServer(images, actionId);
 
       setPublishedId(productId);
       setPublishOutcome(outcome);
       setInfo(null);
       await clearLotDraft();
       setStep("success");
+      recordSellerJourneyEvent({
+        screen: "preview",
+        action: "submit",
+        actionId,
+        productId,
+        outcome: "SUCCESS",
+        clientState: outcome,
+        httpRoute: "/api/mobile/seller/products",
+        durationMs: Date.now() - startedAt,
+      });
     } catch (err) {
       if (err instanceof ApiClientError && err.code === "CHARACTERISTICS_REQUIRED") {
+        recordSellerJourneyEvent({
+          screen: "preview",
+          action: "submit",
+          actionId,
+          outcome: "VISIBLE_ERROR",
+          errorCode: err.code,
+          durationMs: Date.now() - startedAt,
+        });
         return;
       }
       await flushSave(draftRef.current);
       const context: LotCreateErrorContext = uploadFailedRef.current ? "upload" : "publish";
       setHumanError(err, context);
+      recordSellerJourneyEvent({
+        screen: "preview",
+        action: "submit",
+        actionId,
+        productId: draftRef.current.savedProductId,
+        outcome: "VISIBLE_ERROR",
+        errorCode: err instanceof ApiClientError ? err.code : "UNKNOWN",
+        durationMs: Date.now() - startedAt,
+      });
     } finally {
       setPublishing(false);
+      publishGuardRef.current.finish();
     }
   }
 
@@ -840,10 +997,13 @@ export function useLotCreateForm() {
     stockNumber,
     canContinuePhotos,
     canContinueDetails,
+    photoStepUi,
     previewValidation,
     previewBlockersMessage,
     imagesUploading,
     hasFailedUploads,
+    continueFromPhotos,
+    continueInFlight,
     persist,
     continueRestore,
     discardRestore,

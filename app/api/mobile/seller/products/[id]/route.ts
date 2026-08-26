@@ -8,6 +8,7 @@ import {
 import { getProductById, ProductServiceError, updateProduct } from "@/features/products/queries";
 import { updateProductSchema } from "@/features/products/schemas";
 import { ccosApiGuard } from "@/lib/ccos/api/guards";
+import { log } from "@/lib/logger";
 import { withMobileApiContract } from "@/lib/mobile/api-contract";
 import { buildSellerProductPublishContract } from "@/lib/mobile/seller-product-publish";
 import { buildMobileSellerProductDetailFromRequest } from "@/lib/mobile/seller-products-data";
@@ -60,9 +61,14 @@ export async function PATCH(request: Request, context: RouteContext) {
   if (blocked) return blocked;
 
   const { id } = await context.params;
+  const requestId = request.headers.get("x-request-id") ?? request.headers.get("x-acceptance-run-id");
+  const clientActionId = request.headers.get("x-client-action-id");
+  let sellerProfileId: string | undefined;
+  let requestedStatus: string | undefined;
 
   try {
     const seller = await requireSellerFromRequest(request);
+    sellerProfileId = seller.sellerProfileId;
     const existing = await getProductById(id, {
       userId: seller.userId,
       role: seller.role,
@@ -86,10 +92,22 @@ export async function PATCH(request: Request, context: RouteContext) {
         { status: 400 },
       );
     }
+    requestedStatus = parsed.data.status;
 
     try {
       const product = await updateProduct(id, seller.sellerProfileId, parsed.data);
       const payload = await enrichSellerProductResponse(product, "ЛОТ обновлён");
+      log.info("mobile_seller_product_update", {
+        requestId: requestId ?? undefined,
+        clientActionId: clientActionId ?? undefined,
+        sellerProfileId,
+        productId: id,
+        route: "PATCH /api/mobile/seller/products/:id",
+        requestedStatus: requestedStatus ?? undefined,
+        publishOutcome: payload.publishOutcome,
+        moderationState: payload.moderationState ?? undefined,
+        statusCode: 200,
+      });
       return NextResponse.json(payload);
     } catch (err) {
       if (err instanceof ProductServiceError && err.code === "MODERATION_PENDING") {
@@ -114,8 +132,27 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Нужен профиль продавца" }, { status: 403 });
     }
     if (err instanceof ProductServiceError) {
+      log.warn("mobile_seller_product_update_rejected", {
+        requestId: requestId ?? undefined,
+        clientActionId: clientActionId ?? undefined,
+        sellerProfileId,
+        productId: id,
+        route: "PATCH /api/mobile/seller/products/:id",
+        requestedStatus: requestedStatus ?? undefined,
+        errorCode: err.code,
+        statusCode: err.status,
+      });
       return NextResponse.json({ error: err.message, code: err.code }, { status: err.status });
     }
+    log.error("mobile_seller_product_update_unexpected", {
+      requestId: requestId ?? undefined,
+      clientActionId: clientActionId ?? undefined,
+      sellerProfileId,
+      productId: id,
+      route: "PATCH /api/mobile/seller/products/:id",
+      errorName: err instanceof Error ? err.name : "unknown",
+      errorMessage: err instanceof Error ? err.message.slice(0, 240) : "unknown",
+    });
     console.error("[PATCH /api/mobile/seller/products/:id]", err);
     return NextResponse.json({ error: "Не удалось обновить ЛОТ" }, { status: 500 });
   }

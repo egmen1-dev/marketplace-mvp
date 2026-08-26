@@ -1,0 +1,23 @@
+{
+  "surface": "Профиль → О приложении → Скопировать диагностику",
+  "fields": [
+    "timestamp",
+    "screen",
+    "action",
+    "actionId",
+    "productId",
+    "clientState",
+    "httpRoute",
+    "httpStatus",
+    "durationMs",
+    "outcome",
+    "errorCode"
+  ],
+  "excluded": [
+    "password",
+    "JWT",
+    "cookies",
+    "raw payloads"
+  ],
+  "correlationHeader": "x-client-action-id"
+}

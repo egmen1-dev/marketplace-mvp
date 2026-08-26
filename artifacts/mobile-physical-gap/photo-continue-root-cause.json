@@ -1,0 +1,9 @@
+{
+  "PHOTO_CONTINUE_ROOT_CAUSE": "canContinuePhotos only checked images.length>0, ignoring idle/uploading phases; photo ScrollView lacked keyboardShouldPersistTaps; no InteractionManager defer after ImagePicker return; parallel upload queue without mutex; Continue called goToStep directly without one-tap guard",
+  "files": [
+    "apps/mobile/src/seller/use-lot-create-form.ts",
+    "apps/mobile/app/sell/create.tsx",
+    "lib/mobile/seller-journey/photo-step-state.ts"
+  ],
+  "fix": "photo step state machine + continueFromPhotos with InteractionManager + upload mutex + truthful CTA"
+}

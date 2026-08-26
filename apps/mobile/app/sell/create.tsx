@@ -434,7 +434,7 @@ export default function CreateLotScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         {header}
         <Text style={styles.screenTitle}>{LOT_CREATE_COPY.photosTitle}</Text>
         <Text style={styles.subtitle}>{LOT_CREATE_COPY.photosHint}</Text>
@@ -489,8 +489,10 @@ export default function CreateLotScreen() {
       </ScrollView>
       <LotCreateStickyFooter
         label={LOT_CREATE_COPY.photosNext}
-        disabled={!form.canContinuePhotos}
-        onPress={() => form.goToStep("details")}
+        disabled={!form.photoStepUi.canContinue || form.photoStepUi.ctaDisabled}
+        loading={form.photoStepUi.ctaLoading || form.continueInFlight}
+        hint={form.photoStepUi.hint}
+        onPress={() => void form.continueFromPhotos()}
       />
     </View>
   );

@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-08-26T17:48:57.000Z",
+  "gate": "mobile:pre-physical:gate",
+  "version": "PRE_PHYSICAL_V2",
+  "verdict": "FAIL",
+  "allows": "READY_FOR_NEXT_PHYSICAL_BUILD",
+  "blocks": "BLOCKED_BEFORE_DEVICE",
+  "physicalAndroid": "NOT_RUN",
+  "failedGate": "lot_publish_truth",
+  "failureReason": "staging smoke timeout in mobile-lot-publish-truth-staging-smoke.mjs",
+  "passedBeforeFailure": [
+    "seller_journey",
+    "create_lot_preview",
+    "my_lots_consistency"
+  ]
+}

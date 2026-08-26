@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-08-26T17:48:54.727Z",
+  "gate": "mobile:seller-journey:gate",
+  "verdict": "PASS",
+  "physicalAndroid": "NOT_RUN",
+  "technology": "vitest harness (lib/mobile/seller-journey)",
+  "mocked": [
+    "network latency",
+    "server responses"
+  ],
+  "real": [
+    "photo step state machine",
+    "submit outcome invariant",
+    "one-tap guards",
+    "wiring contracts"
+  ],
+  "limitations": [
+    "No React Native touch layer",
+    "No physical ImagePicker return"
+  ]
+}

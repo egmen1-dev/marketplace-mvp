@@ -1,5 +1,6 @@
 import { apiRequest } from "./client";
 import type { LotCharacteristicPayload } from "../seller/lot-characteristics";
+import { createClientActionId } from "../../../../lib/mobile/seller-journey/one-tap-action";
 
 export { uploadSellerLotImage, type SellerLotUploadedImage } from "../seller/upload-seller-lot-image";
 
@@ -134,24 +135,32 @@ export type CreateLotPayload = {
   characteristics?: LotCharacteristicPayload[];
 };
 
-export async function createSellerLot(payload: CreateLotPayload) {
+export async function createSellerLot(payload: CreateLotPayload, actionId = createClientActionId("lot-create")) {
   const pickupEnabled = payload.pickupEnabled ?? false;
   const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
-  return apiRequest<SellerLotMutationResponse>("/api/mobile/seller/products", {
-    method: "POST",
-    body: JSON.stringify({
-      ...payload,
-      stock: payload.stock ?? 1,
-      pickupEnabled,
-      reservationEnabled: false,
-      prepaymentPercent: 0,
-      pickupPointIds,
-      characteristics: payload.characteristics ?? [],
-    }),
-  });
+  return apiRequest<SellerLotMutationResponse>(
+    "/api/mobile/seller/products",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        ...payload,
+        stock: payload.stock ?? 1,
+        pickupEnabled,
+        reservationEnabled: false,
+        prepaymentPercent: 0,
+        pickupPointIds,
+        characteristics: payload.characteristics ?? [],
+      }),
+    },
+    { clientActionId: actionId },
+  );
 }
 
-export async function updateSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
+export async function updateSellerLot(
+  productId: string,
+  payload: Partial<CreateLotPayload>,
+  actionId = createClientActionId("lot-update"),
+) {
   const pickupEnabled = payload.pickupEnabled ?? false;
   const pickupPointIds = pickupEnabled ? (payload.pickupPointIds ?? []) : [];
   return apiRequest<SellerLotMutationResponse>(
@@ -165,16 +174,22 @@ export async function updateSellerLot(productId: string, payload: Partial<Create
         characteristics: payload.characteristics,
       }),
     },
+    { clientActionId: actionId },
   );
 }
 
-export async function publishSellerLot(productId: string, payload: Partial<CreateLotPayload>) {
+export async function publishSellerLot(
+  productId: string,
+  payload: Partial<CreateLotPayload>,
+  actionId = createClientActionId("lot-publish"),
+) {
   return apiRequest<SellerLotMutationResponse>(
     `/api/mobile/seller/products/${encodeURIComponent(productId)}`,
     {
       method: "PATCH",
       body: JSON.stringify({ ...payload, status: "ACTIVE" }),
     },
+    { clientActionId: actionId },
   );
 }
 
