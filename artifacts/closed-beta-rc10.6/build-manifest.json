@@ -1,0 +1,42 @@
+{
+  "candidate": "RC10.6",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.7",
+  "versionCode": 22,
+  "commitSha": "bdf9143",
+  "mergeCommitSha": "8d67190",
+  "pr198MergeSha": "8d67190",
+  "buildTime": "2026-08-26T18:35:04Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.7.apk",
+    "path": "artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107",
+    "sizeBytes": 44402466
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "photoContinueFix": true,
+    "submitBlackHoleFix": true,
+    "sellerJourneyDiagnostics": true,
+    "asyncModerationBoundary": true,
+    "oneTapGuards": true,
+    "previousRelease": "RC10.5 0.1.15-beta.6 (code 21)"
+  },
+  "buildNotes": {
+    "release": "RC10.6 — physical retest build after PR #198 (photo Continue one-tap + submit black-hole closure + async OCR boundary)",
+    "previousRelease": "RC10.5 0.1.15-beta.6 (code 21)",
+    "versionPolicy": "Closed Beta RC series increments versionCode monotonically (RC10.5=21 → RC10.6=22) and versionName beta patch (0.1.15-beta.6 → 0.1.15-beta.7)"
+  }
+}

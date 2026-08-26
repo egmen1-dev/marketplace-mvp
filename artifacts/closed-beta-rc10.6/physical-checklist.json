@@ -1,0 +1,130 @@
+{
+  "candidate": "RC10.6",
+  "generatedAt": "2026-08-26T18:30:00Z",
+  "status": "FROZEN",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "scope": "Focused physical retest — RC10.5 P0 failures (photo Continue + submit black hole) plus critical downstream journey",
+  "physical": "NOT_RUN",
+  "pr198": "8d67190",
+  "testerFailureReportFormat": {
+    "fields": ["screenshot_or_video", "physical_checklist_step", "copied_beta_diagnostics"],
+    "example": "STEP=D\nEXPECTED=submit→pending\nOBSERVED=spinner→same screen\n\nDIAGNOSTICS:\n..."
+  },
+  "apk": {
+    "versionName": "0.1.15-beta.7",
+    "versionCode": 22,
+    "path": "artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk"
+  },
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234",
+    "admin": "admin@demo.lot / demo1234"
+  },
+  "environment": {
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "channel": "CLOSED_BETA",
+    "deployedSha": "bdf9143"
+  },
+  "scenarios": [
+    {
+      "id": "A",
+      "name": "UPDATE RC10.5 → RC10.6",
+      "startingState": "About: 0.1.15-beta.6 / code 21 / RC10.5",
+      "steps": [
+        "Installed RC10.5 code 21",
+        "Update detected",
+        "One download",
+        "Android installer opens",
+        "RC10.6 installed",
+        "About confirms 0.1.15-beta.7 / code 22 / RC10.6"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "B",
+      "name": "PHOTO CONTINUE",
+      "steps": [
+        "Продать → Создать ЛОТ → choose several photos",
+        "While processing/uploading: UI truthfully indicates state",
+        "Continue must not falsely look ready",
+        "When READY: one single tap on Продолжить",
+        "Expected: Details opens immediately",
+        "FAIL if second tap required — capture diagnostics"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "C",
+      "name": "SMARTPHONE DETAILS",
+      "steps": [
+        "Title: Телефон самсунг a57",
+        "Category: Электроника → Смартфоны",
+        "Fill price, stock, city, required preview fields",
+        "Expected: Preview opens"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "D",
+      "name": "SUBMIT BLACK-HOLE REGRESSION",
+      "steps": [
+        "Fill required publication characteristics",
+        "Tap Отправить на проверку exactly ONCE",
+        "Loading appears; submit completes quickly",
+        "Visible success: Проверяем ЛОТ or canonical equivalent",
+        "LOT appears in На проверке",
+        "FORBIDDEN: spinner → same Preview screen with no message",
+        "If fail: STOP and copy beta diagnostics immediately"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "E",
+      "name": "DIAGNOSTICS",
+      "steps": [
+        "Open beta diagnostics (About → Скопировать диагностику)",
+        "Recent chain contains photo/continue, submit, actionId, productId, outcome",
+        "Copy works"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "F",
+      "name": "MY LOTS QUICK CHECK",
+      "steps": [
+        "На проверке: submitted LOT appears exactly once",
+        "Rapid switch: Активные → На проверке → Сохранённые → На проверке",
+        "No stale card contamination"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "G",
+      "name": "SEARCH",
+      "steps": [
+        "Search part of smartphone title",
+        "LOT found in correct seller tab"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "H",
+      "name": "MODERATOR APPROVE",
+      "steps": [
+        "Human moderator approves exact Product.id",
+        "Seller: Pending → Active",
+        "Buyer: catalog/search/PDP visible"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "I",
+      "name": "RELAUNCH",
+      "steps": [
+        "Kill app completely and reopen",
+        "Server truth remains correct"
+      ],
+      "status": "NOT_RUN"
+    }
+  ]
+}

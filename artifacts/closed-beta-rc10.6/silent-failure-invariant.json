@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-08-26T18:35:06.170Z",
+  "candidate": "RC10.6",
+  "invariant": "ACTION_STARTED → SUCCESS | VISIBLE_ERROR",
+  "forbidden": "loading → idle → no visible outcome",
+  "symbols": {
+    "visibleErrorOutcome": true,
+    "handleCharacteristicRejection": true,
+    "characteristicsRequiredCode": true,
+    "continueFromPhotos": true,
+    "journeyDiagnostics": true,
+    "pendingReviewSuccessCopy": true
+  },
+  "verdict": "PASS"
+}

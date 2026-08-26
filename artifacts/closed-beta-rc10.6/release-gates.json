@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-08-26T18:35:00Z",
+  "candidate": "RC10.6",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "physicalAndroid": "NOT_RUN",
+  "prePhysicalV2": "PASS",
+  "mainSha": "bdf9143",
+  "railwaySha": "bdf9143",
+  "pr198MergeSha": "8d67190",
+  "results": [
+    { "id": "pre_physical_v2", "verdict": "PASS" },
+    { "id": "seller_journey", "verdict": "PASS" },
+    { "id": "create_lot_preview", "verdict": "PASS" },
+    { "id": "my_lots_consistency", "verdict": "PASS" },
+    { "id": "lot_publish_truth", "verdict": "PASS" },
+    { "id": "lot_dynamic_characteristics", "verdict": "PASS" },
+    { "id": "lot_moderation", "verdict": "PASS" },
+    { "id": "seller_photo_upload", "verdict": "PASS" },
+    { "id": "backend_stability", "verdict": "PASS" },
+    { "id": "railway_runtime", "verdict": "PASS" },
+    { "id": "migration_verify", "verdict": "PASS" },
+    { "id": "release_pipeline", "verdict": "PASS" },
+    { "id": "apk_verify", "verdict": "PASS" },
+    { "id": "signer_verification", "verdict": "PASS" },
+    { "id": "silent_failure_invariant", "verdict": "PASS" }
+  ],
+  "invariants": [
+    "photo_continue_one_tap",
+    "submit_visible_outcome",
+    "no_silent_characteristics_required",
+    "journey_diagnostics_copy",
+    "async_ocr_off_submit_path"
+  ]
+}
