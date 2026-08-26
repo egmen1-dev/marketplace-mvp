@@ -106,9 +106,11 @@ export function ShadowBlindReviewPanel({ product, batchId }: Props) {
         <section className="rounded-lg border border-amber-200 bg-amber-50 p-4" data-testid="shadow-review-reveal">
           <h3 className="font-medium">System comparison (revealed)</h3>
           <pre className="mt-2 overflow-auto text-xs">{JSON.stringify(result, null, 2)}</pre>
-          <Button asChild className="mt-3" variant="secondary">
-            <Link href="/admin/shadow-review">Back to queue</Link>
-          </Button>
+          <Link href="/admin/shadow-review">
+            <Button className="mt-3" variant="secondary" type="button">
+              Back to queue
+            </Button>
+          </Link>
         </section>
       )}
     </div>
