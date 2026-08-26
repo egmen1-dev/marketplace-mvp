@@ -18,8 +18,8 @@
   "environment": {
     "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
     "channel": "CLOSED_BETA",
-    "deployedSha": "135fdf8",
-    "note": "Backend deploy pending — My Lots server search requires #188 backend on Railway"
+    "deployedSha": "ed9e1ab",
+    "mrpPublished": true
   },
   "scenarios": [
     {

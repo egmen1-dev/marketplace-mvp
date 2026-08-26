@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-25T19:42:32.747Z",
+  "generatedAt": "2026-08-26T12:50:59.598Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "mainSha": "c078c3a",
-  "deployedSha": "c078c3a",
+  "mainSha": "ed9e1ab",
+  "deployedSha": "ed9e1ab",
   "shaMatch": true,
   "database": {
     "reachable": true,

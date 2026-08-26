@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T06:29:26.017Z",
+  "generatedAt": "2026-08-26T12:51:00.827Z",
   "staging": "https://web-production-e56fb.up.railway.app",
   "checks": [
     {
@@ -45,7 +45,7 @@
     {
       "id": "server_search_pending",
       "ok": true,
-      "detail": "q=RC10_1_PUBLISH_TRUTH_1787725575706"
+      "detail": "q=P01_CHARS_auto-accessories-phone-mount_1787745020476"
     }
   ],
   "failed": [],
