@@ -14,6 +14,11 @@ import {
 } from "@/lib/marketplace-trust-loop/reviews/actions";
 import { ROUTES } from "@/lib/constants";
 import { formatPrice } from "@/features/products/mappers";
+import {
+  PolicyIntelligencePanel,
+  asImageEvaluationSummary,
+  asPolicyV2Snapshot,
+} from "@/features/marketplace-trust-loop/components/policy-intelligence-panel";
 
 type ModerationIssue = {
   code?: string;
@@ -68,6 +73,9 @@ type AdminModerationDetailPanelProps = {
       reasonCodes: unknown;
       rulesTriggered: unknown;
       issues: unknown;
+      policyV2Snapshot?: unknown;
+      evaluationCompleteness?: unknown;
+      imageEvaluationSummary?: unknown;
       auditEvents: AuditEvent[];
     } | null;
   };
@@ -253,6 +261,13 @@ export function AdminModerationDetailPanel({ product, sellerStats }: AdminModera
               </ul>
             ) : null}
           </section>
+
+          <PolicyIntelligencePanel
+            policyV2={asPolicyV2Snapshot(moderation?.policyV2Snapshot)}
+            imageEvaluationSummary={asImageEvaluationSummary(moderation?.imageEvaluationSummary)}
+            systemRecommendation={moderation?.systemRecommendation}
+            riskScore={moderation?.riskScore}
+          />
 
           <section className="rounded-xl border p-4">
             <h2 className="font-medium">Действия</h2>

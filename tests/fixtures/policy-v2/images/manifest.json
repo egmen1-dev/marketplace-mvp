@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-08-26T07:27:43.333Z",
+  "fixtures": [
+    {
+      "id": "safe-drill",
+      "path": "tests/fixtures/policy-v2/images/safe-drill.png",
+      "lines": [
+        "Bosch GSR 120",
+        "Дрель аккумуляторная"
+      ]
+    },
+    {
+      "id": "cyrillic-packaging",
+      "path": "tests/fixtures/policy-v2/images/cyrillic-packaging.png",
+      "lines": [
+        "Состав: вода, соль",
+        "Срок годности 2027"
+      ]
+    },
+    {
+      "id": "mixed-latin-cyrillic",
+      "path": "tests/fixtures/policy-v2/images/mixed-latin-cyrillic.png",
+      "lines": [
+        "NICOTINE FREE",
+        "без никотина",
+        "0 mg/ml"
+      ]
+    },
+    {
+      "id": "nicotine-label",
+      "path": "tests/fixtures/policy-v2/images/nicotine-label.png",
+      "lines": [
+        "Жидкость для вейпа",
+        "NICOTINE 20 mg/ml",
+        "Манго"
+      ]
+    },
+    {
+      "id": "phone-on-image",
+      "path": "tests/fixtures/policy-v2/images/phone-on-image.png",
+      "lines": [
+        "Звоните +7 999 123-45-67",
+        "Telegram @seller"
+      ]
+    },
+    {
+      "id": "url-on-image",
+      "path": "tests/fixtures/policy-v2/images/url-on-image.png",
+      "lines": [
+        "Купить на t.me/shop",
+        "https://example.com"
+      ]
+    },
+    {
+      "id": "vape-packaging",
+      "path": "tests/fixtures/policy-v2/images/vape-packaging.png",
+      "lines": [
+        "POD SYSTEM",
+        "Вейп одноразка"
+      ]
+    },
+    {
+      "id": "alcohol-label",
+      "path": "tests/fixtures/policy-v2/images/alcohol-label.png",
+      "lines": [
+        "Водка 0.5л",
+        "40% vol"
+      ]
+    },
+    {
+      "id": "toy-gun-box",
+      "path": "tests/fixtures/policy-v2/images/toy-gun-box.png",
+      "lines": [
+        "Игрушечный пистолет",
+        "NERF"
+      ]
+    },
+    {
+      "id": "ambiguous-bottle",
+      "path": "tests/fixtures/policy-v2/images/ambiguous-bottle.png",
+      "lines": [
+        "Ароматизатор",
+        "без никотина"
+      ]
+    },
+    {
+      "id": "spaced-evasion",
+      "path": "tests/fixtures/policy-v2/images/spaced-evasion.png",
+      "lines": [
+        "в е й п",
+        "ж и ж а"
+      ]
+    },
+    {
+      "id": "low-contrast",
+      "path": "tests/fixtures/policy-v2/images/low-contrast.png",
+      "lines": [
+        "nicotine 20mg"
+      ]
+    }
+  ]
+}

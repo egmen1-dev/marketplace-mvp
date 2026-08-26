@@ -70,9 +70,9 @@ describe("EPIC 174 — moderation engine", () => {
     expect(moderationContentStale(h1, h1)).toBe(false);
   });
 
-  it("does not claim image/OCR PASS when providers are absent", () => {
-    expect(IMAGE_MODERATION_AVAILABLE).toBe(false);
-    expect(OCR_AVAILABLE).toBe(false);
+  it("pixel OCR is operational when provider enabled", () => {
+    expect(OCR_AVAILABLE).toBe(true);
+    expect(IMAGE_MODERATION_AVAILABLE).toBe(true);
   });
 
   it("approve path publishes ACTIVE transactionally", () => {

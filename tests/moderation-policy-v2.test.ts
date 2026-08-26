@@ -112,7 +112,7 @@ describe("LOT_POLICY_V2 — Жидкость для вэйпа case", () => {
     });
     expect(result.decisionClass).toBe("MANUAL_REVIEW");
     expect(result.rulesTriggered).toContain("LOT_VAPE_LIQUID_AMBIGUOUS_V2");
-    expect(result.notEvaluatedDimensions.some((d) => d.includes("PIXEL"))).toBe(true);
+    expect(result.notEvaluatedDimensions.some((d) => d.includes("IMAGE_EVALUATION") || d.includes("PIXEL"))).toBe(true);
   });
 
   it("hard-blocks when nicotine concentration is evidenced in characteristics", () => {

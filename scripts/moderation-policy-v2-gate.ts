@@ -5,7 +5,8 @@ import { existsSync, readFileSync } from "node:fs";
 
 import { evaluateLotPolicyV2 } from "@/lib/moderation/policy-v2/evaluate";
 import { loadLotPolicyV2Registry } from "@/lib/moderation/policy-v2/load-registry";
-import { automationVerdict } from "@/lib/moderation/policy-v2/safe-auto-approval";
+import { automationVerdict, canAutoApprove } from "@/lib/moderation/policy-v2/safe-auto-approval";
+import { isImageModerationOperational, isOcrOperational } from "@/lib/moderation/providers";
 
 function fail(msg) {
   console.error(`[FAIL] ${msg}`);
@@ -71,8 +72,8 @@ execFileSync("npm", ["test", "--", "tests/moderation-policy-v2.test.ts"], { stdi
 
 const verdict = automationVerdict({
   policyResearchComplete: true,
-  imageEngineOperational: false,
-  ocrOperational: false,
+  imageEngineOperational: isImageModerationOperational(),
+  ocrOperational: isOcrOperational(),
   criticalFalseNegatives: falseNegative,
 });
 
@@ -87,8 +88,8 @@ console.log(
       falsePositives: falsePositive,
       falseNegatives: falseNegative,
       vapeCase: vapeCase.decisionClass,
-      imageEngine: "HEURISTIC_NOT_PIXEL_CV",
-      ocr: "HEURISTIC_ALT_URL_ONLY",
+      imageEngine: isImageModerationOperational() ? "PIXEL_OCR_QR_OPERATIONAL" : "UNAVAILABLE",
+      ocr: isOcrOperational() ? "TESSERACT_PIXEL" : "UNAVAILABLE",
       shadowMode: "LOT_POLICY_V2_SHADOW default enabled",
       rc105: "BLOCKED",
     },

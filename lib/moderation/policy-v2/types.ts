@@ -84,7 +84,10 @@ export type PolicyEvaluationInput = {
   price?: number | null;
   imageUrls?: string[];
   imageAltTexts?: string[];
+  imageIds?: string[];
   sellerTrustScore?: number | null;
+  /** Pixel OCR + image moderation aggregate (EPIC 189.1). */
+  imageEvaluation?: import("../providers/types").LotImageEvaluationAggregate | null;
 };
 
 export type PolicyEvaluationResult = {
@@ -100,4 +103,6 @@ export type PolicyEvaluationResult = {
   userMessage: string | null;
   adminSummary: string;
   blockBeforeSubmit: boolean;
+  evaluationCompleteness?: import("../evaluation-completeness").EvaluationCompleteness;
+  imageEvaluationSummary?: import("../providers/types").LotImageEvaluationAggregate | null;
 };

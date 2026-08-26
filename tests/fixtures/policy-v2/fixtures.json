@@ -495,9 +495,10 @@
     {
       "id": "contact-in-image-url",
       "tags": [
-        "manual"
+        "manual",
+        "not-evaluated"
       ],
-      "expected": "MANUAL_REVIEW",
+      "expected": "NOT_EVALUATED",
       "input": {
         "title": "Стол",
         "imageUrls": [
@@ -508,9 +509,10 @@
     {
       "id": "qr-in-image",
       "tags": [
-        "manual"
+        "manual",
+        "not-evaluated"
       ],
-      "expected": "MANUAL_REVIEW",
+      "expected": "NOT_EVALUATED",
       "input": {
         "title": "Книга",
         "imageUrls": [

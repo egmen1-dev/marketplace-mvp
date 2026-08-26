@@ -6,7 +6,8 @@ import {
   mergeTriggeredRules,
   resolveDecisionClass,
 } from "./evidence-fusion";
-import { analyzeImageAndOcrHeuristic } from "./image-ocr-engine";
+import { analyzePixelImageAndOcr } from "./image-ocr-engine";
+import { buildEvaluationCompleteness } from "../evaluation-completeness";
 import { loadLotPolicyV2Registry } from "./load-registry";
 import { analyzeTitleDescriptionSignals, detectAlcoholFreeContext, detectNicotineFreeClaim, detectNicotinePatchContext, detectToyContext, matchPatterns } from "./text-engine";
 import type {
@@ -74,12 +75,16 @@ export function evaluateLotPolicyV2(
     evaluatedAt,
   });
 
-  const imageOcr = analyzeImageAndOcrHeuristic({
-    imageUrls: input.imageUrls ?? [],
-    imageAltTexts: input.imageAltTexts ?? [],
+  const imageOcr = analyzePixelImageAndOcr({
+    imageEvaluation: input.imageEvaluation ?? null,
     evaluatedAt,
   });
   notEvaluatedDimensions.push(...imageOcr.notEvaluatedReasons);
+
+  const hasImages = (input.imageUrls?.length ?? 0) > 0;
+  if (hasImages && !input.imageEvaluation) {
+    notEvaluatedDimensions.push("IMAGE_EVALUATION_PENDING");
+  }
 
   const ocrPatterns = analyzeOcrTextPatterns({
     registry,
@@ -153,10 +158,10 @@ export function evaluateLotPolicyV2(
   const decisionClass = resolveDecisionClass(triggeredRules, notEvaluatedDimensions, conflicts.length > 0);
   const { user, admin } = highestSeverityMessage(triggeredRules);
 
-  const hasImages = (input.imageUrls?.length ?? 0) > 0;
+  const hasImagesForTitleOnly = (input.imageUrls?.length ?? 0) > 0;
   const titleDescOnly =
-    hasImages &&
-    notEvaluatedDimensions.some((d) => d.startsWith("PIXEL_")) &&
+    hasImagesForTitleOnly &&
+    !input.imageEvaluation &&
     text.triggeredRules.length === 0 &&
     ocrPatterns.triggeredRules.length === 0;
 
@@ -191,6 +196,25 @@ export function evaluateLotPolicyV2(
 
   const confidence = computeConfidence(evidence, finalDecision, notEvaluatedDimensions.length);
 
+  const evaluationCompleteness = buildEvaluationCompleteness({
+    hasImages: hasImagesForTitleOnly,
+    imageEvaluation: input.imageEvaluation,
+    policyResult: {
+      policyVersion: LOT_POLICY_V2,
+      decisionClass: finalDecision,
+      recommendation: finalDecision,
+      confidence,
+      rulesTriggered: [...new Set(triggeredRules.map((r) => r.policyId))],
+      evidence,
+      conflicts,
+      notEvaluatedDimensions: [...new Set(notEvaluatedDimensions)],
+      humanReviewRequired,
+      userMessage: user ?? category.userMessage,
+      adminSummary: `${admin} · evaluator=${EVALUATOR_VERSION}`,
+      blockBeforeSubmit: category.blockBeforeSubmit || finalDecision === "HARD_BLOCK",
+    },
+  });
+
   return {
     policyVersion: LOT_POLICY_V2,
     decisionClass: finalDecision,
@@ -204,5 +228,7 @@ export function evaluateLotPolicyV2(
     userMessage: user ?? category.userMessage,
     adminSummary: `${admin} · evaluator=${EVALUATOR_VERSION}`,
     blockBeforeSubmit,
+    evaluationCompleteness,
+    imageEvaluationSummary: input.imageEvaluation ?? imageOcr.aggregate ?? null,
   };
 }

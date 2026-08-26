@@ -4,11 +4,13 @@ import { computeContentVersionHash } from "./content-version";
 import { buildModerationResult } from "./decision-engine";
 import { isLotPolicyV2ShadowEnabled } from "./config";
 import { evaluateLotPolicyV2 } from "./policy-v2/evaluate";
-import { analyzeImageSignals } from "./signals/image-signals";
+import { analyzeImageSignalsFromEvaluation } from "./signals/image-signals";
 import { analyzePriceSignals } from "./signals/price-signals";
 import { analyzeProhibitedSignals } from "./signals/prohibited-signals";
 import { analyzeStructuralSignals } from "./signals/structural-signals";
 import { analyzeTextSignals } from "./signals/text-signals";
+import { evaluateLotImages } from "./providers/evaluate-lot-images";
+import type { ImageInput } from "./providers/types";
 import type { ModerationResult } from "./types";
 
 export async function runLotModerationEngine(productId: string): Promise<ModerationResult> {
@@ -27,7 +29,7 @@ export async function runLotModerationEngine(productId: string): Promise<Moderat
     return buildModerationResult({
       reasons: [],
       signals: [],
-      imageSignals: analyzeImageSignals({ imageCount: 0, imageUrls: [] }).imageSignals,
+      imageSignals: analyzeImageSignalsFromEvaluation(null).imageSignals,
       contentVersionHash: "",
     });
   }
@@ -45,10 +47,17 @@ export async function runLotModerationEngine(productId: string): Promise<Moderat
     imageCount: product.images.length,
     hasPrimary: product.images.some((img) => img.isPrimary) || product.images.length > 0,
   });
-  const image = analyzeImageSignals({
-    imageCount: product.images.length,
-    imageUrls: product.images.map((img) => img.url),
-  });
+
+  const imageInputs: ImageInput[] = product.images.map((img) => ({
+    imageId: img.id,
+    url: img.url,
+    pathname: img.pathname,
+    alt: img.alt,
+    sortOrder: img.sortOrder,
+  }));
+
+  const imageEvaluation = imageInputs.length > 0 ? await evaluateLotImages({ images: imageInputs }) : null;
+  const image = analyzeImageSignalsFromEvaluation(imageEvaluation);
 
   const reasons = [
     ...text.reasons,
@@ -101,11 +110,16 @@ export async function runLotModerationEngine(productId: string): Promise<Moderat
     productTypeSlug: productType?.slug ?? null,
     characteristics: product.characteristicValues.map((row) => ({
       name: row.definition.name,
-      value: row.valueText ?? row.valueNumber,
+      value:
+        row.valueText ??
+        (row.valueNumber != null ? Number(row.valueNumber) : null) ??
+        (row.valueBoolean != null ? (row.valueBoolean ? "true" : "false") : null),
     })),
     price,
     imageUrls: product.images.map((img) => img.url),
-    imageAltTexts: product.images.map((img) => img.altText ?? ""),
+    imageAltTexts: product.images.map((img) => img.alt ?? ""),
+    imageIds: product.images.map((img) => img.id),
+    imageEvaluation,
   });
 
   return { ...baseResult, policyV2 };
