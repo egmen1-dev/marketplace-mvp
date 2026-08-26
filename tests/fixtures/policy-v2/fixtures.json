@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-08-26",
-  "count": 121,
+  "count": 131,
   "fixtures": [
     {
       "id": "allow-clean-drill",
@@ -1451,6 +1451,124 @@
         "title": "Жидкость для вэйпа вкус 14",
         "description": "без никотина",
         "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-audit-xxx-filler",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Audit product placeholder",
+        "description": "xxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    },
+    {
+      "id": "block-adult-xxx-explicit",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Adult video collection",
+        "description": "xxx explicit content 18+"
+      }
+    },
+    {
+      "id": "allow-model-code-xxx",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Камера Sony Alpha XXX-500",
+        "description": "Б/у, рабочая"
+      }
+    },
+    {
+      "id": "block-adult-xxx-domain",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Сайт",
+        "description": "visit www.xxx.com for content"
+      }
+    },
+    {
+      "id": "allow-sds-drill-chuck",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Перфоратор RockDrill SDS+",
+        "description": "Комплект с патроном SDS+, кейс"
+      }
+    },
+    {
+      "id": "allow-drill-chuck-patron",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Патрон для дрели SDS",
+        "description": "Сверлильный патрон, новый"
+      }
+    },
+    {
+      "id": "block-ammo-cartridge",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Патроны 9мм",
+        "description": "Боеприпасы для пистолета"
+      }
+    },
+    {
+      "id": "manual-ambiguous-patron",
+      "tags": [
+        "manual",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Патрон металлический",
+        "description": "Один патрон, без описания назначения"
+      }
+    },
+    {
+      "id": "restrict-perfume-cedar-amber",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Парфюм Cedar & Amber",
+        "description": "Новый, в коробке"
+      }
+    },
+    {
+      "id": "restrict-face-cream",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Крем для лица",
+        "description": "Увлажняющий"
       }
     }
   ]

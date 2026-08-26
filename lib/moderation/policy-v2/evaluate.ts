@@ -9,7 +9,7 @@ import {
 import { analyzePixelImageAndOcr } from "./image-ocr-engine";
 import { buildEvaluationCompleteness } from "../evaluation-completeness";
 import { loadLotPolicyV2Registry } from "./load-registry";
-import { analyzeTitleDescriptionSignals, detectAlcoholFreeContext, detectNicotineFreeClaim, detectNicotinePatchContext, detectToyContext, matchPatterns } from "./text-engine";
+import { analyzeTitleDescriptionSignals, detectAlcoholFreeContext, detectAlcoholFreePerfumeContext, detectAmbiguousPatronContext, detectDrillChuckContext, detectNicotineFreeClaim, detectNicotinePatchContext, detectToyContext, matchPatterns } from "./text-engine";
 import type {
   LotPolicyV2Registry,
   PolicyEvaluationInput,
@@ -19,7 +19,15 @@ import type {
 } from "./types";
 import { LOT_POLICY_V2 } from "./types";
 
-const EVALUATOR_VERSION = "LOT_POLICY_V2_EVALUATOR/1.0.0";
+const EVALUATOR_VERSION = "LOT_POLICY_V2_EVALUATOR/1.1.0";
+
+function alignEvidenceWithTriggeredRules(
+  evidence: PolicyEvidenceHit[],
+  triggeredRules: PolicyRuleRecord[],
+): PolicyEvidenceHit[] {
+  const triggeredIds = new Set(triggeredRules.map((r) => r.policyId));
+  return evidence.filter((hit) => triggeredIds.has(hit.policyId));
+}
 
 function analyzeOcrTextPatterns(input: {
   registry: LotPolicyV2Registry;
@@ -121,8 +129,21 @@ export function evaluateLotPolicyV2(
     const toyRule = registry.rules.find((r) => r.policyId === "LOT_WEAPON_TOY_V2");
     if (toyRule) triggeredRules = mergeTriggeredRules(triggeredRules, [toyRule]);
   }
-  if (matchPatterns(input.title, ["парфюм", "духи", "туалетная вода"]).length > 0) {
-    triggeredRules = triggeredRules.filter((r) => r.policyId !== "LOT_COSMETICS_V2");
+  if (detectDrillChuckContext(combinedText)) {
+    triggeredRules = triggeredRules.filter((r) => r.policyId !== "LOT_WEAPON_FIREARM_V2");
+  }
+  const ambiguousPatron = detectAmbiguousPatronContext(combinedText);
+  if (ambiguousPatron && triggeredRules.some((r) => r.policyId === "LOT_WEAPON_FIREARM_V2")) {
+    triggeredRules = triggeredRules.filter((r) => r.policyId !== "LOT_WEAPON_FIREARM_V2");
+    const patronRule = registry.rules.find((r) => r.policyId === "LOT_WEAPON_PATRON_AMBIGUOUS_V2");
+    if (patronRule) triggeredRules = mergeTriggeredRules(triggeredRules, [patronRule]);
+  }
+  if (detectAlcoholFreePerfumeContext(combinedText)) {
+    triggeredRules = triggeredRules.filter(
+      (r) => r.policyId !== "LOT_COSMETICS_V2" && r.policyId !== "LOT_ALCOHOL_REMOTE_V2",
+    );
+    const perfumeRule = registry.rules.find((r) => r.policyId === "LOT_ALCOHOL_FREE_PERFUME_V2");
+    if (perfumeRule) triggeredRules = mergeTriggeredRules(triggeredRules, [perfumeRule]);
   }
 
   const charEval = evaluateCharacteristics({
@@ -146,13 +167,16 @@ export function evaluateLotPolicyV2(
     notEvaluatedDimensions.push(`MISSING_REQUIRED_CHARACTERISTICS:${charEval.missingRequiredFields.join(",")}`);
   }
 
-  const evidence: PolicyEvidenceHit[] = [
-    ...category.evidence,
-    ...text.hits,
-    ...imageOcr.evidence,
-    ...ocrPatterns.hits,
-    ...charEval.evidence,
-  ];
+  const evidence: PolicyEvidenceHit[] = alignEvidenceWithTriggeredRules(
+    [
+      ...category.evidence,
+      ...text.hits,
+      ...imageOcr.evidence,
+      ...ocrPatterns.hits,
+      ...charEval.evidence,
+    ],
+    triggeredRules,
+  );
 
   const conflicts = detectEvidenceConflicts(evidence, input.description);
   const decisionClass = resolveDecisionClass(triggeredRules, notEvaluatedDimensions, conflicts.length > 0);

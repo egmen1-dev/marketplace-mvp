@@ -1,67 +1,41 @@
 {
-  "generatedAt": "2026-08-26T09:53:39.313Z",
+  "generatedAt": "2026-08-26T10:13:43.444Z",
+  "policyVersion": "LOT_POLICY_V2_1",
   "count": 6,
-  "suspectedFalsePositives": 4,
+  "suspectedFalsePositives": 0,
   "audits": [
     {
       "productId": "cmssvqouc000ijsf23cbho4ln",
       "title": "Товар развивающегося продавца (audit)",
       "category": "Наушники",
       "productType": null,
-      "policyDecision": "HARD_BLOCK",
-      "rulesTriggered": [
-        "LOT_ADULT_CONTENT_V2"
-      ],
-      "evidence": [
-        {
-          "source": "DESCRIPTION_SIGNAL",
-          "policyId": "LOT_ADULT_CONTENT_V2",
-          "matchedValue": "xxx",
-          "detail": "group=adult_explicit; accessory=false"
-        }
-      ],
-      "exactReason": "Explicit adult content prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
-      "verdict": "SUSPECTED_FALSE_POSITIVE"
+      "policyDecision": "ALLOW",
+      "rulesTriggered": [],
+      "evidence": [],
+      "exactReason": "No policy rules triggered · evaluator=LOT_POLICY_V2_EVALUATOR/1.1.0",
+      "verdict": "NEEDS_HUMAN_REVIEW"
     },
     {
       "productId": "cmsmzt4d00049y0w6cy6x2eg3",
       "title": "Перфоратор RockDrill SDS+",
       "category": "Электроинструмент",
       "productType": "Перфораторы",
-      "policyDecision": "HARD_BLOCK",
-      "rulesTriggered": [
-        "LOT_WEAPON_FIREARM_V2"
-      ],
-      "evidence": [
-        {
-          "source": "DESCRIPTION_SIGNAL",
-          "policyId": "LOT_WEAPON_FIREARM_V2",
-          "matchedValue": "патрон",
-          "detail": "group=firearm; accessory=false"
-        }
-      ],
-      "exactReason": "Firearms and ammunition prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
-      "verdict": "SUSPECTED_FALSE_POSITIVE"
+      "policyDecision": "ALLOW",
+      "rulesTriggered": [],
+      "evidence": [],
+      "exactReason": "No policy rules triggered · evaluator=LOT_POLICY_V2_EVALUATOR/1.1.0",
+      "verdict": "NEEDS_HUMAN_REVIEW"
     },
     {
       "productId": "cmssvqpbr000ujsf2txeuhkl9",
       "title": "Товар с проблемами карточки (audit)",
       "category": "Наушники",
       "productType": null,
-      "policyDecision": "HARD_BLOCK",
-      "rulesTriggered": [
-        "LOT_ADULT_CONTENT_V2"
-      ],
-      "evidence": [
-        {
-          "source": "DESCRIPTION_SIGNAL",
-          "policyId": "LOT_ADULT_CONTENT_V2",
-          "matchedValue": "xxx",
-          "detail": "group=adult_explicit; accessory=false"
-        }
-      ],
-      "exactReason": "Explicit adult content prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
-      "verdict": "SUSPECTED_FALSE_POSITIVE"
+      "policyDecision": "ALLOW",
+      "rulesTriggered": [],
+      "evidence": [],
+      "exactReason": "No policy rules triggered · evaluator=LOT_POLICY_V2_EVALUATOR/1.1.0",
+      "verdict": "NEEDS_HUMAN_REVIEW"
     },
     {
       "productId": "cmsmztepk0050y0w6tqujeym5",
@@ -80,7 +54,7 @@
           "detail": "group=cosmetics; accessory=false"
         }
       ],
-      "exactReason": "Cosmetics may require labeling review. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "exactReason": "Cosmetics may require labeling review. · evaluator=LOT_POLICY_V2_EVALUATOR/1.1.0",
       "verdict": "CORRECT"
     },
     {
@@ -88,8 +62,10 @@
       "title": "Парфюм Cedar & Amber",
       "category": "Парфюмерия",
       "productType": "Духи и парфюмерная вода",
-      "policyDecision": "ALLOW",
-      "rulesTriggered": [],
+      "policyDecision": "RESTRICTED_REVIEW",
+      "rulesTriggered": [
+        "LOT_COSMETICS_V2"
+      ],
       "evidence": [
         {
           "source": "TITLE_SIGNAL",
@@ -98,28 +74,19 @@
           "detail": "group=cosmetics; accessory=false"
         }
       ],
-      "exactReason": "No policy rules triggered · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
-      "verdict": "NEEDS_HUMAN_REVIEW"
+      "exactReason": "Cosmetics may require labeling review. · evaluator=LOT_POLICY_V2_EVALUATOR/1.1.0",
+      "verdict": "CORRECT"
     },
     {
       "productId": "cmssvqoas000ajsf24b4e59hj",
       "title": "Товар нового продавца (audit)",
       "category": "Наушники",
       "productType": null,
-      "policyDecision": "HARD_BLOCK",
-      "rulesTriggered": [
-        "LOT_ADULT_CONTENT_V2"
-      ],
-      "evidence": [
-        {
-          "source": "DESCRIPTION_SIGNAL",
-          "policyId": "LOT_ADULT_CONTENT_V2",
-          "matchedValue": "xxx",
-          "detail": "group=adult_explicit; accessory=false"
-        }
-      ],
-      "exactReason": "Explicit adult content prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
-      "verdict": "SUSPECTED_FALSE_POSITIVE"
+      "policyDecision": "ALLOW",
+      "rulesTriggered": [],
+      "evidence": [],
+      "exactReason": "No policy rules triggered · evaluator=LOT_POLICY_V2_EVALUATOR/1.1.0",
+      "verdict": "NEEDS_HUMAN_REVIEW"
     }
   ]
 }

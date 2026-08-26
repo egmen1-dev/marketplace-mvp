@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { evaluateLotPolicyV2 } from "@/lib/moderation/policy-v2/evaluate";
 import { loadLotPolicyV2Registry } from "@/lib/moderation/policy-v2/load-registry";
-import { normalizePolicyText, matchPatterns, detectAccessoryContext } from "@/lib/moderation/policy-v2/text-engine";
+import { normalizePolicyText, matchPatterns, detectAccessoryContext, shouldTreatXxxAsAdultContent, detectDrillChuckContext } from "@/lib/moderation/policy-v2/text-engine";
 import {
   detectEvidenceConflicts,
   resolveDecisionClass,
@@ -27,7 +27,7 @@ const registry = loadLotPolicyV2Registry();
 
 describe("LOT_POLICY_V2 registry", () => {
   it("loads machine-readable registry with required metadata", () => {
-    expect(registry.version).toBe("LOT_POLICY_V2");
+    expect(registry.version).toBe("LOT_POLICY_V2_1");
     expect(registry.rules.length).toBeGreaterThanOrEqual(40);
     expect(registry.textPatternGroups.length).toBeGreaterThanOrEqual(40);
     for (const rule of registry.rules) {
@@ -51,6 +51,17 @@ describe("LOT_POLICY_V2 text engine", () => {
 
   it("matches spaced obfuscation", () => {
     expect(matchPatterns("в е й п", ["вейп"]).length).toBeGreaterThan(0);
+  });
+
+  it("suppresses audit xxx filler but keeps explicit adult xxx", () => {
+    expect(shouldTreatXxxAsAdultContent("xxxxxxxxxxxxxxxx")).toBe(false);
+    expect(shouldTreatXxxAsAdultContent("xxx explicit 18+")).toBe(true);
+    expect(shouldTreatXxxAsAdultContent("Sony Alpha XXX-500")).toBe(false);
+  });
+
+  it("detects SDS+ drill chuck context", () => {
+    expect(detectDrillChuckContext("Перфоратор с патроном SDS+")).toBe(true);
+    expect(detectDrillChuckContext("Патроны 9мм для пистолета")).toBe(false);
   });
 });
 

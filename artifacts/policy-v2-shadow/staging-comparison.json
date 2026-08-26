@@ -1,609 +1,409 @@
 {
   "generatedAt": "2026-08-26T10:22:11.555Z",
-  "mode": "SHADOW",
-  "evaluationMode": "HTTP_FALLBACK",
-  "stagingUrl": "https://web-production-e56fb.up.railway.app",
-  "deployedSha": "135fdf8",
-  "sampleSizeReal": 48,
-  "sampleSizeSynthetic": 2,
-  "decisionDistribution": {
-    "ALLOW": 48,
-    "RESTRICTED_REVIEW": 2
-  },
-  "humanReviewedCount": 0,
-  "humanComparison": {
-    "INSUFFICIENT_EVIDENCE": 50
-  },
-  "criticalFalseNegatives": "UNKNOWN",
-  "criticalFalseNegativeStatus": "UNKNOWN",
-  "criticalFalseNegativeCases": [],
-  "hardFalsePositives": 0,
-  "manualReviewFalsePositives": 0,
-  "ocrCoverage": {
-    "evaluated": 35,
-    "failed": 0,
-    "unavailable": 0,
-    "noImages": 15
-  },
-  "imageCoverage": {
-    "partial": 35,
-    "failed": 0
-  },
-  "qrCoverage": "OPERATIONAL_ON_PIXEL_FIXTURES",
-  "pixelOcr": "OPERATIONAL",
-  "visualObjectClassification": "UNAVAILABLE",
-  "providerFailures": 0,
-  "notEvaluatedDimensions": 0,
-  "medianLatencyMs": 408,
-  "p95LatencyMs": 3870,
-  "cacheHitRate": 0,
-  "rawSimulatedEligibility": {
-    "rawAllowCount": 46,
-    "humanConfirmedSafeAllowCount": 0,
-    "guardedAutoEligibleCount": 46,
-    "guardedAutoEligiblePercent": 0.9583333333333334,
-    "neverAutoExcluded": 0,
-    "visualReviewExcluded": 0
-  },
-  "automationVerdict": "NOT_READY_FOR_AUTOMATION",
-  "guardedAuto": "DISABLED",
-  "enforce": "DISABLED",
-  "rc105": "NOT_STARTED",
-  "policyGaps": [],
-  "rows": [
+  "comparisons": [
     {
       "productId": "cmsmzsjx0002xy0w60fa73kqf",
       "name": "Дрель ударная Drill Pro 750",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 895
+      "rulesTriggered": []
     },
     {
       "productId": "cmssvqouc000ijsf23cbho4ln",
       "name": "Товар развивающегося продавца (audit)",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 1984
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt6lr004fy0w6wzhy1t32",
       "name": "Ноутбук AeroBook 14",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 336
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt7wr004iy0w6s7m7s5mu",
       "name": "Смартфон Pixelium X 128 ГБ",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 412
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt0ef0040y0w6zswthc68",
       "name": "Тепловая пушка HeatMax 3 кВт",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 3870
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsgqg002qy0w6zgmwjw2z",
       "name": "Беспроводные наушники Pulse",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 888
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt4d00049y0w6cy6x2eg3",
       "name": "Перфоратор RockDrill SDS+",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 301
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzssxo003iy0w6zqfiyiyp",
       "name": "Держатель телефона для авто",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 396
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt926004ly0w6xyg5xjhr",
       "name": "Диван-кровать Nord Compact",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 408
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsifg002uy0w6tpm0xoir",
       "name": "Смарт-часы Nova Watch",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 294
+      "rulesTriggered": []
     },
     {
       "productId": "cmssvqpbr000ujsf2txeuhkl9",
       "name": "Товар с проблемами карточки (audit)",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 395
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmztfua0053y0w6oa84gjyw",
       "name": "Обогреватель керамический WarmRoom",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 555
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt2zl0046y0w6hq6c0ke3",
       "name": "Набор саморезов и дюбелей FixBox",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 948
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsohi0039y0w6sq0lomij",
       "name": "Куртка SoftShell Trail",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 735
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsm5i0033y0w6ezzr1vrw",
       "name": "Шуруповёрт Compact 12V",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 3877
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmztbcn004ry0w6hktu7i1f",
       "name": "Светодиодная лента HomeLED 5 м",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 268
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsu5f003ly0w6ijiytrlp",
       "name": "Автомобильный пылесос MiniVac",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 1084
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmztdlf004xy0w69cddjnkj",
       "name": "Гантели неопреновые 2×5 кг",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 1281
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt5h9004cy0w6pmejg0ga",
       "name": "Набор гаечных ключей ProTorque",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 3876
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsrq0003fy0w6vmdzpw4m",
       "name": "Керамический набор посуды",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 1056
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsvjt003oy0w6uuo3544m",
       "name": "Кроссовки Trail Runner",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 563
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzta7u004oy0w6jvnjkaam",
       "name": "Комплект постельного SoftCotton",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 443
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsl1d0030y0w6l1i6qews",
       "name": "Набор бит и свёрл Master Kit",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 959
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzt1io0043y0w6q9vq2luc",
       "name": "Краска интерьерная ProWall 10 л",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 446
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsxzc003uy0w6gwkk2qvh",
       "name": "Набор уходовой косметики Glow",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 418
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmztcgw004uy0w6xfbwa45v",
       "name": "Щётка для дисков AutoShine",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 388
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsn9s0036y0w6aa6kaz5g",
       "name": "Рюкзак Urban Compact",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 419
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmztepk0050y0w6tqujeym5",
       "name": "Крем для лица HydraDay SPF30",
-      "group": "A_ORDINARY",
-      "policyDecision": "RESTRICTED_REVIEW",
+      "systemDecision": "RESTRICTED_REVIEW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
       "rulesTriggered": [
         "LOT_COSMETICS_V2"
-      ],
-      "notEvaluated": [],
-      "latencyMs": 671
+      ]
     },
     {
       "productId": "cmsmzswrk003ry0w6lm0sifsq",
       "name": "Коврик для йоги Balance",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 436
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzspp8003cy0w66dp9dskd",
       "name": "Настольная лампа Arc",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 257
+      "rulesTriggered": []
     },
     {
       "productId": "cmsmzsz6y003xy0w6xzg26iau",
       "name": "Парфюм Cedar & Amber",
-      "group": "A_ORDINARY",
-      "policyDecision": "RESTRICTED_REVIEW",
+      "systemDecision": "RESTRICTED_REVIEW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
       "rulesTriggered": [
         "LOT_COSMETICS_V2"
-      ],
-      "notEvaluated": [],
-      "latencyMs": 593
+      ]
     },
     {
       "productId": "cmssvqoas000ajsf24b4e59hj",
       "name": "Товар нового продавца (audit)",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 1173
+      "rulesTriggered": []
     },
     {
       "productId": "cmsq336rx00p7qt1m9y84auec",
       "name": "Тепловая пушка E2E 1786538820659",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 95
+      "rulesTriggered": []
     },
     {
       "productId": "cmsq2n32q00ekqt1m5vf2xa1e",
       "name": "Тепловая пушка E2E 1786538069463",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 195
+      "rulesTriggered": []
     },
     {
       "productId": "cmsq0llv3003xqt1mhhi4r1dt",
       "name": "Тепловая пушка E2E 1786534641256",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 93
+      "rulesTriggered": []
     },
     {
       "productId": "cmsot58ph00ucs01msdzo7kjd",
       "name": "E2E-PICKUP-shots Тепловая пушка",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 91
+      "rulesTriggered": []
     },
     {
       "productId": "cmsope5tb0005pd1mhrlshnkt",
       "name": "E2E тепловая пушка Pickup 1786455347860",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 92
+      "rulesTriggered": []
     },
     {
       "productId": "cmsvn0tj1000fjsm4tzgwn10k",
       "name": "Напольный вентилятор",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 671
+      "rulesTriggered": []
     },
     {
       "productId": "cmsrlb62s00b6lt01f8lmx5ql",
       "name": "Тепловая пушка Ballu BHP-M-5 E2E 1786629892190",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 93
+      "rulesTriggered": []
     },
     {
       "productId": "cmsqdoiix0006n21my0jj7ifs",
       "name": "Тепловая пушка E2E 1786556609867",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 96
+      "rulesTriggered": []
     },
     {
       "productId": "cmsqa259h0001n01mgpy90myp",
       "name": "Тепловая пушка E2E 1786550529594",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 276
+      "rulesTriggered": []
     },
     {
       "productId": "cmsq9mbl1000mr21m596rfu37",
       "name": "Тепловая пушка E2E 1786549791045",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 96
+      "rulesTriggered": []
     },
     {
       "productId": "cmsq3e0hw00tuqt1msxnf7e4c",
       "name": "Тепловая пушка E2E 1786539325367",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 91
+      "rulesTriggered": []
     },
     {
       "productId": "cmsopgtam0036pd1mak0sm05e",
       "name": "E2E тепловая пушка ChatRes 1786455471261",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 93
+      "rulesTriggered": []
     },
     {
       "productId": "cmsopgj8s002mpd1mje4d3itz",
       "name": "E2E тепловая пушка Checkout 1786455458066",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 94
+      "rulesTriggered": []
     },
     {
       "productId": "cmsopftxa0026pd1md70mb20u",
       "name": "E2E тепловая пушка Cancel 1786455425097",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 94
+      "rulesTriggered": []
     },
     {
       "productId": "cmsopfdza0013pd1mrxxdu692",
       "name": "E2E тепловая пушка Reject 1786455403829",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 95
+      "rulesTriggered": []
     },
     {
       "productId": "cmsopegmb000npd1mq3cjhq3m",
       "name": "E2E тепловая пушка Reserve 1786455360007",
-      "group": "A_ORDINARY",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 92
+      "rulesTriggered": []
     },
     {
       "productId": "cmt92qep300f9ly013okngzbo",
       "name": "rc104-d5e1d0f2-H idempotency",
-      "group": "C_SYNTHETIC",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 260
+      "rulesTriggered": []
     },
     {
       "productId": "cmt92q3vc00clly01fpf3pp03",
       "name": "rc104-d5e1d0f2-C needs-fix flow",
-      "group": "C_SYNTHETIC",
-      "policyDecision": "ALLOW",
+      "systemDecision": "ALLOW",
       "humanStatus": null,
       "comparison": "INSUFFICIENT_EVIDENCE",
-      "rulesTriggered": [],
-      "notEvaluated": [],
-      "latencyMs": 228
+      "rulesTriggered": []
     }
   ]
 }
