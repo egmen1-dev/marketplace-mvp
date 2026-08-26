@@ -92,6 +92,18 @@ export async function POST(request: Request) {
       parsed.data.status === ProductStatus.ACTIVE ? "ЛОТ опубликован" : "Черновик ЛОТа сохранён",
     );
 
+    log.info("mobile_seller_product_create", {
+      requestId: requestId ?? undefined,
+      clientActionId: request.headers.get("x-client-action-id") ?? undefined,
+      sellerProfileId,
+      productId: product.id,
+      route: "POST /api/mobile/seller/products",
+      requestedStatus: parsed.data.status,
+      publishOutcome: payload.publishOutcome,
+      moderationState: payload.moderationState ?? undefined,
+      statusCode: 201,
+    });
+
     return NextResponse.json(payload, { status: 201 });
   } catch (err) {
     if (err instanceof AuthRequiredError) {

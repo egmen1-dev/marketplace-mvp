@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-26T17:50:00.000Z",
+  "epic": "MOBILE_PHYSICAL_GAP_CLOSURE",
+  "baseline": {
+    "mainSha": "c304d8a",
+    "rc105SourceSha": "90d41fe",
+    "railwaySha": "c304d8a",
+    "versionName": "0.1.15-beta.6",
+    "versionCode": 21,
+    "physicalVerdictBefore": "READY_FOR_PHYSICAL_VALIDATION",
+    "physicalVerdictAfterP0": "BLOCKED_FOR_BETA"
+  },
+  "physicalP0A": {
+    "rootCause": "canContinuePhotos only checked images.length>0 (ignored idle/uploading/picker phases); photo ScrollView lacked keyboardShouldPersistTaps; no InteractionManager defer after ImagePicker return; parallel upload queue without mutex; Continue called goToStep without one-tap guard",
+    "whyFirstTapFailed": "Android often swallows first touch after ImagePicker return; CTA looked ready while images were still idle/processing",
+    "fix": "photo step state machine + continueFromPhotos with InteractionManager + upload mutex + truthful CTA loading/hint"
+  },
+  "physicalP0B": {
+    "rootCause": "publishLot catch returned silently on CHARACTERISTICS_REQUIRED after clearErrors(); create/update in publishOnServer did not call handleCharacteristicRejection",
+    "serverClientTruth": "Server returned CHARACTERISTICS_REQUIRED on create/update; client cleared errors then exited catch without UI",
+    "whySpinnerReturnedIdle": "finally { setPublishing(false) } ran after silent return",
+    "fix": "handleCharacteristicRejection on all CHARACTERISTICS_REQUIRED paths + publish one-tap guard + journey diagnostics"
+  },
+  "journeyHarness": {
+    "technology": "vitest + lib/mobile/seller-journey harness",
+    "real": ["photo step state machine", "submit outcome invariant", "one-tap guards", "wiring contracts"],
+    "mocked": ["network latency", "server responses"],
+    "limitations": ["No React Native touch layer", "No physical ImagePicker return"]
+  },
+  "regressionProof": {
+    "P0A": "tests/mobile-seller-journey.test.ts — processing blocks continue; ready + one tap navigates",
+    "P0B": "forbids silent CHARACTERISTICS_REQUIRED catch; submit error/success observable"
+  },
+  "diagnostics": {
+    "surface": "Профиль → О приложении → Скопировать диагностику",
+    "correlationHeader": "x-client-action-id",
+    "sample": "LOT seller journey diagnostics\nversion=0.1.15-beta.6 code=21\naction=submit actionId=lot-submit-...\noutcome=SUCCESS"
+  },
+  "prePhysicalV2": {
+    "gate": "mobile:pre-physical:gate",
+    "verdict": "FAIL",
+    "blocker": "mobile:lot-publish-truth:gate staging smoke timeout (environmental)",
+    "journeyGate": "PASS"
+  },
+  "quality": {
+    "build": "PASS",
+    "mobileTypecheck": "PASS",
+    "mobileSellerPhotoUploadGate": "PASS",
+    "mobileCreateLotPreviewGate": "PASS",
+    "mobileLotPublishTruthGate": "FAIL — staging smoke timeout",
+    "mobileLotDynamicCharacteristicsGate": "FAIL — staging smoke timeout (intermittent)",
+    "mobileLotModerationGate": "PASS",
+    "mobileMyLotsConsistencyGate": "PASS",
+    "mobileSellerJourneyGate": "PASS",
+    "mobilePrePhysicalGate": "FAIL — nested staging smoke",
+    "stagingBackendStabilityGate": "PASS",
+    "releaseRailwayRuntimeVerify": "PASS",
+    "releaseMigrationVerify": "PASS",
+    "releasePipelineVerify": "PASS"
+  },
+  "apk": "NOT_BUILT",
+  "physical": "NOT_RUN",
+  "finalVerdict": "BLOCKED_BEFORE_DEVICE"
+}

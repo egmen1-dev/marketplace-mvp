@@ -13,7 +13,15 @@ import { evaluateLotImages } from "./providers/evaluate-lot-images";
 import type { ImageInput } from "./providers/types";
 import type { ModerationResult } from "./types";
 
-export async function runLotModerationEngine(productId: string): Promise<ModerationResult> {
+export type RunLotModerationOptions = {
+  /** Defer OCR/image fetch from request path; heavy evaluation runs in ModerationEvaluationJob. */
+  deferImageEvaluation?: boolean;
+};
+
+export async function runLotModerationEngine(
+  productId: string,
+  options?: RunLotModerationOptions,
+): Promise<ModerationResult> {
   const product = await prisma.product.findUnique({
     where: { id: productId },
     include: {
@@ -56,7 +64,10 @@ export async function runLotModerationEngine(productId: string): Promise<Moderat
     sortOrder: img.sortOrder,
   }));
 
-  const imageEvaluation = imageInputs.length > 0 ? await evaluateLotImages({ images: imageInputs }) : null;
+  const imageEvaluation =
+    imageInputs.length > 0 && !options?.deferImageEvaluation
+      ? await evaluateLotImages({ images: imageInputs })
+      : null;
   const image = analyzeImageSignalsFromEvaluation(imageEvaluation);
 
   const reasons = [

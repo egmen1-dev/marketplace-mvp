@@ -100,13 +100,25 @@ async function refreshAccessToken(): Promise<string | null> {
   return refreshInFlight;
 }
 
-export async function apiRequest<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
+export type ApiRequestOptions = {
+  retry?: boolean;
+  clientActionId?: string;
+};
+
+export async function apiRequest<T>(
+  path: string,
+  init: RequestInit = {},
+  options: boolean | ApiRequestOptions = true,
+): Promise<T> {
+  const retry = typeof options === "boolean" ? options : (options.retry ?? true);
+  const clientActionId = typeof options === "object" ? options.clientActionId : undefined;
   const config = loadAppConfig();
   const token = memoryAccessToken ?? (await getAccessToken());
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
   if (!headers.has("Content-Type") && init.body) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (clientActionId) headers.set("x-client-action-id", clientActionId);
 
   const res = await fetchWithTimeout(`${config.apiBaseUrl}${path}`, { ...init, headers });
 
@@ -115,7 +127,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}, retry 
     if (err.code === "TOKEN_EXPIRED" || err.code === "UNAUTHORIZED" || err.message.toLowerCase().includes("token")) {
       try {
         const refreshed = await refreshAccessToken();
-        if (refreshed) return apiRequest<T>(path, init, false);
+        if (refreshed) return apiRequest<T>(path, init, { retry: false, clientActionId });
       } catch (refreshErr) {
         if (refreshErr instanceof ApiClientError && DEFINITIVE_REFRESH_FAILURE_CODES.has(refreshErr.code)) {
           throw refreshErr;

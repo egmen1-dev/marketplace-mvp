@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-08-26T17:49:47.696Z",
+  "rc": "RC10.5",
+  "failures": [
+    {
+      "id": "P0-A",
+      "screen": "Создать ЛОТ → Добавьте фото",
+      "symptom": "Продолжить иногда не срабатывает с первого tap",
+      "expected": "photo ready → one tap Continue → Details"
+    },
+    {
+      "id": "P0-B",
+      "screen": "Проверить ЛОТ → Отправить на проверку",
+      "symptom": "spinner → idle, same screen, no error/success",
+      "expected": "SUCCESS or VISIBLE_ERROR"
+    }
+  ],
+  "verdict": "BLOCKED_FOR_BETA"
+}

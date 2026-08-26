@@ -1,8 +1,18 @@
 {
   "candidate": "RC10.5",
   "generatedAt": "2026-08-26T12:00:00Z",
-  "status": "NOT_RUN",
-  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "status": "FAILED",
+  "verdict": "BLOCKED_FOR_BETA",
+  "physicalFailure": {
+    "recordedAt": "2026-08-26T17:00:00Z",
+    "p0": ["P0-A photo Continue first-tap", "P0-B submit black hole"],
+    "nextBuild": "RC10.6 after PRE_PHYSICAL_V2 PASS"
+  },
+  "testerDiagnostics": [
+    "Screenshot or screen recording of the issue",
+    "Profile → О приложении → Скопировать диагностику",
+    "Send copied text with ACTION_ID if present"
+  ],
   "scope": "RC10.4→RC10.5 in-app updater + My Lots P0 + create/preview P0",
   "apk": {
     "versionName": "0.1.15-beta.6",

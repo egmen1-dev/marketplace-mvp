@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-08-26T17:49:47.696Z",
+  "summary": "Low-level gates validated contracts; no journey-level observable UI outcome tests",
+  "matrix": [
+    {
+      "gate": "mobile:seller-photo-upload:gate",
+      "passedRc105": true,
+      "caughtPhysicalBug": false,
+      "whyMissed": "Tests upload API/FormData, not Continue tap/navigation after picker"
+    },
+    {
+      "gate": "mobile:create-lot-preview:gate",
+      "passedRc105": true,
+      "caughtPhysicalBug": false,
+      "whyMissed": "Validates details→preview blockers, not photo step Continue"
+    },
+    {
+      "gate": "mobile:lot-publish-truth:gate",
+      "passedRc105": true,
+      "caughtPhysicalBug": false,
+      "whyMissed": "Tests outcome mapper, not full submit UI flow or silent catch branch"
+    },
+    {
+      "gate": "mobile:rc10.5:physical-regression:gate",
+      "passedRc105": true,
+      "caughtPhysicalBug": false,
+      "whyMissed": "Aggregates low-level gates only — no seller journey harness"
+    }
+  ]
+}

@@ -28,7 +28,7 @@ export async function submitLotForModeration(productId: string): Promise<void> {
   });
   if (!product) return;
 
-  const result = await runLotModerationEngine(productId);
+  const result = await runLotModerationEngine(productId, { deferImageEvaluation: true });
   const status = mapDecisionToModerationStatus(result.decision);
   const now = new Date();
 
@@ -98,6 +98,23 @@ export async function submitLotForModeration(productId: string): Promise<void> {
         productId,
         errorMessage: err instanceof Error ? err.message.slice(0, 200) : "unknown",
       });
+    }
+  } else {
+    const hasImages = await prisma.productImage.count({ where: { productId } });
+    if (hasImages > 0) {
+      try {
+        await enqueuePolicyEvaluationJob({
+          productId,
+          contentVersionHash: result.contentVersionHash,
+        });
+        void processPolicyEvaluationJob(productId).catch(() => {});
+      } catch (err) {
+        log.error("policy_evaluation_enqueue_failed", {
+          productId,
+          phase: "deferred_images",
+          errorMessage: err instanceof Error ? err.message.slice(0, 200) : "unknown",
+        });
+      }
     }
   }
 

@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-08-26T17:49:47.697Z",
+  "scenarios": {
+    "A_slow_upload": "PASS — processing blocks, ready navigates (0–3000ms)",
+    "B_upload_fail": "PASS — ERROR phase blocks continue",
+    "C_tap_during_processing": "PASS — blocked; uploading may continue",
+    "D_double_tap_continue": "PASS — idempotent",
+    "E_submit_pending_review": "PASS — success step",
+    "F_submit_published": "PASS — success step",
+    "G_submit_400": "PASS — visible error",
+    "H_submit_409": "PASS — visible error",
+    "I_submit_500": "PASS — visible error",
+    "J_timeout_abort": "PASS — visible error",
+    "K_duplicate_submit": "PASS — single request",
+    "L_focus_loss": "PASS — silent catch detected by invariant"
+  },
+  "verdict": "AUTOMATED_JOURNEY_PASS"
+}

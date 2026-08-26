@@ -1,0 +1,7 @@
+{
+  "SUBMIT_BLACK_HOLE_ROOT_CAUSE": "publishLot catch returned silently on CHARACTERISTICS_REQUIRED after clearErrors(); create/update path in publishOnServer did not call handleCharacteristicRejection; finally reset publishing → spinner→idle with no UI",
+  "files": [
+    "apps/mobile/src/seller/use-lot-create-form.ts"
+  ],
+  "fix": "handleCharacteristicRejection on all CHARACTERISTICS_REQUIRED paths + submit action diagnostics + one-tap publish guard"
+}

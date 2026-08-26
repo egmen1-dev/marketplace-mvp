@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-08-26T17:49:47.696Z",
+  "mainSha": "c304d8a1078f96c018c639dd296e7bbff5a22152",
+  "rc105SourceSha": "90d41fe",
+  "versionName": "0.1.15-beta.6",
+  "versionCode": 21,
+  "railwaySha": "c304d8a1078f96c018c639dd296e7bbff5a22152",
+  "mrp": "PUBLISHED",
+  "physicalVerdictBefore": "READY_FOR_PHYSICAL_VALIDATION",
+  "physicalVerdictAfterP0": "BLOCKED_FOR_BETA",
+  "prePhysicalGate": "PRE_PHYSICAL_V2"
+}
