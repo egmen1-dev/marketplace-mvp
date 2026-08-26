@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-08-26T22:15:00Z",
+  "summary": "MRP/update-matrix gates validated SERVER_DECISION + ARTIFACT only; CLIENT_STATE_GATE was missing",
+  "layers": {
+    "SERVER_DECISION_GATE": "PASS",
+    "ARTIFACT_GATE": "PASS",
+    "CLIENT_STATE_GATE": "MISSING",
+    "DOWNLOAD_GATE": "PARTIAL",
+    "PHYSICAL_GATE": "FAIL"
+  },
+  "whyAllGreenExceptPhysical": [
+    "rc10.6-update-api-verification.mjs probes /api/mobile/android/update only",
+    "No test exercised useUpdateCheckFlow + update.tsx dual rendering",
+    "RC10.5 hook sets updateInfo before cache lookup; catch leaves stale release",
+    "update.tsx availableHint block keys off hasUpdate when phase=failed"
+  ],
+  "remediation": "mobile:update-journey:gate integrated into mobile:pre-physical:gate"
+}

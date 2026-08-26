@@ -8,6 +8,11 @@ import {
   formatSellerJourneyDiagnostics,
   getSellerJourneyDiagnostics,
 } from "../src/seller/journey-diagnostics";
+import {
+  copyUpdateJourneyDiagnostics,
+  formatUpdateJourneyDiagnostics,
+  getUpdateJourneyDiagnostics,
+} from "../src/update/journey-diagnostics";
 import { colors, radii, spacing, typography } from "../src/theme/tokens";
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -50,16 +55,19 @@ export default function AboutScreen() {
 
       {env.isBeta ? (
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Диагностика seller journey</Text>
+          <Text style={styles.sectionTitle}>Диагностика</Text>
           <Text style={styles.hint}>
-            При проблеме с созданием ЛОТа: сделайте скриншот и скопируйте диагностику ({getSellerJourneyDiagnostics().length} событий в буфере).
+            При проблеме с приложением: сделайте скриншот и скопируйте диагностику (
+            {getSellerJourneyDiagnostics().length + getUpdateJourneyDiagnostics().length} событий в буфере).
           </Text>
           <Pressable
             accessibilityRole="button"
             style={styles.copyButton}
             onPress={() => {
               void (async () => {
-                const text = await copySellerJourneyDiagnostics();
+                const seller = await copySellerJourneyDiagnostics();
+                const update = await copyUpdateJourneyDiagnostics();
+                const text = `${seller}\n\n---\n\n${update}`;
                 setDiagnosticsPreview(text);
                 setCopyStatus("Диагностика скопирована");
               })();
@@ -74,14 +82,14 @@ export default function AboutScreen() {
             </Text>
           ) : (
             <Text style={styles.diagnosticsPreview} selectable>
-              {formatSellerJourneyDiagnostics()}
+              {`${formatSellerJourneyDiagnostics()}\n\n---\n\n${formatUpdateJourneyDiagnostics()}`}
             </Text>
           )}
         </View>
       ) : null}
 
       <Text style={styles.hint}>
-        Сверьте эти данные с ожидаемой RC-сборкой перед физическим тестированием. Если версия или commit не совпадают — установлена устаревшая APK.
+        Эти данные помогают проверить установленную тестовую сборку и используются при сообщении об ошибках.
       </Text>
     </ScrollView>
   );

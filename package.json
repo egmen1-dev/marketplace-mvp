@@ -116,6 +116,7 @@
     "mobile:rc10.5:physical-regression:gate": "tsx scripts/mobile-rc10.5-physical-regression-gate.ts",
     "mobile:seller-journey:gate": "tsx scripts/mobile-seller-journey-gate.ts",
     "mobile:pre-physical:gate": "node scripts/mobile-physical-gap-artifacts.mjs && tsx scripts/mobile-pre-physical-gate.ts",
+    "mobile:update-journey:gate": "tsx scripts/mobile-update-journey-gate.ts",
     "mobile:physical-gap:artifacts": "node scripts/mobile-physical-gap-artifacts.mjs",
     "mobile:pre-physical-v2:artifacts": "node scripts/pre-physical-v2-closure-artifacts.mjs",
     "moderation:policy-v2:gate": "tsx scripts/moderation-policy-v2-gate.ts",

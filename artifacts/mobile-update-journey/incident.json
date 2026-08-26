@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-26T22:15:00Z",
+  "incident": "P0_UPDATE_STATE_CONTRADICTION",
+  "physicalVerdict": "FAIL",
+  "rc106Status": "BLOCKED_FOR_BETA",
+  "installed": {
+    "versionName": "0.1.15-beta.6",
+    "versionCode": 21,
+    "rc": "RC10.5",
+    "commit": "91b9c1d",
+    "channel": "CLOSED_BETA",
+    "environment": "staging"
+  },
+  "published": {
+    "versionName": "0.1.15-beta.7",
+    "versionCode": 22,
+    "rc": "RC10.6",
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107"
+  },
+  "observedUi": {
+    "checkError": "Не удалось проверить обновление. Попробуйте ещё раз.",
+    "availableHint": "Доступно обновление: 0.1.15-beta.7",
+    "downloadCta": "Скачать обновление"
+  },
+  "rootCause": {
+    "file": "apps/mobile/app/update.tsx",
+    "lines": "74-91",
+    "mechanism": "phase=failed renders check error while independent hasUpdate block still renders available hint because updateInfo survives catch in useUpdateCheckFlow"
+  },
+  "updateMatrixClientEquivalentToRc105": "NO"
+}
