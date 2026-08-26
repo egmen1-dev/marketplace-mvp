@@ -70,7 +70,7 @@ export async function evaluateStagingProductFromDb(productId: string): Promise<S
       : "A_ORDINARY";
 
   let imageEvaluation: LotImageEvaluationAggregate | null = null;
-  let cacheHits = 0;
+  const cacheHits = 0;
   let ocrCalls = 0;
   let imageCalls = 0;
   let providerFailures = false;
@@ -177,7 +177,7 @@ export async function evaluateStagingProductFromDb(productId: string): Promise<S
 export async function sampleStagingProductsFromDb(targetReal = 75): Promise<string[]> {
   const products = await prisma.product.findMany({
     where: {
-      status: { in: ["ACTIVE", "PENDING_REVIEW", "DRAFT"] },
+      status: { in: ["ACTIVE", "DRAFT"] },
     },
     select: { id: true, name: true, description: true, status: true, updatedAt: true },
     orderBy: { updatedAt: "desc" },
