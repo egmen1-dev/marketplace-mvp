@@ -1,0 +1,54 @@
+{
+  "version": "LOT_NEVER_AUTO_V1",
+  "effectiveFrom": "2026-08-26",
+  "description": "Policy classes that must remain human-only even under GUARDED_AUTO.",
+  "entries": [
+    {
+      "id": "NEVER_AUTO_AMBIGUOUS_NICOTINE_VAPE",
+      "policyIds": ["LOT_VAPE_LIQUID_AMBIGUOUS_V2", "LOT_NICOTINE_LIQUID_V2", "LOT_NICOTINE_PRODUCT_V2"],
+      "reason": "Ambiguous nicotine/vape liquids require human judgment when nicotine evidence is incomplete.",
+      "legalBasis": "ФЗ-15, ФЗ-268",
+      "requiredPath": "MANUAL_REVIEW"
+    },
+    {
+      "id": "NEVER_AUTO_MEDICINE",
+      "policyIds": ["LOT_MEDICINE_OTC_V2", "LOT_MEDICINE_RX_V2", "LOT_MEDICAL_DEVICE_V2", "LOT_NICOTINE_PATCH_MEDICAL_V2"],
+      "reason": "Medicines and medical claims require licensed human review.",
+      "legalBasis": "ФЗ-61",
+      "requiredPath": "RESTRICTED_REVIEW"
+    },
+    {
+      "id": "NEVER_AUTO_WEAPONS",
+      "policyIds": ["LOT_WEAPON_FIREARM_V2", "LOT_WEAPON_COLD_V2", "LOT_WEAPON_TOY_V2", "LOT_TASER_V2"],
+      "reason": "Weapon-like goods cannot be auto-approved without human verification.",
+      "legalBasis": "ФЗ-150",
+      "requiredPath": "MANUAL_REVIEW"
+    },
+    {
+      "id": "NEVER_AUTO_DOCUMENTS",
+      "policyIds": ["LOT_FAKE_DOCUMENTS_V2", "LOT_OFFICIAL_DOCUMENTS_V2", "LOT_PERSONAL_DATA_V2"],
+      "reason": "Identity documents and personal data listings require human review.",
+      "legalBasis": "ФЗ-152",
+      "requiredPath": "HARD_BLOCK_OR_MANUAL_REVIEW"
+    },
+    {
+      "id": "NEVER_AUTO_HAZCHEM",
+      "policyIds": ["LOT_HAZCHEM_V2", "LOT_POISON_V2", "LOT_RADIOACTIVE_V2", "LOT_EXPLOSIVES_V2"],
+      "reason": "Hazardous chemicals and dangerous goods require specialist review.",
+      "legalBasis": "ТР ТС / ГОСТ",
+      "requiredPath": "RESTRICTED_REVIEW"
+    },
+    {
+      "id": "NEVER_AUTO_POLICY_CONFLICT",
+      "condition": "hasMultimodalConflict",
+      "reason": "Conflicting seller claims vs OCR/image evidence must not auto-approve.",
+      "requiredPath": "MANUAL_REVIEW"
+    },
+    {
+      "id": "NEVER_AUTO_VISUAL_REQUIRED",
+      "condition": "requiresVisualObjectReview",
+      "reason": "Safety cannot be established without visual object classification.",
+      "requiredPath": "MANUAL_REVIEW"
+    }
+  ]
+}

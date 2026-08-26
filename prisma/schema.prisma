@@ -1681,6 +1681,50 @@ model ModerationEvaluationJob {
   @@map("moderation_evaluation_jobs")
 }
 
+/// Blind human shadow review for Policy V2 acceptance (EPIC 190.2). Does not mutate Product.status.
+model PolicyShadowReviewBatch {
+  id               String   @id @default(cuid())
+  sampleBatchId    String   @unique
+  status           String   @default("OPEN")
+  targetSampleSize Int      @default(75)
+  policyVersion    String   @default("LOT_POLICY_V2")
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  reviews PolicyShadowHumanReview[]
+
+  @@map("policy_shadow_review_batches")
+}
+
+model PolicyShadowHumanReview {
+  id                   String    @id @default(cuid())
+  batchId              String
+  productId            String
+  contentVersion       Int
+  contentVersionHash   String?
+  policyVersion        String    @default("LOT_POLICY_V2")
+  humanDecision        String
+  humanReason          String?
+  reviewerId           String?
+  reviewedAt           DateTime  @default(now())
+  systemDecision       String?
+  systemRecommendation String?
+  comparisonClass      String?
+  rulesTriggered       Json?
+  evidenceSummary      Json?
+  revealedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  batch PolicyShadowReviewBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@unique([batchId, productId, contentVersion, reviewerId])
+  @@index([productId])
+  @@index([batchId])
+  @@map("policy_shadow_human_reviews")
+}
+
 model ProductModerationAuditEvent {
   id              String            @id @default(cuid())
   productId       String

@@ -1,0 +1,125 @@
+{
+  "generatedAt": "2026-08-26T09:53:39.313Z",
+  "count": 6,
+  "suspectedFalsePositives": 4,
+  "audits": [
+    {
+      "productId": "cmssvqouc000ijsf23cbho4ln",
+      "title": "Товар развивающегося продавца (audit)",
+      "category": "Наушники",
+      "productType": null,
+      "policyDecision": "HARD_BLOCK",
+      "rulesTriggered": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "evidence": [
+        {
+          "source": "DESCRIPTION_SIGNAL",
+          "policyId": "LOT_ADULT_CONTENT_V2",
+          "matchedValue": "xxx",
+          "detail": "group=adult_explicit; accessory=false"
+        }
+      ],
+      "exactReason": "Explicit adult content prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "verdict": "SUSPECTED_FALSE_POSITIVE"
+    },
+    {
+      "productId": "cmsmzt4d00049y0w6cy6x2eg3",
+      "title": "Перфоратор RockDrill SDS+",
+      "category": "Электроинструмент",
+      "productType": "Перфораторы",
+      "policyDecision": "HARD_BLOCK",
+      "rulesTriggered": [
+        "LOT_WEAPON_FIREARM_V2"
+      ],
+      "evidence": [
+        {
+          "source": "DESCRIPTION_SIGNAL",
+          "policyId": "LOT_WEAPON_FIREARM_V2",
+          "matchedValue": "патрон",
+          "detail": "group=firearm; accessory=false"
+        }
+      ],
+      "exactReason": "Firearms and ammunition prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "verdict": "SUSPECTED_FALSE_POSITIVE"
+    },
+    {
+      "productId": "cmssvqpbr000ujsf2txeuhkl9",
+      "title": "Товар с проблемами карточки (audit)",
+      "category": "Наушники",
+      "productType": null,
+      "policyDecision": "HARD_BLOCK",
+      "rulesTriggered": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "evidence": [
+        {
+          "source": "DESCRIPTION_SIGNAL",
+          "policyId": "LOT_ADULT_CONTENT_V2",
+          "matchedValue": "xxx",
+          "detail": "group=adult_explicit; accessory=false"
+        }
+      ],
+      "exactReason": "Explicit adult content prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "verdict": "SUSPECTED_FALSE_POSITIVE"
+    },
+    {
+      "productId": "cmsmztepk0050y0w6tqujeym5",
+      "title": "Крем для лица HydraDay SPF30",
+      "category": "Уход за кожей",
+      "productType": "Кремы для лица",
+      "policyDecision": "RESTRICTED_REVIEW",
+      "rulesTriggered": [
+        "LOT_COSMETICS_V2"
+      ],
+      "evidence": [
+        {
+          "source": "TITLE_SIGNAL",
+          "policyId": "LOT_COSMETICS_V2",
+          "matchedValue": "крем для лица",
+          "detail": "group=cosmetics; accessory=false"
+        }
+      ],
+      "exactReason": "Cosmetics may require labeling review. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "verdict": "CORRECT"
+    },
+    {
+      "productId": "cmsmzsz6y003xy0w6xzg26iau",
+      "title": "Парфюм Cedar & Amber",
+      "category": "Парфюмерия",
+      "productType": "Духи и парфюмерная вода",
+      "policyDecision": "ALLOW",
+      "rulesTriggered": [],
+      "evidence": [
+        {
+          "source": "TITLE_SIGNAL",
+          "policyId": "LOT_COSMETICS_V2",
+          "matchedValue": "парфюм",
+          "detail": "group=cosmetics; accessory=false"
+        }
+      ],
+      "exactReason": "No policy rules triggered · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "verdict": "NEEDS_HUMAN_REVIEW"
+    },
+    {
+      "productId": "cmssvqoas000ajsf24b4e59hj",
+      "title": "Товар нового продавца (audit)",
+      "category": "Наушники",
+      "productType": null,
+      "policyDecision": "HARD_BLOCK",
+      "rulesTriggered": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "evidence": [
+        {
+          "source": "DESCRIPTION_SIGNAL",
+          "policyId": "LOT_ADULT_CONTENT_V2",
+          "matchedValue": "xxx",
+          "detail": "group=adult_explicit; accessory=false"
+        }
+      ],
+      "exactReason": "Explicit adult content prohibited. · evaluator=LOT_POLICY_V2_EVALUATOR/1.0.0",
+      "verdict": "SUSPECTED_FALSE_POSITIVE"
+    }
+  ]
+}
