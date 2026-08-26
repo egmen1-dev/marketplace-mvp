@@ -5,16 +5,18 @@ import { join } from "node:path";
 
 import { automationVerdict } from "@/lib/moderation/policy-v2/safe-auto-approval";
 import {
-  countGuardedAutoEligible,
   evaluateStagingProductFromDb,
   sampleStagingProductsFromDb,
   type StagingProductEvalRow,
 } from "@/lib/moderation/staging-shadow/evaluate-product";
+import { assessSafeAutoCandidates } from "@/lib/moderation/staging-shadow/safe-auto-candidate";
 import { terminateTesseractWorker } from "@/lib/moderation/providers/tesseract-ocr";
+import { prisma } from "@/lib/prisma";
 
 const STAGING = process.env.STAGING_BASE_URL ?? "https://web-production-e56fb.up.railway.app";
 const OUT_JSON = join(process.cwd(), "artifacts/policy-v2-shadow/staging-shadow-report.json");
 const OUT_MD = join(process.cwd(), "docs/product/LOT_POLICY_V2_STAGING_SHADOW_REPORT.md");
+const OUT_COMPARISON = join(process.cwd(), "artifacts/policy-v2-shadow/staging-comparison.json");
 const TARGET_SAMPLE = Number(process.env.SHADOW_SAMPLE_SIZE ?? "75");
 
 function tally(rows: StagingProductEvalRow[], key: keyof StagingProductEvalRow) {
@@ -63,6 +65,7 @@ async function httpFallbackSample(): Promise<StagingProductEvalRow[]> {
   for (const item of body.items ?? []) {
     const started = Date.now();
     let detail: {
+      title?: string;
       name?: string;
       description?: string | null;
       category?: { slug?: string } | null;
@@ -87,7 +90,7 @@ async function httpFallbackSample(): Promise<StagingProductEvalRow[]> {
       detail = null;
     }
 
-    const title = detail?.name ?? item.name ?? "";
+    const title = detail?.title ?? detail?.name ?? item.name ?? "";
     const description = detail?.description ?? item.description ?? "";
     const images = detail?.images ?? (item.imageUrl ? [{ id: item.id, url: item.imageUrl, alt: null }] : []);
 
@@ -181,12 +184,57 @@ async function main(): Promise<void> {
   const realRows = rows.filter((r) => r.group !== "C_SYNTHETIC");
   const syntheticRows = rows.filter((r) => r.group === "C_SYNTHETIC");
 
-  const criticalFalseNegatives = rows.filter((r) => r.criticalFalseNegative);
+  let humanReviews: Array<{
+    productId: string;
+    humanDecision: string;
+    comparisonClass: string | null;
+    systemDecision: string | null;
+  }> = [];
+  if (process.env.DATABASE_URL) {
+    try {
+      humanReviews = await prisma.policyShadowHumanReview.findMany({
+        select: {
+          productId: true,
+          humanDecision: true,
+          comparisonClass: true,
+          systemDecision: true,
+        },
+      });
+      for (const row of rows) {
+        const hr = humanReviews.find((h) => h.productId === row.productId);
+        if (hr) {
+          row.humanStatus =
+            hr.humanDecision === "APPROVE"
+              ? "APPROVED"
+              : hr.humanDecision === "REJECT"
+                ? "REJECTED"
+                : hr.humanDecision === "NEEDS_CHANGES"
+                  ? "NEEDS_FIX"
+                  : "PENDING_REVIEW";
+          row.comparison = (hr.comparisonClass as StagingProductEvalRow["comparison"]) ?? row.comparison;
+        }
+      }
+    } catch {
+      // shadow review tables may not exist until migration applied
+    }
+  }
+
+  const humanReviewedCount = humanReviews.length;
+  const hasHumanBaseline = humanReviewedCount >= 30;
+
+  const criticalFalseNegatives = hasHumanBaseline
+    ? rows.filter((r) => r.criticalFalseNegative)
+    : [];
+  const criticalFnStatus = hasHumanBaseline ? criticalFalseNegatives.length : "UNKNOWN";
   const hardFalsePositives = rows.filter((r) => r.hardFalsePositive);
   const manualReviewFalsePositives = rows.filter((r) => r.manualReviewFalsePositive);
 
   const latencies = rows.map((r) => r.latencyMs);
-  const guarded = countGuardedAutoEligible(rows);
+  const comparisons = new Map(rows.map((r) => [r.productId, r.comparison]));
+  const humanDecisions = new Map(
+    humanReviews.map((h) => [h.productId, h.humanDecision]),
+  );
+  const safeAuto = assessSafeAutoCandidates({ rows, comparisons, humanDecisions });
 
   const humanComparable = rows.filter((r) => r.humanStatus && r.comparison !== "INSUFFICIENT_EVIDENCE");
   const agreeCount = humanComparable.filter((r) => r.comparison === "AGREE").length;
@@ -197,10 +245,15 @@ async function main(): Promise<void> {
     policyResearchComplete: true,
     imageEngineOperational: true,
     ocrOperational: true,
-    stagingShadowComplete: mode === "DATABASE" && realRows.length >= 50,
+    stagingShadowComplete: mode === "DATABASE" && realRows.length >= 50 && hasHumanBaseline,
     shadowAgreementRate: humanAgreementRate ?? undefined,
-    criticalFalseNegatives: criticalFalseNegatives.length,
+    criticalFalseNegatives:
+      criticalFnStatus === "UNKNOWN" ? 1 : (criticalFnStatus as number),
   });
+  const automationVerdictFinal =
+    criticalFnStatus === "UNKNOWN" || !hasHumanBaseline
+      ? "NOT_READY_FOR_AUTOMATION"
+      : verdict;
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -211,8 +264,10 @@ async function main(): Promise<void> {
     sampleSizeReal: realRows.length,
     sampleSizeSynthetic: syntheticRows.length,
     decisionDistribution: tally(rows, "policyDecision"),
+    humanReviewedCount,
     humanComparison: tally(rows, "comparison"),
-    criticalFalseNegatives: criticalFalseNegatives.length,
+    criticalFalseNegatives: criticalFnStatus,
+    criticalFalseNegativeStatus: criticalFnStatus === "UNKNOWN" ? "UNKNOWN" : "MEASURED",
     criticalFalseNegativeCases: criticalFalseNegatives.map((r) => ({
       productId: r.productId,
       name: r.name,
@@ -241,10 +296,15 @@ async function main(): Promise<void> {
     cacheHitRate: rows.length
       ? rows.reduce((s, r) => s + r.cacheHits, 0) / Math.max(1, rows.reduce((s, r) => s + r.ocrCalls, 0))
       : 0,
-    guardedAutoEligibleCount: guarded.guardedAutoEligibleCount,
-    guardedAutoEligiblePercent: guarded.guardedAutoEligiblePercent,
-    humanAgreementRate,
-    automationVerdict: verdict,
+    rawSimulatedEligibility: {
+      rawAllowCount: safeAuto.rawAllowCount,
+      humanConfirmedSafeAllowCount: safeAuto.humanConfirmedSafeAllowCount,
+      guardedAutoEligibleCount: safeAuto.guardedAutoEligibleCount,
+      guardedAutoEligiblePercent: safeAuto.guardedAutoEligiblePercent,
+      neverAutoExcluded: safeAuto.neverAutoExcluded,
+      visualReviewExcluded: safeAuto.visualReviewExcluded,
+    },
+    automationVerdict: automationVerdictFinal,
     guardedAuto: "DISABLED",
     enforce: "DISABLED",
     rc105: "NOT_STARTED",
@@ -263,10 +323,28 @@ async function main(): Promise<void> {
   };
 
   writeFileSync(OUT_JSON, JSON.stringify(report, null, 2));
+  writeFileSync(
+    OUT_COMPARISON,
+    JSON.stringify(
+      {
+        generatedAt: report.generatedAt,
+        comparisons: rows.map((r) => ({
+          productId: r.productId,
+          name: r.name,
+          systemDecision: r.policyDecision,
+          humanStatus: r.humanStatus,
+          comparison: r.comparison,
+          rulesTriggered: r.rulesTriggered,
+        })),
+      },
+      null,
+      2,
+    ),
+  );
 
   const md = `# LOT Policy V2 — Staging Shadow Report
 
-**EPIC:** 190.1  
+**EPIC:** 190.2  
 **Generated:** ${report.generatedAt}  
 **Mode:** SHADOW (no publication mutations)  
 **Evaluation:** ${mode}  
@@ -278,7 +356,8 @@ async function main(): Promise<void> {
 |--------|-------|
 | Real listings | ${report.sampleSizeReal} |
 | Synthetic fixtures | ${report.sampleSizeSynthetic} |
-| Human agreement | ${humanAgreementRate != null ? `${(humanAgreementRate * 100).toFixed(1)}%` : "NOT_RUN (no DATABASE_URL human records)"} |
+| Human reviewed | ${humanReviewedCount} |
+| Human agreement | ${humanAgreementRate != null ? `${(humanAgreementRate * 100).toFixed(1)}%` : "UNKNOWN — blind review not completed"} |
 
 ## Policy decisions
 
@@ -290,7 +369,7 @@ ${Object.entries(report.decisionDistribution)
 
 | Metric | Count |
 |--------|-------|
-| Critical false negatives | ${report.criticalFalseNegatives} |
+| Critical false negatives | ${String(report.criticalFalseNegatives)} (${report.criticalFalseNegativeStatus}) |
 | Hard false positives | ${report.hardFalsePositives} |
 | Manual-review false positives | ${report.manualReviewFalsePositives} |
 
@@ -310,11 +389,12 @@ ${Object.entries(report.decisionDistribution)
 
 ## GUARDED_AUTO simulation
 
-Eligible: ${report.guardedAutoEligibleCount} (${(report.guardedAutoEligiblePercent * 100).toFixed(1)}% of real sample)
+Eligible (conservative): ${safeAuto.guardedAutoEligibleCount} (${(safeAuto.guardedAutoEligiblePercent * 100).toFixed(1)}% of real sample)
+Raw ALLOW (simulated): ${safeAuto.rawAllowCount}
 
 ## Automation verdict
 
-**\`${verdict}\`**
+**\`${automationVerdictFinal}\`**
 
 GUARDED_AUTO and ENFORCE remain **disabled**.
 
@@ -324,7 +404,19 @@ GUARDED_AUTO and ENFORCE remain **disabled**.
 `;
 
   writeFileSync(OUT_MD, md);
-  console.log(JSON.stringify({ out: OUT_JSON, verdict, sampleReal: realRows.length, automationVerdict: verdict }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        out: OUT_JSON,
+        verdict: automationVerdictFinal,
+        sampleReal: realRows.length,
+        humanReviewedCount,
+        criticalFnStatus,
+      },
+      null,
+      2,
+    ),
+  );
   await terminateTesseractWorker();
 }
 
