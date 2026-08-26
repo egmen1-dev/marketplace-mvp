@@ -1,0 +1,1455 @@
+{
+  "generatedAt": "2026-08-26",
+  "count": 121,
+  "fixtures": [
+    {
+      "id": "allow-clean-drill",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Дрель Bosch GSR 120",
+        "description": "Новая, в коробке",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-kitchen-knife",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Кухонный нож поварской 20 см",
+        "description": "Нержавеющая сталь"
+      }
+    },
+    {
+      "id": "allow-toy-gun-context",
+      "tags": [
+        "manual",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Игрушечный пистолет Nerf",
+        "description": "Мягкие пули"
+      }
+    },
+    {
+      "id": "allow-game-controller",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Геймпад в форме бластера",
+        "description": "Для PlayStation"
+      }
+    },
+    {
+      "id": "allow-alcohol-free-perfume",
+      "tags": [
+        "allow",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Парфюм безалкогольный спрей",
+        "description": "0% алкоголя"
+      }
+    },
+    {
+      "id": "allow-vape-case",
+      "tags": [
+        "manual",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Чехол для вейпа силиконовый",
+        "description": "Подходит для pod"
+      }
+    },
+    {
+      "id": "allow-collectible-bottle",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Коллекционная бутылка пустая",
+        "description": "Декор, без содержимого"
+      }
+    },
+    {
+      "id": "block-cigarettes",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Сигареты Marlboro",
+        "description": "Блок"
+      }
+    },
+    {
+      "id": "block-iqos",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Стики IQOS HEETS",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-nicotine-liquid",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Жидкость для вейпа 20 mg/ml nicotine",
+        "description": "Манго"
+      }
+    },
+    {
+      "id": "block-vape-device",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Pod-система вейп",
+        "description": "Новая"
+      }
+    },
+    {
+      "id": "block-vape-obfuscation",
+      "tags": [
+        "hard-block",
+        "evasion"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "в е й п одноразка",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-vape-latin",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Vape disposable",
+        "description": "mint"
+      }
+    },
+    {
+      "id": "block-hookah",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Кальян Khalil Mamoon",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-alcohol-vodka",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Водка 0.5л",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-drugs",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Марихуана",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-cocaine-slang",
+      "tags": [
+        "hard-block",
+        "evasion"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Кокаин",
+        "description": "test"
+      }
+    },
+    {
+      "id": "block-firearm",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Пистолет ТТ",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-ammo",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Патроны 9мм",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-taser",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Электрошокер",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-fake-passport",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Поддельный паспорт",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-bank-card",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Банковская карта с CVV",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-sim",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "SIM-карта МТС",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-account",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Продам аккаунт Steam",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-counterfeit",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Реплика 1:1 Rolex",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-extremist",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Флаг со свастикой",
+        "description": ""
+      }
+    },
+    {
+      "id": "restricted-medicine",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Таблетки парацетамол",
+        "description": "Лекарство"
+      }
+    },
+    {
+      "id": "restricted-supplement",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "БАД витамин D",
+        "description": ""
+      }
+    },
+    {
+      "id": "restricted-food",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Сыр пармезан",
+        "description": "Продукты питания"
+      }
+    },
+    {
+      "id": "restricted-children",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Игрушка для детей 0+",
+        "description": ""
+      }
+    },
+    {
+      "id": "restricted-intimate",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Интим-товар",
+        "description": ""
+      }
+    },
+    {
+      "id": "restricted-pyrotechnics",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Фейерверк салют",
+        "description": ""
+      }
+    },
+    {
+      "id": "restricted-cold-weapon",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Кинжал коллекционный",
+        "description": ""
+      }
+    },
+    {
+      "id": "manual-services",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Окажу услугу ремонта",
+        "description": ""
+      }
+    },
+    {
+      "id": "manual-nicotine-patch",
+      "tags": [
+        "restricted"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "Никотиновый пластырь Nicorette",
+        "description": ""
+      }
+    },
+    {
+      "id": "vape-case-zhidkost",
+      "tags": [
+        "manual",
+        "vape-case"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа",
+        "description": "без никотина",
+        "imageUrls": [
+          "/img/vape.jpg"
+        ]
+      }
+    },
+    {
+      "id": "vape-conflict-ocr",
+      "tags": [
+        "manual",
+        "conflict"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вейпа",
+        "description": "без никотина",
+        "imageAltTexts": [
+          "nicotine 20mg/ml label"
+        ]
+      }
+    },
+    {
+      "id": "vape-nicotine-char",
+      "tags": [
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Жижа",
+        "description": "",
+        "characteristics": [
+          {
+            "name": "Никотин",
+            "value": "20 mg/ml"
+          }
+        ]
+      }
+    },
+    {
+      "id": "category-guard-alcohol",
+      "tags": [
+        "category-guard"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Напиток",
+        "productTypeSlug": "alcohol-wine"
+      }
+    },
+    {
+      "id": "category-guard-tobacco",
+      "tags": [
+        "category-guard"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "Товар",
+        "productTypeSlug": "tobacco-cigarettes"
+      }
+    },
+    {
+      "id": "category-guard-vape",
+      "tags": [
+        "category-guard",
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Товар",
+        "productTypeSlug": "vape-liquid"
+      }
+    },
+    {
+      "id": "not-evaluated-images-only",
+      "tags": [
+        "not-evaluated"
+      ],
+      "expected": "NOT_EVALUATED",
+      "input": {
+        "title": "Телефон Samsung",
+        "description": "Отличное состояние",
+        "imageUrls": [
+          "https://cdn.example/a.jpg"
+        ]
+      }
+    },
+    {
+      "id": "contact-in-image-url",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Стол",
+        "imageUrls": [
+          "https://t.me/seller123/photo.jpg"
+        ]
+      }
+    },
+    {
+      "id": "qr-in-image",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Книга",
+        "imageUrls": [
+          "/qr-code-promo.png"
+        ]
+      }
+    },
+    {
+      "id": "evasion-nicotine-zero",
+      "tags": [
+        "evasion"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "жидк0сть ник0тин 20mg",
+        "description": ""
+      }
+    },
+    {
+      "id": "evasion-vape-at",
+      "tags": [
+        "evasion"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "v@pe pod",
+        "description": ""
+      }
+    },
+    {
+      "id": "evasion-spaced",
+      "tags": [
+        "evasion"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "в е й п",
+        "description": "одноразка"
+      }
+    },
+    {
+      "id": "wrong-category-vape",
+      "tags": [
+        "false-negative"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа",
+        "categorySlug": "electronics",
+        "productTypeSlug": "cables"
+      }
+    },
+    {
+      "id": "empty-description-vape",
+      "tags": [
+        "vape-case"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа",
+        "description": ""
+      }
+    },
+    {
+      "id": "image-only-vape-title",
+      "tags": [
+        "vape-case",
+        "not-evaluated"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа",
+        "description": "",
+        "imageUrls": [
+          "/product.jpg"
+        ]
+      }
+    },
+    {
+      "id": "evasion-main-0",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "вейп новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-0",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Чехол для вейп",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-1",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "vape новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-1",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Чехол для vape",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-2",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "вэйп новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-2",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Чехол для вэйп",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-3",
+      "tags": [
+        "evasion",
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "жижа новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-3",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Чехол для жижа",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-4",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "pod новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-4",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Чехол для pod",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-5",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "iqos новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-5",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Чехол для iqos",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-6",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "снюс новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-6",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Чехол для снюс",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "evasion-main-7",
+      "tags": [
+        "evasion",
+        "hard-block"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "heets новый",
+        "description": "продам"
+      }
+    },
+    {
+      "id": "evasion-accessory-7",
+      "tags": [
+        "evasion",
+        "false-positive"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Чехол для heets",
+        "description": "аксессуар"
+      }
+    },
+    {
+      "id": "allow-generic-0",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 1",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-1",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 2",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-2",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 3",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-3",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 4",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-4",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 5",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-5",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 6",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-6",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 7",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-7",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 8",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-8",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 9",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-9",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 10",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-10",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 11",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-11",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 12",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-12",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 13",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-13",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 14",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-14",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 15",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-15",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 16",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-16",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 17",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-17",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 18",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-18",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 19",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "allow-generic-19",
+      "tags": [
+        "allow"
+      ],
+      "expected": "ALLOW",
+      "input": {
+        "title": "Товар бытовой 20",
+        "description": "Обычный товар без ограничений",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "block-variant-0",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "табак жевательный",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-1",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "сигариллы",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-2",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "одноразовая электронка",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-3",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "salt nic juice",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-4",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "спайс микс",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-5",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "героин",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-6",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "амфетамин",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-7",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "взрывчатка",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-8",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "ртуть",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-9",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "радиоактивный",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-10",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "краденый телефон",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-11",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "база данных клиентов",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-12",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "порно dvd",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-13",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "щенок лабрадор",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-14",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "золотой слиток",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-15",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "б/у зубная щетка",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-16",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "честный знак без маркировки",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-17",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "RESTRICTED_REVIEW",
+      "input": {
+        "title": "18+ нож боевой",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-18",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "рецептурный препарат",
+        "description": ""
+      }
+    },
+    {
+      "id": "block-variant-19",
+      "tags": [
+        "hard-block",
+        "false-negative"
+      ],
+      "expected": "HARD_BLOCK",
+      "input": {
+        "title": "поддельный диплом",
+        "description": ""
+      }
+    },
+    {
+      "id": "ambiguous-0",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 0",
+        "description": "без никотина",
+        "imageUrls": [
+          "/img.jpg"
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-1",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 1",
+        "description": "",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-2",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 2",
+        "description": "без никотина",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-3",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 3",
+        "description": "",
+        "imageUrls": [
+          "/img.jpg"
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-4",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 4",
+        "description": "без никотина",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-5",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 5",
+        "description": "",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-6",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 6",
+        "description": "без никотина",
+        "imageUrls": [
+          "/img.jpg"
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-7",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 7",
+        "description": "",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-8",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 8",
+        "description": "без никотина",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-9",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 9",
+        "description": "",
+        "imageUrls": [
+          "/img.jpg"
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-10",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 10",
+        "description": "без никотина",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-11",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 11",
+        "description": "",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-12",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 12",
+        "description": "без никотина",
+        "imageUrls": [
+          "/img.jpg"
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-13",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 13",
+        "description": "",
+        "imageUrls": []
+      }
+    },
+    {
+      "id": "ambiguous-14",
+      "tags": [
+        "manual"
+      ],
+      "expected": "MANUAL_REVIEW",
+      "input": {
+        "title": "Жидкость для вэйпа вкус 14",
+        "description": "без никотина",
+        "imageUrls": []
+      }
+    }
+  ]
+}

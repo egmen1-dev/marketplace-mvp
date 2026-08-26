@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 
 import { computeContentVersionHash } from "./content-version";
 import { buildModerationResult } from "./decision-engine";
+import { isLotPolicyV2ShadowEnabled } from "./config";
+import { evaluateLotPolicyV2 } from "./policy-v2/evaluate";
 import { analyzeImageSignals } from "./signals/image-signals";
 import { analyzePriceSignals } from "./signals/price-signals";
 import { analyzeProhibitedSignals } from "./signals/prohibited-signals";
@@ -74,10 +76,37 @@ export async function runLotModerationEngine(productId: string): Promise<Moderat
     })),
   });
 
-  return buildModerationResult({
+  const baseResult = buildModerationResult({
     reasons,
     signals,
     imageSignals: image.imageSignals,
     contentVersionHash,
   });
+
+  if (!isLotPolicyV2ShadowEnabled()) {
+    return baseResult;
+  }
+
+  const category = product.categoryId
+    ? await prisma.category.findUnique({ where: { id: product.categoryId }, select: { slug: true } })
+    : null;
+  const productType = product.productTypeId
+    ? await prisma.productType.findUnique({ where: { id: product.productTypeId }, select: { slug: true } })
+    : null;
+
+  const policyV2 = evaluateLotPolicyV2({
+    title: product.name,
+    description: product.description,
+    categorySlug: category?.slug ?? null,
+    productTypeSlug: productType?.slug ?? null,
+    characteristics: product.characteristicValues.map((row) => ({
+      name: row.definition.name,
+      value: row.valueText ?? row.valueNumber,
+    })),
+    price,
+    imageUrls: product.images.map((img) => img.url),
+    imageAltTexts: product.images.map((img) => img.altText ?? ""),
+  });
+
+  return { ...baseResult, policyV2 };
 }

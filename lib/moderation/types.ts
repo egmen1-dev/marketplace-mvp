@@ -73,6 +73,7 @@ export type ModerationResult = {
   reviewerType: "SYSTEM" | "ADMIN";
   imageSignals: ImageModerationSignals;
   contentVersionHash: string;
+  policyV2?: import("./policy-v2/types").PolicyEvaluationResult;
 };
 
 export type PolicyRuleAction = "APPROVE" | "NEEDS_CHANGES" | "REJECT" | "MANUAL_REVIEW";

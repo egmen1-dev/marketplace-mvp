@@ -1,0 +1,1214 @@
+{
+  "generatedAt": "2026-08-26T06:56:41.640Z",
+  "mode": "SHADOW",
+  "fixtureCount": 121,
+  "agreementRate": 1,
+  "disagreementCount": 0,
+  "rows": [
+    {
+      "id": "allow-clean-drill",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-kitchen-knife",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [
+        "LOT_KITCHEN_KNIFE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-toy-gun-context",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_WEAPON_TOY_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-game-controller",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-alcohol-free-perfume",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [
+        "LOT_ALCOHOL_FREE_PERFUME_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-vape-case",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_ACCESSORY_V2",
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-collectible-bottle",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-cigarettes",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-iqos",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-nicotine-liquid",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2",
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:состав,composition,никотин,nicotine,объем,volume"
+      ]
+    },
+    {
+      "id": "block-vape-device",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-vape-obfuscation",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-vape-latin",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-hookah",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_HOOKAH_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-alcohol-vodka",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_ALCOHOL_REMOTE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-drugs",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DRUGS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-cocaine-slang",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DRUGS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-firearm",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_WEAPON_FIREARM_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-ammo",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_WEAPON_FIREARM_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-taser",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TASER_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-fake-passport",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_FAKE_DOCUMENTS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-bank-card",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_PAYMENT_INSTRUMENTS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-sim",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DIGITAL_ACCOUNTS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-account",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DIGITAL_ACCOUNTS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-counterfeit",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_COUNTERFEIT_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-extremist",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_EXTREMIST_SYMBOLS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "restricted-medicine",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_MEDICINE_OTC_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "restricted-supplement",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_DIETARY_SUPPLEMENT_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "restricted-food",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_FOOD_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "restricted-children",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_CHILDREN_PRODUCT_V2",
+        "LOT_WEAPON_TOY_V2"
+      ],
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:возраст,age"
+      ]
+    },
+    {
+      "id": "restricted-intimate",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_INTIMATE_GOODS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "restricted-pyrotechnics",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_PYROTECHNICS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "restricted-cold-weapon",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_WEAPON_COLD_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "manual-services",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_SERVICES_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "manual-nicotine-patch",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_NICOTINE_PATCH_MEDICAL_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "vape-case-zhidkost",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "vape-conflict-ocr",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "vape-nicotine-char",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2",
+        "LOT_NICOTINE_LIQUID_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "category-guard-alcohol",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_ALCOHOL_REMOTE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "category-guard-tobacco",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "category-guard-vape",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "not-evaluated-images-only",
+      "expected": "NOT_EVALUATED",
+      "recommendation": "NOT_EVALUATED",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "contact-in-image-url",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_CONTACT_IN_IMAGE_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "qr-in-image",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_QR_IN_IMAGE_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "evasion-nicotine-zero",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2"
+      ],
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:состав,composition,никотин,nicotine,объем,volume"
+      ]
+    },
+    {
+      "id": "evasion-vape-at",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-spaced",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "wrong-category-vape",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "empty-description-vape",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "image-only-vape-title",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "evasion-main-0",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-0",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_ACCESSORY_V2",
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-1",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-1",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_ACCESSORY_V2",
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-2",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-2",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-3",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-3",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-4",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-4",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_ACCESSORY_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-5",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-5",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-6",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-6",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-main-7",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "evasion-accessory-7",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-0",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-1",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-2",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-3",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-4",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-5",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-6",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-7",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-8",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-9",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-10",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-11",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-12",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-13",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-14",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-15",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-16",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-17",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-18",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "allow-generic-19",
+      "expected": "ALLOW",
+      "recommendation": "ALLOW",
+      "agree": true,
+      "rules": [],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-0",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-1",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_TOBACCO_REMOTE_SALE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-2",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_DEVICE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-3",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2"
+      ],
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:состав,composition,никотин,nicotine,объем,volume"
+      ]
+    },
+    {
+      "id": "block-variant-4",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DRUGS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-5",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DRUGS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-6",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_DRUGS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-7",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_EXPLOSIVES_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-8",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_HAZCHEM_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-9",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_RADIOACTIVE_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-10",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_STOLEN_GOODS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-11",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_PERSONAL_DATA_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-12",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-13",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_ANIMALS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-14",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_PRECIOUS_METALS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-15",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_USED_SANITARY_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-16",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_MARKING_REQUIRED_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-17",
+      "expected": "RESTRICTED_REVIEW",
+      "recommendation": "RESTRICTED_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_WEAPON_COLD_V2",
+        "LOT_AGE_RESTRICTED_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-18",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_MEDICINE_RX_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "block-variant-19",
+      "expected": "HARD_BLOCK",
+      "recommendation": "HARD_BLOCK",
+      "agree": true,
+      "rules": [
+        "LOT_FAKE_DOCUMENTS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-0",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "ambiguous-1",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-2",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-3",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "ambiguous-4",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-5",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-6",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "ambiguous-7",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-8",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-9",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "ambiguous-10",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-11",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-12",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": [
+        "PIXEL_OCR_NOT_AVAILABLE",
+        "PIXEL_IMAGE_CLASSIFICATION_NOT_AVAILABLE"
+      ]
+    },
+    {
+      "id": "ambiguous-13",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    },
+    {
+      "id": "ambiguous-14",
+      "expected": "MANUAL_REVIEW",
+      "recommendation": "MANUAL_REVIEW",
+      "agree": true,
+      "rules": [
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "notEvaluated": []
+    }
+  ],
+  "note": "Staging DB evaluation requires DATABASE_URL — fixture-only shadow in cloud CI."
+}

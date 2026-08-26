@@ -1,0 +1,1730 @@
+{
+  "version": "LOT_POLICY_V2",
+  "effectiveFrom": "2026-08-26",
+  "deprecatedAt": null,
+  "jurisdiction": "RU",
+  "researchedAt": "2026-08-26",
+  "rules": [
+    {
+      "policyId": "LOT_TOBACCO_REMOTE_SALE_V2",
+      "category": "tobacco",
+      "subcategory": "cigarettes",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-15 «Об охране здоровья граждан от воздействия окружающего табачного дыма…» ст. 19",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": "Удалите табачную продукцию из объявления.",
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Табачную продукцию нельзя продавать дистанционно на ЛОТ.",
+      "adminMessage": "Remote retail sale of tobacco prohibited (FZ-15 art. 19)."
+    },
+    {
+      "policyId": "LOT_NICOTINE_PRODUCT_V2",
+      "category": "nicotine",
+      "subcategory": "nicotine-containing",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-15 «Об охране здоровья граждан от воздействия окружающего табачного дыма…» ст. 19",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Никотинсодержащую продукцию нельзя продавать дистанционно.",
+      "adminMessage": "Nicotine-containing products remote sale prohibited."
+    },
+    {
+      "policyId": "LOT_NICOTINE_LIQUID_V2",
+      "category": "vape",
+      "subcategory": "nicotine-liquid",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-15 «Об охране здоровья граждан от воздействия окружающего табачного дыма…» ст. 19",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Жидкости с никотином для вейпов нельзя продавать дистанционно.",
+      "adminMessage": "Nicotine e-liquid remote sale prohibited."
+    },
+    {
+      "policyId": "LOT_VAPE_DEVICE_V2",
+      "category": "vape",
+      "subcategory": "device",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-15 «Об охране здоровья граждан от воздействия окружающего табачного дыма…» ст. 19",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "category"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Устройства для потребления никотинсодержащей продукции нельзя продавать дистанционно.",
+      "adminMessage": "Vaping devices remote sale prohibited."
+    },
+    {
+      "policyId": "LOT_VAPE_LIQUID_AMBIGUOUS_V2",
+      "category": "vape",
+      "subcategory": "liquid-ambiguous",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ-15 «Об охране здоровья граждан от воздействия окружающего табачного дыма…» ст. 19",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Жидкость для вейпа требует проверки модератором — нельзя подтвердить состав автоматически.",
+      "adminMessage": "Vape liquid listing without nicotine evidence — manual classification required."
+    },
+    {
+      "policyId": "LOT_VAPE_ACCESSORY_V2",
+      "category": "vape",
+      "subcategory": "accessory",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "https://www.avito.ru/legal/rules/listing-policy"
+      ],
+      "detectionSignals": [
+        "title",
+        "context"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Аксессуар для вейпа требует проверки — убедитесь, что это не запрещённая никотинсодержащая продукция.",
+      "adminMessage": "Vape accessory — verify not restricted consumable."
+    },
+    {
+      "policyId": "LOT_HOOKAH_V2",
+      "category": "tobacco",
+      "subcategory": "hookah",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-15 «Об охране здоровья граждан от воздействия окружающего табачного дыма…» ст. 19",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Кальяны и комплектующие для курения нельзя продавать дистанционно.",
+      "adminMessage": "Hookah / smoking device remote sale prohibited."
+    },
+    {
+      "policyId": "LOT_ALCOHOL_REMOTE_V2",
+      "category": "alcohol",
+      "subcategory": "beverages",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-171 «О государственном регулировании производства и оборота этилового спирта…»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Алкогольную продукцию нельзя продавать дистанционно без лицензии и специального канала.",
+      "adminMessage": "Alcohol remote retail restricted — LOT blocks all alcohol listings."
+    },
+    {
+      "policyId": "LOT_DRUGS_V2",
+      "category": "drugs",
+      "subcategory": "narcotic",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-3 «О наркотических средствах и психотропных веществах»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Наркотические и психотропные вещества запрещены.",
+      "adminMessage": "Narcotic/psychotropic substances prohibited."
+    },
+    {
+      "policyId": "LOT_PRECURSOR_V2",
+      "category": "drugs",
+      "subcategory": "precursor",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-3 «О наркотических средствах и психотропных веществах»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Прекурсоры наркотических веществ запрещены.",
+      "adminMessage": "Drug precursors prohibited."
+    },
+    {
+      "policyId": "LOT_MEDICINE_RX_V2",
+      "category": "medicine",
+      "subcategory": "prescription",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-61 «Об обращении лекарственных средств»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Рецептурные лекарства нельзя продавать на маркетплейсе.",
+      "adminMessage": "Prescription medicines prohibited on marketplace."
+    },
+    {
+      "policyId": "LOT_MEDICINE_OTC_V2",
+      "category": "medicine",
+      "subcategory": "otc",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ-61 «Об обращении лекарственных средств»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Лекарственные средства требуют документов и ручной проверки.",
+      "adminMessage": "OTC medicines require documents and manual review."
+    },
+    {
+      "policyId": "LOT_DIETARY_SUPPLEMENT_V2",
+      "category": "health",
+      "subcategory": "dietary-supplement",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ТР ТС 021/2011",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "https://www.consultant.ru/document/cons_doc_LAW_215315/"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "БАД требуют подтверждения регистрации и ручной проверки.",
+      "adminMessage": "Dietary supplements require registration evidence."
+    },
+    {
+      "policyId": "LOT_MEDICAL_DEVICE_V2",
+      "category": "health",
+      "subcategory": "medical-device",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ-180 «О биологической безопасности…» / Росздравнадзор",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "https://roszdravnadzor.gov.ru/"
+      ],
+      "detectionSignals": [
+        "title",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Медицинские изделия требуют регистрационных данных.",
+      "adminMessage": "Medical devices require registration data."
+    },
+    {
+      "policyId": "LOT_WEAPON_FIREARM_V2",
+      "category": "weapons",
+      "subcategory": "firearm",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-150 «О внесении изменений…» / ФЗ «Об оружии»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "image"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Оружие и боеприпасы запрещены.",
+      "adminMessage": "Firearms and ammunition prohibited."
+    },
+    {
+      "policyId": "LOT_WEAPON_COLD_V2",
+      "category": "weapons",
+      "subcategory": "cold",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ «Об оружии»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Холодное оружие требует проверки классификации.",
+      "adminMessage": "Cold weapons require classification review."
+    },
+    {
+      "policyId": "LOT_WEAPON_TOY_V2",
+      "category": "weapons",
+      "subcategory": "toy-replica",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Игрушечное оружие требует проверки — должно быть явно обозначено как игрушка.",
+      "adminMessage": "Toy gun / replica requires manual review for misclassification."
+    },
+    {
+      "policyId": "LOT_KITCHEN_KNIFE_V2",
+      "category": "weapons",
+      "subcategory": "kitchen-knife",
+      "decisionClass": "ALLOW",
+      "severity": "LOW",
+      "legalBasis": "Not weapon — household goods",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "title",
+        "context"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": false,
+      "sellerRemediation": null,
+      "buyerExposureRule": "NONE",
+      "userMessage": null,
+      "adminMessage": "Kitchen/household knife — allowed when context is culinary."
+    },
+    {
+      "policyId": "LOT_EXPLOSIVES_V2",
+      "category": "hazmat",
+      "subcategory": "explosives",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "УК РФ / ФЗ об оружии",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Взрывчатые вещества запрещены.",
+      "adminMessage": "Explosives prohibited."
+    },
+    {
+      "policyId": "LOT_PYROTECHNICS_V2",
+      "category": "hazmat",
+      "subcategory": "pyrotechnics",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ТР ЕАЭС 042/2017",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Пиротехника требует документов и ручной проверки.",
+      "adminMessage": "Pyrotechnics require permits."
+    },
+    {
+      "policyId": "LOT_TASER_V2",
+      "category": "weapons",
+      "subcategory": "taser",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ «Об оружии»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Электрошоковые устройства запрещены.",
+      "adminMessage": "Tasers / stun devices prohibited."
+    },
+    {
+      "policyId": "LOT_HAZCHEM_V2",
+      "category": "hazmat",
+      "subcategory": "chemical",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ТР ТС 041/2017",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Опасные химикаты запрещены.",
+      "adminMessage": "Hazardous chemicals prohibited."
+    },
+    {
+      "policyId": "LOT_POISON_V2",
+      "category": "hazmat",
+      "subcategory": "poison",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-61 «Об обращении лекарственных средств»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Яды и сильнодействующие вещества запрещены.",
+      "adminMessage": "Poisons prohibited."
+    },
+    {
+      "policyId": "LOT_RADIOACTIVE_V2",
+      "category": "hazmat",
+      "subcategory": "radioactive",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ «Об использовании атомной энергии»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Радиоактивные материалы запрещены.",
+      "adminMessage": "Radioactive materials prohibited."
+    },
+    {
+      "policyId": "LOT_COUNTERFEIT_V2",
+      "category": "fraud",
+      "subcategory": "counterfeit",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ГК РФ / УК РФ",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Контрафакт и подделки брендов запрещены.",
+      "adminMessage": "Counterfeit goods prohibited."
+    },
+    {
+      "policyId": "LOT_FAKE_DOCUMENTS_V2",
+      "category": "fraud",
+      "subcategory": "fake-documents",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "УК РФ",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Поддельные документы запрещены.",
+      "adminMessage": "Forged documents prohibited."
+    },
+    {
+      "policyId": "LOT_STOLEN_GOODS_V2",
+      "category": "fraud",
+      "subcategory": "stolen",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "УК РФ",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Продажа похищенных товаров запрещена.",
+      "adminMessage": "Stolen goods prohibited."
+    },
+    {
+      "policyId": "LOT_OFFICIAL_DOCUMENTS_V2",
+      "category": "fraud",
+      "subcategory": "official-documents",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "УК РФ",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr",
+        "image"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Государственные документы и удостоверения нельзя продавать.",
+      "adminMessage": "Official documents / credentials prohibited."
+    },
+    {
+      "policyId": "LOT_PAYMENT_INSTRUMENTS_V2",
+      "category": "fraud",
+      "subcategory": "payment-cards",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ «О национальной платёжной системе»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Банковские карты и платёжные инструменты запрещены.",
+      "adminMessage": "Payment cards / financial instruments prohibited."
+    },
+    {
+      "policyId": "LOT_PERSONAL_DATA_V2",
+      "category": "fraud",
+      "subcategory": "personal-data",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-152 «О персональных данных»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Базы персональных данных запрещены.",
+      "adminMessage": "Personal data databases prohibited."
+    },
+    {
+      "policyId": "LOT_DIGITAL_ACCOUNTS_V2",
+      "category": "digital",
+      "subcategory": "accounts",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "https://www.avito.ru/legal/rules/listing-policy"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Продажа аккаунтов, SIM и цифровых доступов запрещена.",
+      "adminMessage": "Digital accounts / SIM resale prohibited."
+    },
+    {
+      "policyId": "LOT_ADULT_CONTENT_V2",
+      "category": "adult",
+      "subcategory": "explicit",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ-436 «О защите детей…»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "image"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Материалы для взрослых с откровенным содержанием запрещены.",
+      "adminMessage": "Explicit adult content prohibited."
+    },
+    {
+      "policyId": "LOT_INTIMATE_GOODS_V2",
+      "category": "adult",
+      "subcategory": "intimate-goods",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ФЗ-436",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "category"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Интим-товары требуют возрастной маркировки и ручной проверки.",
+      "adminMessage": "Intimate goods require age gating."
+    },
+    {
+      "policyId": "LOT_ANIMALS_V2",
+      "category": "animals",
+      "subcategory": "live",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ «Об ответственном обращении с животными»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Животных можно размещать только с документами и ручной проверкой.",
+      "adminMessage": "Live animals require permits."
+    },
+    {
+      "policyId": "LOT_PLANTS_RESTRICTED_V2",
+      "category": "plants",
+      "subcategory": "restricted-seeds",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ФЗ «О семеноводстве»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Семена и растения с ограничениями требуют проверки.",
+      "adminMessage": "Restricted plants/seeds require review."
+    },
+    {
+      "policyId": "LOT_PRECIOUS_METALS_V2",
+      "category": "commodities",
+      "subcategory": "precious",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ФЗ «О драгоценных металлах…»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Драгоценные металлы и камни требуют документов.",
+      "adminMessage": "Precious metals/stones require documentation."
+    },
+    {
+      "policyId": "LOT_FOOD_V2",
+      "category": "food",
+      "subcategory": "general",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ТР ТС 021/2011",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Продукты питания требуют маркировки и срока годности.",
+      "adminMessage": "Food products require labeling evidence."
+    },
+    {
+      "policyId": "LOT_CHILDREN_PRODUCT_V2",
+      "category": "children",
+      "subcategory": "general",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ТР ТС 008/2011",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Детские товары требуют возрастной маркировки.",
+      "adminMessage": "Children's products require age labeling."
+    },
+    {
+      "policyId": "LOT_COSMETICS_V2",
+      "category": "cosmetics",
+      "subcategory": "general",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "LOW",
+      "legalBasis": "ТР ТС 009/2011",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Косметика требует проверки маркировки при дистанционной продаже.",
+      "adminMessage": "Cosmetics may require labeling review."
+    },
+    {
+      "policyId": "LOT_USED_SANITARY_V2",
+      "category": "used",
+      "subcategory": "sanitary",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "title",
+        "description",
+        "condition"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Б/у товары с санитарными ограничениями требуют проверки.",
+      "adminMessage": "Used sanitary goods require review."
+    },
+    {
+      "policyId": "LOT_MARKING_REQUIRED_V2",
+      "category": "compliance",
+      "subcategory": "marking",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ФЗ «О государственном информационном мониторинге…»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "https://честныйзнак.рф/"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Товары с обязательной маркировкой требуют подтверждения.",
+      "adminMessage": "Mandatory marking (Chestny ZNAK) required."
+    },
+    {
+      "policyId": "LOT_AGE_RESTRICTED_V2",
+      "category": "compliance",
+      "subcategory": "age",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "ФЗ-436",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Товар с возрастным ограничением требует проверки.",
+      "adminMessage": "Age-restricted product."
+    },
+    {
+      "policyId": "LOT_SERVICES_V2",
+      "category": "services",
+      "subcategory": "general",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "LOW",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "title",
+        "category"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Услуги на ЛОТ пока не поддерживаются.",
+      "adminMessage": "Services not supported on LOT."
+    },
+    {
+      "policyId": "LOT_CONTACT_IN_IMAGE_V2",
+      "category": "spam",
+      "subcategory": "contact-in-image",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "image"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Контактные данные на изображении требуют проверки.",
+      "adminMessage": "Contact info detected in image URL/metadata."
+    },
+    {
+      "policyId": "LOT_QR_IN_IMAGE_V2",
+      "category": "spam",
+      "subcategory": "qr-code",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "MEDIUM",
+      "legalBasis": "LOT platform policy",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "image"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "QR-код на изображении требует проверки.",
+      "adminMessage": "QR code in image."
+    },
+    {
+      "policyId": "LOT_EXTREMIST_SYMBOLS_V2",
+      "category": "safety",
+      "subcategory": "extremism",
+      "decisionClass": "HARD_BLOCK",
+      "severity": "CRITICAL",
+      "legalBasis": "ФЗ «О противодействии экстремистской деятельности»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "image",
+        "ocr"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_PERMANENT",
+      "userMessage": "Экстремистская символика запрещена.",
+      "adminMessage": "Extremist symbols prohibited."
+    },
+    {
+      "policyId": "LOT_ALCOHOL_FREE_PERFUME_V2",
+      "category": "cosmetics",
+      "subcategory": "alcohol-free",
+      "decisionClass": "ALLOW",
+      "severity": "LOW",
+      "legalBasis": "Not alcoholic beverage",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [],
+      "detectionSignals": [
+        "title",
+        "context"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": false,
+      "sellerRemediation": null,
+      "buyerExposureRule": "NONE",
+      "userMessage": null,
+      "adminMessage": "Alcohol-free perfume context — allowed."
+    },
+    {
+      "policyId": "LOT_NICOTINE_PATCH_MEDICAL_V2",
+      "category": "health",
+      "subcategory": "nicotine-patch",
+      "decisionClass": "RESTRICTED_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ-61 «Об обращении лекарственных средств»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "characteristics"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Никотинсодержащие медицинские изделия требуют регистрации.",
+      "adminMessage": "Nicotine patch / medical nicotine — restricted."
+    }
+  ],
+  "productTypeGuards": [
+    {
+      "slugPattern": "tobacco*",
+      "policyClass": "HARD_BLOCK",
+      "policyId": "LOT_TOBACCO_REMOTE_SALE_V2",
+      "userMessage": "Табачную продукцию нельзя размещать на ЛОТ."
+    },
+    {
+      "slugPattern": "alcohol*",
+      "policyClass": "HARD_BLOCK",
+      "policyId": "LOT_ALCOHOL_REMOTE_V2",
+      "userMessage": "Алкогольную продукцию нельзя размещать на ЛОТ."
+    },
+    {
+      "slugPattern": "weapons*",
+      "policyClass": "HARD_BLOCK",
+      "policyId": "LOT_WEAPON_FIREARM_V2",
+      "userMessage": "Оружие нельзя размещать на ЛОТ."
+    },
+    {
+      "slugPattern": "vape*",
+      "policyClass": "MANUAL_ONLY",
+      "policyId": "LOT_VAPE_LIQUID_AMBIGUOUS_V2",
+      "userMessage": "Товары для вейпинга требуют проверки модератором."
+    },
+    {
+      "slugPattern": "medicine*",
+      "policyClass": "RESTRICTED",
+      "policyId": "LOT_MEDICINE_OTC_V2",
+      "userMessage": "Лекарства требуют документов и проверки."
+    },
+    {
+      "slugPattern": "services*",
+      "policyClass": "MANUAL_ONLY",
+      "policyId": "LOT_SERVICES_V2",
+      "userMessage": "Услуги пока не поддерживаются на ЛОТ."
+    }
+  ],
+  "textPatternGroups": [
+    {
+      "groupId": "tobacco_main",
+      "policyId": "LOT_TOBACCO_REMOTE_SALE_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "сигарет",
+        "сигарилл",
+        "табак",
+        "стики",
+        "iqos",
+        "heets",
+        "нюхательный табак",
+        "снюс"
+      ]
+    },
+    {
+      "groupId": "nicotine_main",
+      "policyId": "LOT_NICOTINE_PRODUCT_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "никотин",
+        "nicotine",
+        "никотиновая жидкость",
+        "salt nic",
+        "солевой никотин"
+      ]
+    },
+    {
+      "groupId": "nicotine_liquid_main",
+      "policyId": "LOT_NICOTINE_LIQUID_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "никотиновая жидкость",
+        "salt nic",
+        "salt juice",
+        "20 mg/ml",
+        "20 mg",
+        "20mg",
+        "мг/мл",
+        "mg/ml",
+        "никотин 20"
+      ]
+    },
+    {
+      "groupId": "vape_liquid_ambiguous",
+      "policyId": "LOT_VAPE_LIQUID_AMBIGUOUS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "жидкость для вейпа",
+        "жидкость для вэйпа",
+        "жижа",
+        "e-liquid",
+        "e liquid"
+      ]
+    },
+    {
+      "groupId": "vape_device_main",
+      "policyId": "LOT_VAPE_DEVICE_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "pod",
+        "pods",
+        "pod-систем",
+        "pod system",
+        "электронная сигарета",
+        "испаритель комплект",
+        "одноразка",
+        "одноразовая электронка",
+        "disposable vape",
+        "vape disposable",
+        "вейп нов",
+        "вэйп нов",
+        "vape нов",
+        "продам вейп",
+        "продам vape",
+        " vape pod",
+        "pod вейп"
+      ]
+    },
+    {
+      "groupId": "vape_accessory",
+      "policyId": "LOT_VAPE_ACCESSORY_V2",
+      "context": "ACCESSORY",
+      "patterns": [
+        "вейп",
+        "vape",
+        "pod"
+      ]
+    },
+    {
+      "groupId": "hookah_main",
+      "policyId": "LOT_HOOKAH_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "кальян",
+        "hookah",
+        "шиша",
+        "табак для кальяна"
+      ]
+    },
+    {
+      "groupId": "alcohol_main",
+      "policyId": "LOT_ALCOHOL_REMOTE_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "водка",
+        "виски",
+        "коньяк",
+        "пиво",
+        "вино",
+        "шампанское",
+        "ликёр",
+        "ликер",
+        "настойка",
+        "спирт",
+        "алкоголь",
+        "whiskey",
+        "beer",
+        "wine"
+      ]
+    },
+    {
+      "groupId": "alcohol_free",
+      "policyId": "LOT_ALCOHOL_FREE_PERFUME_V2",
+      "context": "ANY",
+      "patterns": [
+        "безалкоголь",
+        "alcohol-free",
+        "0% алкоголя"
+      ]
+    },
+    {
+      "groupId": "drugs_main",
+      "policyId": "LOT_DRUGS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "марихуана",
+        "гашиш",
+        "кокаин",
+        "героин",
+        "лсд",
+        "mdma",
+        "амфетамин",
+        "мефедрон",
+        "спайс",
+        "наркотик"
+      ]
+    },
+    {
+      "groupId": "precursor_main",
+      "policyId": "LOT_PRECURSOR_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "прекурсор",
+        "ephedrine",
+        "эфедрин",
+        "псевдоэфедрин"
+      ]
+    },
+    {
+      "groupId": "medicine_rx",
+      "policyId": "LOT_MEDICINE_RX_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "рецептурн",
+        "по рецепту",
+        "rx only"
+      ]
+    },
+    {
+      "groupId": "medicine_otc",
+      "policyId": "LOT_MEDICINE_OTC_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "лекарств",
+        "таблетки",
+        "антибиотик",
+        "парацетамол",
+        "ибупрофен"
+      ]
+    },
+    {
+      "groupId": "supplement",
+      "policyId": "LOT_DIETARY_SUPPLEMENT_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "бад",
+        "биодобавк",
+        "dietary supplement"
+      ]
+    },
+    {
+      "groupId": "medical_device",
+      "policyId": "LOT_MEDICAL_DEVICE_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "медицинское изделие",
+        "тонометр",
+        "глюкометр",
+        "ингалятор медицин"
+      ]
+    },
+    {
+      "groupId": "firearm",
+      "policyId": "LOT_WEAPON_FIREARM_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "пистолет",
+        "винтовк",
+        "автомат",
+        "боеприпас",
+        "патрон",
+        "firearm",
+        "rifle",
+        "gun ammo"
+      ]
+    },
+    {
+      "groupId": "cold_weapon",
+      "policyId": "LOT_WEAPON_COLD_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "холодное оружие",
+        "кинжал",
+        "стилет",
+        "нож боевой"
+      ]
+    },
+    {
+      "groupId": "toy_gun",
+      "policyId": "LOT_WEAPON_TOY_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "игрушечный пистолет",
+        "пистолет игрушеч",
+        "toy gun",
+        "мягкая игрушка пистолет"
+      ]
+    },
+    {
+      "groupId": "kitchen_knife",
+      "policyId": "LOT_KITCHEN_KNIFE_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "кухонный нож",
+        "нож для овощей",
+        "kitchen knife",
+        "поварской нож"
+      ]
+    },
+    {
+      "groupId": "explosives",
+      "policyId": "LOT_EXPLOSIVES_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "взрывчат",
+        "тротил",
+        "динамит",
+        "detonator"
+      ]
+    },
+    {
+      "groupId": "pyro",
+      "policyId": "LOT_PYROTECHNICS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "фейерверк",
+        "пиротехник",
+        "салют",
+        "fireworks"
+      ]
+    },
+    {
+      "groupId": "taser",
+      "policyId": "LOT_TASER_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "электрошокер",
+        "шокер",
+        "taser",
+        "stun gun"
+      ]
+    },
+    {
+      "groupId": "hazchem",
+      "policyId": "LOT_HAZCHEM_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "ртуть",
+        "mercury",
+        "кислота концентр",
+        "cyanide",
+        "цианид"
+      ]
+    },
+    {
+      "groupId": "poison",
+      "policyId": "LOT_POISON_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "яды",
+        "poison",
+        "strychnine",
+        "цианид",
+        "cyanide"
+      ]
+    },
+    {
+      "groupId": "radioactive",
+      "policyId": "LOT_RADIOACTIVE_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "радиоактив",
+        "uranium",
+        "уран",
+        "plutonium"
+      ]
+    },
+    {
+      "groupId": "counterfeit",
+      "policyId": "LOT_COUNTERFEIT_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "реплика 1:1",
+        "копия бренда",
+        "fake luxury",
+        "подделка"
+      ]
+    },
+    {
+      "groupId": "fake_docs",
+      "policyId": "LOT_FAKE_DOCUMENTS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "поддельный паспорт",
+        "поддельный диплом",
+        "фальшивый диплом",
+        "fake passport",
+        "fake id"
+      ]
+    },
+    {
+      "groupId": "stolen",
+      "policyId": "LOT_STOLEN_GOODS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "краден",
+        "украден",
+        "stolen goods"
+      ]
+    },
+    {
+      "groupId": "official_docs",
+      "policyId": "LOT_OFFICIAL_DOCUMENTS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "паспорт рф",
+        "водительское удостоверение",
+        "диплом гос",
+        "бланк диплома"
+      ]
+    },
+    {
+      "groupId": "payment",
+      "policyId": "LOT_PAYMENT_INSTRUMENTS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "банковская карта",
+        "cvv",
+        "cvc",
+        "dump card",
+        "скимминг"
+      ]
+    },
+    {
+      "groupId": "personal_data",
+      "policyId": "LOT_PERSONAL_DATA_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "база данных",
+        "утечка данных",
+        "personal data leak",
+        "список телефонов"
+      ]
+    },
+    {
+      "groupId": "digital_accounts",
+      "policyId": "LOT_DIGITAL_ACCOUNTS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "аккаунт steam",
+        "продам аккаунт",
+        "sim-карта",
+        "sim карта",
+        "логин пароль",
+        "netflix account"
+      ]
+    },
+    {
+      "groupId": "adult_explicit",
+      "policyId": "LOT_ADULT_CONTENT_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "порно",
+        "porn",
+        "xxx",
+        "эротика видео"
+      ]
+    },
+    {
+      "groupId": "intimate",
+      "policyId": "LOT_INTIMATE_GOODS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "секс-игрушк",
+        "интим",
+        "sex toy",
+        "dildo"
+      ]
+    },
+    {
+      "groupId": "animals",
+      "policyId": "LOT_ANIMALS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "щенок",
+        "котёнок",
+        "котенок",
+        "породистый кот",
+        "животное продам"
+      ]
+    },
+    {
+      "groupId": "plants",
+      "policyId": "LOT_PLANTS_RESTRICTED_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "семена конопл",
+        "cannabis seeds",
+        "редкие семена"
+      ]
+    },
+    {
+      "groupId": "precious",
+      "policyId": "LOT_PRECIOUS_METALS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "золотой слиток",
+        "инвестиционное золото",
+        "бриллиант карат"
+      ]
+    },
+    {
+      "groupId": "food",
+      "policyId": "LOT_FOOD_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "продукты питания",
+        "сыр",
+        "колбаса",
+        "мёд",
+        "мед натуральный"
+      ]
+    },
+    {
+      "groupId": "children",
+      "policyId": "LOT_CHILDREN_PRODUCT_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "для детей",
+        "детский",
+        "детская",
+        "детское",
+        "детям",
+        "baby toy",
+        "возраст 0+",
+        "от 0 лет"
+      ]
+    },
+    {
+      "groupId": "cosmetics",
+      "policyId": "LOT_COSMETICS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "крем для лица",
+        "парфюм",
+        "туалетная вода",
+        "косметика"
+      ]
+    },
+    {
+      "groupId": "used_sanitary",
+      "policyId": "LOT_USED_SANITARY_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "б/у зубная щетка",
+        "бу трусы",
+        "used underwear"
+      ]
+    },
+    {
+      "groupId": "marking",
+      "policyId": "LOT_MARKING_REQUIRED_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "честный знак",
+        "datamatrix",
+        "маркировка обязательна"
+      ]
+    },
+    {
+      "groupId": "age",
+      "policyId": "LOT_AGE_RESTRICTED_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "18+",
+        "21+",
+        "только для взрослых"
+      ]
+    },
+    {
+      "groupId": "services",
+      "policyId": "LOT_SERVICES_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "услуга",
+        "окажу услугу",
+        "ремонт на дому",
+        "аренда с выездом"
+      ]
+    },
+    {
+      "groupId": "extremist",
+      "policyId": "LOT_EXTREMIST_SYMBOLS_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "свастик",
+        "swastika",
+        "террорист",
+        "игил",
+        "isis"
+      ]
+    },
+    {
+      "groupId": "nicotine_patch",
+      "policyId": "LOT_NICOTINE_PATCH_MEDICAL_V2",
+      "context": "MAIN_PRODUCT",
+      "patterns": [
+        "никотиновый пластырь",
+        "nicotine patch",
+        "никоретте"
+      ]
+    },
+    {
+      "groupId": "char_nicotine",
+      "policyId": "LOT_NICOTINE_LIQUID_V2",
+      "context": "ANY",
+      "patterns": [
+        "никотин",
+        "nicotine",
+        "mg/ml",
+        "мг/мл"
+      ]
+    }
+  ]
+}
