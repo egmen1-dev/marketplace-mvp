@@ -1,49 +1,29 @@
 {
-  "generatedAt": "2026-08-26T11:52:00Z",
+  "generatedAt": "2026-08-26T12:53:00Z",
   "candidate": "RC10.5",
   "verdict": "READY_FOR_PHYSICAL_VALIDATION",
-  "mainSha": "91b9c1d",
-  "branchSha": "91b9c1d",
-  "originMainSha": "0d8deec",
-  "railwaySha": "135fdf8",
-  "pr188": { "state": "OPEN", "merged": false, "note": "Changes reconciled on RC10.5 branch cursor/closed-beta-rc10.5-build-12fd" },
-  "pr193": { "state": "MERGED", "mergedAt": "2026-08-26T11:44:49Z", "mainSha": "0d8deec" },
-  "pr189_192": { "state": "MERGED", "note": "On origin/main; Railway deploy pending" },
-  "fixPresence": {
-    "MY_LOTS_FIX_PRESENT": true,
-    "CREATE_PREVIEW_FIX_PRESENT": true,
-    "evidence": [
-      "lib/mobile/seller-lots-section.ts",
-      "apps/mobile/src/seller/use-seller-products-list.ts (requestSeq)",
-      "lib/mobile/lot-preview-validation.ts",
-      "apps/mobile/app/sell/create.tsx"
-    ]
-  },
-  "version": {
+  "mainSha": "ed9e1ab",
+  "pr194MergeSha": "76bc9fe",
+  "pr194Head": "90d41fe",
+  "railwaySha": "ed9e1ab",
+  "mrp": {
+    "published": true,
     "versionName": "0.1.15-beta.6",
     "versionCode": 21,
-    "policy": "RC10.4 code 20 → RC10.5 code 21; beta patch 0.1.15-beta.5 → 0.1.15-beta.6"
+    "sha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db",
+    "channel": "CLOSED_BETA",
+    "environment": "staging"
   },
   "apk": {
     "path": "artifacts/closed-beta-rc10.5/lot_android_closed_beta_0.1.15_beta.6.apk",
-    "sizeBytes": 43743134,
     "sha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db",
     "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
-    "signerMatchesPrevious": "YES"
+    "finalMainCompatible": true,
+    "evidence": "git diff 90d41fe ed9e1ab -- apps/mobile lib/mobile = 0 lines"
   },
-  "mrp": "NOT_PUBLISHED",
   "physical": "NOT_RUN",
-  "physicalChecklist": "artifacts/closed-beta-rc10.5/physical-checklist.json",
-  "backendBlockers": [
-    {
-      "id": "railway_sha_mismatch",
-      "detail": "Railway 135fdf8 !== origin/main 0d8deec; #188 backend + #189-192 moderation stack not deployed",
-      "impact": "Server-backed My Lots search/tab filters need staging deploy after merge"
-    }
-  ],
-  "policyAutomation": {
-    "GUARDED_AUTO": "DISABLED",
-    "ENFORCE": "DISABLED",
-    "moderationAutomationMode": "SHADOW"
-  }
+  "deployFixes": [
+    "PR #195 — dockerignore artifacts/mobile",
+    "PR #196 — production build compile errors (EPIC 190.2)"
+  ]
 }

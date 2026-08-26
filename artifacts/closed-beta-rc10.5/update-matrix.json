@@ -1,65 +1,65 @@
 {
-  "generatedAt": "2026-08-26T11:53:09.533Z",
+  "generatedAt": "2026-08-26T12:52:29.550Z",
   "candidate": "RC10.5",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "mrpStatus": "NOT_PUBLISHED",
+  "mrpStatus": "PUBLISHED",
   "probes": [
     {
       "installedVersionCode": 17,
       "updateState": "OPTIONAL_UPDATE",
       "expectedState": "OPTIONAL_UPDATE",
-      "targetVersionCode": 20,
-      "targetVersionName": "0.1.15-beta.5",
-      "verdict": "NOT_PUBLISHED"
+      "targetVersionCode": 21,
+      "targetVersionName": "0.1.15-beta.6",
+      "verdict": "PASS"
     },
     {
       "installedVersionCode": 18,
       "updateState": "OPTIONAL_UPDATE",
       "expectedState": "OPTIONAL_UPDATE",
-      "targetVersionCode": 20,
-      "targetVersionName": "0.1.15-beta.5",
-      "verdict": "NOT_PUBLISHED"
+      "targetVersionCode": 21,
+      "targetVersionName": "0.1.15-beta.6",
+      "verdict": "PASS"
     },
     {
       "installedVersionCode": 19,
       "updateState": "OPTIONAL_UPDATE",
       "expectedState": "OPTIONAL_UPDATE",
-      "targetVersionCode": 20,
-      "targetVersionName": "0.1.15-beta.5",
-      "verdict": "NOT_PUBLISHED"
+      "targetVersionCode": 21,
+      "targetVersionName": "0.1.15-beta.6",
+      "verdict": "PASS"
     },
     {
       "installedVersionCode": 20,
-      "updateState": "NO_UPDATE",
+      "updateState": "OPTIONAL_UPDATE",
       "expectedState": "OPTIONAL_UPDATE",
-      "targetVersionCode": 20,
-      "targetVersionName": "0.1.15-beta.5",
-      "verdict": "NOT_PUBLISHED"
+      "targetVersionCode": 21,
+      "targetVersionName": "0.1.15-beta.6",
+      "verdict": "PASS"
     },
     {
       "installedVersionCode": 21,
       "updateState": "NO_UPDATE",
       "expectedState": "NO_UPDATE",
-      "targetVersionCode": 20,
-      "targetVersionName": "0.1.15-beta.5",
+      "targetVersionCode": 21,
+      "targetVersionName": "0.1.15-beta.6",
       "verdict": "PASS"
     },
     {
       "installedVersionCode": 22,
       "updateState": "NO_UPDATE",
       "expectedState": "NO_UPDATE",
-      "targetVersionCode": 20,
-      "targetVersionName": "0.1.15-beta.5",
+      "targetVersionCode": 21,
+      "targetVersionName": "0.1.15-beta.6",
       "verdict": "PASS"
     }
   ],
   "apkIntegrityFromMrpUrl": {
     "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.5/lot_android_closed_beta_0.1.15_beta.6.apk",
-    "httpOk": false,
+    "httpOk": true,
     "expectedSha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db",
-    "actualSha256": "d5558cd419c8d46bdc958064cb97f963d1ea793866414c025906ec15033512ed",
-    "sizeBytes": 14,
-    "verdict": "NOT_PUBLISHED"
+    "actualSha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db",
+    "sizeBytes": 43743134,
+    "verdict": "PASS"
   },
   "matrix": [
     {
@@ -81,5 +81,5 @@
       "physical": "NOT_RUN"
     }
   ],
-  "verdict": "NOT_PUBLISHED"
+  "verdict": "PASS"
 }
