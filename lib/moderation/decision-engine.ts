@@ -19,11 +19,14 @@ export function buildModerationResult(input: {
     decision = "MANUAL_REVIEW";
   } else if (mode === "SHADOW") {
     decision = "MANUAL_REVIEW";
-  } else if (mode === "ENFORCE") {
+  } else if (mode === "GUARDED_AUTO" || mode === "ENFORCE") {
     if (systemDecision === "REJECT" && !input.reasons.some((r) => r.code === "PROHIBITED_PRODUCT")) {
       decision = "MANUAL_REVIEW";
     }
     if (systemDecision === "APPROVE" && input.imageSignals.evaluation === "NOT_EVALUATED") {
+      decision = "MANUAL_REVIEW";
+    }
+    if (mode === "GUARDED_AUTO" && systemDecision === "APPROVE" && input.imageSignals.evaluation !== "SAFE") {
       decision = "MANUAL_REVIEW";
     }
   }
