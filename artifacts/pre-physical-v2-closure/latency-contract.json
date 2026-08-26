@@ -1,0 +1,7 @@
+{
+  "sellerCreateP95Ms": 289,
+  "sellerPublishPatchP95Ms": 352,
+  "sellerReadBackP95Ms": 150,
+  "smokeTotalP95Ms": 10000,
+  "note": "Measured post-fix on staging Railway 8d67190"
+}

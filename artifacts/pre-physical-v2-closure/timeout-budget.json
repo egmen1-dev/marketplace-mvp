@@ -1,0 +1,23 @@
+{
+  "layers": [
+    {
+      "layer": "smoke fetch (before)",
+      "timeoutMs": 30000
+    },
+    {
+      "layer": "smoke fetch (after)",
+      "timeoutMs": 45000
+    },
+    {
+      "layer": "publish_patch P95 after fix",
+      "timeoutMs": 352
+    },
+    {
+      "layer": "ModerationEvaluationJob OCR",
+      "timeoutMs": 25000,
+      "async": true
+    }
+  ],
+  "issue": "30s client timeout < synchronous OCR path (>90s observed)",
+  "fix": "Moved OCR off request path; 45s retained as safety margin for non-OCR steps"
+}

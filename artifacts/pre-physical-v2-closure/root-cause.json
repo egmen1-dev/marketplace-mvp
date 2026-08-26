@@ -1,0 +1,11 @@
+{
+  "PUBLISH_TRUTH_SMOKE_FAILURE_CLASS": "HARNESS_TIMEOUT",
+  "OCR_ON_SUBMIT_CRITICAL_PATH_BEFORE": "YES",
+  "OCR_ON_SUBMIT_CRITICAL_PATH_AFTER": "NO",
+  "chain": "ACTIVE PATCH → updateProduct → submitProductForModeration → submitLotForModeration → runLotModerationEngine → evaluateLotImages (Tesseract OCR synchronous)",
+  "fix": "deferImageEvaluation:true on submit; enqueue ModerationEvaluationJob for heavy eval",
+  "files": [
+    "lib/moderation/lifecycle.ts",
+    "lib/moderation/run-product-moderation.ts"
+  ]
+}

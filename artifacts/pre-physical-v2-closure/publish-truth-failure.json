@@ -1,0 +1,11 @@
+{
+  "PUBLISH_TRUTH_SMOKE_FAILURE_CLASS": "HARNESS_TIMEOUT",
+  "failingPhase": "publish_patch",
+  "route": "PATCH /api/mobile/seller/products/:id",
+  "clientTimeoutMs": 30000,
+  "observedDurationBeforeFixMs": ">90000",
+  "clientOutcome": "TimeoutError abort",
+  "serverOutcomeBeforeFix": "still processing synchronous OCR in submitLotForModeration",
+  "serverOutcomeAfterFix": "200 PENDING_REVIEW in ~300ms",
+  "evidence": "Instrumented smoke: publish PATCH with characteristics exceeded 90s before fix; 352ms after deferImageEvaluation"
+}

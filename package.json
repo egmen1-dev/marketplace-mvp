@@ -113,6 +113,7 @@
     "mobile:seller-journey:gate": "tsx scripts/mobile-seller-journey-gate.ts",
     "mobile:pre-physical:gate": "node scripts/mobile-physical-gap-artifacts.mjs && tsx scripts/mobile-pre-physical-gate.ts",
     "mobile:physical-gap:artifacts": "node scripts/mobile-physical-gap-artifacts.mjs",
+    "mobile:pre-physical-v2:artifacts": "node scripts/pre-physical-v2-closure-artifacts.mjs",
     "moderation:policy-v2:gate": "tsx scripts/moderation-policy-v2-gate.ts",
     "moderation:policy-v2:shadow": "tsx scripts/moderation-policy-v2-shadow-report.ts",
     "moderation:staging-shadow": "tsx scripts/staging-policy-v2-shadow-eval.ts",

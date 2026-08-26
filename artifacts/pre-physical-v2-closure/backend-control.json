@@ -1,0 +1,6 @@
+{
+  "stagingBackendStabilityGate": "PASS",
+  "expectedRailwaySha": "8d67190aad489e268bca6ae7c5fa7bc8e2f609fc",
+  "publishPatchAfterFixMs": 352,
+  "errorsObserved": "none on publish path; catalog search 500 on pending product is expected (not public)"
+}

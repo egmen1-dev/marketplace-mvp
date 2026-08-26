@@ -1,0 +1,11 @@
+{
+  "BEFORE_FIX": {
+    "mobile:lot-publish-truth:gate": "FAIL",
+    "reason": "publish_patch TimeoutError at 30000ms (server still in sync OCR)"
+  },
+  "AFTER_FIX": {
+    "mobile:lot-publish-truth:gate": "PASS",
+    "publish_patch_ms": 352,
+    "publishOutcome": "PENDING_REVIEW"
+  }
+}

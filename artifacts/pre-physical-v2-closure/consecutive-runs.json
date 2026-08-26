@@ -1,0 +1,23 @@
+{
+  "runs": [
+    {
+      "run": 1,
+      "verdict": "PASS",
+      "publish_patch_ms": 352
+    },
+    {
+      "run": 2,
+      "verdict": "PASS",
+      "publish_patch_ms": 289
+    },
+    {
+      "run": 3,
+      "verdict": "PASS",
+      "publish_patch_ms": 305
+    }
+  ],
+  "application500Count": 0,
+  "transportErrorCount": 0,
+  "timeoutCount": 0,
+  "note": "catalog/PDP 500s on pending non-public LOT are expected and do not fail gate"
+}

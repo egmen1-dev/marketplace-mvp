@@ -1,0 +1,23 @@
+{
+  "R1_cold": {
+    "verdict": "PASS",
+    "publish_patch_ms": 352,
+    "note": "first attempt during deploy transition had parse glitch; retry PASS"
+  },
+  "R2_immediate": {
+    "verdict": "PASS",
+    "publish_patch_ms": 289
+  },
+  "R3_after_5s": {
+    "verdict": "PASS",
+    "publish_patch_ms": 305
+  },
+  "R4_after_15s": {
+    "verdict": "PASS",
+    "publish_patch_ms": 352
+  },
+  "R5_after_backend_stability": {
+    "verdict": "PASS",
+    "backendStability": "PASS"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "pr": 198,
+  "status": "MERGED",
+  "mergeSha": "8d67190aad489e268bca6ae7c5fa7bc8e2f609fc",
+  "headSha": "e86f5ad",
+  "preserved": [
+    "photo state machine",
+    "one-tap Continue",
+    "submit black-hole fix",
+    "seller journey harness",
+    "beta diagnostics",
+    "x-client-action-id",
+    "pre-physical V2 gate",
+    "moderation async boundary fix"
+  ]
+}

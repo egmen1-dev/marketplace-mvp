@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-08-26T18:19:30.278Z",
+  "originMainSha": "8d67190aad489e268bca6ae7c5fa7bc8e2f609fc",
+  "pr198HeadSha": "e86f5ad",
+  "pr198MergeSha": "8d67190aad489e268bca6ae7c5fa7bc8e2f609fc",
+  "pr198Status": "MERGED",
+  "railwayServingSha": "8d67190",
+  "apiVersion": {
+    "environment": "staging",
+    "commit": "8d67190",
+    "buildTime": "2026-08-26T18:11:44.324Z",
+    "version": "0.1.0"
+  },
+  "apiHealth": {
+    "ok": true,
+    "database": {
+      "ok": true,
+      "reachable": true,
+      "schemaCompatible": true,
+      "detail": "compatible",
+      "missingColumns": [],
+      "missingTables": [],
+      "epic174MigrationApplied": true
+    },
+    "runtime": {
+      "trustLoopEnabled": true,
+      "moderationAutomationMode": "SHADOW",
+      "policyV2Shadow": true,
+      "policyV2": "AVAILABLE",
+      "ocr": "OPERATIONAL",
+      "imageModeration": "PARTIAL",
+      "visualObjectClassification": "UNAVAILABLE"
+    }
+  },
+  "rc105": {
+    "versionName": "0.1.15-beta.6",
+    "versionCode": 21
+  },
+  "mrp": {
+    "published": true,
+    "versionCode": 21
+  },
+  "physicalVerdict": "BLOCKED_FOR_BETA",
+  "railwayRedeployRequired": "YES — backend moderation async boundary fix",
+  "pr198ServerChanges": true
+}

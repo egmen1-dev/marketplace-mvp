@@ -1,0 +1,54 @@
+{
+  "steps": [
+    {
+      "step": "login_seller",
+      "route": "POST /api/mobile/auth/session"
+    },
+    {
+      "step": "login_buyer",
+      "route": "POST /api/mobile/auth/session"
+    },
+    {
+      "step": "template_product",
+      "route": "GET /api/products/:id"
+    },
+    {
+      "step": "taxonomy_characteristics",
+      "route": "GET /api/taxonomy/browse?productTypeId="
+    },
+    {
+      "step": "upload",
+      "route": "POST /api/mobile/seller/uploads"
+    },
+    {
+      "step": "create_draft",
+      "route": "POST /api/mobile/seller/products"
+    },
+    {
+      "step": "publish_patch",
+      "route": "PATCH /api/mobile/seller/products/:id",
+      "critical": true
+    },
+    {
+      "step": "seller_list_*",
+      "route": "GET /api/mobile/seller/products?tab="
+    },
+    {
+      "step": "seller_detail",
+      "route": "GET /api/mobile/seller/products/:id"
+    },
+    {
+      "step": "buyer_catalog_search",
+      "route": "GET /api/mobile/catalog/products?q="
+    },
+    {
+      "step": "public_pdp",
+      "route": "GET /api/products/:id"
+    },
+    {
+      "step": "duplicate_save/publish",
+      "route": "PATCH /api/mobile/seller/products/:id"
+    }
+  ],
+  "bottleneckBeforeFix": "publish_patch — synchronous evaluateLotImages/Tesseract in submitLotForModeration"
+}
