@@ -5,7 +5,7 @@ export {
   canAutoApprove,
   mapPolicyV2ToModerationDecision,
 } from "./safe-auto-approval";
-export { normalizePolicyText, matchPatterns, detectAccessoryContext } from "./text-engine";
+export { normalizePolicyText, matchPatterns, detectAccessoryContext, shouldTreatXxxAsAdultContent, detectDrillChuckContext, detectAmbiguousPatronContext } from "./text-engine";
 export {
   LOT_POLICY_V2,
   LOT_POLICY_V2_EFFECTIVE_FROM,

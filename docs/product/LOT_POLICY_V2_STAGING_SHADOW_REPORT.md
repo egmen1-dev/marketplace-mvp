@@ -1,7 +1,7 @@
 # LOT Policy V2 — Staging Shadow Report
 
-**EPIC:** 190.1  
-**Generated:** 2026-08-26T09:43:07.162Z  
+**EPIC:** 190.2  
+**Generated:** 2026-08-26T10:22:11.555Z  
 **Mode:** SHADOW (no publication mutations)  
 **Evaluation:** HTTP_FALLBACK  
 **Staging SHA:** 135fdf8
@@ -10,21 +10,21 @@
 
 | Metric | Value |
 |--------|-------|
-| Real listings | 50 |
-| Synthetic fixtures | 0 |
-| Human agreement | NOT_RUN (no DATABASE_URL human records) |
+| Real listings | 48 |
+| Synthetic fixtures | 2 |
+| Human reviewed | 0 |
+| Human agreement | UNKNOWN — blind review not completed |
 
 ## Policy decisions
 
-- **ALLOW**: 44
-- **HARD_BLOCK**: 4
+- **ALLOW**: 48
 - **RESTRICTED_REVIEW**: 2
 
 ## Critical safety
 
 | Metric | Count |
 |--------|-------|
-| Critical false negatives | 0 |
+| Critical false negatives | UNKNOWN (UNKNOWN) |
 | Hard false positives | 0 |
 | Manual-review false positives | 0 |
 
@@ -38,13 +38,14 @@
 
 ## Latency / cost
 
-- Median: 407ms
-- P95: 3889ms
+- Median: 408ms
+- P95: 3870ms
 - Cache hit rate: 0.0%
 
 ## GUARDED_AUTO simulation
 
-Eligible: 44 (88.0% of real sample)
+Eligible (conservative): 46 (95.8% of real sample)
+Raw ALLOW (simulated): 46
 
 ## Automation verdict
 

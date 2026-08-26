@@ -1,6 +1,8 @@
 /** LOT_POLICY_V2 — formal decision taxonomy and evidence model. */
 
-export const LOT_POLICY_V2 = "LOT_POLICY_V2";
+export const LOT_POLICY_V2_1 = "LOT_POLICY_V2_1";
+/** Current active policy pack version (EPIC 190.3 patch). */
+export const LOT_POLICY_V2 = LOT_POLICY_V2_1;
 export const LOT_POLICY_V2_EFFECTIVE_FROM = "2026-08-26";
 
 export type PolicyDecisionClass =

@@ -1,9 +1,22 @@
 {
-  "version": "LOT_POLICY_V2",
+  "version": "LOT_POLICY_V2_1",
   "effectiveFrom": "2026-08-26",
   "deprecatedAt": null,
   "jurisdiction": "RU",
   "researchedAt": "2026-08-26",
+  "patchNotes": [
+    {
+      "version": "LOT_POLICY_V2_1",
+      "effectiveDate": "2026-08-26",
+      "reason": "EPIC 190.3 false-positive fixes and evidence/decision fusion alignment",
+      "source": "docs/product/LOT_MARKETPLACE_POLICY_RESEARCH.md",
+      "changedRules": [
+        "LOT_ADULT_CONTENT_V2 — contextual xxx handling (suppress audit filler, SKUs; keep explicit adult)",
+        "LOT_WEAPON_FIREARM_V2 — suppress drill SDS+ chuck context; downgrade ambiguous патрон to LOT_WEAPON_PATRON_AMBIGUOUS_V2",
+        "LOT_COSMETICS_V2 — restore RESTRICTED_REVIEW for regular perfume; only alcohol-free perfume maps to ALLOW via LOT_ALCOHOL_FREE_PERFUME_V2"
+      ]
+    }
+  ],
   "rules": [
     {
       "policyId": "LOT_TOBACCO_REMOTE_SALE_V2",
@@ -362,6 +375,30 @@
       "buyerExposureRule": "BLOCK_PERMANENT",
       "userMessage": "Оружие и боеприпасы запрещены.",
       "adminMessage": "Firearms and ammunition prohibited."
+    },
+    {
+      "policyId": "LOT_WEAPON_PATRON_AMBIGUOUS_V2",
+      "category": "weapons",
+      "subcategory": "patron-ambiguous",
+      "decisionClass": "MANUAL_REVIEW",
+      "severity": "HIGH",
+      "legalBasis": "ФЗ «Об оружии»",
+      "jurisdiction": "RU",
+      "effectiveFrom": "2026-08-26",
+      "sourceUrls": [
+        "http://pravo.gov.ru/proxy/ips/?docbody=&nd=102074277"
+      ],
+      "detectionSignals": [
+        "title",
+        "description",
+        "context"
+      ],
+      "requiredEvidence": [],
+      "humanReviewRequired": true,
+      "sellerRemediation": null,
+      "buyerExposureRule": "BLOCK_UNTIL_REVIEW",
+      "userMessage": "Слово «патрон» требует проверки контекста — это боеприпас или инструмент?",
+      "adminMessage": "Ambiguous патрон without drill-chuck or ammunition context — manual classification required."
     },
     {
       "policyId": "LOT_WEAPON_COLD_V2",
