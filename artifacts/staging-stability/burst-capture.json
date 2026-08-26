@@ -1,0 +1,342 @@
+{
+  "generatedAt": "2026-08-25T18:16:27.439Z",
+  "runId": "stability-c078c3a-1787681747",
+  "startedAt": "2026-08-25T18:15:47.867Z",
+  "endedAt": "2026-08-25T18:16:27.439Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "deployedSha": "c078c3a",
+  "exitCode": 0,
+  "acceptance": {
+    "generatedAt": "2026-08-25T18:16:27.433Z",
+    "staging": "https://web-production-e56fb.up.railway.app",
+    "runId": "stability-c078c3a-1787681747",
+    "deployedSha": "c078c3a",
+    "server500Events": [],
+    "transportErrors": [],
+    "unexplainedServer500Count": 0,
+    "transportErrorCount": 0,
+    "application500Count": 0,
+    "effectiveConfig": {
+      "note": "Runtime env inferred from moderation behavior; secrets not logged",
+      "trustLoopInferred": true,
+      "moderationAutomationModeInferred": "SHADOW"
+    },
+    "scenarios": [
+      {
+        "scenario": "deploy",
+        "status": "PASS",
+        "deployedSha": "c078c3a",
+        "expectedSha": "c078c3a",
+        "databaseOk": true
+      },
+      {
+        "scenario": "migration-api",
+        "status": "PASS",
+        "adminModerationStatus": 200,
+        "counters": {
+          "pending": 136,
+          "needsFix": 7,
+          "rejected": 12,
+          "highRisk": 0,
+          "overdue": 0
+        }
+      },
+      {
+        "scenario": "A",
+        "status": "PASS",
+        "productId": "cmt8zkdp0000bly012af06ip2",
+        "moderationId": "cmt8zkdtr000lly01ouutq5u7",
+        "serverState": {
+          "productStatus": "DRAFT",
+          "moderationStatus": "PENDING_REVIEW",
+          "reviewMode": "MANUAL",
+          "stage": "MANUAL_REVIEW",
+          "contentVersion": 1,
+          "systemRecommendation": "MANUAL_REVIEW",
+          "isPublic": false
+        },
+        "buyerVisibility": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 404
+        },
+        "auditVerified": false
+      },
+      {
+        "scenario": "B",
+        "status": "PASS",
+        "productId": "cmt8zkdp0000bly012af06ip2",
+        "approveStatus": 200,
+        "approveBody": true,
+        "serverState": {
+          "moderationStatus": "APPROVED",
+          "productStatus": "ACTIVE",
+          "publishedAt": "2026-08-25T18:16:07.075Z"
+        },
+        "buyerVisibility": {
+          "catalogHit": true,
+          "pdpOk": true,
+          "pdpStatus": 200
+        },
+        "auditVerified": false
+      },
+      {
+        "scenario": "C",
+        "status": "PASS",
+        "productId": "cmt8zkjrh000uly01yvbgnubx",
+        "serverState": {
+          "contentVersionBefore": 1,
+          "contentVersionAfter": 2,
+          "resubmitOutcome": "PENDING_REVIEW"
+        },
+        "buyerVisibility": {
+          "before": {
+            "catalogHit": false,
+            "pdpOk": false,
+            "pdpStatus": 404
+          },
+          "after": {
+            "catalogHit": true,
+            "pdpOk": true,
+            "pdpStatus": 200
+          }
+        },
+        "auditVerified": true
+      },
+      {
+        "scenario": "D",
+        "status": "PASS",
+        "productId": "cmt8zkmwk001oly01wg2u2ytd",
+        "buyerVisibility": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 404
+        },
+        "auditVerified": true
+      },
+      {
+        "scenario": "E",
+        "status": "PASS",
+        "productId": "cmt8zkp490027ly01856b5ztl",
+        "serverState": {
+          "moderationStatus": "PENDING_REVIEW",
+          "systemRecommendation": "MANUAL_REVIEW",
+          "riskScore": 30
+        },
+        "auditVerified": true
+      },
+      {
+        "scenario": "F",
+        "status": "PASS",
+        "productId": "cmt8zkqqp002oly01fhp590q6",
+        "serverState": {
+          "beforeStatus": "ACTIVE",
+          "afterStatus": "DRAFT",
+          "moderationStatus": "PENDING_REVIEW",
+          "contentVersion": 2,
+          "moderatedContentVersion": 1
+        },
+        "buyerVisibility": {
+          "before": {
+            "catalogHit": true,
+            "pdpOk": true,
+            "pdpStatus": 200
+          },
+          "after": {
+            "catalogHit": false,
+            "pdpOk": false,
+            "pdpStatus": 404
+          }
+        },
+        "auditVerified": true
+      },
+      {
+        "scenario": "G",
+        "status": "PASS",
+        "buyerApproveStatus": 403,
+        "sellerApproveStatus": 403,
+        "sellerBypassStatus": 200,
+        "crossSellerStatus": 404
+      },
+      {
+        "scenario": "H",
+        "status": "PASS",
+        "productId": "cmt8zkus5003ily01f23thmmg",
+        "decisions": {
+          "first": 200,
+          "secondApprove": 409,
+          "rejectAfter": 409
+        },
+        "auditEventCount": 0,
+        "auditVerified": false
+      }
+    ],
+    "adminAcceptance": {
+      "queueLoads": true,
+      "detailLoads": true,
+      "counters": {
+        "pending": 136,
+        "needsFix": 7,
+        "rejected": 12,
+        "highRisk": 0,
+        "overdue": 0
+      },
+      "verdict": "PASS"
+    },
+    "verdict": "READY_FOR_RC10_4_BUILD"
+  },
+  "server500Events": [],
+  "application500Count": 0,
+  "transportErrors": [],
+  "scenarios": [
+    {
+      "scenario": "deploy",
+      "status": "PASS",
+      "deployedSha": "c078c3a",
+      "expectedSha": "c078c3a",
+      "databaseOk": true
+    },
+    {
+      "scenario": "migration-api",
+      "status": "PASS",
+      "adminModerationStatus": 200,
+      "counters": {
+        "pending": 136,
+        "needsFix": 7,
+        "rejected": 12,
+        "highRisk": 0,
+        "overdue": 0
+      }
+    },
+    {
+      "scenario": "A",
+      "status": "PASS",
+      "productId": "cmt8zkdp0000bly012af06ip2",
+      "moderationId": "cmt8zkdtr000lly01ouutq5u7",
+      "serverState": {
+        "productStatus": "DRAFT",
+        "moderationStatus": "PENDING_REVIEW",
+        "reviewMode": "MANUAL",
+        "stage": "MANUAL_REVIEW",
+        "contentVersion": 1,
+        "systemRecommendation": "MANUAL_REVIEW",
+        "isPublic": false
+      },
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 404
+      },
+      "auditVerified": false
+    },
+    {
+      "scenario": "B",
+      "status": "PASS",
+      "productId": "cmt8zkdp0000bly012af06ip2",
+      "approveStatus": 200,
+      "approveBody": true,
+      "serverState": {
+        "moderationStatus": "APPROVED",
+        "productStatus": "ACTIVE",
+        "publishedAt": "2026-08-25T18:16:07.075Z"
+      },
+      "buyerVisibility": {
+        "catalogHit": true,
+        "pdpOk": true,
+        "pdpStatus": 200
+      },
+      "auditVerified": false
+    },
+    {
+      "scenario": "C",
+      "status": "PASS",
+      "productId": "cmt8zkjrh000uly01yvbgnubx",
+      "serverState": {
+        "contentVersionBefore": 1,
+        "contentVersionAfter": 2,
+        "resubmitOutcome": "PENDING_REVIEW"
+      },
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 404
+        },
+        "after": {
+          "catalogHit": true,
+          "pdpOk": true,
+          "pdpStatus": 200
+        }
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "D",
+      "status": "PASS",
+      "productId": "cmt8zkmwk001oly01wg2u2ytd",
+      "buyerVisibility": {
+        "catalogHit": false,
+        "pdpOk": false,
+        "pdpStatus": 404
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "E",
+      "status": "PASS",
+      "productId": "cmt8zkp490027ly01856b5ztl",
+      "serverState": {
+        "moderationStatus": "PENDING_REVIEW",
+        "systemRecommendation": "MANUAL_REVIEW",
+        "riskScore": 30
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "F",
+      "status": "PASS",
+      "productId": "cmt8zkqqp002oly01fhp590q6",
+      "serverState": {
+        "beforeStatus": "ACTIVE",
+        "afterStatus": "DRAFT",
+        "moderationStatus": "PENDING_REVIEW",
+        "contentVersion": 2,
+        "moderatedContentVersion": 1
+      },
+      "buyerVisibility": {
+        "before": {
+          "catalogHit": true,
+          "pdpOk": true,
+          "pdpStatus": 200
+        },
+        "after": {
+          "catalogHit": false,
+          "pdpOk": false,
+          "pdpStatus": 404
+        }
+      },
+      "auditVerified": true
+    },
+    {
+      "scenario": "G",
+      "status": "PASS",
+      "buyerApproveStatus": 403,
+      "sellerApproveStatus": 403,
+      "sellerBypassStatus": 200,
+      "crossSellerStatus": 404
+    },
+    {
+      "scenario": "H",
+      "status": "PASS",
+      "productId": "cmt8zkus5003ily01f23thmmg",
+      "decisions": {
+        "first": 200,
+        "secondApprove": 409,
+        "rejectAfter": 409
+      },
+      "auditEventCount": 0,
+      "auditVerified": false
+    }
+  ],
+  "verdict": "READY_FOR_RC10_4_BUILD"
+}

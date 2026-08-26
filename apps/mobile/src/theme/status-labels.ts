@@ -34,3 +34,19 @@ export function productStatusTone(status: string | undefined | null): "success" 
       return "neutral";
   }
 }
+
+export function sellerLotSectionTone(
+  section: string,
+): "success" | "warning" | "neutral" | "danger" {
+  switch (section) {
+    case "active":
+      return "success";
+    case "pending":
+    case "needs_fix":
+      return "warning";
+    case "rejected":
+      return "danger";
+    default:
+      return "neutral";
+  }
+}

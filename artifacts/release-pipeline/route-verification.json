@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-25T15:58:13.511Z",
+  "generatedAt": "2026-08-25T19:42:36.424Z",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
   "routes": [
     {
@@ -10,7 +10,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 130,
+      "latencyMs": 99,
       "verdict": "PASS"
     },
     {
@@ -21,7 +21,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 86,
+      "latencyMs": 85,
       "verdict": "PASS"
     },
     {
@@ -32,7 +32,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 187,
+      "latencyMs": 127,
       "verdict": "PASS"
     },
     {
@@ -43,7 +43,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 272,
+      "latencyMs": 180,
       "verdict": "PASS"
     },
     {
@@ -54,7 +54,7 @@
       "expectedStatus": [
         200
       ],
-      "latencyMs": 672,
+      "latencyMs": 445,
       "verdict": "PASS"
     },
     {
@@ -66,7 +66,7 @@
         401,
         403
       ],
-      "latencyMs": 106,
+      "latencyMs": 84,
       "verdict": "PASS",
       "note": "401/403 without auth proves route registered; 404 = not deployed"
     }
