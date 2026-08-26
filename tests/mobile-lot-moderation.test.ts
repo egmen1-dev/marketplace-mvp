@@ -96,4 +96,11 @@ describe("EPIC 174 — moderation engine", () => {
     expect(lifecycle).toContain("status: ProductStatus.DRAFT");
     expect(lifecycle).toContain("CONTENT_VERSION_INVALIDATED");
   });
+
+  it("defers OCR/image evaluation from seller submit critical path", () => {
+    const engine = readFileSync("lib/moderation/run-product-moderation.ts", "utf8");
+    expect(engine).toContain("deferImageEvaluation");
+    expect(lifecycle).toContain("deferImageEvaluation: true");
+    expect(lifecycle).toContain("enqueuePolicyEvaluationJob");
+  });
 });
