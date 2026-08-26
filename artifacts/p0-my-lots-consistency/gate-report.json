@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-08-26T06:29:26.017Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "checks": [
+    {
+      "id": "vitest",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "staging_login",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "tab_filter_active",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "tab_filter_pending",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "tab_filter_drafts",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "tab_filter_sold",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "no_duplicate_ids_per_tab",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "no_cross_tab_duplicates",
+      "ok": true,
+      "detail": "PASS"
+    },
+    {
+      "id": "server_search_pending",
+      "ok": true,
+      "detail": "q=RC10_1_PUBLISH_TRUTH_1787725575706"
+    }
+  ],
+  "failed": [],
+  "verdict": "PASS"
+}

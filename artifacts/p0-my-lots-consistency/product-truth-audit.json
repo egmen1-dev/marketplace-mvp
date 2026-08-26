@@ -1,0 +1,735 @@
+{
+  "generatedAt": "2026-08-26T06:23:15.646Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "seller": "seller@demo.lot",
+  "titleNeedle": "Жидкость для вэйпа",
+  "byTab": {
+    "active": {
+      "status": 200,
+      "count": 20,
+      "ids": [
+        "cmt92qep300f9ly013okngzbo",
+        "cmt92q3vc00clly01fpf3pp03",
+        "cmt92pxsl00c2ly01cn140we4",
+        "cmt8uzhj2004vnu019kdrk564",
+        "cmt8nthcj01dfli017dr1nynx",
+        "cmt8nrtzl01c9li01aqqjbwy8",
+        "cmt8nrsfe01boli01y43t0q7j",
+        "cmt8nrqwi01b3li010gb90qgb",
+        "cmt8nrpec01aili01jl3flz65",
+        "cmt8nrnvs019xli01drilx64o",
+        "cmt8nrmbk019cli0108f6m7ir",
+        "cmt8nrkmw018rli0148yi80e5",
+        "cmt8nqhvb017bli01krkx1gx3",
+        "cmt8np2av014lli01c2lvlzxx",
+        "cmt8np1wl0142li01psyuid8j",
+        "cmt8np1kl013jli01lxdm0lsk",
+        "cmt8np1af0130li01p4twe0qx",
+        "cmt8nooe7012dli01ptrjldmp",
+        "cmt8nlciy00s9li014pwt9467",
+        "cmt8nhbes00nvli01a87nk5yh"
+      ],
+      "items": [
+        {
+          "id": "cmt92qep300f9ly013okngzbo",
+          "title": "rc104-d5e1d0f2-H idempotency",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt92q3vc00clly01fpf3pp03",
+          "title": "rc104-d5e1d0f2-C needs-fix flow",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt92pxsl00c2ly01cn140we4",
+          "title": "rc104-d5e1d0f2-A sofa acceptance",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8uzhj2004vnu019kdrk564",
+          "title": "Диван тест moderation 1787674071366",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nthcj01dfli017dr1nynx",
+          "title": "A-1787662033884",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrtzl01c9li01aqqjbwy8",
+          "title": "test-1787661956423",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrsfe01boli01y43t0q7j",
+          "title": "approve-1787661954390",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrqwi01b3li010gb90qgb",
+          "title": "NEEDS_CHANGES-1787661952452",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrpec01aili01jl3flz65",
+          "title": "needs_changes-1787661950469",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrnvs019xli01drilx64o",
+          "title": "MODERATION-1787661948508",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrmbk019cli0108f6m7ir",
+          "title": "moderation-1787661946424",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nrkmw018rli0148yi80e5",
+          "title": "lot-1787661944021",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nqhvb017bli01krkx1gx3",
+          "title": "plain-1787661892542",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8np2av014lli01c2lvlzxx",
+          "title": "cap-1787661826446-vis",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8np1wl0142li01psyuid8j",
+          "title": "cap-1787661826446-det",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8np1kl013jli01lxdm0lsk",
+          "title": "cap-1787661826446-mod",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8np1af0130li01p4twe0qx",
+          "title": "cap-1787661826446-base",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nooe7012dli01ptrjldmp",
+          "title": "cap-1787661809732-baseline",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nlciy00s9li014pwt9467",
+          "title": "cap-1787661654389",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        },
+        {
+          "id": "cmt8nhbes00nvli01a87nk5yh",
+          "title": "Диван тест moderation 1787661450054",
+          "status": "ACTIVE",
+          "moderationState": "APPROVED",
+          "publishOutcome": "PUBLISHED",
+          "isPublic": true,
+          "price": 2500
+        }
+      ]
+    },
+    "pending": {
+      "status": 200,
+      "count": 20,
+      "ids": [
+        "cmt92qan100efly01xq2pthgt",
+        "cmt92q95q00dyly01epwn2ikx",
+        "cmt92piop00bily01cdgvenhw",
+        "cmt92pei500b1ly01k0mk5va0",
+        "cmt92pagp00ally01nq0uodcn",
+        "cmt92na5r009zly01doaazqoq",
+        "cmt92n66n009ily0193mmp60s",
+        "cmt92n22g0092ly01pcnjth60",
+        "cmt92mxsd0085ly01pw48spwk",
+        "cmt8zlseg006kly01zmlzh942",
+        "cmt8zlqty0063ly01wdl50i2k",
+        "cmt8zkqqp002oly01fhp590q6",
+        "cmt8zkp490027ly01856b5ztl",
+        "cmt8z8m0w001wpa01icman2w1",
+        "cmt8z86st000upa010d8oks7e",
+        "cmt8yx3d3003gqn01z626l2cw",
+        "cmt8ywo6n002eqn017l1owwkn",
+        "cmt8w2q3000hnrx01mf3fiz6v",
+        "cmt8w2nds00h6rx01zjnj3e5r",
+        "cmt8w00sj00drrx01wx145myn"
+      ],
+      "items": [
+        {
+          "id": "cmt92qan100efly01xq2pthgt",
+          "title": "rc104-d5e1d0f2-F content-version ИЗМЕНЕНО",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt92q95q00dyly01epwn2ikx",
+          "title": "rc104-d5e1d0f2-E manual review",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt92piop00bily01cdgvenhw",
+          "title": "P01_CHARS_auto-accessories-phone-mount_1787687042715",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmt92pei500b1ly01k0mk5va0",
+          "title": "P01_CHARS_power-tools_1787687037442",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmt92pagp00ally01nq0uodcn",
+          "title": "P01_CHARS_clothing-dress_1787687032183",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmt92na5r009zly01doaazqoq",
+          "title": "P01_CHARS_auto-accessories-phone-mount_1787686938469",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmt92n66n009ily0193mmp60s",
+          "title": "P01_CHARS_power-tools_1787686933306",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmt92n22g0092ly01pcnjth60",
+          "title": "P01_CHARS_clothing-dress_1787686927991",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmt92mxsd0085ly01pw48spwk",
+          "title": "RC10_1_PUBLISH_TRUTH_1787686921223",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 1500
+        },
+        {
+          "id": "cmt8zlseg006kly01zmlzh942",
+          "title": "rc104-confirm-1787681796-F content-version ИЗМЕНЕНО",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8zlqty0063ly01wdl50i2k",
+          "title": "rc104-confirm-1787681796-E manual review",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8zkqqp002oly01fhp590q6",
+          "title": "rc104-stability-c078c3a-1787681747-F content-version ИЗМЕНЕНО",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8zkp490027ly01856b5ztl",
+          "title": "rc104-stability-c078c3a-1787681747-E manual review",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8z8m0w001wpa01icman2w1",
+          "title": "rc104-stability-postfix-1787681162-E manual review",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8z86st000upa010d8oks7e",
+          "title": "rc104-stability-postfix-1787681162-C needs-fix flow",
+          "status": "DRAFT",
+          "moderationState": "NEEDS_FIX",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8yx3d3003gqn01z626l2cw",
+          "title": "rc104-stability-burst-1787680623-E manual review",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8ywo6n002eqn017l1owwkn",
+          "title": "rc104-stability-burst-1787680623-C needs-fix flow",
+          "status": "DRAFT",
+          "moderationState": "NEEDS_FIX",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8w2q3000hnrx01mf3fiz6v",
+          "title": "rc104-final-cooldown-F content-version ИЗМЕНЕНО",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8w2nds00h6rx01zjnj3e5r",
+          "title": "rc104-final-cooldown-E manual review",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8w00sj00drrx01wx145myn",
+          "title": "rc104-run3-865a180-F content-version ИЗМЕНЕНО",
+          "status": "DRAFT",
+          "moderationState": "PENDING_REVIEW",
+          "publishOutcome": "PENDING_REVIEW",
+          "isPublic": false,
+          "price": 2500
+        }
+      ]
+    },
+    "drafts": {
+      "status": 200,
+      "count": 20,
+      "ids": [
+        "cmt92q6z300dfly01us53yg0a",
+        "cmt8zloom005kly01n0tfo9hs",
+        "cmt8zkmwk001oly01wg2u2ytd",
+        "cmt8z8gdk001dpa016idb5zty",
+        "cmt8ywxyr002xqn01215hdc28",
+        "cmt8w2hn100gnrx016sxvkkdq",
+        "cmt8vzvh700crrx01tf62guvh",
+        "cmt8vyhd1008xrx01yfswwku6",
+        "cmt8vx5wv0057rx01tek5xw9f",
+        "cmt8vvkf6001drx012qczzyio",
+        "cmt8vig50001mo4017ivzu0lb",
+        "cmt8v5d2g00f7nu018d3qzzhp",
+        "cmt8uzmy6005cnu014guiygcc",
+        "cmt8uw9zv0033nu01e35a676u",
+        "cmt8uvubj0028nu015ctlf8f4",
+        "cmt8uvu8a001ynu01d1tbyctv",
+        "cmt8ogh0601r5li011fz562j5",
+        "cmt8o5w8j01m1li01ck993a0d",
+        "cmt8o2y0b01ixli01hzj3696g",
+        "cmt8o2xw501inli01tsck8rok"
+      ],
+      "items": [
+        {
+          "id": "cmt92q6z300dfly01us53yg0a",
+          "title": "rc104-d5e1d0f2-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8zloom005kly01n0tfo9hs",
+          "title": "rc104-confirm-1787681796-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8zkmwk001oly01wg2u2ytd",
+          "title": "rc104-stability-c078c3a-1787681747-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8z8gdk001dpa016idb5zty",
+          "title": "rc104-stability-postfix-1787681162-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8ywxyr002xqn01215hdc28",
+          "title": "rc104-stability-burst-1787680623-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8w2hn100gnrx016sxvkkdq",
+          "title": "rc104-final-cooldown-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8vzvh700crrx01tf62guvh",
+          "title": "rc104-run3-865a180-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8vyhd1008xrx01yfswwku6",
+          "title": "rc104-run2-865a180-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8vx5wv0057rx01tek5xw9f",
+          "title": "rc104-run1-865a180-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8vvkf6001drx012qczzyio",
+          "title": "rc104-green-865a180-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8vig50001mo4017ivzu0lb",
+          "title": "rc104-final-f378203-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8v5d2g00f7nu018d3qzzhp",
+          "title": "rc104-acc5-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8uzmy6005cnu014guiygcc",
+          "title": "NEEDS_CHANGES moderation 1787674078241",
+          "status": "DRAFT",
+          "moderationState": null,
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8uw9zv0033nu01e35a676u",
+          "title": "NEEDS_CHANGES moderation 1787673921485",
+          "status": "DRAFT",
+          "moderationState": null,
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8uvubj0028nu015ctlf8f4",
+          "title": "rc104-diag1787673896945-C-alone",
+          "status": "DRAFT",
+          "moderationState": null,
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8uvu8a001ynu01d1tbyctv",
+          "title": "rc104-diag1787673896945-C",
+          "status": "DRAFT",
+          "moderationState": null,
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8ogh0601r5li011fz562j5",
+          "title": "rc104-resilient-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8o5w8j01m1li01ck993a0d",
+          "title": "rc104-1787662586-D reject flow",
+          "status": "DRAFT",
+          "moderationState": "REJECTED",
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8o2y0b01ixli01hzj3696g",
+          "title": "rc104-1787662324-C needs-fix flow-replay2",
+          "status": "DRAFT",
+          "moderationState": null,
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        },
+        {
+          "id": "cmt8o2xw501inli01tsck8rok",
+          "title": "rc104-1787662324-C needs-fix flow-replay1",
+          "status": "DRAFT",
+          "moderationState": null,
+          "publishOutcome": "SAVED",
+          "isPublic": false,
+          "price": 2500
+        }
+      ]
+    },
+    "sold": {
+      "status": 200,
+      "count": 9,
+      "ids": [
+        "cmsrlk1x600lhlt0176rklfcd",
+        "cmsrjyygl005bp80189zes41x",
+        "cmsrjsjg6002ip8012vm6uhn6",
+        "cmsribu0x007lo001axu608wp",
+        "cmsq9m36u0001r21my14llvei",
+        "cmsq3dsly00t9qt1m8zahn27u",
+        "cmsq32zte00omqt1mkw5hwpjh",
+        "cmsq2mt4y00dzqt1m63dqgclm",
+        "cmsq0ldrt003cqt1m77dp88ho"
+      ],
+      "items": [
+        {
+          "id": "cmsrlk1x600lhlt0176rklfcd",
+          "title": "E2E Пушка 1786630306875 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsrjyygl005bp80189zes41x",
+          "title": "E2E Пушка 1786627641718 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsrjsjg6002ip8012vm6uhn6",
+          "title": "E2E Пушка 1786627343104 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsribu0x007lo001axu608wp",
+          "title": "E2E Пушка 1786624884067 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsq9m36u0001r21my14llvei",
+          "title": "E2E Пушка 1786549779390 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsq3dsly00t9qt1m8zahn27u",
+          "title": "E2E Пушка 1786539315898 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsq32zte00omqt1mkw5hwpjh",
+          "title": "E2E Пушка 1786538811440 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsq2mt4y00dzqt1m63dqgclm",
+          "title": "E2E Пушка 1786538056608 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        },
+        {
+          "id": "cmsq0ldrt003cqt1m77dp88ho",
+          "title": "E2E Пушка 1786534630295 edited",
+          "status": "ARCHIVED",
+          "moderationState": null,
+          "publishOutcome": "FAILED",
+          "isPublic": false,
+          "price": 1990
+        }
+      ]
+    }
+  },
+  "matchingProductCount": 0,
+  "matchingIds": [],
+  "details": [],
+  "crossTabDuplicates": false,
+  "idsInMultipleTabs": []
+}

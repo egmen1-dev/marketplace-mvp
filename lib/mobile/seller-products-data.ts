@@ -1,12 +1,18 @@
-import { ModerationStatus, ProductStatus } from "@prisma/client";
+import { ModerationStatus, ProductStatus, type Prisma } from "@prisma/client";
 
 import { resolveRequestUser, isSellerCapable } from "@/features/auth/resolve-request-user";
 import { mapProductListItem } from "@/features/products/mappers";
 import { parseMobilePageCursor, toMobilePagination } from "@/lib/mobile/pagination";
+import {
+  parseSellerLotsTab,
+  resolveSellerLotSection,
+  sellerLotSectionLabel,
+  type SellerLotsTab,
+} from "@/lib/mobile/seller-lots-section";
 import { buildSellerProductPublishContract } from "@/lib/mobile/seller-product-publish";
 import { prisma } from "@/lib/prisma";
 
-export type SellerLotsTab = "active" | "pending" | "drafts" | "sold";
+export type { SellerLotsTab } from "@/lib/mobile/seller-lots-section";
 
 const listInclude = {
   category: { select: { id: true, name: true, slug: true } },
@@ -23,6 +29,7 @@ function mapSellerListItem(row: {
 } & Parameters<typeof mapProductListItem>[0]) {
   const base = mapProductListItem(row);
   const moderationState = row.productModeration?.status ?? null;
+  const section = resolveSellerLotSection({ status: base.status, moderationState });
   return {
     ...base,
     ...buildSellerProductPublishContract({
@@ -30,48 +37,29 @@ function mapSellerListItem(row: {
       status: base.status,
       moderationState,
     }),
+    sellerSection: section,
+    sellerSectionLabel: sellerLotSectionLabel(section),
   };
 }
 
-async function listSellerLotsByTab(
-  sellerId: string,
-  tab: SellerLotsTab,
-  page: number,
-  pageSize: number,
-) {
-  const skip = (page - 1) * pageSize;
-  const take = pageSize;
+function titleSearchFilter(q: string | null | undefined): Prisma.ProductWhereInput | null {
+  const trimmed = q?.trim();
+  if (!trimmed) return null;
+  return { name: { contains: trimmed, mode: "insensitive" } };
+}
 
+function whereForTab(tab: SellerLotsTab): Prisma.ProductWhereInput {
   if (tab === "pending") {
-    const where = {
-      sellerId,
+    return {
       status: { not: ProductStatus.ACTIVE },
       productModeration: {
         status: { in: [ModerationStatus.PENDING_REVIEW, ModerationStatus.NEEDS_FIX] },
       },
     };
-    const [rows, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: listInclude,
-        orderBy: { updatedAt: "desc" },
-        skip,
-        take,
-      }),
-      prisma.product.count({ where }),
-    ]);
-    return {
-      items: rows.map(mapSellerListItem),
-      total,
-      page,
-      pageSize,
-      totalPages: Math.max(1, Math.ceil(total / pageSize)),
-    };
   }
 
   if (tab === "drafts") {
-    const where = {
-      sellerId,
+    return {
       status: ProductStatus.DRAFT,
       OR: [
         { productModeration: { is: null } },
@@ -84,27 +72,38 @@ async function listSellerLotsByTab(
         },
       ],
     };
-    const [rows, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: listInclude,
-        orderBy: { updatedAt: "desc" },
-        skip,
-        take,
-      }),
-      prisma.product.count({ where }),
-    ]);
-    return {
-      items: rows.map(mapSellerListItem),
-      total,
-      page,
-      pageSize,
-      totalPages: Math.max(1, Math.ceil(total / pageSize)),
-    };
   }
 
-  const status = tab === "sold" ? ProductStatus.ARCHIVED : ProductStatus.ACTIVE;
-  const where = { sellerId, status };
+  if (tab === "sold") {
+    return { status: ProductStatus.ARCHIVED };
+  }
+
+  // Active — only genuinely published LOTs (ACTIVE + approved or legacy without moderation row).
+  return {
+    status: ProductStatus.ACTIVE,
+    OR: [
+      { productModeration: { is: null } },
+      { productModeration: { status: ModerationStatus.APPROVED } },
+    ],
+  };
+}
+
+async function listSellerLotsByTab(
+  sellerId: string,
+  tab: SellerLotsTab,
+  page: number,
+  pageSize: number,
+  q?: string | null,
+) {
+  const skip = (page - 1) * pageSize;
+  const take = pageSize;
+  const search = titleSearchFilter(q);
+  const where: Prisma.ProductWhereInput = {
+    sellerId,
+    ...whereForTab(tab),
+    ...(search ?? {}),
+  };
+
   const [rows, total] = await Promise.all([
     prisma.product.findMany({
       where,
@@ -129,6 +128,7 @@ export async function buildMobileSellerProductsFromRequest(
   request: Request,
   cursor?: string | null,
   tab?: string | null,
+  q?: string | null,
 ) {
   const user = await resolveRequestUser(request);
   if (!user || !isSellerCapable(user.role) || !user.sellerProfileId) {
@@ -136,9 +136,8 @@ export async function buildMobileSellerProductsFromRequest(
   }
 
   const page = parseMobilePageCursor(cursor);
-  const resolvedTab: SellerLotsTab =
-    tab === "drafts" || tab === "pending" || tab === "sold" ? tab : "active";
-  const result = await listSellerLotsByTab(user.sellerProfileId, resolvedTab, page, 20);
+  const resolvedTab = parseSellerLotsTab(tab);
+  const result = await listSellerLotsByTab(user.sellerProfileId, resolvedTab, page, 20, q);
 
   return toMobilePagination(result);
 }
@@ -179,9 +178,12 @@ export async function buildMobileSellerProductDetailFromRequest(request: Request
     status: row.status,
     moderationState,
   });
+  const section = resolveSellerLotSection({ status: row.status, moderationState });
 
   return {
     ...publish,
+    sellerSection: section,
+    sellerSectionLabel: sellerLotSectionLabel(section),
     title: row.name,
     description: row.description,
     price: Number(row.price),

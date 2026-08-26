@@ -1,8 +1,7 @@
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Animated, FlatList, RefreshControl, ScrollView, StyleSheet } from "react-native";
 
-import { fetchSellerProducts, type MobileProductListItem } from "../../src/api/endpoints";
 import {
   Chip,
   CommerceSearchBar,
@@ -16,6 +15,7 @@ import {
 } from "../../src/components/ui";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { isSellerProductPublic } from "../../src/seller/resolve-lot-publish-outcome";
+import { useSellerProductsList } from "../../src/seller/use-seller-products-list";
 import { useAppStore } from "../../src/store/app-store";
 import { spacing } from "../../src/theme/tokens";
 
@@ -39,38 +39,17 @@ export default function SellerProductsScreen() {
   const params = useLocalSearchParams<{ tab?: string }>();
   const offline = useAppStore((s) => s.offline);
   const sellerCapable = useAppStore((s) => s.sellerCapable);
-  const [tab, setTab] = useState<SellerLotsTab>(() => resolveInitialTab(params.tab));
-  const [items, setItems] = useState<MobileProductListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-
-  const load = useCallback(async () => {
-    if (offline) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetchSellerProducts({ tab });
-      setItems(res.items);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось загрузить ЛОТы");
-    } finally {
-      setLoading(false);
-    }
-  }, [offline, tab]);
+  const tab = resolveInitialTab(params.tab);
+  const { items, loading, error, query, setQuery, refresh } = useSellerProductsList(tab, offline);
 
   useFocusEffect(
     useCallback(() => {
-      const nextTab = resolveInitialTab(params.tab);
-      setTab((current) => (current === nextTab ? current : nextTab));
-      void load();
-    }, [load, params.tab]),
+      refresh();
+    }, [refresh]),
   );
 
-  const filtered = query ? items.filter((item) => item.title.toLowerCase().includes(query.toLowerCase())) : items;
+  const hasSearch = query.trim().length > 0;
+  const showInitialSkeleton = loading && items.length === 0 && !hasSearch;
 
   if (!sellerCapable) {
     return (
@@ -82,7 +61,7 @@ export default function SellerProductsScreen() {
     );
   }
 
-  if (loading && items.length === 0) {
+  if (showInitialSkeleton) {
     return (
       <PageContainer style={styles.container}>
         <SkeletonGrid count={3} />
@@ -90,7 +69,9 @@ export default function SellerProductsScreen() {
     );
   }
 
-  if (error && items.length === 0) return <ErrorState title="Ошибка загрузки" description={error} onRetry={load} />;
+  if (error && items.length === 0) {
+    return <ErrorState title="Ошибка загрузки" description={error} onRetry={refresh} />;
+  }
 
   return (
     <PageContainer style={styles.container}>
@@ -98,14 +79,28 @@ export default function SellerProductsScreen() {
         <SectionHeader title="Мои ЛОТы" />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
           {TABS.map((item) => (
-            <Chip key={item.key} label={item.label} active={tab === item.key} onPress={() => setTab(item.key)} />
+            <Chip
+              key={item.key}
+              label={item.label}
+              active={tab === item.key}
+              onPress={() => {
+                if (item.key !== tab) {
+                  router.setParams({ tab: item.key });
+                }
+              }}
+            />
           ))}
         </ScrollView>
-        <CommerceSearchBar placeholder="Поиск по вашим ЛОТам" value={query} onChangeText={setQuery} onClear={() => setQuery("")} />
+        <CommerceSearchBar
+          placeholder="Поиск по вашим ЛОТам"
+          value={query}
+          onChangeText={setQuery}
+          onClear={() => setQuery("")}
+        />
         <FlatList
-          data={filtered}
+          data={items}
           keyExtractor={(item) => item.id}
-          refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} />}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <SellerProductCard
@@ -118,33 +113,45 @@ export default function SellerProductsScreen() {
                 const href = isPublic ? `/product/${item.id}` : `/sell/lot/${item.id}`;
                 router.push(href as `/product/${string}` | `/sell/lot/${string}`);
               }}
-              onRefresh={load}
+              onRefresh={refresh}
             />
           )}
           ListEmptyComponent={
             <EmptyState
               title={
-                tab === "active"
-                  ? "У вас пока нет ЛОТов"
-                  : tab === "pending"
-                    ? "ЛОТов на проверке пока нет"
-                    : tab === "drafts"
-                      ? "Сохранённых ЛОТов пока нет"
-                      : "Проданных ЛОТов пока нет"
+                hasSearch
+                  ? "По вашему запросу ничего не найдено"
+                  : tab === "active"
+                    ? "У вас пока нет ЛОТов"
+                    : tab === "pending"
+                      ? "ЛОТов на проверке пока нет"
+                      : tab === "drafts"
+                        ? "Сохранённых ЛОТов пока нет"
+                        : "Проданных ЛОТов пока нет"
               }
               description={
-                tab === "active"
-                  ? "Создайте первый ЛОТ — покупатели увидят его в каталоге"
-                  : tab === "pending"
-                    ? "Отправьте ЛОТ на проверку — он появится здесь"
-                    : "Создайте ЛОТ, чтобы покупатели могли его найти"
+                hasSearch
+                  ? "Попробуйте другой запрос или очистите поиск"
+                  : tab === "active"
+                    ? "Создайте первый ЛОТ — покупатели увидят его в каталоге"
+                    : tab === "pending"
+                      ? "Отправьте ЛОТ на проверку — он появится здесь"
+                      : "Создайте ЛОТ, чтобы покупатели могли его найти"
               }
-              actionLabel={tab === "sold" ? "Создать ЛОТ" : tab === "active" ? "Создать первый ЛОТ" : "Создать ЛОТ"}
-              onAction={() => router.push("/sell/create")}
+              actionLabel={
+                hasSearch
+                  ? "Очистить поиск"
+                  : tab === "sold"
+                    ? "Создать ЛОТ"
+                    : tab === "active"
+                      ? "Создать первый ЛОТ"
+                      : "Создать ЛОТ"
+              }
+              onAction={() => (hasSearch ? setQuery("") : router.push("/sell/create"))}
             />
           }
           ListFooterComponent={
-            tab === "active" ? (
+            tab === "active" && !hasSearch ? (
               <PrimaryButton label="Создать ЛОТ" fullWidth onPress={() => router.push("/sell/create")} />
             ) : null
           }

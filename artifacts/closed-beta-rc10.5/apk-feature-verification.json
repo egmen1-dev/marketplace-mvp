@@ -1,0 +1,193 @@
+{
+  "generatedAt": "2026-08-26T11:52:43.584Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.5/lot_android_closed_beta_0.1.15_beta.6.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.6",
+    "versionCode": "21",
+    "nativeCode": "arm64-v8a",
+    "sha256": "94a60432ca8199bfd4316001e806b2fe6fff2c8ef0c26dc3860a5a44376813db",
+    "sizeBytes": 43743134
+  },
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.15-beta.6",
+      "actual": "0.1.15-beta.6"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "21",
+      "actual": "21"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc10_5Label",
+      "ok": true,
+      "expected": "RC10.5 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "unknown"
+    },
+    {
+      "name": "signerSha256",
+      "ok": true,
+      "expected": "fac61745…",
+      "actual": "fac61745dc090378…"
+    }
+  ],
+  "manifestChecks": [
+    {
+      "name": "requestInstallPackages",
+      "ok": true,
+      "expected": "REQUEST_INSTALL_PACKAGES"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "myLotsConsistency",
+      "name": "sellerSection",
+      "pattern": "sellerSection",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "myLotsConsistency",
+      "name": "fetchSellerProducts",
+      "pattern": "fetchSellerProducts",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "myLotsConsistency",
+      "name": "emptySearch",
+      "pattern": "По вашему запросу ничего не найдено",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "myLotsConsistency",
+      "name": "emptyTab",
+      "pattern": "У вас пока нет ЛОТов",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "myLotsConsistency",
+      "name": "pendingTab",
+      "pattern": "На проверке",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "createPreviewFix",
+      "name": "evaluateLotPreviewValidation",
+      "pattern": "evaluateLotPreviewValidation",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "createPreviewFix",
+      "name": "canPreview",
+      "pattern": "canPreview",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "createPreviewFix",
+      "name": "previewBlockers",
+      "pattern": "previewBlockers",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "createPreviewFix",
+      "name": "selectCategory",
+      "pattern": "Выберите категорию",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "createPreviewFix",
+      "name": "selectProductType",
+      "pattern": "Выберите тип ЛОТа",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "createPreviewFix",
+      "name": "addPhoto",
+      "pattern": "Добавьте хотя бы 1 фотографию",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "pendingReviewTab",
+      "pattern": "На проверке",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "checkingLot",
+      "pattern": "Проверяем ЛОТ",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationUx",
+      "name": "PENDING_REVIEW",
+      "pattern": "PENDING_REVIEW",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "downloadVerifiedApk",
+      "pattern": "downloadVerifiedApk",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "openApkInstaller",
+      "pattern": "openApkInstall",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}
