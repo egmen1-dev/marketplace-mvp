@@ -1,0 +1,271 @@
+{
+  "generatedAt": "2026-08-26T18:35:06.169Z",
+  "candidate": "RC10.6",
+  "pr198": "8d67190",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.7",
+    "versionCode": "22",
+    "nativeCode": "arm64-v8a",
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107",
+    "sizeBytes": 44402466
+  },
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "identityChecks": [
+    {
+      "name": "versionName",
+      "ok": true,
+      "expected": "0.1.15-beta.7",
+      "actual": "0.1.15-beta.7"
+    },
+    {
+      "name": "versionCode",
+      "ok": true,
+      "expected": "22",
+      "actual": "22"
+    },
+    {
+      "name": "package",
+      "ok": true,
+      "expected": "ru.lot.marketplace.alpha",
+      "actual": "ru.lot.marketplace.alpha"
+    },
+    {
+      "name": "abi",
+      "ok": true,
+      "expected": "arm64-v8a",
+      "actual": "arm64-v8a"
+    },
+    {
+      "name": "rc10_6Label",
+      "ok": true,
+      "expected": "RC10.6 in bundle",
+      "actual": "present"
+    },
+    {
+      "name": "stagingUrl",
+      "ok": true,
+      "expected": "staging URL",
+      "actual": "present"
+    },
+    {
+      "name": "closedBeta",
+      "ok": true,
+      "expected": "CLOSED_BETA",
+      "actual": "present"
+    },
+    {
+      "name": "commitSha",
+      "ok": true,
+      "expected": "commit SHA in bundle",
+      "actual": "bdf9143"
+    },
+    {
+      "name": "signerSha256",
+      "ok": true,
+      "expected": "fac61745…",
+      "actual": "fac61745dc090378…"
+    }
+  ],
+  "manifestChecks": [
+    {
+      "name": "requestInstallPackages",
+      "ok": true,
+      "expected": "REQUEST_INSTALL_PACKAGES"
+    }
+  ],
+  "symbolChecks": [
+    {
+      "group": "photoFlow",
+      "name": "derivePhotoStepPhase",
+      "pattern": "derivePhotoStepPhase",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "buildPhotoStepUiContract",
+      "pattern": "buildPhotoStepUiContract",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "continueFromPhotos",
+      "pattern": "continueFromPhotos",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "photoProcessingHint",
+      "pattern": "Обрабатываем фото",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "interactionManagerDefer",
+      "pattern": "runAfterInteractions",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "uploadQueueMutex",
+      "pattern": "uploadWaitPublish",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "createOneTapGuard",
+      "pattern": "createOneTapGuard",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "photoFlow",
+      "name": "uploadStatusUploading",
+      "pattern": "uploading",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "submitFlow",
+      "name": "handleCharacteristicRejection",
+      "pattern": "handleCharacteristicRejection",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "submitFlow",
+      "name": "asyncActionOutcomeVisibleError",
+      "pattern": "VISIBLE_ERROR",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "submitFlow",
+      "name": "characteristicsRequiredCode",
+      "pattern": "CHARACTERISTICS_REQUIRED",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "submitFlow",
+      "name": "publishOnServer",
+      "pattern": "publishOnServer",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "submitFlow",
+      "name": "pendingReviewTitle",
+      "pattern": "Проверяем ЛОТ",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "submitFlow",
+      "name": "PENDING_REVIEW",
+      "pattern": "PENDING_REVIEW",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "journeyDiagnostics",
+      "name": "recordSellerJourneyEvent",
+      "pattern": "recordSellerJourneyEvent",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "journeyDiagnostics",
+      "name": "formatSellerJourneyDiagnostics",
+      "pattern": "formatSellerJourneyDiagnostics",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "journeyDiagnostics",
+      "name": "copySellerJourneyDiagnostics",
+      "pattern": "copySellerJourneyDiagnostics",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "journeyDiagnostics",
+      "name": "actionIdCorrelation",
+      "pattern": "actionId=",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "journeyDiagnostics",
+      "name": "diagnosticsCopyButton",
+      "pattern": "Скопировать диагностику",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "journeyDiagnostics",
+      "name": "sellerJourneyDiagnosticsHeader",
+      "pattern": "LOT seller journey diagnostics",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationAsyncBoundary",
+      "name": "clientActionIdHeader",
+      "pattern": "x-client-action-id",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationAsyncBoundary",
+      "name": "lotSubmitActionId",
+      "pattern": "lot-submit",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationAsyncBoundary",
+      "name": "photoContinueActionId",
+      "pattern": "photo-continue",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "moderationAsyncBoundary",
+      "name": "publishOutcomeMapper",
+      "pattern": "resolveLotPublishOutcome",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "downloadVerifiedApk",
+      "pattern": "downloadVerifiedApk",
+      "present": true,
+      "ok": true
+    },
+    {
+      "group": "androidUpdater",
+      "name": "openApkInstaller",
+      "pattern": "openApkInstall",
+      "present": true,
+      "ok": true
+    }
+  ],
+  "featureForensics": {
+    "photoFix": true,
+    "submitFix": true,
+    "diagnostics": true,
+    "moderationAsyncBoundary": true
+  },
+  "evidenceNote": "APK bundle symbol presence only — not physical PASS",
+  "failed": [],
+  "verdict": "PASS"
+}
