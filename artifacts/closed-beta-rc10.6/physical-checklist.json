@@ -13,7 +13,8 @@
   "apk": {
     "versionName": "0.1.15-beta.7",
     "versionCode": 22,
-    "path": "artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk"
+    "path": "artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107"
   },
   "accounts": {
     "seller": "seller@demo.lot / demo1234",

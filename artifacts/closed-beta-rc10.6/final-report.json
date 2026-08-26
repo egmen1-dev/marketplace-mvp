@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-08-26T18:37:00Z",
+  "candidate": "RC10.6",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "baseline": {
+    "mainSha": "47d6530",
+    "railwaySha": "bdf9143",
+    "prePhysicalV2": "PASS",
+    "pr198MergeSha": "8d67190"
+  },
+  "version": {
+    "previous": { "rc": "RC10.5", "versionName": "0.1.15-beta.6", "versionCode": 21 },
+    "new": { "rc": "RC10.6", "versionName": "0.1.15-beta.7", "versionCode": 22 }
+  },
+  "build": {
+    "result": "PASS",
+    "package": "ru.lot.marketplace.alpha",
+    "channel": "CLOSED_BETA",
+    "environment": "staging",
+    "commitSha": "bdf9143"
+  },
+  "apk": {
+    "path": "artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+    "sizeBytes": 44402466,
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107",
+    "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
+  },
+  "featureForensics": {
+    "photoFix": true,
+    "submitFix": true,
+    "diagnostics": true,
+    "silentFailureInvariant": "PASS",
+    "apkFeatureVerification": "PASS"
+  },
+  "mrp": {
+    "published": true,
+    "versionName": "0.1.15-beta.7",
+    "versionCode": 22,
+    "channel": "CLOSED_BETA",
+    "environment": "staging",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107"
+  },
+  "updateMatrix": {
+    "verdict": "PASS",
+    "probes": {
+      "17": "OPTIONAL_UPDATE→22",
+      "18": "OPTIONAL_UPDATE→22",
+      "19": "OPTIONAL_UPDATE→22",
+      "20": "OPTIONAL_UPDATE→22",
+      "21": "OPTIONAL_UPDATE→22",
+      "22": "NO_UPDATE",
+      "23": "NO_DOWNGRADE"
+    },
+    "canonicalDownload": {
+      "httpOk": true,
+      "sha256Match": true,
+      "sizeBytes": 44402466
+    }
+  },
+  "physicalChecklist": {
+    "path": "artifacts/closed-beta-rc10.6/physical-checklist.json",
+    "scenarioCount": 9,
+    "status": "NOT_RUN"
+  },
+  "physical": "NOT_RUN",
+  "pr": "https://github.com/egmen1-dev/marketplace-mvp/pull/199"
+}

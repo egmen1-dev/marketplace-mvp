@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-08-26T18:36:16.294Z",
+  "publishMethod": "staging_admin_api",
+  "versionName": "0.1.15-beta.7",
+  "versionCode": 22,
+  "channel": "BETA",
+  "clientChannel": "CLOSED_BETA",
+  "environment": "staging",
+  "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107",
+  "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+  "status": "PUBLISHED",
+  "updatePath": {
+    "code17": "OPTIONAL_UPDATE→22",
+    "code18": "OPTIONAL_UPDATE→22",
+    "code19": "OPTIONAL_UPDATE→22",
+    "code20": "OPTIONAL_UPDATE→22",
+    "code21": "OPTIONAL_UPDATE→22",
+    "code22": "NO_UPDATE",
+    "code23plus": "NO_DOWNGRADE"
+  },
+  "verdict": "PASS"
+}
