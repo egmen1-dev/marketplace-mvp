@@ -245,43 +245,71 @@ export default function CreateLotScreen() {
 
           <Text style={styles.label}>Выберите категорию</Text>
           <View style={styles.categoryGrid}>
-            {form.rootCategories.map((cat) => (
+            {form.rootCategories.map((cat) => {
+              const selected = form.draft.categoryId === cat.id;
+              return (
               <Pressable
                 key={cat.id}
-                style={[styles.categoryCard, form.draft.categoryId === cat.id ? styles.categoryCardActive : null]}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                style={[styles.categoryCard, selected ? styles.categoryCardActive : null]}
                 onPress={() => void form.selectRootCategory(cat)}
               >
+                {selected ? (
+                  <View style={styles.categoryCheck}>
+                    <MaterialCommunityIcons name="check" size={14} color={colors.white} />
+                  </View>
+                ) : null}
                 <Text style={styles.categoryEmoji}>{emojiForCategoryName(cat.name)}</Text>
-                <Text style={styles.categoryName} numberOfLines={2}>
+                <Text style={[styles.categoryName, selected ? styles.categoryNameActive : null]} numberOfLines={2}>
                   {cat.name}
                 </Text>
               </Pressable>
-            ))}
+            );
+            })}
           </View>
 
           {form.subcategories.length > 0 ? (
             <View style={styles.subList}>
-              {form.subcategories.map((sub) => (
-                <Pressable key={sub.id} style={styles.subRow} onPress={() => void form.selectRootCategory(sub)}>
-                  <Text style={styles.subName}>{sub.name}</Text>
+              {form.subcategories.map((sub) => {
+                const selected = form.draft.categoryId === sub.id;
+                return (
+                <Pressable
+                  key={sub.id}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  style={[styles.subRow, selected ? styles.subRowActive : null]}
+                  onPress={() => void form.selectRootCategory(sub)}
+                >
+                  <Text style={[styles.subName, selected ? styles.subNameActive : null]}>{sub.name}</Text>
                 </Pressable>
-              ))}
+              );
+              })}
             </View>
           ) : null}
 
           {form.productTypes.length > 0 ? (
             <>
               <Text style={styles.label}>{LOT_CREATE_COPY.productTypeLabel}</Text>
-              {form.productTypes.map((pt) => (
+              {form.productTypes.map((pt) => {
+                const selected = form.draft.productTypeId === pt.id;
+                return (
                 <Pressable
                   key={pt.id}
-                  style={[styles.subRow, form.draft.productTypeId === pt.id ? styles.subRowActive : null]}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  style={[styles.subRow, selected ? styles.subRowActive : null]}
                   onPress={() => void form.selectProductType(pt)}
                 >
-                  <Text style={styles.subName}>{pt.name}</Text>
+                  <Text style={[styles.subName, selected ? styles.subNameActive : null]}>{pt.name}</Text>
                 </Pressable>
-              ))}
+              );
+              })}
             </>
+          ) : null}
+
+          {form.draft.categoryId && !form.draft.productTypeId && form.productTypes.length > 0 ? (
+            <Text style={styles.helperText}>{LOT_CREATE_COPY.productTypeRequiredHint}</Text>
           ) : null}
 
           {form.draft.productTypeId ? (
@@ -397,7 +425,7 @@ export default function CreateLotScreen() {
         </ScrollView>
         <LotCreateStickyFooter
           label="Предпросмотр"
-          disabled={!form.canContinueDetails}
+          hint={form.previewBlockersMessage}
           onPress={() => void form.goPreview()}
         />
       </View>
@@ -533,16 +561,29 @@ const styles = StyleSheet.create({
     width: "30%",
     minHeight: 88,
     borderRadius: radii.lg,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: colors.gray200,
     padding: spacing.sm,
     alignItems: "center",
     justifyContent: "center",
     gap: spacing.xs,
+    position: "relative",
   },
   categoryCardActive: { borderColor: colors.orange, backgroundColor: colors.orangeSoft },
+  categoryCheck: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.orange,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   categoryEmoji: { fontSize: 24 },
   categoryName: { ...typography.caption, textAlign: "center", color: colors.black },
+  categoryNameActive: { color: colors.orange, fontWeight: "700" },
   subList: { gap: spacing.xs },
   subRow: {
     padding: spacing.md,
@@ -551,8 +592,10 @@ const styles = StyleSheet.create({
     borderColor: colors.gray200,
     gap: spacing.xs,
   },
-  subRowActive: { borderColor: colors.orange, backgroundColor: colors.orangeSoft },
+  subRowActive: { borderColor: colors.orange, backgroundColor: colors.orangeSoft, borderWidth: 2 },
   subName: { ...typography.body, color: colors.black },
+  subNameActive: { color: colors.orange, fontWeight: "700" },
+  helperText: { ...typography.caption, color: colors.gray700 },
   conditionRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   conditionChip: {
     paddingHorizontal: spacing.md,

@@ -8,17 +8,20 @@ export function LotCreateStickyFooter({
   onPress,
   loading,
   disabled,
+  hint,
 }: {
   label: string;
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
+  hint?: string | null;
 }) {
   const insets = useSafeAreaInsets();
   const isDisabled = disabled || loading;
 
   return (
     <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
+      {hint ? <Text style={styles.hint}>{hint}</Text> : null}
       <Pressable
         accessibilityRole="button"
         disabled={isDisabled}
@@ -64,5 +67,10 @@ const styles = StyleSheet.create({
     ...typography.button,
     color: colors.white,
     fontSize: 16,
+  },
+  hint: {
+    ...typography.caption,
+    color: colors.gray700,
+    marginBottom: spacing.sm,
   },
 });

@@ -28,6 +28,12 @@ import { loadAppConfig } from "../config/env";
 import { LOT_CREATE_COPY } from "./lot-create-copy";
 import { formatLotCreateError, type LotCreateErrorContext } from "./lot-create-errors";
 import {
+  evaluateLotPreviewValidation,
+  formatPreviewBlockersMessage,
+  parseLotPriceNumber,
+  parseLotStockNumber,
+} from "./lot-preview-validation";
+import {
   resolveLotPublishOutcome,
   type LotPublishOutcome,
 } from "./resolve-lot-publish-outcome";
@@ -248,11 +254,6 @@ export function useLotCreateForm() {
       .filter((row): row is { name: string; value: string } => Boolean(row));
   }, [characteristicDefinitions, draft.characteristicValues]);
 
-  const requiredCharacteristicIssues = useMemo(
-    () => validateLotCharacteristicForm(characteristicDefinitions, draft.characteristicValues, { onlyRequired: true }),
-    [characteristicDefinitions, draft.characteristicValues],
-  );
-
   useEffect(() => {
     const config = loadAppConfig();
     fetch(`${config.apiBaseUrl}/api/mobile/bootstrap`)
@@ -356,23 +357,46 @@ export function useLotCreateForm() {
     void loadPickupPoints();
   }, [loadPickupPoints]);
 
-  const priceNumber = useMemo(
-    () => Number(draft.price.replace(/\s/g, "").replace(",", ".")),
-    [draft.price],
+  const priceNumber = useMemo(() => parseLotPriceNumber(draft.price), [draft.price]);
+  const stockNumber = useMemo(() => parseLotStockNumber(draft.stock), [draft.stock]);
+
+  const previewValidation = useMemo(
+    () =>
+      evaluateLotPreviewValidation({
+        title: draft.title,
+        price: draft.price,
+        stock: draft.stock,
+        city: draft.city,
+        categoryId: draft.categoryId,
+        productTypeId: draft.productTypeId,
+        imagesCount: draft.images.length,
+        pickupEnabled: draft.pickupEnabled,
+        pickupPointIds: draft.pickupPointIds,
+        characteristicDefinitions,
+        characteristicValues: draft.characteristicValues,
+        imagesUploading,
+        hasFailedUploads,
+      }),
+    [
+      draft.title,
+      draft.price,
+      draft.stock,
+      draft.city,
+      draft.categoryId,
+      draft.productTypeId,
+      draft.images.length,
+      draft.pickupEnabled,
+      draft.pickupPointIds,
+      draft.characteristicValues,
+      characteristicDefinitions,
+      imagesUploading,
+      hasFailedUploads,
+    ],
   );
-  const stockNumber = useMemo(() => {
-    const n = Number(draft.stock.replace(/\s/g, ""));
-    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
-  }, [draft.stock]);
 
   const canContinuePhotos = draft.images.length > 0;
-  const canContinueDetails =
-    draft.title.trim().length >= 2 &&
-    priceNumber > 0 &&
-    draft.city.trim().length >= 2 &&
-    Boolean(draft.productTypeId) &&
-    requiredCharacteristicIssues.length === 0 &&
-    (!draft.pickupEnabled || draft.pickupPointIds.length > 0);
+  const canContinueDetails = previewValidation.canPreview;
+  const previewBlockersMessage = formatPreviewBlockersMessage(previewValidation.previewBlockers);
 
   function updateCharacteristicValue(definitionId: string, value: LotCharacteristicFormValue) {
     const nextValues = { ...draftRef.current.characteristicValues, [definitionId]: value };
@@ -496,45 +520,56 @@ export function useLotCreateForm() {
   }
 
   async function goPreview() {
-    if (!draftRef.current.title.trim() || priceNumber <= 0 || !draftRef.current.city.trim() || !draftRef.current.productTypeId) {
-      setError(LOT_CREATE_COPY.validationDetails);
-      await flushSave(draftRef.current);
-      return;
+    clearErrors();
+
+    let working = { ...draftRef.current };
+    if (!working.productTypeId && working.title.trim().length >= 2) {
+      const suggestion = await suggestProductType(working.title);
+      if (suggestion.productTypeId) {
+        working = {
+          ...working,
+          productTypeId: suggestion.productTypeId,
+          productTypeName: suggestion.productTypeName,
+          categoryId: working.categoryId ?? suggestion.categoryId,
+          categoryName: working.categoryName ?? suggestion.categoryName,
+        };
+        if (suggestion.productTypeId !== draftRef.current.productTypeId) {
+          await loadCharacteristicsForProductType(suggestion.productTypeId, working.characteristicValues);
+        }
+        persist(working, { immediate: true });
+      }
     }
 
-    if (draftRef.current.pickupEnabled && draftRef.current.pickupPointIds.length === 0) {
-      setError(LOT_CREATE_COPY.pickupSaveError);
-      await flushSave(draftRef.current);
-      return;
-    }
-
-    const issues = validateLotCharacteristicForm(characteristicDefinitions, draftRef.current.characteristicValues, {
-      onlyRequired: true,
+    const validation = evaluateLotPreviewValidation({
+      title: working.title,
+      price: working.price,
+      stock: working.stock,
+      city: working.city,
+      categoryId: working.categoryId,
+      productTypeId: working.productTypeId,
+      imagesCount: working.images.length,
+      pickupEnabled: working.pickupEnabled,
+      pickupPointIds: working.pickupPointIds,
+      characteristicDefinitions,
+      characteristicValues: working.characteristicValues,
+      imagesUploading: working.images.some((img) => img.uploadStatus === "uploading"),
+      hasFailedUploads: working.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl),
     });
-    if (issues.length > 0) {
-      setHighlightedCharacteristicIds(new Set(issues.map((issue) => issue.definitionId)));
-      setError(humanCharacteristicMissingMessage(issues));
-      setErrorDetail(issues.length === 1 ? issues[0]!.message : null);
+
+    if (!validation.canPreview) {
+      const message = formatPreviewBlockersMessage(validation.previewBlockers) ?? LOT_CREATE_COPY.validationDetails;
+      setError(message);
+      setErrorDetail(
+        validation.previewBlockers.length > 1
+          ? validation.previewBlockers.map((b) => `• ${b.message}`).join("\n")
+          : null,
+      );
       setCanRetry(false);
-      await flushSave(draftRef.current);
+      await flushSave(working);
       return;
     }
 
-    const suggestion = await suggestProductType(draftRef.current.title);
-    const nextProductTypeId = draftRef.current.productTypeId ?? suggestion.productTypeId;
-    if (nextProductTypeId && nextProductTypeId !== draftRef.current.productTypeId) {
-      await loadCharacteristicsForProductType(nextProductTypeId, draftRef.current.characteristicValues);
-    }
-
-    const next = {
-      ...draftRef.current,
-      productTypeId: nextProductTypeId,
-      productTypeName: draftRef.current.productTypeName ?? suggestion.productTypeName,
-      categoryId: draftRef.current.categoryId ?? suggestion.categoryId,
-      categoryName: draftRef.current.categoryName ?? suggestion.categoryName,
-      step: "preview" as const,
-    };
-    persist(next, { immediate: true });
+    persist({ ...working, step: "preview" }, { immediate: true });
     setStep("preview");
     clearErrors();
     setHighlightedCharacteristicIds(new Set());
@@ -546,6 +581,7 @@ export function useLotCreateForm() {
       characteristicDefinitions,
       current.characteristicValues,
     );
+    const stock = parseLotStockNumber(current.stock);
     return {
       title: current.title.trim(),
       description: current.description.trim() || null,
@@ -555,7 +591,7 @@ export function useLotCreateForm() {
       productTypeId: current.productTypeId,
       categoryId: current.categoryId,
       images,
-      stock: stockNumber,
+      stock: Number.isFinite(stock) && stock > 0 ? stock : 1,
       status,
       pickupEnabled: current.pickupEnabled,
       pickupPointIds: current.pickupPointIds,
@@ -692,6 +728,35 @@ export function useLotCreateForm() {
       return;
     }
 
+    const submitCheck = evaluateLotPreviewValidation({
+      title: draftRef.current.title,
+      price: draftRef.current.price,
+      stock: draftRef.current.stock,
+      city: draftRef.current.city,
+      categoryId: draftRef.current.categoryId,
+      productTypeId: draftRef.current.productTypeId,
+      imagesCount: draftRef.current.images.length,
+      pickupEnabled: draftRef.current.pickupEnabled,
+      pickupPointIds: draftRef.current.pickupPointIds,
+      characteristicDefinitions,
+      characteristicValues: draftRef.current.characteristicValues,
+    });
+    const charBlockers = submitCheck.submitBlockers.filter((b) => b.code === "CHARACTERISTIC_MISSING");
+    if (charBlockers.length > 0) {
+      const issues = validateLotCharacteristicForm(
+        characteristicDefinitions,
+        draftRef.current.characteristicValues,
+        { onlyRequired: true },
+      );
+      setHighlightedCharacteristicIds(new Set(issues.map((issue) => issue.definitionId)));
+      setError(humanCharacteristicMissingMessage(issues));
+      setErrorDetail(issues.length === 1 ? issues[0]!.message : null);
+      setCanRetry(false);
+      setStep("details");
+      persist({ ...draftRef.current, step: "details" }, { immediate: true });
+      return;
+    }
+
     setPublishing(true);
     clearErrors();
     setInfo(null);
@@ -775,6 +840,8 @@ export function useLotCreateForm() {
     stockNumber,
     canContinuePhotos,
     canContinueDetails,
+    previewValidation,
+    previewBlockersMessage,
     imagesUploading,
     hasFailedUploads,
     persist,
