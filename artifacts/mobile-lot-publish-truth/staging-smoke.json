@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-25T12:09:11.712Z",
+  "generatedAt": "2026-08-26T06:26:20.656Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "title": "RC10_1_PUBLISH_TRUTH_1787659747334",
-  "createdId": "cmt8mgi6l00guli01etshdps1",
+  "title": "RC10_1_PUBLISH_TRUTH_1787725575706",
+  "createdId": "cmt9pnftt002tn001a9ko5crb",
   "returnedStatus": "DRAFT",
   "publishOutcome": "PENDING_REVIEW",
   "moderationState": "PENDING_REVIEW",
@@ -26,7 +26,7 @@
   "sellerDetailEndpoint": "PASS",
   "duplicateProtection": "PASS",
   "duplicateIds": [
-    "cmt8mgi6l00guli01etshdps1"
+    "cmt9pnftt002tn001a9ko5crb"
   ],
   "duplicateSaveStatus": 200,
   "duplicatePublishStatus": 200,

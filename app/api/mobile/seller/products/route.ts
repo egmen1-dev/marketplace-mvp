@@ -53,6 +53,7 @@ export async function GET(request: Request) {
     request,
     searchParams.get("cursor"),
     searchParams.get("tab"),
+    searchParams.get("q"),
   );
   return NextResponse.json(withMobileApiContract(page, `seller-products-p${searchParams.get("cursor") ?? "1"}`));
 }

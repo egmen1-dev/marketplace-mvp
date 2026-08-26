@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-08-25T19:42:34.337Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "runId": "stability-1787686949622",
+  "deployedSha": "c078c3a",
+  "probes": [
+    {
+      "at": "2026-08-25T19:42:30.044Z",
+      "path": "/api/health",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 420,
+      "runId": "stability-1787686949622"
+    },
+    {
+      "at": "2026-08-25T19:42:30.447Z",
+      "path": "/api/mobile/auth/session",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 402,
+      "runId": "stability-1787686949622"
+    },
+    {
+      "at": "2026-08-25T19:42:30.807Z",
+      "path": "/api/mobile/auth/session",
+      "method": "POST",
+      "status": 200,
+      "durationMs": 359,
+      "runId": "stability-1787686949622"
+    },
+    {
+      "at": "2026-08-25T19:42:31.944Z",
+      "path": "/api/mobile/catalog/products?q=дрель",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 834,
+      "runId": "stability-1787686949622"
+    },
+    {
+      "at": "2026-08-25T19:42:33.081Z",
+      "path": "/api/mobile/catalog/products?q=rc104",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 836,
+      "runId": "stability-1787686949622"
+    },
+    {
+      "at": "2026-08-25T19:42:33.490Z",
+      "path": "/api/products/cmt8zlwha007ely016z0z2qz8",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 108,
+      "runId": "stability-1787686949622"
+    },
+    {
+      "at": "2026-08-25T19:42:34.337Z",
+      "path": "/api/admin/moderation",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 115,
+      "runId": "stability-1787686949622"
+    }
+  ],
+  "transportErrors": [],
+  "application500s": [],
+  "application500Count": 0,
+  "transportErrorCount": 0,
+  "latencyMs": {
+    "p50": 402,
+    "p95": 836,
+    "samples": 7
+  },
+  "verdict": "PASS"
+}

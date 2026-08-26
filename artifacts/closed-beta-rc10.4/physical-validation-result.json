@@ -1,0 +1,62 @@
+{
+  "candidate": "RC10.4",
+  "generatedAt": "2026-08-26T06:30:00Z",
+  "status": "FAIL",
+  "verdict": "BLOCKED_FOR_BETA",
+  "physicalValidation": "FAIL",
+  "tester": "physical Android (operator)",
+  "environment": {
+    "versionName": "0.1.15-beta.5",
+    "versionCode": 20,
+    "channel": "CLOSED_BETA",
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "railwaySha": "c078c3a"
+  },
+  "failures": [
+    {
+      "id": "P0-TABS",
+      "severity": "P0",
+      "symptom": "Selected tab «Активные» shows cards with badges «На проверке» or «Сохранён», or empty state while cards exist",
+      "classification": "CLIENT_STATE_BUG",
+      "rootCauseHypothesis": "Tab chip updated UI without authoritative refetch; stale list from previous tab; out-of-order responses"
+    },
+    {
+      "id": "P0-FLICKER",
+      "severity": "P0",
+      "symptom": "Same seller/tab — product appears, disappears, reappears",
+      "classification": "CLIENT_RACE",
+      "rootCauseHypothesis": "No request sequencing; older fetch overwrites newer tab"
+    },
+    {
+      "id": "P0-SEARCH",
+      "severity": "P1",
+      "symptom": "Seller search «Поиск по вашим ЛОТам» cannot find LOT (e.g. «Жидкость для вэйпа»)",
+      "classification": "CLIENT_SEARCH_ONLY",
+      "rootCauseHypothesis": "Client-side filter on stale/wrong tab data; no server q parameter"
+    },
+    {
+      "id": "P0-MODERATION-OPS",
+      "severity": "P0",
+      "symptom": "LOT remains «На проверке» with no completion",
+      "classification": "OPERATIONAL_GAP",
+      "rootCauseHypothesis": "SHADOW mode + no human moderator action — not a state-machine bug"
+    },
+    {
+      "id": "P0-POLICY",
+      "severity": "P1",
+      "symptom": "Test product «Жидкость для вэйпа» — policy classification unclear",
+      "classification": "POLICY_GAP",
+      "rootCauseHypothesis": "No vape/nicotine rule; requires human review"
+    }
+  ],
+  "exampleProduct": {
+    "title": "Жидкость для вэйпа",
+    "priceRub": 400,
+    "note": "Exact Product.id not resolved on demo seller — physical account may differ"
+  },
+  "promotionPolicy": {
+    "rc104": "BLOCKED_FOR_BETA",
+    "doNotBuild": "RC10.5 until physical retest PASS",
+    "nextVerdict": "READY_FOR_PHYSICAL_RETEST after fix deploy"
+  }
+}

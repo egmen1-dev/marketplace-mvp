@@ -5,7 +5,7 @@ import { Alert, Animated, Pressable, StyleSheet, Text, View } from "react-native
 import { loadAppConfig } from "../../config/env";
 import { usePressScale } from "../../hooks/usePressScale";
 import { formatPrice, resolveImageUrl } from "../../utils/format";
-import { productStatusLabel, productStatusTone, moderationStatusLabel } from "../../theme/status-labels";
+import { productStatusLabel, productStatusTone, moderationStatusLabel, sellerLotSectionTone } from "../../theme/status-labels";
 import { colors, layout, radii, shadows, spacing, typography } from "../../theme/tokens";
 import type { MobileProductListItem } from "../../api/endpoints";
 import { Badge } from "./primitives";
@@ -23,10 +23,17 @@ export function SellerProductCard({
   const config = loadAppConfig();
   const { scale, onPressIn, onPressOut } = usePressScale(0.98);
   const imageUrl = resolveImageUrl(product.primaryImage?.url ?? null, config.apiBaseUrl);
-  const tone = productStatusTone(product.status);
-  const moderationLabel = moderationStatusLabel(
-    (product as MobileProductListItem & { moderationState?: string | null }).moderationState,
-  );
+  const section = (product as MobileProductListItem & { sellerSection?: string }).sellerSection;
+  const sectionLabel =
+    (product as MobileProductListItem & { sellerSectionLabel?: string }).sellerSectionLabel ??
+    moderationStatusLabel(
+      (product as MobileProductListItem & { moderationState?: string | null }).moderationState,
+    ) ??
+    productStatusLabel(product.status);
+  const tone =
+    section && ["active", "pending", "needs_fix", "rejected", "drafts", "sold"].includes(section)
+      ? sellerLotSectionTone(section as "active" | "pending" | "needs_fix" | "rejected" | "drafts" | "sold")
+      : productStatusTone(product.status);
 
   function openMenu() {
     Alert.alert(product.title, "Действия с ЛОТом", [
@@ -48,7 +55,7 @@ export function SellerProductCard({
           </Text>
           <Text style={styles.price}>{formatPrice(product.price)}</Text>
           <View style={styles.meta}>
-            <Badge label={moderationLabel ?? productStatusLabel(product.status)} tone={moderationLabel ? "warning" : tone} />
+            <Badge label={sectionLabel} tone={tone} />
             <Text style={styles.metaText}>Остаток {product.stock ?? 0}</Text>
             <Text style={styles.metaText}>{product.views ?? 0} просм.</Text>
           </View>

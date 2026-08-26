@@ -103,6 +103,7 @@
     "mobile:lot-dynamic-characteristics:smoke": "node scripts/mobile-lot-dynamic-characteristics-staging-smoke.mjs",
     "mobile:lot-dynamic-characteristics:gate": "tsx scripts/mobile-lot-dynamic-characteristics-gate.ts",
     "mobile:lot-moderation:gate": "tsx scripts/mobile-lot-moderation-gate.ts",
+    "mobile:my-lots-consistency:gate": "tsx scripts/mobile-my-lots-consistency-gate.ts",
     "mobile:rc10.4:moderation-acceptance": "node scripts/rc10.4-moderation-staging-acceptance.mjs",
     "mobile:rc10.4:cleanup-acceptance": "node scripts/rc10.4-cleanup-acceptance-http.mjs",
     "staging:cleanup:rc10.4": "tsx scripts/staging-cleanup-rc10.4.ts",
