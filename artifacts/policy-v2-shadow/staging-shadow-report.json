@@ -1,27 +1,611 @@
 {
-  "generatedAt": "2026-08-26T07:55:00.000Z",
+  "generatedAt": "2026-08-26T09:43:07.162Z",
   "mode": "SHADOW",
-  "status": "NOT_RUN",
-  "reason": "Staging deploy and DATABASE_URL required for real listing sample",
-  "fixtureShadow": {
-    "textFixtures": 121,
-    "imageFixtures": 12,
-    "agreementRate": 1,
-    "criticalFalseNegatives": 0,
-    "falsePositives": 0,
-    "ocrCoverage": "EVALUATED_ON_PIXEL_FIXTURES",
-    "imageCoverage": "OCR_QR_DERIVED_SIGNALS_OPERATIONAL",
-    "visualClassification": "UNAVAILABLE_WITHOUT_CLOUD_CV"
+  "evaluationMode": "HTTP_FALLBACK",
+  "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "deployedSha": "135fdf8",
+  "sampleSizeReal": 50,
+  "sampleSizeSynthetic": 0,
+  "decisionDistribution": {
+    "ALLOW": 44,
+    "HARD_BLOCK": 4,
+    "RESTRICTED_REVIEW": 2
   },
-  "stagingSample": {
-    "sampleSize": 0,
-    "decisionDistribution": {},
-    "humanAgreement": null,
-    "providerFailures": 0,
-    "notEvaluatedCount": null
+  "humanComparison": {
+    "INSUFFICIENT_EVIDENCE": 50
   },
+  "criticalFalseNegatives": 0,
+  "criticalFalseNegativeCases": [],
+  "hardFalsePositives": 0,
+  "manualReviewFalsePositives": 0,
+  "ocrCoverage": {
+    "evaluated": 35,
+    "failed": 0,
+    "unavailable": 0,
+    "noImages": 15
+  },
+  "imageCoverage": {
+    "partial": 35,
+    "failed": 0
+  },
+  "qrCoverage": "OPERATIONAL_ON_PIXEL_FIXTURES",
+  "pixelOcr": "OPERATIONAL",
+  "visualObjectClassification": "UNAVAILABLE",
+  "providerFailures": 0,
+  "notEvaluatedDimensions": 0,
+  "medianLatencyMs": 407,
+  "p95LatencyMs": 3889,
+  "cacheHitRate": 0,
+  "guardedAutoEligibleCount": 44,
+  "guardedAutoEligiblePercent": 0.88,
+  "humanAgreementRate": null,
   "automationVerdict": "NOT_READY_FOR_AUTOMATION",
   "guardedAuto": "DISABLED",
   "enforce": "DISABLED",
-  "rc105": "NOT_STARTED"
+  "rc105": "NOT_STARTED",
+  "policyGaps": [],
+  "rows": [
+    {
+      "productId": "cmsmzsjx0002xy0w60fa73kqf",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 608
+    },
+    {
+      "productId": "cmssvqouc000ijsf23cbho4ln",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "HARD_BLOCK",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "notEvaluated": [],
+      "latencyMs": 1714
+    },
+    {
+      "productId": "cmsmzt6lr004fy0w6wzhy1t32",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 316
+    },
+    {
+      "productId": "cmsmzt7wr004iy0w6s7m7s5mu",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 407
+    },
+    {
+      "productId": "cmsmzt0ef0040y0w6zswthc68",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 4032
+    },
+    {
+      "productId": "cmsmzsgqg002qy0w6zgmwjw2z",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 891
+    },
+    {
+      "productId": "cmsmzt4d00049y0w6cy6x2eg3",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "HARD_BLOCK",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [
+        "LOT_WEAPON_FIREARM_V2"
+      ],
+      "notEvaluated": [],
+      "latencyMs": 306
+    },
+    {
+      "productId": "cmsmzssxo003iy0w6zqfiyiyp",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 393
+    },
+    {
+      "productId": "cmsmzt926004ly0w6xyg5xjhr",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 411
+    },
+    {
+      "productId": "cmsmzsifg002uy0w6tpm0xoir",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 299
+    },
+    {
+      "productId": "cmssvqpbr000ujsf2txeuhkl9",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "HARD_BLOCK",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "notEvaluated": [],
+      "latencyMs": 398
+    },
+    {
+      "productId": "cmsmztfua0053y0w6oa84gjyw",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 561
+    },
+    {
+      "productId": "cmsmzt2zl0046y0w6hq6c0ke3",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 966
+    },
+    {
+      "productId": "cmsmzsohi0039y0w6sq0lomij",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 739
+    },
+    {
+      "productId": "cmsmzsm5i0033y0w6ezzr1vrw",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 3889
+    },
+    {
+      "productId": "cmsmztbcn004ry0w6hktu7i1f",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 302
+    },
+    {
+      "productId": "cmsmzsu5f003ly0w6ijiytrlp",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 1139
+    },
+    {
+      "productId": "cmsmztdlf004xy0w69cddjnkj",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 1340
+    },
+    {
+      "productId": "cmsmzt5h9004cy0w6pmejg0ga",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 3998
+    },
+    {
+      "productId": "cmsmzsrq0003fy0w6vmdzpw4m",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 1060
+    },
+    {
+      "productId": "cmsmzsvjt003oy0w6uuo3544m",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 563
+    },
+    {
+      "productId": "cmsmzta7u004oy0w6jvnjkaam",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 449
+    },
+    {
+      "productId": "cmsmzsl1d0030y0w6l1i6qews",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 961
+    },
+    {
+      "productId": "cmsmzt1io0043y0w6q9vq2luc",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 442
+    },
+    {
+      "productId": "cmsmzsxzc003uy0w6gwkk2qvh",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 416
+    },
+    {
+      "productId": "cmsmztcgw004uy0w6xfbwa45v",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 392
+    },
+    {
+      "productId": "cmsmzsn9s0036y0w6aa6kaz5g",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 421
+    },
+    {
+      "productId": "cmsmztepk0050y0w6tqujeym5",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "RESTRICTED_REVIEW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [
+        "LOT_COSMETICS_V2"
+      ],
+      "notEvaluated": [],
+      "latencyMs": 664
+    },
+    {
+      "productId": "cmsmzswrk003ry0w6lm0sifsq",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 436
+    },
+    {
+      "productId": "cmsmzspp8003cy0w66dp9dskd",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 262
+    },
+    {
+      "productId": "cmsmzsz6y003xy0w6xzg26iau",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "RESTRICTED_REVIEW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [
+        "LOT_COSMETICS_V2"
+      ],
+      "notEvaluated": [],
+      "latencyMs": 596
+    },
+    {
+      "productId": "cmssvqoas000ajsf24b4e59hj",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "HARD_BLOCK",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [
+        "LOT_ADULT_CONTENT_V2"
+      ],
+      "notEvaluated": [],
+      "latencyMs": 1015
+    },
+    {
+      "productId": "cmsq336rx00p7qt1m9y84auec",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 130
+    },
+    {
+      "productId": "cmsq2n32q00ekqt1m5vf2xa1e",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 123
+    },
+    {
+      "productId": "cmsq0llv3003xqt1mhhi4r1dt",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 93
+    },
+    {
+      "productId": "cmsot58ph00ucs01msdzo7kjd",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 96
+    },
+    {
+      "productId": "cmsope5tb0005pd1mhrlshnkt",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 92
+    },
+    {
+      "productId": "cmsvn0tj1000fjsm4tzgwn10k",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 612
+    },
+    {
+      "productId": "cmsrlb62s00b6lt01f8lmx5ql",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 94
+    },
+    {
+      "productId": "cmsqdoiix0006n21my0jj7ifs",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 97
+    },
+    {
+      "productId": "cmsqa259h0001n01mgpy90myp",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 92
+    },
+    {
+      "productId": "cmsq9mbl1000mr21m596rfu37",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 93
+    },
+    {
+      "productId": "cmsq3e0hw00tuqt1msxnf7e4c",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 90
+    },
+    {
+      "productId": "cmsopgtam0036pd1mak0sm05e",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 98
+    },
+    {
+      "productId": "cmsopgj8s002mpd1mje4d3itz",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 107
+    },
+    {
+      "productId": "cmsopftxa0026pd1md70mb20u",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 92
+    },
+    {
+      "productId": "cmsopfdza0013pd1mrxxdu692",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 95
+    },
+    {
+      "productId": "cmsopegmb000npd1mq3cjhq3m",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 96
+    },
+    {
+      "productId": "cmt92qep300f9ly013okngzbo",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 251
+    },
+    {
+      "productId": "cmt92q3vc00clly01fpf3pp03",
+      "name": "",
+      "group": "A_ORDINARY",
+      "policyDecision": "ALLOW",
+      "humanStatus": null,
+      "comparison": "INSUFFICIENT_EVIDENCE",
+      "rulesTriggered": [],
+      "notEvaluated": [],
+      "latencyMs": 216
+    }
+  ]
 }

@@ -1,0 +1,306 @@
+{
+  "generatedAt": "2026-08-26T09:37:59.069Z",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "caseCount": 9,
+  "results": [
+    {
+      "id": "safe-drill",
+      "source": "fixture",
+      "imageHash": "22e6a4f87cdf944632ad688e102dd2866a72bd1fea9038879a9d91ec54d4ce7d",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "Bosch GSR 120\nДрель аккумуляторная",
+      "ocrConfidence": 0.95,
+      "imageStatus": "EVALUATED",
+      "signals": [],
+      "qrDetected": false,
+      "rulesTriggered": [],
+      "recommendation": "ALLOW",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": true,
+        "blockingReasons": []
+      },
+      "notEvaluated": [],
+      "conflicts": [],
+      "latencyMs": 369,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "cyrillic-packaging",
+      "source": "fixture",
+      "imageHash": "ef6f18d120482ea53d7805675d43f2f93ed53398c8a468ccb47db913d9cf3d3c",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "Состав: вода, соль\nСрок годности 2027",
+      "ocrConfidence": 0.95,
+      "imageStatus": "EVALUATED",
+      "signals": [],
+      "qrDetected": false,
+      "rulesTriggered": [],
+      "recommendation": "ALLOW",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": true,
+        "blockingReasons": []
+      },
+      "notEvaluated": [],
+      "conflicts": [],
+      "latencyMs": 69,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "mixed-latin-cyrillic",
+      "source": "fixture",
+      "imageHash": "4b5714c675da468b7a30b0291c2a07d83653f6bd167b31a097861ad250b49f46",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "NICOTINE FREE\nбез никотина\n0 mg/ml",
+      "ocrConfidence": 0.95,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "nicotine_text_on_packaging"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2"
+      ],
+      "recommendation": "HARD_BLOCK",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "NOT_EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": false,
+        "blockingReasons": []
+      },
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:состав,composition,никотин,nicotine,объем,volume"
+      ],
+      "conflicts": [],
+      "latencyMs": 98,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "phone-on-image",
+      "source": "fixture",
+      "imageHash": "cee475a6360f029e6fc7ab954113f7b86bf9187577f1177273e7ce322472d2ae",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "Звоните +7 999 123-45-67\nTelegram @seller",
+      "ocrConfidence": 0.94,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "contact_phone_in_image",
+        "contact_telegram_in_image"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_CONTACT_IN_IMAGE_V2"
+      ],
+      "recommendation": "MANUAL_REVIEW",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": true,
+        "blockingReasons": []
+      },
+      "notEvaluated": [],
+      "conflicts": [],
+      "latencyMs": 81,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "url-on-image",
+      "source": "fixture",
+      "imageHash": "69e1d1125b12bf2e6fb278194710be419cb579f138b5386d0535e2e661295cc9",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "Купить Ha t.me/shop\nhttps://example.com",
+      "ocrConfidence": 0.92,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "contact_telegram_in_image",
+        "contact_url_in_image"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_CONTACT_IN_IMAGE_V2"
+      ],
+      "recommendation": "MANUAL_REVIEW",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": true,
+        "blockingReasons": []
+      },
+      "notEvaluated": [],
+      "conflicts": [],
+      "latencyMs": 82,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "nicotine-label",
+      "source": "fixture",
+      "imageHash": "5f6a6dea4125f1db7b05a41fd4993a66d653bf6b9905f49e1c10e1c92de52425",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "Жидкость для вейпа\nNICOTINE 20 mg/ml\nМанго",
+      "ocrConfidence": 0.93,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "nicotine_text_on_packaging",
+        "vape_text_on_packaging"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2",
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "recommendation": "HARD_BLOCK",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "NOT_EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": false,
+        "blockingReasons": []
+      },
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:состав,composition,никотин,nicotine,объем,volume"
+      ],
+      "conflicts": [],
+      "latencyMs": 107,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "vape-packaging",
+      "source": "fixture",
+      "imageHash": "9bd99c307386f5df48e906a4f68b3526c2e2569646c7cc1b699bdcc7350cf487",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "POD SYSTEM\nBenn одноразка",
+      "ocrConfidence": 0.88,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "vape_text_on_packaging"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_VAPE_DEVICE_V2",
+        "LOT_VAPE_LIQUID_AMBIGUOUS_V2"
+      ],
+      "recommendation": "HARD_BLOCK",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": true,
+        "blockingReasons": []
+      },
+      "notEvaluated": [],
+      "conflicts": [],
+      "latencyMs": 82,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "ambiguous-bottle",
+      "source": "fixture",
+      "imageHash": "b40234bf4d2c19270db05cd2df6be5040325ae95a0d11db5008b0d75ce8b93bb",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "Ароматизатор\nбез никотина",
+      "ocrConfidence": 0.94,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "nicotine_text_on_packaging"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2"
+      ],
+      "recommendation": "HARD_BLOCK",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": true,
+        "blockingReasons": []
+      },
+      "notEvaluated": [],
+      "conflicts": [],
+      "latencyMs": 48,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    },
+    {
+      "id": "low-contrast",
+      "source": "fixture",
+      "imageHash": "e0e4cb7918f9dbf074eb01ac9b9ea9706a75fbb7e01425f64cf3e03913150851",
+      "ocrStatus": "EVALUATED",
+      "ocrText": "nicotine 20mg",
+      "ocrConfidence": 0.96,
+      "imageStatus": "EVALUATED",
+      "signals": [
+        "nicotine_text_on_packaging"
+      ],
+      "qrDetected": false,
+      "rulesTriggered": [
+        "LOT_NICOTINE_PRODUCT_V2",
+        "LOT_NICOTINE_LIQUID_V2"
+      ],
+      "recommendation": "HARD_BLOCK",
+      "evaluationCompleteness": {
+        "textEvaluated": "EVALUATED",
+        "categoryEvaluated": "NOT_APPLICABLE",
+        "characteristicsEvaluated": "NOT_EVALUATED",
+        "imagesEvaluated": "EVALUATED",
+        "ocrEvaluated": "EVALUATED",
+        "allRequiredEvaluated": false,
+        "blockingReasons": []
+      },
+      "notEvaluated": [
+        "MISSING_REQUIRED_CHARACTERISTICS:состав,composition,никотин,nicotine,объем,volume"
+      ],
+      "conflicts": [],
+      "latencyMs": 41,
+      "providerFailure": false,
+      "notAllowOnFailure": true
+    }
+  ],
+  "failureSimulation": {
+    "decision": "NOT_EVALUATED",
+    "notEvaluated": [
+      "IMAGE_EVALUATION_PENDING"
+    ],
+    "notAllow": true
+  },
+  "vapeCases": {
+    "noNicotineEvidence": "HARD_BLOCK",
+    "nicotineEvidence": "HARD_BLOCK",
+    "accessory": "MANUAL_REVIEW"
+  },
+  "verdict": "PASS"
+}

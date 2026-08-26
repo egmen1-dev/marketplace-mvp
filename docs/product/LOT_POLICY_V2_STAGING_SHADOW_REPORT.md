@@ -1,40 +1,56 @@
 # LOT Policy V2 — Staging Shadow Report
 
-**EPIC:** 189.1  
-**Mode:** SHADOW (no publication changes)  
-**Generated:** 2026-08-26 (fixture validation; staging DB pending deploy)
+**EPIC:** 190.1  
+**Generated:** 2026-08-26T09:43:07.162Z  
+**Mode:** SHADOW (no publication mutations)  
+**Evaluation:** HTTP_FALLBACK  
+**Staging SHA:** 135fdf8
 
----
+## Sample
 
-## Summary
+| Metric | Value |
+|--------|-------|
+| Real listings | 50 |
+| Synthetic fixtures | 0 |
+| Human agreement | NOT_RUN (no DATABASE_URL human records) |
 
-| Metric | Fixture shadow | Staging (pending) |
-|--------|----------------|-------------------|
-| Sample size | 121 text + 12 image fixtures | NOT_RUN (requires staging deploy + DATABASE_URL) |
-| Agreement (fixtures) | 100% | — |
-| OCR coverage | EVALUATED on pixel fixtures | — |
-| Image coverage | QR + OCR-derived signals EVALUATED | — |
-| Provider failures | 0 on fixtures | — |
-| Critical false negatives | 0 | — |
-| NOT_EVALUATED (pending pixel) | URL-only image hints without bytes | — |
+## Policy decisions
 
----
+- **ALLOW**: 44
+- **HARD_BLOCK**: 4
+- **RESTRICTED_REVIEW**: 2
+
+## Critical safety
+
+| Metric | Count |
+|--------|-------|
+| Critical false negatives | 0 |
+| Hard false positives | 0 |
+| Manual-review false positives | 0 |
+
+## Image / OCR honesty
+
+| Capability | Status |
+|------------|--------|
+| Pixel OCR | OPERATIONAL |
+| QR | OPERATIONAL |
+| Visual object classification | UNAVAILABLE |
+
+## Latency / cost
+
+- Median: 407ms
+- P95: 3889ms
+- Cache hit rate: 0.0%
+
+## GUARDED_AUTO simulation
+
+Eligible: 44 (88.0% of real sample)
 
 ## Automation verdict
 
-**`NOT_READY_FOR_AUTOMATION`** — pixel OCR + QR/OCR-derived image signals operational on fixtures; **staging human comparison not yet run**.
+**`NOT_READY_FOR_AUTOMATION`**
 
-`GUARDED_AUTO` and `ENFORCE` remain **disabled**.
-
----
-
-## Next steps after staging deploy
-
-1. Run `npm run moderation:policy-v2:shadow` against staging listings
-2. Compare system recommendation vs human moderator decisions
-3. Update this report with `artifacts/policy-v2-shadow/staging-shadow-report.json`
-
----
+GUARDED_AUTO and ENFORCE remain **disabled**.
 
 ## RC10.5
 

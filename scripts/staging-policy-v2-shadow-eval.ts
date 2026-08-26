@@ -62,12 +62,49 @@ async function httpFallbackSample(): Promise<StagingProductEvalRow[]> {
 
   for (const item of body.items ?? []) {
     const started = Date.now();
+    let detail: {
+      name?: string;
+      description?: string | null;
+      category?: { slug?: string } | null;
+      productType?: { slug?: string } | null;
+      images?: Array<{ id: string; url: string; alt?: string | null }>;
+      characteristicValues?: Array<{
+        definition?: { name?: string };
+        valueText?: string | null;
+        valueNumber?: number | string | null;
+        valueBoolean?: boolean | null;
+      }>;
+    } | null = null;
+
+    try {
+      const detailRes = await fetch(`${STAGING}/api/products/${item.id}`, {
+        signal: AbortSignal.timeout(20000),
+      });
+      if (detailRes.ok) {
+        detail = (await detailRes.json()) as typeof detail;
+      }
+    } catch {
+      detail = null;
+    }
+
+    const title = detail?.name ?? item.name ?? "";
+    const description = detail?.description ?? item.description ?? "";
+    const images = detail?.images ?? (item.imageUrl ? [{ id: item.id, url: item.imageUrl, alt: null }] : []);
+
+    const resolveImageUrl = (url: string) =>
+      url.startsWith("http") ? url : `${STAGING}${url.startsWith("/") ? "" : "/"}${url}`;
+
     let imageEvaluation = null;
-    if (item.imageUrl) {
+    if (images.length > 0) {
       const { evaluateLotImages } = await import("@/lib/moderation/providers/evaluate-lot-images");
       try {
         imageEvaluation = await evaluateLotImages({
-          images: [{ imageId: item.id, url: item.imageUrl, sortOrder: 0 }],
+          images: images.map((img, idx) => ({
+            imageId: img.id,
+            url: resolveImageUrl(img.url),
+            alt: img.alt ?? null,
+            sortOrder: idx,
+          })),
         });
       } catch {
         imageEvaluation = null;
@@ -75,20 +112,30 @@ async function httpFallbackSample(): Promise<StagingProductEvalRow[]> {
     }
 
     const policy = evaluateLotPolicyV2({
-      title: item.name,
-      description: item.description ?? null,
-      categorySlug: item.categorySlug ?? null,
-      imageUrls: item.imageUrl ? [item.imageUrl] : [],
+      title,
+      description,
+      categorySlug: detail?.category?.slug ?? item.categorySlug ?? null,
+      productTypeSlug: detail?.productType?.slug ?? null,
+      characteristics: (detail?.characteristicValues ?? []).map((row) => ({
+        name: row.definition?.name ?? "unknown",
+        value:
+          row.valueText ??
+          (row.valueNumber != null ? Number(row.valueNumber) : null) ??
+          (row.valueBoolean != null ? (row.valueBoolean ? "true" : "false") : null),
+      })),
+      imageUrls: images.map((i) => resolveImageUrl(i.url)),
+      imageAltTexts: images.map((i) => i.alt ?? ""),
+      imageIds: images.map((i) => i.id),
       imageEvaluation,
     });
 
     rows.push({
       productId: item.id,
-      name: item.name,
-      group: /^(rc\d|test-)/i.test(item.name) ? "C_SYNTHETIC" : "A_ORDINARY",
-      categorySlug: item.categorySlug ?? null,
-      productTypeSlug: null,
-      imageCount: item.imageUrl ? 1 : 0,
+      name: title,
+      group: /^(rc\d|test-)/i.test(title) ? "C_SYNTHETIC" : "A_ORDINARY",
+      categorySlug: detail?.category?.slug ?? item.categorySlug ?? null,
+      productTypeSlug: detail?.productType?.slug ?? null,
+      imageCount: images.length,
       policyDecision: policy.decisionClass,
       systemRecommendation: policy.decisionClass,
       riskScore: Math.round((1 - policy.confidence) * 100),
@@ -106,8 +153,8 @@ async function httpFallbackSample(): Promise<StagingProductEvalRow[]> {
       ocrStatus: imageEvaluation?.ocrStatus ?? null,
       imageStatus: imageEvaluation?.imageStatus ?? null,
       cacheHits: 0,
-      ocrCalls: item.imageUrl ? 1 : 0,
-      imageCalls: item.imageUrl ? 1 : 0,
+      ocrCalls: images.length,
+      imageCalls: images.length,
     });
   }
   return rows;
