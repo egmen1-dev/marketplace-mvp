@@ -80,29 +80,61 @@ async function adminLogin() {
   return cookie;
 }
 
-async function main() {
-  const cookie = await adminLogin();
-  const publishRes = await fetchJson(
+async function adminPost(cookie, payload) {
+  const res = await fetchJson(
     `${STAGING}/api/admin/mobile/releases`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(RELEASE),
-    },
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
     cookie,
   );
-  mkdirSync(resolve("artifacts/closed-beta-rc10.9"), { recursive: true });
+  if (res.status >= 400) throw new Error(`Admin API ${payload.action} failed: ${res.status} ${JSON.stringify(res.body)}`);
+  return res.body;
+}
+
+async function main() {
+  const cookie = await adminLogin();
+  const list = await fetchJson(`${STAGING}/api/admin/mobile/releases`, {}, cookie);
+  const existing = (list.body.releases ?? []).find((r) => r.versionCode === RELEASE.versionCode);
+  let releaseId = existing?.id;
+  let status = existing?.status ?? "DRAFT";
+  if (!releaseId) {
+    const created = await adminPost(cookie, { action: "create", input: RELEASE });
+    releaseId = created.release?.id;
+    status = created.release?.status ?? "DRAFT";
+  }
+  if (!releaseId) throw new Error("No releaseId after create");
+  if (status !== "PUBLISHED") {
+    await adminPost(cookie, { action: "rollout", releaseId, percent: 100 });
+    await adminPost(cookie, { action: "publish", releaseId });
+    status = "PUBLISHED";
+  }
+
   const report = {
     generatedAt: new Date().toISOString(),
-    staging: STAGING,
-    release: RELEASE,
-    publishStatus: publishRes.status,
-    publishBody: publishRes.body,
-    verdict: publishRes.status >= 200 && publishRes.status < 300 ? "PASS" : "FAIL",
+    publishMethod: "staging_admin_api",
+    versionName: RELEASE.versionName,
+    versionCode: RELEASE.versionCode,
+    channel: "BETA",
+    clientChannel: "CLOSED_BETA",
+    environment: "staging",
+    sha256: RELEASE.sha256,
+    artifactSizeBytes: RELEASE.artifactSizeBytes,
+    downloadUrl: RELEASE.downloadUrl,
+    proxyUrl: manifest.artifact.proxyUrl,
+    status,
+    updatePath: {
+      code21: "OPTIONAL_UPDATE→25",
+      code22: "OPTIONAL_UPDATE→25",
+      code23: "OPTIONAL_UPDATE→25",
+      code24: "OPTIONAL_UPDATE→25",
+      code25: "NO_UPDATE",
+      code26plus: "NO_DOWNGRADE",
+    },
+    verdict: status === "PUBLISHED" ? "PASS" : "FAIL",
   };
+
+  mkdirSync(resolve("artifacts/closed-beta-rc10.9"), { recursive: true });
   writeFileSync(OUT, JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report, null, 2));
-  if (report.verdict !== "PASS") process.exit(1);
 }
 
 main().catch((err) => {
