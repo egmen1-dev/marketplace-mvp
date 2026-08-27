@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-08-27T13:40:00.000Z",
+  "gates": {
+    "build": "PASS",
+    "mobile:typecheck": "PASS",
+    "mobile:update-journey:gate": "PASS",
+    "mobile:android-update-install:gate": "PASS",
+    "mobile:update-device-bridge:gate": "PASS",
+    "mobile:seller-journey:gate": "PASS",
+    "mobile:create-lot-preview:gate": "PASS",
+    "mobile:lot-publish-truth:gate": "PASS",
+    "mobile:my-lots-consistency:gate": "PASS",
+    "mobile:seller-photo-upload:gate": "PASS",
+    "mobile:lot-moderation:gate": "PASS",
+    "staging:backend-stability:gate": "PASS",
+    "release:migration:verify": "PASS",
+    "release:railway-runtime:verify": "PASS",
+    "release:pipeline:verify": "PASS",
+    "mobile:pre-physical:v3": "PASS"
+  },
+  "PHYSICAL_ANDROID_PROOF": "NOT_RUN"
+}

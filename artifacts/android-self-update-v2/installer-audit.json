@@ -1,0 +1,7 @@
+{
+  "openApkInstaller": "IntentLauncher VIEW + contentUri",
+  "mime": "application/vnd.android.package-archive",
+  "flag": "FLAG_GRANT_READ_URI_PERMISSION",
+  "manifest": "REQUEST_INSTALL_PACKAGES",
+  "unknownSources": "MANAGE_UNKNOWN_APP_SOURCES → INSTALL_PERMISSION_REQUIRED"
+}

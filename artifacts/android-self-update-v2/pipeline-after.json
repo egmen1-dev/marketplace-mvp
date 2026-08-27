@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-08-27T13:36:07.395Z",
+  "flow": "CTA → downloadUpdate → startApkDownload → cache lookup → File.downloadFileAsync → SHA → content URI → Android installer",
+  "stages": [
+    {
+      "stage": "UPDATE_CTA",
+      "input": "user tap",
+      "output": "downloadUpdate()",
+      "throws": "silent return if no updateInfo",
+      "sideEffects": "UPDATE_CTA_PRESS diagnostic",
+      "stateTransition": "UPDATE_AVAILABLE → DOWNLOAD_PREPARING",
+      "diagnosticEvent": "UPDATE_CTA_PRESS"
+    },
+    {
+      "stage": "CACHE_LOOKUP",
+      "input": "versionCode + sha256 + artifactSizeBytes",
+      "output": "CACHE_MISS | CACHE_FOUND | CACHE_VALID | CACHE_INVALID",
+      "throws": "CACHE_IO → fallback fresh download",
+      "sideEffects": "may delete corrupted cache file",
+      "stateTransition": "CACHE_VALID → VERIFIED",
+      "diagnosticEvent": "CACHE_CHECK_STARTED"
+    },
+    {
+      "stage": "HTTP_DOWNLOAD",
+      "input": "downloadUrl + destination File",
+      "output": "on-disk APK",
+      "throws": "DOWNLOAD_NETWORK | DOWNLOAD_HTTP | DOWNLOAD_TIMEOUT",
+      "sideEffects": "partial file on Android if interrupted",
+      "stateTransition": "DOWNLOAD_STARTED → DOWNLOAD_PROGRESS → DOWNLOAD_COMPLETE",
+      "diagnosticEvent": "DOWNLOAD_HTTP_STARTED"
+    },
+    {
+      "stage": "INTEGRITY",
+      "input": "file size + sha256 + artifactSizeBytes",
+      "output": "verified file or delete + error",
+      "throws": "VERIFY_SHA_MISMATCH | DOWNLOAD_SIZE_MISMATCH",
+      "sideEffects": "delete corrupted APK",
+      "stateTransition": "VERIFYING → VERIFIED",
+      "diagnosticEvent": "SHA_VERIFY_COMPLETE"
+    },
+    {
+      "stage": "INSTALLER",
+      "input": "verified File.contentUri",
+      "output": "Android package installer intent",
+      "throws": "INSTALL_PERMISSION | INSTALL_INTENT",
+      "sideEffects": "FLAG_GRANT_READ_URI_PERMISSION",
+      "stateTransition": "INSTALLER_PREPARING → INSTALLER_HANDOFF → INSTALLER_OPENED",
+      "diagnosticEvent": "INSTALLER_INTENT_OPENED"
+    }
+  ],
+  "note": "V2 uses File.open(FileMode.ReadOnly).readBytes(chunk) for SHA — no arrayBuffer",
+  "shaVerifier": {
+    "APK_SHA_IMPLEMENTATION": "CHUNKED",
+    "FULL_FILE_JS_ARRAYBUFFER": "NO",
+    "chunkBytes": 262144
+  }
+}

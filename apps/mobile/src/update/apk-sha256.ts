@@ -1,29 +1,48 @@
-import { File } from "expo-file-system";
+import { File, FileMode } from "expo-file-system";
 
-function bytesToHex(bytes: Uint8Array): string {
-  return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
+import {
+  APK_SHA_CHUNK_BYTES,
+  createIncrementalSha256,
+  normalizeSha256Hex,
+  sha256Matches,
+} from "../../../../lib/mobile/apk-verify/incremental-sha256";
 
-export async function sha256HexFromArrayBuffer(buffer: ArrayBuffer): Promise<string> {
-  if (typeof globalThis.crypto?.subtle?.digest === "function") {
-    const digest = await globalThis.crypto.subtle.digest("SHA-256", buffer);
-    return bytesToHex(new Uint8Array(digest));
+export { normalizeSha256Hex, sha256Matches };
+
+export class ShaVerifyError extends Error {
+  readonly code: "VERIFY_SHA_MISMATCH" | "VERIFY_IO" = "VERIFY_SHA_MISMATCH";
+
+  constructor(message: string, code: "VERIFY_SHA_MISMATCH" | "VERIFY_IO" = "VERIFY_SHA_MISMATCH") {
+    super(message);
+    this.name = "ShaVerifyError";
+    this.code = code;
   }
-  throw new Error("sha256_unavailable");
 }
 
+/** Bounded-memory SHA256 over an on-disk APK via Expo FileHandle.readBytes. */
 export async function sha256HexFromFile(file: File): Promise<string> {
-  return sha256HexFromArrayBuffer(await file.arrayBuffer());
+  const hasher = createIncrementalSha256();
+  const handle = file.open(FileMode.ReadOnly);
+  try {
+    while (true) {
+      const chunk = handle.readBytes(APK_SHA_CHUNK_BYTES);
+      if (chunk.byteLength === 0) break;
+      hasher.update(chunk);
+    }
+    return hasher.digestHex();
+  } catch (err) {
+    throw new ShaVerifyError(
+      err instanceof Error ? err.message : "verify_io_failed",
+      "VERIFY_IO",
+    );
+  } finally {
+    handle.close();
+  }
 }
 
-export function normalizeSha256Hex(value: string | null | undefined): string | null {
-  if (!value) return null;
-  const normalized = value.trim().toLowerCase();
-  return /^[a-f0-9]{64}$/.test(normalized) ? normalized : null;
-}
-
-export function sha256Matches(actual: string, expected: string): boolean {
-  const left = normalizeSha256Hex(actual);
-  const right = normalizeSha256Hex(expected);
-  return Boolean(left && right && left === right);
+/** Test-only helper — not used in APK verification path on device. */
+export async function sha256HexFromArrayBuffer(buffer: ArrayBuffer): Promise<string> {
+  const hasher = createIncrementalSha256();
+  hasher.update(new Uint8Array(buffer));
+  return hasher.digestHex();
 }

@@ -19,10 +19,12 @@ export default function UpdateCheckScreen() {
   const rcLabel = process.env.EXPO_PUBLIC_RC_LABEL ?? "RC8";
   const primaryLabel =
     ui.showDownloading
-      ? UPDATE_UI_LABELS.downloading
-      : ui.showReadyToInstall || ui.showInstallCta
-        ? UPDATE_UI_LABELS.installCta
-        : UPDATE_UI_LABELS.downloadCta;
+      ? ui.progressLabel ?? UPDATE_UI_LABELS.downloading
+      : ui.showVerifying
+        ? ui.progressLabel ?? UPDATE_UI_LABELS.verifying
+        : ui.showReadyToInstall || ui.showInstallCta
+          ? UPDATE_UI_LABELS.installCta
+          : UPDATE_UI_LABELS.downloadCta;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -48,8 +50,15 @@ export default function UpdateCheckScreen() {
 
         {ui.showDownloading ? (
           <>
-            <Text style={styles.title}>{UPDATE_UI_LABELS.downloading}</Text>
+            <Text style={styles.title}>{ui.progressLabel ?? UPDATE_UI_LABELS.downloading}</Text>
             <Text style={styles.hint}>Не закрывайте приложение до завершения загрузки.</Text>
+          </>
+        ) : null}
+
+        {ui.showVerifying ? (
+          <>
+            <Text style={styles.title}>{ui.progressLabel ?? UPDATE_UI_LABELS.verifying}</Text>
+            <Text style={styles.hint}>Это может занять несколько секунд.</Text>
           </>
         ) : null}
 
@@ -96,6 +105,14 @@ export default function UpdateCheckScreen() {
             {needsUnknownSources ? (
               <SecondaryButton label={UPDATE_UI_LABELS.allowInstallCta} onPress={openUnknownSourcesSettings} fullWidth />
             ) : null}
+          </>
+        ) : null}
+
+        {ui.showInstallPermission ? (
+          <>
+            <Text style={styles.title}>{ui.errorTitle ?? UPDATE_UI_LABELS.installPermissionRequired}</Text>
+            <PrimaryButton label={UPDATE_UI_LABELS.allowInstallCta} onPress={openUnknownSourcesSettings} fullWidth />
+            <GhostButton label={UPDATE_UI_LABELS.installCta} onPress={downloadUpdate} fullWidth />
           </>
         ) : null}
       </View>

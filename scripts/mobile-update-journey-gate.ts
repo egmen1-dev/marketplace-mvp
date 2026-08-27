@@ -42,7 +42,7 @@ for (const file of required) {
   if (!existsSync(file)) fail(`missing ${file}`);
 }
 
-run("npm test -- tests/mobile-update-journey.test.ts");
+run("npm test -- tests/mobile-update-journey.test.ts tests/mobile-android-self-update-v2.test.ts");
 
 async function liveMrpContract() {
   const res = await fetch(`${STAGING}/api/mobile/android/update?versionCode=${INSTALLED_CODE}&channel=BETA`, {

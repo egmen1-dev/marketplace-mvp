@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-27T13:40:00.000Z",
+  "epic": "Android Self-Update V2 / Post-Download Hardening",
+  "BASELINE": {
+    "installed": "RC10.5 0.1.15-beta.6 code=21 commit=91b9c1d",
+    "target": "RC10.7 0.1.15-beta.8 code=23 bytes=44411738",
+    "RC10_5_REMOTE_RECOVERY": "FAILED",
+    "MANUAL_BROWSER_BRIDGE": "SUPPORTED"
+  },
+  "FORENSIC_INPUT": {
+    "HTTP_REQUEST_FROM_DEVICE": "YES",
+    "NETWORK_DOWNLOAD_SUCCESS": "PROVEN",
+    "POST_DOWNLOAD_FAILURE": "PROVEN"
+  },
+  "ROOT_CAUSE": {
+    "PROVEN_ROOT_CAUSE": "NOT_PROVEN",
+    "primarySuspect": "SHA_VERIFY via full-file arrayBuffer (forensic suspect only)",
+    "ADDITIONAL_HARDENING": "cache lifecycle, size validation, installer permission UX, diagnostics V2, state machine V2"
+  },
+  "SHA_VERIFICATION": {
+    "APK_SHA_IMPLEMENTATION": "CHUNKED",
+    "FULL_FILE_JS_ARRAYBUFFER": "NO",
+    "APK_VERIFY_PEAK_JS_MEMORY_SAFE": "YES",
+    "chunkBytes": 262144
+  },
+  "PRE_PHYSICAL_V3": "PASS",
+  "APK": "NOT_BUILT",
+  "MRP": "UNCHANGED",
+  "PHYSICAL": "NOT_RUN",
+  "FINAL_VERDICT": "READY_FOR_NEXT_PHYSICAL_BUILD"
+}

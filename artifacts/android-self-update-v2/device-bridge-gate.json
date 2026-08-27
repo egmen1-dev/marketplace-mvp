@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2026-08-27T13:36:09.763Z",
+  "gate": "mobile:update-device-bridge:gate",
+  "verdict": "PASS",
+  "proofs": {
+    "SERVER_TRANSPORT_PROOF": "PASS",
+    "CLIENT_JOURNEY_PROOF": "PASS",
+    "PHYSICAL_ANDROID_PROOF": "NOT_RUN"
+  },
+  "forensicInput": {
+    "HTTP_REQUEST_FROM_DEVICE": "YES",
+    "NETWORK_DOWNLOAD_SUCCESS": "PROVEN",
+    "POST_DOWNLOAD_FAILURE": "PROVEN",
+    "RC10_5_REMOTE_RECOVERY": "FAILED",
+    "MANUAL_BROWSER_BRIDGE": "SUPPORTED"
+  },
+  "shaVerifier": {
+    "APK_SHA_IMPLEMENTATION": "CHUNKED",
+    "FULL_FILE_JS_ARRAYBUFFER": "NO",
+    "APK_VERIFY_PEAK_JS_MEMORY_SAFE": "YES"
+  },
+  "installedCode": 21,
+  "latestCode": 23,
+  "serverTransport": {
+    "httpStatus": 200,
+    "sizeBytes": 44411738,
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
+  },
+  "note": "PHYSICAL_ANDROID_PROOF requires real device execution — never auto-PASS"
+}

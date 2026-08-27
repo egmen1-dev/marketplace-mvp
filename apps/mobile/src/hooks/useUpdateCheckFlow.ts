@@ -10,6 +10,7 @@ import {
   openUnknownSourcesSettings,
   startApkDownload,
   type ApkUpdateFlowState,
+  type DownloadProgressUpdate,
 } from "../update/download-apk";
 import {
   createUpdateActionId,
@@ -19,7 +20,12 @@ import { UPDATE_UI_LABELS } from "../update/update-ui-labels";
 import { UPDATE_ANALYTICS } from "../update/types";
 import { isUpdateEligibleForInstall } from "../utils/update-eligibility";
 import {
-  beginDownload,
+  describeUpdateError,
+  type UpdateErrorClass,
+} from "../../../../lib/mobile/update-journey/error-taxonomy";
+import {
+  applyDownloadFlowState,
+  beginDownloadPreparing,
   beginUpdateCheck,
   buildUpdateScreenUiContract,
   completeDownloadReady,
@@ -29,6 +35,8 @@ import {
   failInstallHandoff,
   failUpdateCheck,
   failVerify,
+  formatDownloadProgressLabel,
+  requireInstallPermission,
   type UpdateJourneySnapshot,
   type UpdateReleaseSnapshot,
 } from "../../../../lib/mobile/update-journey/update-state";
@@ -40,19 +48,34 @@ function toReleaseSnapshot(info: MobileUpdateInfo): UpdateReleaseSnapshot {
     versionCode: info.versionCode,
     sha256: info.sha256,
     downloadUrl: info.downloadUrl,
+    artifactSizeBytes: info.artifactSizeBytes,
   };
 }
 
 function mapFlowErrorToSnapshot(
   snapshot: UpdateJourneySnapshot,
-  code: Parameters<typeof getUpdateErrorMessage>[0],
+  code: UpdateErrorClass,
 ): UpdateJourneySnapshot {
   const message = getUpdateErrorMessage(code);
-  if (code === "sha_verification_failed") return failVerify(snapshot, message);
-  if (code === "install_handoff_failed" || code === "installer_permission_unavailable") {
-    return failInstallHandoff(snapshot, message);
+  const descriptor = describeUpdateError(code);
+  if (descriptor.stage === "verify") return failVerify(snapshot, message, code);
+  if (descriptor.stage === "install") {
+    if (code === "INSTALL_PERMISSION") return requireInstallPermission(snapshot, message);
+    return failInstallHandoff(snapshot, message, code);
   }
-  return failDownload(snapshot, message);
+  if (descriptor.stage === "check") return failUpdateCheck(snapshot, message, code);
+  return failDownload(snapshot, message, code);
+}
+
+function toProgressSnapshot(progress: DownloadProgressUpdate) {
+  const snapshot = {
+    bytesWritten: progress.bytesWritten,
+    totalBytes: progress.totalBytes,
+    percent: progress.percent,
+    label: null as string | null,
+  };
+  snapshot.label = formatDownloadProgressLabel(snapshot);
+  return snapshot;
 }
 
 export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
@@ -63,8 +86,11 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
     availableRelease: null,
     errorStage: null,
     errorMessage: null,
+    errorClass: null,
     activeCheckSequence: 0,
     hasCachedApk: false,
+    updateActionId: null,
+    downloadProgress: null,
   });
   const [needsUnknownSources, setNeedsUnknownSources] = useState(false);
   const ui = useMemo(() => buildUpdateScreenUiContract(snapshot), [snapshot]);
@@ -80,6 +106,7 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
       mandatory: false,
       downloadUrl: snapshot.availableRelease.downloadUrl,
       sha256: snapshot.availableRelease.sha256,
+      artifactSizeBytes: snapshot.availableRelease.artifactSizeBytes,
       releaseNotes: [],
       channel: "BETA",
       rollout: { percent: 100, eligible: true },
@@ -92,7 +119,7 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
     const actionId = createUpdateActionId("update-check");
     const startedAt = Date.now();
     setNeedsUnknownSources(false);
-    setSnapshot(beginUpdateCheck(sequence));
+    setSnapshot(beginUpdateCheck(sequence, actionId));
     recordUpdateJourneyEvent({
       event: "UPDATE_CHECK_STARTED",
       actionId,
@@ -125,17 +152,24 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
 
       let hasCachedApk = false;
       if (info.sha256) {
-        recordUpdateJourneyEvent({ event: "UPDATE_VERIFY_STARTED", actionId, latestCode: info.versionCode });
+        recordUpdateJourneyEvent({
+          event: "CACHE_VERIFY_STARTED",
+          actionId,
+          latestCode: info.versionCode,
+          targetCode: info.versionCode,
+        });
         const cached = await findVerifiedCachedApk({
           versionCode: info.versionCode,
           sha256: info.sha256,
+          expectedSizeBytes: info.artifactSizeBytes,
         });
         hasCachedApk = Boolean(cached);
         recordUpdateJourneyEvent({
-          event: "UPDATE_VERIFY_SUCCESS",
+          event: hasCachedApk ? "CACHE_VALID" : "CACHE_MISS",
           actionId,
           latestCode: info.versionCode,
-          finalState: hasCachedApk ? "READY_TO_INSTALL" : "UPDATE_AVAILABLE",
+          targetCode: info.versionCode,
+          finalState: hasCachedApk ? "VERIFIED" : "UPDATE_AVAILABLE",
         });
       }
 
@@ -153,18 +187,20 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
         actionId,
         installedCode: buildInfo.buildNumber,
         latestCode: info.versionCode,
+        targetCode: info.versionCode,
         durationMs: Date.now() - startedAt,
-        finalState: hasCachedApk ? "READY_TO_INSTALL" : "UPDATE_AVAILABLE",
+        finalState: hasCachedApk ? "VERIFIED" : "UPDATE_AVAILABLE",
       });
     } catch (err) {
       if (!sequenceGuardRef.current.isLatest(sequence)) return;
-      setSnapshot((prev) => failUpdateCheck(prev, UPDATE_UI_LABELS.checkFailed));
+      setSnapshot((prev) => failUpdateCheck(prev, UPDATE_UI_LABELS.checkFailed, "UPDATE_CHECK_NETWORK"));
       recordUpdateJourneyEvent({
         event: "UPDATE_CHECK_FAILED",
         actionId,
         installedCode: buildInfo.buildNumber,
         durationMs: Date.now() - startedAt,
         errorCode: err instanceof Error ? err.message.slice(0, 80) : "check_failed",
+        errorClass: "UPDATE_CHECK_NETWORK",
         finalState: "CHECK_ERROR",
       });
     }
@@ -180,48 +216,73 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
     if (!updateInfo || !snapshot.availableRelease) return;
     const actionId = createUpdateActionId("update-download");
     setNeedsUnknownSources(false);
-    setSnapshot((prev) => beginDownload(prev));
+    setSnapshot((prev) => ({
+      ...beginDownloadPreparing(prev),
+      updateActionId: actionId,
+    }));
+    recordUpdateJourneyEvent({
+      event: "UPDATE_CTA_PRESS",
+      actionId,
+      installedCode: buildInfo.buildNumber,
+      targetCode: updateInfo.versionCode,
+    });
     recordUpdateJourneyEvent({
       event: "UPDATE_DOWNLOAD_STARTED",
       actionId,
       installedCode: buildInfo.buildNumber,
       latestCode: updateInfo.versionCode,
+      targetCode: updateInfo.versionCode,
     });
     await postTelemetry({ screen: "update", event: UPDATE_ANALYTICS.started, errorCode: updateInfo.versionName });
 
-    const runner = snapshot.hasCachedApk ? installCachedApkUpdate : startApkDownload;
+    const useVerifiedCache =
+      snapshot.hasCachedApk &&
+      (snapshot.phase === "VERIFIED" ||
+        snapshot.phase === "INSTALLER_ERROR" ||
+        snapshot.phase === "INSTALL_PERMISSION_REQUIRED");
+    const runner = useVerifiedCache ? installCachedApkUpdate : startApkDownload;
     const result = await runner(updateInfo, {
+      actionId,
       onStateChange: (flowState: ApkUpdateFlowState) => {
-        if (flowState === "DOWNLOADING") {
-          setSnapshot((prev) => beginDownload(prev));
-        }
-        if (flowState === "READY_TO_INSTALL") {
-          setSnapshot((prev) => completeDownloadReady(prev));
-        }
+        setSnapshot((prev) => applyDownloadFlowState(prev, flowState));
+      },
+      onProgress: (progress) => {
+        setSnapshot((prev) => ({
+          ...applyDownloadFlowState(prev, "DOWNLOAD_PROGRESS"),
+          downloadProgress: toProgressSnapshot(progress),
+        }));
       },
     });
 
     if (!result.ok) {
-      const failedPhase =
-        result.code === "sha_verification_failed"
-          ? "VERIFY_ERROR"
-          : result.code === "install_handoff_failed" || result.code === "installer_permission_unavailable"
-            ? "INSTALL_HANDOFF_ERROR"
-            : "DOWNLOAD_ERROR";
+      if (result.state === "INSTALL_PERMISSION_REQUIRED") {
+        setSnapshot((prev) => requireInstallPermission(prev, getUpdateErrorMessage(result.code)));
+        setNeedsUnknownSources(true);
+        recordUpdateJourneyEvent({
+          event: "INSTALL_PERMISSION_REQUIRED",
+          actionId,
+          installedCode: buildInfo.buildNumber,
+          targetCode: updateInfo.versionCode,
+          errorClass: result.code,
+          finalState: "INSTALL_PERMISSION_REQUIRED",
+        });
+        return;
+      }
+
       setSnapshot((prev) => mapFlowErrorToSnapshot(prev, result.code));
       setNeedsUnknownSources(Boolean(result.needsUnknownSources));
       recordUpdateJourneyEvent({
         event:
-          result.code === "sha_verification_failed"
-            ? "UPDATE_VERIFY_FAILED"
-            : result.code === "install_handoff_failed" || result.code === "installer_permission_unavailable"
-              ? "UPDATE_INSTALL_HANDOFF_FAILED"
-              : "UPDATE_DOWNLOAD_STARTED",
+          describeUpdateError(result.code).stage === "verify"
+            ? "SHA_VERIFY_FAILED"
+            : describeUpdateError(result.code).stage === "install"
+              ? "INSTALLER_INTENT_FAILED"
+              : "UPDATE_FLOW_FAILED",
         actionId,
         installedCode: buildInfo.buildNumber,
-        latestCode: updateInfo.versionCode,
-        errorCode: result.code,
-        finalState: failedPhase,
+        targetCode: updateInfo.versionCode,
+        errorClass: result.code,
+        finalState: describeUpdateError(result.code).stage === "verify" ? "VERIFY_ERROR" : "DOWNLOAD_ERROR",
       });
       return;
     }
@@ -230,13 +291,13 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
       result.state === "INSTALLER_OPENED" ? completeInstallerHandoff(prev) : completeDownloadReady(prev),
     );
     recordUpdateJourneyEvent({
-      event: result.state === "INSTALLER_OPENED" ? "UPDATE_INSTALL_HANDOFF" : "UPDATE_DOWNLOAD_SUCCESS",
+      event: result.state === "INSTALLER_OPENED" ? "INSTALLER_INTENT_OPENED" : "UPDATE_DOWNLOAD_SUCCESS",
       actionId,
       installedCode: buildInfo.buildNumber,
-      latestCode: updateInfo.versionCode,
+      targetCode: updateInfo.versionCode,
       finalState: result.state,
     });
-  }, [buildInfo.buildNumber, snapshot.availableRelease, snapshot.hasCachedApk, updateInfo]);
+  }, [buildInfo.buildNumber, snapshot.availableRelease, snapshot.hasCachedApk, snapshot.phase, updateInfo]);
 
   return {
     buildInfo,
