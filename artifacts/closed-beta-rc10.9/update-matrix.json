@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T14:02:33.232Z",
+  "generatedAt": "2026-08-27T14:04:02.617Z",
   "targetCode": 25,
   "bootstrapCode": 24,
   "criticalContract": {
@@ -53,12 +53,12 @@
   ],
   "downloadProof": {
     "url": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=25",
-    "httpStatus": 502,
-    "sizeBytes": 89,
+    "httpStatus": 200,
+    "sizeBytes": 44458174,
     "expectedSizeBytes": 44458174,
     "expectedSha256": "eafa8a877a7e17b35a3699963942220206ac18d9f497cd4f6effc99223db81ab",
-    "actualSha256": "6f5b3a0f2478884ef6081f725f205d02fddc7083200b3fcc5d77a91567e2e46c",
-    "verdict": "FAIL"
+    "actualSha256": "eafa8a877a7e17b35a3699963942220206ac18d9f497cd4f6effc99223db81ab",
+    "verdict": "PASS"
   },
-  "overallVerdict": "FAIL"
+  "overallVerdict": "PASS"
 }
