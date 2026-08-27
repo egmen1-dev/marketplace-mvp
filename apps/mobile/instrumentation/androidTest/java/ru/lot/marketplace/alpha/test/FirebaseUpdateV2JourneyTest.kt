@@ -2,6 +2,7 @@ package ru.lot.marketplace.alpha.test
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiSelector
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -15,10 +16,13 @@ class FirebaseUpdateV2JourneyTest {
         FirebaseQaSupport.tapText("Проверить обновление")
 
         val device = FirebaseQaSupport.device
-        device.wait(UntilText.anyOf("Проверяем обновления", "актуальная версия", "Доступно обновление"), 30_000)
+        FirebaseQaSupport.waitForAnyText(
+            listOf("Проверяем обновления", "актуальная версия", "Доступно обновление"),
+            30_000,
+        )
 
-        val download = device.findObject(By.desc("update-download"))
-        if (download != null) {
+        val download = device.findObject(UiSelector().description("update-download"))
+        if (download.exists()) {
             download.click()
             observeDownloadStages()
         } else {
@@ -26,9 +30,9 @@ class FirebaseUpdateV2JourneyTest {
             return
         }
 
-        val installer = device.findObject(By.pkg("com.android.packageinstaller"))
+        val installerPkg = device.findObject(By.pkg("com.android.packageinstaller"))
             ?: device.findObject(By.pkg("com.google.android.packageinstaller"))
-        val automation = if (installer != null) "PARTIAL" else "UNSUPPORTED"
+        val automation = if (installerPkg != null) "PARTIAL" else "UNSUPPORTED"
         FirebaseQaLogger.stepPass("UPDATE_V2", "INSTALLER_BOUNDARY_REACHED PACKAGE_INSTALLER_AUTOMATION=$automation")
     }
 
@@ -44,7 +48,7 @@ class FirebaseUpdateV2JourneyTest {
         val seen = mutableSetOf<String>()
         while (System.currentTimeMillis() < deadline) {
             for (label in labels) {
-                if (device.findObject(By.textContains(label)) != null) seen.add(label)
+                if (device.findObject(UiSelector().textContains(label)).exists()) seen.add(label)
             }
             if (seen.size >= 2) break
             device.waitForIdle(1_000)
@@ -54,19 +58,5 @@ class FirebaseUpdateV2JourneyTest {
             throw AssertionError("DOWNLOAD stages missing")
         }
         FirebaseQaLogger.stepPass("UPDATE_V2_DOWNLOAD", seen.joinToString(","))
-    }
-}
-
-private object UntilText {
-    fun anyOf(vararg parts: String, timeoutMs: Long = 20_000): Boolean {
-        val device = FirebaseQaSupport.device
-        val deadline = System.currentTimeMillis() + timeoutMs
-        while (System.currentTimeMillis() < deadline) {
-            for (part in parts) {
-                if (device.findObject(By.textContains(part)) != null) return true
-            }
-            device.waitForIdle(300)
-        }
-        return false
     }
 }

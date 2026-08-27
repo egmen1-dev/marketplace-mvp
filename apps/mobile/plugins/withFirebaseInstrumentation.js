@@ -34,15 +34,18 @@ function patchAppBuildGradle(contents) {
         testInstrumentationRunner "${RUNNER}"`,
     );
   }
-  const deps = `
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:rules:1.6.2")
+  const depBlock = `    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
-    androidTestImplementation("com.squareup.okhttp3:okhttp:4.12.0")`;
-  if (!next.includes("androidTestImplementation")) {
-    next = next.replace(/dependencies\s*\{/, `dependencies {${deps}`);
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")`;
+  if (next.includes("androidTestImplementation")) {
+    next = next.replace(
+      /androidTestImplementation\("androidx\.test[\s\S]*?okhttp:4\.12\.0"\)/m,
+      depBlock.trim(),
+    );
+  } else {
+    next = next.replace(/dependencies\s*\{/, `dependencies {\n${depBlock}`);
   }
   return next;
 }
@@ -60,13 +63,17 @@ function withFirebaseInstrumentation(config) {
       const androidRoot = path.join(projectRoot, "android");
       const instrumentationRoot = path.join(projectRoot, "instrumentation");
       const androidTestDest = path.join(androidRoot, "app", "src", "androidTest");
-      const javaDest = path.join(androidTestDest, "java", "ru", "lot", "marketplace", "alpha", "test");
+      const javaSrc = path.join(instrumentationRoot, "androidTest", "java");
+      const javaDest = path.join(androidTestDest, "java");
       const assetsDest = path.join(androidTestDest, "assets");
 
+      if (fs.existsSync(androidTestDest)) {
+        fs.rmSync(androidTestDest, { recursive: true, force: true });
+      }
       fs.mkdirSync(javaDest, { recursive: true });
       fs.mkdirSync(assetsDest, { recursive: true });
 
-      copyDirRecursive(path.join(instrumentationRoot, "androidTest", "java"), javaDest);
+      copyDirRecursive(javaSrc, javaDest);
       copyDirRecursive(path.join(instrumentationRoot, "fixtures"), assetsDest);
 
       const marker = path.join(androidTestDest, ".firebase-qa-synced");

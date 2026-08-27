@@ -67,6 +67,7 @@ next-env.d.ts
 # prisma generated (if custom output is used)
 /app/generated/prisma
 artifacts/*.apk
+artifacts/firebase-test-lab/*.apk
 
 # tesseract traineddata (downloaded at runtime / gate)
 *.traineddata

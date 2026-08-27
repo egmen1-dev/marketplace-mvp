@@ -19,10 +19,25 @@ const MANIFEST = join(OUT, "build-manifest.json");
 const APP_PACKAGE = "ru.lot.marketplace.alpha";
 const TEST_PACKAGE = `${APP_PACKAGE}.test`;
 const RUNNER = "androidx.test.runner.AndroidJUnitRunner";
+const ANDROID_SDK =
+  process.env.ANDROID_HOME ?? process.env.ANDROID_SDK_ROOT ?? join(ROOT, ".android-sdk");
 
 function run(cmd, cwd = ROOT, env = {}) {
   console.log(`[RUN] ${cmd}`);
-  execFileSync(cmd, { cwd, stdio: "inherit", shell: true, env: { ...process.env, ...env } });
+  execFileSync(cmd, {
+    cwd,
+    stdio: "inherit",
+    shell: true,
+    env: { ...process.env, ANDROID_HOME: ANDROID_SDK, ANDROID_SDK_ROOT: ANDROID_SDK, ...env },
+  });
+}
+
+function ensureAndroidSdk() {
+  if (!existsSync(ANDROID_SDK)) {
+    fail(`Android SDK missing at ${ANDROID_SDK}`);
+  }
+  const localProps = join(ANDROID, "local.properties");
+  writeFileSync(localProps, `sdk.dir=${ANDROID_SDK}\n`);
 }
 
 function sha256(file) {
@@ -45,8 +60,9 @@ const buildEnv = {
 run("npx expo prebuild --platform android --clean", MOBILE, buildEnv);
 
 if (!existsSync(ANDROID)) fail("android folder missing after prebuild");
+ensureAndroidSdk();
 
-run("./gradlew assembleDebug assembleDebugAndroidTest", join(ANDROID), buildEnv);
+run("./gradlew :app:assembleDebug :app:assembleDebugAndroidTest", join(ANDROID), buildEnv);
 
 const debugApk = join(ANDROID, "app/build/outputs/apk/debug/app-debug.apk");
 const debugTestApk = join(ANDROID, "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk");

@@ -6,8 +6,12 @@ import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.junit.Assert.fail
+
+private fun qaError(message: String): Nothing = throw AssertionError(message)
 
 object FirebaseQaLogger {
     private const val TAG = "FirebaseQa"
@@ -54,10 +58,10 @@ object FirebaseQaSupport {
     val device: UiDevice
         get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-  fun launchApp(clearTask: Boolean = true) {
+    fun launchApp(clearTask: Boolean = true) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-            ?: fail("Launch intent missing for ${context.packageName}")
+            ?: qaError("Launch intent missing for ${context.packageName}")
         if (clearTask) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         } else {
@@ -85,11 +89,17 @@ object FirebaseQaSupport {
         device.wait(Until.hasObject(By.pkg(context.packageName)), 15_000)
     }
 
+    private fun findByDesc(testId: String): UiObject? {
+        val byDesc = device.findObject(UiSelector().description(testId))
+        if (byDesc.exists()) return byDesc
+        val byRes = device.findObject(UiSelector().resourceId("${FirebaseQaConfig.appPackage}:id/$testId"))
+        return if (byRes.exists()) byRes else null
+    }
+
     fun waitForTestId(testId: String, timeoutMs: Long = 20_000): Boolean {
         val deadline = System.currentTimeMillis() + timeoutMs
         while (System.currentTimeMillis() < deadline) {
-            if (device.findObject(By.desc(testId)) != null) return true
-            if (device.findObject(By.res(FirebaseQaConfig.appPackage, testId)) != null) return true
+            if (findByDesc(testId) != null) return true
             device.waitForIdle(250)
         }
         return false
@@ -104,17 +114,15 @@ object FirebaseQaSupport {
 
     fun tapTestId(testId: String, timeoutMs: Long = 20_000) {
         requireTestId(testId, timeoutMs)
-        val obj = device.findObject(By.desc(testId))
-            ?: device.findObject(By.res(FirebaseQaConfig.appPackage, testId))
-            ?: fail("Object vanished: $testId")
+        val obj = findByDesc(testId) ?: qaError("Object vanished: $testId")
         obj.click()
     }
 
     fun tapText(text: String, timeoutMs: Long = 15_000) {
         val deadline = System.currentTimeMillis() + timeoutMs
         while (System.currentTimeMillis() < deadline) {
-            val obj = device.findObject(By.text(text))
-            if (obj != null) {
+            val obj = device.findObject(UiSelector().text(text))
+            if (obj.exists()) {
                 obj.click()
                 return
             }
@@ -123,24 +131,12 @@ object FirebaseQaSupport {
         fail("Timed out waiting for text: $text")
     }
 
-    fun typeIntoTestId(testId: String, value: String, clear: Boolean = true) {
+    fun typeIntoTestId(testId: String, value: String) {
         requireTestId(testId)
-        val field = device.findObject(By.desc(testId))
-            ?: device.findObject(By.res(FirebaseQaConfig.appPackage, testId))
-            ?: fail("Input missing: $testId")
+        val field = findByDesc(testId) ?: qaError("Input missing: $testId")
         field.click()
-        if (clear) field.clear()
-        field.text = value
-    }
-
-    fun waitUntilGone(testId: String, timeoutMs: Long = 30_000) {
-        val deadline = System.currentTimeMillis() + timeoutMs
-        while (System.currentTimeMillis() < deadline) {
-            val obj = device.findObject(By.desc(testId)) ?: device.findObject(By.res(FirebaseQaConfig.appPackage, testId))
-            if (obj == null) return
-            device.waitForIdle(300)
-        }
-        fail("Expected $testId to disappear within ${timeoutMs}ms")
+        field.clearTextField()
+        field.setText(value)
     }
 
     fun waitForText(text: String, timeoutMs: Long = 20_000) {
@@ -162,7 +158,6 @@ object FirebaseQaSupport {
             tapTestId("login-submit")
             device.wait(Until.gone(By.desc("login-submit")), 30_000)
         }
-        // Seller lands on tabs — wait for sell tab
         val onTabs = device.wait(Until.hasObject(By.text("Продать")), 30_000)
         if (!onTabs) fail("Seller login did not reach main tabs")
         FirebaseQaLogger.stepPass("SELLER_LOGIN")
@@ -170,8 +165,8 @@ object FirebaseQaSupport {
 
     fun dismissBootIfNeeded() {
         device.waitForIdle(1_000)
-        val retry = device.findObject(By.text("Повторить"))
-        if (retry != null) retry.click()
+        val retry = device.findObject(UiSelector().text("Повторить"))
+        if (retry.exists()) retry.click()
     }
 
     fun navigateToCreateLot() {
@@ -189,11 +184,11 @@ object FirebaseQaSupport {
     fun waitPhotoReady(timeoutMs: Long = 90_000) {
         val deadline = System.currentTimeMillis() + timeoutMs
         while (System.currentTimeMillis() < deadline) {
-            val continueBtn = device.findObject(By.desc("lot-photo-continue"))
+            val continueBtn = findByDesc("lot-photo-continue")
             if (continueBtn != null && continueBtn.isEnabled) {
-                val uploading = device.findObject(By.text("Загружаем фото"))
-                val processing = device.findObject(By.textContains("Обрабатываем"))
-                if (uploading == null && processing == null) return
+                val uploading = device.findObject(UiSelector().textContains("Загружаем фото"))
+                val processing = device.findObject(UiSelector().textContains("Обрабатываем"))
+                if (!uploading.exists() && !processing.exists()) return
             }
             device.waitForIdle(500)
         }
@@ -202,8 +197,7 @@ object FirebaseQaSupport {
 
     fun tapPhotoContinueOnce() {
         FirebaseQaLogger.stepStart("PHOTO_CONTINUE_ONE_TAP")
-        val btn = device.findObject(By.desc("lot-photo-continue"))
-            ?: fail("Continue button missing")
+        val btn = findByDesc("lot-photo-continue") ?: qaError("Continue button missing")
         if (!btn.isEnabled) fail("Continue blocked when tap attempted")
         btn.click()
         requireTestId("lot-title", 15_000, "PHOTO_CONTINUE_ONE_TAP")
@@ -214,5 +208,16 @@ object FirebaseQaSupport {
         tapText("Профиль")
         tapText("Мои ЛОТы")
         tapTestId("seller-lots-tab-pending")
+    }
+
+    fun waitForAnyText(parts: List<String>, timeoutMs: Long) {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            for (part in parts) {
+                if (device.findObject(UiSelector().textContains(part)).exists()) return
+            }
+            device.waitForIdle(300)
+        }
+        fail("Timed out waiting for any of: $parts")
     }
 }
