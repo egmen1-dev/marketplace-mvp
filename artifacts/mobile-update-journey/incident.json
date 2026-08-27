@@ -35,10 +35,13 @@
   },
   "recovery": {
     "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "YES",
-    "fix": "MOBILE_APK_PROXY_DOWNLOAD=1 + /api/mobile/releases/apk proxy — MRP returns same-origin downloadUrl",
-    "RC10_5_REMOTE_RECOVERY_GATE": "PENDING_DEPLOY",
+    "fix": "Auto-proxy GitHub raw via /api/mobile/releases/apk (PR #203 + #204)",
+    "RC10_5_REMOTE_RECOVERY_GATE": "PASS",
+    "stagingCommit": "0b1d6d5",
+    "mrpDownloadUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
     "RC10.8": "NOT_CREATED"
   },
+  "finalVerdict": "READY_FOR_PHYSICAL_UPDATE_RETRY"
   "gate": "mobile:update-bridge-rc10.5:gate",
   "physicalFailureReproducedInHarness": "YES"
 }

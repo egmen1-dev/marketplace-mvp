@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T08:17:05.395Z",
+  "generatedAt": "2026-08-27T08:42:31.765Z",
   "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
   "installed": {
     "versionName": "0.1.15-beta.6",
@@ -51,7 +51,7 @@
     "updateRequired": false,
     "updateState": "OPTIONAL_UPDATE",
     "mandatory": false,
-    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "downloadUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
     "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
     "artifactSizeBytes": null,
     "releaseNotes": [
@@ -87,12 +87,12 @@
     "syncVersion": "0.1.15-beta.8"
   },
   "apkTransport": {
-    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "url": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
     "probe": {
       "status": 200,
-      "contentType": "application/octet-stream",
+      "contentType": "application/vnd.android.package-archive",
       "contentLength": 44411738,
-      "finalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+      "finalUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
       "redirectCount": 0
     },
     "bytes": 44411738,
@@ -101,9 +101,11 @@
   },
   "proxyRecovery": {
     "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
-    "proxyProbeStatus": 404,
-    "RC10_5_REMOTE_RECOVERY_GATE": "PENDING_DEPLOY",
-    "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "PENDING_DEPLOY"
+    "mrpDownloadUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+    "mrpUsesProxy": true,
+    "proxyProbeStatus": 200,
+    "RC10_5_REMOTE_RECOVERY_GATE": "PASS",
+    "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "YES"
   },
   "classification": "H=MULTIPLE",
   "physicalFailureReproducedInHarness": "YES"
