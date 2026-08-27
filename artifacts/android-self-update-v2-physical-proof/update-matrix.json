@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-08-27T14:02:33.232Z",
+  "targetCode": 25,
+  "bootstrapCode": 24,
+  "criticalContract": {
+    "probe": "24 → 25",
+    "verdict": "PASS",
+    "updateState": "OPTIONAL_UPDATE"
+  },
+  "probes": [
+    {
+      "installedVersionCode": 21,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 25,
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 22,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 25,
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 23,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 25,
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 24,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 25,
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 25,
+      "updateState": "NO_UPDATE",
+      "expectedState": "NO_UPDATE",
+      "targetVersionCode": 25,
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 26,
+      "updateState": "NO_UPDATE",
+      "expectedState": "NO_UPDATE",
+      "targetVersionCode": 25,
+      "verdict": "PASS"
+    }
+  ],
+  "downloadProof": {
+    "url": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=25",
+    "httpStatus": 502,
+    "sizeBytes": 89,
+    "expectedSizeBytes": 44458174,
+    "expectedSha256": "eafa8a877a7e17b35a3699963942220206ac18d9f497cd4f6effc99223db81ab",
+    "actualSha256": "6f5b3a0f2478884ef6081f725f205d02fddc7083200b3fcc5d77a91567e2e46c",
+    "verdict": "FAIL"
+  },
+  "overallVerdict": "FAIL"
+}

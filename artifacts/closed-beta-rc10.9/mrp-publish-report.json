@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-08-27T14:02:25.845Z",
+  "publishMethod": "staging_admin_api",
+  "versionName": "0.1.15-beta.10",
+  "versionCode": 25,
+  "channel": "BETA",
+  "clientChannel": "CLOSED_BETA",
+  "environment": "staging",
+  "sha256": "eafa8a877a7e17b35a3699963942220206ac18d9f497cd4f6effc99223db81ab",
+  "artifactSizeBytes": 44458174,
+  "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.9/lot_android_closed_beta_0.1.15_beta.10.apk",
+  "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=25",
+  "status": "PUBLISHED",
+  "updatePath": {
+    "code21": "OPTIONAL_UPDATE→25",
+    "code22": "OPTIONAL_UPDATE→25",
+    "code23": "OPTIONAL_UPDATE→25",
+    "code24": "OPTIONAL_UPDATE→25",
+    "code25": "NO_UPDATE",
+    "code26plus": "NO_DOWNGRADE"
+  },
+  "verdict": "PASS"
+}

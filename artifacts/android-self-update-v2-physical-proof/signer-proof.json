@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-08-27T14:01:00.000Z",
+  "expectedSignerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "bootstrap": {
+    "rc": "RC10.8",
+    "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "verdict": "PASS"
+  },
+  "target": {
+    "rc": "RC10.9",
+    "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "verdict": "PASS"
+  },
+  "rc10_7Reference": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "inPlaceUpgradeCompatible": true,
+  "verdict": "PASS"
+}
