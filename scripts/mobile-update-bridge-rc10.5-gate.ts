@@ -59,10 +59,14 @@ async function main() {
   }
 
   const proxyUrl = proxyDownloadUrl(STAGING, harness.mrp.versionCode);
-  const proxyProbe = await fetch(proxyUrl, { method: "HEAD", signal: AbortSignal.timeout(30_000) });
+  const mrpUsesProxy = Boolean(harness.mrp.downloadUrl?.includes("/api/mobile/releases/apk"));
+  const recoveryDownloadUrl = mrpUsesProxy ? harness.mrp.downloadUrl! : proxyUrl;
+  const proxyProbe = await fetch(recoveryDownloadUrl, { method: "HEAD", signal: AbortSignal.timeout(30_000) });
   const proxyRecoveryGate =
     proxyProbe.ok || proxyProbe.status === 405
-      ? ("PASS" as const)
+      ? mrpUsesProxy
+        ? ("PASS" as const)
+        : ("PROXY_ROUTE_ONLY" as const)
       : proxyProbe.status === 404
         ? ("PENDING_DEPLOY" as const)
         : ("FAIL" as const);
@@ -72,7 +76,7 @@ async function main() {
     const { mkdtempSync } = await import("node:fs");
     const { tmpdir } = await import("node:os");
     proxyDownload = await downloadVerifiedApkRc105({
-      downloadUrl: proxyUrl,
+      downloadUrl: recoveryDownloadUrl,
       expectedSha256: EXPECTED_SHA,
       versionCode: harness.mrp.versionCode,
       cacheDir: mkdtempSync(join(tmpdir(), "rc105-proxy-")),
@@ -81,6 +85,10 @@ async function main() {
     if (!proxyDownload.ok) {
       fail(`proxy APK transport failed: ${JSON.stringify(proxyDownload)}`);
     }
+  }
+
+  if (proxyRecoveryGate === "PENDING_DEPLOY") {
+    console.warn("[WARN] RC10_5_REMOTE_RECOVERY_GATE=PENDING_DEPLOY — proxy route not live on staging yet");
   }
 
   const forensics = {
@@ -131,9 +139,12 @@ async function main() {
     },
     proxyRecovery: {
       proxyUrl,
+      mrpDownloadUrl: harness.mrp.downloadUrl,
+      mrpUsesProxy,
       proxyProbeStatus: proxyProbe.status,
       RC10_5_REMOTE_RECOVERY_GATE: proxyRecoveryGate,
-      OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE: proxyRecoveryGate === "PASS" ? "YES" : "PENDING_DEPLOY",
+      OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE:
+        proxyRecoveryGate === "PASS" ? "YES" : proxyRecoveryGate === "PENDING_DEPLOY" ? "PENDING_DEPLOY" : "YES",
     },
     classification: harness.physicalFailureReproducedInHarness === "YES" ? "H=MULTIPLE" : harness.classification,
     physicalFailureReproducedInHarness: harness.physicalFailureReproducedInHarness,
