@@ -1,0 +1,144 @@
+{
+  "candidate": "RC10.7",
+  "generatedAt": "2026-08-27T06:55:00Z",
+  "status": "FROZEN",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "scope": "Focused physical retest — RC10.6 P0 update journey state contradiction (PR #201) plus critical seller journey regression",
+  "physical": "NOT_RUN",
+  "pr201": "654c16f",
+  "testerFailureReportFormat": {
+    "fields": ["screenshot_or_video", "physical_checklist_step", "copied_beta_diagnostics"],
+    "example": "STEP=B\nEXPECTED=single coherent update UI\nOBSERVED=check error + available hint together\n\nDIAGNOSTICS:\n..."
+  },
+  "apk": {
+    "versionName": "0.1.15-beta.8",
+    "versionCode": 23,
+    "path": "artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "sha256": null
+  },
+  "accounts": {
+    "seller": "seller@demo.lot / demo1234",
+    "buyer": "buyer@demo.lot / demo1234",
+    "admin": "admin@demo.lot / demo1234"
+  },
+  "environment": {
+    "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+    "channel": "CLOSED_BETA",
+    "deployedSha": "654c16f"
+  },
+  "scenarios": [
+    {
+      "id": "A",
+      "name": "UPDATE RC10.6 → RC10.7",
+      "startingState": "About: 0.1.15-beta.7 / code 22 / RC10.6",
+      "contextNote": "RC10.5 (code 21) upgrading to RC10.6 exhibited P0 contradictory UI: check-failed error ('Не удалось проверить обновление') plus stale 'Доступно обновление: 0.1.15-beta.7' hint. RC10.7 must not reproduce this on any upgrade path.",
+      "steps": [
+        "Installed RC10.6 code 22",
+        "Update detected for 0.1.15-beta.8",
+        "One download",
+        "Android installer opens",
+        "RC10.7 installed",
+        "About confirms 0.1.15-beta.8 / code 23 / RC10.7"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "B",
+      "name": "UPDATE CHECK UI CONTRACT",
+      "steps": [
+        "Profile → Проверить обновление",
+        "While checking: only checking state visible",
+        "On success with update: only available/download UI — no error block",
+        "FORBIDDEN: simultaneous check-failed title and available hint",
+        "If fail: copy beta diagnostics immediately"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "C",
+      "name": "UPDATE CHECK FAILURE + RETRY",
+      "steps": [
+        "Simulate or observe check failure (airplane mode briefly, then restore)",
+        "Only check-failed + retry shown — no stale version hint",
+        "Retry succeeds into coherent available state",
+        "No contradictory dual rendering"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "D",
+      "name": "UPDATE DOWNLOAD + VERIFY",
+      "steps": [
+        "Tap download once",
+        "Progress/downloading state truthful",
+        "SHA verify passes",
+        "Ready-to-install state shown"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "E",
+      "name": "UPDATE INSTALL HANDOFF",
+      "steps": [
+        "Tap install CTA",
+        "Android installer opens",
+        "After install: About shows RC10.7 / code 23"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "F",
+      "name": "UPDATE JOURNEY DIAGNOSTICS",
+      "steps": [
+        "About → Скопировать диагностику",
+        "Recent chain contains UPDATE_CHECK_STARTED, outcome, actionId, version codes",
+        "LOT update journey diagnostics header present",
+        "Copy works"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "G",
+      "name": "PHOTO CONTINUE REGRESSION",
+      "steps": [
+        "Продать → Создать ЛОТ → choose several photos",
+        "When READY: one single tap on Продолжить",
+        "Expected: Details opens immediately",
+        "FAIL if second tap required"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "H",
+      "name": "SUBMIT BLACK-HOLE REGRESSION",
+      "steps": [
+        "Fill required publication characteristics",
+        "Tap Отправить на проверку exactly ONCE",
+        "Visible success: Проверяем ЛОТ or canonical equivalent",
+        "FORBIDDEN: spinner → same Preview screen with no message"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "I",
+      "name": "RC10.5 DIRECT UPGRADE PATH",
+      "steps": [
+        "Device on RC10.5 code 21 (or fresh install of RC10.5)",
+        "Update check offers RC10.7 directly",
+        "No contradictory UI during check/download",
+        "Install succeeds to code 23"
+      ],
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "J",
+      "name": "RELAUNCH",
+      "steps": [
+        "Kill app completely and reopen",
+        "About still shows RC10.7 / code 23",
+        "Server truth remains correct"
+      ],
+      "status": "NOT_RUN"
+    }
+  ]
+}
