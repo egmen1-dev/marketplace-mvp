@@ -1,64 +1,42 @@
 {
-  "generatedAt": "2026-08-27T12:30:00.000Z",
+  "generatedAt": "2026-08-27T12:33:42.000Z",
   "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
   "physicalRetry": "FAIL after Railway proxy recovery",
   "PREVIOUS_GITHUB_ROOT_CAUSE_STATUS": "DISPROVEN",
   "FAILED_PHASE_DOWNLOAD_SUPPORTED_BY_RC10_5": "BROKEN",
   "HTTP_REQUEST_FROM_DEVICE": "NOT_RUN",
   "ROOT_CAUSE": "UNKNOWN",
+  "ROOT_CAUSE_BOUNDARY": "UNKNOWN",
   "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "UNKNOWN_UNTIL_PROBE",
   "MANUAL_RECOVERY_REQUIRED": "UNKNOWN_UNTIL_PROBE",
-  "NEXT_ACTION": "BLOCKED_WAITING_FOR_RAILWAY_DEPLOY",
+  "NEXT_ACTION": "WAITING_FOR_PHYSICAL_PROBE",
   "RC10_8": "NOT_CREATED",
   "mrpVersionUnchanged": true,
   "deployTruth": {
     "PR205_STATUS": "MERGED",
     "MAIN_SHA": "b91871a",
-    "RAILWAY_SHA": "83fb3b4",
-    "DEVICE_PROBE_API_LIVE": "NO"
+    "RAILWAY_SHA": "b91871a",
+    "DEVICE_PROBE_API_LIVE": "YES"
+  },
+  "probeWindow": {
+    "PROBE_WINDOW_ID": "pbw-20260827-123330Z",
+    "PROBE_WINDOW_START": "2026-08-27T12:33:30.000Z",
+    "TARGET_VERSION_CODE": 23,
+    "EXPECTED_APK_BYTES": 44411738
+  },
+  "controlProbe": {
+    "PROBE_API": "PASS",
+    "CONTROL_REQUEST_LOGGED": "PASS",
+    "CONTROL_RESPONSE_COMPLETED": "PASS",
+    "CONTROL_BYTES_SENT": 44411738,
+    "controlRequestId": "f9a2a06c-637"
   },
   "gateGap": {
     "RC10_5_SERVER_BRIDGE_GATE": {
-      "status": "PASS",
-      "proves": [
-        "MRP contract",
-        "proxy HTTP 200",
-        "full APK bytes",
-        "SHA256 match from CI/Node"
-      ],
-      "doesNotProve": [
-        "Expo FileSystem Android execution on device",
-        "HTTP request initiation from RC10.5 tap",
-        "OkHttp 44MB mobile transport",
-        "file.arrayBuffer SHA on device heap",
-        "installer handoff",
-        "lifecycle cancellation"
-      ]
+      "status": "PASS"
     },
     "RC10_5_DEVICE_BRIDGE": {
-      "status": "NOT_RUN",
-      "requires": "physical tap + server request-log correlation (blocked until Railway deploys b91871a)"
-    },
-    "previousOverstatement": "RC10_5_REMOTE_RECOVERY_GATE=PASS did NOT prove physical RC10.5 download"
-  },
-  "baseline": {
-    "generatedAt": "2026-08-27T12:30:00.000Z",
-    "mainCommit": "b91871a",
-    "stagingCommit": "83fb3b4",
-    "stagingUrl": "https://web-production-e56fb.up.railway.app",
-    "installed": {
-      "rc": "RC10.5",
-      "versionName": "0.1.15-beta.6",
-      "versionCode": 21,
-      "commit": "91b9c1d"
-    },
-    "target": {
-      "rc": "RC10.7",
-      "versionName": "0.1.15-beta.8",
-      "versionCode": 23,
-      "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
-    },
-    "mrpDownloadUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
-    "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23"
+      "status": "NOT_RUN"
+    }
   }
 }

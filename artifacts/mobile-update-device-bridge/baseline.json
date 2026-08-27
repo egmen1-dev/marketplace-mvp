@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-08-27T12:30:00.000Z",
+  "generatedAt": "2026-08-27T12:33:42.000Z",
   "mainCommit": "b91871a",
-  "stagingCommit": "83fb3b4",
+  "stagingCommit": "b91871a",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
   "deployLag": {
-    "commitsBehind": 2,
-    "missingProbeApi": true,
-    "verdict": "BLOCKED_WAITING_FOR_RAILWAY_DEPLOY"
+    "commitsBehind": 0,
+    "missingProbeApi": false,
+    "verdict": "PROBE_LIVE"
   },
   "installed": {
     "rc": "RC10.5",

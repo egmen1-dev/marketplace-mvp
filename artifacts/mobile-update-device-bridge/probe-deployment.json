@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T12:30:00.000Z",
+  "generatedAt": "2026-08-27T12:33:30.000Z",
   "pr205": {
     "number": 205,
     "title": "forensics(mobile): RC10.5 device bridge probe after proxy physical FAIL",
@@ -11,35 +11,21 @@
   "deployTruth": {
     "PR205_STATUS": "MERGED",
     "MAIN_SHA": "b91871a",
-    "RAILWAY_SHA": "83fb3b4",
-    "DEVICE_PROBE_API_LIVE": "NO",
-    "railwayLagCommits": 2,
+    "RAILWAY_SHA": "b91871a",
+    "DEVICE_PROBE_API_LIVE": "YES",
+    "railwayBuildTime": "2026-08-27T12:28:44.960Z",
     "requestLogEndpoint": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk/request-log?versionCode=23&since=<ISO>",
     "requestLogProbeResult": {
-      "httpStatus": 404,
-      "body": "Next.js 404 page — route not deployed on staging",
-      "checkedAt": "2026-08-27T12:28:00.310Z"
-    },
-    "healthEndpoint": {
-      "url": "https://web-production-e56fb.up.railway.app/api/health",
-      "commit": "83fb3b4",
-      "buildTime": "2026-08-27T08:43:53.166Z"
-    },
-    "versionEndpoint": {
-      "url": "https://web-production-e56fb.up.railway.app/api/version",
-      "commit": "83fb3b4"
+      "httpStatus": 200,
+      "bodyShape": "JSON with events array",
+      "checkedAt": "2026-08-27T12:32:48.742Z"
     }
   },
-  "verdict": "BLOCKED_WAITING_FOR_RAILWAY_DEPLOY",
-  "nextAction": "Wait for Railway to deploy b91871a (PR #205 merge), then verify request-log endpoint returns JSON with events array",
-  "probeApiRequirements": [
-    "request_started",
-    "response_headers",
-    "response_complete",
-    "client_disconnect",
-    "bytesStreamed",
-    "timestamp (at)",
-    "versionCode",
-    "requestId"
-  ]
+  "verdict": "PROBE_LIVE",
+  "controlProbe": {
+    "PROBE_API": "PASS",
+    "CONTROL_REQUEST_LOGGED": "PASS",
+    "CONTROL_RESPONSE_COMPLETED": "PASS",
+    "CONTROL_BYTES_SENT": 44411738
+  }
 }
