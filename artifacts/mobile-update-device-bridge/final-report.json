@@ -1,15 +1,14 @@
 {
-  "generatedAt": "2026-08-27T12:33:42.000Z",
+  "generatedAt": "2026-08-27T13:01:00.000Z",
   "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
-  "physicalRetry": "FAIL after Railway proxy recovery",
   "PREVIOUS_GITHUB_ROOT_CAUSE_STATUS": "DISPROVEN",
   "FAILED_PHASE_DOWNLOAD_SUPPORTED_BY_RC10_5": "BROKEN",
-  "HTTP_REQUEST_FROM_DEVICE": "NOT_RUN",
-  "ROOT_CAUSE": "UNKNOWN",
-  "ROOT_CAUSE_BOUNDARY": "UNKNOWN",
-  "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "UNKNOWN_UNTIL_PROBE",
-  "MANUAL_RECOVERY_REQUIRED": "UNKNOWN_UNTIL_PROBE",
-  "NEXT_ACTION": "WAITING_FOR_PHYSICAL_PROBE",
+  "HTTP_REQUEST_FROM_DEVICE": "YES",
+  "APK_TRANSPORT": "PASS",
+  "ROOT_CAUSE_BOUNDARY": "POST_DOWNLOAD_CLIENT",
+  "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "NO",
+  "MANUAL_INSTALL_REQUIRED_FOR_RC10_5": "YES",
+  "NEXT_ACTION": "MANUAL_INSTALL_REQUIRED_FOR_RC10_5",
   "RC10_8": "NOT_CREATED",
   "mrpVersionUnchanged": true,
   "deployTruth": {
@@ -18,25 +17,20 @@
     "RAILWAY_SHA": "b91871a",
     "DEVICE_PROBE_API_LIVE": "YES"
   },
-  "probeWindow": {
-    "PROBE_WINDOW_ID": "pbw-20260827-123330Z",
-    "PROBE_WINDOW_START": "2026-08-27T12:33:30.000Z",
-    "TARGET_VERSION_CODE": 23,
-    "EXPECTED_APK_BYTES": 44411738
+  "physicalProbe": {
+    "probeWindowId": "pbw-20260827-123330Z",
+    "inferredTapTime": "2026-08-27T12:56:04Z",
+    "operatorTapTimeSupplied": false,
+    "screenshotReceived": false,
+    "primaryRequestId": "117959fd-9ae",
+    "retryRequestId": "26ba1005-0c2",
+    "bytesSent": 44411738,
+    "transferCompletionPercent": 100
   },
-  "controlProbe": {
-    "PROBE_API": "PASS",
-    "CONTROL_REQUEST_LOGGED": "PASS",
-    "CONTROL_RESPONSE_COMPLETED": "PASS",
-    "CONTROL_BYTES_SENT": 44411738,
-    "controlRequestId": "f9a2a06c-637"
+  "gates": {
+    "RC10_5_SERVER_BRIDGE_GATE": "PASS",
+    "RC10_5_DEVICE_BRIDGE": "PASS_TRANSPORT_FAIL_POST_DOWNLOAD"
   },
-  "gateGap": {
-    "RC10_5_SERVER_BRIDGE_GATE": {
-      "status": "PASS"
-    },
-    "RC10_5_DEVICE_BRIDGE": {
-      "status": "NOT_RUN"
-    }
-  }
+  "RC10_7_INSTALL_RECOVERY": "NOT_RUN",
+  "FUTURE_SELF_UPDATE_PHYSICAL_PROOF": "REQUIRED"
 }

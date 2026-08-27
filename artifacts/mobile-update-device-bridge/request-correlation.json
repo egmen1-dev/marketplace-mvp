@@ -14,6 +14,9 @@
     "filter": "versionCode=23",
     "exclude": "control request IDs and device-bridge-control-probe UA"
   },
-  "physicalRequestId": null,
-  "physicalTapTime": null
+  "physicalRequestIds": ["117959fd-9ae", "26ba1005-0c2"],
+  "physicalTapTime": "INFERRED_2026-08-27T12:56:04Z",
+  "physicalTapTimeSuppliedByOperator": false,
+  "httpRequestFromDevice": "YES",
+  "classification": "POST_DOWNLOAD_CLIENT"
 }
