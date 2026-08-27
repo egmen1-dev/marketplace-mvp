@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "NO",
+  "rationale": "Immutable RC10.5 received full APK over HTTP twice. Failure is post-download client defect. No server/proxy/MRP change can repair verify/installer in installed APK.",
+  "MANUAL_BROWSER_BRIDGE_SAFE": "YES",
+  "SIGNER_MATCH": "YES",
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "package": "ru.lot.marketplace.alpha",
+  "versionUpgrade": { "from": 21, "to": 23, "valid": true },
+  "manualBridgeUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+  "instructions": [
+    "Do NOT uninstall RC10.5",
+    "Open URL in Android Chrome",
+    "Download APK",
+    "Open downloaded file",
+    "Install over existing ЛОТ",
+    "Verify versionCode=23 versionName=0.1.15-beta.8",
+    "Confirm app data/session preserved"
+  ],
+  "RC10_7_INSTALL_RECOVERY": "NOT_RUN",
+  "FUTURE_SELF_UPDATE_PHYSICAL_PROOF": "REQUIRED",
+  "previousHypotheses": {
+    "githubRawTransport": "DISPROVEN",
+    "railwayProxyTransport": "DISPROVEN"
+  }
+}

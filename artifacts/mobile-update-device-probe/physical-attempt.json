@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "device": {
+    "installedRc": "RC10.5",
+    "versionName": "0.1.15-beta.6",
+    "versionCode": 21,
+    "commit": "91b9c1d",
+    "channel": "CLOSED_BETA",
+    "environment": "staging"
+  },
+  "target": {
+    "rc": "RC10.7",
+    "versionName": "0.1.15-beta.8",
+    "versionCode": 23,
+    "expectedBytes": 44411738,
+    "expectedSha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
+  },
+  "operatorReport": {
+    "deviceDisplayTime": "17:59",
+    "secondsPrecision": false,
+    "screen": "Проверить обновление",
+    "action": "Скачать обновление (single tap reported)",
+    "observedOutcome": {
+      "rc105StillInstalled": true,
+      "updateDetected": "0.1.15-beta.8",
+      "installerOpened": false,
+      "downloadInstallVisual": false,
+      "uiState": "failed/available legacy contradictory state"
+    },
+    "screenshotReceived": true,
+    "screenshotNote": "Described by operator; confirms RC10.5 remains on code 21"
+  },
+  "timeMapping": {
+    "DEVICE_DISPLAY_TIME": "17:59",
+    "DEVICE_TIMEZONE": "UTC+5 (best-evidence, not device-proven)",
+    "timezoneCandidates": [
+      { "offset": "UTC+5", "localForPrimaryRequest": "17:58:29", "deltaFromDisplay": "-31s", "confidence": "HIGH" },
+      { "offset": "UTC+3", "localForPrimaryRequest": "15:58:29", "deltaFromDisplay": "-2h1m", "confidence": "LOW" },
+      { "offset": "UTC+4", "localForPrimaryRequest": "16:58:29", "deltaFromDisplay": "-1h1m", "confidence": "LOW" }
+    ],
+    "TIME_MAPPING_CONFIDENCE": "HIGH",
+    "mappingRationale": "Server request 26ba1005-0c2 started 2026-08-27T12:58:29.491Z maps to 17:58:29 at UTC+5 — within 31s of operator 17:59 display time. okhttp/4.9.2 UA matches Expo FileSystem Android."
+  },
+  "probeWindowId": "pbw-20260827-123330Z"
+}
