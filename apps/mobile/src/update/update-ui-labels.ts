@@ -14,6 +14,10 @@ export const UPDATE_UI_LABELS = {
   installerOpened: "Подтвердите установку в окне Android",
   allowInstallCta: "Разрешить",
   installFailed: "Не удалось проверить обновление",
+  checkFailed: "Не удалось проверить обновление. Попробуйте ещё раз.",
+  downloadFailed: "Не удалось скачать обновление. Попробуйте ещё раз.",
+  verifyFailed: "Не удалось проверить целостность обновления",
+  installHandoffFailed: "Не удалось открыть установщик Android. Попробуйте ещё раз.",
   retry: "Повторить",
   profileBadge: "Обновление доступно",
 } as const;

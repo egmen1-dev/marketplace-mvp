@@ -8,11 +8,8 @@ import { colors, radii, spacing, typography } from "../src/theme/tokens";
 export default function UpdateCheckScreen() {
   const {
     buildInfo,
-    phase,
+    ui,
     updateInfo,
-    errorMessage,
-    hasUpdate,
-    hasCachedApk,
     needsUnknownSources,
     checkForUpdate,
     downloadUpdate,
@@ -21,18 +18,18 @@ export default function UpdateCheckScreen() {
 
   const rcLabel = process.env.EXPO_PUBLIC_RC_LABEL ?? "RC8";
   const primaryLabel =
-    phase === "downloading"
+    ui.showDownloading
       ? UPDATE_UI_LABELS.downloading
-      : phase === "ready_to_install" || hasCachedApk
+      : ui.showReadyToInstall || ui.showInstallCta
         ? UPDATE_UI_LABELS.installCta
         : UPDATE_UI_LABELS.downloadCta;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
-        {phase === "checking" ? <Text style={styles.title}>{UPDATE_UI_LABELS.checking}</Text> : null}
+        {ui.showChecking ? <Text style={styles.title}>{UPDATE_UI_LABELS.checking}</Text> : null}
 
-        {phase === "up_to_date" ? (
+        {ui.showUpToDate ? (
           <>
             <Text style={styles.title}>{UPDATE_UI_LABELS.upToDate}</Text>
             <Text style={styles.body}>
@@ -41,7 +38,7 @@ export default function UpdateCheckScreen() {
           </>
         ) : null}
 
-        {phase === "available" && updateInfo ? (
+        {ui.showUpdateAvailable && updateInfo ? (
           <>
             <Text style={styles.title}>{UPDATE_UI_LABELS.available}</Text>
             <Text style={styles.body}>Версия {updateInfo.versionName}</Text>
@@ -49,45 +46,57 @@ export default function UpdateCheckScreen() {
           </>
         ) : null}
 
-        {phase === "downloading" ? (
+        {ui.showDownloading ? (
           <>
             <Text style={styles.title}>{UPDATE_UI_LABELS.downloading}</Text>
             <Text style={styles.hint}>Не закрывайте приложение до завершения загрузки.</Text>
           </>
         ) : null}
 
-        {phase === "ready_to_install" && updateInfo ? (
+        {ui.showReadyToInstall && updateInfo ? (
           <>
-            <Text style={styles.title}>{hasCachedApk ? UPDATE_UI_LABELS.alreadyDownloaded : UPDATE_UI_LABELS.readyToInstall}</Text>
+            <Text style={styles.title}>{UPDATE_UI_LABELS.readyToInstall}</Text>
             <Text style={styles.body}>Версия {updateInfo.versionName}</Text>
             <PrimaryButton label={UPDATE_UI_LABELS.installCta} onPress={downloadUpdate} fullWidth />
           </>
         ) : null}
 
-        {phase === "installer_opened" ? (
+        {ui.showInstallerOpened ? (
           <>
             <Text style={styles.title}>{UPDATE_UI_LABELS.installerOpened}</Text>
             <Text style={styles.hint}>После установки откройте ЛОТ снова и проверьте версию в профиле.</Text>
           </>
         ) : null}
 
-        {phase === "failed" ? (
+        {ui.showCheckError ? (
           <>
-            <Text style={styles.title}>{errorMessage ?? UPDATE_UI_LABELS.installFailed}</Text>
+            <Text style={styles.title}>{ui.errorTitle ?? UPDATE_UI_LABELS.checkFailed}</Text>
             <GhostButton label={UPDATE_UI_LABELS.retry} onPress={checkForUpdate} fullWidth />
+          </>
+        ) : null}
+
+        {ui.showDownloadError ? (
+          <>
+            <Text style={styles.title}>{ui.errorTitle ?? UPDATE_UI_LABELS.downloadFailed}</Text>
+            <GhostButton label={UPDATE_UI_LABELS.retry} onPress={downloadUpdate} fullWidth />
+          </>
+        ) : null}
+
+        {ui.showVerifyError ? (
+          <>
+            <Text style={styles.title}>{ui.errorTitle ?? UPDATE_UI_LABELS.verifyFailed}</Text>
+            <GhostButton label={UPDATE_UI_LABELS.retry} onPress={downloadUpdate} fullWidth />
+          </>
+        ) : null}
+
+        {ui.showInstallError ? (
+          <>
+            <Text style={styles.title}>{ui.errorTitle ?? UPDATE_UI_LABELS.installHandoffFailed}</Text>
+            <GhostButton label={UPDATE_UI_LABELS.retry} onPress={downloadUpdate} fullWidth />
             {needsUnknownSources ? (
               <SecondaryButton label={UPDATE_UI_LABELS.allowInstallCta} onPress={openUnknownSourcesSettings} fullWidth />
             ) : null}
           </>
-        ) : null}
-
-        {hasUpdate && phase !== "available" && phase !== "downloading" && phase !== "ready_to_install" && updateInfo ? (
-          <View style={styles.availableHint}>
-            <Text style={styles.body}>
-              {UPDATE_UI_LABELS.available}: {updateInfo.versionName}
-            </Text>
-            <PrimaryButton label={primaryLabel} onPress={downloadUpdate} fullWidth />
-          </View>
         ) : null}
       </View>
 
@@ -119,7 +128,6 @@ const styles = StyleSheet.create({
   title: { ...typography.h2, color: colors.black },
   body: { ...typography.body, color: colors.gray700 },
   hint: { ...typography.caption, color: colors.gray500 },
-  availableHint: { gap: spacing.sm, marginTop: spacing.sm },
   identityCard: {
     backgroundColor: colors.white,
     borderRadius: radii.lg,

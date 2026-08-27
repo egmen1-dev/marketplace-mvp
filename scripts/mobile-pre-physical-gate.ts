@@ -22,6 +22,7 @@ if (!existsSync("artifacts/mobile-physical-gap/gate-gap-analysis.json")) {
 }
 
 const gates: Array<{ id: string; cmd: string }> = [
+  { id: "update_journey", cmd: "npm run mobile:update-journey:gate" },
   { id: "seller_journey", cmd: "npm run mobile:seller-journey:gate" },
   { id: "create_lot_preview", cmd: "npm run mobile:create-lot-preview:gate" },
   { id: "my_lots_consistency", cmd: "npm run mobile:my-lots-consistency:gate" },

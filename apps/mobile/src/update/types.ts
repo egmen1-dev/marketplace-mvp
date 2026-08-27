@@ -23,7 +23,7 @@ export const UPDATE_ERROR_MESSAGES: Record<UpdateFlowError, string> = {
   update_cancelled: "Обновление отменено.",
   installer_permission_unavailable:
     "Чтобы установить обновление, разрешите LOT устанавливать обновления.",
-  sha_verification_failed: "Не удалось проверить обновление. Попробуйте ещё раз.",
+  sha_verification_failed: "Не удалось проверить целостность обновления",
   install_handoff_failed: "Не удалось открыть установщик Android. Попробуйте ещё раз.",
 };
 

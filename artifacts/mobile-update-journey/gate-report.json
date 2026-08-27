@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-26T22:17:01.128Z",
+  "gate": "mobile:update-journey:gate",
+  "verdict": "PASS",
+  "physicalAndroid": "NOT_RUN",
+  "installedCode": 21,
+  "latestCode": 22,
+  "liveMrp": {
+    "decision": {
+      "installedVersionCode": 21,
+      "latestVersionCode": 22,
+      "latestVersionName": "0.1.15-beta.7",
+      "updateState": "OPTIONAL_UPDATE",
+      "eligibleForInstall": true,
+      "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk",
+      "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107"
+    },
+    "httpStatus": 200,
+    "sizeBytes": 44402466,
+    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107"
+  },
+  "layers": {
+    "serverDecision": "PASS",
+    "artifactSha": "PASS",
+    "clientStateGate": "PASS",
+    "downloadGate": "PASS",
+    "physicalGate": "NOT_RUN"
+  },
+  "updateMatrixClientEquivalentToRc105": "NO",
+  "gateGapNote": "Previous update matrix tested server API only; RC10.5 client had independent error/available booleans in update.tsx"
+}
