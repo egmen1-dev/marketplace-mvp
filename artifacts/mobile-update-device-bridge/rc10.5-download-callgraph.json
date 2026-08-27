@@ -1,0 +1,177 @@
+{
+  "steps": [
+    {
+      "order": 1,
+      "file": "apps/mobile/app/update.tsx",
+      "symbol": "PrimaryButton.onPress → downloadUpdate",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": "tap",
+      "notes": "availableHint block active when phase=failed && hasUpdate"
+    },
+    {
+      "order": 2,
+      "file": "apps/mobile/src/hooks/useUpdateCheckFlow.ts",
+      "symbol": "downloadUpdate",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": "if !updateInfo return (silent no-op)",
+      "notes": "NO phase guard — reachable when phase=failed"
+    },
+    {
+      "order": 3,
+      "file": "useUpdateCheckFlow.ts",
+      "symbol": "setErrorMessage(null)",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": "clears prior error text",
+      "notes": "does NOT set phase=downloading yet"
+    },
+    {
+      "order": 4,
+      "file": "useUpdateCheckFlow.ts",
+      "symbol": "postTelemetry(UPDATE_ANALYTICS.started)",
+      "canThrowBeforeHttp": false,
+      "throwsInto": "swallowed in postTelemetry catch",
+      "uiEffect": null,
+      "notes": "telemetry failure cannot block download"
+    },
+    {
+      "order": 5,
+      "file": "useUpdateCheckFlow.ts",
+      "symbol": "runner = hasCachedApk ? installCachedApkUpdate : startApkDownload",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": null,
+      "notes": "hasCachedApk from check-time cache lookup only"
+    },
+    {
+      "order": 6,
+      "file": "download-apk.ts",
+      "symbol": "startApkDownload guards (downloadUrl, Platform.OS, sha256)",
+      "canThrowBeforeHttp": true,
+      "throwsInto": "return {ok:false} — no HTTP",
+      "uiEffect": "onStateChange FAILED",
+      "notes": "synchronous early returns before network"
+    },
+    {
+      "order": 7,
+      "file": "download-apk.ts",
+      "symbol": "postTelemetry(started) duplicate",
+      "canThrowBeforeHttp": false,
+      "throwsInto": "await but telemetry non-blocking upstream",
+      "uiEffect": null,
+      "notes": "second started event"
+    },
+    {
+      "order": 8,
+      "file": "apk-download-cache.ts",
+      "symbol": "findVerifiedCachedApk",
+      "canThrowBeforeHttp": true,
+      "throwsInto": "startApkDownload catch → mapUpdateError",
+      "uiEffect": "FAILED before DOWNLOADING if throws",
+      "notes": "SecureStore IO; sha256HexFromFile loads FULL file via arrayBuffer()"
+    },
+    {
+      "order": 9,
+      "file": "download-apk.ts",
+      "symbol": "setState(\"DOWNLOADING\")",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": "phase=downloading via phaseFromFlowState",
+      "notes": "only after cache miss path entered"
+    },
+    {
+      "order": 10,
+      "file": "download-apk.ts",
+      "symbol": "downloadVerifiedApk",
+      "canThrowBeforeHttp": true,
+      "throwsInto": "startApkDownload catch",
+      "uiEffect": null,
+      "notes": "pre-HTTP: sha256_expected_missing; destination.exists delete"
+    },
+    {
+      "order": 11,
+      "file": "apk-download-cache.ts",
+      "symbol": "apkCacheFile → new File(Paths.cache, lot-update-{code}.apk)",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": null,
+      "notes": "Expo SDK 57 File API — cache dir"
+    },
+    {
+      "order": 12,
+      "file": "download-apk.ts",
+      "symbol": "File.downloadFileAsync(url, destination, {idempotent:true})",
+      "canThrowBeforeHttp": false,
+      "throwsInto": "catch → mapUpdateError (network|timeout|download_failed)",
+      "uiEffect": "HTTP begins here — OkHttp via expo-file-system",
+      "notes": "sharedHttpClient = OkHttpClient() default 10s read timeout between chunks"
+    },
+    {
+      "order": 13,
+      "file": "apk-sha256.ts",
+      "symbol": "sha256HexFromFile → file.arrayBuffer()",
+      "canThrowBeforeHttp": false,
+      "throwsInto": "catch → sha_verification_failed if message matches",
+      "uiEffect": "post-download, loads entire APK into JS heap",
+      "notes": "44MB memory spike after HTTP completes"
+    },
+    {
+      "order": 14,
+      "file": "apk-download-cache.ts",
+      "symbol": "saveApkDownloadCache",
+      "canThrowBeforeHttp": false,
+      "throwsInto": "catch",
+      "uiEffect": null,
+      "notes": "SecureStore write"
+    },
+    {
+      "order": 15,
+      "file": "download-apk.ts",
+      "symbol": "setState(\"READY_TO_INSTALL\")",
+      "canThrowBeforeHttp": false,
+      "throwsInto": null,
+      "uiEffect": "phase=ready_to_install",
+      "notes": "before installer"
+    },
+    {
+      "order": 16,
+      "file": "install-apk-android.ts",
+      "symbol": "openApkInstaller(file.contentUri)",
+      "canThrowBeforeHttp": false,
+      "throwsInto": "permission_required or install_handoff_failed",
+      "uiEffect": "Android package installer intent",
+      "notes": "automatic — no separate install tap after download"
+    }
+  ],
+  "preHttpThrows": [
+    {
+      "order": 6,
+      "file": "download-apk.ts",
+      "symbol": "startApkDownload guards (downloadUrl, Platform.OS, sha256)",
+      "canThrowBeforeHttp": true,
+      "throwsInto": "return {ok:false} — no HTTP",
+      "uiEffect": "onStateChange FAILED",
+      "notes": "synchronous early returns before network"
+    },
+    {
+      "order": 8,
+      "file": "apk-download-cache.ts",
+      "symbol": "findVerifiedCachedApk",
+      "canThrowBeforeHttp": true,
+      "throwsInto": "startApkDownload catch → mapUpdateError",
+      "uiEffect": "FAILED before DOWNLOADING if throws",
+      "notes": "SecureStore IO; sha256HexFromFile loads FULL file via arrayBuffer()"
+    },
+    {
+      "order": 10,
+      "file": "download-apk.ts",
+      "symbol": "downloadVerifiedApk",
+      "canThrowBeforeHttp": true,
+      "throwsInto": "startApkDownload catch",
+      "uiEffect": null,
+      "notes": "pre-HTTP: sha256_expected_missing; destination.exists delete"
+    }
+  ]
+}

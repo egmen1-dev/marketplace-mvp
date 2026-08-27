@@ -1,0 +1,20 @@
+{
+  "PREVIOUS_GITHUB_ROOT_CAUSE_STATUS": "DISPROVEN",
+  "explanation": "Same-origin Railway proxy also fails on physical RC10.5 after retry. GitHub raw transport was at most a CONTRIBUTOR; not sufficient root cause.",
+  "HTTP_REQUEST_FROM_DEVICE": "NOT_RUN",
+  "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "UNKNOWN_UNTIL_PROBE",
+  "manualRecoveryRequired": "UNKNOWN_UNTIL_PROBE",
+  "nextAction": "BLOCKED_ROOT_CAUSE_UNPROVEN",
+  "manualRecovery": {
+    "required": "if HTTP_REQUEST_FROM_DEVICE=NO",
+    "signerSha256Expected": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "signerSha256Verified": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "browserUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+    "steps": [
+      "Open proxy URL in Chrome on device",
+      "Download APK",
+      "Tap file",
+      "Install over existing app"
+    ]
+  }
+}

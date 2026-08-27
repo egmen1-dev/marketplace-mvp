@@ -71,6 +71,8 @@ async function main() {
         ? ("PENDING_DEPLOY" as const)
         : ("FAIL" as const);
 
+  const serverBridgeGate = proxyRecoveryGate;
+
   let proxyDownload: Awaited<ReturnType<typeof downloadVerifiedApkRc105>> | null = null;
   if (proxyProbe.ok) {
     const { mkdtempSync } = await import("node:fs");
@@ -87,8 +89,8 @@ async function main() {
     }
   }
 
-  if (proxyRecoveryGate === "PENDING_DEPLOY") {
-    console.warn("[WARN] RC10_5_REMOTE_RECOVERY_GATE=PENDING_DEPLOY — proxy route not live on staging yet");
+  if (serverBridgeGate === "PENDING_DEPLOY") {
+    console.warn("[WARN] RC10_5_SERVER_BRIDGE_GATE=PENDING_DEPLOY — proxy route not live on staging yet");
   }
 
   const forensics = {
@@ -142,9 +144,11 @@ async function main() {
       mrpDownloadUrl: harness.mrp.downloadUrl,
       mrpUsesProxy,
       proxyProbeStatus: proxyProbe.status,
-      RC10_5_REMOTE_RECOVERY_GATE: proxyRecoveryGate,
-      OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE:
-        proxyRecoveryGate === "PASS" ? "YES" : proxyRecoveryGate === "PENDING_DEPLOY" ? "PENDING_DEPLOY" : "YES",
+      RC10_5_SERVER_BRIDGE_GATE: serverBridgeGate,
+      RC10_5_DEVICE_BRIDGE: "NOT_RUN",
+      RC10_5_REMOTE_RECOVERY_GATE: serverBridgeGate,
+      gateGapNote: "SERVER_BRIDGE_PASS ≠ physical device download proven",
+      OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE: "UNKNOWN_UNTIL_DEVICE_PROBE",
     },
     classification: harness.physicalFailureReproducedInHarness === "YES" ? "H=MULTIPLE" : harness.classification,
     physicalFailureReproducedInHarness: harness.physicalFailureReproducedInHarness,
@@ -154,7 +158,7 @@ async function main() {
 
   const report = {
     generatedAt: new Date().toISOString(),
-    gate: "mobile:update-bridge-rc10.5:gate",
+    gate: "mobile:update-bridge-rc10.5:gate (RC10_5_SERVER_BRIDGE_GATE)",
     verdict: "PASS",
     physicalAndroid: "FAIL",
     installedCode: INSTALLED_CODE,
@@ -164,8 +168,10 @@ async function main() {
     DOWNLOAD_HANDLER_REACHABLE: harness.downloadHandler.reachable ? "YES" : "NO",
     APK_DOWNLOAD_BYTES: direct.bytes,
     APK_SHA256: direct.sha256,
-    RC10_5_REMOTE_RECOVERY_GATE: proxyRecoveryGate,
-    OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE: forensics.proxyRecovery.OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE,
+    RC10_5_SERVER_BRIDGE_GATE: serverBridgeGate,
+    RC10_5_DEVICE_BRIDGE: "NOT_RUN",
+    RC10_5_REMOTE_RECOVERY_GATE: serverBridgeGate,
+    OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE: "UNKNOWN_UNTIL_DEVICE_PROBE",
     "RC10_8": "NOT_CREATED",
     mrpVersionUnchanged: true,
     harness,

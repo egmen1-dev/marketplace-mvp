@@ -1,0 +1,55 @@
+{
+  "FAILED_PHASE_DOWNLOAD_SUPPORTED_BY_RC10_5": "BROKEN",
+  "supported": "BROKEN",
+  "phaseGuardBlocksDownload": false,
+  "setPhaseDownloadingOnTap": false,
+  "downloadUrlRequired": true,
+  "sha256Required": true,
+  "abortControllerFromCheck": false,
+  "competingCheckOnFocus": false,
+  "transitions": [
+    {
+      "step": "initial",
+      "phase": "failed",
+      "errorMessage": "Не удалось проверить обновление. Проверьте интернет и попробуйте позже.",
+      "notes": "availableHint still visible; hasUpdate=true from updateInfo"
+    },
+    {
+      "step": "downloadUpdate_entry",
+      "phase": "failed",
+      "errorMessage": null,
+      "notes": "setErrorMessage(null) — does NOT change phase yet"
+    },
+    {
+      "step": "postTelemetry_started",
+      "phase": "failed",
+      "errorMessage": null,
+      "notes": "still failed until onStateChange"
+    },
+    {
+      "step": "startApkDownload_cache_lookup",
+      "phase": "failed",
+      "errorMessage": null,
+      "notes": "findVerifiedCachedApk may throw/OOM before DOWNLOADING"
+    },
+    {
+      "step": "onStateChange_DOWNLOADING",
+      "phase": "downloading",
+      "errorMessage": null,
+      "notes": "only if cache lookup completes without throw"
+    },
+    {
+      "step": "File_downloadFileAsync",
+      "phase": "downloading",
+      "errorMessage": null,
+      "notes": "HTTP to MRP proxy begins"
+    },
+    {
+      "step": "on_failure",
+      "phase": "failed",
+      "errorMessage": "network_error copy",
+      "notes": "setPhase failed + availableHint returns"
+    }
+  ],
+  "verdict": "Handler executes (no phase guard) but UX is BROKEN: tap does not set downloading until after cache lookup; auto-installer runs immediately after download; failed-phase CTA remains visible after failure."
+}

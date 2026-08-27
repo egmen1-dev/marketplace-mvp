@@ -1,0 +1,13 @@
+{
+  "endpoint": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk/request-log?versionCode=23&since=<ISO_TAP-30s>",
+  "HTTP_REQUEST_FROM_DEVICE": "NOT_RUN",
+  "probeDeployed": "pending_this_deploy",
+  "physicalProcedure": [
+    "Open update screen on RC10.5",
+    "Tap Повторить, wait for 0.1.15-beta.8",
+    "Record tap time (seconds)",
+    "Tap Скачать обновление once",
+    "Wait 20s",
+    "Query request-log with since=tap-30s"
+  ]
+}
