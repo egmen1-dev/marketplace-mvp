@@ -44,7 +44,7 @@ export default function UpdateCheckScreen() {
           <>
             <Text style={styles.title}>{UPDATE_UI_LABELS.available}</Text>
             <Text style={styles.body}>Версия {updateInfo.versionName}</Text>
-            <PrimaryButton label={primaryLabel} onPress={downloadUpdate} fullWidth />
+            <PrimaryButton testID="update-download" label={primaryLabel} onPress={downloadUpdate} fullWidth />
           </>
         ) : null}
 
@@ -66,7 +66,7 @@ export default function UpdateCheckScreen() {
           <>
             <Text style={styles.title}>{UPDATE_UI_LABELS.readyToInstall}</Text>
             <Text style={styles.body}>Версия {updateInfo.versionName}</Text>
-            <PrimaryButton label={UPDATE_UI_LABELS.installCta} onPress={downloadUpdate} fullWidth />
+            <PrimaryButton testID="update-install" label={UPDATE_UI_LABELS.installCta} onPress={downloadUpdate} fullWidth />
           </>
         ) : null}
 
@@ -117,7 +117,7 @@ export default function UpdateCheckScreen() {
         ) : null}
       </View>
 
-      <View style={styles.identityCard}>
+      <View style={styles.identityCard} testID="update-identity-card">
         <Text style={styles.identityTitle}>
           ЛОТ {buildInfo.appVersion} ({buildInfo.buildNumber})
         </Text>

@@ -1,7 +1,7 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { Alert, InteractionManager } from "react-native";
+import { Alert, Image, InteractionManager } from "react-native";
 
 import { buildPhotoStepUiContract } from "../../../../lib/mobile/seller-journey/photo-step-state";
 import { createClientActionId, createOneTapGuard } from "../../../../lib/mobile/seller-journey/one-tap-action";
@@ -28,6 +28,7 @@ import {
   type SellerLotMutationResponse,
 } from "../api/seller-lot";
 import { loadAppConfig } from "../config/env";
+import { isFirebaseQaEnabled } from "../config/firebase-qa";
 import { LOT_CREATE_COPY } from "./lot-create-copy";
 import { formatLotCreateError, type LotCreateErrorContext } from "./lot-create-errors";
 import {
@@ -471,6 +472,42 @@ export function useLotCreateForm() {
       });
       const current = draftRef.current;
       const nextImages = [...current.images, ...added].slice(0, 10);
+      persist({ ...current, images: nextImages, step: "photos" }, { immediate: true });
+      clearErrors();
+      await new Promise<void>((resolve) => {
+        InteractionManager.runAfterInteractions(() => resolve());
+      });
+      void processUploadQueue();
+    } finally {
+      setPickerBusy(false);
+    }
+  }
+
+  async function injectFixturePhoto(fixture: "smartphone" | "product") {
+    if (!isFirebaseQaEnabled()) return;
+    setPickerBusy(true);
+    try {
+      const moduleId =
+        fixture === "smartphone"
+          ? require("../firebase-qa-fixtures/smartphone-photo.png")
+          : require("../firebase-qa-fixtures/product-photo.png");
+      const resolved = Image.resolveAssetSource(moduleId);
+      const uri = resolved.uri;
+      if (!uri) {
+        Alert.alert("QA fixture", "Не удалось загрузить тестовое фото");
+        return;
+      }
+      const added = {
+        uri,
+        fileName: `${fixture}-fixture.png`,
+        mimeType: "image/png",
+        width: 48,
+        height: 48,
+        fileSize: 1024,
+        uploadStatus: "idle" as const,
+      };
+      const current = draftRef.current;
+      const nextImages = [...current.images, added].slice(0, 10);
       persist({ ...current, images: nextImages, step: "photos" }, { immediate: true });
       clearErrors();
       await new Promise<void>((resolve) => {
@@ -1008,6 +1045,7 @@ export function useLotCreateForm() {
     continueRestore,
     discardRestore,
     pickImages,
+    injectFixturePhoto,
     selectRootCategory,
     selectProductType,
     togglePickupEnabled,

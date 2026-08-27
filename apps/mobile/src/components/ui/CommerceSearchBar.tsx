@@ -23,6 +23,8 @@ export function CommerceSearchBar({
   onClearHistory,
   showSuggestions,
   inputRef,
+  testID,
+  accessibilityLabel,
   ...rest
 }: CommerceSearchBarProps) {
   const hasValue = typeof value === "string" && value.length > 0;
@@ -34,6 +36,8 @@ export function CommerceSearchBar({
         <MaterialCommunityIcons name="magnify" size={20} color={colors.gray500} />
         <TextInput
           ref={inputRef}
+          testID={testID}
+          accessibilityLabel={accessibilityLabel ?? testID}
           placeholderTextColor={colors.gray500}
           style={styles.input}
           value={value}

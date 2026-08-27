@@ -81,6 +81,7 @@ export default function SellerProductsScreen() {
           {TABS.map((item) => (
             <Chip
               key={item.key}
+              testID={`seller-lots-tab-${item.key}`}
               label={item.label}
               active={tab === item.key}
               onPress={() => {
@@ -92,6 +93,8 @@ export default function SellerProductsScreen() {
           ))}
         </ScrollView>
         <CommerceSearchBar
+          testID="seller-lots-search"
+          accessibilityLabel="seller-lots-search"
           placeholder="Поиск по вашим ЛОТам"
           value={query}
           onChangeText={setQuery}
