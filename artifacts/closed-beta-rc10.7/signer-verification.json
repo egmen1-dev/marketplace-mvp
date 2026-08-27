@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-08-27T06:59:36.431Z",
+  "apkPath": "/workspace/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "expectedSignerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "rc10_6SignerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "compatibleWithCode22": true,
+  "verdict": "PASS"
+}

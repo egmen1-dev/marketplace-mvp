@@ -1,0 +1,45 @@
+{
+  "candidate": "RC10.7",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.8",
+  "versionCode": 23,
+  "commitSha": "e3855e8",
+  "mergeCommitSha": "654c16f",
+  "pr201MergeSha": "654c16f",
+  "buildTime": "2026-08-26T18:35:04Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.8.apk",
+    "path": "artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "sizeBytes": 44411738
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "photoContinueFix": true,
+    "submitBlackHoleFix": true,
+    "sellerJourneyDiagnostics": true,
+    "asyncModerationBoundary": true,
+    "oneTapGuards": true,
+    "updateJourneyFix": true,
+    "updateUiContract": true,
+    "updateJourneyDiagnostics": true,
+    "previousRelease": "RC10.6 0.1.15-beta.7 (code 22)"
+  },
+  "buildNotes": {
+    "release": "RC10.7 — update journey hotfix after PR #201 (canonical UI contract + sequence guard + journey diagnostics; no availableHint contradiction)",
+    "previousRelease": "RC10.6 0.1.15-beta.7 (code 22)",
+    "versionPolicy": "Closed Beta RC series increments versionCode monotonically (RC10.6=22 → RC10.7=23) and versionName beta patch (0.1.15-beta.7 → 0.1.15-beta.8)"
+  }
+}
