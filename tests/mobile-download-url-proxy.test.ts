@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { resolveClientDownloadUrl } from "@/lib/mobile-release-platform/download-url";
+import { buildApkProxyDownloadUrl, resolveClientDownloadUrl } from "@/lib/mobile-release-platform/download-url";
 import type { ReleaseVersion } from "@/lib/mobile-release-platform/types";
 
 const baseRelease: ReleaseVersion = {
@@ -25,7 +25,34 @@ const baseRelease: ReleaseVersion = {
 };
 
 describe("resolveClientDownloadUrl", () => {
-  it("returns upstream URL when proxy disabled", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("returns upstream URL when no public origin (local dev)", () => {
+    vi.stubEnv("RAILWAY_PUBLIC_DOMAIN", "");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
     expect(resolveClientDownloadUrl(baseRelease)).toBe(baseRelease.downloadUrl);
+  });
+
+  it("auto-proxies GitHub raw when Railway public domain is set", () => {
+    vi.stubEnv("RAILWAY_PUBLIC_DOMAIN", "web-production-e56fb.up.railway.app");
+    expect(resolveClientDownloadUrl(baseRelease)).toBe(
+      "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+    );
+  });
+
+  it("honours explicit MOBILE_APK_PROXY_DOWNLOAD=1", () => {
+    vi.stubEnv("MOBILE_APK_PROXY_DOWNLOAD", "1");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://example.test");
+    expect(resolveClientDownloadUrl({ ...baseRelease, downloadUrl: "https://cdn.example/apk.apk" })).toBe(
+      "https://example.test/api/mobile/releases/apk?versionCode=23",
+    );
+  });
+
+  it("buildApkProxyDownloadUrl uses explicit origin", () => {
+    expect(buildApkProxyDownloadUrl(23, "https://staging.test")).toBe(
+      "https://staging.test/api/mobile/releases/apk?versionCode=23",
+    );
   });
 });
