@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-26T12:51:50.656Z",
+  "generatedAt": "2026-08-27T06:55:14.620Z",
   "deploymentComplete": true,
-  "currentGitSha": "ed9e1ab",
-  "railwaySha": "ed9e1ab",
+  "currentGitSha": "654c16f",
+  "railwaySha": "654c16f",
   "shaMatch": true,
   "deploymentAgeHours": 0.1,
   "version": "0.1.0",
@@ -40,6 +40,6 @@
       "httpStatus": 401
     }
   ],
-  "openDraftPrCount": 36,
+  "openDraftPrCount": 31,
   "blockers": []
 }

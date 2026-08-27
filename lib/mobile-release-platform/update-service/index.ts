@@ -7,6 +7,7 @@ import { parseReleaseNotes } from "../registry/map-release";
 import { getLatestPublishedRelease, listReleaseVersions } from "../registry";
 import { isDeviceEligibleForRollout } from "../release-manager";
 import type { MobileUpdatePayload } from "../types";
+import { resolveClientDownloadUrl } from "../download-url";
 import { resolveUpdateState } from "./resolve-update-state";
 import { buildUnsupportedClientPayload } from "./unsupported-client";
 
@@ -43,7 +44,8 @@ export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVers
 
   const hasNewer = latest ? query.clientVersionCode < latest.versionCode : false;
   const updateRequired = compatibility.forceUpgrade || (latest?.mandatory ?? false);
-  const showUpdate = hasNewer && rolloutEligible && Boolean(latest?.downloadUrl);
+  const clientDownloadUrl = resolveClientDownloadUrl(latest);
+  const showUpdate = hasNewer && rolloutEligible && Boolean(clientDownloadUrl);
   const updateState = resolveUpdateState({
     clientVersionCode: query.clientVersionCode,
     latestVersionCode: latest?.versionCode ?? null,
@@ -66,7 +68,7 @@ export async function buildMobileUpdatePayload(query: UpdateQuery = { clientVers
     updateRequired,
     updateState,
     mandatory: latest?.mandatory ?? false,
-    downloadUrl: showUpdate ? latest?.downloadUrl ?? null : null,
+    downloadUrl: showUpdate ? clientDownloadUrl : null,
     sha256: showUpdate ? latest?.sha256 ?? null : null,
     artifactSizeBytes: showUpdate ? latest?.artifactSizeBytes ?? null : null,
     releaseNotes: parseReleaseNotes(latest?.releaseNotes ?? "No release notes"),

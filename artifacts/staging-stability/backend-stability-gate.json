@@ -1,64 +1,64 @@
 {
-  "generatedAt": "2026-08-26T12:52:16.065Z",
+  "generatedAt": "2026-08-27T07:01:35.781Z",
   "staging": "https://web-production-e56fb.up.railway.app",
-  "runId": "stability-1787748731605",
-  "deployedSha": "ed9e1ab",
+  "runId": "stability-1787814090600",
+  "deployedSha": "654c16f",
   "probes": [
     {
-      "at": "2026-08-26T12:52:11.783Z",
+      "at": "2026-08-27T07:01:30.816Z",
       "path": "/api/health",
       "method": "GET",
       "status": 200,
-      "durationMs": 175,
-      "runId": "stability-1787748731605"
+      "durationMs": 214,
+      "runId": "stability-1787814090600"
     },
     {
-      "at": "2026-08-26T12:52:12.120Z",
+      "at": "2026-08-27T07:01:31.411Z",
       "path": "/api/mobile/auth/session",
       "method": "POST",
       "status": 200,
-      "durationMs": 336,
-      "runId": "stability-1787748731605"
+      "durationMs": 594,
+      "runId": "stability-1787814090600"
     },
     {
-      "at": "2026-08-26T12:52:12.443Z",
+      "at": "2026-08-27T07:01:31.903Z",
       "path": "/api/mobile/auth/session",
       "method": "POST",
       "status": 200,
-      "durationMs": 322,
-      "runId": "stability-1787748731605"
+      "durationMs": 492,
+      "runId": "stability-1787814090600"
     },
     {
-      "at": "2026-08-26T12:52:13.690Z",
+      "at": "2026-08-27T07:01:33.124Z",
       "path": "/api/mobile/catalog/products?q=дрель",
       "method": "GET",
       "status": 200,
-      "durationMs": 942,
-      "runId": "stability-1787748731605"
+      "durationMs": 917,
+      "runId": "stability-1787814090600"
     },
     {
-      "at": "2026-08-26T12:52:14.810Z",
+      "at": "2026-08-27T07:01:34.287Z",
       "path": "/api/mobile/catalog/products?q=rc104",
       "method": "GET",
       "status": 200,
-      "durationMs": 819,
-      "runId": "stability-1787748731605"
+      "durationMs": 861,
+      "runId": "stability-1787814090600"
     },
     {
-      "at": "2026-08-26T12:52:15.209Z",
+      "at": "2026-08-27T07:01:34.730Z",
       "path": "/api/products/cmt92qep300f9ly013okngzbo",
       "method": "GET",
       "status": 200,
-      "durationMs": 98,
-      "runId": "stability-1787748731605"
+      "durationMs": 144,
+      "runId": "stability-1787814090600"
     },
     {
-      "at": "2026-08-26T12:52:16.065Z",
+      "at": "2026-08-27T07:01:35.781Z",
       "path": "/api/admin/moderation",
       "method": "GET",
       "status": 200,
-      "durationMs": 129,
-      "runId": "stability-1787748731605"
+      "durationMs": 139,
+      "runId": "stability-1787814090600"
     }
   ],
   "transportErrors": [],
@@ -66,8 +66,8 @@
   "application500Count": 0,
   "transportErrorCount": 0,
   "latencyMs": {
-    "p50": 322,
-    "p95": 942,
+    "p50": 492,
+    "p95": 917,
     "samples": 7
   },
   "verdict": "PASS"

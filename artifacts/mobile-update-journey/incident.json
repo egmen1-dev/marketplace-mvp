@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-26T22:15:00Z",
-  "incident": "P0_UPDATE_STATE_CONTRADICTION",
-  "physicalVerdict": "FAIL",
-  "rc106Status": "BLOCKED_FOR_BETA",
+  "generatedAt": "2026-08-27T08:17:05Z",
+  "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
+  "physicalVerdict": "BLOCKED_FOR_BETA",
+  "scenarioA": "FAIL",
   "installed": {
     "versionName": "0.1.15-beta.6",
     "versionCode": 21,
@@ -12,20 +12,33 @@
     "environment": "staging"
   },
   "published": {
-    "versionName": "0.1.15-beta.7",
-    "versionCode": 22,
-    "rc": "RC10.6",
-    "sha256": "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107"
+    "versionName": "0.1.15-beta.8",
+    "versionCode": 23,
+    "rc": "RC10.7",
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
   },
   "observedUi": {
-    "checkError": "Не удалось проверить обновление. Попробуйте ещё раз.",
-    "availableHint": "Доступно обновление: 0.1.15-beta.7",
-    "downloadCta": "Скачать обновление"
+    "checkError": "Не удалось проверить обновление. Проверьте интернет и попробуйте позже.",
+    "availableHint": "Доступно обновление: 0.1.15-beta.8",
+    "downloadCta": "Скачать обновление",
+    "downloadResult": "RC10.7 not downloaded"
   },
   "rootCause": {
-    "file": "apps/mobile/app/update.tsx",
-    "lines": "74-91",
-    "mechanism": "phase=failed renders check error while independent hasUpdate block still renders available hint because updateInfo survives catch in useUpdateCheckFlow"
+    "primary": "H=MULTIPLE",
+    "components": [
+      "P0_UPDATE_STATE_CONTRADICTION — RC10.5 update.tsx availableHint renders when phase=failed",
+      "C=APK_DOWNLOAD_TRANSPORT_FAILURE — File.downloadFileAsync to raw.githubusercontent.com fails on device; maps to network_error misleading copy"
+    ],
+    "cacheFailure": "NO",
+    "downloadHandlerReachable": "YES",
+    "internetMessageProves": "download path (UPDATE_ERROR_MESSAGES.network_error), not check catch (installFailed has no internet suffix)"
   },
-  "updateMatrixClientEquivalentToRc105": "NO"
+  "recovery": {
+    "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "YES",
+    "fix": "MOBILE_APK_PROXY_DOWNLOAD=1 + /api/mobile/releases/apk proxy — MRP returns same-origin downloadUrl",
+    "RC10_5_REMOTE_RECOVERY_GATE": "PENDING_DEPLOY",
+    "RC10.8": "NOT_CREATED"
+  },
+  "gate": "mobile:update-bridge-rc10.5:gate",
+  "physicalFailureReproducedInHarness": "YES"
 }
