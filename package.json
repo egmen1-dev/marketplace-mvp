@@ -122,6 +122,7 @@
     "mobile:pre-physical:gate": "node scripts/mobile-physical-gap-artifacts.mjs && tsx scripts/mobile-pre-physical-gate.ts",
     "mobile:update-journey:gate": "tsx scripts/mobile-update-journey-gate.ts",
     "mobile:update-bridge-rc10.5:gate": "tsx scripts/mobile-update-bridge-rc10.5-gate.ts",
+    "mobile:update-device-bridge:forensics": "tsx scripts/mobile-update-device-bridge-forensics.ts",
     "mobile:physical-gap:artifacts": "node scripts/mobile-physical-gap-artifacts.mjs",
     "mobile:pre-physical-v2:artifacts": "node scripts/pre-physical-v2-closure-artifacts.mjs",
     "moderation:policy-v2:gate": "tsx scripts/moderation-policy-v2-gate.ts",

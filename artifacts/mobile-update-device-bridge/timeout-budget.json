@@ -1,0 +1,37 @@
+{
+  "layers": [
+    {
+      "layer": "OkHttp connect (expo-file-system File.downloadFileAsync)",
+      "timeout": "10s default",
+      "evidence": "OkHttpClient() no custom builder in FileSystemDownload.kt:44"
+    },
+    {
+      "layer": "OkHttp read between chunks",
+      "timeout": "10s default",
+      "evidence": "idle gap between bytes, not total transfer"
+    },
+    {
+      "layer": "Railway proxy upstream fetch",
+      "timeout": "600s",
+      "evidence": "AbortSignal.timeout(600_000) in apk/route.ts"
+    },
+    {
+      "layer": "RC10.5 update check (fetchMobileUpdate)",
+      "timeout": "api client default",
+      "evidence": "separate from APK download"
+    },
+    {
+      "layer": "RC10.5 download AbortSignal",
+      "timeout": "none",
+      "evidence": "downloadFileAsync called without signal in 91b9c1d"
+    }
+  ],
+  "transferDurationEstimateSeconds": {
+    "at1Mbps": 355.293904,
+    "at5Mbps": 71.0587808,
+    "at10Mbps": 35.5293904,
+    "at20Mbps": 17.7646952,
+    "at50Mbps": 7.10587808
+  },
+  "note": "10s OkHttp read timeout fires only if no bytes for 10s — steady slow 4G may still complete; stalled proxy/upstream more risky"
+}

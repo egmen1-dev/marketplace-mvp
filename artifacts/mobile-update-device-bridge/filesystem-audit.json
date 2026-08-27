@@ -1,0 +1,13 @@
+{
+  "destination": "Paths.cache/lot-update-{versionCode}.apk",
+  "api": "expo-file-system ~57.0.3 File API (not legacy)",
+  "preDownloadDelete": "destination.exists → delete()",
+  "idempotent": true,
+  "postDownloadVerify": "file.arrayBuffer() entire APK into JS heap — 44MB OOM risk on device",
+  "emulatorTest": "NOT_RUN",
+  "risks": [
+    "pre-http cache sha on corrupt partial",
+    "post-download memory verify",
+    "auto-installer after download"
+  ]
+}

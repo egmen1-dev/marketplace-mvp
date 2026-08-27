@@ -1,0 +1,23 @@
+{
+  "RC10_5_SERVER_BRIDGE_GATE": {
+    "proves": [
+      "MRP contract",
+      "proxy HTTP 200",
+      "full APK bytes",
+      "SHA256 match from CI/Node"
+    ],
+    "doesNotProve": [
+      "Expo FileSystem Android execution on device",
+      "HTTP request initiation from RC10.5 tap",
+      "OkHttp 44MB mobile transport",
+      "file.arrayBuffer SHA on device heap",
+      "installer handoff",
+      "lifecycle cancellation"
+    ]
+  },
+  "RC10_5_DEVICE_BRIDGE": {
+    "status": "NOT_RUN",
+    "requires": "physical tap + server request-log correlation"
+  },
+  "previousOverstatement": "RC10_5_REMOTE_RECOVERY_GATE=PASS did NOT prove physical RC10.5 download"
+}

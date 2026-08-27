@@ -1,0 +1,42 @@
+{
+  "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+  "head": {
+    "status": 200,
+    "contentType": "application/vnd.android.package-archive",
+    "contentLength": 44411738,
+    "finalUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+    "redirectCount": 0
+  },
+  "fullDownload": {
+    "ok": true,
+    "bytes": 44411738,
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "destination": "/tmp/device-bridge-jBCacl/lot-update-23.apk"
+  },
+  "throttle10MB": {
+    "1Mbps": {
+      "ok": false,
+      "error": "fetch 404"
+    },
+    "5Mbps": {
+      "ok": false,
+      "error": "fetch 404"
+    },
+    "10Mbps": {
+      "ok": false,
+      "error": "fetch 404"
+    }
+  },
+  "headers": {
+    "contentType": "application/vnd.android.package-archive",
+    "contentLengthPreserved": true,
+    "compression": "none observed",
+    "acceptRanges": "bytes"
+  },
+  "proxyImplementationNotes": [
+    "Streams upstream body via createCountedResponseStream",
+    "No full-buffer before response",
+    "Upstream fetch timeout 600s",
+    "Forwards Range when present"
+  ]
+}

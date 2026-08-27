@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T08:42:31.765Z",
+  "generatedAt": "2026-08-27T08:43:27.845Z",
   "gate": "mobile:update-bridge-rc10.5:gate",
   "verdict": "PASS",
   "physicalAndroid": "FAIL",
@@ -93,14 +93,14 @@
       "ok": true,
       "bytes": 44411738,
       "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
-      "destination": "/tmp/rc105-bridge-NqMsT7/lot-update-23.apk"
+      "destination": "/tmp/rc105-bridge-5Q4xO5/lot-update-23.apk"
     },
     "physicalFailureReproducedInHarness": "YES",
     "cacheFailureRootCause": "NO",
     "classification": "B=INVALID_FAILED_PHASE_DOWNLOAD_STATE"
   },
   "forensics": {
-    "generatedAt": "2026-08-27T08:42:31.765Z",
+    "generatedAt": "2026-08-27T08:43:27.845Z",
     "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
     "installed": {
       "versionName": "0.1.15-beta.6",
