@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-08-27T14:01:10.074Z",
+  "epic": "Android Self-Update V2 Physical Proof Release",
+  "merge": {
+    "pr208": "merged",
+    "selfUpdateV2MergeSha": "d78f902b64aaed045a556009ec513de7dc0f5c45",
+    "mainSha": "e062f772ac669d55d321c2c620efa04002ea17b2"
+  },
+  "releaseNumbers": {
+    "bootstrap": {
+      "rc": "RC10.8",
+      "versionName": "0.1.15-beta.9",
+      "versionCode": 24
+    },
+    "target": {
+      "rc": "RC10.9",
+      "versionName": "0.1.15-beta.10",
+      "versionCode": 25
+    }
+  },
+  "forensicBaseline": {
+    "HTTP_REQUEST_FROM_DEVICE": "YES",
+    "NETWORK_DOWNLOAD_SUCCESS": "PROVEN",
+    "POST_DOWNLOAD_FAILURE": "PROVEN",
+    "RC10_5_REMOTE_RECOVERY": "FAILED"
+  },
+  "expectedSignerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "physicalProofContract": "BOOTSTRAP_FIXED_RC → in-app updater V2 → NEXT_FIXED_RC"
+}

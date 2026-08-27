@@ -1,0 +1,18 @@
+{
+  "status": "NOT_RUN",
+  "sections": [
+    "A_BOOTSTRAP",
+    "B_CLEAN_UPDATE_CHECK",
+    "C_DOWNLOAD",
+    "D_VERIFY",
+    "E_INSTALLER",
+    "F_TARGET_INSTALLED",
+    "G_POST_INSTALL",
+    "H_DIAGNOSTICS",
+    "I_SELLER_PHOTO",
+    "J_SELLER_PREVIEW",
+    "K_SELLER_SUBMIT",
+    "L_MY_LOTS"
+  ],
+  "note": "See docs/mobile/EPIC_ANDROID_SELF_UPDATE_V2_PHYSICAL_CHECKLIST.md"
+}

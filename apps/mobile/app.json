@@ -2,7 +2,7 @@
   "expo": {
     "name": "ЛОТ",
     "slug": "lot-marketplace",
-    "version": "0.1.15-beta.8",
+    "version": "0.1.15-beta.10",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "lot",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "ru.lot.marketplace.alpha",
-      "versionCode": 23,
+      "versionCode": 25,
       "adaptiveIcon": {
         "backgroundColor": "#FF6B00",
         "foregroundImage": "./assets/android-icon-foreground.png",

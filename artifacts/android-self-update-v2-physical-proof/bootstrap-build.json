@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-08-27T14:01:00.000Z",
+  "role": "BOOTSTRAP_FIXED_RC",
+  "rc": "RC10.8",
+  "versionName": "0.1.15-beta.9",
+  "versionCode": 24,
+  "path": "artifacts/closed-beta-rc10.8/lot_android_closed_beta_0.1.15_beta.9.apk",
+  "bytes": 44457990,
+  "sha256": "240e1acf3786a6fb758987f0c28c26bb8a1bd5a07d0892a2a08c35bdfb75aadf",
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "sourceSha": "e062f77",
+  "package": "ru.lot.marketplace.alpha",
+  "channel": "CLOSED_BETA",
+  "environment": "staging",
+  "browserInstallUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.8/lot_android_closed_beta_0.1.15_beta.9.apk",
+  "bootstrapPath": "RC10.5 code 21 → browser install → RC10.8 code 24 (no uninstall)",
+  "apkFeatureVerification": "PASS",
+  "prePhysicalV3": "PASS"
+}

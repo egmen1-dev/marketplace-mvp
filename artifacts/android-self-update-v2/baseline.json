@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T13:36:07.395Z",
+  "generatedAt": "2026-08-27T13:55:02.872Z",
   "epic": "Android Self-Update V2 / Post-Download Hardening",
   "forensicInput": {
     "HTTP_REQUEST_FROM_DEVICE": "YES",

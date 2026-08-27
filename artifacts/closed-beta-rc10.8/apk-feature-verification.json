@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-08-27T13:59:40.153Z",
+  "candidate": "RC10.8",
+  "role": "BOOTSTRAP_FIXED_RC",
+  "identity": {
+    "package": "ru.lot.marketplace.alpha",
+    "versionName": "0.1.15-beta.9",
+    "versionCode": "24",
+    "sha256": "240e1acf3786a6fb758987f0c28c26bb8a1bd5a07d0892a2a08c35bdfb75aadf",
+    "sizeBytes": 44457990
+  },
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "expectedSignerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "signerVerdict": "PASS",
+  "v2Symbols": {
+    "readBytes": true,
+    "noArrayBufferVerify": true,
+    "downloadPreparing": true,
+    "shaVerifyStarted": true,
+    "installPermissionRequired": true,
+    "updateActionId": true
+  },
+  "verdict": "PASS",
+  "failures": []
+}

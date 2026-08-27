@@ -1,0 +1,9 @@
+{
+  "generatedAt": "2026-08-27T14:01:00.000Z",
+  "epic": "Android Self-Update V2 Physical Proof Release",
+  "FINAL_VERDICT": "READY_FOR_V2_PHYSICAL_BOOTSTRAP",
+  "PHYSICAL_ANDROID_PROOF": "NOT_RUN",
+  "SELF_UPDATE_V2_PHYSICAL_E2E": "NOT_RUN",
+  "APK": "BUILT",
+  "MRP": "PENDING_PUBLISH_AFTER_PUSH"
+}

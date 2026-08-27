@@ -1,0 +1,41 @@
+{
+  "candidate": "RC10.9",
+  "role": "NEXT_FIXED_RC",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.10",
+  "versionCode": 25,
+  "commitSha": "e062f77",
+  "mergeCommitSha": "e062f77",
+  "pr208MergeSha": "e062f77",
+  "buildTime": "2026-08-27T14:00:23Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.10.apk",
+    "path": "artifacts/closed-beta-rc10.9/lot_android_closed_beta_0.1.15_beta.10.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.9/lot_android_closed_beta_0.1.15_beta.10.apk",
+    "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=25",
+    "sha256": "eafa8a877a7e17b35a3699963942220206ac18d9f497cd4f6effc99223db81ab",
+    "sizeBytes": 44458174
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "selfUpdateV2": true,
+    "metadataOnlyDeltaFromBootstrap": true
+  },
+  "buildNotes": {
+    "release": "RC10.9 — NEXT_FIXED_RC for Self-Update V2 physical E2E proof",
+    "bootstrapRelease": "RC10.8 0.1.15-beta.9 (code 24)",
+    "physicalProof": "RC10.8 → in-app V2 updater → RC10.9",
+    "functionalDeltaFromBootstrap": "version metadata only"
+  }
+}

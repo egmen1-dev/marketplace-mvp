@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-08-27T14:01:00.000Z",
+  "role": "NEXT_FIXED_RC",
+  "rc": "RC10.9",
+  "versionName": "0.1.15-beta.10",
+  "versionCode": 25,
+  "path": "artifacts/closed-beta-rc10.9/lot_android_closed_beta_0.1.15_beta.10.apk",
+  "bytes": 44458174,
+  "sha256": "eafa8a877a7e17b35a3699963942220206ac18d9f497cd4f6effc99223db81ab",
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "sourceSha": "e062f77",
+  "package": "ru.lot.marketplace.alpha",
+  "channel": "CLOSED_BETA",
+  "environment": "staging",
+  "functionalDeltaFromBootstrap": "version metadata only",
+  "mrpTarget": true,
+  "prePhysicalV3": "PASS"
+}

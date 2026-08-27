@@ -19,7 +19,7 @@ export function loadAppConfig(): AppConfig {
   return {
     apiBaseUrl,
     releaseChannel: channel,
-    appVersion: "0.1.15-beta.8",
-    buildNumber: "23",
+    appVersion: "0.1.15-beta.10",
+    buildNumber: "25",
   };
 }

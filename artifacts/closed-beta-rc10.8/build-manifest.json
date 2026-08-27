@@ -1,0 +1,44 @@
+{
+  "candidate": "RC10.8",
+  "role": "BOOTSTRAP_FIXED_RC",
+  "packageName": "ru.lot.marketplace.alpha",
+  "versionName": "0.1.15-beta.9",
+  "versionCode": 24,
+  "commitSha": "e3855e8",
+  "mergeCommitSha": "e062f77",
+  "pr208MergeSha": "e062f77",
+  "buildTime": "2026-08-26T18:35:04Z",
+  "environment": "staging",
+  "releaseChannel": "CLOSED_BETA",
+  "betaChannel": "CLOSED_BETA",
+  "apiBaseUrl": "https://web-production-e56fb.up.railway.app",
+  "artifact": {
+    "fileName": "lot_android_closed_beta_0.1.15_beta.9.apk",
+    "path": "artifacts/closed-beta-rc10.8/lot_android_closed_beta_0.1.15_beta.9.apk",
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.8/lot_android_closed_beta_0.1.15_beta.9.apk",
+    "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=24",
+    "sha256": "240e1acf3786a6fb758987f0c28c26bb8a1bd5a07d0892a2a08c35bdfb75aadf",
+    "sizeBytes": 44457990
+  },
+  "android": {
+    "minSdk": 24,
+    "targetSdk": 36,
+    "abi": [
+      "arm64-v8a"
+    ],
+    "newArchEnabled": false
+  },
+  "embeddedMetadata": {
+    "selfUpdateV2": true,
+    "chunkedSha256": true,
+    "updateStateMachineV2": true,
+    "updateJourneyDiagnosticsV2": true,
+    "sellerJourneyFixes": true
+  },
+  "buildNotes": {
+    "release": "RC10.8 — BOOTSTRAP_FIXED_RC with Android Self-Update V2 (PR #208)",
+    "previousRelease": "RC10.7 0.1.15-beta.8 (code 23)",
+    "bootstrapPath": "RC10.5 → browser/manual install → RC10.8 (no uninstall)",
+    "physicalProofRole": "First on-device build containing V2 updater — not the in-app proof target"
+  }
+}

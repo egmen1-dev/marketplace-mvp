@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T13:36:07.395Z",
+  "generatedAt": "2026-08-27T13:55:02.872Z",
   "flow": "CTA → downloadUpdate → startApkDownload → cache lookup → File.downloadFileAsync → SHA → content URI → Android installer",
   "stages": [
     {
