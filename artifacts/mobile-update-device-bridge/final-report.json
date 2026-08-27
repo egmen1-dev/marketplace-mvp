@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T11:33:21.349Z",
+  "generatedAt": "2026-08-27T12:30:00.000Z",
   "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
   "physicalRetry": "FAIL after Railway proxy recovery",
   "PREVIOUS_GITHUB_ROOT_CAUSE_STATUS": "DISPROVEN",
@@ -8,11 +8,18 @@
   "ROOT_CAUSE": "UNKNOWN",
   "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "UNKNOWN_UNTIL_PROBE",
   "MANUAL_RECOVERY_REQUIRED": "UNKNOWN_UNTIL_PROBE",
-  "NEXT_ACTION": "BLOCKED_ROOT_CAUSE_UNPROVEN",
+  "NEXT_ACTION": "BLOCKED_WAITING_FOR_RAILWAY_DEPLOY",
   "RC10_8": "NOT_CREATED",
   "mrpVersionUnchanged": true,
+  "deployTruth": {
+    "PR205_STATUS": "MERGED",
+    "MAIN_SHA": "b91871a",
+    "RAILWAY_SHA": "83fb3b4",
+    "DEVICE_PROBE_API_LIVE": "NO"
+  },
   "gateGap": {
     "RC10_5_SERVER_BRIDGE_GATE": {
+      "status": "PASS",
       "proves": [
         "MRP contract",
         "proxy HTTP 200",
@@ -30,13 +37,13 @@
     },
     "RC10_5_DEVICE_BRIDGE": {
       "status": "NOT_RUN",
-      "requires": "physical tap + server request-log correlation"
+      "requires": "physical tap + server request-log correlation (blocked until Railway deploys b91871a)"
     },
     "previousOverstatement": "RC10_5_REMOTE_RECOVERY_GATE=PASS did NOT prove physical RC10.5 download"
   },
   "baseline": {
-    "generatedAt": "2026-08-27T11:33:21.344Z",
-    "mainCommit": "83fb3b4",
+    "generatedAt": "2026-08-27T12:30:00.000Z",
+    "mainCommit": "b91871a",
     "stagingCommit": "83fb3b4",
     "stagingUrl": "https://web-production-e56fb.up.railway.app",
     "installed": {
