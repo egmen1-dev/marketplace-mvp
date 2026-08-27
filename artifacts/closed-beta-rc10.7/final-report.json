@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-08-27T07:01:00Z",
+  "candidate": "RC10.7",
+  "verdict": "READY_FOR_PHYSICAL_VALIDATION",
+  "merge": {
+    "pr201": "654c16f",
+    "pr202": "d046ee9",
+    "mainSha": "d046ee9"
+  },
+  "railway": {
+    "servingSha": "654c16f",
+    "health": "PASS",
+    "schemaCompatible": true
+  },
+  "prePhysicalV2": "PASS",
+  "version": {
+    "rc106": { "versionName": "0.1.15-beta.7", "versionCode": 22 },
+    "rc107": { "versionName": "0.1.15-beta.8", "versionCode": 23 }
+  },
+  "apk": {
+    "path": "artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "sizeBytes": 44411738,
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "sourceSha": "d046ee9"
+  },
+  "featureForensics": {
+    "updateStateFix": "PASS",
+    "requestSequencing": "PASS",
+    "updateDiagnostics": "PASS",
+    "photoFix": "PASS",
+    "submitFix": "PASS",
+    "noAvailableHintContradiction": "PASS"
+  },
+  "mrp": {
+    "published": true,
+    "versionName": "0.1.15-beta.8",
+    "versionCode": 23,
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
+  },
+  "physicalChecklist": "artifacts/closed-beta-rc10.7/physical-checklist.json",
+  "physical": "NOT_RUN",
+  "rc106Immutable": true,
+  "physicalNote": "RC10.5 contradictory update UI is expected until RC10.7 installs; Scenario A success = download+install, not clean UI on RC10.5"
+}

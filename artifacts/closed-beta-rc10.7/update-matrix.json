@@ -1,0 +1,131 @@
+{
+  "generatedAt": "2026-08-27T07:00:57.644Z",
+  "candidate": "RC10.7",
+  "staging": "https://web-production-e56fb.up.railway.app",
+  "mrpStatus": "PUBLISHED",
+  "probes": [
+    {
+      "installedVersionCode": 17,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 18,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 19,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 20,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 21,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 22,
+      "updateState": "OPTIONAL_UPDATE",
+      "expectedState": "OPTIONAL_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 23,
+      "updateState": "NO_UPDATE",
+      "expectedState": "NO_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    },
+    {
+      "installedVersionCode": 24,
+      "updateState": "NO_UPDATE",
+      "expectedState": "NO_UPDATE",
+      "targetVersionCode": 23,
+      "targetVersionName": "0.1.15-beta.8",
+      "verdict": "PASS"
+    }
+  ],
+  "apkIntegrityFromMrpUrl": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "httpOk": true,
+    "expectedSha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "actualSha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "sizeBytes": 44411738,
+    "verdict": "PASS"
+  },
+  "matrix": [
+    {
+      "from": "code 17",
+      "to": "RC10.7 (code 23)",
+      "expected": "OPTIONAL_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "code 18",
+      "to": "RC10.7 (code 23)",
+      "expected": "OPTIONAL_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "code 19",
+      "to": "RC10.7 (code 23)",
+      "expected": "OPTIONAL_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "code 20",
+      "to": "RC10.7 (code 23)",
+      "expected": "OPTIONAL_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "RC10.5 (code 21)",
+      "to": "RC10.7 (code 23)",
+      "expected": "OPTIONAL_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "RC10.6 (code 22)",
+      "to": "RC10.7 (code 23)",
+      "expected": "OPTIONAL_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "RC10.7 (code 23)",
+      "to": "RC10.7",
+      "expected": "NO_UPDATE",
+      "physical": "NOT_RUN"
+    },
+    {
+      "from": "future code 24+",
+      "to": "RC10.7",
+      "expected": "NO_DOWNGRADE",
+      "physical": "NOT_RUN"
+    }
+  ],
+  "verdict": "PASS"
+}

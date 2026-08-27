@@ -2,7 +2,7 @@
 /** Canonical update journey gate — client state machine + live MRP contract. */
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { evaluateUpdateDecision } from "../lib/mobile/update-journey/mrp-contract";
@@ -11,7 +11,12 @@ const OUT_DIR = join(process.cwd(), "artifacts/mobile-update-journey");
 const OUT = join(OUT_DIR, "gate-report.json");
 const STAGING = process.env.STAGING_BASE_URL ?? "https://web-production-e56fb.up.railway.app";
 const INSTALLED_CODE = 21;
-const EXPECTED_SHA = "d25e04bcf65287e0b747b8489a0ff5efb10ab50f663eb4a48250dbabd9715107";
+const MANIFEST_PATH = join(process.cwd(), "artifacts/closed-beta-rc10.7/build-manifest.json");
+const manifest = existsSync(MANIFEST_PATH)
+  ? JSON.parse(readFileSync(MANIFEST_PATH, "utf8"))
+  : null;
+const EXPECTED_LATEST_CODE = manifest?.versionCode ?? 23;
+const EXPECTED_SHA = manifest?.artifact?.sha256 ?? "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043";
 
 function run(cmd: string): void {
   console.log(`[RUN] ${cmd}`);
@@ -45,7 +50,7 @@ async function liveMrpContract() {
   });
   const body = await res.json();
   const decision = evaluateUpdateDecision(body, INSTALLED_CODE);
-  if (decision.updateState !== "OPTIONAL_UPDATE" || decision.latestVersionCode !== 22) {
+  if (decision.updateState !== "OPTIONAL_UPDATE" || decision.latestVersionCode !== EXPECTED_LATEST_CODE) {
     fail(`live MRP decision mismatch: ${JSON.stringify(decision)}`);
   }
 
@@ -69,7 +74,7 @@ async function main() {
     verdict: "PASS",
     physicalAndroid: "NOT_RUN",
     installedCode: INSTALLED_CODE,
-    latestCode: 22,
+    latestCode: EXPECTED_LATEST_CODE,
     liveMrp: live,
     layers: {
       serverDecision: "PASS",
