@@ -1,0 +1,6 @@
+{
+  "APK_SHA_IMPLEMENTATION": "CHUNKED",
+  "FULL_FILE_JS_ARRAYBUFFER": "NO",
+  "APK_VERIFY_PEAK_JS_MEMORY_SAFE": "YES",
+  "mechanism": "Expo FileHandle.readBytes(256KiB) + @noble/hashes incremental SHA256"
+}

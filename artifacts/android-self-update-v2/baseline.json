@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-27T13:36:07.395Z",
+  "epic": "Android Self-Update V2 / Post-Download Hardening",
+  "forensicInput": {
+    "HTTP_REQUEST_FROM_DEVICE": "YES",
+    "NETWORK_DOWNLOAD_SUCCESS": "PROVEN",
+    "POST_DOWNLOAD_FAILURE": "PROVEN",
+    "FAILURE_BOUNDARY": "POST_DOWNLOAD",
+    "RC10_5_REMOTE_RECOVERY": "FAILED",
+    "MANUAL_BROWSER_BRIDGE": "SUPPORTED"
+  },
+  "installed": {
+    "rc": "RC10.5",
+    "version": "0.1.15-beta.6",
+    "versionCode": 21,
+    "commit": "91b9c1d"
+  },
+  "target": {
+    "rc": "RC10.7",
+    "version": "0.1.15-beta.8",
+    "versionCode": 23,
+    "bytes": 44411738
+  },
+  "PROVEN_ROOT_CAUSE": "NOT_PROVEN",
+  "primarySuspect": "SHA_VERIFY via full-file arrayBuffer (suspect only)"
+}

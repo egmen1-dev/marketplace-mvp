@@ -23,6 +23,13 @@ type Props = {
   onDismiss: () => void;
 };
 
+const DOWNLOADING_STATES = new Set<ApkUpdateFlowState>([
+  "DOWNLOAD_PREPARING",
+  "DOWNLOAD_STARTED",
+  "DOWNLOAD_PROGRESS",
+  "DOWNLOAD_COMPLETE",
+]);
+
 function titleForState(state: MobileUpdateState, versionName: string) {
   if (state === "UNSUPPORTED_CLIENT") return "Эта версия ЛОТ больше не поддерживается";
   if (state === "REQUIRED_UPDATE") return "Эта версия ЛОТ больше не поддерживается";
@@ -37,16 +44,21 @@ function bodyForState(state: MobileUpdateState, versionName: string) {
 }
 
 function ctaForFlowState(flowState: ApkUpdateFlowState, hasCachedApk: boolean): string {
-  if (flowState === "DOWNLOADING") return UPDATE_UI_LABELS.downloading;
-  if (flowState === "READY_TO_INSTALL" || flowState === "INSTALLER_OPENED") return UPDATE_UI_LABELS.installCta;
+  if (DOWNLOADING_STATES.has(flowState)) return UPDATE_UI_LABELS.downloading;
+  if (flowState === "VERIFYING" || flowState === "INSTALLER_PREPARING") return UPDATE_UI_LABELS.verifying;
+  if (flowState === "VERIFIED" || flowState === "INSTALLER_OPENED" || flowState === "INSTALLER_HANDOFF") {
+    return UPDATE_UI_LABELS.installCta;
+  }
   if (hasCachedApk) return UPDATE_UI_LABELS.installCta;
   return UPDATE_UI_LABELS.updateNow;
 }
 
 function statusForFlowState(flowState: ApkUpdateFlowState, hasCachedApk: boolean): string | null {
-  if (flowState === "DOWNLOADING") return UPDATE_UI_LABELS.downloading;
-  if (flowState === "READY_TO_INSTALL") return UPDATE_UI_LABELS.readyToInstall;
+  if (DOWNLOADING_STATES.has(flowState)) return UPDATE_UI_LABELS.downloading;
+  if (flowState === "VERIFYING") return UPDATE_UI_LABELS.verifying;
+  if (flowState === "VERIFIED") return UPDATE_UI_LABELS.readyToInstall;
   if (flowState === "INSTALLER_OPENED") return UPDATE_UI_LABELS.installerOpened;
+  if (flowState === "INSTALL_PERMISSION_REQUIRED") return UPDATE_UI_LABELS.installPermissionRequired;
   if (hasCachedApk && flowState === "AVAILABLE") return UPDATE_UI_LABELS.alreadyDownloaded;
   return null;
 }
@@ -65,23 +77,30 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
     void (async () => {
       if (!info.sha256) {
         setHasCachedApk(false);
+        setFlowState("AVAILABLE");
         return;
       }
       const cached = await findVerifiedCachedApk({
         versionCode: info.versionCode,
         sha256: info.sha256,
+        expectedSizeBytes: info.artifactSizeBytes,
       });
       setHasCachedApk(Boolean(cached));
-      setFlowState(cached ? "READY_TO_INSTALL" : "AVAILABLE");
+      setFlowState(cached ? "VERIFIED" : "AVAILABLE");
     })();
-  }, [info.sha256, info.versionCode, visible]);
+  }, [info.artifactSizeBytes, info.sha256, info.versionCode, visible]);
 
   async function onUpdate() {
     setBusy(true);
     setError(null);
     setNeedsUnknownSources(false);
 
-    const runner = hasCachedApk && flowState !== "AVAILABLE" ? installCachedApkUpdate : startApkDownload;
+    const useCache =
+      hasCachedApk &&
+      (flowState === "VERIFIED" ||
+        flowState === "INSTALL_PERMISSION_REQUIRED" ||
+        flowState === "INSTALLER_HANDOFF");
+    const runner = useCache ? installCachedApkUpdate : startApkDownload;
     const result = await runner(info, { onStateChange: setFlowState });
     setBusy(false);
 
@@ -109,7 +128,10 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
   }
 
   const statusLine = statusForFlowState(flowState, hasCachedApk);
-  const primaryDisabled = flowState === "DOWNLOADING" || flowState === "INSTALLER_OPENED";
+  const primaryDisabled =
+    DOWNLOADING_STATES.has(flowState) ||
+    flowState === "VERIFYING" ||
+    flowState === "INSTALLER_OPENED";
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={dismissible ? onDismiss : undefined}>
@@ -150,7 +172,7 @@ export function UpdateGate({ info, visible, onDismiss }: Props) {
             label={ctaForFlowState(flowState, hasCachedApk)}
             fullWidth
             onPress={onUpdate}
-            loading={busy || flowState === "DOWNLOADING"}
+            loading={busy || DOWNLOADING_STATES.has(flowState) || flowState === "VERIFYING"}
             disabled={primaryDisabled}
           />
           {needsUnknownSources ? (

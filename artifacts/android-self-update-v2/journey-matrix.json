@@ -1,0 +1,4 @@
+{
+  "scenarios": "A-R covered in tests/mobile-android-self-update-v2.test.ts + mobile-update-journey.test.ts",
+  "physicalAndroid": "NOT_RUN"
+}

@@ -8,7 +8,7 @@ import {
   normalizeSha256Hex,
   sha256HexFromArrayBuffer,
   sha256Matches,
-} from "../apps/mobile/src/update/apk-sha256";
+} from "@/lib/mobile/apk-verify/incremental-sha256";
 
 const downloadApk = readFileSync("apps/mobile/src/update/download-apk.ts", "utf8");
 const installApk = readFileSync("apps/mobile/src/update/install-apk-android.ts", "utf8");
@@ -41,9 +41,9 @@ describe("P0 — Android update install hotfix", () => {
   });
 
   it("tracks truthful update states and prevents false completion", () => {
-    expect(downloadApk).toContain('"DOWNLOADING"');
-    expect(downloadApk).toContain('"READY_TO_INSTALL"');
-    expect(downloadApk).toContain('"INSTALLER_OPENED"');
+    expect(downloadApk).toContain("DOWNLOAD_PREPARING");
+    expect(downloadApk).toContain("VERIFIED");
+    expect(downloadApk).toContain("INSTALLER_OPENED");
     expect(downloadApk).toContain("UPDATE_ANALYTICS.downloaded");
     expect(updateLabels).toContain("Скачиваем обновление…");
     expect(updateLabels).toContain("Обновление скачано");
@@ -67,6 +67,7 @@ describe("P0 — Android update install hotfix", () => {
     expect(sha256Matches(actual, expected)).toBe(true);
     expect(normalizeSha256Hex("INVALID")).toBeNull();
     expect(downloadApk).toContain("sha256_verify_failed");
+    expect(readFileSync("apps/mobile/src/update/apk-sha256.ts", "utf8")).not.toContain("arrayBuffer()");
   });
 
   it("keeps CLOSED_BETA APK signatures compatible for in-place upgrade", () => {

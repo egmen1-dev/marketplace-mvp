@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-08-27T13:36:45.675Z",
+  "gate": "mobile:pre-physical:v3",
+  "PRE_PHYSICAL_V3": "PASS",
+  "allows": "READY_FOR_NEXT_PHYSICAL_BUILD",
+  "blocks": "BLOCKED_PRE_PHYSICAL_V3",
+  "physicalAndroid": "NOT_RUN",
+  "apkBuilt": "NOT_BUILT",
+  "mrp": "UNCHANGED",
+  "results": [
+    {
+      "id": "build",
+      "verdict": "PASS"
+    },
+    {
+      "id": "mobile_typecheck",
+      "verdict": "PASS"
+    },
+    {
+      "id": "update_journey",
+      "verdict": "PASS"
+    },
+    {
+      "id": "android_update_install",
+      "verdict": "PASS"
+    },
+    {
+      "id": "update_device_bridge",
+      "verdict": "PASS"
+    },
+    {
+      "id": "seller_journey",
+      "verdict": "PASS"
+    },
+    {
+      "id": "create_lot_preview",
+      "verdict": "PASS"
+    },
+    {
+      "id": "lot_publish_truth",
+      "verdict": "PASS"
+    },
+    {
+      "id": "my_lots_consistency",
+      "verdict": "PASS"
+    },
+    {
+      "id": "seller_photo_upload",
+      "verdict": "PASS"
+    },
+    {
+      "id": "lot_moderation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "backend_stability",
+      "verdict": "PASS"
+    },
+    {
+      "id": "migration_verify",
+      "verdict": "PASS"
+    },
+    {
+      "id": "railway_runtime",
+      "verdict": "PASS"
+    },
+    {
+      "id": "release_pipeline",
+      "verdict": "PASS"
+    }
+  ]
+}

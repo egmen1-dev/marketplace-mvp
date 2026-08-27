@@ -28,8 +28,11 @@ export function createUpdateJourneyHarness(installedVersionCode = 21) {
     availableRelease: null,
     errorStage: null,
     errorMessage: null,
+    errorClass: null,
     activeCheckSequence: 0,
     hasCachedApk: false,
+    updateActionId: null,
+    downloadProgress: null,
   };
 
   const release: UpdateHarnessRelease = {
@@ -124,7 +127,7 @@ export function createUpdateJourneyHarness(installedVersionCode = 21) {
     },
 
     beginDownload() {
-      snapshot = { ...snapshot, phase: "DOWNLOADING" };
+      snapshot = { ...snapshot, phase: "DOWNLOAD_PROGRESS" };
       return snapshot;
     },
 
