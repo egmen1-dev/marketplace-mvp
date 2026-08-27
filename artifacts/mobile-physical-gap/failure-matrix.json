@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-26T17:49:47.697Z",
+  "generatedAt": "2026-08-27T06:54:21.613Z",
   "scenarios": {
     "A_slow_upload": "PASS — processing blocks, ready navigates (0–3000ms)",
     "B_upload_fail": "PASS — ERROR phase blocks continue",

@@ -1,16 +1,60 @@
 {
-  "generatedAt": "2026-08-26T17:48:57.000Z",
+  "generatedAt": "2026-08-27T06:55:14.633Z",
   "gate": "mobile:pre-physical:gate",
   "version": "PRE_PHYSICAL_V2",
-  "verdict": "FAIL",
+  "verdict": "PASS",
   "allows": "READY_FOR_NEXT_PHYSICAL_BUILD",
   "blocks": "BLOCKED_BEFORE_DEVICE",
   "physicalAndroid": "NOT_RUN",
-  "failedGate": "lot_publish_truth",
-  "failureReason": "staging smoke timeout in mobile-lot-publish-truth-staging-smoke.mjs",
-  "passedBeforeFailure": [
-    "seller_journey",
-    "create_lot_preview",
-    "my_lots_consistency"
+  "gapAnalysisRef": "Low-level gates validated contracts; no journey-level observable UI outcome tests",
+  "results": [
+    {
+      "id": "update_journey",
+      "verdict": "PASS"
+    },
+    {
+      "id": "seller_journey",
+      "verdict": "PASS"
+    },
+    {
+      "id": "create_lot_preview",
+      "verdict": "PASS"
+    },
+    {
+      "id": "my_lots_consistency",
+      "verdict": "PASS"
+    },
+    {
+      "id": "lot_publish_truth",
+      "verdict": "PASS"
+    },
+    {
+      "id": "lot_dynamic_characteristics",
+      "verdict": "PASS"
+    },
+    {
+      "id": "lot_moderation",
+      "verdict": "PASS"
+    },
+    {
+      "id": "seller_photo_upload",
+      "verdict": "PASS"
+    },
+    {
+      "id": "backend_stability",
+      "verdict": "PASS"
+    },
+    {
+      "id": "railway_runtime",
+      "verdict": "PASS"
+    },
+    {
+      "id": "migration_verify",
+      "verdict": "PASS"
+    },
+    {
+      "id": "release_pipeline",
+      "verdict": "PASS"
+    }
   ]
 }

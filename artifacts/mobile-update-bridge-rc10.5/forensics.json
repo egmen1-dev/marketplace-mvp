@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-08-27T08:17:05.395Z",
+  "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
+  "installed": {
+    "versionName": "0.1.15-beta.6",
+    "versionCode": 21,
+    "commit": "91b9c1d",
+    "channel": "CLOSED_BETA"
+  },
+  "target": {
+    "versionName": "0.1.15-beta.8",
+    "versionCode": 23,
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
+  },
+  "callGraph": {
+    "tapDownload": "update.tsx PrimaryButton → useUpdateCheckFlow.downloadUpdate",
+    "guard": "if (!updateInfo) return — NO phase guard",
+    "runner": "hasCachedApk ? installCachedApkUpdate : startApkDownload",
+    "download": "download-apk.ts downloadVerifiedApk → File.downloadFileAsync(url, apkCacheFile)",
+    "verify": "sha256HexFromFile(downloaded) vs MRP sha256",
+    "installer": "openApkInstaller(file.contentUri)"
+  },
+  "partialSuccess": {
+    "succeededRequest": "https://web-production-e56fb.up.railway.app/api/mobile/update?versionCode=21&channel=BETA",
+    "networkData": [
+      "versionName",
+      "versionCode",
+      "downloadUrl",
+      "sha256",
+      "updateState"
+    ],
+    "staleStateRisk": "updateInfo survives check catch (RC10.5 bug)",
+    "internetMessageSource": "UPDATE_ERROR_MESSAGES.network_error via download failure only",
+    "failureStage": "APK_DOWNLOAD_TRANSPORT (File.downloadFileAsync / OkHttp on device)"
+  },
+  "downloadTap": {
+    "DOWNLOAD_HANDLER_REACHABLE": "YES",
+    "DOWNLOAD_REQUEST_STARTED": "YES when updateInfo != null (no phase gate)",
+    "DOWNLOAD_STATE_VALID": "YES"
+  },
+  "cache": {
+    "CACHE_FAILURE_ROOT_CAUSE": "NO",
+    "note": "findVerifiedCachedApk returns null on mismatch; throws only on SecureStore/IO — check catch uses installFailed without internet suffix"
+  },
+  "liveMrp": {
+    "latestVersion": "0.1.15-beta.8",
+    "versionCode": 23,
+    "versionName": "0.1.15-beta.8",
+    "minimumVersion": "0.1.6-beta.2",
+    "minimumSupportedVersionCode": 5,
+    "updateRequired": false,
+    "updateState": "OPTIONAL_UPDATE",
+    "mandatory": false,
+    "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "artifactSizeBytes": null,
+    "releaseNotes": [
+      "Closed Beta RC10.7 — update journey hotfix (PR #201)",
+      "Fix: canonical update UI contract — no contradictory check-failed + available hint",
+      "Fix: update check sequence guard prevents stale release on failure",
+      "Fix: update journey diagnostics ring buffer + copy surface",
+      "Carry-forward: RC10.6 photo Continue + submit black-hole fixes",
+      "Upgrade path: codes 17–22 → RC10.7 (code 23)"
+    ],
+    "channel": "BETA",
+    "rollout": {
+      "percent": 100,
+      "eligible": true
+    },
+    "compatibility": {
+      "minBackendVersion": "mobile-v1",
+      "minAppVersion": "0.1.6-beta.2",
+      "minApiVersion": "mobile-api-v1",
+      "compatible": true,
+      "forceUpgrade": false
+    },
+    "publishedAt": "2026-08-27T07:00:39.082Z",
+    "previousRelease": {
+      "versionName": "0.1.15-beta.7",
+      "versionCode": 22,
+      "downloadUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.6/lot_android_closed_beta_0.1.15_beta.7.apk"
+    },
+    "knownIssues": [],
+    "advisoryOnly": true,
+    "apiVersion": "mobile-api-v1",
+    "schemaVersion": "mobile-schema-v1",
+    "syncVersion": "0.1.15-beta.8"
+  },
+  "apkTransport": {
+    "url": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+    "probe": {
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": 44411738,
+      "finalUrl": "https://raw.githubusercontent.com/egmen1-dev/marketplace-mvp/main/artifacts/closed-beta-rc10.7/lot_android_closed_beta_0.1.15_beta.8.apk",
+      "redirectCount": 0
+    },
+    "bytes": 44411738,
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "androidCompatibility": "OkHttp via expo-file-system File.downloadFileAsync; GitHub raw 200 direct"
+  },
+  "proxyRecovery": {
+    "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+    "proxyProbeStatus": 404,
+    "RC10_5_REMOTE_RECOVERY_GATE": "PENDING_DEPLOY",
+    "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "PENDING_DEPLOY"
+  },
+  "classification": "H=MULTIPLE",
+  "physicalFailureReproducedInHarness": "YES"
+}

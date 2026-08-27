@@ -1,13 +1,13 @@
 {
   "epic": "EPIC-109",
-  "generatedAt": "2026-08-26T12:51:50.656Z",
+  "generatedAt": "2026-08-27T06:55:14.620Z",
   "verdict": "COMPLETE",
   "railwayRuntime": "PASS",
   "deploymentVerification": "PASS",
   "healthCheck": "PASS",
   "routeVerification": "PASS",
   "prPolicyAudit": {
-    "generatedAt": "2026-08-26T12:51:50.655Z",
+    "generatedAt": "2026-08-27T06:55:14.620Z",
     "creationPaths": {
       "cursorCloudAgentManagePullRequest": {
         "createsDraftByDefault": true,
@@ -24,7 +24,7 @@
         "evidence": "No gh pr create in repo"
       }
     },
-    "openDraftPrCount": 36,
+    "openDraftPrCount": 31,
     "mergeableCleanDraftPrs": [],
     "limitation": "Cursor cannot change global ManagePullRequest default; agents must set draft=false per AGENTS.md"
   },
