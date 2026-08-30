@@ -28,6 +28,7 @@
     "mobile:validate": "npm run mobile:typecheck && npm run mobile:test",
     "mobile:staging-smoke": "tsx scripts/mobile-staging-integration-smoke.ts",
     "mobile:release-gate": "tsx scripts/mobile-release-gate-003-staging.ts",
+    "mobile:release-integrity:gate": "tsx scripts/mobile-release-integrity-gate.ts",
     "mobile:web-parity:gate": "tsx scripts/mobile-web-parity-gate.ts",
     "mobile:physical-fixes:category-audit": "node scripts/mobile-category-coverage-audit.mjs",
     "mobile:physical-fixes:cart-image": "node scripts/mobile-cart-image-staging-smoke.mjs",

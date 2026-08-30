@@ -11,6 +11,7 @@ export type UpdateErrorClass =
   | "DOWNLOAD_FILESYSTEM"
   | "DOWNLOAD_SIZE_MISMATCH"
   | "VERIFY_IO"
+  | "SHA_API_UNAVAILABLE"
   | "VERIFY_SHA_MISMATCH"
   | "VERIFY_MEMORY"
   | "INSTALL_PERMISSION"
@@ -38,6 +39,7 @@ export const UPDATE_ERROR_MESSAGES: Record<UpdateErrorClass, string> = {
   DOWNLOAD_FILESYSTEM: "Не удалось сохранить обновление на устройстве. Освободите место и попробуйте снова.",
   DOWNLOAD_SIZE_MISMATCH: "Размер скачанного файла не совпадает с ожидаемым. Попробуйте ещё раз.",
   VERIFY_IO: "Не удалось прочитать скачанное обновление для проверки.",
+  SHA_API_UNAVAILABLE: "Проверка обновления недоступна на этом устройстве. Попробуйте позже или обратитесь в поддержку.",
   VERIFY_SHA_MISMATCH: "Проверка целостности не пройдена. Файл будет удалён и загружен заново.",
   VERIFY_MEMORY: "Недостаточно памяти для проверки обновления. Закройте другие приложения и попробуйте снова.",
   INSTALL_PERMISSION: "Чтобы установить обновление, разрешите ЛОТ устанавливать приложения.",
@@ -62,6 +64,7 @@ export function describeUpdateError(errorClass: UpdateErrorClass): UpdateErrorDe
     case "DOWNLOAD_SIZE_MISMATCH":
       return { class: errorClass, stage: "download", message, retryAction: "download" };
     case "VERIFY_IO":
+    case "SHA_API_UNAVAILABLE":
     case "VERIFY_SHA_MISMATCH":
     case "VERIFY_MEMORY":
       return { class: errorClass, stage: "verify", message, retryAction: "verify_fresh_download" };
@@ -112,6 +115,8 @@ export function mapThrownError(err: unknown): UpdateErrorClass {
   if (/content_uri/i.test(message)) return "INSTALL_CONTENT_URI";
   if (/install|handoff|intent/i.test(message)) return "INSTALL_INTENT";
   if (/cancel/i.test(message)) return "DOWNLOAD_NETWORK";
+  if (/sha_api_unavailable|readBytes|FileHandle/i.test(message)) return "SHA_API_UNAVAILABLE";
+  if (/verify_io|verify_io_failed/i.test(message)) return "VERIFY_IO";
   if (/sha256|verify/i.test(message)) return "VERIFY_SHA_MISMATCH";
   return "UNKNOWN";
 }
