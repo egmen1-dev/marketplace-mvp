@@ -10,6 +10,7 @@ export function Chip({
   icon,
   style,
   variant = "default",
+  testID,
 }: {
   label: string;
   active?: boolean;
@@ -18,11 +19,14 @@ export function Chip({
   style?: StyleProp<ViewStyle>;
   /** Category chips in horizontal rails: single-line with ellipsis. */
   variant?: "default" | "category";
+  testID?: string;
 }) {
   const isCategory = variant === "category";
 
   return (
     <Pressable
+      testID={testID}
+      accessibilityLabel={testID ?? label}
       accessibilityRole="button"
       accessibilityState={{ selected: Boolean(active) }}
       onPress={onPress}
