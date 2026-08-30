@@ -1,14 +1,22 @@
 {
-  "generatedAt": "2026-08-27T15:33:15.713Z",
+  "generatedAt": "2026-08-28T08:22:26.673Z",
+  "gate": "mobile:firebase-instrumentation:build",
   "appApk": "/workspace/artifacts/firebase-test-lab/lot-under-test.apk",
   "testApk": "/workspace/artifacts/firebase-test-lab/lot-instrumentation-tests.apk",
   "appPackage": "ru.lot.marketplace.alpha",
   "testPackage": "ru.lot.marketplace.alpha.test",
   "runner": "androidx.test.runner.AndroidJUnitRunner",
-  "appBytes": 233050071,
-  "testBytes": 650288,
-  "appSha256": "e46ad1cd754f29454fbc674cd7a07ffcfbe31e793d7f48ff7958c0afafc7955a",
-  "testSha256": "69d103d9022493c0b2f768f31b8b507e5f07f81aa03bad8b6296e9ea6fb231a8",
+  "appBytes": 103797221,
+  "testBytes": 516876,
+  "appSha256": "79fa022dd41a2b42a11cbdb42b0c736fce552701974b814db597e19401258ca9",
+  "testSha256": "8d90ea4dd1404ea7dfc549a166558a02d390f1ad7efdcbef843541a4d8c5bd47",
+  "buildVariant": "firebaseQa",
+  "firebaseQa": true,
+  "releaseChannel": "staging",
+  "metroRequired": false,
+  "mrpPublished": false,
+  "rcCreated": false,
   "estimatedInstrumentationMinutes": 18,
-  "estimatedRoboMinutes": 5
+  "estimatedRoboMinutes": 5,
+  "gcloudExample": "gcloud firebase test android run \\\n  --type instrumentation \\\n  --app /workspace/artifacts/firebase-test-lab/lot-under-test.apk \\\n  --test /workspace/artifacts/firebase-test-lab/lot-instrumentation-tests.apk \\\n  --device model=redfin,version=30,locale=ru,orientation=portrait \\\n  --timeout 25m \\\n  --environment-variables RUN_ID=firebase-qa-manual-phone,clearPackageData=true"
 }

@@ -1,31 +1,27 @@
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../src/api/endpoints";
 import { selectRailCategories } from "../../src/catalog/rail-categories";
-import { CommerceHeader } from "../../src/components/CommerceHeader";
 import {
-  CatalogToolbar,
-  CategoryRail,
-  CommerceSearchBar,
-  EmptyState,
-  PageContainer,
-  POPULAR_SEARCHES,
-  ProductCard,
-  SkeletonGrid,
-  type CatalogSort,
-} from "../../src/components/ui";
-import { useFadeIn } from "../../src/hooks/useFadeIn";
+  CatalogCategoryRow,
+  CatalogFilterBar,
+  CatalogLoadMore,
+  CatalogProductCard,
+  CatalogSearchRow,
+  CatalogSkeletonGrid,
+  CatalogTitleRow,
+  CATALOG_GRID_GAP,
+  CATALOG_SCREEN_PADDING,
+} from "../../src/catalog/ui";
+import { EmptyState, ErrorState, type CatalogSort } from "../../src/components/ui";
+import { HomeHeader } from "../../src/home";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
-import { openSellerStorefront } from "../../src/navigation/seller-routes";
+import { pushSearchHistory } from "../../src/storage/search-history";
 import { discountPercent } from "../../src/utils/format";
-import {
-  clearSearchHistory,
-  loadSearchHistory,
-  pushSearchHistory,
-} from "../../src/storage/search-history";
-import { spacing } from "../../src/theme/tokens";
+import { colors } from "../../src/theme/tokens";
 
 const SORT_VALUES = new Set<CatalogSort>(["popular", "newest", "price_asc", "price_desc"]);
 
@@ -51,9 +47,10 @@ export default function CatalogScreen() {
     deals?: string;
     focusSearch?: string;
   }>();
+  const insets = useSafeAreaInsets();
   const searchInputRef = useRef<TextInput>(null);
-  const fade = useFadeIn();
   const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+
   const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
   const [sort, setSort] = useState<CatalogSort>(parseSort(params.sort));
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -66,17 +63,17 @@ export default function CatalogScreen() {
       ? { id: params.sellerId, name: typeof params.sellerName === "string" ? params.sellerName : "Продавец" }
       : null,
   );
-  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; catalogProductCount?: number; productCount?: number }>>([]);
+  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; slug?: string; catalogProductCount?: number; productCount?: number }>>([]);
   const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
-  const [history, setHistory] = useState<string[]>([]);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
-    loadSearchHistory().then(setHistory);
     fetchCategories()
       .then((res) => {
         const list = res.items;
@@ -118,14 +115,18 @@ export default function CatalogScreen() {
 
   useEffect(() => {
     if (params.focusSearch === "1") {
-      setSearchFocused(true);
       requestAnimationFrame(() => searchInputRef.current?.focus());
     }
   }, [params.focusSearch]);
 
   const load = useCallback(
     async (reset = true) => {
-      setLoading(true);
+      if (reset) {
+        setLoading(true);
+        setError(null);
+      } else {
+        setLoadingMore(true);
+      }
       try {
         const res = await fetchCatalog({
           q: q.trim() || undefined,
@@ -139,8 +140,13 @@ export default function CatalogScreen() {
         setItems((prev) => (reset ? nextItems : [...prev, ...nextItems]));
         setCursor(res.nextCursor);
         setHasMore(res.hasMore);
+      } catch (err) {
+        if (reset) {
+          setError(err instanceof Error ? err.message : "Ошибка загрузки");
+        }
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
     },
     [q, cursor, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly],
@@ -151,21 +157,12 @@ export default function CatalogScreen() {
     load(true);
   }, [q, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly]);
 
-  const activeFiltersLabel = useMemo(() => {
-    const parts: string[] = [];
-    if (sellerFilter) parts.push(sellerFilter.name);
-    if (dealsOnly) parts.push("Скидки");
-    return parts.join(" · ");
-  }, [sellerFilter, dealsOnly]);
-
   async function submitSearch(value: string) {
     setCategory(null);
     setSellerFilter(null);
     setDealsOnly(false);
     setQ(value);
-    setSearchFocused(false);
-    const next = await pushSearchHistory(value);
-    setHistory(next);
+    await pushSearchHistory(value);
   }
 
   function clearFilters() {
@@ -184,98 +181,113 @@ export default function CatalogScreen() {
     return "catalog";
   }
 
+  const listHeader = (
+    <View style={styles.headerBlock}>
+      <HomeHeader />
+      <CatalogSearchRow
+        inputRef={searchInputRef}
+        value={q}
+        onChangeText={setQ}
+        onSubmit={() => submitSearch(q)}
+        onFilterPress={() => setFiltersOpen(true)}
+      />
+      <CatalogCategoryRow
+        activeCategoryId={category?.id ?? null}
+        categories={railCategories}
+        onSelect={(cat) => {
+          setCategory(cat);
+          setSellerFilter(null);
+          setDealsOnly(false);
+          if (cat) setQ("");
+          else clearFilters();
+        }}
+      />
+      <CatalogTitleRow count={items.length} hasMore={hasMore} />
+      <CatalogFilterBar
+        sort={sort}
+        onSortChange={setSort}
+        dealsOnly={dealsOnly}
+        onDealsChange={setDealsOnly}
+        inStockOnly={inStockOnly}
+        onInStockChange={setInStockOnly}
+        filtersOpen={filtersOpen}
+        onFiltersOpenChange={setFiltersOpen}
+        categoryName={category?.name ?? sellerFilter?.name ?? null}
+        onClearCategory={() => {
+          setCategory(null);
+          setSellerFilter(null);
+        }}
+        onResetFilters={clearFilters}
+      />
+      {error && items.length === 0 ? (
+        <ErrorState title="Не удалось загрузить товары" onRetry={() => load(true)} variant="network" />
+      ) : null}
+      {loading && items.length === 0 ? <CatalogSkeletonGrid count={6} /> : null}
+    </View>
+  );
+
   return (
-    <PageContainer style={styles.container}>
-      <Animated.View style={{ opacity: fade, gap: spacing.sm, flex: 1 }}>
-        <CommerceHeader compact />
-        <CommerceSearchBar
-          inputRef={searchInputRef}
-          placeholder="Поиск товаров и категорий"
-          value={q}
-          onChangeText={setQ}
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
-          onSubmitEditing={() => submitSearch(q)}
-          onClear={() => setQ("")}
-          history={history}
-          popular={POPULAR_SEARCHES}
-          showSuggestions={searchFocused}
-          onSelectSuggestion={submitSearch}
-          onClearHistory={async () => {
-            await clearSearchHistory();
-            setHistory([]);
-          }}
-        />
-
-        <CategoryRail
-          categories={railCategories}
-          activeId={category?.id ?? null}
-          onSelect={(cat) => {
-            setCategory(cat);
-            setSellerFilter(null);
-            setDealsOnly(false);
-            if (cat) setQ("");
-            else clearFilters();
-          }}
-        />
-
-        <CatalogToolbar
-          sort={sort}
-          onSortChange={setSort}
-          inStockOnly={inStockOnly}
-          onInStockChange={setInStockOnly}
-          dealsOnly={dealsOnly}
-          onDealsChange={setDealsOnly}
-          categoryName={(category?.name ?? activeFiltersLabel) || null}
-          onClearCategory={() => setCategory(null)}
-          onResetFilters={clearFilters}
-        />
-
-        {loading && items.length === 0 ? (
-          <SkeletonGrid count={6} />
-        ) : (
-          <FlatList
-            data={items}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            columnWrapperStyle={styles.row}
-            contentContainerStyle={styles.list}
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={() => load(true)} />}
-            renderItem={({ item }) => (
-              <View style={styles.cardCell}>
-                <ProductCard
-                  product={item}
-                  width="100%"
-                  isFavorite={isFavorite(item.id)}
-                  onPress={() => router.push(`/product/${item.id}`)}
-                  onFavorite={() => toggleProductFavorite(item.id)}
-                  onAddToCart={() => addProductToCart(item.id, 1)}
-                  onIncrementCart={() => incrementProductCart(item.id)}
-                  onDecrementCart={() => decrementProductCart(item.id)}
-                  onSellerPress={
-                    item.seller?.id
-                      ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName)
-                      : undefined
-                  }
-                />
-              </View>
-            )}
-            ListEmptyComponent={
-              !loading ? (
-                <EmptyState preset={catalogEmptyPreset()} actionLabel="Сбросить фильтры" onAction={clearFilters} />
-              ) : null
-            }
-            onEndReached={() => hasMore && !loading && load(false)}
+    <View style={styles.screen}>
+      <FlatList
+        data={loading && items.length === 0 ? [] : items}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 24 }]}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={listHeader}
+        refreshControl={<RefreshControl refreshing={loading && items.length > 0} onRefresh={() => load(true)} tintColor={colors.ctaPrimary} />}
+        renderItem={({ item }) => (
+          <CatalogProductCard
+            product={item}
+            isFavorite={isFavorite(item.id)}
+            onPress={() => router.push(`/product/${item.id}`)}
+            onFavorite={() => toggleProductFavorite(item.id)}
+            onAddToCart={() => addProductToCart(item.id, 1)}
+            onIncrementCart={() => incrementProductCart(item.id)}
+            onDecrementCart={() => decrementProductCart(item.id)}
           />
         )}
-      </Animated.View>
-    </PageContainer>
+        ListEmptyComponent={
+          !loading && !error ? (
+            <EmptyState preset={catalogEmptyPreset()} actionLabel="Сбросить фильтры" onAction={clearFilters} />
+          ) : null
+        }
+        ListFooterComponent={
+          hasMore && items.length > 0 ? (
+            <CatalogLoadMore loading={loadingMore} onPress={() => load(false)} />
+          ) : (
+            <View style={styles.footerSpacer} />
+          )
+        }
+        onEndReachedThreshold={0.4}
+        onEndReached={() => {
+          if (hasMore && !loading && !loadingMore) load(false);
+        }}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: 0 },
-  list: { paddingBottom: spacing.xxl, gap: spacing.md },
-  row: { justifyContent: "space-between", alignItems: "stretch", marginBottom: spacing.md },
-  cardCell: { width: "48%" },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  headerBlock: {
+    gap: 14,
+    paddingBottom: 8,
+    backgroundColor: colors.white,
+  },
+  list: {
+    paddingHorizontal: CATALOG_SCREEN_PADDING,
+    flexGrow: 1,
+  },
+  row: {
+    gap: CATALOG_GRID_GAP,
+    marginBottom: CATALOG_GRID_GAP,
+  },
+  footerSpacer: {
+    height: 8,
+  },
 });

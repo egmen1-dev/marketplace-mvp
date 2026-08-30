@@ -91,7 +91,11 @@ export default function LoginScreen() {
           </Pressable>
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? (
+          <Text testID="login-error" accessibilityLabel="login-error" style={styles.error}>
+            {error}
+          </Text>
+        ) : null}
 
         <PrimaryButton testID="login-submit" label="Войти" onPress={onSubmit} loading={loading} fullWidth size="md" />
 

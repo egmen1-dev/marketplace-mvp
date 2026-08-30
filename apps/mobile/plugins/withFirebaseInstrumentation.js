@@ -24,8 +24,48 @@ function copyDirRecursive(src, dest) {
   }
 }
 
-function patchAppBuildGradle(contents) {
+function patchReactBlockForFirebaseQa(contents) {
+  if (contents.includes('debuggableVariants = ["debug"]')) {
+    return contents;
+  }
+  if (contents.includes("// debuggableVariants = [\"debug\"]")) {
+    return contents.replace(
+      /\/\/\s*debuggableVariants\s*=\s*\["debug"\]/,
+      'debuggableVariants = ["debug"] // Firebase QA variants must embed JS; only debug uses Metro',
+    );
+  }
+  if (contents.includes("debuggableVariants")) {
+    return contents.replace(/debuggableVariants\s*=\s*\[[^\]]*\]/, 'debuggableVariants = ["debug"]');
+  }
+  return contents.replace(
+    /bundleCommand = "export:embed"/,
+    `bundleCommand = "export:embed"
+    debuggableVariants = ["debug"]`,
+  );
+}
+
+function patchFirebaseQaBuildType(contents) {
   let next = contents;
+  if (!next.includes('testBuildType "firebaseQa"')) {
+    next = next.replace(/android\s*\{/, 'android {\n    testBuildType "firebaseQa"');
+  }
+  if (!next.includes("firebaseQa {")) {
+    next = next.replace(
+      /(\s+release\s*\{[\s\S]*?\n\s+\})\s*(\n\s+\})/m,
+      `$1
+        firebaseQa {
+            initWith release
+            matchingFallbacks = ["release", "debug"]
+            signingConfig signingConfigs.debug
+        }$2`,
+    );
+  }
+  return next;
+}
+
+function patchAppBuildGradle(contents) {
+  let next = patchReactBlockForFirebaseQa(contents);
+  next = patchFirebaseQaBuildType(next);
   if (!next.includes("testApplicationId")) {
     next = next.replace(
       /defaultConfig\s*\{/,

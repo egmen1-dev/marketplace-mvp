@@ -1,73 +1,157 @@
-import { useLocalSearchParams, router } from "expo-router";
-import { useEffect, useState } from "react";
-import { Animated, Dimensions, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
-import { Image } from "expo-image";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { router, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { fetchCatalog, fetchProduct, postTelemetry, type MobileProductListItem } from "../../src/api/endpoints";
+import { fetchCatalog, fetchProduct, fetchSellerStorefront, postTelemetry, type MobileProductListItem } from "../../src/api/endpoints";
+import { getCartQuantity, useCartQuantitiesStore } from "../../src/commerce/cart-quantities-store";
 import { loadAppConfig } from "../../src/config/env";
-import {
-  Badge,
-  PrimaryButton,
-  ProductCard,
-  ProductImageFallback,
-  ProductRatingRow,
-  ProductReviewsSection,
-  SecondaryButton,
-  SectionHeader,
-  SellerCard,
-  Price,
-  SkeletonGrid,
-} from "../../src/components/ui";
-import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { openProductConversation } from "../../src/hooks/useChatActions";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
+import {
+  ProductCharacteristicsCard,
+  ProductDeliveryCard,
+  ProductDescriptionCard,
+  ProductDetailHeader,
+  ProductDetailSkeleton,
+  ProductGallery,
+  ProductPriceCard,
+  ProductRelatedRail,
+  ProductReviewsCard,
+  ProductSection,
+  ProductSectionDivider,
+  ProductSellerCard,
+  ProductSocialProof,
+  ProductStickyPurchaseBar,
+  isHitProduct,
+  stickyBarContentInset,
+} from "../../src/product/ui";
 import { trackRecentView } from "../../src/storage/recent-views";
+import { colors, spacing, typography } from "../../src/theme/tokens";
 import { discountPercent, resolveImageUrl } from "../../src/utils/format";
-import { useAppStore } from "../../src/store/app-store";
-import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
-const { width } = Dimensions.get("window");
+type ProductRecord = Record<string, unknown>;
+
+type PickupPoint = {
+  id: string;
+  name: string;
+  city: string;
+  address: string;
+};
+
+type Characteristic = {
+  name: string;
+  displayValue: string;
+};
 
 export default function ProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const fade = useFadeIn();
-  const offline = useAppStore((s) => s.offline);
-  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
   const config = loadAppConfig();
-  const [product, setProduct] = useState<Record<string, unknown> | null>(null);
-  const [similar, setSimilar] = useState<MobileProductListItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState<string | null>(null);
-  const [imageIndex, setImageIndex] = useState(0);
+  const scrollRef = useRef<ScrollView>(null);
+  const similarYRef = useRef(0);
+  const cartQuantity = useCartQuantitiesStore((s) => (id ? s.quantities[id] ?? 0 : 0));
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } =
+    useCommerceActions();
 
-  useEffect(() => {
+  const [product, setProduct] = useState<ProductRecord | null>(null);
+  const [similar, setSimilar] = useState<MobileProductListItem[]>([]);
+  const [sellerTrust, setSellerTrust] = useState<{ badges: string[]; respondsInChat: boolean } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [buyNowLoading, setBuyNowLoading] = useState(false);
+
+  const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
-    fetchProduct(id)
-      .then(async (p) => {
-        setProduct(p);
-        await trackRecentView(p as MobileProductListItem);
-        postTelemetry({ screen: "product", event: "product_opened" });
-        const categoryId = (p.category as { id?: string } | null)?.id;
-        const related = await fetchCatalog({ sort: "popular", categoryId }).catch(() => ({ items: [] }));
-        setSimilar(related.items.filter((item) => item.id !== id).slice(0, 6));
-      })
-      .finally(() => setLoading(false));
+    setError(false);
+    try {
+      const p = await fetchProduct(id);
+      setProduct(p);
+      await trackRecentView(p as MobileProductListItem);
+      postTelemetry({ screen: "product", event: "product_opened" });
+
+      const seller = p.seller as { id?: string } | undefined;
+      const categoryId = (p.category as { id?: string } | null)?.id;
+
+      const [related, storefront] = await Promise.all([
+        fetchCatalog({ sort: "popular", categoryId }).catch(() => ({ items: [] as MobileProductListItem[] })),
+        seller?.id ? fetchSellerStorefront(seller.id).catch(() => null) : Promise.resolve(null),
+      ]);
+
+      setSimilar(related.items.filter((item) => item.id !== id).slice(0, 6));
+      if (storefront) {
+        setSellerTrust({ badges: storefront.badges ?? [], respondsInChat: storefront.respondsInChat });
+      } else {
+        setSellerTrust(null);
+      }
+    } catch {
+      setProduct(null);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  async function onAddToCart() {
-    if (!id) return;
-    try {
-      await addProductToCart(id, 1);
-      await postTelemetry({ screen: "product", event: "add_to_cart" });
-      setMessage("Добавлено в корзину");
-    } catch {
-      setMessage(null);
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const derived = useMemo(() => {
+    if (!product) return null;
+
+    const images = (product.images as Array<{ url: string }> | undefined) ?? [];
+    const primary = product.primaryImage as { url?: string } | undefined;
+    const gallery = images.length > 0 ? images : primary?.url ? [{ url: primary.url }] : [];
+    const price = Number(product.price ?? 0);
+    const compareAt = product.compareAt != null ? Number(product.compareAt) : null;
+    const seller = product.seller as { id?: string; storeName?: string; isVerified?: boolean } | undefined;
+    const characteristics = (product.characteristics as Characteristic[] | undefined) ?? [];
+    const pickupPoints = (product.pickupPoints as PickupPoint[] | undefined) ?? [];
+    const favoritesCount = Number(product.favoritesCount ?? 0);
+    const views = Number(product.views ?? 0);
+    const averageRating = product.averageRating != null ? Number(product.averageRating) : null;
+    const reviewsCount = Number(product.reviewsCount ?? 0);
+    const stock = Number(product.stock ?? 0);
+    const title = String(product.title ?? product.name ?? "Товар");
+    const description = String(product.description ?? "");
+    const discount = discountPercent(price, compareAt);
+
+    return {
+      gallery,
+      price,
+      compareAt,
+      seller,
+      characteristics,
+      pickupPoints,
+      favoritesCount,
+      views,
+      averageRating,
+      reviewsCount,
+      stock,
+      title,
+      description,
+      discount,
+      inStock: stock > 0,
+      showHitBadge: isHitProduct(views, favoritesCount),
+    };
+  }, [product]);
+
+  const trustChips = useMemo(() => {
+    if (!derived?.seller) return [];
+    const chips: Array<{ id: string; icon: "shield-check" | "message-text-outline" | "star" | "truck-delivery-outline"; label: string }> = [];
+    for (const badge of sellerTrust?.badges ?? []) {
+      chips.push({ id: `badge-${badge}`, icon: "star", label: badge });
     }
+    if (sellerTrust?.respondsInChat) {
+      chips.push({ id: "responds", icon: "message-text-outline", label: "Быстро отвечает" });
+    }
+    return chips.slice(0, 3);
+  }, [derived?.seller, sellerTrust]);
+
+  function scrollToSimilar() {
+    scrollRef.current?.scrollTo({ y: Math.max(0, similarYRef.current - 12), animated: true });
   }
 
   async function onWriteSeller() {
@@ -75,222 +159,214 @@ export default function ProductScreen() {
     try {
       await openProductConversation(id);
     } catch {
-      setMessage("Войдите, чтобы написать продавцу");
+      // auth toast handled in hook
     }
   }
 
-  async function onToggleFavorite() {
-    if (!id) return;
+  async function onBuyNow() {
+    if (!id || !derived?.inStock) return;
+    setBuyNowLoading(true);
     try {
-      await toggleProductFavorite(id);
+      const qty = getCartQuantity(id);
+      if (qty <= 0) {
+        await addProductToCart(id, 1);
+      }
+      await postTelemetry({ screen: "product", event: "buy_now" });
+      router.push("/checkout");
     } catch {
-      // toast handled in hook
+      // toast handled in commerce hook
+    } finally {
+      setBuyNowLoading(false);
     }
   }
 
   if (loading) {
+    return <ProductDetailSkeleton />;
+  }
+
+  if (error || !product || !derived || !id) {
     return (
-      <View style={styles.loadingWrap}>
-        <SkeletonGrid count={1} />
+      <View style={styles.errorScreen}>
+        <ProductDetailHeader productId={id ?? ""} isFavorite={false} onToggleFavorite={() => undefined} />
+        <View style={styles.errorBody}>
+          <Text style={styles.errorTitle}>Не удалось загрузить товар</Text>
+          <Pressable style={styles.retryBtn} onPress={() => void load()}>
+            <Text style={styles.retryText}>Повторить</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
 
-  if (!product) return <Text style={styles.empty}>Товар не найден</Text>;
-
-  const images = (product.images as Array<{ url: string }> | undefined) ?? [];
-  const primary = product.primaryImage as { url?: string } | undefined;
-  const gallery = images.length > 0 ? images : primary?.url ? [{ url: primary.url }] : [];
-  const currentImage = gallery[imageIndex]?.url ?? primary?.url ?? null;
-  const imageUrl = resolveImageUrl(currentImage, config.apiBaseUrl);
-  const price = Number(product.price ?? 0);
-  const compareAt = product.compareAt != null ? Number(product.compareAt) : null;
-  const seller = product.seller as { id?: string; storeName?: string; isVerified?: boolean } | undefined;
-  const characteristics = (product.characteristics as Array<{ name: string; displayValue: string }> | undefined) ?? [];
-  const pickupPoints = (product.pickupPoints as Array<{ city?: string; name?: string }> | undefined) ?? [];
-  const favoritesCount = Number(product.favoritesCount ?? 0);
-  const views = Number(product.views ?? 0);
-  const averageRating = product.averageRating != null ? Number(product.averageRating) : null;
-  const reviewsCount = Number(product.reviewsCount ?? 0);
-  const discount = discountPercent(price, compareAt);
+  const resolveUrl = (url: string) => resolveImageUrl(url, config.apiBaseUrl);
+  const hasSimilar = similar.length > 0;
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 120 + insets.bottom }]}>
-        <Animated.View style={{ opacity: fade }}>
-          <View style={styles.gallery}>
-            {imageUrl ? (
-              <Image source={{ uri: imageUrl }} style={styles.heroImage} contentFit="cover" transition={200} />
-            ) : (
-              <ProductImageFallback />
-            )}
-            {discount ? <Badge label={`-${discount}%`} tone="brand" style={styles.discountBadge} /> : null}
-            {gallery.length > 1 ? (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.thumbs}>
-                {gallery.map((img, idx) => (
-                  <Pressable key={`${img.url}-${idx}`} onPress={() => setImageIndex(idx)}>
-                    <Image
-                      source={{ uri: resolveImageUrl(img.url, config.apiBaseUrl) ?? undefined }}
-                      style={[styles.thumb, idx === imageIndex ? styles.thumbActive : null]}
-                      contentFit="cover"
-                    />
-                  </Pressable>
-                ))}
-              </ScrollView>
-            ) : null}
-          </View>
+      <ProductDetailHeader
+        productId={id}
+        isFavorite={isFavorite(id)}
+        onToggleFavorite={() => void toggleProductFavorite(id)}
+      />
 
-          <View style={styles.content}>
-            <Price value={price} compareAt={compareAt} large />
-            <Text style={styles.title}>{String(product.title ?? product.name ?? "Товар")}</Text>
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.content, { paddingBottom: stickyBarContentInset(insets.bottom) }]}
+      >
+        <ProductGallery
+          images={derived.gallery}
+          resolveUrl={resolveUrl}
+          discountPercent={derived.discount}
+          showHitBadge={derived.showHitBadge}
+          showSimilarButton={hasSimilar}
+          onSimilarPress={hasSimilar ? scrollToSimilar : undefined}
+        />
 
-            <View style={styles.badges}>
-              <Badge label="Доставка СДЭК" tone="neutral" />
-              {Number(product.stock ?? 0) > 0 ? <Badge label="В наличии" tone="success" /> : <Badge label="Нет в наличии" tone="danger" />}
-            </View>
+        <View style={styles.titleBlock}>
+          <Text style={styles.title}>{derived.title}</Text>
+          <ProductSocialProof averageRating={derived.averageRating} reviewsCount={derived.reviewsCount} />
+        </View>
 
-            <ProductRatingRow averageRating={averageRating} reviewsCount={reviewsCount} />
+        <ProductSection style={styles.priceSection}>
+          <ProductPriceCard price={derived.price} compareAt={derived.compareAt} />
+        </ProductSection>
 
-            <View style={styles.trustRow}>
-              {favoritesCount > 0 ? (
-                <View style={styles.trustItem}>
-                  <MaterialCommunityIcons name="heart" size={16} color={colors.orange} />
-                  <Text style={styles.trustText}>{favoritesCount} в избранном</Text>
-                </View>
-              ) : null}
-              {views > 0 ? (
-                <View style={styles.trustItem}>
-                  <MaterialCommunityIcons name="eye-outline" size={16} color={colors.gray500} />
-                  <Text style={styles.trustText}>{views} просмотров</Text>
-                </View>
-              ) : null}
-              {seller?.isVerified ? <Badge label="Проверенный продавец" tone="success" /> : null}
-            </View>
-
-            {seller?.storeName ? (
-              <SellerCard
-                storeName={seller.storeName}
-                subtitle="Продавец на ЛОТ"
-                onPress={seller.id ? () => openSellerStorefront(seller.id!, seller.storeName) : undefined}
+        {derived.seller?.storeName ? (
+          <>
+            <ProductSectionDivider />
+            <ProductSection>
+              <ProductSellerCard
+                storeName={derived.seller.storeName}
+                isVerified={derived.seller.isVerified}
+                trustChips={trustChips}
+                showWriteButton={Boolean(derived.seller.id)}
+                showAllProductsLink={Boolean(derived.seller.id)}
+                onWriteSeller={() => void onWriteSeller()}
+                onViewAllProducts={
+                  derived.seller.id
+                    ? () => openSellerStorefront(derived.seller!.id!, derived.seller!.storeName)
+                    : undefined
+                }
               />
-            ) : null}
+            </ProductSection>
+          </>
+        ) : null}
 
-            {seller?.id ? (
-              <SecondaryButton label="Написать продавцу" onPress={onWriteSeller} />
-            ) : null}
+        {derived.pickupPoints.length > 0 ? (
+          <>
+            <ProductSectionDivider />
+            <ProductSection>
+              <ProductDeliveryCard pickupPoints={derived.pickupPoints} />
+            </ProductSection>
+          </>
+        ) : null}
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Доставка</Text>
-              <Text style={styles.body}>
-                {pickupPoints.length > 0
-                  ? `Доступна доставка и самовывоз: ${pickupPoints[0]?.city ?? "ваш город"}`
-                  : "Доставка через партнёров маркетплейса. Сроки уточняются при оформлении."}
-              </Text>
-            </View>
+        {derived.characteristics.length > 0 ? (
+          <>
+            <ProductSectionDivider />
+            <ProductSection>
+              <ProductCharacteristicsCard characteristics={derived.characteristics} />
+            </ProductSection>
+          </>
+        ) : null}
 
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Описание</Text>
-              <Text style={styles.body}>{String(product.description ?? "Подробное описание скоро будет дополнено.")}</Text>
-            </View>
+        {derived.description.trim() ? (
+          <>
+            <ProductSectionDivider />
+            <ProductSection>
+              <ProductDescriptionCard description={derived.description} />
+            </ProductSection>
+          </>
+        ) : null}
 
-            {characteristics.length > 0 ? (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Характеристики</Text>
-                {characteristics.slice(0, 10).map((row) => (
-                  <View key={row.name} style={styles.charRow}>
-                    <Text style={styles.charName}>{row.name}</Text>
-                    <Text style={styles.charValue}>{row.displayValue}</Text>
-                  </View>
-                ))}
-              </View>
-            ) : null}
+        <ProductSectionDivider />
+        <ProductSection>
+          <ProductReviewsCard productId={id} />
+        </ProductSection>
 
-            {id ? <ProductReviewsSection productId={id} /> : null}
-
-            {similar.length > 0 ? (
-              <View style={styles.section}>
-                <SectionHeader title="Похожие товары" />
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.similarRow}>
-                  {similar.map((item) => (
-                    <ProductCard
-                      key={item.id}
-                      product={item}
-                      compact
-                      isFavorite={isFavorite(item.id)}
-                      onPress={() => router.push(`/product/${item.id}`)}
-                      onFavorite={() => toggleProductFavorite(item.id)}
-                      onAddToCart={() => addProductToCart(item.id, 1)}
-                      onIncrementCart={() => incrementProductCart(item.id)}
-                      onDecrementCart={() => decrementProductCart(item.id)}
-                      onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
-                    />
-                  ))}
-                </ScrollView>
-              </View>
-            ) : null}
+        {hasSimilar ? (
+          <View
+            onLayout={(e) => {
+              similarYRef.current = e.nativeEvent.layout.y;
+            }}
+          >
+            <ProductSectionDivider />
+            <ProductRelatedRail
+              title="Похожие товары"
+              items={similar}
+              isFavorite={isFavorite}
+              onPressProduct={(productId) => router.push(`/product/${productId}`)}
+              onFavorite={(productId) => void toggleProductFavorite(productId)}
+            />
           </View>
-        </Animated.View>
+        ) : null}
       </ScrollView>
 
-      <View style={[styles.stickyBar, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
-        {message ? <Text style={styles.message}>{message}</Text> : null}
-        <View style={styles.stickyActions}>
-          <SecondaryButton
-            label={id && isFavorite(id) ? "В избранном" : "Избранное"}
-            onPress={onToggleFavorite}
-            style={styles.secondaryBtn}
-          />
-          <PrimaryButton label="В корзину" onPress={onAddToCart} style={styles.primaryBtn} />
-        </View>
-        <Pressable onPress={() => Share.share({ message: `lot://product/${id}`, url: `lot://product/${id}` })}>
-          <Text style={styles.shareLink}>Поделиться товаром</Text>
-        </Pressable>
-      </View>
+      <ProductStickyPurchaseBar
+        price={derived.price}
+        quantity={cartQuantity}
+        inStock={derived.inStock}
+        buyNowLoading={buyNowLoading}
+        onAddToCart={() => void addProductToCart(id, 1)}
+        onIncrement={() => void incrementProductCart(id)}
+        onDecrement={() => void decrementProductCart(id)}
+        onBuyNow={() => void onBuyNow()}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.white },
-  loadingWrap: { flex: 1, padding: spacing.lg },
-  container: { backgroundColor: colors.white },
-  gallery: { backgroundColor: colors.gray100 },
-  heroImage: { width, height: width * 0.92 },
-  heroFallback: { width, height: width * 0.92, alignItems: "center", justifyContent: "center" },
-  heroFallbackText: { ...typography.display, color: colors.orange },
-  discountBadge: { position: "absolute", top: spacing.lg, left: spacing.lg },
-  thumbs: { padding: spacing.md, gap: spacing.sm },
-  thumb: { width: 56, height: 56, borderRadius: radii.sm, borderWidth: 2, borderColor: "transparent" },
-  thumbActive: { borderColor: colors.orange },
-  content: { padding: spacing.lg, gap: spacing.md },
-  title: { ...typography.h1, color: colors.black },
-  badges: { flexDirection: "row", gap: spacing.sm, flexWrap: "wrap" },
-  trustRow: { flexDirection: "row", gap: spacing.md, flexWrap: "wrap", alignItems: "center" },
-  trustItem: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
-  trustText: { ...typography.caption, color: colors.gray700 },
-  section: { gap: spacing.sm },
-  sectionTitle: { ...typography.h2, color: colors.black },
-  body: { ...typography.body, color: colors.gray900 },
-  charRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
-  charName: { ...typography.caption, color: colors.gray500, flex: 1 },
-  charValue: { ...typography.body, color: colors.black, flex: 1, textAlign: "right" },
-  similarRow: { gap: spacing.md, paddingVertical: spacing.sm },
-  stickyBar: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
+  screen: {
+    flex: 1,
     backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray200,
+  },
+  content: {
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
+  },
+  titleBlock: {
+    gap: 8,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
-    gap: spacing.sm,
+    paddingBottom: spacing.sm,
   },
-  stickyActions: { flexDirection: "row", gap: spacing.sm },
-  primaryBtn: { flex: 2 },
-  secondaryBtn: { flex: 1 },
-  shareLink: { ...typography.caption, color: colors.orange, textAlign: "center", fontWeight: "600" },
-  empty: { padding: spacing.lg, textAlign: "center" },
-  message: { color: colors.orange, ...typography.caption, textAlign: "center" },
+  title: {
+    fontSize: 21,
+    lineHeight: 27,
+    fontWeight: "700",
+    color: colors.black,
+  },
+  priceSection: {
+    paddingTop: 4,
+    paddingBottom: 12,
+  },
+  errorScreen: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  errorBody: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xl,
+    gap: spacing.lg,
+  },
+  errorTitle: {
+    ...typography.h2,
+    color: colors.black,
+    textAlign: "center",
+  },
+  retryBtn: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: 12,
+    backgroundColor: colors.ctaPrimary,
+  },
+  retryText: {
+    ...typography.button,
+    color: colors.white,
+    fontWeight: "700",
+  },
 });

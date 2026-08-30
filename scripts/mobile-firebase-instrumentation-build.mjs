@@ -19,6 +19,7 @@ const MANIFEST = join(OUT, "build-manifest.json");
 const APP_PACKAGE = "ru.lot.marketplace.alpha";
 const TEST_PACKAGE = `${APP_PACKAGE}.test`;
 const RUNNER = "androidx.test.runner.AndroidJUnitRunner";
+const BUILD_VARIANT = "firebaseQa";
 const ANDROID_SDK =
   process.env.ANDROID_HOME ?? process.env.ANDROID_SDK_ROOT ?? join(ROOT, ".android-sdk");
 
@@ -49,6 +50,10 @@ function fail(msg) {
   process.exit(1);
 }
 
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 mkdirSync(OUT, { recursive: true });
 
 const buildEnv = {
@@ -62,15 +67,22 @@ run("npx expo prebuild --platform android --clean", MOBILE, buildEnv);
 if (!existsSync(ANDROID)) fail("android folder missing after prebuild");
 ensureAndroidSdk();
 
-run("./gradlew :app:assembleDebug :app:assembleDebugAndroidTest", join(ANDROID), buildEnv);
+run(
+  `./gradlew :app:assemble${capitalize(BUILD_VARIANT)} :app:assemble${capitalize(BUILD_VARIANT)}AndroidTest`,
+  join(ANDROID),
+  buildEnv,
+);
 
-const debugApk = join(ANDROID, "app/build/outputs/apk/debug/app-debug.apk");
-const debugTestApk = join(ANDROID, "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk");
-if (!existsSync(debugApk)) fail(`missing app APK: ${debugApk}`);
-if (!existsSync(debugTestApk)) fail(`missing test APK: ${debugTestApk}`);
+const builtAppApk = join(ANDROID, `app/build/outputs/apk/${BUILD_VARIANT}/app-${BUILD_VARIANT}.apk`);
+const builtTestApk = join(
+  ANDROID,
+  `app/build/outputs/apk/androidTest/${BUILD_VARIANT}/app-${BUILD_VARIANT}-androidTest.apk`,
+);
+if (!existsSync(builtAppApk)) fail(`missing app APK: ${builtAppApk}`);
+if (!existsSync(builtTestApk)) fail(`missing test APK: ${builtTestApk}`);
 
-copyFileSync(debugApk, APP_APK);
-copyFileSync(debugTestApk, TEST_APK);
+copyFileSync(builtAppApk, APP_APK);
+copyFileSync(builtTestApk, TEST_APK);
 
 const manifest = {
   generatedAt: new Date().toISOString(),
@@ -84,8 +96,10 @@ const manifest = {
   testBytes: statSync(TEST_APK).size,
   appSha256: sha256(APP_APK),
   testSha256: sha256(TEST_APK),
+  buildVariant: BUILD_VARIANT,
   firebaseQa: true,
   releaseChannel: "staging",
+  metroRequired: false,
   mrpPublished: false,
   rcCreated: false,
   estimatedInstrumentationMinutes: 18,

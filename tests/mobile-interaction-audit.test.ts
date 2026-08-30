@@ -41,3 +41,23 @@ describe("mobile interaction audit — seller deep link", () => {
     expect(mapLotDeepLinkToHref("lot://seller/abc123")).toBe("/seller/abc123");
   });
 });
+
+describe("mobile interaction audit — checkout deep link", () => {
+  it("maps lot://checkout and lot:///checkout to native checkout", () => {
+    expect(mapLotDeepLinkToHref("lot://checkout")).toBe("/checkout");
+    expect(mapLotDeepLinkToHref("lot://checkout/")).toBe("/checkout");
+    expect(mapLotDeepLinkToHref("lot:///checkout")).toBe("/checkout");
+    expect(mapLotDeepLinkToHref("lot:///checkout/")).toBe("/checkout");
+  });
+
+  it("maps cart/product/orders/profile deep links", () => {
+    expect(mapLotDeepLinkToHref("lot://cart")).toBe("/cart");
+    expect(mapLotDeepLinkToHref("lot://product/abc-123")).toBe("/product/abc-123");
+    expect(mapLotDeepLinkToHref("lot://orders")).toBe("/(tabs)/orders");
+    expect(mapLotDeepLinkToHref("lot://profile")).toBe("/(tabs)/profile");
+  });
+
+  it("returns null for unknown lot links (safe fallback)", () => {
+    expect(mapLotDeepLinkToHref("lot://unknown-screen")).toBeNull();
+  });
+});

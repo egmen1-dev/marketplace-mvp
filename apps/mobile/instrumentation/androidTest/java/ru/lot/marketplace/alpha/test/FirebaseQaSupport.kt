@@ -1,8 +1,12 @@
 package ru.lot.marketplace.alpha.test
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.view.KeyEvent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -26,6 +30,10 @@ object FirebaseQaLogger {
 
     fun stepFail(name: String, reason: String) {
         Log.e(TAG, "FIREBASE_QA_STEP_FAIL=$name reason=$reason")
+    }
+
+    fun info(marker: String, detail: String) {
+        Log.i(TAG, "$marker=$detail")
     }
 }
 
@@ -55,6 +63,10 @@ object FirebaseQaConfig {
 }
 
 object FirebaseQaSupport {
+    private const val BOOT_WAIT_MS = 60_000L
+    private const val TAB_WAIT_MS = 30_000L
+    private val TAB_MARKERS = listOf("tab-home", "tab-sell", "tab-profile", "tab-catalog", "tab-orders")
+
     val device: UiDevice
         get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
@@ -132,11 +144,20 @@ object FirebaseQaSupport {
     }
 
     fun typeIntoTestId(testId: String, value: String) {
-        requireTestId(testId)
+        pasteIntoTestId(testId, value)
+    }
+
+    private fun pasteIntoTestId(testId: String, value: String) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("firebase-qa", value))
         val field = findByDesc(testId) ?: qaError("Input missing: $testId")
         field.click()
+        device.waitForIdle(300)
         field.clearTextField()
-        field.setText(value)
+        device.waitForIdle(150)
+        device.pressKeyCode(KeyEvent.KEYCODE_PASTE)
+        device.waitForIdle(300)
     }
 
     fun waitForText(text: String, timeoutMs: Long = 20_000) {
@@ -148,30 +169,158 @@ object FirebaseQaSupport {
         return device.findObjects(By.text(title)).size
     }
 
-    fun loginSeller() {
-        FirebaseQaLogger.stepStart("SELLER_LOGIN", FirebaseQaConfig.runId)
-        launchApp()
-        dismissBootIfNeeded()
-        if (waitForTestId("login-email", 5_000)) {
-            typeIntoTestId("login-email", FirebaseQaConfig.sellerEmail)
-            typeIntoTestId("login-password", FirebaseQaConfig.sellerPassword)
-            tapTestId("login-submit")
-            device.wait(Until.gone(By.desc("login-submit")), 30_000)
+    private fun visibleTextSample(limit: Int = 12): String {
+        val texts = mutableListOf<String>()
+        val nodes = device.findObjects(By.clickable(true))
+        for (node in nodes) {
+            val text = node.text?.trim().orEmpty()
+            if (text.isNotEmpty()) texts.add(text)
+            if (texts.size >= limit) break
         }
-        val onTabs = device.wait(Until.hasObject(By.text("Продать")), 30_000)
-        if (!onTabs) fail("Seller login did not reach main tabs")
-        FirebaseQaLogger.stepPass("SELLER_LOGIN")
+        if (texts.isEmpty()) {
+            val labels = TAB_MARKERS.filter { waitForTestId(it, 100) }
+            if (labels.isNotEmpty()) return "tabMarkers=${labels.joinToString(",")}"
+        }
+        return texts.joinToString(" | ")
     }
 
-    fun dismissBootIfNeeded() {
-        device.waitForIdle(1_000)
+    private fun visibleRouteHint(): String {
+        return when {
+            waitForTestId("login-email", 200) -> "route=login"
+            waitForTestId("tab-home", 200) -> "route=main-tabs(home)"
+            waitForTestId("tab-sell", 200) -> "route=main-tabs(sell)"
+            waitForTestId("tab-profile", 200) -> "route=main-tabs(profile)"
+            waitForTestId("lot-photo-inject-smartphone", 200) -> "route=sell/create"
+            device.findObject(UiSelector().textContains("Доступно обновление")).exists() -> "route=update-gate"
+            device.findObject(UiSelector().textContains("больше не поддерживается")).exists() -> "route=unsupported-client"
+            device.findObject(UiSelector().text("Повторить")).exists() -> "route=boot-error"
+            else -> "route=unknown"
+        }
+    }
+
+    private fun waitForBootSurface(timeoutMs: Long = BOOT_WAIT_MS): String {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            dismissBootRetryIfPresent()
+            dismissOptionalUpdateIfPresent()
+            when (visibleRouteHint()) {
+                "route=login" -> return "login"
+                "route=main-tabs(home)",
+                "route=main-tabs(sell)",
+                "route=main-tabs(profile)",
+                "route=main-tabs(catalog)",
+                -> return "tabs"
+                "route=unsupported-client" -> qaError("UNSUPPORTED_CLIENT screen blocks login")
+            }
+            device.waitForIdle(400)
+        }
+        return "timeout"
+    }
+
+    private fun dismissBootRetryIfPresent() {
         val retry = device.findObject(UiSelector().text("Повторить"))
         if (retry.exists()) retry.click()
     }
 
+    fun dismissOptionalUpdateIfPresent() {
+        val later = device.findObject(UiSelector().text("Позже"))
+        if (later.exists()) {
+            later.click()
+            device.waitForIdle(500)
+            FirebaseQaLogger.info("FIREBASE_QA_UPDATE_GATE", "dismissed_optional_update")
+        }
+    }
+
+    private fun waitForMainTabs(timeoutMs: Long = TAB_WAIT_MS): Boolean {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            dismissOptionalUpdateIfPresent()
+            for (marker in TAB_MARKERS) {
+                if (waitForTestId(marker, 250)) return true
+            }
+            device.waitForIdle(300)
+        }
+        return false
+    }
+
+    fun loginSeller() {
+        FirebaseQaLogger.stepStart("FIREBASE_QA_LOGIN_START", FirebaseQaConfig.runId)
+        FirebaseQaLogger.info("FIREBASE_QA_LOGIN_CONFIG", "email=${FirebaseQaConfig.sellerEmail} api=${FirebaseQaConfig.apiBaseUrl}")
+
+        launchApp()
+        val bootSurface = waitForBootSurface()
+        FirebaseQaLogger.info("FIREBASE_QA_BOOT_SURFACE", bootSurface)
+        FirebaseQaLogger.info("FIREBASE_QA_ROUTE_BEFORE_AUTH", visibleRouteHint())
+
+        if (bootSurface == "tabs" || waitForMainTabs(2_000)) {
+            FirebaseQaLogger.stepPass("FIREBASE_QA_LOGIN", "already_authenticated route=${visibleRouteHint()}")
+            return
+        }
+
+        if (bootSurface != "login") {
+            val reason = "boot_surface=$bootSurface route=${visibleRouteHint()} visible=${visibleTextSample()}"
+            FirebaseQaLogger.stepFail("FIREBASE_QA_LOGIN_FAIL", reason)
+            fail("Seller login blocked before credentials: $reason")
+        }
+
+        requireTestId("login-email", 5_000, "LOGIN_FORM")
+        FirebaseQaLogger.info("FIREBASE_QA_LOGIN_SUBMIT", "credentials_submitted")
+        pasteIntoTestId("login-email", FirebaseQaConfig.sellerEmail)
+        pasteIntoTestId("login-password", FirebaseQaConfig.sellerPassword)
+        tapTestId("login-submit")
+
+        val loginDeadline = System.currentTimeMillis() + TAB_WAIT_MS
+        var loginOutcome = "pending"
+        while (System.currentTimeMillis() < loginDeadline) {
+            dismissOptionalUpdateIfPresent()
+            if (waitForTestId("login-error", 200)) {
+                loginOutcome = "visible_error"
+                break
+            }
+            if (waitForMainTabs(500)) {
+                loginOutcome = "main_tabs"
+                break
+            }
+            if (!waitForTestId("login-submit", 200) && !waitForTestId("login-email", 200)) {
+                if (waitForMainTabs(1_000)) {
+                    loginOutcome = "main_tabs"
+                    break
+                }
+            }
+            device.waitForIdle(400)
+        }
+
+        FirebaseQaLogger.info("FIREBASE_QA_LOGIN_OUTCOME", loginOutcome)
+        FirebaseQaLogger.info("FIREBASE_QA_ROUTE_AFTER_AUTH", visibleRouteHint())
+        FirebaseQaLogger.info("FIREBASE_QA_VISIBLE_AFTER_AUTH", visibleTextSample())
+
+        if (loginOutcome == "visible_error") {
+            val errorText = device.findObject(UiSelector().description("login-error")).text
+                ?: device.findObject(UiSelector().resourceId("${FirebaseQaConfig.appPackage}:id/login-error")).text
+                ?: "unknown_login_error"
+            val reason = "PRODUCT_AUTH_FAILURE error=$errorText route=${visibleRouteHint()}"
+            FirebaseQaLogger.stepFail("FIREBASE_QA_LOGIN_FAIL", reason)
+            fail(reason)
+        }
+
+        if (!waitForMainTabs(1_000)) {
+            val reason =
+                "POST_LOGIN_NAV_FAILURE outcome=$loginOutcome route=${visibleRouteHint()} visible=${visibleTextSample()} assertion=tab-home|tab-sell|tab-profile"
+            FirebaseQaLogger.stepFail("FIREBASE_QA_LOGIN_FAIL", reason)
+            fail("Seller login did not reach main tabs: $reason")
+        }
+
+        FirebaseQaLogger.stepPass("FIREBASE_QA_LOGIN", "route=${visibleRouteHint()}")
+    }
+
+    fun dismissBootIfNeeded() {
+        device.waitForIdle(1_000)
+        dismissBootRetryIfPresent()
+    }
+
     fun navigateToCreateLot() {
         FirebaseQaLogger.stepStart("NAV_CREATE_LOT")
-        tapText("Продать")
+        tapTestId("tab-sell")
         tapText("Создать ЛОТ")
         requireTestId("lot-photo-inject-smartphone", 20_000, "NAV_CREATE_LOT")
         FirebaseQaLogger.stepPass("NAV_CREATE_LOT")
@@ -205,7 +354,7 @@ object FirebaseQaSupport {
     }
 
     fun openMyLotsPending() {
-        tapText("Профиль")
+        tapTestId("tab-profile")
         tapText("Мои ЛОТы")
         tapTestId("seller-lots-tab-pending")
     }

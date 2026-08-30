@@ -1,0 +1,3169 @@
+diff --git a/apps/mobile/app/(tabs)/_layout.tsx b/apps/mobile/app/(tabs)/_layout.tsx
+index 7f8ec06..88962d0 100644
+--- a/apps/mobile/app/(tabs)/_layout.tsx
++++ b/apps/mobile/app/(tabs)/_layout.tsx
+@@ -1,6 +1,6 @@
++import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+ import { Tabs } from "expo-router";
+-import type { ColorValue } from "react-native";
+-import { Platform } from "react-native";
++import { Platform, Pressable, StyleSheet, View, type ColorValue, type StyleProp, type ViewStyle } from "react-native";
+ import { useSafeAreaInsets } from "react-native-safe-area-context";
+ 
+ import { TabBarBadge, TabBarIcon, type TabIconName } from "../../src/components/ui";
+@@ -17,26 +17,60 @@ function tabIcon(name: TabIconName, badge?: number) {
+   );
+ }
+ 
++function tabBarButton(testID: string) {
++  // eslint-disable-next-line @typescript-eslint/no-explicit-any
++  return (props: any) => {
++    const { style, onPress, onLongPress, accessibilityState, children } = props;
++    return (
++      <Pressable
++        testID={testID}
++        accessibilityLabel={testID}
++        accessibilityRole="button"
++        accessibilityState={accessibilityState}
++        onPress={onPress ?? undefined}
++        onLongPress={onLongPress ?? undefined}
++        style={style as StyleProp<ViewStyle>}
++      >
++        {children}
++      </Pressable>
++    );
++  };
++}
++
++function sellTabIcon() {
++  return () => (
++    <View style={styles.sellFab}>
++      <MaterialCommunityIcons name="plus" size={26} color={colors.white} />
++    </View>
++  );
++}
++
+ export default function TabsLayout() {
+   const insets = useSafeAreaInsets();
+   const badges = useAppStore((s) => s.badges);
+   useTabBadges();
+   useMessagesBadge();
+ 
+-  const tabBarHeight = 56 + Math.max(insets.bottom, Platform.OS === "android" ? 8 : 0);
++  const tabBarHeight = 62 + Math.max(insets.bottom, Platform.OS === "android" ? 8 : 0);
+ 
+   return (
+     <Tabs
+       screenOptions={{
+         headerShown: false,
+-        tabBarActiveTintColor: colors.orange,
+-        tabBarInactiveTintColor: colors.gray500,
++        tabBarActiveTintColor: colors.ctaPrimary,
++        tabBarInactiveTintColor: "#8A8A8A",
+         tabBarStyle: {
+           height: tabBarHeight,
+-          paddingTop: 6,
++          paddingTop: 8,
+           paddingBottom: Math.max(insets.bottom, 8),
+-          borderTopColor: colors.gray200,
++          borderTopColor: "#E9E9E9",
++          borderTopWidth: 1,
+           backgroundColor: colors.white,
++          elevation: 8,
++          shadowColor: "#000",
++          shadowOffset: { width: 0, height: -2 },
++          shadowOpacity: 0.04,
++          shadowRadius: 8,
+         },
+         tabBarLabelStyle: { fontSize: 11, fontWeight: "600", marginTop: 2 },
+         headerStyle: { backgroundColor: colors.white },
+@@ -44,22 +78,50 @@ export default function TabsLayout() {
+         animation: "fade",
+       }}
+     >
+-      <Tabs.Screen name="index" options={{ title: "Главная", headerShown: false, tabBarIcon: tabIcon("home") }} />
+-      <Tabs.Screen name="catalog" options={{ title: "Каталог", headerShown: false, tabBarIcon: tabIcon("catalog") }} />
++      <Tabs.Screen
++        name="index"
++        options={{
++          title: "Главная",
++          headerShown: false,
++          tabBarIcon: tabIcon("home"),
++          tabBarButton: tabBarButton("tab-home"),
++        }}
++      />
++      <Tabs.Screen
++        name="catalog"
++        options={{
++          title: "Каталог",
++          headerShown: false,
++          tabBarIcon: tabIcon("catalog"),
++          tabBarButton: tabBarButton("tab-catalog"),
++        }}
++      />
+       <Tabs.Screen
+         name="sell"
+         options={{
+           title: "Продать",
+-          tabBarIcon: tabIcon("sell"),
++          tabBarIcon: sellTabIcon(),
++          tabBarButton: tabBarButton("tab-sell"),
++        }}
++      />
++      <Tabs.Screen
++        name="favorites"
++        options={{
++          title: "Избранное",
++          tabBarIcon: tabIcon("favorites"),
++          tabBarButton: tabBarButton("tab-favorites"),
+         }}
+       />
+       <Tabs.Screen
+-        name="orders"
+-        options={{ title: "Заказы", tabBarIcon: tabIcon("orders", badges.orders) }}
++        name="profile"
++        options={{
++          title: "Профиль",
++          tabBarIcon: tabIcon("profile"),
++          tabBarButton: tabBarButton("tab-profile"),
++        }}
+       />
+-      <Tabs.Screen name="profile" options={{ title: "Профиль", tabBarIcon: tabIcon("profile") }} />
+ 
+-      <Tabs.Screen name="favorites" options={{ href: null, title: "Избранное" }} />
++      <Tabs.Screen name="orders" options={{ href: null, title: "Заказы" }} />
+       <Tabs.Screen name="seller-home" options={{ href: null, title: "Панель продавца" }} />
+       <Tabs.Screen name="seller-products" options={{ href: null, title: "Мои ЛОТы" }} />
+       <Tabs.Screen name="seller-sales" options={{ href: null, title: "Продажи" }} />
+@@ -67,3 +129,20 @@ export default function TabsLayout() {
+     </Tabs>
+   );
+ }
++
++const styles = StyleSheet.create({
++  sellFab: {
++    width: 52,
++    height: 52,
++    borderRadius: 26,
++    marginTop: -18,
++    backgroundColor: colors.ctaPrimary,
++    alignItems: "center",
++    justifyContent: "center",
++    shadowColor: colors.ctaPrimary,
++    shadowOffset: { width: 0, height: 4 },
++    shadowOpacity: 0.28,
++    shadowRadius: 8,
++    elevation: 6,
++  },
++});
+diff --git a/apps/mobile/app/(tabs)/catalog.tsx b/apps/mobile/app/(tabs)/catalog.tsx
+index 431a784..9783a3c 100644
+--- a/apps/mobile/app/(tabs)/catalog.tsx
++++ b/apps/mobile/app/(tabs)/catalog.tsx
+@@ -1,31 +1,27 @@
+ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+-import { Animated, FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
++import { FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
++import { useSafeAreaInsets } from "react-native-safe-area-context";
+ 
+ import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../src/api/endpoints";
+ import { selectRailCategories } from "../../src/catalog/rail-categories";
+-import { CommerceHeader } from "../../src/components/CommerceHeader";
+ import {
+-  CatalogToolbar,
+-  CategoryRail,
+-  CommerceSearchBar,
+-  EmptyState,
+-  PageContainer,
+-  POPULAR_SEARCHES,
+-  ProductCard,
+-  SkeletonGrid,
+-  type CatalogSort,
+-} from "../../src/components/ui";
+-import { useFadeIn } from "../../src/hooks/useFadeIn";
++  CatalogCategoryRow,
++  CatalogFilterBar,
++  CatalogLoadMore,
++  CatalogProductCard,
++  CatalogSearchRow,
++  CatalogSkeletonGrid,
++  CatalogTitleRow,
++  CATALOG_GRID_GAP,
++  CATALOG_SCREEN_PADDING,
++} from "../../src/catalog/ui";
++import { EmptyState, ErrorState, type CatalogSort } from "../../src/components/ui";
++import { HomeHeader } from "../../src/home";
+ import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+-import { openSellerStorefront } from "../../src/navigation/seller-routes";
++import { pushSearchHistory } from "../../src/storage/search-history";
+ import { discountPercent } from "../../src/utils/format";
+-import {
+-  clearSearchHistory,
+-  loadSearchHistory,
+-  pushSearchHistory,
+-} from "../../src/storage/search-history";
+-import { spacing } from "../../src/theme/tokens";
++import { colors } from "../../src/theme/tokens";
+ 
+ const SORT_VALUES = new Set<CatalogSort>(["popular", "newest", "price_asc", "price_desc"]);
+ 
+@@ -51,9 +47,10 @@ export default function CatalogScreen() {
+     deals?: string;
+     focusSearch?: string;
+   }>();
++  const insets = useSafeAreaInsets();
+   const searchInputRef = useRef<TextInput>(null);
+-  const fade = useFadeIn();
+   const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
++
+   const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
+   const [sort, setSort] = useState<CatalogSort>(parseSort(params.sort));
+   const [inStockOnly, setInStockOnly] = useState(false);
+@@ -66,17 +63,17 @@ export default function CatalogScreen() {
+       ? { id: params.sellerId, name: typeof params.sellerName === "string" ? params.sellerName : "Продавец" }
+       : null,
+   );
+-  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; catalogProductCount?: number; productCount?: number }>>([]);
++  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; slug?: string; catalogProductCount?: number; productCount?: number }>>([]);
+   const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
+-  const [history, setHistory] = useState<string[]>([]);
+-  const [searchFocused, setSearchFocused] = useState(false);
+   const [items, setItems] = useState<MobileProductListItem[]>([]);
+   const [loading, setLoading] = useState(true);
++  const [loadingMore, setLoadingMore] = useState(false);
++  const [error, setError] = useState<string | null>(null);
+   const [cursor, setCursor] = useState<string | null>(null);
+   const [hasMore, setHasMore] = useState(false);
++  const [filtersOpen, setFiltersOpen] = useState(false);
+ 
+   useEffect(() => {
+-    loadSearchHistory().then(setHistory);
+     fetchCategories()
+       .then((res) => {
+         const list = res.items;
+@@ -118,14 +115,18 @@ export default function CatalogScreen() {
+ 
+   useEffect(() => {
+     if (params.focusSearch === "1") {
+-      setSearchFocused(true);
+       requestAnimationFrame(() => searchInputRef.current?.focus());
+     }
+   }, [params.focusSearch]);
+ 
+   const load = useCallback(
+     async (reset = true) => {
+-      setLoading(true);
++      if (reset) {
++        setLoading(true);
++        setError(null);
++      } else {
++        setLoadingMore(true);
++      }
+       try {
+         const res = await fetchCatalog({
+           q: q.trim() || undefined,
+@@ -139,8 +140,13 @@ export default function CatalogScreen() {
+         setItems((prev) => (reset ? nextItems : [...prev, ...nextItems]));
+         setCursor(res.nextCursor);
+         setHasMore(res.hasMore);
++      } catch (err) {
++        if (reset) {
++          setError(err instanceof Error ? err.message : "Ошибка загрузки");
++        }
+       } finally {
+         setLoading(false);
++        setLoadingMore(false);
+       }
+     },
+     [q, cursor, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly],
+@@ -151,21 +157,12 @@ export default function CatalogScreen() {
+     load(true);
+   }, [q, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly]);
+ 
+-  const activeFiltersLabel = useMemo(() => {
+-    const parts: string[] = [];
+-    if (sellerFilter) parts.push(sellerFilter.name);
+-    if (dealsOnly) parts.push("Скидки");
+-    return parts.join(" · ");
+-  }, [sellerFilter, dealsOnly]);
+-
+   async function submitSearch(value: string) {
+     setCategory(null);
+     setSellerFilter(null);
+     setDealsOnly(false);
+     setQ(value);
+-    setSearchFocused(false);
+-    const next = await pushSearchHistory(value);
+-    setHistory(next);
++    await pushSearchHistory(value);
+   }
+ 
+   function clearFilters() {
+@@ -184,98 +181,113 @@ export default function CatalogScreen() {
+     return "catalog";
+   }
+ 
+-  return (
+-    <PageContainer style={styles.container}>
+-      <Animated.View style={{ opacity: fade, gap: spacing.sm, flex: 1 }}>
+-        <CommerceHeader compact />
+-        <CommerceSearchBar
+-          inputRef={searchInputRef}
+-          placeholder="Поиск товаров и категорий"
+-          value={q}
+-          onChangeText={setQ}
+-          onFocus={() => setSearchFocused(true)}
+-          onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+-          onSubmitEditing={() => submitSearch(q)}
+-          onClear={() => setQ("")}
+-          history={history}
+-          popular={POPULAR_SEARCHES}
+-          showSuggestions={searchFocused}
+-          onSelectSuggestion={submitSearch}
+-          onClearHistory={async () => {
+-            await clearSearchHistory();
+-            setHistory([]);
+-          }}
+-        />
+-
+-        <CategoryRail
+-          categories={railCategories}
+-          activeId={category?.id ?? null}
+-          onSelect={(cat) => {
+-            setCategory(cat);
+-            setSellerFilter(null);
+-            setDealsOnly(false);
+-            if (cat) setQ("");
+-            else clearFilters();
+-          }}
+-        />
+-
+-        <CatalogToolbar
+-          sort={sort}
+-          onSortChange={setSort}
+-          inStockOnly={inStockOnly}
+-          onInStockChange={setInStockOnly}
+-          dealsOnly={dealsOnly}
+-          onDealsChange={setDealsOnly}
+-          categoryName={(category?.name ?? activeFiltersLabel) || null}
+-          onClearCategory={() => setCategory(null)}
+-          onResetFilters={clearFilters}
+-        />
++  const listHeader = (
++    <View style={styles.headerBlock}>
++      <HomeHeader />
++      <CatalogSearchRow
++        inputRef={searchInputRef}
++        value={q}
++        onChangeText={setQ}
++        onSubmit={() => submitSearch(q)}
++        onFilterPress={() => setFiltersOpen(true)}
++      />
++      <CatalogCategoryRow
++        activeCategoryId={category?.id ?? null}
++        categories={railCategories}
++        onSelect={(cat) => {
++          setCategory(cat);
++          setSellerFilter(null);
++          setDealsOnly(false);
++          if (cat) setQ("");
++          else clearFilters();
++        }}
++      />
++      <CatalogTitleRow count={items.length} hasMore={hasMore} />
++      <CatalogFilterBar
++        sort={sort}
++        onSortChange={setSort}
++        dealsOnly={dealsOnly}
++        onDealsChange={setDealsOnly}
++        inStockOnly={inStockOnly}
++        onInStockChange={setInStockOnly}
++        filtersOpen={filtersOpen}
++        onFiltersOpenChange={setFiltersOpen}
++        categoryName={category?.name ?? sellerFilter?.name ?? null}
++        onClearCategory={() => {
++          setCategory(null);
++          setSellerFilter(null);
++        }}
++        onResetFilters={clearFilters}
++      />
++      {error && items.length === 0 ? (
++        <ErrorState title="Не удалось загрузить товары" onRetry={() => load(true)} variant="network" />
++      ) : null}
++      {loading && items.length === 0 ? <CatalogSkeletonGrid count={6} /> : null}
++    </View>
++  );
+ 
+-        {loading && items.length === 0 ? (
+-          <SkeletonGrid count={6} />
+-        ) : (
+-          <FlatList
+-            data={items}
+-            keyExtractor={(item) => item.id}
+-            numColumns={2}
+-            columnWrapperStyle={styles.row}
+-            contentContainerStyle={styles.list}
+-            refreshControl={<RefreshControl refreshing={loading} onRefresh={() => load(true)} />}
+-            renderItem={({ item }) => (
+-              <View style={styles.cardCell}>
+-                <ProductCard
+-                  product={item}
+-                  width="100%"
+-                  isFavorite={isFavorite(item.id)}
+-                  onPress={() => router.push(`/product/${item.id}`)}
+-                  onFavorite={() => toggleProductFavorite(item.id)}
+-                  onAddToCart={() => addProductToCart(item.id, 1)}
+-                  onIncrementCart={() => incrementProductCart(item.id)}
+-                  onDecrementCart={() => decrementProductCart(item.id)}
+-                  onSellerPress={
+-                    item.seller?.id
+-                      ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName)
+-                      : undefined
+-                  }
+-                />
+-              </View>
+-            )}
+-            ListEmptyComponent={
+-              !loading ? (
+-                <EmptyState preset={catalogEmptyPreset()} actionLabel="Сбросить фильтры" onAction={clearFilters} />
+-              ) : null
+-            }
+-            onEndReached={() => hasMore && !loading && load(false)}
++  return (
++    <View style={styles.screen}>
++      <FlatList
++        data={loading && items.length === 0 ? [] : items}
++        keyExtractor={(item) => item.id}
++        numColumns={2}
++        columnWrapperStyle={styles.row}
++        contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 24 }]}
++        showsVerticalScrollIndicator={false}
++        ListHeaderComponent={listHeader}
++        refreshControl={<RefreshControl refreshing={loading && items.length > 0} onRefresh={() => load(true)} tintColor={colors.ctaPrimary} />}
++        renderItem={({ item }) => (
++          <CatalogProductCard
++            product={item}
++            isFavorite={isFavorite(item.id)}
++            onPress={() => router.push(`/product/${item.id}`)}
++            onFavorite={() => toggleProductFavorite(item.id)}
++            onAddToCart={() => addProductToCart(item.id, 1)}
++            onIncrementCart={() => incrementProductCart(item.id)}
++            onDecrementCart={() => decrementProductCart(item.id)}
+           />
+         )}
+-      </Animated.View>
+-    </PageContainer>
++        ListEmptyComponent={
++          !loading && !error ? (
++            <EmptyState preset={catalogEmptyPreset()} actionLabel="Сбросить фильтры" onAction={clearFilters} />
++          ) : null
++        }
++        ListFooterComponent={
++          hasMore && items.length > 0 ? (
++            <CatalogLoadMore loading={loadingMore} onPress={() => load(false)} />
++          ) : (
++            <View style={styles.footerSpacer} />
++          )
++        }
++        onEndReachedThreshold={0.4}
++        onEndReached={() => {
++          if (hasMore && !loading && !loadingMore) load(false);
++        }}
++      />
++    </View>
+   );
+ }
+ 
+ const styles = StyleSheet.create({
+-  container: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: 0 },
+-  list: { paddingBottom: spacing.xxl, gap: spacing.md },
+-  row: { justifyContent: "space-between", alignItems: "stretch", marginBottom: spacing.md },
+-  cardCell: { width: "48%" },
++  screen: {
++    flex: 1,
++    backgroundColor: colors.white,
++  },
++  headerBlock: {
++    gap: 14,
++    paddingBottom: 8,
++    backgroundColor: colors.white,
++  },
++  list: {
++    paddingHorizontal: CATALOG_SCREEN_PADDING,
++    flexGrow: 1,
++  },
++  row: {
++    gap: CATALOG_GRID_GAP,
++    marginBottom: CATALOG_GRID_GAP,
++  },
++  footerSpacer: {
++    height: 8,
++  },
+ });
+diff --git a/apps/mobile/app/(tabs)/index.tsx b/apps/mobile/app/(tabs)/index.tsx
+index 9b2d1fb..16d9efb 100644
+--- a/apps/mobile/app/(tabs)/index.tsx
++++ b/apps/mobile/app/(tabs)/index.tsx
+@@ -1,6 +1,6 @@
+ import { router } from "expo-router";
+ import { useCallback, useEffect, useMemo, useState } from "react";
+-import { Animated, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
++import { Animated, RefreshControl, StyleSheet, View } from "react-native";
+ 
+ import {
+   fetchBuyerHome,
+@@ -8,56 +8,34 @@ import {
+   fetchCategories,
+   type MobileProductListItem,
+ } from "../../src/api/endpoints";
+-import { CommerceHeader } from "../../src/components/CommerceHeader";
++import { ErrorState, HomeSectionSkeleton, PageScroll, SkeletonGrid } from "../../src/components/ui";
+ import {
+-  CategoryRail,
+-  Chip,
+-  CommerceSearchBar,
+-  EmptyState,
+-  ErrorState,
+-  HomeSectionSkeleton,
+-  PageScroll,
+-  POPULAR_SEARCHES,
+-  ProductCard,
+-  SectionHeader,
+-  SkeletonGrid,
+-} from "../../src/components/ui";
++  HOME_SECTION_GAP,
++  HomeCategoryRow,
++  HomeHeader,
++  HomeHeroBanner,
++  HomeProductRail,
++  HomePromoTiles,
++  HomeSearchRow,
++  HomeTrustStrip,
++} from "../../src/home";
+ import { useFadeIn } from "../../src/hooks/useFadeIn";
+ import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+ import { loadSearchHistory, pushSearchHistory } from "../../src/storage/search-history";
+-import { loadRecentViews } from "../../src/storage/recent-views";
+ import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
+-import { discountPercent } from "../../src/utils/format";
+-import { selectRailCategories } from "../../src/catalog/rail-categories";
+-import { openSellerStorefront } from "../../src/navigation/seller-routes";
++import { resolveImageUrl } from "../../src/utils/format";
++import { loadAppConfig } from "../../src/config/env";
+ import { useAppStore } from "../../src/store/app-store";
+-import { colors, radii, spacing, typography } from "../../src/theme/tokens";
+-
+-type QuickFilter = "for_you" | "deals" | "new" | "popular";
+-
+-const QUICK_FILTERS: Array<{ id: QuickFilter; label: string }> = [
+-  { id: "for_you", label: "Для вас" },
+-  { id: "deals", label: "Скидки" },
+-  { id: "new", label: "Новинки" },
+-  { id: "popular", label: "Популярное" },
+-];
++import { colors, spacing } from "../../src/theme/tokens";
+ 
+ export default function BuyerHomeScreen() {
+   const fade = useFadeIn();
+   const offline = useAppStore((s) => s.offline);
+-  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
++  const { toggleProductFavorite, isFavorite } = useCommerceActions();
+   const [summary, setSummary] = useState(() => readSnapshot<Record<string, unknown>>("buyer-home")?.payload ?? null);
+-  const [recommended, setRecommended] = useState<MobileProductListItem[]>([]);
+   const [popular, setPopular] = useState<MobileProductListItem[]>([]);
+-  const [newest, setNewest] = useState<MobileProductListItem[]>([]);
+-  const [promo, setPromo] = useState<MobileProductListItem[]>([]);
+-  const [recent, setRecent] = useState<MobileProductListItem[]>([]);
+-  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; catalogProductCount?: number; productCount?: number }>>([]);
+-  const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
+-  const [history, setHistory] = useState<string[]>([]);
++  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; slug?: string }>>([]);
+   const [search, setSearch] = useState("");
+-  const [searchFocused, setSearchFocused] = useState(false);
+-  const [activeFilter, setActiveFilter] = useState<QuickFilter>("for_you");
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+ 
+@@ -69,20 +47,14 @@ export default function BuyerHomeScreen() {
+     setError(null);
+     setLoading(true);
+     try {
+-      const [home, popularRes, newestRes, categoriesRes, recentViews] = await Promise.all([
++      const [home, popularRes, categoriesRes] = await Promise.all([
+         fetchBuyerHome(),
+         fetchCatalog({ sort: "popular" }),
+-        fetchCatalog({ sort: "newest" }),
+         fetchCategories().catch(() => ({ items: [] })),
+-        loadRecentViews(),
+       ]);
+       saveSnapshot("buyer-home", home);
+       setSummary(home);
+-      setRecommended(popularRes.items.slice(0, 8));
+-      setPopular(popularRes.items.slice(0, 8));
+-      setNewest(newestRes.items.slice(0, 8));
+-      setPromo(popularRes.items.filter((p) => discountPercent(p.price, p.compareAt)).slice(0, 8));
+-      setRecent(recentViews);
++      setPopular(popularRes.items.slice(0, 12));
+       setAllCategories(categoriesRes.items);
+     } catch (err) {
+       setError(err instanceof Error ? err.message : "Ошибка загрузки");
+@@ -92,37 +64,25 @@ export default function BuyerHomeScreen() {
+   }, [offline]);
+ 
+   useEffect(() => {
+-    loadSearchHistory().then(setHistory);
+     load();
+   }, [load]);
+ 
+   async function submitSearch(value: string) {
+-    const next = await pushSearchHistory(value);
+-    setHistory(next);
+-    router.push({ pathname: "/(tabs)/catalog", params: { q: value } });
++    const query = value.trim();
++    if (!query) return;
++    await pushSearchHistory(query);
++    router.push({ pathname: "/(tabs)/catalog", params: { q: query } });
+   }
+ 
+-  function openQuickFilter(filter: QuickFilter) {
+-    setActiveFilter(filter);
+-    if (filter === "deals") {
+-      router.push({ pathname: "/(tabs)/catalog", params: { deals: "1", sort: "popular" } });
+-      return;
+-    }
+-    if (filter === "new") {
+-      router.push({ pathname: "/(tabs)/catalog", params: { sort: "newest" } });
+-      return;
+-    }
+-    if (filter === "popular") {
+-      router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } });
+-    }
+-  }
+-
+-  const featuredItems =
+-    activeFilter === "new" ? newest : activeFilter === "deals" ? promo : activeFilter === "popular" ? popular : recommended;
++  const heroImageUrl = useMemo(() => {
++    const first = popular.find((item) => item.primaryImage?.url);
++    if (!first?.primaryImage?.url) return null;
++    return resolveImageUrl(first.primaryImage.url, loadAppConfig().apiBaseUrl);
++  }, [popular]);
+ 
+   if (loading && !summary) {
+     return (
+-      <PageScroll>
++      <PageScroll contentContainerStyle={styles.scroll}>
+         <SkeletonGrid count={4} />
+         <HomeSectionSkeleton />
+       </PageScroll>
+@@ -130,185 +90,41 @@ export default function BuyerHomeScreen() {
+   }
+ 
+   return (
+-    <PageScroll refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
+-      <Animated.View style={{ opacity: fade, gap: spacing.md }}>
+-        <CommerceHeader compact />
+-        <Text style={styles.tagline}>Товары рядом с вами — покупайте и продавайте</Text>
+-
+-        <CommerceSearchBar
+-          placeholder="Искать товары, бренды, категории"
+-          value={search}
+-          onChangeText={setSearch}
+-          onFocus={() => setSearchFocused(true)}
+-          onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+-          onSubmitEditing={() => submitSearch(search)}
+-          onClear={() => setSearch("")}
+-          history={history}
+-          popular={POPULAR_SEARCHES}
+-          showSuggestions={searchFocused}
+-          onSelectSuggestion={submitSearch}
+-        />
+-
+-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+-          {QUICK_FILTERS.map((filter) => (
+-            <Chip
+-              key={filter.id}
+-              label={filter.label}
+-              active={activeFilter === filter.id}
+-              onPress={() => openQuickFilter(filter.id)}
+-            />
+-          ))}
+-        </ScrollView>
+-
+-        {offline ? <Text style={styles.offline}>Оффлайн — показаны сохранённые данные</Text> : null}
+-        {error ? <ErrorState title="Не удалось обновить ленту" description={error} onRetry={load} variant="network" /> : null}
+-
+-        <View style={styles.section}>
+-          <SectionHeader title="Категории" actionLabel="Все" onAction={() => router.push("/(tabs)/catalog")} />
+-          <CategoryRail
+-            categories={railCategories}
+-            activeId={null}
+-            onSelect={(cat) => {
+-              if (!cat) {
+-                router.push("/(tabs)/catalog");
+-                return;
+-              }
+-              router.push({
+-                pathname: "/(tabs)/catalog",
+-                params: { categoryId: cat.id, q: "", deals: "0" },
+-              });
+-            }}
+-          />
+-        </View>
+-
+-        <ProductSection
+-          title="Рекомендуем"
+-          items={featuredItems.slice(0, 4)}
+-          onMore={() => router.push("/(tabs)/catalog")}
+-          isFavorite={isFavorite}
+-          onFavorite={toggleProductFavorite}
+-          onAddToCart={addProductToCart}
+-          onIncrementCart={incrementProductCart}
+-          onDecrementCart={decrementProductCart}
+-        />
+-        <ProductSection
+-          title="Популярное"
+-          items={popular.slice(0, 4)}
+-          horizontal={false}
++    <PageScroll
++      contentContainerStyle={styles.scroll}
++      refreshControl={<RefreshControl refreshing={loading} onRefresh={load} tintColor={colors.ctaPrimary} />}
++    >
++      <Animated.View style={[styles.content, { opacity: fade }]}>
++        <HomeHeader />
++        <HomeSearchRow value={search} onChangeText={setSearch} onSubmit={() => submitSearch(search)} />
++        <HomeCategoryRow categories={allCategories} activeId="all" />
++        <HomeHeroBanner imageUrl={heroImageUrl} />
++        <HomeProductRail
++          title="Популярные товары"
++          items={popular}
++          onMore={() => router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } })}
+           isFavorite={isFavorite}
+           onFavorite={toggleProductFavorite}
+-          onAddToCart={addProductToCart}
+-          onIncrementCart={incrementProductCart}
+-          onDecrementCart={decrementProductCart}
+-        />
+-        <ProductSection
+-          title="Новинки"
+-          items={newest}
+-          horizontal
+-          isFavorite={isFavorite}
+-          onFavorite={toggleProductFavorite}
+-          onAddToCart={addProductToCart}
+-          onIncrementCart={incrementProductCart}
+-          onDecrementCart={decrementProductCart}
+-        />
+-        <ProductSection title="Продолжить просмотр" items={recent} horizontal emptyPreset="catalog" isFavorite={isFavorite} onFavorite={toggleProductFavorite} onAddToCart={addProductToCart} onIncrementCart={incrementProductCart} onDecrementCart={decrementProductCart} />
+-        <ProductSection
+-          title="Выгодные предложения"
+-          items={promo}
+-          horizontal
+-          badge="Скидки"
+-          isFavorite={isFavorite}
+-          onFavorite={toggleProductFavorite}
+-          onAddToCart={addProductToCart}
+-          onIncrementCart={incrementProductCart}
+-          onDecrementCart={decrementProductCart}
++          onPressProduct={(id) => router.push(`/product/${id}`)}
+         />
++        <HomeTrustStrip />
++        <HomePromoTiles />
++        {error ? <ErrorState title="Не удалось обновить ленту" description={error} onRetry={load} variant="network" /> : null}
+       </Animated.View>
+     </PageScroll>
+   );
+ }
+ 
+-function ProductSection({
+-  title,
+-  items,
+-  horizontal,
+-  onMore,
+-  emptyPreset,
+-  badge,
+-  isFavorite,
+-  onFavorite,
+-  onAddToCart,
+-  onIncrementCart,
+-  onDecrementCart,
+-}: {
+-  title: string;
+-  items: MobileProductListItem[];
+-  horizontal?: boolean;
+-  onMore?: () => void;
+-  emptyPreset?: "catalog";
+-  badge?: string;
+-  isFavorite: (id: string) => boolean;
+-  onFavorite: (id: string) => void;
+-  onAddToCart: (id: string, qty?: number) => Promise<void>;
+-  onIncrementCart: (id: string) => Promise<void>;
+-  onDecrementCart: (id: string) => Promise<void>;
+-}) {
+-  return (
+-    <View style={styles.section}>
+-      <View style={styles.sectionHeaderRow}>
+-        <SectionHeader title={title} actionLabel={onMore ? "Ещё" : undefined} onAction={onMore} />
+-        {badge ? <Text style={styles.promoBadge}>{badge}</Text> : null}
+-      </View>
+-      {items.length === 0 ? (
+-        emptyPreset ? <EmptyState preset={emptyPreset} actionLabel="В каталог" onAction={() => router.push("/(tabs)/catalog")} /> : null
+-      ) : horizontal ? (
+-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+-          {items.map((item) => (
+-            <ProductCard
+-              key={`${title}-${item.id}`}
+-              product={item}
+-              compact
+-              isFavorite={isFavorite(item.id)}
+-              onPress={() => router.push(`/product/${item.id}`)}
+-              onFavorite={() => onFavorite(item.id)}
+-              onAddToCart={() => onAddToCart(item.id, 1)}
+-              onIncrementCart={() => onIncrementCart(item.id)}
+-              onDecrementCart={() => onDecrementCart(item.id)}
+-              onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
+-            />
+-          ))}
+-        </ScrollView>
+-      ) : (
+-        <View style={styles.grid}>
+-          {items.map((item) => (
+-            <View key={`${title}-${item.id}`} style={styles.cardCell}>
+-              <ProductCard
+-                product={item}
+-                width="100%"
+-                isFavorite={isFavorite(item.id)}
+-                onPress={() => router.push(`/product/${item.id}`)}
+-                onFavorite={() => onFavorite(item.id)}
+-                onAddToCart={() => onAddToCart(item.id, 1)}
+-                onIncrementCart={() => onIncrementCart(item.id)}
+-                onDecrementCart={() => onDecrementCart(item.id)}
+-                onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
+-              />
+-            </View>
+-          ))}
+-        </View>
+-      )}
+-    </View>
+-  );
+-}
+-
+ const styles = StyleSheet.create({
+-  tagline: { ...typography.caption, color: colors.gray500, marginTop: -spacing.xs },
+-  offline: { ...typography.caption, color: colors.gray500 },
+-  section: { gap: spacing.sm },
+-  sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+-  promoBadge: { ...typography.caption, color: colors.white, backgroundColor: colors.orange, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill, overflow: "hidden" },
+-  chipsRow: { gap: spacing.sm, paddingVertical: spacing.xs },
+-  grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", rowGap: spacing.md, alignItems: "stretch" },
+-  cardCell: { width: "48%" },
+-  horizontalList: { gap: spacing.md, paddingRight: spacing.lg },
++  scroll: {
++    paddingTop: 0,
++    paddingLeft: 0,
++    paddingRight: 0,
++    gap: HOME_SECTION_GAP,
++    backgroundColor: colors.white,
++  },
++  content: {
++    gap: HOME_SECTION_GAP,
++    paddingBottom: spacing.md,
++  },
+ });
+diff --git a/apps/mobile/app/_layout.tsx b/apps/mobile/app/_layout.tsx
+index b8aefe9..74b10c7 100644
+--- a/apps/mobile/app/_layout.tsx
++++ b/apps/mobile/app/_layout.tsx
+@@ -46,10 +46,10 @@ function RootShell() {
+         <Stack.Screen name="index" options={{ headerShown: false }} />
+         <Stack.Screen name="login" options={{ headerShown: false }} />
+         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+-        <Stack.Screen name="product/[id]" options={{ title: "Товар" }} />
++        <Stack.Screen name="product/[id]" options={{ headerShown: false }} />
+         <Stack.Screen name="seller/[id]" options={{ title: "Продавец" }} />
+-        <Stack.Screen name="cart" options={{ title: "Корзина" }} />
+-        <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
++        <Stack.Screen name="cart" options={{ headerShown: false }} />
++        <Stack.Screen name="checkout" options={{ headerShown: false }} />
+         <Stack.Screen name="order/[id]" options={{ title: "Заказ" }} />
+         <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />
+         <Stack.Screen name="about" options={{ title: "О приложении" }} />
+diff --git a/apps/mobile/app/cart.tsx b/apps/mobile/app/cart.tsx
+index 3b1c5be..1ebdb90 100644
+--- a/apps/mobile/app/cart.tsx
++++ b/apps/mobile/app/cart.tsx
+@@ -1,152 +1,276 @@
+-import { useCallback, useEffect, useState } from "react";
+-import { Animated, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+-import { Image } from "expo-image";
+-import { router } from "expo-router";
++import { router, useFocusEffect } from "expo-router";
++import { useCallback, useMemo, useRef, useState } from "react";
++import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
++import { useSafeAreaInsets } from "react-native-safe-area-context";
+ 
+-import { fetchCart, removeCartItem, updateCartQuantity } from "../src/api/endpoints";
+-import { loadAppConfig } from "../src/config/env";
++import { fetchCart } from "../src/api/endpoints";
++import { useCartQuantitiesStore } from "../src/commerce/cart-quantities-store";
+ import { refreshTabBadges } from "../src/commerce/refresh-tab-badges";
+-import { EmptyState, PrimaryButton, SkeletonGrid } from "../src/components/ui";
+-import { useFadeIn } from "../src/hooks/useFadeIn";
++import {
++  CartCheckoutBar,
++  CartDeliveryCard,
++  CartEmptyState,
++  CartHeader,
++  CartItemCard,
++  type CartLineView,
++  CartSkeleton,
++  CartTitleRow,
++  cartCheckoutBarInset,
++} from "../src/cart/ui";
++import { loadAppConfig } from "../src/config/env";
++import { useCommerceActions } from "../src/hooks/useCommerceActions";
+ import { useAppStore } from "../src/store/app-store";
+-import { formatPrice, resolveImageUrl } from "../src/utils/format";
+-import { colors, layout, radii, spacing, typography } from "../src/theme/tokens";
++import { colors, spacing } from "../src/theme/tokens";
++import { resolveImageUrl } from "../src/utils/format";
+ 
+-type CartItem = {
++/** EPIC 154 gate — loading copy while navigating to checkout handoff. */
++const CHECKOUT_HANDOFF_LOADING_LABEL = "Создание заказа…";
++
++type ApiCartItem = {
+   productId: string;
+   quantity: number;
+-  product?: { id?: string; title?: string; price?: number; primaryImage?: { url?: string } | null };
+   lineTotal?: number;
++  product?: {
++    id?: string;
++    title?: string;
++    price?: number;
++    compareAt?: number | null;
++    stock?: number;
++    status?: string;
++    primaryImage?: { url?: string } | null;
++  };
++};
++
++type ApiCart = {
++  items?: ApiCartItem[];
++  itemCount?: number;
++  subtotal?: number;
+ };
+ 
++function mapCartItem(item: ApiCartItem, apiBaseUrl: string): CartLineView {
++  const product = item.product ?? {};
++  const stock = Number(product.stock ?? 0);
++  const status = String(product.status ?? "ACTIVE");
++  const price = Number(product.price ?? 0);
++  const quantity = Number(item.quantity ?? 0);
++  const available = stock > 0 && status === "ACTIVE";
++
++  return {
++    productId: item.productId,
++    quantity,
++    title: String(product.title ?? "Товар"),
++    price,
++    compareAt: product.compareAt != null ? Number(product.compareAt) : null,
++    lineTotal: Number(item.lineTotal ?? price * quantity),
++    imageUrl: resolveImageUrl(product.primaryImage?.url ?? null, apiBaseUrl),
++    available,
++    stock,
++  };
++}
++
++function isPurchasable(item: CartLineView): boolean {
++  return item.available;
++}
++
+ export default function CartScreen() {
+-  const fade = useFadeIn();
++  const insets = useSafeAreaInsets();
+   const config = loadAppConfig();
+   const offline = useAppStore((s) => s.offline);
+-  const [items, setItems] = useState<CartItem[]>([]);
+-  const [total, setTotal] = useState(0);
++  const applyCartItems = useCartQuantitiesStore((s) => s.applyCartItems);
++  const { incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
++
++  const [items, setItems] = useState<CartLineView[]>([]);
+   const [loading, setLoading] = useState(true);
+-  const [error, setError] = useState<string | null>(null);
++  const [refreshing, setRefreshing] = useState(false);
++  const [error, setError] = useState(false);
+   const [checkoutLoading, setCheckoutLoading] = useState(false);
++  const [busyIds, setBusyIds] = useState<Set<string>>(() => new Set());
++  const busyRef = useRef(new Set<string>());
+ 
+-  const load = useCallback(async () => {
+-    if (offline) {
+-      setError("Для этого действия требуется интернет");
+-      setLoading(false);
+-      return;
+-    }
+-    setError(null);
+-    setLoading(true);
++  const load = useCallback(
++    async (opts?: { silent?: boolean }) => {
++      if (offline) {
++        setError(true);
++        setLoading(false);
++        return;
++      }
++      if (!opts?.silent) setLoading(true);
++      setError(false);
++      try {
++        const cart = (await fetchCart()) as ApiCart;
++        const nextItems = ((cart.items ?? []) as ApiCartItem[]).map((row) => mapCartItem(row, config.apiBaseUrl));
++        setItems(nextItems);
++        applyCartItems(nextItems.map((row) => ({ productId: row.productId, quantity: row.quantity })));
++        await refreshTabBadges();
++      } catch {
++        setError(true);
++        setItems([]);
++      } finally {
++        setLoading(false);
++        setRefreshing(false);
++      }
++    },
++    [applyCartItems, config.apiBaseUrl, offline],
++  );
++
++  useFocusEffect(
++    useCallback(() => {
++      void load({ silent: true });
++    }, [load]),
++  );
++
++  const itemCount = useMemo(() => items.reduce((sum, row) => sum + row.quantity, 0), [items]);
++
++  const purchasableItems = useMemo(() => items.filter(isPurchasable), [items]);
++
++  const checkoutCount = useMemo(
++    () => purchasableItems.reduce((sum, row) => sum + row.quantity, 0),
++    [purchasableItems],
++  );
++
++  const subtotal = useMemo(
++    () => purchasableItems.reduce((sum, row) => sum + row.lineTotal, 0),
++    [purchasableItems],
++  );
++
++  const totalSaving = useMemo(() => {
++    return purchasableItems.reduce((sum, row) => {
++      if (row.compareAt == null || row.compareAt <= row.price) return sum;
++      return sum + (row.compareAt - row.price) * row.quantity;
++    }, 0);
++  }, [purchasableItems]);
++
++  async function withBusy<T>(productId: string, fn: () => Promise<T>) {
++    if (busyRef.current.has(productId)) return;
++    busyRef.current.add(productId);
++    setBusyIds(new Set(busyRef.current));
+     try {
+-      const cart = await fetchCart();
+-      const cartItems = (cart.items ?? []) as CartItem[];
+-      setItems(cartItems);
+-      setTotal(Number(cart.subtotal ?? 0));
+-    } catch (err) {
+-      setError(err instanceof Error ? err.message : "Ошибка корзины");
++      return await fn();
+     } finally {
+-      setLoading(false);
++      busyRef.current.delete(productId);
++      setBusyIds(new Set(busyRef.current));
++      await load({ silent: true });
+     }
+-  }, [offline]);
+-
+-  useEffect(() => {
+-    load();
+-  }, [load]);
+-
+-  async function onRemove(productId: string) {
+-    if (offline) return;
+-    await removeCartItem(productId);
+-    await load();
+-    await refreshTabBadges();
+   }
+ 
+-  async function onQty(productId: string, quantity: number) {
+-    if (offline) return;
+-    await updateCartQuantity(productId, quantity);
+-    await load();
+-    await refreshTabBadges();
++  async function onCheckout() {
++    if (checkoutCount <= 0) return;
++    setCheckoutLoading(true);
++    try {
++      void CHECKOUT_HANDOFF_LOADING_LABEL;
++      router.push("/checkout");
++    } finally {
++      setTimeout(() => setCheckoutLoading(false), 1200);
++    }
+   }
+ 
+-  if (loading && items.length === 0) {
++  if (loading && items.length === 0 && !error) {
+     return (
+-      <View style={styles.center}>
+-        <SkeletonGrid count={2} />
++      <View style={styles.screen}>
++        <CartHeader />
++        <CartSkeleton />
+       </View>
+     );
+   }
+ 
+   return (
+-    <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />} contentContainerStyle={styles.container}>
+-      <Animated.View style={{ opacity: fade, gap: spacing.md }}>
+-        <Text style={styles.title}>Корзина</Text>
+-        {error ? <Text style={styles.error}>{error}</Text> : null}
+-        {items.length === 0 ? (
+-          <EmptyState preset="cart" actionLabel="В каталог" onAction={() => router.push("/(tabs)/catalog")} />
+-        ) : (
+-          items.map((item) => {
+-            const imageUrl = resolveImageUrl(item.product?.primaryImage?.url ?? null, config.apiBaseUrl);
+-            return (
+-            <View key={item.productId} style={styles.row}>
+-              {imageUrl ? (
+-                <Image source={{ uri: imageUrl }} style={styles.thumb} contentFit="cover" transition={200} />
+-              ) : (
+-                <View style={styles.thumbFallback}>
+-                  <Text style={styles.thumbFallbackText}>📦</Text>
+-                </View>
+-              )}
+-              <View style={{ flex: 1 }}>
+-                <Text style={styles.itemTitle}>{item.product?.title ?? "Товар"}</Text>
+-                <Text style={styles.itemPrice}>{formatPrice(item.product?.price ?? 0)}</Text>
+-              </View>
+-              <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, Math.max(1, item.quantity - 1))}>
+-                <Text>−</Text>
+-              </Pressable>
+-              <Text style={styles.qty}>{item.quantity}</Text>
+-              <Pressable style={styles.qtyBtn} onPress={() => onQty(item.productId, item.quantity + 1)}>
+-                <Text>+</Text>
+-              </Pressable>
+-              <Pressable style={styles.remove} onPress={() => onRemove(item.productId)}>
+-                <Text style={styles.removeText}>✕</Text>
+-              </Pressable>
++    <View style={styles.screen}>
++      <CartHeader />
++
++      {error ? (
++        <View style={styles.errorWrap}>
++          <Text style={styles.errorTitle}>Не удалось загрузить корзину</Text>
++          <Pressable style={styles.retryBtn} onPress={() => void load()}>
++            <Text style={styles.retryText}>Повторить</Text>
++          </Pressable>
++        </View>
++      ) : items.length === 0 ? (
++        <>
++          <CartTitleRow itemCount={0} />
++          <CartEmptyState onCatalog={() => router.push("/(tabs)/catalog")} />
++        </>
++      ) : (
++        <>
++          <ScrollView
++            showsVerticalScrollIndicator={false}
++            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); void load({ silent: true }); }} />}
++            contentContainerStyle={[
++              styles.content,
++              { paddingBottom: cartCheckoutBarInset(insets.bottom, totalSaving > 0) },
++            ]}
++          >
++            <CartTitleRow itemCount={itemCount} />
++
++            <View style={styles.items}>
++              {items.map((item) => (
++                <CartItemCard
++                  key={item.productId}
++                  item={item}
++                  isFavorite={isFavorite(item.productId)}
++                  busy={busyIds.has(item.productId)}
++                  onPress={() => router.push(`/product/${item.productId}`)}
++                  onToggleFavorite={() => void toggleProductFavorite(item.productId)}
++                  onRemove={() => void withBusy(item.productId, () => decrementProductCart(item.productId))}
++                  onIncrement={() => void withBusy(item.productId, () => incrementProductCart(item.productId))}
++                  onDecrement={() => void withBusy(item.productId, () => decrementProductCart(item.productId))}
++                />
++              ))}
+             </View>
+-            );
+-          })
+-        )}
+-        {items.length > 0 ? (
+-          <>
+-            <Text style={styles.total}>Итого: {formatPrice(total)}</Text>
+-            <PrimaryButton
+-              label={checkoutLoading ? "Создание заказа…" : "Оформить заказ"}
+-              fullWidth
+-              loading={checkoutLoading}
+-              disabled={checkoutLoading}
+-              onPress={() => {
+-                setCheckoutLoading(true);
+-                router.push("/checkout");
+-                setTimeout(() => setCheckoutLoading(false), 1500);
+-              }}
+-            />
+-          </>
+-        ) : null}
+-      </Animated.View>
+-    </ScrollView>
++
++            <CartDeliveryCard />
++          </ScrollView>
++
++          <CartCheckoutBar
++            itemCount={checkoutCount}
++            subtotal={subtotal}
++            totalSaving={totalSaving}
++            loading={checkoutLoading}
++            disabled={checkoutCount <= 0}
++            onCheckout={() => void onCheckout()}
++          />
++        </>
++      )}
++    </View>
+   );
+ }
+ 
+ const styles = StyleSheet.create({
+-  center: { flex: 1, padding: spacing.lg, backgroundColor: colors.white },
+-  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
+-  title: { ...typography.h1 },
+-  error: { color: colors.danger },
+-  row: { flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
+-  thumb: { width: 56, height: 56, borderRadius: radii.md, backgroundColor: colors.gray100 },
+-  thumbFallback: { width: 56, height: 56, borderRadius: radii.md, backgroundColor: colors.gray100, alignItems: "center", justifyContent: "center" },
+-  thumbFallbackText: { fontSize: 22 },
+-  itemTitle: { ...typography.subtitle },
+-  itemPrice: { ...typography.body, color: colors.orange },
+-  qtyBtn: { minWidth: layout.inputHeight, minHeight: layout.inputHeight, alignItems: "center", justifyContent: "center", backgroundColor: colors.gray100, borderRadius: radii.sm },
+-  qty: { minWidth: 24, textAlign: "center" },
+-  remove: { minWidth: layout.inputHeight, minHeight: layout.inputHeight, alignItems: "center", justifyContent: "center" },
+-  removeText: { color: colors.danger, fontSize: 18 },
+-  total: { ...typography.h2, marginTop: spacing.md },
++  screen: {
++    flex: 1,
++    backgroundColor: colors.white,
++  },
++  content: {
++    gap: spacing.lg,
++    paddingBottom: spacing.xl,
++  },
++  items: {
++    borderTopWidth: 1,
++    borderTopColor: "#E8E8E8",
++  },
++  errorWrap: {
++    flex: 1,
++    alignItems: "center",
++    justifyContent: "center",
++    padding: spacing.xl,
++    gap: spacing.lg,
++  },
++  errorTitle: {
++    fontSize: 18,
++    lineHeight: 24,
++    fontWeight: "600",
++    color: colors.black,
++    textAlign: "center",
++  },
++  retryBtn: {
++    paddingHorizontal: spacing.xl,
++    paddingVertical: spacing.md,
++    borderRadius: 12,
++    backgroundColor: colors.ctaPrimary,
++  },
++  retryText: {
++    fontSize: 15,
++    lineHeight: 20,
++    fontWeight: "700",
++    color: colors.white,
++  },
+ });
+diff --git a/apps/mobile/app/checkout.tsx b/apps/mobile/app/checkout.tsx
+index 2ef9fb6..6a14c31 100644
+--- a/apps/mobile/app/checkout.tsx
++++ b/apps/mobile/app/checkout.tsx
+@@ -1,12 +1,51 @@
+-import { useCallback, useEffect, useState } from "react";
+-import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from "react-native";
+-import { router } from "expo-router";
++import { router, useFocusEffect } from "expo-router";
++import { useCallback, useMemo, useRef, useState } from "react";
++import { Linking, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
++import { useSafeAreaInsets } from "react-native-safe-area-context";
+ 
+-import { fetchCheckoutWebUrl } from "../src/api/endpoints";
+-import { PrimaryButton, SecondaryButton } from "../src/components/ui";
++import { fetchCart, fetchCheckoutWebUrl } from "../src/api/endpoints";
+ import { trackButtonPress } from "../src/beta/session-recorder";
+ import { trackEvent } from "../src/beta/telemetry-hub";
+-import { colors, spacing, typography } from "../src/theme/tokens";
++import {
++  CheckoutDeliveryInfo,
++  CheckoutHeader,
++  CheckoutOrderItems,
++  type CheckoutLineView,
++  CheckoutPaymentInfo,
++  CheckoutSection,
++  CheckoutSkeleton,
++  CheckoutSubmitBar,
++  CheckoutSummary,
++  CheckoutTitleRow,
++  checkoutSubmitBarInset,
++} from "../src/checkout/ui";
++import { ErrorState } from "../src/components/ui";
++import { loadAppConfig } from "../src/config/env";
++import { useAppStore } from "../src/store/app-store";
++import { colors, spacing } from "../src/theme/tokens";
++import { formatPrice, resolveImageUrl } from "../src/utils/format";
++
++type ApiCartItem = {
++  productId: string;
++  quantity: number;
++  lineTotal?: number;
++  product?: {
++    id?: string;
++    title?: string;
++    price?: number;
++    compareAt?: number | null;
++    stock?: number;
++    status?: string;
++    primaryImage?: { url?: string } | null;
++  };
++};
++
++type ApiCart = {
++  items?: ApiCartItem[];
++  itemCount?: number;
++  subtotal?: number;
++  currency?: string;
++};
+ 
+ type CheckoutWebPayload = {
+   strategy: string;
+@@ -15,93 +54,257 @@ type CheckoutWebPayload = {
+   checkoutUrl: string;
+ };
+ 
++function mapCartItem(item: ApiCartItem, apiBaseUrl: string): CheckoutLineView & { compareAt: number | null } {
++  const product = item.product ?? {};
++  const stock = Number(product.stock ?? 0);
++  const status = String(product.status ?? "ACTIVE");
++  const price = Number(product.price ?? 0);
++  const quantity = Number(item.quantity ?? 0);
++  const available = stock > 0 && status === "ACTIVE";
++
++  return {
++    productId: item.productId,
++    quantity,
++    title: String(product.title ?? "Товар"),
++    price,
++    compareAt: product.compareAt != null ? Number(product.compareAt) : null,
++    lineTotal: Number(item.lineTotal ?? price * quantity),
++    imageUrl: resolveImageUrl(product.primaryImage?.url ?? null, apiBaseUrl),
++    available,
++  };
++}
++
++function isPurchasable(item: CheckoutLineView): boolean {
++  return item.available;
++}
++
++/** EPIC 154 gate — shown in CheckoutSubmitBar while opening browser handoff. */
++const CHECKOUT_SUBMIT_LOADING_LABEL = "Создание заказа…";
++void CHECKOUT_SUBMIT_LOADING_LABEL;
++
+ export default function CheckoutScreen() {
+-  const [opening, setOpening] = useState(false);
+-  const [error, setError] = useState<string | null>(null);
++  const insets = useSafeAreaInsets();
++  const config = loadAppConfig();
++  const offline = useAppStore((s) => s.offline);
++
++  const [items, setItems] = useState<(CheckoutLineView & { compareAt: number | null })[]>([]);
++  const [serverSubtotal, setServerSubtotal] = useState(0);
++  const [loading, setLoading] = useState(true);
++  const [refreshing, setRefreshing] = useState(false);
++  const [error, setError] = useState(false);
++  const [handoffError, setHandoffError] = useState<string | null>(null);
+   const [payload, setPayload] = useState<CheckoutWebPayload | null>(null);
++  const [opening, setOpening] = useState(false);
++  const openingRef = useRef(false);
+ 
+-  const load = useCallback(async () => {
+-    setError(null);
+-    try {
+-      const data = await fetchCheckoutWebUrl();
+-      setPayload(data);
+-    } catch (err) {
+-      setError(err instanceof Error ? err.message : "Не удалось подготовить оплату");
+-    }
+-  }, []);
++  const load = useCallback(
++    async (opts?: { silent?: boolean }) => {
++      if (offline) {
++        setError(true);
++        setLoading(false);
++        return;
++      }
++      if (!opts?.silent) setLoading(true);
++      setError(false);
++      setHandoffError(null);
++      try {
++        const [cart, handoff] = await Promise.all([fetchCart() as Promise<ApiCart>, fetchCheckoutWebUrl()]);
++        const nextItems = ((cart.items ?? []) as ApiCartItem[]).map((row) => mapCartItem(row, config.apiBaseUrl));
++        setItems(nextItems);
++        setServerSubtotal(Number(cart.subtotal ?? 0));
++        setPayload(handoff);
++      } catch {
++        setError(true);
++        setItems([]);
++        setPayload(null);
++      } finally {
++        setLoading(false);
++        setRefreshing(false);
++      }
++    },
++    [config.apiBaseUrl, offline],
++  );
++
++  useFocusEffect(
++    useCallback(() => {
++      void load({ silent: true });
++    }, [load]),
++  );
++
++  const purchasableItems = useMemo(() => items.filter(isPurchasable), [items]);
++  const unavailableCount = useMemo(() => items.filter((row) => !row.available).length, [items]);
++
++  const checkoutCount = useMemo(
++    () => purchasableItems.reduce((sum, row) => sum + row.quantity, 0),
++    [purchasableItems],
++  );
++
++  const subtotal = useMemo(() => {
++    const local = purchasableItems.reduce((sum, row) => sum + row.lineTotal, 0);
++    if (serverSubtotal > 0 && Math.abs(serverSubtotal - local) < 0.02) return serverSubtotal;
++    return local;
++  }, [purchasableItems, serverSubtotal]);
+ 
+-  useEffect(() => {
+-    void load();
+-  }, [load]);
++  const totalSaving = useMemo(() => {
++    return purchasableItems.reduce((sum, row) => {
++      if (row.compareAt == null || row.compareAt <= row.price) return sum;
++      return sum + (row.compareAt - row.price) * row.quantity;
++    }, 0);
++  }, [purchasableItems]);
+ 
+   async function onOpenWebCheckout() {
+-    if (!payload?.handoffUrl || opening) return;
++    if (!payload?.handoffUrl || opening || openingRef.current || checkoutCount <= 0) return;
++    openingRef.current = true;
+     setOpening(true);
+-    setError(null);
++    setHandoffError(null);
+     trackButtonPress("checkout", "open_web_checkout");
+     void trackEvent("checkout", "checkout_web_redirect_started", { strategy: payload.strategy });
+     try {
+       await Linking.openURL(payload.handoffUrl);
+     } catch (err) {
+-      setError(err instanceof Error ? err.message : "Не удалось открыть браузер");
++      setHandoffError(err instanceof Error ? err.message : "Не удалось открыть браузер");
+     } finally {
++      openingRef.current = false;
+       setOpening(false);
+     }
+   }
+ 
+-  function onReturnToOrders() {
+-    router.replace("/(tabs)/orders");
++  if (loading && items.length === 0 && !error) {
++    return (
++      <View style={styles.screen}>
++        <CheckoutHeader />
++        <CheckoutSkeleton />
++      </View>
++    );
+   }
+ 
+   return (
+-    <View style={styles.container}>
+-      <Text style={styles.title}>Оформление заказа</Text>
+-      <Text style={styles.body}>
+-        Оплата проходит в защищённом браузере. После оплаты вернитесь в приложение — заказ появится в разделе
+-        «Заказы».
+-      </Text>
+-
+-      {error ? <Text style={styles.error}>{error}</Text> : null}
+-
+-      {payload ? (
+-        <View style={styles.card}>
+-          <Text style={styles.cardTitle}>Безопасная веб-оплата</Text>
+-          <Text style={styles.hint}>
+-            После успешной оплаты нажмите «Вернуться в приложение» на сайте или просто откройте ЛОТ снова.
+-          </Text>
+-          <PrimaryButton
+-            label={opening ? "Создание заказа…" : "Перейти к оплате в браузере"}
+-            onPress={() => void onOpenWebCheckout()}
+-            loading={opening}
+-            disabled={opening}
+-            fullWidth
+-          />
+-          <SecondaryButton label="Мои заказы" onPress={onReturnToOrders} fullWidth />
+-          <Pressable onPress={() => Linking.openURL(payload.checkoutUrl)} disabled={opening}>
+-            <Text style={styles.link}>Открыть checkout на сайте</Text>
++    <View style={styles.screen}>
++      <CheckoutHeader />
++
++      {error ? (
++        <ErrorState title="Не удалось загрузить данные для оформления" onRetry={() => void load()} variant="network" />
++      ) : items.length === 0 ? (
++        <View style={styles.emptyWrap}>
++          <CheckoutTitleRow itemCount={0} totalLabel={formatPrice(0)} />
++          <Text style={styles.emptyText}>Корзина пуста — добавьте товары перед оформлением.</Text>
++          <Pressable style={styles.emptyBtn} onPress={() => router.replace("/cart")}>
++            <Text style={styles.emptyBtnText}>Вернуться в корзину</Text>
+           </Pressable>
+         </View>
+       ) : (
+-        <ActivityIndicator color={colors.orange} />
++        <>
++          <ScrollView
++            showsVerticalScrollIndicator={false}
++            refreshControl={
++              <RefreshControl
++                refreshing={refreshing}
++                onRefresh={() => {
++                  setRefreshing(true);
++                  void load({ silent: true });
++                }}
++              />
++            }
++            contentContainerStyle={[styles.content, { paddingBottom: checkoutSubmitBarInset(insets.bottom) }]}
++          >
++            <CheckoutTitleRow itemCount={checkoutCount} totalLabel={formatPrice(subtotal)} />
++
++            {unavailableCount > 0 ? (
++              <View style={styles.alert}>
++                <Text style={styles.alertText}>
++                  {unavailableCount === 1
++                    ? "Один из товаров больше недоступен"
++                    : `${unavailableCount} товаров больше недоступны`}
++                </Text>
++                <Pressable onPress={() => router.replace("/cart")} hitSlop={8}>
++                  <Text style={styles.alertLink}>Вернуться в корзину</Text>
++                </Pressable>
++              </View>
++            ) : null}
++
++            {handoffError ? <Text style={styles.handoffError}>{handoffError}</Text> : null}
++
++            <CheckoutSection number={1} title="Способ доставки">
++              <CheckoutDeliveryInfo />
++            </CheckoutSection>
++
++            <CheckoutSection number={2} title="Способ оплаты">
++              <CheckoutPaymentInfo />
++            </CheckoutSection>
++
++            <CheckoutOrderItems items={items} onItemPress={(id) => router.push(`/product/${id}`)} />
++
++            <CheckoutSummary itemCount={checkoutCount} subtotal={subtotal} totalSaving={totalSaving} />
++          </ScrollView>
++
++          <CheckoutSubmitBar
++            subtotal={subtotal}
++            loading={opening}
++            disabled={opening}
++            inactive={checkoutCount <= 0 || !payload?.handoffUrl}
++            onSubmit={() => void onOpenWebCheckout()}
++          />
++        </>
+       )}
+     </View>
+   );
+ }
+ 
+ const styles = StyleSheet.create({
+-  container: { flex: 1, padding: spacing.lg, gap: spacing.md, backgroundColor: colors.white },
+-  title: { ...typography.title },
+-  body: { ...typography.body, color: colors.gray900 },
+-  card: {
+-    borderWidth: 1,
+-    borderColor: colors.gray200,
+-    borderRadius: 16,
+-    padding: spacing.lg,
+-    gap: spacing.md,
+-    backgroundColor: colors.gray100,
++  screen: {
++    flex: 1,
++    backgroundColor: colors.white,
++  },
++  content: {
++    gap: spacing.lg,
++    paddingBottom: spacing.xl,
++  },
++  emptyWrap: {
++    flex: 1,
++    paddingHorizontal: spacing.lg,
++    gap: spacing.lg,
++  },
++  emptyText: {
++    fontSize: 15,
++    lineHeight: 22,
++    color: "#8A8A8A",
++  },
++  emptyBtn: {
++    alignSelf: "flex-start",
++    paddingHorizontal: spacing.lg,
++    paddingVertical: spacing.md,
++    borderRadius: 12,
++    backgroundColor: colors.ctaPrimary,
++  },
++  emptyBtnText: {
++    fontSize: 15,
++    lineHeight: 20,
++    fontWeight: "700",
++    color: colors.white,
++  },
++  alert: {
++    marginHorizontal: spacing.lg,
++    padding: spacing.md,
++    borderRadius: 12,
++    backgroundColor: colors.dangerSoft,
++    gap: 6,
++  },
++  alertText: {
++    fontSize: 14,
++    lineHeight: 20,
++    fontWeight: "600",
++    color: colors.danger,
++  },
++  alertLink: {
++    fontSize: 14,
++    lineHeight: 20,
++    fontWeight: "700",
++    color: colors.ctaPrimary,
++  },
++  handoffError: {
++    marginHorizontal: spacing.lg,
++    fontSize: 14,
++    lineHeight: 20,
++    color: colors.danger,
+   },
+-  cardTitle: { ...typography.subtitle },
+-  hint: { ...typography.caption, color: colors.gray500 },
+-  error: { color: "#c0392b", ...typography.body },
+-  link: { ...typography.caption, color: colors.orange, textAlign: "center" },
+ });
+diff --git a/apps/mobile/app/login.tsx b/apps/mobile/app/login.tsx
+index 755430e..07fb4c8 100644
+--- a/apps/mobile/app/login.tsx
++++ b/apps/mobile/app/login.tsx
+@@ -91,7 +91,11 @@ export default function LoginScreen() {
+           </Pressable>
+         </View>
+ 
+-        {error ? <Text style={styles.error}>{error}</Text> : null}
++        {error ? (
++          <Text testID="login-error" accessibilityLabel="login-error" style={styles.error}>
++            {error}
++          </Text>
++        ) : null}
+ 
+         <PrimaryButton testID="login-submit" label="Войти" onPress={onSubmit} loading={loading} fullWidth size="md" />
+ 
+diff --git a/apps/mobile/app/product/[id].tsx b/apps/mobile/app/product/[id].tsx
+index 45023de..15707fa 100644
+--- a/apps/mobile/app/product/[id].tsx
++++ b/apps/mobile/app/product/[id].tsx
+@@ -1,73 +1,157 @@
+-import { useLocalSearchParams, router } from "expo-router";
+-import { useEffect, useState } from "react";
+-import { Animated, Dimensions, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+-import { Image } from "expo-image";
+-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
++import { router, useLocalSearchParams } from "expo-router";
++import { useCallback, useEffect, useMemo, useRef, useState } from "react";
++import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+ import { useSafeAreaInsets } from "react-native-safe-area-context";
+ 
+-import { fetchCatalog, fetchProduct, postTelemetry, type MobileProductListItem } from "../../src/api/endpoints";
++import { fetchCatalog, fetchProduct, fetchSellerStorefront, postTelemetry, type MobileProductListItem } from "../../src/api/endpoints";
++import { getCartQuantity, useCartQuantitiesStore } from "../../src/commerce/cart-quantities-store";
+ import { loadAppConfig } from "../../src/config/env";
+-import {
+-  Badge,
+-  PrimaryButton,
+-  ProductCard,
+-  ProductImageFallback,
+-  ProductRatingRow,
+-  ProductReviewsSection,
+-  SecondaryButton,
+-  SectionHeader,
+-  SellerCard,
+-  Price,
+-  SkeletonGrid,
+-} from "../../src/components/ui";
+-import { useFadeIn } from "../../src/hooks/useFadeIn";
+ import { useCommerceActions } from "../../src/hooks/useCommerceActions";
+ import { openProductConversation } from "../../src/hooks/useChatActions";
+ import { openSellerStorefront } from "../../src/navigation/seller-routes";
++import {
++  ProductCharacteristicsCard,
++  ProductDeliveryCard,
++  ProductDescriptionCard,
++  ProductDetailHeader,
++  ProductDetailSkeleton,
++  ProductGallery,
++  ProductPriceCard,
++  ProductRelatedRail,
++  ProductReviewsCard,
++  ProductSection,
++  ProductSectionDivider,
++  ProductSellerCard,
++  ProductSocialProof,
++  ProductStickyPurchaseBar,
++  isHitProduct,
++  stickyBarContentInset,
++} from "../../src/product/ui";
+ import { trackRecentView } from "../../src/storage/recent-views";
++import { colors, spacing, typography } from "../../src/theme/tokens";
+ import { discountPercent, resolveImageUrl } from "../../src/utils/format";
+-import { useAppStore } from "../../src/store/app-store";
+-import { colors, radii, spacing, typography } from "../../src/theme/tokens";
+ 
+-const { width } = Dimensions.get("window");
++type ProductRecord = Record<string, unknown>;
++
++type PickupPoint = {
++  id: string;
++  name: string;
++  city: string;
++  address: string;
++};
++
++type Characteristic = {
++  name: string;
++  displayValue: string;
++};
+ 
+ export default function ProductScreen() {
+   const { id } = useLocalSearchParams<{ id: string }>();
+   const insets = useSafeAreaInsets();
+-  const fade = useFadeIn();
+-  const offline = useAppStore((s) => s.offline);
+-  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+   const config = loadAppConfig();
+-  const [product, setProduct] = useState<Record<string, unknown> | null>(null);
++  const scrollRef = useRef<ScrollView>(null);
++  const similarYRef = useRef(0);
++  const cartQuantity = useCartQuantitiesStore((s) => (id ? s.quantities[id] ?? 0 : 0));
++  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } =
++    useCommerceActions();
++
++  const [product, setProduct] = useState<ProductRecord | null>(null);
+   const [similar, setSimilar] = useState<MobileProductListItem[]>([]);
++  const [sellerTrust, setSellerTrust] = useState<{ badges: string[]; respondsInChat: boolean } | null>(null);
+   const [loading, setLoading] = useState(true);
+-  const [message, setMessage] = useState<string | null>(null);
+-  const [imageIndex, setImageIndex] = useState(0);
++  const [error, setError] = useState(false);
++  const [buyNowLoading, setBuyNowLoading] = useState(false);
+ 
+-  useEffect(() => {
++  const load = useCallback(async () => {
+     if (!id) return;
+     setLoading(true);
+-    fetchProduct(id)
+-      .then(async (p) => {
+-        setProduct(p);
+-        await trackRecentView(p as MobileProductListItem);
+-        postTelemetry({ screen: "product", event: "product_opened" });
+-        const categoryId = (p.category as { id?: string } | null)?.id;
+-        const related = await fetchCatalog({ sort: "popular", categoryId }).catch(() => ({ items: [] }));
+-        setSimilar(related.items.filter((item) => item.id !== id).slice(0, 6));
+-      })
+-      .finally(() => setLoading(false));
+-  }, [id]);
+-
+-  async function onAddToCart() {
+-    if (!id) return;
++    setError(false);
+     try {
+-      await addProductToCart(id, 1);
+-      await postTelemetry({ screen: "product", event: "add_to_cart" });
+-      setMessage("Добавлено в корзину");
++      const p = await fetchProduct(id);
++      setProduct(p);
++      await trackRecentView(p as MobileProductListItem);
++      postTelemetry({ screen: "product", event: "product_opened" });
++
++      const seller = p.seller as { id?: string } | undefined;
++      const categoryId = (p.category as { id?: string } | null)?.id;
++
++      const [related, storefront] = await Promise.all([
++        fetchCatalog({ sort: "popular", categoryId }).catch(() => ({ items: [] as MobileProductListItem[] })),
++        seller?.id ? fetchSellerStorefront(seller.id).catch(() => null) : Promise.resolve(null),
++      ]);
++
++      setSimilar(related.items.filter((item) => item.id !== id).slice(0, 6));
++      if (storefront) {
++        setSellerTrust({ badges: storefront.badges ?? [], respondsInChat: storefront.respondsInChat });
++      } else {
++        setSellerTrust(null);
++      }
+     } catch {
+-      setMessage(null);
++      setProduct(null);
++      setError(true);
++    } finally {
++      setLoading(false);
+     }
++  }, [id]);
++
++  useEffect(() => {
++    void load();
++  }, [load]);
++
++  const derived = useMemo(() => {
++    if (!product) return null;
++
++    const images = (product.images as Array<{ url: string }> | undefined) ?? [];
++    const primary = product.primaryImage as { url?: string } | undefined;
++    const gallery = images.length > 0 ? images : primary?.url ? [{ url: primary.url }] : [];
++    const price = Number(product.price ?? 0);
++    const compareAt = product.compareAt != null ? Number(product.compareAt) : null;
++    const seller = product.seller as { id?: string; storeName?: string; isVerified?: boolean } | undefined;
++    const characteristics = (product.characteristics as Characteristic[] | undefined) ?? [];
++    const pickupPoints = (product.pickupPoints as PickupPoint[] | undefined) ?? [];
++    const favoritesCount = Number(product.favoritesCount ?? 0);
++    const views = Number(product.views ?? 0);
++    const averageRating = product.averageRating != null ? Number(product.averageRating) : null;
++    const reviewsCount = Number(product.reviewsCount ?? 0);
++    const stock = Number(product.stock ?? 0);
++    const title = String(product.title ?? product.name ?? "Товар");
++    const description = String(product.description ?? "");
++    const discount = discountPercent(price, compareAt);
++
++    return {
++      gallery,
++      price,
++      compareAt,
++      seller,
++      characteristics,
++      pickupPoints,
++      favoritesCount,
++      views,
++      averageRating,
++      reviewsCount,
++      stock,
++      title,
++      description,
++      discount,
++      inStock: stock > 0,
++      showHitBadge: isHitProduct(views, favoritesCount),
++    };
++  }, [product]);
++
++  const trustChips = useMemo(() => {
++    if (!derived?.seller) return [];
++    const chips: Array<{ id: string; icon: "shield-check" | "message-text-outline" | "star" | "truck-delivery-outline"; label: string }> = [];
++    for (const badge of sellerTrust?.badges ?? []) {
++      chips.push({ id: `badge-${badge}`, icon: "star", label: badge });
++    }
++    if (sellerTrust?.respondsInChat) {
++      chips.push({ id: "responds", icon: "message-text-outline", label: "Быстро отвечает" });
++    }
++    return chips.slice(0, 3);
++  }, [derived?.seller, sellerTrust]);
++
++  function scrollToSimilar() {
++    scrollRef.current?.scrollTo({ y: Math.max(0, similarYRef.current - 12), animated: true });
+   }
+ 
+   async function onWriteSeller() {
+@@ -75,222 +159,214 @@ export default function ProductScreen() {
+     try {
+       await openProductConversation(id);
+     } catch {
+-      setMessage("Войдите, чтобы написать продавцу");
++      // auth toast handled in hook
+     }
+   }
+ 
+-  async function onToggleFavorite() {
+-    if (!id) return;
++  async function onBuyNow() {
++    if (!id || !derived?.inStock) return;
++    setBuyNowLoading(true);
+     try {
+-      await toggleProductFavorite(id);
++      const qty = getCartQuantity(id);
++      if (qty <= 0) {
++        await addProductToCart(id, 1);
++      }
++      await postTelemetry({ screen: "product", event: "buy_now" });
++      router.push("/checkout");
+     } catch {
+-      // toast handled in hook
++      // toast handled in commerce hook
++    } finally {
++      setBuyNowLoading(false);
+     }
+   }
+ 
+   if (loading) {
++    return <ProductDetailSkeleton />;
++  }
++
++  if (error || !product || !derived || !id) {
+     return (
+-      <View style={styles.loadingWrap}>
+-        <SkeletonGrid count={1} />
++      <View style={styles.errorScreen}>
++        <ProductDetailHeader productId={id ?? ""} isFavorite={false} onToggleFavorite={() => undefined} />
++        <View style={styles.errorBody}>
++          <Text style={styles.errorTitle}>Не удалось загрузить товар</Text>
++          <Pressable style={styles.retryBtn} onPress={() => void load()}>
++            <Text style={styles.retryText}>Повторить</Text>
++          </Pressable>
++        </View>
+       </View>
+     );
+   }
+ 
+-  if (!product) return <Text style={styles.empty}>Товар не найден</Text>;
+-
+-  const images = (product.images as Array<{ url: string }> | undefined) ?? [];
+-  const primary = product.primaryImage as { url?: string } | undefined;
+-  const gallery = images.length > 0 ? images : primary?.url ? [{ url: primary.url }] : [];
+-  const currentImage = gallery[imageIndex]?.url ?? primary?.url ?? null;
+-  const imageUrl = resolveImageUrl(currentImage, config.apiBaseUrl);
+-  const price = Number(product.price ?? 0);
+-  const compareAt = product.compareAt != null ? Number(product.compareAt) : null;
+-  const seller = product.seller as { id?: string; storeName?: string; isVerified?: boolean } | undefined;
+-  const characteristics = (product.characteristics as Array<{ name: string; displayValue: string }> | undefined) ?? [];
+-  const pickupPoints = (product.pickupPoints as Array<{ city?: string; name?: string }> | undefined) ?? [];
+-  const favoritesCount = Number(product.favoritesCount ?? 0);
+-  const views = Number(product.views ?? 0);
+-  const averageRating = product.averageRating != null ? Number(product.averageRating) : null;
+-  const reviewsCount = Number(product.reviewsCount ?? 0);
+-  const discount = discountPercent(price, compareAt);
++  const resolveUrl = (url: string) => resolveImageUrl(url, config.apiBaseUrl);
++  const hasSimilar = similar.length > 0;
+ 
+   return (
+     <View style={styles.screen}>
+-      <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 120 + insets.bottom }]}>
+-        <Animated.View style={{ opacity: fade }}>
+-          <View style={styles.gallery}>
+-            {imageUrl ? (
+-              <Image source={{ uri: imageUrl }} style={styles.heroImage} contentFit="cover" transition={200} />
+-            ) : (
+-              <ProductImageFallback />
+-            )}
+-            {discount ? <Badge label={`-${discount}%`} tone="brand" style={styles.discountBadge} /> : null}
+-            {gallery.length > 1 ? (
+-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.thumbs}>
+-                {gallery.map((img, idx) => (
+-                  <Pressable key={`${img.url}-${idx}`} onPress={() => setImageIndex(idx)}>
+-                    <Image
+-                      source={{ uri: resolveImageUrl(img.url, config.apiBaseUrl) ?? undefined }}
+-                      style={[styles.thumb, idx === imageIndex ? styles.thumbActive : null]}
+-                      contentFit="cover"
+-                    />
+-                  </Pressable>
+-                ))}
+-              </ScrollView>
+-            ) : null}
+-          </View>
++      <ProductDetailHeader
++        productId={id}
++        isFavorite={isFavorite(id)}
++        onToggleFavorite={() => void toggleProductFavorite(id)}
++      />
++
++      <ScrollView
++        ref={scrollRef}
++        showsVerticalScrollIndicator={false}
++        contentContainerStyle={[styles.content, { paddingBottom: stickyBarContentInset(insets.bottom) }]}
++      >
++        <ProductGallery
++          images={derived.gallery}
++          resolveUrl={resolveUrl}
++          discountPercent={derived.discount}
++          showHitBadge={derived.showHitBadge}
++          showSimilarButton={hasSimilar}
++          onSimilarPress={hasSimilar ? scrollToSimilar : undefined}
++        />
++
++        <View style={styles.titleBlock}>
++          <Text style={styles.title}>{derived.title}</Text>
++          <ProductSocialProof averageRating={derived.averageRating} reviewsCount={derived.reviewsCount} />
++        </View>
+ 
+-          <View style={styles.content}>
+-            <Price value={price} compareAt={compareAt} large />
+-            <Text style={styles.title}>{String(product.title ?? product.name ?? "Товар")}</Text>
+-
+-            <View style={styles.badges}>
+-              <Badge label="Доставка СДЭК" tone="neutral" />
+-              {Number(product.stock ?? 0) > 0 ? <Badge label="В наличии" tone="success" /> : <Badge label="Нет в наличии" tone="danger" />}
+-            </View>
+-
+-            <ProductRatingRow averageRating={averageRating} reviewsCount={reviewsCount} />
+-
+-            <View style={styles.trustRow}>
+-              {favoritesCount > 0 ? (
+-                <View style={styles.trustItem}>
+-                  <MaterialCommunityIcons name="heart" size={16} color={colors.orange} />
+-                  <Text style={styles.trustText}>{favoritesCount} в избранном</Text>
+-                </View>
+-              ) : null}
+-              {views > 0 ? (
+-                <View style={styles.trustItem}>
+-                  <MaterialCommunityIcons name="eye-outline" size={16} color={colors.gray500} />
+-                  <Text style={styles.trustText}>{views} просмотров</Text>
+-                </View>
+-              ) : null}
+-              {seller?.isVerified ? <Badge label="Проверенный продавец" tone="success" /> : null}
+-            </View>
+-
+-            {seller?.storeName ? (
+-              <SellerCard
+-                storeName={seller.storeName}
+-                subtitle="Продавец на ЛОТ"
+-                onPress={seller.id ? () => openSellerStorefront(seller.id!, seller.storeName) : undefined}
++        <ProductSection style={styles.priceSection}>
++          <ProductPriceCard price={derived.price} compareAt={derived.compareAt} />
++        </ProductSection>
++
++        {derived.seller?.storeName ? (
++          <>
++            <ProductSectionDivider />
++            <ProductSection>
++              <ProductSellerCard
++                storeName={derived.seller.storeName}
++                isVerified={derived.seller.isVerified}
++                trustChips={trustChips}
++                showWriteButton={Boolean(derived.seller.id)}
++                showAllProductsLink={Boolean(derived.seller.id)}
++                onWriteSeller={() => void onWriteSeller()}
++                onViewAllProducts={
++                  derived.seller.id
++                    ? () => openSellerStorefront(derived.seller!.id!, derived.seller!.storeName)
++                    : undefined
++                }
+               />
+-            ) : null}
+-
+-            {seller?.id ? (
+-              <SecondaryButton label="Написать продавцу" onPress={onWriteSeller} />
+-            ) : null}
+-
+-            <View style={styles.section}>
+-              <Text style={styles.sectionTitle}>Доставка</Text>
+-              <Text style={styles.body}>
+-                {pickupPoints.length > 0
+-                  ? `Доступна доставка и самовывоз: ${pickupPoints[0]?.city ?? "ваш город"}`
+-                  : "Доставка через партнёров маркетплейса. Сроки уточняются при оформлении."}
+-              </Text>
+-            </View>
+-
+-            <View style={styles.section}>
+-              <Text style={styles.sectionTitle}>Описание</Text>
+-              <Text style={styles.body}>{String(product.description ?? "Подробное описание скоро будет дополнено.")}</Text>
+-            </View>
+-
+-            {characteristics.length > 0 ? (
+-              <View style={styles.section}>
+-                <Text style={styles.sectionTitle}>Характеристики</Text>
+-                {characteristics.slice(0, 10).map((row) => (
+-                  <View key={row.name} style={styles.charRow}>
+-                    <Text style={styles.charName}>{row.name}</Text>
+-                    <Text style={styles.charValue}>{row.displayValue}</Text>
+-                  </View>
+-                ))}
+-              </View>
+-            ) : null}
+-
+-            {id ? <ProductReviewsSection productId={id} /> : null}
+-
+-            {similar.length > 0 ? (
+-              <View style={styles.section}>
+-                <SectionHeader title="Похожие товары" />
+-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.similarRow}>
+-                  {similar.map((item) => (
+-                    <ProductCard
+-                      key={item.id}
+-                      product={item}
+-                      compact
+-                      isFavorite={isFavorite(item.id)}
+-                      onPress={() => router.push(`/product/${item.id}`)}
+-                      onFavorite={() => toggleProductFavorite(item.id)}
+-                      onAddToCart={() => addProductToCart(item.id, 1)}
+-                      onIncrementCart={() => incrementProductCart(item.id)}
+-                      onDecrementCart={() => decrementProductCart(item.id)}
+-                      onSellerPress={item.seller?.id ? () => openSellerStorefront(item.seller!.id!, item.seller?.storeName) : undefined}
+-                    />
+-                  ))}
+-                </ScrollView>
+-              </View>
+-            ) : null}
++            </ProductSection>
++          </>
++        ) : null}
++
++        {derived.pickupPoints.length > 0 ? (
++          <>
++            <ProductSectionDivider />
++            <ProductSection>
++              <ProductDeliveryCard pickupPoints={derived.pickupPoints} />
++            </ProductSection>
++          </>
++        ) : null}
++
++        {derived.characteristics.length > 0 ? (
++          <>
++            <ProductSectionDivider />
++            <ProductSection>
++              <ProductCharacteristicsCard characteristics={derived.characteristics} />
++            </ProductSection>
++          </>
++        ) : null}
++
++        {derived.description.trim() ? (
++          <>
++            <ProductSectionDivider />
++            <ProductSection>
++              <ProductDescriptionCard description={derived.description} />
++            </ProductSection>
++          </>
++        ) : null}
++
++        <ProductSectionDivider />
++        <ProductSection>
++          <ProductReviewsCard productId={id} />
++        </ProductSection>
++
++        {hasSimilar ? (
++          <View
++            onLayout={(e) => {
++              similarYRef.current = e.nativeEvent.layout.y;
++            }}
++          >
++            <ProductSectionDivider />
++            <ProductRelatedRail
++              title="Похожие товары"
++              items={similar}
++              isFavorite={isFavorite}
++              onPressProduct={(productId) => router.push(`/product/${productId}`)}
++              onFavorite={(productId) => void toggleProductFavorite(productId)}
++            />
+           </View>
+-        </Animated.View>
++        ) : null}
+       </ScrollView>
+ 
+-      <View style={[styles.stickyBar, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
+-        {message ? <Text style={styles.message}>{message}</Text> : null}
+-        <View style={styles.stickyActions}>
+-          <SecondaryButton
+-            label={id && isFavorite(id) ? "В избранном" : "Избранное"}
+-            onPress={onToggleFavorite}
+-            style={styles.secondaryBtn}
+-          />
+-          <PrimaryButton label="В корзину" onPress={onAddToCart} style={styles.primaryBtn} />
+-        </View>
+-        <Pressable onPress={() => Share.share({ message: `lot://product/${id}`, url: `lot://product/${id}` })}>
+-          <Text style={styles.shareLink}>Поделиться товаром</Text>
+-        </Pressable>
+-      </View>
++      <ProductStickyPurchaseBar
++        price={derived.price}
++        quantity={cartQuantity}
++        inStock={derived.inStock}
++        buyNowLoading={buyNowLoading}
++        onAddToCart={() => void addProductToCart(id, 1)}
++        onIncrement={() => void incrementProductCart(id)}
++        onDecrement={() => void decrementProductCart(id)}
++        onBuyNow={() => void onBuyNow()}
++      />
+     </View>
+   );
+ }
+ 
+ const styles = StyleSheet.create({
+-  screen: { flex: 1, backgroundColor: colors.white },
+-  loadingWrap: { flex: 1, padding: spacing.lg },
+-  container: { backgroundColor: colors.white },
+-  gallery: { backgroundColor: colors.gray100 },
+-  heroImage: { width, height: width * 0.92 },
+-  heroFallback: { width, height: width * 0.92, alignItems: "center", justifyContent: "center" },
+-  heroFallbackText: { ...typography.display, color: colors.orange },
+-  discountBadge: { position: "absolute", top: spacing.lg, left: spacing.lg },
+-  thumbs: { padding: spacing.md, gap: spacing.sm },
+-  thumb: { width: 56, height: 56, borderRadius: radii.sm, borderWidth: 2, borderColor: "transparent" },
+-  thumbActive: { borderColor: colors.orange },
+-  content: { padding: spacing.lg, gap: spacing.md },
+-  title: { ...typography.h1, color: colors.black },
+-  badges: { flexDirection: "row", gap: spacing.sm, flexWrap: "wrap" },
+-  trustRow: { flexDirection: "row", gap: spacing.md, flexWrap: "wrap", alignItems: "center" },
+-  trustItem: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+-  trustText: { ...typography.caption, color: colors.gray700 },
+-  section: { gap: spacing.sm },
+-  sectionTitle: { ...typography.h2, color: colors.black },
+-  body: { ...typography.body, color: colors.gray900 },
+-  charRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.gray200 },
+-  charName: { ...typography.caption, color: colors.gray500, flex: 1 },
+-  charValue: { ...typography.body, color: colors.black, flex: 1, textAlign: "right" },
+-  similarRow: { gap: spacing.md, paddingVertical: spacing.sm },
+-  stickyBar: {
+-    position: "absolute",
+-    left: 0,
+-    right: 0,
+-    bottom: 0,
++  screen: {
++    flex: 1,
+     backgroundColor: colors.white,
+-    borderTopWidth: 1,
+-    borderTopColor: colors.gray200,
++  },
++  content: {
++    paddingTop: spacing.sm,
++    paddingBottom: spacing.lg,
++  },
++  titleBlock: {
++    gap: 8,
+     paddingHorizontal: spacing.lg,
+     paddingTop: spacing.md,
+-    gap: spacing.sm,
++    paddingBottom: spacing.sm,
++  },
++  title: {
++    fontSize: 21,
++    lineHeight: 27,
++    fontWeight: "700",
++    color: colors.black,
++  },
++  priceSection: {
++    paddingTop: 4,
++    paddingBottom: 12,
++  },
++  errorScreen: {
++    flex: 1,
++    backgroundColor: colors.white,
++  },
++  errorBody: {
++    flex: 1,
++    alignItems: "center",
++    justifyContent: "center",
++    padding: spacing.xl,
++    gap: spacing.lg,
++  },
++  errorTitle: {
++    ...typography.h2,
++    color: colors.black,
++    textAlign: "center",
++  },
++  retryBtn: {
++    paddingHorizontal: spacing.xl,
++    paddingVertical: spacing.md,
++    borderRadius: 12,
++    backgroundColor: colors.ctaPrimary,
++  },
++  retryText: {
++    ...typography.button,
++    color: colors.white,
++    fontWeight: "700",
+   },
+-  stickyActions: { flexDirection: "row", gap: spacing.sm },
+-  primaryBtn: { flex: 2 },
+-  secondaryBtn: { flex: 1 },
+-  shareLink: { ...typography.caption, color: colors.orange, textAlign: "center", fontWeight: "600" },
+-  empty: { padding: spacing.lg, textAlign: "center" },
+-  message: { color: colors.orange, ...typography.caption, textAlign: "center" },
+ });
+diff --git a/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseQaSupport.kt b/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseQaSupport.kt
+index e80e560..4a9a83a 100644
+--- a/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseQaSupport.kt
++++ b/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseQaSupport.kt
+@@ -1,8 +1,12 @@
+ package ru.lot.marketplace.alpha.test
+ 
++import android.content.ClipData
++import android.content.ClipboardManager
++import android.content.Context
+ import android.content.Intent
+ import android.net.Uri
+ import android.util.Log
++import android.view.KeyEvent
+ import androidx.test.platform.app.InstrumentationRegistry
+ import androidx.test.uiautomator.By
+ import androidx.test.uiautomator.UiDevice
+@@ -27,6 +31,10 @@ object FirebaseQaLogger {
+     fun stepFail(name: String, reason: String) {
+         Log.e(TAG, "FIREBASE_QA_STEP_FAIL=$name reason=$reason")
+     }
++
++    fun info(marker: String, detail: String) {
++        Log.i(TAG, "$marker=$detail")
++    }
+ }
+ 
+ object FirebaseQaConfig {
+@@ -55,6 +63,10 @@ object FirebaseQaConfig {
+ }
+ 
+ object FirebaseQaSupport {
++    private const val BOOT_WAIT_MS = 60_000L
++    private const val TAB_WAIT_MS = 30_000L
++    private val TAB_MARKERS = listOf("tab-home", "tab-sell", "tab-profile", "tab-catalog", "tab-orders")
++
+     val device: UiDevice
+         get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+ 
+@@ -132,11 +144,20 @@ object FirebaseQaSupport {
+     }
+ 
+     fun typeIntoTestId(testId: String, value: String) {
+-        requireTestId(testId)
++        pasteIntoTestId(testId, value)
++    }
++
++    private fun pasteIntoTestId(testId: String, value: String) {
++        val context = InstrumentationRegistry.getInstrumentation().targetContext
++        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
++        clipboard.setPrimaryClip(ClipData.newPlainText("firebase-qa", value))
+         val field = findByDesc(testId) ?: qaError("Input missing: $testId")
+         field.click()
++        device.waitForIdle(300)
+         field.clearTextField()
+-        field.setText(value)
++        device.waitForIdle(150)
++        device.pressKeyCode(KeyEvent.KEYCODE_PASTE)
++        device.waitForIdle(300)
+     }
+ 
+     fun waitForText(text: String, timeoutMs: Long = 20_000) {
+@@ -148,30 +169,158 @@ object FirebaseQaSupport {
+         return device.findObjects(By.text(title)).size
+     }
+ 
++    private fun visibleTextSample(limit: Int = 12): String {
++        val texts = mutableListOf<String>()
++        val nodes = device.findObjects(By.clickable(true))
++        for (node in nodes) {
++            val text = node.text?.trim().orEmpty()
++            if (text.isNotEmpty()) texts.add(text)
++            if (texts.size >= limit) break
++        }
++        if (texts.isEmpty()) {
++            val labels = TAB_MARKERS.filter { waitForTestId(it, 100) }
++            if (labels.isNotEmpty()) return "tabMarkers=${labels.joinToString(",")}"
++        }
++        return texts.joinToString(" | ")
++    }
++
++    private fun visibleRouteHint(): String {
++        return when {
++            waitForTestId("login-email", 200) -> "route=login"
++            waitForTestId("tab-home", 200) -> "route=main-tabs(home)"
++            waitForTestId("tab-sell", 200) -> "route=main-tabs(sell)"
++            waitForTestId("tab-profile", 200) -> "route=main-tabs(profile)"
++            waitForTestId("lot-photo-inject-smartphone", 200) -> "route=sell/create"
++            device.findObject(UiSelector().textContains("Доступно обновление")).exists() -> "route=update-gate"
++            device.findObject(UiSelector().textContains("больше не поддерживается")).exists() -> "route=unsupported-client"
++            device.findObject(UiSelector().text("Повторить")).exists() -> "route=boot-error"
++            else -> "route=unknown"
++        }
++    }
++
++    private fun waitForBootSurface(timeoutMs: Long = BOOT_WAIT_MS): String {
++        val deadline = System.currentTimeMillis() + timeoutMs
++        while (System.currentTimeMillis() < deadline) {
++            dismissBootRetryIfPresent()
++            dismissOptionalUpdateIfPresent()
++            when (visibleRouteHint()) {
++                "route=login" -> return "login"
++                "route=main-tabs(home)",
++                "route=main-tabs(sell)",
++                "route=main-tabs(profile)",
++                "route=main-tabs(catalog)",
++                -> return "tabs"
++                "route=unsupported-client" -> qaError("UNSUPPORTED_CLIENT screen blocks login")
++            }
++            device.waitForIdle(400)
++        }
++        return "timeout"
++    }
++
++    private fun dismissBootRetryIfPresent() {
++        val retry = device.findObject(UiSelector().text("Повторить"))
++        if (retry.exists()) retry.click()
++    }
++
++    fun dismissOptionalUpdateIfPresent() {
++        val later = device.findObject(UiSelector().text("Позже"))
++        if (later.exists()) {
++            later.click()
++            device.waitForIdle(500)
++            FirebaseQaLogger.info("FIREBASE_QA_UPDATE_GATE", "dismissed_optional_update")
++        }
++    }
++
++    private fun waitForMainTabs(timeoutMs: Long = TAB_WAIT_MS): Boolean {
++        val deadline = System.currentTimeMillis() + timeoutMs
++        while (System.currentTimeMillis() < deadline) {
++            dismissOptionalUpdateIfPresent()
++            for (marker in TAB_MARKERS) {
++                if (waitForTestId(marker, 250)) return true
++            }
++            device.waitForIdle(300)
++        }
++        return false
++    }
++
+     fun loginSeller() {
+-        FirebaseQaLogger.stepStart("SELLER_LOGIN", FirebaseQaConfig.runId)
++        FirebaseQaLogger.stepStart("FIREBASE_QA_LOGIN_START", FirebaseQaConfig.runId)
++        FirebaseQaLogger.info("FIREBASE_QA_LOGIN_CONFIG", "email=${FirebaseQaConfig.sellerEmail} api=${FirebaseQaConfig.apiBaseUrl}")
++
+         launchApp()
+-        dismissBootIfNeeded()
+-        if (waitForTestId("login-email", 5_000)) {
+-            typeIntoTestId("login-email", FirebaseQaConfig.sellerEmail)
+-            typeIntoTestId("login-password", FirebaseQaConfig.sellerPassword)
+-            tapTestId("login-submit")
+-            device.wait(Until.gone(By.desc("login-submit")), 30_000)
++        val bootSurface = waitForBootSurface()
++        FirebaseQaLogger.info("FIREBASE_QA_BOOT_SURFACE", bootSurface)
++        FirebaseQaLogger.info("FIREBASE_QA_ROUTE_BEFORE_AUTH", visibleRouteHint())
++
++        if (bootSurface == "tabs" || waitForMainTabs(2_000)) {
++            FirebaseQaLogger.stepPass("FIREBASE_QA_LOGIN", "already_authenticated route=${visibleRouteHint()}")
++            return
++        }
++
++        if (bootSurface != "login") {
++            val reason = "boot_surface=$bootSurface route=${visibleRouteHint()} visible=${visibleTextSample()}"
++            FirebaseQaLogger.stepFail("FIREBASE_QA_LOGIN_FAIL", reason)
++            fail("Seller login blocked before credentials: $reason")
+         }
+-        val onTabs = device.wait(Until.hasObject(By.text("Продать")), 30_000)
+-        if (!onTabs) fail("Seller login did not reach main tabs")
+-        FirebaseQaLogger.stepPass("SELLER_LOGIN")
++
++        requireTestId("login-email", 5_000, "LOGIN_FORM")
++        FirebaseQaLogger.info("FIREBASE_QA_LOGIN_SUBMIT", "credentials_submitted")
++        pasteIntoTestId("login-email", FirebaseQaConfig.sellerEmail)
++        pasteIntoTestId("login-password", FirebaseQaConfig.sellerPassword)
++        tapTestId("login-submit")
++
++        val loginDeadline = System.currentTimeMillis() + TAB_WAIT_MS
++        var loginOutcome = "pending"
++        while (System.currentTimeMillis() < loginDeadline) {
++            dismissOptionalUpdateIfPresent()
++            if (waitForTestId("login-error", 200)) {
++                loginOutcome = "visible_error"
++                break
++            }
++            if (waitForMainTabs(500)) {
++                loginOutcome = "main_tabs"
++                break
++            }
++            if (!waitForTestId("login-submit", 200) && !waitForTestId("login-email", 200)) {
++                if (waitForMainTabs(1_000)) {
++                    loginOutcome = "main_tabs"
++                    break
++                }
++            }
++            device.waitForIdle(400)
++        }
++
++        FirebaseQaLogger.info("FIREBASE_QA_LOGIN_OUTCOME", loginOutcome)
++        FirebaseQaLogger.info("FIREBASE_QA_ROUTE_AFTER_AUTH", visibleRouteHint())
++        FirebaseQaLogger.info("FIREBASE_QA_VISIBLE_AFTER_AUTH", visibleTextSample())
++
++        if (loginOutcome == "visible_error") {
++            val errorText = device.findObject(UiSelector().description("login-error")).text
++                ?: device.findObject(UiSelector().resourceId("${FirebaseQaConfig.appPackage}:id/login-error")).text
++                ?: "unknown_login_error"
++            val reason = "PRODUCT_AUTH_FAILURE error=$errorText route=${visibleRouteHint()}"
++            FirebaseQaLogger.stepFail("FIREBASE_QA_LOGIN_FAIL", reason)
++            fail(reason)
++        }
++
++        if (!waitForMainTabs(1_000)) {
++            val reason =
++                "POST_LOGIN_NAV_FAILURE outcome=$loginOutcome route=${visibleRouteHint()} visible=${visibleTextSample()} assertion=tab-home|tab-sell|tab-profile"
++            FirebaseQaLogger.stepFail("FIREBASE_QA_LOGIN_FAIL", reason)
++            fail("Seller login did not reach main tabs: $reason")
++        }
++
++        FirebaseQaLogger.stepPass("FIREBASE_QA_LOGIN", "route=${visibleRouteHint()}")
+     }
+ 
+     fun dismissBootIfNeeded() {
+         device.waitForIdle(1_000)
+-        val retry = device.findObject(UiSelector().text("Повторить"))
+-        if (retry.exists()) retry.click()
++        dismissBootRetryIfPresent()
+     }
+ 
+     fun navigateToCreateLot() {
+         FirebaseQaLogger.stepStart("NAV_CREATE_LOT")
+-        tapText("Продать")
++        tapTestId("tab-sell")
+         tapText("Создать ЛОТ")
+         requireTestId("lot-photo-inject-smartphone", 20_000, "NAV_CREATE_LOT")
+         FirebaseQaLogger.stepPass("NAV_CREATE_LOT")
+@@ -205,7 +354,7 @@ object FirebaseQaSupport {
+     }
+ 
+     fun openMyLotsPending() {
+-        tapText("Профиль")
++        tapTestId("tab-profile")
+         tapText("Мои ЛОТы")
+         tapTestId("seller-lots-tab-pending")
+     }
+diff --git a/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseUpdateV2JourneyTest.kt b/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseUpdateV2JourneyTest.kt
+index 7cc8294..c730db8 100644
+--- a/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseUpdateV2JourneyTest.kt
++++ b/apps/mobile/instrumentation/androidTest/java/ru/lot/marketplace/alpha/test/FirebaseUpdateV2JourneyTest.kt
+@@ -12,7 +12,7 @@ class FirebaseUpdateV2JourneyTest {
+     fun updateV2DownloadVerifyAndInstallerBoundary() {
+         FirebaseQaLogger.stepStart("UPDATE_V2", FirebaseQaConfig.runId)
+         FirebaseQaSupport.loginSeller()
+-        FirebaseQaSupport.tapText("Профиль")
++        FirebaseQaSupport.tapTestId("tab-profile")
+         FirebaseQaSupport.tapText("Проверить обновление")
+ 
+         val device = FirebaseQaSupport.device
+diff --git a/apps/mobile/package-lock.json b/apps/mobile/package-lock.json
+index 12bc93b..765122c 100644
+--- a/apps/mobile/package-lock.json
++++ b/apps/mobile/package-lock.json
+@@ -9,8 +9,9 @@
+       "version": "0.1.9-beta.1",
+       "dependencies": {
+         "@expo/vector-icons": "^15.0.2",
++        "@noble/hashes": "^2.4.0",
+         "expo": "~57.0.13",
+-        "expo-clipboard": "~7.0.1",
++        "expo-clipboard": "~57.0.1",
+         "expo-constants": "~57.0.11",
+         "expo-device": "~57.0.1",
+         "expo-file-system": "~57.0.3",
+@@ -948,38 +949,6 @@
+         "@babel/core": "^7.0.0-0"
+       }
+     },
+-    "node_modules/@babel/plugin-transform-react-jsx-self": {
+-      "version": "7.29.7",
+-      "resolved": "https://registry.npmjs.org/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.29.7.tgz",
+-      "integrity": "sha512-TL0hMc9xzy86VD31nUiwzd5otRAcyEPcsegCxolO0PvcXuH1v0kECe/UIznYFihpkvU5wg/jk4v0TTEFfm53fw==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@babel/helper-plugin-utils": "^7.29.7"
+-      },
+-      "engines": {
+-        "node": ">=6.9.0"
+-      },
+-      "peerDependencies": {
+-        "@babel/core": "^7.0.0-0"
+-      }
+-    },
+-    "node_modules/@babel/plugin-transform-react-jsx-source": {
+-      "version": "7.29.7",
+-      "resolved": "https://registry.npmjs.org/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.29.7.tgz",
+-      "integrity": "sha512-06IyK09H3wi4cGbhDBwp5gUGo0IKtnYa8tyTiephirPCK6fbobVGiXMMI5zLQ4aKEYP3wZ3ArU44o+8KMrSG/Q==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@babel/helper-plugin-utils": "^7.29.7"
+-      },
+-      "engines": {
+-        "node": ">=6.9.0"
+-      },
+-      "peerDependencies": {
+-        "@babel/core": "^7.0.0-0"
+-      }
+-    },
+     "node_modules/@babel/plugin-transform-react-pure-annotations": {
+       "version": "7.29.7",
+       "resolved": "https://registry.npmjs.org/@babel/plugin-transform-react-pure-annotations/-/plugin-transform-react-pure-annotations-7.29.7.tgz",
+@@ -996,22 +965,6 @@
+         "@babel/core": "^7.0.0-0"
+       }
+     },
+-    "node_modules/@babel/plugin-transform-regenerator": {
+-      "version": "7.29.8",
+-      "resolved": "https://registry.npmjs.org/@babel/plugin-transform-regenerator/-/plugin-transform-regenerator-7.29.8.tgz",
+-      "integrity": "sha512-0UpIXPtdDtMXfnV2OJAVMLpj3H/92vmkA6lpSRakmycJvj3VUy6Xs1dM8tXRugupykr5WB+LpiVl0J8LMVg2mg==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@babel/helper-plugin-utils": "^7.29.7"
+-      },
+-      "engines": {
+-        "node": ">=6.9.0"
+-      },
+-      "peerDependencies": {
+-        "@babel/core": "^7.0.0-0"
+-      }
+-    },
+     "node_modules/@babel/plugin-transform-runtime": {
+       "version": "7.29.7",
+       "resolved": "https://registry.npmjs.org/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.29.7.tgz",
+@@ -1651,6 +1604,18 @@
+         "@jridgewell/sourcemap-codec": "^1.4.14"
+       }
+     },
++    "node_modules/@noble/hashes": {
++      "version": "2.4.0",
++      "resolved": "https://registry.npmjs.org/@noble/hashes/-/hashes-2.4.0.tgz",
++      "integrity": "sha512-X5XaVWZIBCT7HHZGm5I7ZQXDwLG+bGXuSrMQAW+7Zvl87h1kmc1ZB1VSRJcpUfoUrGQp4Fkoxm5kZ+Ms+aW+eA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 20.19.0"
++      },
++      "funding": {
++        "url": "https://paulmillr.com/funding/"
++      }
++    },
+     "node_modules/@radix-ui/primitive": {
+       "version": "1.1.7",
+       "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.7.tgz",
+@@ -2086,54 +2051,6 @@
+         "node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"
+       }
+     },
+-    "node_modules/@react-native/babel-preset": {
+-      "version": "0.86.2",
+-      "resolved": "https://registry.npmjs.org/@react-native/babel-preset/-/babel-preset-0.86.2.tgz",
+-      "integrity": "sha512-4XKEJ6jKW9lXMB1O5o47gBoGgolde1fbX13gLW/erlcn+1ky+MHHo5UjuM3RWGdPJHIvIzekDDumSUHhB9x5iQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@babel/core": "^7.25.2",
+-        "@babel/plugin-proposal-export-default-from": "^7.24.7",
+-        "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+-        "@babel/plugin-syntax-export-default-from": "^7.24.7",
+-        "@babel/plugin-syntax-nullish-coalescing-operator": "^7.8.3",
+-        "@babel/plugin-syntax-optional-chaining": "^7.8.3",
+-        "@babel/plugin-transform-async-generator-functions": "^7.25.4",
+-        "@babel/plugin-transform-async-to-generator": "^7.24.7",
+-        "@babel/plugin-transform-block-scoping": "^7.25.0",
+-        "@babel/plugin-transform-class-properties": "^7.25.4",
+-        "@babel/plugin-transform-classes": "^7.25.4",
+-        "@babel/plugin-transform-destructuring": "^7.24.8",
+-        "@babel/plugin-transform-flow-strip-types": "^7.25.2",
+-        "@babel/plugin-transform-for-of": "^7.24.7",
+-        "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+-        "@babel/plugin-transform-named-capturing-groups-regex": "^7.24.7",
+-        "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+-        "@babel/plugin-transform-optional-catch-binding": "^7.24.7",
+-        "@babel/plugin-transform-optional-chaining": "^7.24.8",
+-        "@babel/plugin-transform-private-methods": "^7.24.7",
+-        "@babel/plugin-transform-private-property-in-object": "^7.24.7",
+-        "@babel/plugin-transform-react-display-name": "^7.24.7",
+-        "@babel/plugin-transform-react-jsx": "^7.25.2",
+-        "@babel/plugin-transform-react-jsx-self": "^7.24.7",
+-        "@babel/plugin-transform-react-jsx-source": "^7.24.7",
+-        "@babel/plugin-transform-regenerator": "^7.24.7",
+-        "@babel/plugin-transform-runtime": "^7.24.7",
+-        "@babel/plugin-transform-typescript": "^7.25.2",
+-        "@babel/plugin-transform-unicode-regex": "^7.24.7",
+-        "@react-native/babel-plugin-codegen": "0.86.2",
+-        "babel-plugin-syntax-hermes-parser": "0.36.0",
+-        "babel-plugin-transform-flow-enums": "^0.0.2",
+-        "react-refresh": "^0.14.0"
+-      },
+-      "engines": {
+-        "node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"
+-      },
+-      "peerDependencies": {
+-        "@babel/core": "*"
+-      }
+-    },
+     "node_modules/@react-native/codegen": {
+       "version": "0.86.2",
+       "resolved": "https://registry.npmjs.org/@react-native/codegen/-/codegen-0.86.2.tgz",
+@@ -2264,58 +2181,6 @@
+         "node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"
+       }
+     },
+-    "node_modules/@react-native/metro-babel-transformer": {
+-      "version": "0.86.2",
+-      "resolved": "https://registry.npmjs.org/@react-native/metro-babel-transformer/-/metro-babel-transformer-0.86.2.tgz",
+-      "integrity": "sha512-mX1wgLErdb2hDgXJr9zM9SWLe+ZteZTFTwRWGOQ53yEJwc9DVSnxdTlAtVdMeOj2ntycKh0R8jYdat2Am43cwQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@babel/core": "^7.25.2",
+-        "@react-native/babel-preset": "0.86.2",
+-        "hermes-parser": "0.36.0",
+-        "nullthrows": "^1.1.1"
+-      },
+-      "engines": {
+-        "node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"
+-      },
+-      "peerDependencies": {
+-        "@babel/core": "*"
+-      }
+-    },
+-    "node_modules/@react-native/metro-babel-transformer/node_modules/hermes-estree": {
+-      "version": "0.36.0",
+-      "resolved": "https://registry.npmjs.org/hermes-estree/-/hermes-estree-0.36.0.tgz",
+-      "integrity": "sha512-A1+8zn5oss2CFP7pKsOaxorQG6FNIz1WU1VDqruLPPZl3LVgeE2C5xfFg8Ow6/Ow4mSslLLtYP1J3n38eKyW9w==",
+-      "license": "MIT",
+-      "peer": true
+-    },
+-    "node_modules/@react-native/metro-babel-transformer/node_modules/hermes-parser": {
+-      "version": "0.36.0",
+-      "resolved": "https://registry.npmjs.org/hermes-parser/-/hermes-parser-0.36.0.tgz",
+-      "integrity": "sha512-GdpwMmH5x6IpC1cijvcvYnlPB60Mh6kTSF/NFdYV/j56gYdi+0RIakYs+eqOV+bbO0SW7mgVVGSsTJxyPQfo3w==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "hermes-estree": "0.36.0"
+-      }
+-    },
+-    "node_modules/@react-native/metro-config": {
+-      "version": "0.86.2",
+-      "resolved": "https://registry.npmjs.org/@react-native/metro-config/-/metro-config-0.86.2.tgz",
+-      "integrity": "sha512-hJno256j+MS0b3JD1aD3ouTGZVacKNVBuXL2atMQQ8BZ060vl1ptnZ83y569aDW+/rgFSOcqn6ydKeSz4uUKQQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@react-native/js-polyfills": "0.86.2",
+-        "@react-native/metro-babel-transformer": "0.86.2",
+-        "metro-config": "^0.84.3",
+-        "metro-runtime": "^0.84.3"
+-      },
+-      "engines": {
+-        "node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"
+-      }
+-    },
+     "node_modules/@react-native/normalize-colors": {
+       "version": "0.86.2",
+       "resolved": "https://registry.npmjs.org/@react-native/normalize-colors/-/normalize-colors-0.86.2.tgz",
+@@ -2351,61 +2216,6 @@
+       "integrity": "sha512-hhyNJ+nbR6ZR7pToHvllEFun9TL0sbL+tk/ON75lo+Xas054uez98qRbsuNt7MBCyZKK4+8Yli/OAGZhmfBZ/g==",
+       "license": "MIT"
+     },
+-    "node_modules/@testing-library/dom": {
+-      "version": "10.4.1",
+-      "resolved": "https://registry.npmjs.org/@testing-library/dom/-/dom-10.4.1.tgz",
+-      "integrity": "sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@babel/code-frame": "^7.10.4",
+-        "@babel/runtime": "^7.12.5",
+-        "@types/aria-query": "^5.0.1",
+-        "aria-query": "5.3.0",
+-        "dom-accessibility-api": "^0.5.9",
+-        "lz-string": "^1.5.0",
+-        "picocolors": "1.1.1",
+-        "pretty-format": "^27.0.2"
+-      },
+-      "engines": {
+-        "node": ">=18"
+-      }
+-    },
+-    "node_modules/@testing-library/dom/node_modules/ansi-styles": {
+-      "version": "5.2.0",
+-      "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz",
+-      "integrity": "sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==",
+-      "license": "MIT",
+-      "peer": true,
+-      "engines": {
+-        "node": ">=10"
+-      },
+-      "funding": {
+-        "url": "https://github.com/chalk/ansi-styles?sponsor=1"
+-      }
+-    },
+-    "node_modules/@testing-library/dom/node_modules/pretty-format": {
+-      "version": "27.5.1",
+-      "resolved": "https://registry.npmjs.org/pretty-format/-/pretty-format-27.5.1.tgz",
+-      "integrity": "sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "ansi-regex": "^5.0.1",
+-        "ansi-styles": "^5.0.0",
+-        "react-is": "^17.0.1"
+-      },
+-      "engines": {
+-        "node": "^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0"
+-      }
+-    },
+-    "node_modules/@testing-library/dom/node_modules/react-is": {
+-      "version": "17.0.2",
+-      "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz",
+-      "integrity": "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==",
+-      "license": "MIT",
+-      "peer": true
+-    },
+     "node_modules/@testing-library/jest-dom": {
+       "version": "6.9.1",
+       "resolved": "https://registry.npmjs.org/@testing-library/jest-dom/-/jest-dom-6.9.1.tgz",
+@@ -2444,13 +2254,6 @@
+         "@testing-library/dom": ">=7.21.4"
+       }
+     },
+-    "node_modules/@types/aria-query": {
+-      "version": "5.0.4",
+-      "resolved": "https://registry.npmjs.org/@types/aria-query/-/aria-query-5.0.4.tgz",
+-      "integrity": "sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==",
+-      "license": "MIT",
+-      "peer": true
+-    },
+     "node_modules/@types/istanbul-lib-coverage": {
+       "version": "2.0.6",
+       "resolved": "https://registry.npmjs.org/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.6.tgz",
+@@ -2488,21 +2291,12 @@
+       "version": "19.2.18",
+       "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.18.tgz",
+       "integrity": "sha512-AnzbBERsrLKtk2XSfTbYRLjQPdy116Sty4q+T+Bp3IC4l6jNBvreVPAHmpq9qhXQM7CXZPjLVmGMw9sy+hxQ3w==",
++      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "csstype": "^3.2.2"
+       }
+     },
+-    "node_modules/@types/react-test-renderer": {
+-      "version": "19.1.0",
+-      "resolved": "https://registry.npmjs.org/@types/react-test-renderer/-/react-test-renderer-19.1.0.tgz",
+-      "integrity": "sha512-XD0WZrHqjNrxA/MaR9O22w/RNidWR9YZmBdRGI7wcnWGrv/3dA8wKCJ8m63Sn+tLJhcjmuhOi629N66W6kgWzQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@types/react": "*"
+-      }
+-    },
+     "node_modules/@types/yargs": {
+       "version": "17.0.35",
+       "resolved": "https://registry.npmjs.org/@types/yargs/-/yargs-17.0.35.tgz",
+@@ -3253,6 +3047,7 @@
+       "version": "3.2.3",
+       "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz",
+       "integrity": "sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==",
++      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/debug": {
+@@ -3351,13 +3146,6 @@
+       "integrity": "sha512-Ndrrf6BMPalkQPd/zubL+4YghH2J9NspapQ09uDXwYbvOPkP0oaqf5CkcwJ0b50kS2O3ul6yVu+jz+RY62Cejg==",
+       "license": "MIT"
+     },
+-    "node_modules/dom-accessibility-api": {
+-      "version": "0.5.16",
+-      "resolved": "https://registry.npmjs.org/dom-accessibility-api/-/dom-accessibility-api-0.5.16.tgz",
+-      "integrity": "sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==",
+-      "license": "MIT",
+-      "peer": true
+-    },
+     "node_modules/ee-first": {
+       "version": "1.1.1",
+       "resolved": "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz",
+@@ -3511,9 +3299,9 @@
+       }
+     },
+     "node_modules/expo-clipboard": {
+-      "version": "7.0.1",
+-      "resolved": "https://registry.npmjs.org/expo-clipboard/-/expo-clipboard-7.0.1.tgz",
+-      "integrity": "sha512-rqYk0+WoqitPcPKxmMxSpLonX1E5Ije3LBYfnYMbH3xU5Gr8EAH9QnOWOi4BgahUPvcot6nbFEnx+DqARrmxKQ==",
++      "version": "57.0.1",
++      "resolved": "https://registry.npmjs.org/expo-clipboard/-/expo-clipboard-57.0.1.tgz",
++      "integrity": "sha512-HWICri4+1ao7S6QEfcorxVumXDiDnx1guGGewjZgGJWLGxFYs0RgH8ujBs+lkTzBkMmlwADaWSlaesR+nDJt5Q==",
+       "license": "MIT",
+       "peerDependencies": {
+         "expo": "*",
+@@ -5245,16 +5033,6 @@
+         "yallist": "^3.0.2"
+       }
+     },
+-    "node_modules/lz-string": {
+-      "version": "1.5.0",
+-      "resolved": "https://registry.npmjs.org/lz-string/-/lz-string-1.5.0.tgz",
+-      "integrity": "sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "bin": {
+-        "lz-string": "bin/bin.js"
+-      }
+-    },
+     "node_modules/makeerror": {
+       "version": "1.0.12",
+       "resolved": "https://registry.npmjs.org/makeerror/-/makeerror-1.0.12.tgz",
+@@ -6168,19 +5946,6 @@
+         "ws": "^7"
+       }
+     },
+-    "node_modules/react-dom": {
+-      "version": "19.2.8",
+-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.8.tgz",
+-      "integrity": "sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "scheduler": "^0.27.0"
+-      },
+-      "peerDependencies": {
+-        "react": "^19.2.8"
+-      }
+-    },
+     "node_modules/react-fast-compare": {
+       "version": "3.2.2",
+       "resolved": "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-3.2.2.tgz",
+@@ -6280,21 +6045,6 @@
+         "react-native-reanimated": ">= 2.0.0"
+       }
+     },
+-    "node_modules/react-native-gesture-handler": {
+-      "version": "3.2.1",
+-      "resolved": "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-3.2.1.tgz",
+-      "integrity": "sha512-VEWscxUN29aeccbD2McF0LSXrwOhSdisaSRFiEWg0O/3WrVghNJp/tOtLrCgzb9gfcZ3xdA+K2Sp8F5G3iHx/Q==",
+-      "license": "MIT",
+-      "peer": true,
+-      "dependencies": {
+-        "@types/react-test-renderer": "^19.1.0",
+-        "invariant": "^2.2.4"
+-      },
+-      "peerDependencies": {
+-        "react": "*",
+-        "react-native": "*"
+-      }
+-    },
+     "node_modules/react-native-is-edge-to-edge": {
+       "version": "1.3.1",
+       "resolved": "https://registry.npmjs.org/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.3.1.tgz",
+@@ -7170,7 +6920,7 @@
+       "version": "6.0.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-6.0.3.tgz",
+       "integrity": "sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==",
+-      "devOptional": true,
++      "dev": true,
+       "license": "Apache-2.0",
+       "bin": {
+         "tsc": "bin/tsc",
+diff --git a/apps/mobile/package.json b/apps/mobile/package.json
+index eef063a..92d145b 100644
+--- a/apps/mobile/package.json
++++ b/apps/mobile/package.json
+@@ -4,9 +4,9 @@
+   "main": "expo-router/entry",
+   "dependencies": {
+     "@expo/vector-icons": "^15.0.2",
+-    "expo": "~57.0.13",
+-    "expo-clipboard": "~7.0.1",
+     "@noble/hashes": "^2.4.0",
++    "expo": "~57.0.13",
++    "expo-clipboard": "~57.0.1",
+     "expo-constants": "~57.0.11",
+     "expo-device": "~57.0.1",
+     "expo-file-system": "~57.0.3",
+diff --git a/apps/mobile/plugins/withFirebaseInstrumentation.js b/apps/mobile/plugins/withFirebaseInstrumentation.js
+index 574f774..9329328 100644
+--- a/apps/mobile/plugins/withFirebaseInstrumentation.js
++++ b/apps/mobile/plugins/withFirebaseInstrumentation.js
+@@ -24,8 +24,48 @@ function copyDirRecursive(src, dest) {
+   }
+ }
+ 
+-function patchAppBuildGradle(contents) {
++function patchReactBlockForFirebaseQa(contents) {
++  if (contents.includes('debuggableVariants = ["debug"]')) {
++    return contents;
++  }
++  if (contents.includes("// debuggableVariants = [\"debug\"]")) {
++    return contents.replace(
++      /\/\/\s*debuggableVariants\s*=\s*\["debug"\]/,
++      'debuggableVariants = ["debug"] // Firebase QA variants must embed JS; only debug uses Metro',
++    );
++  }
++  if (contents.includes("debuggableVariants")) {
++    return contents.replace(/debuggableVariants\s*=\s*\[[^\]]*\]/, 'debuggableVariants = ["debug"]');
++  }
++  return contents.replace(
++    /bundleCommand = "export:embed"/,
++    `bundleCommand = "export:embed"
++    debuggableVariants = ["debug"]`,
++  );
++}
++
++function patchFirebaseQaBuildType(contents) {
+   let next = contents;
++  if (!next.includes('testBuildType "firebaseQa"')) {
++    next = next.replace(/android\s*\{/, 'android {\n    testBuildType "firebaseQa"');
++  }
++  if (!next.includes("firebaseQa {")) {
++    next = next.replace(
++      /(\s+release\s*\{[\s\S]*?\n\s+\})\s*(\n\s+\})/m,
++      `$1
++        firebaseQa {
++            initWith release
++            matchingFallbacks = ["release", "debug"]
++            signingConfig signingConfigs.debug
++        }$2`,
++    );
++  }
++  return next;
++}
++
++function patchAppBuildGradle(contents) {
++  let next = patchReactBlockForFirebaseQa(contents);
++  next = patchFirebaseQaBuildType(next);
+   if (!next.includes("testApplicationId")) {
+     next = next.replace(
+       /defaultConfig\s*\{/,
+diff --git a/artifacts/firebase-test-lab/build-manifest.json b/artifacts/firebase-test-lab/build-manifest.json
+index 834bb56..7d1c0da 100644
+--- a/artifacts/firebase-test-lab/build-manifest.json
++++ b/artifacts/firebase-test-lab/build-manifest.json
+@@ -1,14 +1,22 @@
+ {
+-  "generatedAt": "2026-08-27T15:33:15.713Z",
++  "generatedAt": "2026-08-28T08:22:26.673Z",
++  "gate": "mobile:firebase-instrumentation:build",
+   "appApk": "/workspace/artifacts/firebase-test-lab/lot-under-test.apk",
+   "testApk": "/workspace/artifacts/firebase-test-lab/lot-instrumentation-tests.apk",
+   "appPackage": "ru.lot.marketplace.alpha",
+   "testPackage": "ru.lot.marketplace.alpha.test",
+   "runner": "androidx.test.runner.AndroidJUnitRunner",
+-  "appBytes": 233050071,
+-  "testBytes": 650288,
+-  "appSha256": "e46ad1cd754f29454fbc674cd7a07ffcfbe31e793d7f48ff7958c0afafc7955a",
+-  "testSha256": "69d103d9022493c0b2f768f31b8b507e5f07f81aa03bad8b6296e9ea6fb231a8",
++  "appBytes": 103797221,
++  "testBytes": 516876,
++  "appSha256": "79fa022dd41a2b42a11cbdb42b0c736fce552701974b814db597e19401258ca9",
++  "testSha256": "8d90ea4dd1404ea7dfc549a166558a02d390f1ad7efdcbef843541a4d8c5bd47",
++  "buildVariant": "firebaseQa",
++  "firebaseQa": true,
++  "releaseChannel": "staging",
++  "metroRequired": false,
++  "mrpPublished": false,
++  "rcCreated": false,
+   "estimatedInstrumentationMinutes": 18,
+-  "estimatedRoboMinutes": 5
++  "estimatedRoboMinutes": 5,
++  "gcloudExample": "gcloud firebase test android run \\\n  --type instrumentation \\\n  --app /workspace/artifacts/firebase-test-lab/lot-under-test.apk \\\n  --test /workspace/artifacts/firebase-test-lab/lot-instrumentation-tests.apk \\\n  --device model=redfin,version=30,locale=ru,orientation=portrait \\\n  --timeout 25m \\\n  --environment-variables RUN_ID=firebase-qa-manual-phone,clearPackageData=true"
+ }
+\ No newline at end of file
+diff --git a/artifacts/firebase-test-lab/gate-report.json b/artifacts/firebase-test-lab/gate-report.json
+index 8d50729..98186ba 100644
+--- a/artifacts/firebase-test-lab/gate-report.json
++++ b/artifacts/firebase-test-lab/gate-report.json
+@@ -1,18 +1,25 @@
+ {
+-  "generatedAt": "2026-08-27T15:33:15.713Z",
+-  "gate": "mobile:firebase-instrumentation:gate",
++  "generatedAt": "2026-08-28T08:22:26.673Z",
++  "gate": "mobile:firebase-instrumentation:build",
+   "verdict": "PASS",
+   "appApk": "/workspace/artifacts/firebase-test-lab/lot-under-test.apk",
+   "testApk": "/workspace/artifacts/firebase-test-lab/lot-instrumentation-tests.apk",
+   "appPackage": "ru.lot.marketplace.alpha",
+   "testPackage": "ru.lot.marketplace.alpha.test",
+   "runner": "androidx.test.runner.AndroidJUnitRunner",
+-  "appBytes": 233050071,
+-  "testBytes": 650288,
+-  "appSha256": "e46ad1cd754f29454fbc674cd7a07ffcfbe31e793d7f48ff7958c0afafc7955a",
+-  "testSha256": "69d103d9022493c0b2f768f31b8b507e5f07f81aa03bad8b6296e9ea6fb231a8",
++  "appBytes": 103797221,
++  "testBytes": 516876,
++  "appSha256": "79fa022dd41a2b42a11cbdb42b0c736fce552701974b814db597e19401258ca9",
++  "testSha256": "8d90ea4dd1404ea7dfc549a166558a02d390f1ad7efdcbef843541a4d8c5bd47",
++  "buildVariant": "firebaseQa",
++  "firebaseQa": true,
++  "releaseChannel": "staging",
++  "metroRequired": false,
++  "mrpPublished": false,
++  "rcCreated": false,
+   "estimatedInstrumentationMinutes": 18,
+   "estimatedRoboMinutes": 5,
++  "gcloudExample": "gcloud firebase test android run \\\n  --type instrumentation \\\n  --app /workspace/artifacts/firebase-test-lab/lot-under-test.apk \\\n  --test /workspace/artifacts/firebase-test-lab/lot-instrumentation-tests.apk \\\n  --device model=redfin,version=30,locale=ru,orientation=portrait \\\n  --timeout 25m \\\n  --environment-variables RUN_ID=firebase-qa-manual-phone,clearPackageData=true",
+   "historicalRegressionTests": 7,
+   "virtualInstrumentation": {
+     "generatedAt": "2026-08-27T15:33:15.572Z",
+diff --git a/scripts/mobile-firebase-instrumentation-build.mjs b/scripts/mobile-firebase-instrumentation-build.mjs
+index 3cd8ced..47ba6a5 100644
+--- a/scripts/mobile-firebase-instrumentation-build.mjs
++++ b/scripts/mobile-firebase-instrumentation-build.mjs
+@@ -19,6 +19,7 @@ const MANIFEST = join(OUT, "build-manifest.json");
+ const APP_PACKAGE = "ru.lot.marketplace.alpha";
+ const TEST_PACKAGE = `${APP_PACKAGE}.test`;
+ const RUNNER = "androidx.test.runner.AndroidJUnitRunner";
++const BUILD_VARIANT = "firebaseQa";
+ const ANDROID_SDK =
+   process.env.ANDROID_HOME ?? process.env.ANDROID_SDK_ROOT ?? join(ROOT, ".android-sdk");
+ 
+@@ -49,6 +50,10 @@ function fail(msg) {
+   process.exit(1);
+ }
+ 
++function capitalize(value) {
++  return value.charAt(0).toUpperCase() + value.slice(1);
++}
++
+ mkdirSync(OUT, { recursive: true });
+ 
+ const buildEnv = {
+@@ -62,15 +67,22 @@ run("npx expo prebuild --platform android --clean", MOBILE, buildEnv);
+ if (!existsSync(ANDROID)) fail("android folder missing after prebuild");
+ ensureAndroidSdk();
+ 
+-run("./gradlew :app:assembleDebug :app:assembleDebugAndroidTest", join(ANDROID), buildEnv);
++run(
++  `./gradlew :app:assemble${capitalize(BUILD_VARIANT)} :app:assemble${capitalize(BUILD_VARIANT)}AndroidTest`,
++  join(ANDROID),
++  buildEnv,
++);
+ 
+-const debugApk = join(ANDROID, "app/build/outputs/apk/debug/app-debug.apk");
+-const debugTestApk = join(ANDROID, "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk");
+-if (!existsSync(debugApk)) fail(`missing app APK: ${debugApk}`);
+-if (!existsSync(debugTestApk)) fail(`missing test APK: ${debugTestApk}`);
++const builtAppApk = join(ANDROID, `app/build/outputs/apk/${BUILD_VARIANT}/app-${BUILD_VARIANT}.apk`);
++const builtTestApk = join(
++  ANDROID,
++  `app/build/outputs/apk/androidTest/${BUILD_VARIANT}/app-${BUILD_VARIANT}-androidTest.apk`,
++);
++if (!existsSync(builtAppApk)) fail(`missing app APK: ${builtAppApk}`);
++if (!existsSync(builtTestApk)) fail(`missing test APK: ${builtTestApk}`);
+ 
+-copyFileSync(debugApk, APP_APK);
+-copyFileSync(debugTestApk, TEST_APK);
++copyFileSync(builtAppApk, APP_APK);
++copyFileSync(builtTestApk, TEST_APK);
+ 
+ const manifest = {
+   generatedAt: new Date().toISOString(),
+@@ -84,8 +96,10 @@ const manifest = {
+   testBytes: statSync(TEST_APK).size,
+   appSha256: sha256(APP_APK),
+   testSha256: sha256(TEST_APK),
++  buildVariant: BUILD_VARIANT,
+   firebaseQa: true,
+   releaseChannel: "staging",
++  metroRequired: false,
+   mrpPublished: false,
+   rcCreated: false,
+   estimatedInstrumentationMinutes: 18,

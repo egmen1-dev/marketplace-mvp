@@ -34,6 +34,8 @@ export function mapLotDeepLinkToHref(uri: string): string | null {
       return "/(tabs)/profile";
     case "cart":
       return "/cart";
+    case "checkout":
+      return "/checkout";
     case "product":
     case "brainProduct":
       return `/product/${parsed.productId}`;

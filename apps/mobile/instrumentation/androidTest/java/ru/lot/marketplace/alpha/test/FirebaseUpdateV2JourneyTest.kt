@@ -12,7 +12,7 @@ class FirebaseUpdateV2JourneyTest {
     fun updateV2DownloadVerifyAndInstallerBoundary() {
         FirebaseQaLogger.stepStart("UPDATE_V2", FirebaseQaConfig.runId)
         FirebaseQaSupport.loginSeller()
-        FirebaseQaSupport.tapText("Профиль")
+        FirebaseQaSupport.tapTestId("tab-profile")
         FirebaseQaSupport.tapText("Проверить обновление")
 
         val device = FirebaseQaSupport.device

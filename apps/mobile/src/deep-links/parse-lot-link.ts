@@ -5,6 +5,7 @@ export type DeepLinkRoute =
   | { screen: "wallet" }
   | { screen: "profile" }
   | { screen: "cart" }
+  | { screen: "checkout" }
   | { screen: "product"; productId: string }
   | { screen: "order"; orderId: string }
   | { screen: "seller"; sellerId: string }
@@ -18,6 +19,7 @@ export function parseLotDeepLink(uri: string): DeepLinkRoute | null {
   if (/^lot:\/\/wallet\/?$/i.test(trimmed)) return { screen: "wallet" };
   if (/^lot:\/\/profile\/?$/i.test(trimmed)) return { screen: "profile" };
   if (/^lot:\/\/cart\/?$/i.test(trimmed)) return { screen: "cart" };
+  if (/^lot:\/\/\/?checkout\/?$/i.test(trimmed)) return { screen: "checkout" };
 
   const product = trimmed.match(/^lot:\/\/product\/([^/?#]+)/i);
   if (product) return { screen: "product", productId: product[1] };
