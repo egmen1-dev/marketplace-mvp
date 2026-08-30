@@ -167,6 +167,12 @@ export async function buildMobileSellerProductDetailFromRequest(request: Request
       seller: { select: { id: true, storeName: true, slug: true } },
       productModeration: { select: { status: true } },
       pickupPoints: { include: { pickupPoint: true } },
+      characteristicValues: {
+        include: {
+          definition: { select: { id: true, type: true } },
+        },
+        orderBy: { sortOrder: "asc" },
+      },
     },
   });
 
@@ -214,5 +220,22 @@ export async function buildMobileSellerProductDetailFromRequest(request: Request
         city: point.city,
         address: point.address,
       })),
+    characteristicValues: row.characteristicValues.map((value) => ({
+      definitionId: value.definitionId,
+      type: value.definition.type,
+      formValue: mapSellerCharacteristicFormValue(value),
+    })),
   };
+}
+
+function mapSellerCharacteristicFormValue(value: {
+  valueBoolean: boolean | null;
+  valueNumber: unknown;
+  valueJson: unknown;
+  valueText: string | null;
+}): string {
+  if (value.valueBoolean != null) return value.valueBoolean ? "true" : "false";
+  if (value.valueNumber != null) return String(Number(value.valueNumber));
+  if (Array.isArray(value.valueJson)) return value.valueJson.map(String).join(",");
+  return value.valueText?.trim() || "";
 }

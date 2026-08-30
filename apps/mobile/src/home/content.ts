@@ -10,31 +10,31 @@ export const HOME_CATEGORY_SHORTCUTS = [
 ] as const;
 
 export const HOME_HERO = {
-  tag: "Скидки до 50%",
-  titleLine1: "Лучшие товары",
-  titleLine2: "по лучшим ценам",
-  subtitle: "Покупай выгодно каждый день",
+  tag: "Маркетплейс LOT",
+  titleLine1: "Товары от продавцов",
+  titleLine2: "в одном приложении",
+  subtitle: "Ищите, сравнивайте и покупайте",
   cta: "Смотреть все",
 } as const;
 
 export const HOME_TRUST_ITEMS = [
   {
-    id: "sellers",
-    icon: "shield-check-outline" as const,
-    title: "Проверенные продавцы",
-    text: "Только честные и надёжные",
-  },
-  {
-    id: "returns",
-    icon: "package-variant-closed" as const,
-    title: "Возврат 14 дней",
-    text: "Если товар не подошёл",
-  },
-  {
-    id: "support",
+    id: "chat",
     icon: "message-text-outline" as const,
-    title: "Поддержка 24/7",
-    text: "Мы всегда на связи",
+    title: "Чат с продавцом",
+    text: "Задайте вопрос перед покупкой",
+  },
+  {
+    id: "orders",
+    icon: "package-variant-closed" as const,
+    title: "Статус заказа",
+    text: "Следите за покупкой в приложении",
+  },
+  {
+    id: "moderation",
+    icon: "shield-check-outline" as const,
+    title: "Проверка ЛОТов",
+    text: "Публикация после модерации",
   },
 ] as const;
 
@@ -42,7 +42,7 @@ export const HOME_PROMO_TILES = [
   {
     id: "home",
     title: "Для дома и уюта",
-    subtitle: "Скидки до 40%",
+    subtitle: "Подборка для дома",
     background: "#FFF4EB",
     accent: "#FFE2CC",
     icon: "sofa-outline" as const,

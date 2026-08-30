@@ -9,6 +9,7 @@ export type StoredSessionMeta = {
   userId: string;
   role: string;
   sessionId: string;
+  email?: string;
 };
 
 export async function saveTokens(input: {

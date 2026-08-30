@@ -38,6 +38,6 @@ export async function buildMobileSellerStorefront(
     joinedLabel: profile.joinedAt
       ? `На LOT с ${formatSellerJoinedDate(profile.joinedAt)}`
       : null,
-    respondsInChat: true,
+    respondsInChat: false,
   };
 }

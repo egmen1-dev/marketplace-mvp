@@ -7,11 +7,11 @@ import { fetchCart, fetchCheckoutWebUrl } from "../src/api/endpoints";
 import { trackButtonPress } from "../src/beta/session-recorder";
 import { trackEvent } from "../src/beta/telemetry-hub";
 import {
-  CheckoutDeliveryInfo,
+  CheckoutHandoffBanner,
   CheckoutHeader,
+  CheckoutNextStepInfo,
   CheckoutOrderItems,
   type CheckoutLineView,
-  CheckoutPaymentInfo,
   CheckoutSection,
   CheckoutSkeleton,
   CheckoutSubmitBar,
@@ -19,6 +19,7 @@ import {
   CheckoutTitleRow,
   checkoutSubmitBarInset,
 } from "../src/checkout/ui";
+import { formatCheckoutHandoffError } from "../src/checkout/checkout-handoff-errors";
 import { ErrorState } from "../src/components/ui";
 import { loadAppConfig } from "../src/config/env";
 import { useAppStore } from "../src/store/app-store";
@@ -162,7 +163,7 @@ export default function CheckoutScreen() {
     try {
       await Linking.openURL(payload.handoffUrl);
     } catch (err) {
-      setHandoffError(err instanceof Error ? err.message : "Не удалось открыть браузер");
+      setHandoffError(formatCheckoutHandoffError(err));
     } finally {
       openingRef.current = false;
       setOpening(false);
@@ -224,12 +225,10 @@ export default function CheckoutScreen() {
 
             {handoffError ? <Text style={styles.handoffError}>{handoffError}</Text> : null}
 
-            <CheckoutSection number={1} title="Способ доставки">
-              <CheckoutDeliveryInfo />
-            </CheckoutSection>
+            <CheckoutHandoffBanner />
 
-            <CheckoutSection number={2} title="Способ оплаты">
-              <CheckoutPaymentInfo />
+            <CheckoutSection number={1} title="Что дальше">
+              <CheckoutNextStepInfo />
             </CheckoutSection>
 
             <CheckoutOrderItems items={items} onItemPress={(id) => router.push(`/product/${id}`)} />

@@ -169,7 +169,12 @@ export async function login(input: { email: string; password: string; pendingDee
   await saveTokens({
     accessToken: data.accessToken,
     refreshToken: data.refreshToken,
-    meta: { sessionId: data.sessionId, userId: data.userId, role: data.role },
+    meta: {
+      sessionId: data.sessionId,
+      userId: data.userId,
+      role: data.role,
+      email: input.email.trim().toLowerCase() || undefined,
+    },
   });
   memoryAccessToken = data.accessToken;
   return data;

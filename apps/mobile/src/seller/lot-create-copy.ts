@@ -57,4 +57,11 @@ export const LOT_CREATE_COPY = {
   viewLot: "Посмотреть ЛОТ",
   createAnother: "Создать ещё один",
   savedLocally: "ЛОТ сохранён. Вы можете продолжить позже.",
+  editScreenTitle: "Редактировать ЛОТ",
+  editLoadError: "Не удалось загрузить ЛОТ для редактирования",
+  editSaveLabel: "Сохранить изменения",
+  editSaveSuccessTitle: "Изменения сохранены",
+  editSaveSuccessBody: "ЛОТ обновлён. Статус можно посмотреть в «Мои ЛОТы».",
+  editPreviewHint: "Проверьте изменения перед сохранением.",
+  editCannotEdit: "Этот ЛОТ сейчас нельзя редактировать. Проверьте статус в «Мои ЛОТы».",
 } as const;

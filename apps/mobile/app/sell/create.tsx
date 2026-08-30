@@ -1,4 +1,4 @@
-import { router, Stack } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   Image,
   Pressable,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { PrimaryButton, SecondaryButton } from "../../src/components/ui";
+import { PrimaryButton, SecondaryButton, ErrorState } from "../../src/components/ui";
 import { ProductImageFallback } from "../../src/components/ui/ProductImageFallback";
 import { LotAutosaveIndicator } from "../../src/seller/LotAutosaveIndicator";
 import { LotCharacteristicsSection } from "../../src/seller/LotCharacteristicsSection";
@@ -54,7 +54,31 @@ function LotCreateErrorBlock({
 }
 
 export default function CreateLotScreen() {
-  const form = useLotCreateForm();
+  const { lotId } = useLocalSearchParams<{ lotId?: string }>();
+  const editLotId = typeof lotId === "string" && lotId.trim().length > 0 ? lotId.trim() : null;
+  const form = useLotCreateForm({ editLotId });
+
+  if (form.editLoading) {
+    return (
+      <View style={styles.centered}>
+        <Stack.Screen options={{ title: LOT_CREATE_COPY.editScreenTitle }} />
+        <Text style={styles.subtitle}>Загружаем ЛОТ…</Text>
+      </View>
+    );
+  }
+
+  if (form.editLoadError) {
+    return (
+      <View style={styles.centered}>
+        <Stack.Screen options={{ title: LOT_CREATE_COPY.editScreenTitle }} />
+        <ErrorState
+          title="Не удалось открыть редактирование"
+          description={form.editLoadError}
+          onRetry={() => router.replace(editLotId ? `/sell/create?lotId=${editLotId}` : "/sell/create")}
+        />
+      </View>
+    );
+  }
 
   if (form.showRestorePrompt) {
     return (
@@ -76,7 +100,16 @@ export default function CreateLotScreen() {
   if (form.step === "success") {
     const outcome = form.publishOutcome ?? "SAVED";
     const successCopy =
-      outcome === "PUBLISHED"
+      form.isEditMode && outcome === "SAVED"
+        ? {
+            emoji: "✅",
+            title: LOT_CREATE_COPY.editSaveSuccessTitle,
+            body: LOT_CREATE_COPY.editSaveSuccessBody,
+            primary: LOT_CREATE_COPY.viewLot,
+            secondary: null,
+            showMyLots: true,
+          }
+        : outcome === "PUBLISHED"
         ? {
             emoji: "🎉",
             title: LOT_CREATE_COPY.successTitle,
@@ -158,11 +191,11 @@ export default function CreateLotScreen() {
 
     return (
       <View style={styles.screen}>
-        <Stack.Screen options={{ title: LOT_CREATE_COPY.previewTitle }} />
+        <Stack.Screen options={{ title: form.screenTitle }} />
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {header}
           <Text style={styles.screenTitle}>{LOT_CREATE_COPY.previewTitle}</Text>
-          <Text style={styles.subtitle}>{LOT_CREATE_COPY.previewHint}</Text>
+          <Text style={styles.subtitle}>{form.previewHint}</Text>
           <View style={styles.previewCard}>
             <View style={styles.previewImageWrap}>
               {form.draft.images[0]?.uri ? (
@@ -217,12 +250,14 @@ export default function CreateLotScreen() {
           {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
         </ScrollView>
         <LotCreatePreviewFooter
-          publishLabel={form.publishCtaLabel}
-          saveLabel={LOT_CREATE_COPY.saveLotLabel}
+          publishLabel={form.previewPrimaryLabel}
+          saveLabel={form.isEditMode ? LOT_CREATE_COPY.saveLotLabel : form.previewSecondaryLabel}
           publishing={form.publishing}
           saving={form.savingLot}
-          onPublish={() => void form.publishLot()}
-          onSave={() => void form.saveLotLocallyAndServer()}
+          onPublish={() =>
+            void (form.isEditMode && !form.editPublishAllowed ? form.saveEditedLot() : form.publishLot())
+          }
+          onSave={() => void (form.isEditMode ? form.saveEditedLot() : form.saveLotLocallyAndServer())}
           onBack={() => form.goToStep("details")}
         />
       </View>
@@ -232,6 +267,7 @@ export default function CreateLotScreen() {
   if (form.step === "details") {
     return (
       <View style={styles.screen}>
+        <Stack.Screen options={{ title: form.screenTitle }} />
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {header}
           <Text style={styles.screenTitle}>{LOT_CREATE_COPY.detailsTitle}</Text>
@@ -451,6 +487,7 @@ export default function CreateLotScreen() {
 
   return (
     <View style={styles.screen}>
+      <Stack.Screen options={{ title: form.screenTitle }} />
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         {header}
         <Text style={styles.screenTitle}>{LOT_CREATE_COPY.photosTitle}</Text>
@@ -532,6 +569,12 @@ export default function CreateLotScreen() {
 }
 
 const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    padding: spacing.lg,
+    backgroundColor: colors.white,
+  },
   screen: { flex: 1, backgroundColor: colors.white },
   scrollContent: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl },
   headerRow: { marginBottom: spacing.xs },

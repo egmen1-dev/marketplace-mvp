@@ -113,7 +113,7 @@ export default function SellerLotDetailScreen() {
       <View style={styles.footer}>
         {showNeedsChangesBanner ? (
           <PrimaryButton
-            label="Исправить ЛОТ"
+            label="Редактировать ЛОТ"
             fullWidth
             onPress={() => router.push(`/sell/create?lotId=${lot.id}`)}
           />

@@ -18,12 +18,13 @@ export default function ProfileScreen() {
   const sellerCapable = useAppStore((s) => s.sellerCapable);
   const messagesBadge = useAppStore((s) => s.badges.messages);
   const { updateAvailable } = useUpdateAvailabilityBadge();
-  const [email, setEmail] = useState<string>("—");
+  const [email, setEmail] = useState<string | null>(null);
   const buildInfo = getBuildInfo();
 
   useEffect(() => {
     getSessionMeta().then((meta) => {
-      if (meta?.userId) setEmail(meta.userId.slice(0, 8) + "…");
+      const normalized = meta?.email?.trim();
+      setEmail(normalized && normalized.length > 0 ? normalized : null);
     });
   }, []);
 
@@ -48,10 +49,10 @@ export default function ProfileScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.identityCard}>
-        <Avatar label={email} size={56} />
+        <Avatar label={email ?? "А"} size={56} />
         <View style={styles.identityText}>
           <Text style={styles.title}>Аккаунт</Text>
-          <Text style={styles.subtitle}>ID: {email}</Text>
+          <Text style={styles.subtitle}>{email ?? "Войдите, чтобы видеть данные аккаунта"}</Text>
         </View>
       </View>
 

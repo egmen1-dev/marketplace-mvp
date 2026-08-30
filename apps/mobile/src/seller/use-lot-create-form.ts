@@ -20,6 +20,7 @@ import { ApiClientError } from "../api/client";
 import {
   createSellerLot,
   fetchProductTypeCharacteristicsCompat,
+  fetchSellerLot,
   fetchSellerPickupPoints,
   fetchTaxonomyBrowse,
   publishSellerLot,
@@ -54,11 +55,24 @@ import { normalizeDraftImageAsset, normalizeImagePickerAsset } from "./normalize
 import { uploadSellerLotImage } from "./upload-seller-lot-image";
 import type { SellerPickupPoint } from "../api/seller-lot";
 import { recordSellerJourneyEvent } from "./journey-diagnostics";
+import { formatLotEditLoadError } from "./lot-edit-errors";
+import {
+  mapSellerLotToDraft,
+  resolveEditPersistStatus,
+  resolveEditPublishAllowed,
+} from "./map-seller-lot-to-draft";
+
+export type LotFormMode = "create" | "edit";
+
+export type UseLotCreateFormOptions = {
+  editLotId?: string | null;
+};
 
 export type LotWizardStep = "photos" | "details" | "preview" | "success";
 export type AutosaveStatus = "idle" | "saving" | "saved";
 
-export function useLotCreateForm() {
+export function useLotCreateForm(options: UseLotCreateFormOptions = {}) {
+  const editLotId = options.editLotId?.trim() || null;
   const draftRef = useRef<LotDraft>(EMPTY_LOT_DRAFT);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedFadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -93,7 +107,12 @@ export function useLotCreateForm() {
   const [continueInFlight, setContinueInFlight] = useState(false);
   const lastFailedActionRef = useRef<LotCreateErrorContext | null>(null);
   const uploadFailedRef = useRef(false);
-  const retryIntentRef = useRef<"save" | "publish">("publish");
+  const retryIntentRef = useRef<"save" | "publish" | "edit">("publish");
+  const [formMode, setFormMode] = useState<LotFormMode>(editLotId ? "edit" : "create");
+  const [editLoading, setEditLoading] = useState(Boolean(editLotId));
+  const [editLoadError, setEditLoadError] = useState<string | null>(null);
+  const [editPublishAllowed, setEditPublishAllowed] = useState(false);
+  const editPersistStatusRef = useRef<"ACTIVE" | "DRAFT">("DRAFT");
 
   const setHumanError = useCallback((err: unknown, context: LotCreateErrorContext) => {
     const formatted = formatLotCreateError(err, context);
@@ -336,6 +355,33 @@ export function useLotCreateForm() {
 
   useEffect(() => {
     void (async () => {
+      if (editLotId) {
+        setEditLoading(true);
+        setEditLoadError(null);
+        try {
+          const lot = await fetchSellerLot(editLotId);
+          const mapped = mapSellerLotToDraft(lot);
+          draftRef.current = mapped;
+          setDraft(mapped);
+          setFormMode("edit");
+          setPublishedId(lot.id);
+          editPersistStatusRef.current = resolveEditPersistStatus(lot);
+          setEditPublishAllowed(resolveEditPublishAllowed(lot));
+          setStep(mapped.step ?? "photos");
+          setShowRestorePrompt(false);
+          setPendingRestore(null);
+          const browse = await fetchTaxonomyBrowse("root").catch(() => ({ children: [], productTypes: [] }));
+          setRootCategories(browse.children ?? []);
+          await restoreTaxonomy(mapped);
+          void loadPickupPoints();
+        } catch (err) {
+          setEditLoadError(formatLotEditLoadError(err));
+        } finally {
+          setEditLoading(false);
+        }
+        return;
+      }
+
       const saved = await loadLotDraft();
       const browse = await fetchTaxonomyBrowse("root").catch(() => ({ children: [], productTypes: [] }));
       setRootCategories(browse.children ?? []);
@@ -352,7 +398,7 @@ export function useLotCreateForm() {
       if (savedFadeRef.current) clearTimeout(savedFadeRef.current);
       void saveLotDraft(draftRef.current);
     };
-  }, [loadPickupPoints]);
+  }, [editLotId, loadPickupPoints, restoreTaxonomy]);
 
   useFocusEffect(
     useCallback(() => {
@@ -843,6 +889,56 @@ export function useLotCreateForm() {
     }
   }
 
+  async function saveEditedLot() {
+    const productId = draftRef.current.savedProductId;
+    if (!productId || formMode !== "edit") {
+      setError(LOT_CREATE_COPY.editCannotEdit);
+      setErrorDetail(null);
+      setCanRetry(false);
+      return;
+    }
+
+    if (draftRef.current.images.some((img) => img.uploadStatus === "uploading")) {
+      setError(LOT_CREATE_COPY.uploadWaitPublish);
+      setErrorDetail(null);
+      setCanRetry(false);
+      return;
+    }
+    if (draftRef.current.images.some((img) => img.uploadStatus === "failed" && !img.uploadedUrl)) {
+      setHumanError(new Error(LOT_CREATE_COPY.uploadErrorTitle), "upload");
+      return;
+    }
+
+    setSavingLot(true);
+    clearErrors();
+    setInfo(null);
+    lastFailedActionRef.current = "save";
+    retryIntentRef.current = "edit";
+    uploadFailedRef.current = false;
+    try {
+      await flushSave(draftRef.current);
+      const images = await uploadImagesWithRecovery();
+      const payload = buildPayload(images, editPersistStatusRef.current);
+      await updateSellerLot(productId, payload);
+      const saved = { ...draftRef.current, savedProductId: productId };
+      await flushSave(saved);
+      setDraft(saved);
+      setPublishedId(productId);
+      setPublishOutcome("SAVED");
+      setStep("success");
+    } catch (err) {
+      if (err instanceof ApiClientError && err.code === "CHARACTERISTICS_REQUIRED") {
+        await handleCharacteristicRejection(err.code, err.message);
+        return;
+      }
+      await flushSave(draftRef.current);
+      const context: LotCreateErrorContext = uploadFailedRef.current ? "upload" : "save";
+      setHumanError(err, context);
+    } finally {
+      setSavingLot(false);
+    }
+  }
+
   async function publishLot() {
     if (!publishGuardRef.current.tryBegin()) return;
 
@@ -937,7 +1033,9 @@ export function useLotCreateForm() {
       setPublishedId(productId);
       setPublishOutcome(outcome);
       setInfo(null);
-      await clearLotDraft();
+      if (formMode === "create") {
+        await clearLotDraft();
+      }
       setStep("success");
       recordSellerJourneyEvent({
         screen: "preview",
@@ -987,12 +1085,18 @@ export function useLotCreateForm() {
         await processUploadQueue();
         if (retryIntentRef.current === "save") {
           await saveLotLocallyAndServer();
+        } else if (retryIntentRef.current === "edit") {
+          await saveEditedLot();
         } else if (!hasFailedUploads) {
           await publishLot();
         }
       } catch (err) {
         setHumanError(err, "upload");
       }
+      return;
+    }
+    if (retryIntentRef.current === "edit") {
+      await saveEditedLot();
       return;
     }
     if (retryIntentRef.current === "save") {
@@ -1007,7 +1111,26 @@ export function useLotCreateForm() {
     persist({ ...draftRef.current, step: next === "success" ? draftRef.current.step : next }, { immediate: true });
   }
 
+  const screenTitle = formMode === "edit" ? LOT_CREATE_COPY.editScreenTitle : LOT_CREATE_COPY.screenTitle;
+  const previewHint = formMode === "edit" ? LOT_CREATE_COPY.editPreviewHint : LOT_CREATE_COPY.previewHint;
+  const previewPrimaryLabel =
+    formMode === "edit"
+      ? editPublishAllowed
+        ? publishCtaLabel
+        : LOT_CREATE_COPY.editSaveLabel
+      : publishCtaLabel;
+  const previewSecondaryLabel = formMode === "edit" ? LOT_CREATE_COPY.editSaveLabel : LOT_CREATE_COPY.saveLotLabel;
+
   return {
+    formMode,
+    isEditMode: formMode === "edit",
+    editLoading,
+    editLoadError,
+    editPublishAllowed,
+    screenTitle,
+    previewHint,
+    previewPrimaryLabel,
+    previewSecondaryLabel,
     step,
     draft,
     showRestorePrompt,
@@ -1055,6 +1178,7 @@ export function useLotCreateForm() {
     loadPickupPoints,
     goPreview,
     saveLotLocallyAndServer,
+    saveEditedLot,
     publishLot,
     retryLastAction,
     goToStep,
