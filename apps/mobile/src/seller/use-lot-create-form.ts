@@ -132,14 +132,14 @@ export function useLotCreateForm(options: UseLotCreateFormOptions = {}) {
   const flushSave = useCallback(async (next: LotDraft) => {
     setAutosaveStatus("saving");
     try {
-      await saveLotDraft(next);
+      if (!editLotId) await saveLotDraft(next);
       setAutosaveStatus("saved");
       if (savedFadeRef.current) clearTimeout(savedFadeRef.current);
       savedFadeRef.current = setTimeout(() => setAutosaveStatus("idle"), 2500);
     } catch {
       setAutosaveStatus("idle");
     }
-  }, []);
+  }, [editLotId]);
 
   const persist = useCallback(
     (next: LotDraft, options?: { immediate?: boolean }) => {
@@ -382,6 +382,11 @@ export function useLotCreateForm(options: UseLotCreateFormOptions = {}) {
         return;
       }
 
+      draftRef.current = EMPTY_LOT_DRAFT;
+      setDraft(EMPTY_LOT_DRAFT);
+      setFormMode("create");
+      setPublishedId(null);
+      setStep("photos");
       const saved = await loadLotDraft();
       const browse = await fetchTaxonomyBrowse("root").catch(() => ({ children: [], productTypes: [] }));
       setRootCategories(browse.children ?? []);
@@ -396,16 +401,16 @@ export function useLotCreateForm(options: UseLotCreateFormOptions = {}) {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       if (savedFadeRef.current) clearTimeout(savedFadeRef.current);
-      void saveLotDraft(draftRef.current);
+      if (!editLotId) void saveLotDraft(draftRef.current);
     };
   }, [editLotId, loadPickupPoints, restoreTaxonomy]);
 
   useFocusEffect(
     useCallback(() => {
       return () => {
-        void saveLotDraft(draftRef.current);
+        if (!editLotId) void saveLotDraft(draftRef.current);
       };
-    }, []),
+    }, [editLotId]),
   );
 
   const continueRestore = useCallback(async () => {

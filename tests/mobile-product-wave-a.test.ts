@@ -19,6 +19,8 @@ const checkoutSource = readFileSync("apps/mobile/app/checkout.tsx", "utf8");
 const hookSource = readFileSync("apps/mobile/src/seller/use-lot-create-form.ts", "utf8");
 const createSource = readFileSync("apps/mobile/app/sell/create.tsx", "utf8");
 const storefrontSource = readFileSync("lib/mobile/seller-storefront-data.ts", "utf8");
+const productDetailSource = readFileSync("apps/mobile/app/product/[id].tsx", "utf8");
+const sellerLotDetailSource = readFileSync("apps/mobile/app/sell/lot/[id].tsx", "utf8");
 const homeContentSource = readFileSync("apps/mobile/src/home/content.ts", "utf8");
 const submitBarSource = readFileSync("apps/mobile/src/checkout/ui/CheckoutSubmitBar.tsx", "utf8");
 
@@ -41,6 +43,10 @@ describe("product wave A — truthful home trust copy", () => {
 describe("product wave A — seller response signal", () => {
   it("does not hardcode respondsInChat as true", () => {
     expect(storefrontSource).not.toMatch(/respondsInChat:\s*true/);
+  });
+
+  it("does not render an unsupported seller response-speed claim from legacy API data", () => {
+    expect(productDetailSource).not.toContain('label: "Быстро отвечает"');
   });
 });
 
@@ -87,6 +93,16 @@ describe("product wave A — seller LOT edit", () => {
     expect(hookSource).toContain("mapSellerLotToDraft");
     expect(hookSource).toContain("saveEditedLot");
     expect(hookSource).toContain("updateSellerLot(productId, payload)");
+  });
+
+  it("exposes edit mode for saved draft LOTs", () => {
+    expect(sellerLotDetailSource).toContain('lot.status === "DRAFT" || showNeedsChangesBanner');
+    expect(sellerLotDetailSource).toContain("{showEditButton ? (");
+  });
+
+  it("does not persist edit state into the create LOT autosave", () => {
+    expect(hookSource).toContain("if (!editLotId) await saveLotDraft(next)");
+    expect(hookSource).toContain('setFormMode("create")');
   });
 
   it("formats human-readable edit load errors", () => {

@@ -144,9 +144,6 @@ export default function ProductScreen() {
     for (const badge of sellerTrust?.badges ?? []) {
       chips.push({ id: `badge-${badge}`, icon: "star", label: badge });
     }
-    if (sellerTrust?.respondsInChat) {
-      chips.push({ id: "responds", icon: "message-text-outline", label: "Быстро отвечает" });
-    }
     return chips.slice(0, 3);
   }, [derived?.seller, sellerTrust]);
 

@@ -57,6 +57,7 @@ export default function SellerLotDetailScreen() {
   const showPendingBanner = moderationState === "PENDING_REVIEW";
   const showNeedsChangesBanner = moderationState === "NEEDS_FIX";
   const showRejectedBanner = moderationState === "REJECTED";
+  const showEditButton = lot.status === "DRAFT" || showNeedsChangesBanner;
   const primaryIssue = moderation?.issues.find((issue) => issue.message) ?? null;
 
   return (
@@ -111,7 +112,7 @@ export default function SellerLotDetailScreen() {
         ) : null}
       </ScrollView>
       <View style={styles.footer}>
-        {showNeedsChangesBanner ? (
+        {showEditButton ? (
           <PrimaryButton
             label="Редактировать ЛОТ"
             fullWidth
