@@ -3,6 +3,14 @@
 **Baseline:** RC26 (`0.1.15-beta.11`)  
 **Goal:** Remove highest-impact real-beta product blockers without expanding scope into redesign or release infrastructure.
 
+### Reconciliation note (PR #212)
+
+Wave A was originally implemented from obsolete base `8ee031b` (audit doc on `release-integrity-gate` lineage). Cloud tests did not expose missing later RC26 redesign modules (checkout UI, home/catalog/cart/product redesign). Mac pre-native acceptance correctly blocked the branch before build (`BLOCKER=PR_BRANCH_MISSING_REQUIRED_BASE_FILES`).
+
+**Reconciled branch:** `main` (`747f008`) + Release Integrity Gate (PR #211) + RC26 product redesign (cloud-session export `9cbc354`) + Wave A (`f606a82`).
+
+No files were invented from test expectations; missing modules were recovered from documented export history. Updater hardening (chunked SHA-256, no native `onProgress`) preserved from PR #211 baseline.
+
 ---
 
 ## Implemented Issues
