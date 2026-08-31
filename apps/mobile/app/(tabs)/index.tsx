@@ -21,7 +21,7 @@ import {
 } from "../../src/home";
 import { useFadeIn } from "../../src/hooks/useFadeIn";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
-import { loadSearchHistory, pushSearchHistory } from "../../src/storage/search-history";
+import { pushSearchHistory } from "../../src/storage/search-history";
 import { readSnapshot, saveSnapshot } from "../../src/storage/offline-cache";
 import { resolveImageUrl } from "../../src/utils/format";
 import { loadAppConfig } from "../../src/config/env";
@@ -31,13 +31,22 @@ import { colors, spacing } from "../../src/theme/tokens";
 export default function BuyerHomeScreen() {
   const fade = useFadeIn();
   const offline = useAppStore((s) => s.offline);
-  const { toggleProductFavorite, isFavorite } = useCommerceActions();
+  const {
+    toggleProductFavorite,
+    isFavorite,
+    isCartBusy,
+    isFavoriteBusy,
+    addProductToCart,
+    incrementProductCart,
+    decrementProductCart,
+  } = useCommerceActions();
   const [summary, setSummary] = useState(() => readSnapshot<Record<string, unknown>>("buyer-home")?.payload ?? null);
   const [popular, setPopular] = useState<MobileProductListItem[]>([]);
   const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; slug?: string }>>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [secondaryError, setSecondaryError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (offline) {
@@ -45,17 +54,23 @@ export default function BuyerHomeScreen() {
       return;
     }
     setError(null);
+    setSecondaryError(null);
     setLoading(true);
     try {
-      const [home, popularRes, categoriesRes] = await Promise.all([
-        fetchBuyerHome(),
+      const [popularRes, categoriesRes] = await Promise.all([
         fetchCatalog({ sort: "popular" }),
         fetchCategories().catch(() => ({ items: [] })),
       ]);
-      saveSnapshot("buyer-home", home);
-      setSummary(home);
       setPopular(popularRes.items.slice(0, 12));
       setAllCategories(categoriesRes.items);
+
+      try {
+        const home = await fetchBuyerHome();
+        saveSnapshot("buyer-home", home);
+        setSummary(home);
+      } catch (homeErr) {
+        setSecondaryError(homeErr instanceof Error ? homeErr.message : "Не удалось обновить сводку");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ошибка загрузки");
     } finally {
@@ -80,7 +95,7 @@ export default function BuyerHomeScreen() {
     return resolveImageUrl(first.primaryImage.url, loadAppConfig().apiBaseUrl);
   }, [popular]);
 
-  if (loading && !summary) {
+  if (loading && popular.length === 0 && !summary) {
     return (
       <PageScroll contentContainerStyle={styles.scroll}>
         <SkeletonGrid count={4} />
@@ -98,18 +113,29 @@ export default function BuyerHomeScreen() {
         <HomeHeader />
         <HomeSearchRow value={search} onChangeText={setSearch} onSubmit={() => submitSearch(search)} />
         <HomeCategoryRow categories={allCategories} activeId="all" />
+        {error && popular.length === 0 ? (
+          <ErrorState title="Не удалось загрузить товары" description={error} onRetry={load} variant="network" />
+        ) : (
+          <HomeProductRail
+            title="Популярные товары"
+            items={popular}
+            onMore={() => router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } })}
+            isFavorite={isFavorite}
+            isFavoriteBusy={isFavoriteBusy}
+            isCartBusy={isCartBusy}
+            onFavorite={toggleProductFavorite}
+            onPressProduct={(id) => router.push(`/product/${id}`)}
+            onAddToCart={(id) => addProductToCart(id, 1)}
+            onIncrementCart={incrementProductCart}
+            onDecrementCart={decrementProductCart}
+          />
+        )}
         <HomeHeroBanner imageUrl={heroImageUrl} />
-        <HomeProductRail
-          title="Популярные товары"
-          items={popular}
-          onMore={() => router.push({ pathname: "/(tabs)/catalog", params: { sort: "popular" } })}
-          isFavorite={isFavorite}
-          onFavorite={toggleProductFavorite}
-          onPressProduct={(id) => router.push(`/product/${id}`)}
-        />
+        <HomePromoTiles categories={allCategories} />
         <HomeTrustStrip />
-        <HomePromoTiles />
-        {error ? <ErrorState title="Не удалось обновить ленту" description={error} onRetry={load} variant="network" /> : null}
+        {secondaryError ? (
+          <ErrorState title="Не удалось обновить сводку" description={secondaryError} onRetry={load} variant="network" />
+        ) : null}
       </Animated.View>
     </PageScroll>
   );

@@ -1,7 +1,6 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { colors, radii, typography } from "../theme/tokens";
@@ -13,13 +12,10 @@ type HomeHeroBannerProps = {
 };
 
 export function HomeHeroBanner({ imageUrl }: HomeHeroBannerProps) {
-  const [activeDot, setActiveDot] = useState(0);
-
   return (
     <View style={styles.wrap}>
       <View style={styles.card}>
         <View style={styles.gradientWarm} />
-        <View style={styles.gradientFade} />
 
         <View style={styles.copy}>
           <View style={styles.tag}>
@@ -42,18 +38,10 @@ export function HomeHeroBanner({ imageUrl }: HomeHeroBannerProps) {
             <Image source={{ uri: imageUrl }} style={styles.image} contentFit="contain" transition={200} />
           ) : (
             <View style={styles.imageFallback}>
-              <MaterialCommunityIcons name="headphones" size={76} color={colors.ctaPrimary} />
+              <MaterialCommunityIcons name="headphones" size={56} color={colors.ctaPrimary} />
             </View>
           )}
         </View>
-      </View>
-
-      <View style={styles.dots}>
-        {[0, 1, 2].map((index) => (
-          <Pressable key={index} onPress={() => setActiveDot(index)} accessibilityRole="button">
-            <View style={[styles.dot, activeDot === index ? styles.dotActive : styles.dotInactive]} />
-          </Pressable>
-        ))}
       </View>
     </View>
   );
@@ -62,11 +50,10 @@ export function HomeHeroBanner({ imageUrl }: HomeHeroBannerProps) {
 const styles = StyleSheet.create({
   wrap: {
     paddingHorizontal: HOME_SCREEN_PADDING,
-    gap: 10,
   },
   card: {
-    minHeight: 176,
-    borderRadius: 20,
+    minHeight: 132,
+    borderRadius: 16,
     backgroundColor: "#FFF8F3",
     overflow: "hidden",
     flexDirection: "row",
@@ -83,20 +70,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFE8D2",
     opacity: 0.55,
   },
-  gradientFade: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: "40%",
-    backgroundColor: colors.white,
-    opacity: 0.12,
-  },
   copy: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    gap: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 2,
     justifyContent: "center",
     zIndex: 1,
   },
@@ -106,37 +84,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     backgroundColor: "#FFF0E3",
-    marginBottom: 4,
+    marginBottom: 2,
   },
   tagText: {
-    fontSize: 12,
-    lineHeight: 14,
+    fontSize: 11,
+    lineHeight: 13,
     color: colors.ctaPrimary,
     fontWeight: "700",
   },
   title: {
-    fontSize: 22,
-    lineHeight: 26,
+    fontSize: 18,
+    lineHeight: 22,
     fontWeight: "800",
     color: colors.black,
   },
   titleAccent: {
-    fontSize: 22,
-    lineHeight: 26,
+    fontSize: 18,
+    lineHeight: 22,
     fontWeight: "800",
     color: colors.ctaPrimary,
     marginBottom: 2,
   },
   subtitle: {
-    fontSize: 13,
-    lineHeight: 17,
-    color: "#777777",
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#77777E",
   },
   cta: {
-    marginTop: 12,
+    marginTop: 8,
     alignSelf: "flex-start",
-    minHeight: 40,
-    paddingHorizontal: 18,
+    minHeight: 34,
+    paddingHorizontal: 14,
     borderRadius: 10,
     backgroundColor: colors.ctaPrimary,
     alignItems: "center",
@@ -146,41 +124,23 @@ const styles = StyleSheet.create({
     ...typography.buttonSm,
     color: colors.white,
     fontWeight: "700",
+    fontSize: 13,
   },
   visual: {
-    width: 138,
+    width: 108,
     alignItems: "center",
     justifyContent: "flex-end",
     paddingRight: 4,
-    paddingBottom: 0,
     zIndex: 1,
   },
   image: {
-    width: 132,
-    height: 132,
+    width: 100,
+    height: 100,
   },
   imageFallback: {
-    width: 132,
-    height: 132,
+    width: 100,
+    height: 100,
     alignItems: "center",
     justifyContent: "center",
-  },
-  dots: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-  },
-  dot: {
-    height: 6,
-    borderRadius: 3,
-  },
-  dotActive: {
-    width: 18,
-    backgroundColor: colors.ctaPrimary,
-  },
-  dotInactive: {
-    width: 6,
-    backgroundColor: "#D9D9D9",
   },
 });
