@@ -54,6 +54,7 @@ describe("P0 seller photo upload — asset normalization", () => {
 describe("P0 seller photo upload — mobile implementation", () => {
   it("uses expo-file-system File instead of RN uri FormData part", () => {
     expect(uploadSource).toContain('from "expo-file-system"');
+    expect(uploadSource).toContain('import { fetch } from "expo/fetch"');
     expect(uploadSource).toContain("form.append(\"file\", uploadFile)");
     expect(uploadSource).not.toContain("uri: localUri");
     expect(uploadSource).not.toContain("as unknown as Blob");

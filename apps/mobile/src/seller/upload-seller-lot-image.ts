@@ -1,4 +1,5 @@
 import { File, Paths } from "expo-file-system";
+import { fetch } from "expo/fetch";
 
 import { loadAppConfig } from "../config/env";
 import { getAccessToken } from "../storage/secure-session";
