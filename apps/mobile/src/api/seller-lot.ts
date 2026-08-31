@@ -61,6 +61,7 @@ export type SellerLotDetail = {
   productType: { id: string; name: string } | null;
   images: Array<{ id: string; url: string; alt: string | null; sortOrder: number; isPrimary: boolean }>;
   pickupPoints: Array<{ id: string; name: string; city: string; address: string }>;
+  characteristicValues?: Array<{ definitionId: string; formValue: string; type?: string }>;
 } & SellerLotPublishContract;
 
 export async function fetchSellerPickupPoints() {

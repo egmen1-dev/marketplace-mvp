@@ -9,6 +9,7 @@ type ButtonProps = PressableProps & {
   loading?: boolean;
   size?: ButtonSize;
   fullWidth?: boolean;
+  testID?: string;
 };
 
 function buttonHeight(size: ButtonSize): number {
@@ -30,11 +31,14 @@ function ButtonBase({
   style,
   variantStyle,
   textStyle,
+  testID,
   ...rest
 }: ButtonProps & { variantStyle: ViewStyle; textStyle: TextStyle }) {
   const isDisabled = disabled || loading;
   return (
     <Pressable
+      testID={testID}
+      accessibilityLabel={testID ?? label}
       accessibilityRole="button"
       disabled={isDisabled}
       style={({ pressed }) => [

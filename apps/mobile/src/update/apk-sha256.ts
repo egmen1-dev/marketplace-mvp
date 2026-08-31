@@ -10,9 +10,12 @@ import {
 export { normalizeSha256Hex, sha256Matches };
 
 export class ShaVerifyError extends Error {
-  readonly code: "VERIFY_SHA_MISMATCH" | "VERIFY_IO" = "VERIFY_SHA_MISMATCH";
+  readonly code: "VERIFY_SHA_MISMATCH" | "VERIFY_IO" | "SHA_API_UNAVAILABLE" = "VERIFY_SHA_MISMATCH";
 
-  constructor(message: string, code: "VERIFY_SHA_MISMATCH" | "VERIFY_IO" = "VERIFY_SHA_MISMATCH") {
+  constructor(
+    message: string,
+    code: "VERIFY_SHA_MISMATCH" | "VERIFY_IO" | "SHA_API_UNAVAILABLE" = "VERIFY_SHA_MISMATCH",
+  ) {
     super(message);
     this.name = "ShaVerifyError";
     this.code = code;
@@ -31,10 +34,11 @@ export async function sha256HexFromFile(file: File): Promise<string> {
     }
     return hasher.digestHex();
   } catch (err) {
-    throw new ShaVerifyError(
-      err instanceof Error ? err.message : "verify_io_failed",
-      "VERIFY_IO",
-    );
+    const message = err instanceof Error ? err.message : "verify_io_failed";
+    const code = /readBytes|FileHandle|not supported|unavailable/i.test(message)
+      ? "SHA_API_UNAVAILABLE"
+      : "VERIFY_IO";
+    throw new ShaVerifyError(message, code);
   } finally {
     handle.close();
   }

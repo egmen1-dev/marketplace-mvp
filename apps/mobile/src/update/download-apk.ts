@@ -18,6 +18,7 @@ import {
   verifyCachedApk,
   type ApkCacheState,
 } from "./apk-download-cache";
+import { quarantineFailedApkIfEnabled } from "./failed-apk-quarantine";
 import { openApkInstaller, openUnknownSourcesSettings } from "./install-apk-android";
 import { normalizeSha256Hex, sha256HexFromFile, sha256Matches } from "./apk-sha256";
 import {
@@ -41,17 +42,10 @@ export type ApkUpdateFlowState =
   | "INSTALL_PERMISSION_REQUIRED"
   | "FAILED";
 
-export type DownloadProgressUpdate = {
-  bytesWritten: number;
-  totalBytes: number | null;
-  percent: number | null;
-};
-
 export type StartApkDownloadOptions = {
   actionId?: string;
   onStateChange?: (state: ApkUpdateFlowState) => void;
   onCacheState?: (state: ApkCacheState) => void;
-  onProgress?: (progress: DownloadProgressUpdate) => void;
 };
 
 export type StartApkDownloadResult =
@@ -62,35 +56,6 @@ export type StartApkDownloadResult =
       state: "FAILED" | "INSTALL_PERMISSION_REQUIRED";
       needsUnknownSources?: boolean;
     };
-
-const PROGRESS_MILESTONES = [10, 25, 50, 75, 90, 100] as const;
-
-function computePercent(bytesWritten: number, totalBytes: number | null): number | null {
-  if (totalBytes == null || totalBytes <= 0) return null;
-  return Math.min(100, Math.round((bytesWritten / totalBytes) * 100));
-}
-
-function logProgressMilestone(
-  actionId: string,
-  targetCode: number,
-  progress: DownloadProgressUpdate,
-  logged: Set<number>,
-): void {
-  const percent = progress.percent;
-  if (percent == null) return;
-  for (const milestone of PROGRESS_MILESTONES) {
-    if (percent >= milestone && !logged.has(milestone)) {
-      logged.add(milestone);
-      recordUpdateJourneyEvent({
-        event: "DOWNLOAD_PROGRESS",
-        actionId,
-        targetCode,
-        bytesDownloaded: progress.bytesWritten,
-        durationMs: percent,
-      });
-    }
-  }
-}
 
 function emit(
   event: UpdateJourneyDiagnosticEvent["event"],
@@ -127,6 +92,7 @@ async function assertDownloadedFileIntegrity(input: {
       errorClass: "VERIFY_SHA_MISMATCH",
       expectedShaPrefix: input.expectedSha.slice(0, 12),
       actualShaPrefix: actualSha?.slice(0, 12) ?? null,
+      bytesDownloaded: size,
     });
     throw new Error("sha256_verify_failed");
   }
@@ -156,35 +122,17 @@ async function downloadVerifiedApk(
   emit("DOWNLOAD_PREPARING", actionId, { targetCode: info.versionCode });
 
   const totalHint = info.artifactSizeBytes ?? null;
-  const loggedMilestones = new Set<number>();
-  let lastProgress: DownloadProgressUpdate = {
-    bytesWritten: 0,
-    totalBytes: totalHint,
-    percent: null,
-  };
 
   options.onStateChange?.("DOWNLOAD_STARTED");
   emit("DOWNLOAD_HTTP_STARTED", actionId, { targetCode: info.versionCode, bytesDownloaded: totalHint ?? undefined });
 
-  const downloaded = await File.downloadFileAsync(downloadUrl, destination, {
-    idempotent: true,
-    onProgress: ({ bytesWritten, totalBytes }) => {
-      const progress: DownloadProgressUpdate = {
-        bytesWritten,
-        totalBytes: totalBytes > 0 ? totalBytes : totalHint,
-        percent: computePercent(bytesWritten, totalBytes > 0 ? totalBytes : totalHint),
-      };
-      lastProgress = progress;
-      options.onStateChange?.("DOWNLOAD_PROGRESS");
-      options.onProgress?.(progress);
-      logProgressMilestone(actionId, info.versionCode, progress, loggedMilestones);
-    },
-  });
+  // expo-file-system 57.0.5: native onProgress can hang after ~8KiB — use idempotent download only.
+  const downloaded = await File.downloadFileAsync(downloadUrl, destination, { idempotent: true });
 
   options.onStateChange?.("DOWNLOAD_COMPLETE");
   emit("DOWNLOAD_HTTP_COMPLETE", actionId, {
     targetCode: info.versionCode,
-    bytesDownloaded: downloaded.size ?? lastProgress.bytesWritten,
+    bytesDownloaded: downloaded.size ?? totalHint ?? undefined,
   });
 
   options.onStateChange?.("VERIFYING");
@@ -197,7 +145,14 @@ async function downloadVerifiedApk(
       targetCode: info.versionCode,
     });
   } catch (err) {
-    await deleteApkFile(downloaded);
+    if (err instanceof Error && /sha256_verify_failed/i.test(err.message)) {
+      await quarantineFailedApkIfEnabled(downloaded, {
+        versionCode: info.versionCode,
+        reason: "VERIFY_SHA_MISMATCH",
+      });
+    } else {
+      await deleteApkFile(downloaded);
+    }
     throw err;
   }
 

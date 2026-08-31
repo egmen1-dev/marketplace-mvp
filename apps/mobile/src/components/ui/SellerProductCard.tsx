@@ -45,7 +45,14 @@ export function SellerProductCard({
 
   return (
     <Animated.View style={{ transform: [{ scale }] }}>
-      <Pressable style={styles.card} onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut}>
+      <Pressable
+        testID={`seller-lot-card-${product.id}`}
+        accessibilityLabel={product.title}
+        style={styles.card}
+        onPress={onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+      >
         <View style={styles.thumb}>
           {imageUrl ? <Image source={{ uri: imageUrl }} style={styles.thumbImage} contentFit="cover" /> : <ProductImageFallback compact />}
         </View>

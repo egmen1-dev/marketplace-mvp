@@ -10,7 +10,6 @@ import {
   openUnknownSourcesSettings,
   startApkDownload,
   type ApkUpdateFlowState,
-  type DownloadProgressUpdate,
 } from "../update/download-apk";
 import {
   createUpdateActionId,
@@ -35,7 +34,6 @@ import {
   failInstallHandoff,
   failUpdateCheck,
   failVerify,
-  formatDownloadProgressLabel,
   requireInstallPermission,
   type UpdateJourneySnapshot,
   type UpdateReleaseSnapshot,
@@ -65,17 +63,6 @@ function mapFlowErrorToSnapshot(
   }
   if (descriptor.stage === "check") return failUpdateCheck(snapshot, message, code);
   return failDownload(snapshot, message, code);
-}
-
-function toProgressSnapshot(progress: DownloadProgressUpdate) {
-  const snapshot = {
-    bytesWritten: progress.bytesWritten,
-    totalBytes: progress.totalBytes,
-    percent: progress.percent,
-    label: null as string | null,
-  };
-  snapshot.label = formatDownloadProgressLabel(snapshot);
-  return snapshot;
 }
 
 export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
@@ -245,12 +232,6 @@ export function useUpdateCheckFlow(options?: { autoCheck?: boolean }) {
       actionId,
       onStateChange: (flowState: ApkUpdateFlowState) => {
         setSnapshot((prev) => applyDownloadFlowState(prev, flowState));
-      },
-      onProgress: (progress) => {
-        setSnapshot((prev) => ({
-          ...applyDownloadFlowState(prev, "DOWNLOAD_PROGRESS"),
-          downloadProgress: toProgressSnapshot(progress),
-        }));
       },
     });
 

@@ -12,6 +12,7 @@ export function LotCreatePreviewFooter({
   onBack,
   publishing,
   saving,
+  publishTestID = "lot-preview-submit",
 }: {
   publishLabel: string;
   saveLabel: string;
@@ -20,12 +21,15 @@ export function LotCreatePreviewFooter({
   onBack: () => void;
   publishing?: boolean;
   saving?: boolean;
+  publishTestID?: string;
 }) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
       <Pressable
+        testID={publishTestID}
+        accessibilityLabel={publishTestID}
         accessibilityRole="button"
         disabled={publishing}
         onPress={onPublish}

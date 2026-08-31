@@ -33,7 +33,7 @@ function CharacteristicField({
 
   if (def.type === "BOOLEAN") {
     return (
-      <View style={[styles.field, highlighted ? styles.fieldHighlight : null]}>
+      <View testID={`lot-char-${def.id}`} style={[styles.field, highlighted ? styles.fieldHighlight : null]}>
         <View style={styles.booleanRow}>
           <Text style={styles.label}>{label}</Text>
           <Switch
@@ -50,7 +50,7 @@ function CharacteristicField({
   if (def.type === "SELECT" || def.type === "SIZE" || def.type === "COLOR") {
     const options = def.options ?? [];
     return (
-      <View style={[styles.field, highlighted ? styles.fieldHighlight : null]}>
+      <View testID={`lot-char-${def.id}`} style={[styles.field, highlighted ? styles.fieldHighlight : null]}>
         <Text style={styles.label}>{label}</Text>
         <View style={styles.optionRow}>
           {options.map((opt) => {
@@ -58,6 +58,8 @@ function CharacteristicField({
             return (
               <Pressable
                 key={opt}
+                testID={`lot-char-option-${def.id}-${opt}`}
+                accessibilityLabel={opt}
                 style={[styles.optionChip, selected ? styles.optionChipActive : null]}
                 onPress={() => onChange({ text: opt })}
               >
@@ -100,9 +102,11 @@ function CharacteristicField({
   }
 
   return (
-    <View style={[styles.field, highlighted ? styles.fieldHighlight : null]}>
+    <View testID={`lot-char-${def.id}`} style={[styles.field, highlighted ? styles.fieldHighlight : null]}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
+        testID={`lot-char-input-${def.id}`}
+        accessibilityLabel={`lot-char-input-${def.id}`}
         style={styles.input}
         placeholder={def.placeholder ?? def.name}
         keyboardType={def.type === "NUMBER" ? "numeric" : "default"}

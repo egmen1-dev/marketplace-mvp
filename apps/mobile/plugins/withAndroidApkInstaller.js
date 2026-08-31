@@ -20,22 +20,31 @@ function withAndroidApkInstaller(config) {
     }
 
     const mainApp = AndroidConfig.Manifest.getMainApplicationOrThrow(manifest);
-    if (!mainApp.queries) {
-      mainApp.queries = [{ intent: [] }];
+    if (mainApp.queries) {
+      delete mainApp.queries;
     }
-    const queries = Array.isArray(mainApp.queries) ? mainApp.queries[0] : mainApp.queries;
-    if (!queries.intent) queries.intent = [];
-    const intents = queries.intent;
-    const hasApkView = intents.some(
-      (item) =>
-        item.action?.some((a) => a.$["android:name"] === "android.intent.action.VIEW") &&
-        item.data?.some((d) => d.$["android:mimeType"] === "application/vnd.android.package-archive"),
+
+    if (!manifest.manifest.queries) {
+      manifest.manifest.queries = [];
+    }
+    const manifestQueries = manifest.manifest.queries;
+    const apkQuery = {
+      intent: [
+        {
+          action: [{ $: { "android:name": "android.intent.action.VIEW" } }],
+          data: [{ $: { "android:mimeType": "application/vnd.android.package-archive" } }],
+        },
+      ],
+    };
+    const hasApkView = manifestQueries.some((query) =>
+      query.intent?.some(
+        (item) =>
+          item.action?.some((a) => a.$["android:name"] === "android.intent.action.VIEW") &&
+          item.data?.some((d) => d.$["android:mimeType"] === "application/vnd.android.package-archive"),
+      ),
     );
     if (!hasApkView) {
-      intents.push({
-        action: [{ $: { "android:name": "android.intent.action.VIEW" } }],
-        data: [{ $: { "android:mimeType": "application/vnd.android.package-archive" } }],
-      });
+      manifestQueries.push(apkQuery);
     }
 
     return config;

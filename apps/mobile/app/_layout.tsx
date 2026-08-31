@@ -46,10 +46,10 @@ function RootShell() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="product/[id]" options={{ title: "Товар" }} />
+        <Stack.Screen name="product/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="seller/[id]" options={{ title: "Продавец" }} />
-        <Stack.Screen name="cart" options={{ title: "Корзина" }} />
-        <Stack.Screen name="checkout" options={{ title: "Оформление" }} />
+        <Stack.Screen name="cart" options={{ headerShown: false }} />
+        <Stack.Screen name="checkout" options={{ headerShown: false }} />
         <Stack.Screen name="order/[id]" options={{ title: "Заказ" }} />
         <Stack.Screen name="feedback" options={{ title: "Обратная связь" }} />
         <Stack.Screen name="about" options={{ title: "О приложении" }} />

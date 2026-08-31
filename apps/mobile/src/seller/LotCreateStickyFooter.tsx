@@ -9,12 +9,14 @@ export function LotCreateStickyFooter({
   loading,
   disabled,
   hint,
+  testID,
 }: {
   label: string;
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
   hint?: string | null;
+  testID?: string;
 }) {
   const insets = useSafeAreaInsets();
   const isDisabled = disabled || loading;
@@ -23,6 +25,8 @@ export function LotCreateStickyFooter({
     <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
       {hint ? <Text style={styles.hint}>{hint}</Text> : null}
       <Pressable
+        testID={testID}
+        accessibilityLabel={testID ?? label}
         accessibilityRole="button"
         disabled={isDisabled}
         onPress={onPress}

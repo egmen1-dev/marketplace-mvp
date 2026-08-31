@@ -1,4 +1,4 @@
-import { router, Stack } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   Image,
   Pressable,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-import { PrimaryButton, SecondaryButton } from "../../src/components/ui";
+import { PrimaryButton, SecondaryButton, ErrorState } from "../../src/components/ui";
 import { ProductImageFallback } from "../../src/components/ui/ProductImageFallback";
 import { LotAutosaveIndicator } from "../../src/seller/LotAutosaveIndicator";
 import { LotCharacteristicsSection } from "../../src/seller/LotCharacteristicsSection";
@@ -24,6 +24,7 @@ import { LOT_CREATE_COPY } from "../../src/seller/lot-create-copy";
 import { EMPTY_LOT_DRAFT } from "../../src/seller/lot-draft-storage";
 import { sellerLotDetailRoute, sellerLotsTabForOutcome } from "../../src/seller/resolve-lot-publish-outcome";
 import { useLotCreateForm } from "../../src/seller/use-lot-create-form";
+import { isFirebaseQaEnabled } from "../../src/config/firebase-qa";
 import { formatPrice } from "../../src/utils/format";
 import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
@@ -53,7 +54,31 @@ function LotCreateErrorBlock({
 }
 
 export default function CreateLotScreen() {
-  const form = useLotCreateForm();
+  const { lotId } = useLocalSearchParams<{ lotId?: string }>();
+  const editLotId = typeof lotId === "string" && lotId.trim().length > 0 ? lotId.trim() : null;
+  const form = useLotCreateForm({ editLotId });
+
+  if (form.editLoading) {
+    return (
+      <View style={styles.centered}>
+        <Stack.Screen options={{ title: LOT_CREATE_COPY.editScreenTitle }} />
+        <Text style={styles.subtitle}>Загружаем ЛОТ…</Text>
+      </View>
+    );
+  }
+
+  if (form.editLoadError) {
+    return (
+      <View style={styles.centered}>
+        <Stack.Screen options={{ title: LOT_CREATE_COPY.editScreenTitle }} />
+        <ErrorState
+          title="Не удалось открыть редактирование"
+          description={form.editLoadError}
+          onRetry={() => router.replace(editLotId ? `/sell/create?lotId=${editLotId}` : "/sell/create")}
+        />
+      </View>
+    );
+  }
 
   if (form.showRestorePrompt) {
     return (
@@ -75,7 +100,16 @@ export default function CreateLotScreen() {
   if (form.step === "success") {
     const outcome = form.publishOutcome ?? "SAVED";
     const successCopy =
-      outcome === "PUBLISHED"
+      form.isEditMode && outcome === "SAVED"
+        ? {
+            emoji: "✅",
+            title: LOT_CREATE_COPY.editSaveSuccessTitle,
+            body: LOT_CREATE_COPY.editSaveSuccessBody,
+            primary: LOT_CREATE_COPY.viewLot,
+            secondary: null,
+            showMyLots: true,
+          }
+        : outcome === "PUBLISHED"
         ? {
             emoji: "🎉",
             title: LOT_CREATE_COPY.successTitle,
@@ -105,7 +139,7 @@ export default function CreateLotScreen() {
     return (
       <View style={styles.successWrap}>
         <Text style={styles.successEmoji}>{successCopy.emoji}</Text>
-        <Text style={styles.successTitle}>{successCopy.title}</Text>
+        <Text testID="lot-success-title" style={styles.successTitle}>{successCopy.title}</Text>
         <Text style={styles.successBody}>{successCopy.body}</Text>
         {form.error ? <Text style={styles.errorText}>{form.error}</Text> : null}
         <View style={styles.actions}>
@@ -135,6 +169,7 @@ export default function CreateLotScreen() {
           ) : null}
           {successCopy.showMyLots ? (
             <SecondaryButton
+              testID="lot-success-my-lots"
               label="Мои ЛОТы"
               fullWidth
               onPress={() =>
@@ -156,11 +191,11 @@ export default function CreateLotScreen() {
 
     return (
       <View style={styles.screen}>
-        <Stack.Screen options={{ title: LOT_CREATE_COPY.previewTitle }} />
+        <Stack.Screen options={{ title: form.screenTitle }} />
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {header}
           <Text style={styles.screenTitle}>{LOT_CREATE_COPY.previewTitle}</Text>
-          <Text style={styles.subtitle}>{LOT_CREATE_COPY.previewHint}</Text>
+          <Text style={styles.subtitle}>{form.previewHint}</Text>
           <View style={styles.previewCard}>
             <View style={styles.previewImageWrap}>
               {form.draft.images[0]?.uri ? (
@@ -215,12 +250,14 @@ export default function CreateLotScreen() {
           {form.info ? <Text style={styles.infoText}>{form.info}</Text> : null}
         </ScrollView>
         <LotCreatePreviewFooter
-          publishLabel={form.publishCtaLabel}
-          saveLabel={LOT_CREATE_COPY.saveLotLabel}
+          publishLabel={form.previewPrimaryLabel}
+          saveLabel={form.isEditMode ? LOT_CREATE_COPY.saveLotLabel : form.previewSecondaryLabel}
           publishing={form.publishing}
           saving={form.savingLot}
-          onPublish={() => void form.publishLot()}
-          onSave={() => void form.saveLotLocallyAndServer()}
+          onPublish={() =>
+            void (form.isEditMode && !form.editPublishAllowed ? form.saveEditedLot() : form.publishLot())
+          }
+          onSave={() => void (form.isEditMode ? form.saveEditedLot() : form.saveLotLocallyAndServer())}
           onBack={() => form.goToStep("details")}
         />
       </View>
@@ -230,6 +267,7 @@ export default function CreateLotScreen() {
   if (form.step === "details") {
     return (
       <View style={styles.screen}>
+        <Stack.Screen options={{ title: form.screenTitle }} />
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {header}
           <Text style={styles.screenTitle}>{LOT_CREATE_COPY.detailsTitle}</Text>
@@ -237,6 +275,8 @@ export default function CreateLotScreen() {
 
           <Text style={styles.label}>Название</Text>
           <TextInput
+            testID="lot-title"
+            accessibilityLabel="lot-title"
             style={styles.input}
             placeholder="Дрель ударная DeWalt"
             value={form.draft.title}
@@ -250,6 +290,8 @@ export default function CreateLotScreen() {
               return (
               <Pressable
                 key={cat.id}
+                testID={`lot-category-${cat.id}`}
+                accessibilityLabel={cat.name}
                 accessibilityRole="button"
                 accessibilityState={{ selected }}
                 style={[styles.categoryCard, selected ? styles.categoryCardActive : null]}
@@ -276,6 +318,8 @@ export default function CreateLotScreen() {
                 return (
                 <Pressable
                   key={sub.id}
+                  testID={`lot-subcategory-${sub.id}`}
+                  accessibilityLabel={sub.name}
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   style={[styles.subRow, selected ? styles.subRowActive : null]}
@@ -296,6 +340,8 @@ export default function CreateLotScreen() {
                 return (
                 <Pressable
                   key={pt.id}
+                  testID={`lot-product-type-${pt.id}`}
+                  accessibilityLabel={pt.name}
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   style={[styles.subRow, selected ? styles.subRowActive : null]}
@@ -325,6 +371,8 @@ export default function CreateLotScreen() {
 
           <Text style={styles.label}>{LOT_CREATE_COPY.priceLabel}</Text>
           <TextInput
+            testID="lot-price"
+            accessibilityLabel="lot-price"
             style={styles.input}
             placeholder="₽"
             keyboardType="numeric"
@@ -334,6 +382,8 @@ export default function CreateLotScreen() {
 
           <Text style={styles.label}>{LOT_CREATE_COPY.stockLabel}</Text>
           <TextInput
+            testID="lot-stock"
+            accessibilityLabel="lot-stock"
             style={styles.input}
             placeholder="1"
             keyboardType="numeric"
@@ -367,6 +417,8 @@ export default function CreateLotScreen() {
 
           <Text style={styles.label}>Город</Text>
           <TextInput
+            testID="lot-city"
+            accessibilityLabel="lot-city"
             style={styles.input}
             placeholder="Москва"
             value={form.draft.city}
@@ -424,6 +476,7 @@ export default function CreateLotScreen() {
           <SecondaryButton label="Назад" fullWidth onPress={() => form.goToStep("photos")} />
         </ScrollView>
         <LotCreateStickyFooter
+          testID="lot-details-preview"
           label="Предпросмотр"
           hint={form.previewBlockersMessage}
           onPress={() => void form.goPreview()}
@@ -434,6 +487,7 @@ export default function CreateLotScreen() {
 
   return (
     <View style={styles.screen}>
+      <Stack.Screen options={{ title: form.screenTitle }} />
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         {header}
         <Text style={styles.screenTitle}>{LOT_CREATE_COPY.photosTitle}</Text>
@@ -468,12 +522,27 @@ export default function CreateLotScreen() {
             </View>
           ))}
           {form.draft.images.length < 10 ? (
-            <Pressable style={styles.addPhoto} onPress={() => void form.pickImages(false)}>
+            <Pressable style={styles.addPhoto} testID="lot-photo-add" accessibilityLabel="lot-photo-add" onPress={() => void form.pickImages(false)}>
               <MaterialCommunityIcons name="plus" size={28} color={colors.orange} />
               <Text style={styles.addPhotoText}>Добавить фото</Text>
             </Pressable>
           ) : null}
         </View>
+
+        {isFirebaseQaEnabled() ? (
+          <View style={styles.photoActions}>
+            <SecondaryButton
+              testID="lot-photo-inject-smartphone"
+              label="QA: smartphone fixture"
+              onPress={() => void form.injectFixturePhoto("smartphone")}
+            />
+            <SecondaryButton
+              testID="lot-photo-inject-product"
+              label="QA: product fixture"
+              onPress={() => void form.injectFixturePhoto("product")}
+            />
+          </View>
+        ) : null}
 
         <View style={styles.photoActions}>
           <SecondaryButton label="Камера" onPress={() => void form.pickImages(true)} />
@@ -488,6 +557,7 @@ export default function CreateLotScreen() {
         />
       </ScrollView>
       <LotCreateStickyFooter
+        testID="lot-photo-continue"
         label={LOT_CREATE_COPY.photosNext}
         disabled={!form.photoStepUi.canContinue || form.photoStepUi.ctaDisabled}
         loading={form.photoStepUi.ctaLoading || form.continueInFlight}
@@ -499,6 +569,12 @@ export default function CreateLotScreen() {
 }
 
 const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    padding: spacing.lg,
+    backgroundColor: colors.white,
+  },
   screen: { flex: 1, backgroundColor: colors.white },
   scrollContent: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xl },
   headerRow: { marginBottom: spacing.xs },

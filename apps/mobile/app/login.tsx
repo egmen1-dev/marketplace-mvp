@@ -61,6 +61,8 @@ export default function LoginScreen() {
 
       <View style={styles.form}>
         <TextInput
+          testID="login-email"
+          accessibilityLabel="login-email"
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="Email"
@@ -71,6 +73,8 @@ export default function LoginScreen() {
         />
         <View style={styles.passwordRow}>
           <TextInput
+            testID="login-password"
+            accessibilityLabel="login-password"
             secureTextEntry={!showPassword}
             placeholder="Пароль"
             placeholderTextColor={colors.gray500}
@@ -87,9 +91,13 @@ export default function LoginScreen() {
           </Pressable>
         </View>
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? (
+          <Text testID="login-error" accessibilityLabel="login-error" style={styles.error}>
+            {error}
+          </Text>
+        ) : null}
 
-        <PrimaryButton label="Войти" onPress={onSubmit} loading={loading} fullWidth size="md" />
+        <PrimaryButton testID="login-submit" label="Войти" onPress={onSubmit} loading={loading} fullWidth size="md" />
 
         <View style={styles.links}>
           <GhostButton label="Создать аккаунт" onPress={() => openWeb("/auth/sign-up")} />
