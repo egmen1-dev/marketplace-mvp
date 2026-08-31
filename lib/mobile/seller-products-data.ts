@@ -171,7 +171,6 @@ export async function buildMobileSellerProductDetailFromRequest(request: Request
         include: {
           definition: { select: { id: true, type: true } },
         },
-        orderBy: { sortOrder: "asc" },
       },
     },
   });
