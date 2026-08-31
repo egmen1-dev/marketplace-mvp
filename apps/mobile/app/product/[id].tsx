@@ -52,7 +52,7 @@ export default function ProductScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const similarYRef = useRef(0);
   const cartQuantity = useCartQuantitiesStore((s) => (id ? s.quantities[id] ?? 0 : 0));
-  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } =
+  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite, isCartBusy, isFavoriteBusy } =
     useCommerceActions();
 
   const [product, setProduct] = useState<ProductRecord | null>(null);
@@ -293,8 +293,13 @@ export default function ProductScreen() {
               title="Похожие товары"
               items={similar}
               isFavorite={isFavorite}
+              isFavoriteBusy={isFavoriteBusy}
+              isCartBusy={isCartBusy}
               onPressProduct={(productId) => router.push(`/product/${productId}`)}
               onFavorite={(productId) => void toggleProductFavorite(productId)}
+              onAddToCart={(productId) => void addProductToCart(productId, 1)}
+              onIncrementCart={(productId) => void incrementProductCart(productId)}
+              onDecrementCart={(productId) => void decrementProductCart(productId)}
             />
           </View>
         ) : null}
