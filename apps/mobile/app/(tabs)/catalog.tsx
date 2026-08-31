@@ -9,7 +9,6 @@ import {
   CatalogCategoryRow,
   CatalogFilterBar,
   CatalogLoadMore,
-  CatalogProductCard,
   CatalogSearchRow,
   CatalogSkeletonGrid,
   CatalogTitleRow,
@@ -17,10 +16,19 @@ import {
   CATALOG_SCREEN_PADDING,
 } from "../../src/catalog/ui";
 import { EmptyState, ErrorState, type CatalogSort } from "../../src/components/ui";
+import {
+  applyDealsOnlyFilter,
+  buildCatalogQueryKey,
+  canRequestCatalogPage,
+  createRequestGeneration,
+  isStaleCatalogRequest,
+  mergeCatalogProducts,
+  resolveCatalogPaginationTruth,
+} from "../../src/commerce/catalog-query";
+import { ProductCard } from "../../src/commerce/product-card";
 import { HomeHeader } from "../../src/home";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { pushSearchHistory } from "../../src/storage/search-history";
-import { discountPercent } from "../../src/utils/format";
 import { colors } from "../../src/theme/tokens";
 
 const SORT_VALUES = new Set<CatalogSort>(["popular", "newest", "price_asc", "price_desc"]);
@@ -49,7 +57,15 @@ export default function CatalogScreen() {
   }>();
   const insets = useSafeAreaInsets();
   const searchInputRef = useRef<TextInput>(null);
-  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite } = useCommerceActions();
+  const {
+    addProductToCart,
+    incrementProductCart,
+    decrementProductCart,
+    toggleProductFavorite,
+    isFavorite,
+    isCartBusy,
+    isFavoriteBusy,
+  } = useCommerceActions();
 
   const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
   const [sort, setSort] = useState<CatalogSort>(parseSort(params.sort));
@@ -63,7 +79,9 @@ export default function CatalogScreen() {
       ? { id: params.sellerId, name: typeof params.sellerName === "string" ? params.sellerName : "Продавец" }
       : null,
   );
-  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string; slug?: string; catalogProductCount?: number; productCount?: number }>>([]);
+  const [allCategories, setAllCategories] = useState<
+    Array<{ id: string; name: string; slug?: string; catalogProductCount?: number; productCount?: number }>
+  >([]);
   const railCategories = useMemo(() => selectRailCategories(allCategories), [allCategories]);
   const [items, setItems] = useState<MobileProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +89,45 @@ export default function CatalogScreen() {
   const [error, setError] = useState<string | null>(null);
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [countMode, setCountMode] = useState<"server" | "client_deals">("server");
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const requestGenerationRef = useRef(createRequestGeneration());
+  const paginationInFlightRef = useRef(false);
+  const lastRequestedCursorRef = useRef<string | null>(null);
+  const cursorRef = useRef<string | null>(null);
+  const hasMoreRef = useRef(false);
+  const loadingRef = useRef(loading);
+  const loadingMoreRef = useRef(loadingMore);
+
+  const queryKey = useMemo(
+    () =>
+      buildCatalogQueryKey({
+        q,
+        sort,
+        categoryId: category?.id,
+        sellerId: sellerFilter?.id,
+        inStockOnly,
+        dealsOnly,
+      }),
+    [q, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly],
+  );
+
+  useEffect(() => {
+    cursorRef.current = cursor;
+  }, [cursor]);
+
+  useEffect(() => {
+    hasMoreRef.current = hasMore;
+  }, [hasMore]);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  useEffect(() => {
+    loadingMoreRef.current = loadingMore;
+  }, [loadingMore]);
 
   useEffect(() => {
     fetchCategories()
@@ -119,43 +175,81 @@ export default function CatalogScreen() {
     }
   }, [params.focusSearch]);
 
-  const load = useCallback(
-    async (reset = true) => {
+  const loadCatalog = useCallback(
+    async (reset: boolean, requestGeneration: number, forQueryKey: string) => {
+      const cursorToFetch = reset ? null : cursorRef.current;
+      if (
+        !canRequestCatalogPage({
+          reset,
+          hasMore: hasMoreRef.current,
+          loading: loadingRef.current,
+          loadingMore: loadingMoreRef.current,
+          paginationInFlight: paginationInFlightRef.current,
+          cursor: cursorToFetch,
+          lastRequestedCursor: lastRequestedCursorRef.current,
+          requestQueryKey: forQueryKey,
+          activeQueryKey: queryKey,
+        })
+      ) {
+        return;
+      }
+
       if (reset) {
         setLoading(true);
         setError(null);
+        lastRequestedCursorRef.current = null;
       } else {
         setLoadingMore(true);
+        paginationInFlightRef.current = true;
+        lastRequestedCursorRef.current = cursorToFetch;
       }
+
       try {
         const res = await fetchCatalog({
           q: q.trim() || undefined,
-          cursor: reset ? null : cursor,
+          cursor: cursorToFetch,
           sort,
           categoryId: category?.id,
           sellerId: sellerFilter?.id,
           inStock: inStockOnly || undefined,
         });
-        const nextItems = dealsOnly ? res.items.filter((item) => (discountPercent(item.price, item.compareAt) ?? 0) > 0) : res.items;
-        setItems((prev) => (reset ? nextItems : [...prev, ...nextItems]));
-        setCursor(res.nextCursor);
-        setHasMore(res.hasMore);
+
+        if (isStaleCatalogRequest(requestGeneration, requestGenerationRef.current.current())) return;
+        if (forQueryKey !== queryKey) return;
+
+        const nextItems = dealsOnly ? applyDealsOnlyFilter(res.items) : res.items;
+        setItems((prev) => mergeCatalogProducts(prev, nextItems, reset));
+
+        const pagination = resolveCatalogPaginationTruth(dealsOnly, res.hasMore, res.nextCursor);
+        setCursor(pagination.nextCursor);
+        setHasMore(pagination.hasMore);
+        setCountMode(pagination.countMode);
       } catch (err) {
+        if (isStaleCatalogRequest(requestGeneration, requestGenerationRef.current.current())) return;
+        if (forQueryKey !== queryKey) return;
         if (reset) {
           setError(err instanceof Error ? err.message : "Ошибка загрузки");
         }
       } finally {
-        setLoading(false);
-        setLoadingMore(false);
+        if (!reset) paginationInFlightRef.current = false;
+        if (!isStaleCatalogRequest(requestGeneration, requestGenerationRef.current.current()) && forQueryKey === queryKey) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     },
-    [q, cursor, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly],
+    [category?.id, dealsOnly, inStockOnly, q, queryKey, sellerFilter?.id, sort],
   );
 
   useEffect(() => {
+    const requestGeneration = requestGenerationRef.current.next();
     setCursor(null);
-    load(true);
-  }, [q, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly]);
+    setHasMore(false);
+    setItems([]);
+    lastRequestedCursorRef.current = null;
+    paginationInFlightRef.current = false;
+    void loadCatalog(true, requestGeneration, queryKey);
+  }, [queryKey, loadCatalog]);
 
   async function submitSearch(value: string) {
     setCategory(null);
@@ -172,7 +266,6 @@ export default function CatalogScreen() {
     setInStockOnly(false);
     setDealsOnly(false);
     setSort("popular");
-    setCursor(null);
   }
 
   function catalogEmptyPreset(): "catalog" | "catalogCategory" | "catalogSearch" {
@@ -180,6 +273,10 @@ export default function CatalogScreen() {
     if (category) return "catalogCategory";
     return "catalog";
   }
+
+  const requestMore = useCallback(() => {
+    void loadCatalog(false, requestGenerationRef.current.current(), queryKey);
+  }, [loadCatalog, queryKey]);
 
   const listHeader = (
     <View style={styles.headerBlock}>
@@ -202,7 +299,7 @@ export default function CatalogScreen() {
           else clearFilters();
         }}
       />
-      <CatalogTitleRow count={items.length} hasMore={hasMore} />
+      <CatalogTitleRow count={items.length} hasMore={hasMore} countMode={countMode} />
       <CatalogFilterBar
         sort={sort}
         onSortChange={setSort}
@@ -220,7 +317,11 @@ export default function CatalogScreen() {
         onResetFilters={clearFilters}
       />
       {error && items.length === 0 ? (
-        <ErrorState title="Не удалось загрузить товары" onRetry={() => load(true)} variant="network" />
+        <ErrorState
+          title="Не удалось загрузить товары"
+          onRetry={() => void loadCatalog(true, requestGenerationRef.current.next(), queryKey)}
+          variant="network"
+        />
       ) : null}
       {loading && items.length === 0 ? <CatalogSkeletonGrid count={6} /> : null}
     </View>
@@ -236,11 +337,20 @@ export default function CatalogScreen() {
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={listHeader}
-        refreshControl={<RefreshControl refreshing={loading && items.length > 0} onRefresh={() => load(true)} tintColor={colors.ctaPrimary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading && items.length > 0}
+            onRefresh={() => void loadCatalog(true, requestGenerationRef.current.next(), queryKey)}
+            tintColor={colors.ctaPrimary}
+          />
+        }
         renderItem={({ item }) => (
-          <CatalogProductCard
+          <ProductCard
+            variant="grid"
             product={item}
             isFavorite={isFavorite(item.id)}
+            isFavoriteBusy={isFavoriteBusy(item.id)}
+            isCartBusy={isCartBusy(item.id)}
             onPress={() => router.push(`/product/${item.id}`)}
             onFavorite={() => toggleProductFavorite(item.id)}
             onAddToCart={() => addProductToCart(item.id, 1)}
@@ -254,16 +364,10 @@ export default function CatalogScreen() {
           ) : null
         }
         ListFooterComponent={
-          hasMore && items.length > 0 ? (
-            <CatalogLoadMore loading={loadingMore} onPress={() => load(false)} />
-          ) : (
-            <View style={styles.footerSpacer} />
-          )
+          hasMore && items.length > 0 ? <CatalogLoadMore loading={loadingMore} onPress={requestMore} /> : <View style={styles.footerSpacer} />
         }
         onEndReachedThreshold={0.4}
-        onEndReached={() => {
-          if (hasMore && !loading && !loadingMore) load(false);
-        }}
+        onEndReached={requestMore}
       />
     </View>
   );
