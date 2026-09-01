@@ -34,8 +34,8 @@ describe("EPIC 154 — closed beta critical path", () => {
     expect(checkoutSource).toContain("disabled={opening}");
   });
 
-  it("cart checkout button shows creating state", () => {
-    expect(cartSource).toContain("Создание заказа…");
+  it("cart checkout button shows transition state while navigating to checkout", () => {
+    expect(cartSource).toContain("CART_CHECKOUT_TRANSITION_LOADING_LABEL");
     expect(cartSource).toContain("checkoutLoading");
   });
 

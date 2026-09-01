@@ -10,11 +10,13 @@ import { colors, radii, spacing, typography } from "../../src/theme/tokens";
 
 export default function SellScreen() {
   const sellerCapable = useAppStore((s) => s.sellerCapable);
+  const setPendingWebHandoff = useAppStore((s) => s.setPendingWebHandoff);
   const [opening, setOpening] = useState(false);
 
   async function onCreateStore() {
     setOpening(true);
     try {
+      setPendingWebHandoff("seller");
       await openWebHandoff("/account/seller-start");
     } finally {
       setOpening(false);

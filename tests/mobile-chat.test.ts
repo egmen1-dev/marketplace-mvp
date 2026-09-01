@@ -42,7 +42,8 @@ describe("mobile chat wiring", () => {
   });
 
   it("PDP has write seller CTA wired to conversation flow", () => {
-    expect(productSource).toContain("Написать продавцу");
+    const sellerCardSource = readFileSync("apps/mobile/src/product/ui/ProductSellerCard.tsx", "utf8");
+    expect(sellerCardSource).toContain("Написать продавцу");
     expect(productSource).toContain("openProductConversation");
     expect(chatActionsSource).toContain("createConversation");
   });

@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Linking, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { fetchCart, fetchCheckoutWebUrl } from "../src/api/endpoints";
+import { fetchCart, fetchCheckoutWebUrl, fetchOrders } from "../src/api/endpoints";
 import { trackButtonPress } from "../src/beta/session-recorder";
 import { trackEvent } from "../src/beta/telemetry-hub";
 import {
@@ -87,6 +87,8 @@ export default function CheckoutScreen() {
   const insets = useSafeAreaInsets();
   const config = loadAppConfig();
   const offline = useAppStore((s) => s.offline);
+  const setCheckoutHandoff = useAppStore((s) => s.setCheckoutHandoff);
+  const setPendingWebHandoff = useAppStore((s) => s.setPendingWebHandoff);
 
   const [items, setItems] = useState<(CheckoutLineView & { compareAt: number | null })[]>([]);
   const [serverSubtotal, setServerSubtotal] = useState(0);
@@ -161,6 +163,12 @@ export default function CheckoutScreen() {
     trackButtonPress("checkout", "open_web_checkout");
     void trackEvent("checkout", "checkout_web_redirect_started", { strategy: payload.strategy });
     try {
+      const existing = await fetchOrders().catch(() => ({ items: [] as Array<Record<string, unknown>> }));
+      setCheckoutHandoff({
+        startedAt: Date.now(),
+        knownOrderIds: existing.items.map((item) => String(item.id ?? "")).filter(Boolean),
+      });
+      setPendingWebHandoff("checkout");
       await Linking.openURL(payload.handoffUrl);
     } catch (err) {
       setHandoffError(formatCheckoutHandoffError(err));

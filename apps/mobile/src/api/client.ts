@@ -194,3 +194,18 @@ export async function logout(): Promise<void> {
   }
   await clearSessionAndNotify();
 }
+
+/** Refresh tokens and return the latest role from the server without requiring re-login. */
+export async function refreshSessionRole(): Promise<string | null> {
+  const refreshToken = await getRefreshToken();
+  if (!refreshToken) return null;
+
+  try {
+    await refreshAccessToken();
+  } catch {
+    return null;
+  }
+
+  const meta = await getSessionMeta();
+  return meta?.role ?? null;
+}
