@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import type { MobileUpdateInfo } from "../api/endpoints";
+import type { CheckoutHandoffContext } from "../commerce/checkout-return";
 
 export type AppMode = "buyer" | "seller";
 
@@ -17,6 +18,8 @@ export type CheckoutSuccessState = {
   statusLabel: string;
 } | null;
 
+export type PendingWebHandoffKind = "seller" | "checkout";
+
 type AppState = {
   mode: AppMode;
   bootstrapped: boolean;
@@ -24,6 +27,8 @@ type AppState = {
   offline: boolean;
   pendingDeepLink: string | null;
   checkoutSuccess: CheckoutSuccessState;
+  checkoutHandoff: CheckoutHandoffContext | null;
+  pendingWebHandoff: PendingWebHandoffKind | null;
   remoteConfig: Record<string, unknown>;
   userRole: string | null;
   sellerCapable: boolean;
@@ -37,6 +42,9 @@ type AppState = {
   setPendingDeepLink: (uri: string | null) => void;
   setCheckoutSuccess: (state: CheckoutSuccessState) => void;
   clearCheckoutSuccess: () => void;
+  setCheckoutHandoff: (context: CheckoutHandoffContext | null) => void;
+  clearCheckoutHandoff: () => void;
+  setPendingWebHandoff: (kind: PendingWebHandoffKind | null) => void;
   setRemoteConfig: (config: Record<string, unknown>) => void;
   setUserRole: (role: string | null) => void;
   setPendingUpdate: (update: MobileUpdateInfo | null) => void;
@@ -55,6 +63,8 @@ export const useAppStore = create<AppState>((set) => ({
   offline: false,
   pendingDeepLink: null,
   checkoutSuccess: null,
+  checkoutHandoff: null,
+  pendingWebHandoff: null,
   remoteConfig: {},
   userRole: null,
   sellerCapable: false,
@@ -68,6 +78,9 @@ export const useAppStore = create<AppState>((set) => ({
   setPendingDeepLink: (pendingDeepLink) => set({ pendingDeepLink }),
   setCheckoutSuccess: (checkoutSuccess) => set({ checkoutSuccess }),
   clearCheckoutSuccess: () => set({ checkoutSuccess: null }),
+  setCheckoutHandoff: (checkoutHandoff) => set({ checkoutHandoff }),
+  clearCheckoutHandoff: () => set({ checkoutHandoff: null }),
+  setPendingWebHandoff: (pendingWebHandoff) => set({ pendingWebHandoff }),
   setRemoteConfig: (remoteConfig) => set({ remoteConfig }),
   setUserRole: (role) =>
     set({

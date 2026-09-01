@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { formatPrice } from "../../utils/format";
 import { colors, radii, spacing, typography } from "../../theme/tokens";
 import { CART_CHECKOUT_BAR_HEIGHT, CART_SCREEN_PADDING } from "./constants";
+import { CART_CHECKOUT_TRANSITION_LOADING_LABEL } from "./checkout-transition-copy";
 import { formatCheckoutCount } from "./format";
 
 export function CartCheckoutBar({
@@ -45,7 +46,7 @@ export function CartCheckoutBar({
         accessibilityRole="button"
         accessibilityLabel="Перейти к оформлению"
       >
-        <Text style={styles.title}>{loading ? "Создание заказа…" : "Перейти к оформлению"}</Text>
+        <Text style={styles.title}>{loading ? CART_CHECKOUT_TRANSITION_LOADING_LABEL : "Перейти к оформлению"}</Text>
         {itemCount > 0 ? <Text style={styles.subtitle}>{formatCheckoutCount(itemCount)}</Text> : null}
       </Pressable>
     </View>

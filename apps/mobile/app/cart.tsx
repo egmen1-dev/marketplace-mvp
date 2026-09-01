@@ -23,8 +23,7 @@ import { useAppStore } from "../src/store/app-store";
 import { colors, spacing } from "../src/theme/tokens";
 import { resolveImageUrl } from "../src/utils/format";
 
-/** EPIC 154 gate — loading copy while navigating to checkout handoff. */
-const CHECKOUT_HANDOFF_LOADING_LABEL = "Создание заказа…";
+import { CART_CHECKOUT_TRANSITION_LOADING_LABEL } from "../src/cart/ui/checkout-transition-copy";
 
 type ApiCartItem = {
   productId: string;
@@ -157,7 +156,7 @@ export default function CartScreen() {
     if (checkoutCount <= 0) return;
     setCheckoutLoading(true);
     try {
-      void CHECKOUT_HANDOFF_LOADING_LABEL;
+      void CART_CHECKOUT_TRANSITION_LOADING_LABEL;
       router.push("/checkout");
     } finally {
       setTimeout(() => setCheckoutLoading(false), 1200);

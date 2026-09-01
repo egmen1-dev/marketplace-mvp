@@ -11,6 +11,7 @@ import { CommerceToastHost } from "../src/components/CommerceToastHost";
 import { BetaBanner, ObservabilityProvider } from "../src/beta";
 import { useDeepLinkHandler } from "../src/deep-links/use-deep-link-handler";
 import { useCheckoutReturnRefresh } from "../src/hooks/useCheckoutReturnRefresh";
+import { useWebHandoffSessionRefresh } from "../src/hooks/useWebHandoffSessionRefresh";
 import { colors } from "../src/theme/tokens";
 
 function SessionGuard() {
@@ -27,6 +28,7 @@ function SessionGuard() {
 function RootShell() {
   useDeepLinkHandler();
   useCheckoutReturnRefresh();
+  useWebHandoffSessionRefresh();
   return (
   <ObservabilityProvider>
     <>

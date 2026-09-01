@@ -12,14 +12,16 @@ const MODERATION_LABELS: Record<string, string> = {
   APPROVED: "Одобрен",
 };
 
+const UNKNOWN_STATUS_LABEL = "Статус обновляется";
+
 export function productStatusLabel(status: string | undefined | null): string {
   if (!status) return "—";
-  return STATUS_LABELS[status] ?? status;
+  return STATUS_LABELS[status] ?? UNKNOWN_STATUS_LABEL;
 }
 
 export function moderationStatusLabel(status: string | undefined | null): string | null {
   if (!status) return null;
-  return MODERATION_LABELS[status] ?? status;
+  return MODERATION_LABELS[status] ?? UNKNOWN_STATUS_LABEL;
 }
 
 export function productStatusTone(status: string | undefined | null): "success" | "warning" | "neutral" | "danger" {
