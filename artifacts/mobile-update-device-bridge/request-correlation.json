@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-08-27T12:33:30.000Z",
+  "probeWindowId": "pbw-20260827-123330Z",
+  "controlRequestIds": ["f9a2a06c-637"],
+  "controlUserAgentPattern": "device-bridge-control-probe",
+  "physicalUserAgentHints": [
+    "okhttp",
+    "Expo",
+    "Dalvik"
+  ],
+  "correlationProcedure": {
+    "windowStart": "tapTime - 30 seconds",
+    "windowEnd": "tapTime + 60 seconds",
+    "filter": "versionCode=23",
+    "exclude": "control request IDs and device-bridge-control-probe UA"
+  },
+  "physicalRequestIds": ["117959fd-9ae", "26ba1005-0c2"],
+  "physicalTapTime": "INFERRED_2026-08-27T12:56:04Z",
+  "physicalTapTimeSuppliedByOperator": false,
+  "httpRequestFromDevice": "YES",
+  "classification": "POST_DOWNLOAD_CLIENT"
+}

@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-08-27T12:33:30.000Z",
+  "probeWindowId": "pbw-20260827-123330Z",
+  "probeWindowStart": "2026-08-27T12:33:30.000Z",
+  "targetVersionCode": 23,
+  "expectedApkBytes": 44411738,
+  "installedVersionCode": 21,
+  "baselineQuery": {
+    "since": "2026-08-27T12:33:00.000Z",
+    "url": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk/request-log?versionCode=23&since=2026-08-27T12:33:00.000Z",
+    "queriedAt": "2026-08-27T12:33:30.000Z",
+    "eventCount": 9,
+    "physicalDeviceRequests": 0,
+    "controlRequests": 1,
+    "controlRequestIds": ["f9a2a06c-637"],
+    "controlUserAgents": ["device-bridge-control-probe/1.0 (RC10.5-forensics)"],
+    "note": "Only CI/control probe present. No okhttp/Expo physical UA in window before operator tap."
+  },
+  "readyForPhysicalTap": true
+}

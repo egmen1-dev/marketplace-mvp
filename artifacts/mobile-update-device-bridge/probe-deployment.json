@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-08-27T12:33:30.000Z",
+  "pr205": {
+    "number": 205,
+    "title": "forensics(mobile): RC10.5 device bridge probe after proxy physical FAIL",
+    "state": "MERGED",
+    "mergedAt": "2026-08-27T12:26:56Z",
+    "mergeCommit": "b91871a39481a98befe764d683b74f34608d925e",
+    "headSha": "1a6fc4f"
+  },
+  "deployTruth": {
+    "PR205_STATUS": "MERGED",
+    "MAIN_SHA": "b91871a",
+    "RAILWAY_SHA": "b91871a",
+    "DEVICE_PROBE_API_LIVE": "YES",
+    "railwayBuildTime": "2026-08-27T12:28:44.960Z",
+    "requestLogEndpoint": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk/request-log?versionCode=23&since=<ISO>",
+    "requestLogProbeResult": {
+      "httpStatus": 200,
+      "bodyShape": "JSON with events array",
+      "checkedAt": "2026-08-27T12:32:48.742Z"
+    }
+  },
+  "verdict": "PROBE_LIVE",
+  "controlProbe": {
+    "PROBE_API": "PASS",
+    "CONTROL_REQUEST_LOGGED": "PASS",
+    "CONTROL_RESPONSE_COMPLETED": "PASS",
+    "CONTROL_BYTES_SENT": 44411738
+  }
+}

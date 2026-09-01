@@ -1,20 +1,30 @@
 {
-  "generatedAt": "2026-08-27T11:33:21.344Z",
-  "mainCommit": "83fb3b4",
-  "stagingCommit": "83fb3b4",
+  "generatedAt": "2026-08-27T12:33:42.000Z",
+  "mainCommit": "b91871a",
+  "stagingCommit": "b91871a",
   "stagingUrl": "https://web-production-e56fb.up.railway.app",
+  "deployLag": {
+    "commitsBehind": 0,
+    "missingProbeApi": false,
+    "verdict": "PROBE_LIVE"
+  },
   "installed": {
     "rc": "RC10.5",
     "versionName": "0.1.15-beta.6",
     "versionCode": 21,
-    "commit": "91b9c1d"
+    "commit": "91b9c1d",
+    "channel": "CLOSED_BETA",
+    "environment": "staging"
   },
   "target": {
     "rc": "RC10.7",
     "versionName": "0.1.15-beta.8",
     "versionCode": 23,
-    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
+    "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+    "expectedBytes": 44411738
   },
   "mrpDownloadUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
-  "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23"
+  "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+  "package": "ru.lot.marketplace.alpha",
+  "signerSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c"
 }

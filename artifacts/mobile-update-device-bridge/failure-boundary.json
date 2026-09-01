@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-08-27T13:01:00.000Z",
+  "classification": "POST_DOWNLOAD_CLIENT",
+  "httpRequestFromDevice": "YES",
+  "apkTransport": "PASS",
+  "transportDetails": {
+    "status": 200,
+    "rangeHeader": null,
+    "responseType": "200 full body (not 206)",
+    "bytesSent": 44411738,
+    "expectedBytes": 44411738,
+    "transferCompletionPercent": 100,
+    "averageThroughputMbps": {
+      "request1_29s": 12.2,
+      "request2_20s": 17.4
+    },
+    "clientDisconnect": false,
+    "upstreamFailure": false
+  },
+  "excludedClassifications": [
+    "CLIENT_BEFORE_NETWORK",
+    "PROXY_TRANSPORT",
+    "LARGE_FILE_TIMEOUT",
+    "CLIENT_DISCONNECT",
+    "UPSTREAM_FAILURE"
+  ],
+  "postDownloadCandidates": [
+    {
+      "candidate": "VERIFY",
+      "rank": 1,
+      "evidence": "RC10.5 uses file.arrayBuffer() on ~44MB APK for SHA256; heap pressure / OOM risk on device"
+    },
+    {
+      "candidate": "FILESYSTEM",
+      "rank": 2,
+      "evidence": "destination delete, partial cache, SecureStore IO before verify"
+    },
+    {
+      "candidate": "INSTALLER",
+      "rank": 3,
+      "evidence": "openApkInstaller handoff may fail after verify even when file exists"
+    },
+    {
+      "candidate": "POST_DOWNLOAD_UNKNOWN",
+      "rank": 4,
+      "evidence": "exception mapping to network_error copy masks true phase"
+    }
+  ],
+  "oldClientRemoteRecoveryPossible": "NO",
+  "manualInstallRequiredForRc105": "YES",
+  "reason": "Immutable RC10.5 received full APK over HTTP twice; server/proxy cannot fix post-download client defect"
+}
