@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "epic": "RC10.5 Physical Update Device Probe Closure",
+  "deployTruth": {
+    "PR205_STATUS": "MERGED",
+    "MAIN_SHA": "b91871a",
+    "RAILWAY_SHA": "b91871a",
+    "DEVICE_PROBE_API_LIVE": "YES"
+  },
+  "physicalAttempt": {
+    "DEVICE_DISPLAY_TIME": "17:59",
+    "DEVICE_TIMEZONE": "UTC+5 (best-evidence)",
+    "TIME_MAPPING_CONFIDENCE": "HIGH",
+    "SERVER_SEARCH_WINDOW": "2026-08-27T12:25:00.000Z..2026-08-27T13:30:00.000Z"
+  },
+  "httpRequestFromDevice": "YES",
+  "primaryRequestId": "26ba1005-0c2",
+  "failureBoundary": "SHA_VERIFY",
+  "rootCause": "Post-HTTP failure in immutable RC10.5: full APK delivered via okhttp twice; client did not reach installer. Primary suspect: sha256HexFromFile → file.arrayBuffer() on ~44MB APK in JS heap after downloadFileAsync.",
+  "oldClientRemoteRecoveryPossible": "NO",
+  "manualBrowserBridgeSafe": "YES",
+  "signerMatch": "YES",
+  "gates": {
+    "RC10_5_SERVER_BRIDGE_GATE": "PASS",
+    "RC10_5_DEVICE_BRIDGE": "PASS_HTTP_FAIL_POST_DOWNLOAD"
+  },
+  "release": {
+    "RC10_8": "NOT_CREATED",
+    "MRP": "UNCHANGED"
+  },
+  "finalVerdict": "BLOCKED_POST_DOWNLOAD"
+}

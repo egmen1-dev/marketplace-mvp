@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "endpoint": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk/request-log",
+  "query": {
+    "versionCode": 23,
+    "since": "2026-08-27T12:25:00.000Z",
+    "limit": 100
+  },
+  "SERVER_SEARCH_WINDOW": {
+    "from": "2026-08-27T12:25:00.000Z",
+    "to": "2026-08-27T13:30:00.000Z",
+    "rationale": "Covers UTC+3..UTC+6 mapping for device display 17:59 without assuming timezone"
+  },
+  "excluded": [
+    {
+      "requestId": "f9a2a06c-637",
+      "reason": "control probe",
+      "userAgent": "device-bridge-control-probe/1.0 (RC10.5-forensics)",
+      "startedAt": "2026-08-27T12:33:10.387Z"
+    }
+  ],
+  "matchingPhysicalRequests": [
+    {
+      "requestId": "117959fd-9ae",
+      "userAgent": "okhttp/4.9.2",
+      "startedAt": "2026-08-27T12:56:04.491Z",
+      "localUtcPlus5": "17:56:04",
+      "correlation": "possible earlier tap or auto-retry before operator-noted 17:59"
+    },
+    {
+      "requestId": "26ba1005-0c2",
+      "userAgent": "okhttp/4.9.2",
+      "startedAt": "2026-08-27T12:58:29.559Z",
+      "localUtcPlus5": "17:58:29",
+      "correlation": "primary match to operator 17:59 display time"
+    }
+  ],
+  "totalEventsInWindow": 25,
+  "physicalRequestStarts": 2,
+  "ciOrAutomatedInWindow": 0
+}

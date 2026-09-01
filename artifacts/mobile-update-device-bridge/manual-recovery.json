@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-08-27T13:01:00.000Z",
+  "required": true,
+  "reason": "POST_DOWNLOAD_CLIENT boundary proven; RC10.5 cannot self-update despite full APK delivery",
+  "packageMatch": {
+    "rc105Package": "ru.lot.marketplace.alpha",
+    "rc107Package": "ru.lot.marketplace.alpha",
+    "PACKAGE_MATCH": "YES"
+  },
+  "signerMatch": {
+    "rc105Signer": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "rc107Signer": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "SIGNER_MATCH": "YES"
+  },
+  "versionUpgrade": {
+    "installedCode": 21,
+    "targetCode": 23,
+    "VERSION_UPGRADE_VALID": "YES"
+  },
+  "inPlaceInstall": {
+    "doNotUninstall": true,
+    "IN_PLACE_INSTALL_SAFE": "YES"
+  },
+  "browserBridgeUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+  "steps": [
+    "Open browser URL on Android device",
+    "Download APK",
+    "Open downloaded APK",
+    "Allow installation from browser if prompted",
+    "Install over existing ЛОТ — do NOT uninstall",
+    "Verify versionName=0.1.15-beta.8 versionCode=23 RC=RC10.7",
+    "Check app data/session preservation"
+  ],
+  "rc10_7_install_recovery": "NOT_RUN",
+  "futureSelfUpdatePhysicalProof": "REQUIRED"
+}

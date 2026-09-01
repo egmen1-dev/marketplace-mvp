@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-08-27T12:30:00.000Z",
+  "correction": "Server-only Node/curl gate PASS must never be described as physical device bridge proof",
+  "gates": {
+    "RC10_5_SERVER_BRIDGE_GATE": {
+      "proves": [
+        "MRP contract for versionCode=21",
+        "proxy HTTP 200 / full APK bytes from Node",
+        "SHA256 match from CI/Node download",
+        "same-origin downloadUrl rewrite"
+      ],
+      "doesNotProve": [
+        "HTTP request initiation from RC10.5 physical tap",
+        "Expo FileSystem Android execution on device",
+        "OkHttp 44MB mobile transport",
+        "file.arrayBuffer SHA on device heap",
+        "installer handoff",
+        "lifecycle cancellation"
+      ],
+      "currentStatus": "PASS",
+      "command": "npm run mobile:update-bridge-rc10.5:gate"
+    },
+    "RC10_5_DEVICE_BRIDGE": {
+      "proves": [
+        "Physical RC10.5 tap produces observable server request log",
+        "Transfer completion or failure boundary on device path"
+      ],
+      "currentStatus": "NOT_RUN",
+      "requires": [
+        "DEVICE_PROBE_API_LIVE=YES",
+        "one controlled physical download tap",
+        "request-log correlation by tap timestamp"
+      ]
+    }
+  },
+  "deprecatedTerms": {
+    "RC10_5_REMOTE_RECOVERY_GATE": "Renamed/reframed to RC10_5_SERVER_BRIDGE_GATE — do not equate with device bridge",
+    "REMOTE_RECOVERY_PROVEN": "Must not be derived from Node/curl download alone"
+  },
+  "overallRemoteRecovery": {
+    "PASS": "only when RC10_5_DEVICE_BRIDGE=PASS",
+    "current": "NOT_RUN"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "httpRequestFromDevice": "YES",
+  "confidence": "HIGH",
+  "evidence": [
+    "Two okhttp/4.9.2 requests in search window — matches Expo FileSystem Android OkHttp stack in RC10.5",
+    "Not control probe UA (device-bridge-control-probe excluded)",
+    "Timestamps align with operator 17:59 at UTC+5 offset (12:58:29Z = 17:58:29)",
+    "Both requests reached response_complete with full byte count",
+    "No CI/automated UA patterns in physical window",
+    "RC10.5 remained on code 21 despite full server delivery — failure after HTTP"
+  ],
+  "excludedRequestIds": ["f9a2a06c-637"],
+  "physicalRequestIds": ["117959fd-9ae", "26ba1005-0c2"],
+  "primaryPhysicalRequestId": "26ba1005-0c2"
+}

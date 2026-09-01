@@ -1,57 +1,36 @@
 {
-  "generatedAt": "2026-08-27T11:33:21.349Z",
+  "generatedAt": "2026-08-27T13:01:00.000Z",
   "incident": "P0_UPDATE_DOWNLOAD_BRIDGE_FAILURE",
-  "physicalRetry": "FAIL after Railway proxy recovery",
   "PREVIOUS_GITHUB_ROOT_CAUSE_STATUS": "DISPROVEN",
   "FAILED_PHASE_DOWNLOAD_SUPPORTED_BY_RC10_5": "BROKEN",
-  "HTTP_REQUEST_FROM_DEVICE": "NOT_RUN",
-  "ROOT_CAUSE": "UNKNOWN",
-  "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "UNKNOWN_UNTIL_PROBE",
-  "MANUAL_RECOVERY_REQUIRED": "UNKNOWN_UNTIL_PROBE",
-  "NEXT_ACTION": "BLOCKED_ROOT_CAUSE_UNPROVEN",
+  "HTTP_REQUEST_FROM_DEVICE": "YES",
+  "APK_TRANSPORT": "PASS",
+  "ROOT_CAUSE_BOUNDARY": "POST_DOWNLOAD_CLIENT",
+  "OLD_CLIENT_REMOTE_RECOVERY_POSSIBLE": "NO",
+  "MANUAL_INSTALL_REQUIRED_FOR_RC10_5": "YES",
+  "NEXT_ACTION": "MANUAL_INSTALL_REQUIRED_FOR_RC10_5",
   "RC10_8": "NOT_CREATED",
   "mrpVersionUnchanged": true,
-  "gateGap": {
-    "RC10_5_SERVER_BRIDGE_GATE": {
-      "proves": [
-        "MRP contract",
-        "proxy HTTP 200",
-        "full APK bytes",
-        "SHA256 match from CI/Node"
-      ],
-      "doesNotProve": [
-        "Expo FileSystem Android execution on device",
-        "HTTP request initiation from RC10.5 tap",
-        "OkHttp 44MB mobile transport",
-        "file.arrayBuffer SHA on device heap",
-        "installer handoff",
-        "lifecycle cancellation"
-      ]
-    },
-    "RC10_5_DEVICE_BRIDGE": {
-      "status": "NOT_RUN",
-      "requires": "physical tap + server request-log correlation"
-    },
-    "previousOverstatement": "RC10_5_REMOTE_RECOVERY_GATE=PASS did NOT prove physical RC10.5 download"
+  "deployTruth": {
+    "PR205_STATUS": "MERGED",
+    "MAIN_SHA": "b91871a",
+    "RAILWAY_SHA": "b91871a",
+    "DEVICE_PROBE_API_LIVE": "YES"
   },
-  "baseline": {
-    "generatedAt": "2026-08-27T11:33:21.344Z",
-    "mainCommit": "83fb3b4",
-    "stagingCommit": "83fb3b4",
-    "stagingUrl": "https://web-production-e56fb.up.railway.app",
-    "installed": {
-      "rc": "RC10.5",
-      "versionName": "0.1.15-beta.6",
-      "versionCode": 21,
-      "commit": "91b9c1d"
-    },
-    "target": {
-      "rc": "RC10.7",
-      "versionName": "0.1.15-beta.8",
-      "versionCode": 23,
-      "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043"
-    },
-    "mrpDownloadUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
-    "proxyUrl": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23"
-  }
+  "physicalProbe": {
+    "probeWindowId": "pbw-20260827-123330Z",
+    "inferredTapTime": "2026-08-27T12:56:04Z",
+    "operatorTapTimeSupplied": false,
+    "screenshotReceived": false,
+    "primaryRequestId": "117959fd-9ae",
+    "retryRequestId": "26ba1005-0c2",
+    "bytesSent": 44411738,
+    "transferCompletionPercent": 100
+  },
+  "gates": {
+    "RC10_5_SERVER_BRIDGE_GATE": "PASS",
+    "RC10_5_DEVICE_BRIDGE": "PASS_TRANSPORT_FAIL_POST_DOWNLOAD"
+  },
+  "RC10_7_INSTALL_RECOVERY": "NOT_RUN",
+  "FUTURE_SELF_UPDATE_PHYSICAL_PROOF": "REQUIRED"
 }

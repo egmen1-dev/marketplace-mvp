@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-08-27T12:33:18.000Z",
+  "type": "control",
+  "purpose": "Verify server instrumentation before physical RC10.5 tap",
+  "url": "https://web-production-e56fb.up.railway.app/api/mobile/releases/apk?versionCode=23",
+  "userAgent": "device-bridge-control-probe/1.0 (RC10.5-forensics)",
+  "requestId": "f9a2a06c-637",
+  "startedAt": "2026-08-27T12:33:10.387Z",
+  "responseHeadersAt": "2026-08-27T12:33:11.550Z",
+  "completedAt": "2026-08-27T12:33:12.463Z",
+  "status": 200,
+  "bytesSent": 44411738,
+  "expectedBytes": 44411738,
+  "durationMs": 913,
+  "sha256": "4b4f88df493eee141019d27e88da37840186e21dbcd45429364e031aa5d9a043",
+  "eventSequence": [
+    "request_started",
+    "response_headers",
+    "bytes_progress",
+    "response_complete"
+  ],
+  "verdict": {
+    "PROBE_API": "PASS",
+    "CONTROL_REQUEST_LOGGED": "PASS",
+    "CONTROL_RESPONSE_COMPLETED": "PASS",
+    "CONTROL_BYTES_SENT": 44411738
+  },
+  "excludeFromPhysicalCorrelation": true
+}

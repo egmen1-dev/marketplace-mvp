@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "primaryRequest": {
+    "REQUEST_ID": "26ba1005-0c2",
+    "correlation": "closest to operator 17:59 (UTC+5 → 17:58:29 local)",
+    "REQUEST_STARTED_AT": "2026-08-27T12:58:29.559Z",
+    "RESPONSE_HEADERS_AT": "2026-08-27T12:58:29.592Z",
+    "RESPONSE_COMPLETED_AT": "2026-08-27T12:58:49.959Z",
+    "RESPONSE_STATUS": 200,
+    "RESPONSE_HEADERS_SENT": true,
+    "contentLength": 44411738,
+    "contentType": "application/vnd.android.package-archive",
+    "rangeHeader": null,
+    "BYTES_SENT": 44411738,
+    "EXPECTED_BYTES": 44411738,
+    "TRANSFER_COMPLETION_PERCENT": 100,
+    "RESPONSE_COMPLETE": "YES",
+    "CLIENT_DISCONNECTED": "NO",
+    "DURATION_MS": 20367,
+    "userAgent": "okhttp/4.9.2",
+    "eventSequence": [
+      "request_started",
+      "response_headers",
+      "bytes_progress",
+      "bytes_progress",
+      "bytes_progress",
+      "bytes_progress",
+      "bytes_progress",
+      "response_complete"
+    ],
+    "classification": "NETWORK_DOWNLOAD_SUCCESS"
+  },
+  "secondaryRequest": {
+    "REQUEST_ID": "117959fd-9ae",
+    "correlation": "earlier physical attempt at 17:56 local (UTC+5)",
+    "REQUEST_STARTED_AT": "2026-08-27T12:56:04.491Z",
+    "RESPONSE_COMPLETED_AT": "2026-08-27T12:56:34.722Z",
+    "RESPONSE_STATUS": 200,
+    "BYTES_SENT": 44411738,
+    "RESPONSE_COMPLETE": "YES",
+    "CLIENT_DISCONNECTED": "NO",
+    "DURATION_MS": 29101,
+    "classification": "NETWORK_DOWNLOAD_SUCCESS"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "commit": "91b9c1d",
+  "appliesToThisAttempt": false,
+  "reason": "HTTP_REQUEST_FROM_DEVICE=YES — pre-http paths ruled out by server probe for operator 17:59 attempt",
+  "callGraph": [
+    { "step": 1, "location": "update.tsx", "action": "PrimaryButton onPress=downloadUpdate (reachable in failed+availableHint legacy state)" },
+    { "step": 2, "location": "useUpdateCheckFlow.downloadUpdate", "guard": "if (!updateInfo) return — NO phase guard" },
+    { "step": 3, "location": "startApkDownload", "preHttpChecks": ["downloadUrl present", "Platform.OS android", "sha256 normalize"] },
+    { "step": 4, "location": "findVerifiedCachedApk", "canThrow": "SecureStore IO, file.arrayBuffer on cache verify", "canReturn": "null → proceed to download" },
+    { "step": 5, "location": "setState(DOWNLOADING)", "note": "only if cache miss" },
+    { "step": 6, "location": "downloadVerifiedApk", "preHttp": ["apkCacheFile", "destination.delete()"] },
+    { "step": 7, "location": "File.downloadFileAsync", "httpStarts": true }
+  ],
+  "preHttpRiskSites": [
+    { "site": "findVerifiedCachedApk", "risk": "arrayBuffer on cached file before HTTP", "relevance": "LOW for this attempt — HTTP occurred" },
+    { "site": "destination.delete()", "risk": "filesystem delete throw", "relevance": "LOW — HTTP started" },
+    { "site": "failed phase + stale updateInfo", "risk": "UX contradiction, handler still reachable", "relevance": "CONFIRMED legacy bug, not transport blocker" },
+    { "site": "SecureStore load/save", "risk": "IO failure", "relevance": "LOW — HTTP completed" }
+  ],
+  "legacyUiBug": {
+    "symptom": "failed check message + available hint + download CTA simultaneously",
+    "cause": "check catch sets phase=failed but does not clear updateInfo; availableHint renders when hasUpdate && phase not in available|downloading|ready",
+    "isRootCause": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-08-27T13:15:00.000Z",
+  "HTTP_REQUEST_FROM_DEVICE": "YES",
+  "FAILURE_BOUNDARY": "SHA_VERIFY",
+  "boundaryNarrowing": {
+    "CLIENT_BEFORE_NETWORK": "RULED_OUT",
+    "NETWORK_TRANSPORT": "RULED_OUT",
+    "POST_DOWNLOAD_FILESYSTEM": "POSSIBLE_SECONDARY",
+    "SHA_VERIFY": "PRIMARY",
+    "INSTALLER_HANDOFF": "POSSIBLE_IF_VERIFY_PASSED",
+    "INCONCLUSIVE": "NO"
+  },
+  "networkEvidence": {
+    "bothPhysicalRequestsCompleted": true,
+    "bytesSent": 44411738,
+    "expectedBytes": 44411738,
+    "clientDisconnect": false,
+    "proxyOrConnectionFailure": false,
+    "largeFileTransportFailure": false
+  },
+  "postDownloadRanking": [
+    {
+      "rank": 1,
+      "boundary": "SHA_VERIFY",
+      "evidence": [
+        "downloadVerifiedApk calls sha256HexFromFile → file.arrayBuffer() on full ~44MB APK after downloadFileAsync",
+        "Telemetry UPDATE_ANALYTICS.downloaded fires only AFTER verify passes — likely never reached",
+        "mapUpdateError maps /sha256|verify/ → sha_verification_failed with copy 'Не удалось проверить обновление'",
+        "Two full HTTP completions with no install — consistent with verify or post-verify failure",
+        "PRE-HTTP ruled out — 44MB arrayBuffer concern applies only post-HTTP"
+      ]
+    },
+    {
+      "rank": 2,
+      "boundary": "INSTALLER_HANDOFF",
+      "evidence": [
+        "openApkInstaller requires file.contentUri — failure if URI unavailable after verify",
+        "Would only apply if SHA verify succeeded silently (less likely given UI state)"
+      ]
+    },
+    {
+      "rank": 3,
+      "boundary": "POST_DOWNLOAD_FILESYSTEM",
+      "evidence": [
+        "destination.delete() before download; partial file if verify throws mid-path",
+        "Lower probability given server-side response_complete on both attempts"
+      ]
+    }
+  ],
+  "preHttpRuledOutNote": "Request-log proves File.downloadFileAsync HTTP path executed. Pre-http archaeology retained for completeness but does not explain this attempt."
+}
