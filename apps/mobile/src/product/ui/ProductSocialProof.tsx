@@ -37,8 +37,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     minHeight: 20,
-    paddingHorizontal: 16,
-    marginTop: -4,
   },
   star: {
     color: colors.ctaPrimary,
@@ -60,13 +58,11 @@ const styles = StyleSheet.create({
   reviews: {
     fontSize: 14,
     lineHeight: 18,
-    color: "#8A8A8A",
+    color: "#77777E",
   },
   empty: {
     fontSize: 14,
     lineHeight: 18,
-    color: "#8A8A8A",
-    paddingHorizontal: 16,
-    marginTop: -4,
+    color: "#77777E",
   },
 });

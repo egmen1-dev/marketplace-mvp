@@ -1,6 +1,6 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
-import { Pressable, Share, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { HOME_LOCATION_LABEL } from "../../home/content";
@@ -12,15 +12,21 @@ function HeaderIconButton({
   label,
   onPress,
   active,
+  busy,
 }: {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   label: string;
   onPress: () => void;
   active?: boolean;
+  busy?: boolean;
 }) {
   return (
-    <Pressable style={styles.iconBtn} onPress={onPress} accessibilityRole="button" accessibilityLabel={label} hitSlop={8}>
-      <MaterialCommunityIcons name={icon} size={22} color={active ? colors.danger : colors.black} />
+    <Pressable style={styles.iconBtn} onPress={onPress} disabled={busy} accessibilityRole="button" accessibilityLabel={label} hitSlop={8}>
+      {busy ? (
+        <ActivityIndicator size="small" color={colors.ctaPrimary} />
+      ) : (
+        <MaterialCommunityIcons name={icon} size={22} color={active ? colors.danger : colors.black} />
+      )}
     </Pressable>
   );
 }
@@ -28,10 +34,12 @@ function HeaderIconButton({
 export function ProductDetailHeader({
   productId,
   isFavorite,
+  isFavoriteBusy,
   onToggleFavorite,
 }: {
   productId: string;
   isFavorite: boolean;
+  isFavoriteBusy?: boolean;
   onToggleFavorite: () => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -42,16 +50,10 @@ export function ProductDetailHeader({
         <Pressable style={styles.backBtn} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Назад" hitSlop={8}>
           <MaterialCommunityIcons name="arrow-left" size={24} color={colors.black} />
         </Pressable>
-        <Pressable
-          style={styles.location}
-          accessibilityRole="button"
-          accessibilityLabel={`Город: ${HOME_LOCATION_LABEL}`}
-          onPress={() => router.push("/(tabs)/catalog")}
-        >
+        <View style={styles.location} accessibilityRole="text" accessibilityLabel={`Город: ${HOME_LOCATION_LABEL}`}>
           <MaterialCommunityIcons name="map-marker-outline" size={17} color={colors.black} />
           <Text style={styles.locationText}>{HOME_LOCATION_LABEL}</Text>
-          <MaterialCommunityIcons name="chevron-down" size={15} color={colors.gray500} />
-        </Pressable>
+        </View>
       </View>
 
       <Pressable
@@ -74,6 +76,7 @@ export function ProductDetailHeader({
           label={isFavorite ? "Убрать из избранного" : "Добавить в избранное"}
           onPress={onToggleFavorite}
           active={isFavorite}
+          busy={isFavoriteBusy}
         />
       </View>
     </View>

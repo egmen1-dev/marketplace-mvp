@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { formatPrice } from "../../utils/format";
@@ -11,6 +11,7 @@ export function ProductStickyPurchaseBar({
   quantity,
   inStock,
   buyNowLoading,
+  cartBusy,
   onAddToCart,
   onIncrement,
   onDecrement,
@@ -20,12 +21,14 @@ export function ProductStickyPurchaseBar({
   quantity: number;
   inStock: boolean;
   buyNowLoading?: boolean;
+  cartBusy?: boolean;
   onAddToCart: () => void;
   onIncrement: () => void;
   onDecrement: () => void;
   onBuyNow: () => void;
 }) {
   const insets = useSafeAreaInsets();
+  const cartDisabled = Boolean(cartBusy);
 
   return (
     <View style={[styles.wrap, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
@@ -36,17 +39,33 @@ export function ProductStickyPurchaseBar({
       ) : (
         <View style={styles.actions}>
           {quantity <= 0 ? (
-            <Pressable style={styles.cartBtn} onPress={onAddToCart} accessibilityRole="button" accessibilityLabel="В корзину">
-              <MaterialCommunityIcons name="cart-outline" size={20} color={colors.ctaPrimary} />
-              <Text style={styles.cartText}>В корзину</Text>
+            <Pressable
+              style={[styles.cartBtn, cartDisabled ? styles.disabled : null]}
+              onPress={onAddToCart}
+              disabled={cartDisabled}
+              accessibilityRole="button"
+              accessibilityLabel="В корзину"
+            >
+              {cartDisabled ? (
+                <ActivityIndicator size="small" color={colors.ctaPrimary} />
+              ) : (
+                <>
+                  <MaterialCommunityIcons name="cart-outline" size={20} color={colors.ctaPrimary} />
+                  <Text style={styles.cartText}>В корзину</Text>
+                </>
+              )}
             </Pressable>
           ) : (
-            <View style={styles.stepper}>
-              <Pressable style={styles.stepBtn} onPress={onDecrement} accessibilityRole="button" hitSlop={6}>
+            <View style={[styles.stepper, cartDisabled ? styles.disabled : null]}>
+              <Pressable style={styles.stepBtn} onPress={onDecrement} disabled={cartDisabled} accessibilityRole="button" hitSlop={6}>
                 <Text style={styles.stepSymbol}>−</Text>
               </Pressable>
-              <Text style={styles.qty}>{quantity}</Text>
-              <Pressable style={styles.stepBtn} onPress={onIncrement} accessibilityRole="button" hitSlop={6}>
+              {cartDisabled ? (
+                <ActivityIndicator size="small" color={colors.ctaPrimary} />
+              ) : (
+                <Text style={styles.qty}>{quantity}</Text>
+              )}
+              <Pressable style={styles.stepBtn} onPress={onIncrement} disabled={cartDisabled} accessibilityRole="button" hitSlop={6}>
                 <Text style={styles.stepSymbol}>+</Text>
               </Pressable>
             </View>
@@ -80,7 +99,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: "#E9E9E9",
+    borderTopColor: "#E9E9EC",
     paddingHorizontal: PRODUCT_SCREEN_PADDING,
     paddingTop: spacing.md,
     shadowColor: "#000",
@@ -175,11 +194,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: radii.md,
-    backgroundColor: "#F8F8F8",
+    backgroundColor: "#F7F7F8",
   },
   unavailableText: {
     ...typography.button,
     color: colors.gray500,
     fontWeight: "600",
+  },
+  disabled: {
+    opacity: 0.65,
   },
 });
