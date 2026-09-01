@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { addToCart, fetchCart, removeCartItem, toggleFavorite, updateCartQuantity } from "../api/endpoints";
 import { ApiClientError } from "../api/client";
 import { resolveCartProductQuantity } from "../commerce/cart-response";
 import { useCartQuantitiesStore } from "../commerce/cart-quantities-store";
-import { selectCartBusyProductIds, selectFavoriteBusyProductIds, useCommerceBusyStore } from "../commerce/commerce-busy-store";
+import { useCommerceBusyStore } from "../commerce/commerce-busy-store";
 import { useAppStore } from "../store/app-store";
 import { showCommerceToast } from "../commerce/commerce-toast-store";
 import { handleCommerceAuthFailure, trackCommerceAction } from "../commerce/commerce-telemetry";
@@ -55,8 +55,10 @@ export function useCommerceActions() {
   const setCartQuantity = useCartQuantitiesStore((s) => s.setQuantity);
   const setCartBusy = useCommerceBusyStore((s) => s.setCartBusy);
   const setFavoriteBusy = useCommerceBusyStore((s) => s.setFavoriteBusy);
-  const cartBusyProductIds = useCommerceBusyStore(selectCartBusyProductIds);
-  const favoriteBusyProductIds = useCommerceBusyStore(selectFavoriteBusyProductIds);
+  const cartBusyMap = useCommerceBusyStore((s) => s.cartProductIds);
+  const favoriteBusyMap = useCommerceBusyStore((s) => s.favoriteProductIds);
+  const cartBusyProductIds = useMemo(() => Object.keys(cartBusyMap), [cartBusyMap]);
+  const favoriteBusyProductIds = useMemo(() => Object.keys(favoriteBusyMap), [favoriteBusyMap]);
 
   useEffect(() => {
     if (!hydrated) void hydrateFavorites();

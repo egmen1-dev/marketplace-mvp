@@ -40,7 +40,10 @@ export function CommerceCartCta({
           { minHeight },
           disabled ? styles.disabled : pressed ? styles.addBtnPressed : null,
         ]}
-        onPress={onAdd}
+        onPress={(event) => {
+          event.stopPropagation();
+          onAdd();
+        }}
         disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel="В корзину"
@@ -62,7 +65,10 @@ export function CommerceCartCta({
     <View style={[styles.stepper, { minHeight }]}>
       <Pressable
         style={styles.stepBtn}
-        onPress={onDecrement}
+        onPress={(event) => {
+          event.stopPropagation();
+          onDecrement();
+        }}
         disabled={disabled}
         accessibilityRole="button"
         hitSlop={6}
@@ -76,7 +82,10 @@ export function CommerceCartCta({
       )}
       <Pressable
         style={styles.stepBtn}
-        onPress={onIncrement}
+        onPress={(event) => {
+          event.stopPropagation();
+          onIncrement();
+        }}
         disabled={disabled}
         accessibilityRole="button"
         hitSlop={6}
