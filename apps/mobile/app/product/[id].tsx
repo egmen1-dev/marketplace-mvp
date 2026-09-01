@@ -1,14 +1,17 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { fetchCatalog, fetchProduct, fetchSellerStorefront, postTelemetry, type MobileProductListItem } from "../../src/api/endpoints";
-import { getCartQuantity, useCartQuantitiesStore } from "../../src/commerce/cart-quantities-store";
+import { ApiClientError } from "../../src/api/client";
+import { useCartQuantitiesStore } from "../../src/commerce/cart-quantities-store";
 import { loadAppConfig } from "../../src/config/env";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
 import { openProductConversation } from "../../src/hooks/useChatActions";
 import { openSellerStorefront } from "../../src/navigation/seller-routes";
+import { filterRelatedProducts, PDP_RELATED_TITLE } from "../../src/product/pdp-related";
+import { filterTruthfulSellerBadges } from "../../src/product/pdp-trust";
 import {
   ProductCharacteristicsCard,
   ProductDeliveryCard,
@@ -49,23 +52,55 @@ export default function ProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const config = loadAppConfig();
-  const scrollRef = useRef<ScrollView>(null);
-  const similarYRef = useRef(0);
   const cartQuantity = useCartQuantitiesStore((s) => (id ? s.quantities[id] ?? 0 : 0));
-  const { addProductToCart, incrementProductCart, decrementProductCart, toggleProductFavorite, isFavorite, isCartBusy, isFavoriteBusy } =
-    useCommerceActions();
+  const {
+    addProductToCart,
+    incrementProductCart,
+    decrementProductCart,
+    toggleProductFavorite,
+    isFavorite,
+    isCartBusy,
+    isFavoriteBusy,
+  } = useCommerceActions();
 
   const [product, setProduct] = useState<ProductRecord | null>(null);
   const [similar, setSimilar] = useState<MobileProductListItem[]>([]);
-  const [sellerTrust, setSellerTrust] = useState<{ badges: string[]; respondsInChat: boolean } | null>(null);
+  const [sellerTrust, setSellerTrust] = useState<{ badges: string[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [buyNowLoading, setBuyNowLoading] = useState(false);
+
+  const loadRelated = useCallback(async (productId: string, categoryId?: string) => {
+    try {
+      const related = await fetchCatalog({ sort: "popular", categoryId });
+      setSimilar(filterRelatedProducts(related.items, productId));
+    } catch {
+      setSimilar([]);
+    }
+  }, []);
+
+  const loadSellerTrust = useCallback(async (sellerId?: string) => {
+    if (!sellerId) {
+      setSellerTrust(null);
+      return;
+    }
+    try {
+      const storefront = await fetchSellerStorefront(sellerId);
+      setSellerTrust({ badges: filterTruthfulSellerBadges(storefront.badges ?? []) });
+    } catch {
+      setSellerTrust(null);
+    }
+  }, []);
 
   const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     setError(false);
+    setNotFound(false);
+    setSimilar([]);
+    setSellerTrust(null);
+
     try {
       const p = await fetchProduct(id);
       setProduct(p);
@@ -74,25 +109,19 @@ export default function ProductScreen() {
 
       const seller = p.seller as { id?: string } | undefined;
       const categoryId = (p.category as { id?: string } | null)?.id;
-
-      const [related, storefront] = await Promise.all([
-        fetchCatalog({ sort: "popular", categoryId }).catch(() => ({ items: [] as MobileProductListItem[] })),
-        seller?.id ? fetchSellerStorefront(seller.id).catch(() => null) : Promise.resolve(null),
-      ]);
-
-      setSimilar(related.items.filter((item) => item.id !== id).slice(0, 6));
-      if (storefront) {
-        setSellerTrust({ badges: storefront.badges ?? [], respondsInChat: storefront.respondsInChat });
-      } else {
-        setSellerTrust(null);
-      }
-    } catch {
+      void loadRelated(id, categoryId);
+      void loadSellerTrust(seller?.id);
+    } catch (err) {
       setProduct(null);
-      setError(true);
+      if (err instanceof ApiClientError && err.status === 404) {
+        setNotFound(true);
+      } else {
+        setError(true);
+      }
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, loadRelated, loadSellerTrust]);
 
   useEffect(() => {
     void load();
@@ -140,16 +169,12 @@ export default function ProductScreen() {
 
   const trustChips = useMemo(() => {
     if (!derived?.seller) return [];
-    const chips: Array<{ id: string; icon: "shield-check" | "message-text-outline" | "star" | "truck-delivery-outline"; label: string }> = [];
-    for (const badge of sellerTrust?.badges ?? []) {
-      chips.push({ id: `badge-${badge}`, icon: "star", label: badge });
-    }
-    return chips.slice(0, 3);
+    return (sellerTrust?.badges ?? []).slice(0, 3).map((badge) => ({
+      id: `badge-${badge}`,
+      icon: "star" as const,
+      label: badge,
+    }));
   }, [derived?.seller, sellerTrust]);
-
-  function scrollToSimilar() {
-    scrollRef.current?.scrollTo({ y: Math.max(0, similarYRef.current - 12), animated: true });
-  }
 
   async function onWriteSeller() {
     if (!id) return;
@@ -161,10 +186,10 @@ export default function ProductScreen() {
   }
 
   async function onBuyNow() {
-    if (!id || !derived?.inStock) return;
+    if (!id || !derived?.inStock || isCartBusy(id)) return;
     setBuyNowLoading(true);
     try {
-      const qty = getCartQuantity(id);
+      const qty = cartQuantity;
       if (qty <= 0) {
         await addProductToCart(id, 1);
       }
@@ -181,12 +206,28 @@ export default function ProductScreen() {
     return <ProductDetailSkeleton />;
   }
 
+  if (notFound) {
+    return (
+      <View style={styles.errorScreen}>
+        <ProductDetailHeader productId={id ?? ""} isFavorite={false} onToggleFavorite={() => undefined} />
+        <View style={styles.errorBody}>
+          <Text style={styles.errorTitle}>Товар не найден</Text>
+          <Text style={styles.errorDescription}>Возможно, он был удалён или временно недоступен.</Text>
+          <Pressable style={styles.secondaryBtn} onPress={() => router.back()} accessibilityRole="button">
+            <Text style={styles.secondaryBtnText}>Назад</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
+
   if (error || !product || !derived || !id) {
     return (
       <View style={styles.errorScreen}>
         <ProductDetailHeader productId={id ?? ""} isFavorite={false} onToggleFavorite={() => undefined} />
         <View style={styles.errorBody}>
           <Text style={styles.errorTitle}>Не удалось загрузить товар</Text>
+          <Text style={styles.errorDescription}>Проверьте подключение к интернету и попробуйте снова.</Text>
           <Pressable style={styles.retryBtn} onPress={() => void load()}>
             <Text style={styles.retryText}>Повторить</Text>
           </Pressable>
@@ -203,11 +244,11 @@ export default function ProductScreen() {
       <ProductDetailHeader
         productId={id}
         isFavorite={isFavorite(id)}
+        isFavoriteBusy={isFavoriteBusy(id)}
         onToggleFavorite={() => void toggleProductFavorite(id)}
       />
 
       <ScrollView
-        ref={scrollRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.content, { paddingBottom: stickyBarContentInset(insets.bottom) }]}
       >
@@ -216,8 +257,6 @@ export default function ProductScreen() {
           resolveUrl={resolveUrl}
           discountPercent={derived.discount}
           showHitBadge={derived.showHitBadge}
-          showSimilarButton={hasSimilar}
-          onSimilarPress={hasSimilar ? scrollToSimilar : undefined}
         />
 
         <View style={styles.titleBlock}>
@@ -228,6 +267,24 @@ export default function ProductScreen() {
         <ProductSection style={styles.priceSection}>
           <ProductPriceCard price={derived.price} compareAt={derived.compareAt} />
         </ProductSection>
+
+        {derived.characteristics.length > 0 ? (
+          <>
+            <ProductSectionDivider />
+            <ProductSection>
+              <ProductCharacteristicsCard characteristics={derived.characteristics} />
+            </ProductSection>
+          </>
+        ) : null}
+
+        {derived.description.trim() ? (
+          <>
+            <ProductSectionDivider />
+            <ProductSection>
+              <ProductDescriptionCard description={derived.description} />
+            </ProductSection>
+          </>
+        ) : null}
 
         {derived.seller?.storeName ? (
           <>
@@ -259,38 +316,16 @@ export default function ProductScreen() {
           </>
         ) : null}
 
-        {derived.characteristics.length > 0 ? (
-          <>
-            <ProductSectionDivider />
-            <ProductSection>
-              <ProductCharacteristicsCard characteristics={derived.characteristics} />
-            </ProductSection>
-          </>
-        ) : null}
-
-        {derived.description.trim() ? (
-          <>
-            <ProductSectionDivider />
-            <ProductSection>
-              <ProductDescriptionCard description={derived.description} />
-            </ProductSection>
-          </>
-        ) : null}
-
         <ProductSectionDivider />
         <ProductSection>
           <ProductReviewsCard productId={id} />
         </ProductSection>
 
         {hasSimilar ? (
-          <View
-            onLayout={(e) => {
-              similarYRef.current = e.nativeEvent.layout.y;
-            }}
-          >
+          <>
             <ProductSectionDivider />
             <ProductRelatedRail
-              title="Похожие товары"
+              title={PDP_RELATED_TITLE}
               items={similar}
               isFavorite={isFavorite}
               isFavoriteBusy={isFavoriteBusy}
@@ -301,7 +336,7 @@ export default function ProductScreen() {
               onIncrementCart={(productId) => void incrementProductCart(productId)}
               onDecrementCart={(productId) => void decrementProductCart(productId)}
             />
-          </View>
+          </>
         ) : null}
       </ScrollView>
 
@@ -310,6 +345,7 @@ export default function ProductScreen() {
         quantity={cartQuantity}
         inStock={derived.inStock}
         buyNowLoading={buyNowLoading}
+        cartBusy={isCartBusy(id)}
         onAddToCart={() => void addProductToCart(id, 1)}
         onIncrement={() => void incrementProductCart(id)}
         onDecrement={() => void decrementProductCart(id)}
@@ -325,24 +361,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   content: {
-    paddingTop: spacing.sm,
+    paddingTop: spacing.xs,
     paddingBottom: spacing.lg,
   },
   titleBlock: {
-    gap: 8,
+    gap: 6,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
   },
   title: {
     fontSize: 21,
     lineHeight: 27,
     fontWeight: "700",
-    color: colors.black,
+    color: "#171717",
   },
   priceSection: {
-    paddingTop: 4,
-    paddingBottom: 12,
+    paddingTop: 2,
+    paddingBottom: 8,
   },
   errorScreen: {
     flex: 1,
@@ -353,14 +389,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: spacing.xl,
-    gap: spacing.lg,
+    gap: spacing.md,
   },
   errorTitle: {
     ...typography.h2,
     color: colors.black,
     textAlign: "center",
   },
+  errorDescription: {
+    ...typography.body,
+    color: "#77777E",
+    textAlign: "center",
+  },
   retryBtn: {
+    marginTop: spacing.sm,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: 12,
@@ -370,5 +412,19 @@ const styles = StyleSheet.create({
     ...typography.button,
     color: colors.white,
     fontWeight: "700",
+  },
+  secondaryBtn: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E9E9EC",
+    backgroundColor: colors.white,
+  },
+  secondaryBtnText: {
+    ...typography.button,
+    color: colors.black,
+    fontWeight: "600",
   },
 });

@@ -16,12 +16,14 @@ export function ProductDetailSkeleton() {
       </View>
       <View style={styles.content}>
         <Block height={28} style={{ width: "92%" }} />
-        <Block height={18} style={{ width: "48%" }} />
-        <Block height={110} style={styles.card} />
-        <Block height={140} style={styles.card} />
-        <Block height={96} style={styles.card} />
-        <Block height={180} style={styles.card} />
+        <Block height={18} style={{ width: "42%" }} />
+        <Block height={36} style={{ width: "56%" }} />
         <Block height={120} style={styles.card} />
+        <Block height={96} style={styles.card} />
+        <Block height={140} style={styles.card} />
+      </View>
+      <View style={styles.sticky}>
+        <Block height={64} style={styles.stickyBlock} />
       </View>
     </View>
   );
@@ -39,8 +41,8 @@ const styles = StyleSheet.create({
   },
   gallery: {
     paddingHorizontal: PRODUCT_SCREEN_PADDING,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
   },
   galleryBlock: {
     width: PRODUCT_GALLERY_WIDTH,
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: PRODUCT_SCREEN_PADDING,
-    gap: spacing.lg,
+    gap: spacing.md,
   },
   card: {
     borderRadius: PRODUCT_CARD_RADIUS,
@@ -56,5 +58,20 @@ const styles = StyleSheet.create({
   block: {
     backgroundColor: "#F0F0F0",
     borderRadius: radii.sm,
+  },
+  sticky: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: PRODUCT_SCREEN_PADDING,
+    paddingBottom: spacing.lg,
+    paddingTop: spacing.md,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: "#E9E9EC",
+  },
+  stickyBlock: {
+    borderRadius: radii.md,
   },
 });

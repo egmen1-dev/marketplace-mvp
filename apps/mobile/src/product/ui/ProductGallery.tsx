@@ -1,7 +1,6 @@
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Image } from "expo-image";
 import { useRef, useState } from "react";
-import { FlatList, NativeScrollEvent, NativeSyntheticEvent, Pressable, StyleSheet, Text, View, type ListRenderItem } from "react-native";
+import { FlatList, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, View, type ListRenderItem } from "react-native";
 
 import { ProductImageFallback } from "../../components/ui";
 import { colors, radii, spacing } from "../../theme/tokens";
@@ -18,15 +17,11 @@ export function ProductGallery({
   resolveUrl,
   discountPercent,
   showHitBadge,
-  onSimilarPress,
-  showSimilarButton = false,
 }: {
   images: GalleryImage[];
   resolveUrl: (url: string) => string | null;
   discountPercent: number | null;
   showHitBadge?: boolean;
-  onSimilarPress?: () => void;
-  showSimilarButton?: boolean;
 }) {
   const listRef = useRef<FlatList<GalleryImage>>(null);
   const [index, setIndex] = useState(0);
@@ -96,13 +91,6 @@ export function ProductGallery({
             </Text>
           </View>
         ) : null}
-
-        {showSimilarButton && onSimilarPress ? (
-          <Pressable style={styles.similarBtn} onPress={onSimilarPress} accessibilityRole="button" accessibilityLabel="Похожие товары">
-            <MaterialCommunityIcons name="layers-search" size={15} color={colors.black} />
-            <Text style={styles.similarText}>Похожие</Text>
-          </Pressable>
-        ) : null}
       </View>
 
       {count > 1 ? (
@@ -119,7 +107,7 @@ export function ProductGallery({
 const styles = StyleSheet.create({
   wrap: {
     paddingHorizontal: PRODUCT_SCREEN_PADDING,
-    gap: 10,
+    gap: 8,
   },
   surface: {
     width: PRODUCT_GALLERY_WIDTH,
@@ -178,7 +166,7 @@ const styles = StyleSheet.create({
   },
   counter: {
     position: "absolute",
-    left: spacing.md,
+    right: spacing.md,
     bottom: spacing.md,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -190,26 +178,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: "600",
     color: colors.white,
-  },
-  similarBtn: {
-    position: "absolute",
-    right: spacing.md,
-    bottom: spacing.md,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-    backgroundColor: colors.white,
-  },
-  similarText: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: "600",
-    color: colors.black,
   },
   dots: {
     flexDirection: "row",

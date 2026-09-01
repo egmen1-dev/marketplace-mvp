@@ -809,7 +809,9 @@ See `docs/product/PRODUCT_WAVE_B_B0_B1_IMPLEMENTATION.md` for architecture, cont
 | B1.1 canonical ProductCard | Implemented (`grid` + `rail`) |
 | B1.2 Home conversion | Implemented |
 | B2 Search UI | Implemented; native acceptance pending |
-| B3 PDP redesign | Deferred |
+| B3 PDP polish | Implemented |
+
+See `docs/product/PRODUCT_WAVE_B_B3_PDP_IMPLEMENTATION.md` for B3 architecture, contracts, and native checklist.
 
 ### B2 implementation note
 
