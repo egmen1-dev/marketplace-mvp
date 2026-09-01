@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import type { MobileProductListItem } from "../../api/endpoints";
-import { HomeProductCard } from "../../home/HomeProductCard";
+import { ProductCard } from "../../commerce/product-card";
 import { HOME_CARD_GAP } from "../../home/constants";
 import { colors, spacing, typography } from "../../theme/tokens";
 import { PRODUCT_SCREEN_PADDING } from "./constants";
@@ -10,14 +10,24 @@ export function ProductRelatedRail({
   title,
   items,
   isFavorite,
+  isFavoriteBusy,
+  isCartBusy,
   onPressProduct,
   onFavorite,
+  onAddToCart,
+  onIncrementCart,
+  onDecrementCart,
 }: {
   title: string;
   items: MobileProductListItem[];
   isFavorite: (id: string) => boolean;
+  isFavoriteBusy?: (id: string) => boolean;
+  isCartBusy?: (id: string) => boolean;
   onPressProduct: (id: string) => void;
   onFavorite: (id: string) => void;
+  onAddToCart: (id: string) => void;
+  onIncrementCart: (id: string) => void;
+  onDecrementCart: (id: string) => void;
 }) {
   if (items.length === 0) return null;
 
@@ -25,14 +35,21 @@ export function ProductRelatedRail({
     <View style={styles.wrap}>
       <Text style={styles.title}>{title}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
-        {items.map((item) => (
-          <HomeProductCard
-            key={item.id}
-            product={item}
-            isFavorite={isFavorite(item.id)}
-            onPress={() => onPressProduct(item.id)}
-            onFavorite={() => onFavorite(item.id)}
-          />
+        {items.map((item, index) => (
+          <View key={item.id} style={index > 0 ? { marginLeft: HOME_CARD_GAP } : undefined}>
+            <ProductCard
+              variant="rail"
+              product={item}
+              isFavorite={isFavorite(item.id)}
+              isFavoriteBusy={isFavoriteBusy?.(item.id)}
+              isCartBusy={isCartBusy?.(item.id)}
+              onPress={() => onPressProduct(item.id)}
+              onFavorite={() => onFavorite(item.id)}
+              onAddToCart={() => onAddToCart(item.id)}
+              onIncrementCart={() => onIncrementCart(item.id)}
+              onDecrementCart={() => onDecrementCart(item.id)}
+            />
+          </View>
         ))}
       </ScrollView>
     </View>
@@ -52,7 +69,6 @@ const styles = StyleSheet.create({
   },
   row: {
     paddingHorizontal: PRODUCT_SCREEN_PADDING,
-    gap: HOME_CARD_GAP,
     paddingBottom: spacing.sm,
   },
 });

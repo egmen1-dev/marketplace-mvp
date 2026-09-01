@@ -5,20 +5,15 @@ import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react
 import { colors, typography } from "../theme/tokens";
 import { HOME_PROMO_TILES } from "./content";
 import { HOME_SCREEN_PADDING } from "./constants";
+import { buildHomeCategoryCatalogRoute } from "./resolveHomeCategoryRoute";
 
 const TILE_WIDTH = Math.round(Dimensions.get("window").width * 0.44);
 
-function resolvePromoRoute(tileId: string) {
-  if (tileId === "electronics") {
-    return { pathname: "/(tabs)/catalog" as const, params: { q: "", deals: "0" } };
-  }
-  if (tileId === "transport") {
-    return { pathname: "/(tabs)/catalog" as const, params: { q: "транспорт", deals: "0" } };
-  }
-  return { pathname: "/(tabs)/catalog" as const, params: { q: "дом", deals: "0" } };
-}
+type HomePromoTilesProps = {
+  categories: Array<{ id: string; name: string; slug?: string }>;
+};
 
-export function HomePromoTiles() {
+export function HomePromoTiles({ categories }: HomePromoTilesProps) {
   return (
     <View style={styles.wrap}>
       <View style={styles.header}>
@@ -34,7 +29,11 @@ export function HomePromoTiles() {
             key={tile.id}
             style={[styles.tile, { backgroundColor: tile.background }]}
             accessibilityRole="button"
-            onPress={() => router.push(resolvePromoRoute(tile.id))}
+            onPress={() =>
+              router.push(
+                buildHomeCategoryCatalogRoute(tile.id as "electronics" | "home" | "transport", categories),
+              )
+            }
           >
             <View style={styles.copy}>
               <Text style={styles.tileTitle}>{tile.title}</Text>

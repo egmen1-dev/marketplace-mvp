@@ -1,17 +1,22 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { MobileProductListItem } from "../api/endpoints";
+import { ProductCard } from "../commerce/product-card";
 import { colors, typography } from "../theme/tokens";
 import { HOME_CARD_GAP, HOME_SCREEN_PADDING } from "./constants";
-import { HomeProductCard } from "./HomeProductCard";
 
 type HomeProductRailProps = {
   title: string;
   items: MobileProductListItem[];
   onMore?: () => void;
   isFavorite: (id: string) => boolean;
+  isFavoriteBusy?: (id: string) => boolean;
+  isCartBusy?: (id: string) => boolean;
   onFavorite: (id: string) => void;
   onPressProduct: (id: string) => void;
+  onAddToCart: (id: string) => void;
+  onIncrementCart: (id: string) => void;
+  onDecrementCart: (id: string) => void;
 };
 
 export function HomeProductRail({
@@ -19,8 +24,13 @@ export function HomeProductRail({
   items,
   onMore,
   isFavorite,
+  isFavoriteBusy,
+  isCartBusy,
   onFavorite,
   onPressProduct,
+  onAddToCart,
+  onIncrementCart,
+  onDecrementCart,
 }: HomeProductRailProps) {
   if (items.length === 0) return null;
 
@@ -43,11 +53,17 @@ export function HomeProductRail({
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <View style={{ width: HOME_CARD_GAP }} />}
         renderItem={({ item }) => (
-          <HomeProductCard
+          <ProductCard
+            variant="rail"
             product={item}
             isFavorite={isFavorite(item.id)}
+            isFavoriteBusy={isFavoriteBusy?.(item.id)}
+            isCartBusy={isCartBusy?.(item.id)}
             onFavorite={() => onFavorite(item.id)}
             onPress={() => onPressProduct(item.id)}
+            onAddToCart={() => onAddToCart(item.id)}
+            onIncrementCart={() => onIncrementCart(item.id)}
+            onDecrementCart={() => onDecrementCart(item.id)}
           />
         )}
       />

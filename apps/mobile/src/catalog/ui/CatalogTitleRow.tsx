@@ -1,14 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { formatCatalogProductCount } from "../../commerce/catalog-query";
 import { colors } from "../../theme/tokens";
 import { CATALOG_SCREEN_PADDING } from "./constants";
-import { formatProductCount } from "./format";
 
-export function CatalogTitleRow({ count, hasMore }: { count: number; hasMore: boolean }) {
+export function CatalogTitleRow({
+  count,
+  hasMore,
+  countMode = "server",
+}: {
+  count: number;
+  hasMore: boolean;
+  countMode?: "server" | "client_deals";
+}) {
   return (
     <View style={styles.wrap}>
       <Text style={styles.title}>Каталог товаров</Text>
-      <Text style={styles.count}>{formatProductCount(count, hasMore)}</Text>
+      <Text style={styles.count}>{formatCatalogProductCount(count, hasMore, countMode)}</Text>
     </View>
   );
 }

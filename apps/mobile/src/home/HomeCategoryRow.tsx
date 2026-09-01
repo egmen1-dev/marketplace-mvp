@@ -3,26 +3,14 @@ import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { colors, typography } from "../theme/tokens";
-import { HOME_CATEGORY_CIRCLE, HOME_SCREEN_PADDING } from "./constants";
 import { HOME_CATEGORY_SHORTCUTS } from "./content";
+import { HOME_CATEGORY_CIRCLE, HOME_SCREEN_PADDING } from "./constants";
+import { buildHomeCategoryCatalogRoute } from "./resolveHomeCategoryRoute";
 
 type HomeCategoryRowProps = {
   activeId?: string | null;
   categories: Array<{ id: string; name: string; slug?: string }>;
 };
-
-function resolveCategoryId(
-  shortcutId: string,
-  categories: Array<{ id: string; name: string; slug?: string }>,
-): string | null {
-  const bySlug = new Map(categories.map((c) => [c.slug ?? c.id, c.id]));
-  const byName = new Map(categories.map((c) => [c.name.toLowerCase(), c.id]));
-  if (shortcutId === "electronics") return bySlug.get("electronics") ?? byName.get("электроника") ?? null;
-  if (shortcutId === "home") return bySlug.get("home") ?? byName.get("дом и сад") ?? byName.get("дом") ?? null;
-  if (shortcutId === "clothing") return bySlug.get("clothing") ?? byName.get("одежда") ?? null;
-  if (shortcutId === "transport") return bySlug.get("auto") ?? bySlug.get("transport") ?? byName.get("транспорт") ?? null;
-  return null;
-}
 
 export function HomeCategoryRow({ activeId = "all", categories }: HomeCategoryRowProps) {
   function onPress(shortcutId: string) {
@@ -30,12 +18,9 @@ export function HomeCategoryRow({ activeId = "all", categories }: HomeCategoryRo
       router.push("/(tabs)/catalog");
       return;
     }
-    const categoryId = resolveCategoryId(shortcutId, categories);
-    if (categoryId) {
-      router.push({ pathname: "/(tabs)/catalog", params: { categoryId, q: "", deals: "0" } });
-      return;
-    }
-    router.push("/(tabs)/catalog");
+    router.push(
+      buildHomeCategoryCatalogRoute(shortcutId as "electronics" | "home" | "transport" | "clothing", categories),
+    );
   }
 
   return (

@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
-import { addToCart, removeCartItem, toggleFavorite, updateCartQuantity } from "../api/endpoints";
+import { addToCart, fetchCart, removeCartItem, toggleFavorite, updateCartQuantity } from "../api/endpoints";
 import { ApiClientError } from "../api/client";
+import { resolveCartProductQuantity } from "../commerce/cart-response";
 import { useCartQuantitiesStore } from "../commerce/cart-quantities-store";
+import { useCommerceBusyStore } from "../commerce/commerce-busy-store";
 import { useAppStore } from "../store/app-store";
 import { showCommerceToast } from "../commerce/commerce-toast-store";
 import { handleCommerceAuthFailure, trackCommerceAction } from "../commerce/commerce-telemetry";
@@ -18,6 +20,30 @@ function formatCommerceError(err: unknown): string {
   return "Не удалось выполнить действие";
 }
 
+async function reconcileCartQuantity(productId: string, setCartQuantity: (productId: string, quantity: number) => void) {
+  try {
+    const cart = await fetchCart();
+    const quantity = resolveCartProductQuantity(cart, productId);
+    if (quantity !== null) setCartQuantity(productId, quantity);
+  } catch {
+    // Keep the last known quantity when reconciliation is unavailable.
+  }
+}
+
+function applyAuthoritativeCartQuantity(
+  cartResponse: Record<string, unknown>,
+  productId: string,
+  setCartQuantity: (productId: string, quantity: number) => void,
+  fallbackQuantity: number,
+) {
+  const quantity = resolveCartProductQuantity(cartResponse, productId);
+  if (quantity !== null) {
+    setCartQuantity(productId, quantity);
+    return;
+  }
+  setCartQuantity(productId, fallbackQuantity);
+}
+
 export function useCommerceActions() {
   const offline = useAppStore((s) => s.offline);
   const favoriteIds = useFavoritesStore((s) => s.ids);
@@ -27,7 +53,12 @@ export function useCommerceActions() {
   const cartHydrated = useCartQuantitiesStore((s) => s.hydrated);
   const hydrateCart = useCartQuantitiesStore((s) => s.hydrate);
   const setCartQuantity = useCartQuantitiesStore((s) => s.setQuantity);
-  const busyRef = useRef(new Set<string>());
+  const setCartBusy = useCommerceBusyStore((s) => s.setCartBusy);
+  const setFavoriteBusy = useCommerceBusyStore((s) => s.setFavoriteBusy);
+  const cartBusyMap = useCommerceBusyStore((s) => s.cartProductIds);
+  const favoriteBusyMap = useCommerceBusyStore((s) => s.favoriteProductIds);
+  const cartBusyProductIds = useMemo(() => Object.keys(cartBusyMap), [cartBusyMap]);
+  const favoriteBusyProductIds = useMemo(() => Object.keys(favoriteBusyMap), [favoriteBusyMap]);
 
   useEffect(() => {
     if (!hydrated) void hydrateFavorites();
@@ -35,21 +66,26 @@ export function useCommerceActions() {
   }, [hydrateFavorites, hydrateCart, hydrated, cartHydrated]);
 
   const isFavorite = useCallback((productId: string) => favoriteIds.has(productId), [favoriteIds]);
+  const isCartBusy = useCallback((productId: string) => useCommerceBusyStore.getState().isCartBusy(productId), []);
+  const isFavoriteBusy = useCallback(
+    (productId: string) => useCommerceBusyStore.getState().isFavoriteBusy(productId),
+    [],
+  );
 
   const addProductToCart = useCallback(
     async (productId: string, quantity = 1) => {
-      const key = `cart:${productId}`;
-      if (busyRef.current.has(key)) return;
+      if (useCommerceBusyStore.getState().isCartBusy(productId)) return;
       if (offline) {
         showCommerceToast("Для этого действия требуется интернет", "error");
         return;
       }
-      busyRef.current.add(key);
+
+      const previousQuantity = useCartQuantitiesStore.getState().quantities[productId] ?? 0;
+      setCartBusy(productId, true);
       const startedAt = Date.now();
       try {
-        await addToCart(productId, quantity);
-        const current = useCartQuantitiesStore.getState().quantities[productId] ?? 0;
-        setCartQuantity(productId, current + quantity);
+        const response = await addToCart(productId, quantity);
+        applyAuthoritativeCartQuantity(response, productId, setCartQuantity, previousQuantity + quantity);
         await refreshTabBadges();
         showCommerceToast("Добавлено в корзину", "success");
         await trackCommerceAction({
@@ -60,6 +96,7 @@ export function useCommerceActions() {
           success: true,
         });
       } catch (err) {
+        await reconcileCartQuantity(productId, setCartQuantity);
         if (handleCommerceAuthFailure(err)) {
           showCommerceToast("Войдите в аккаунт для этого действия", "error");
         } else {
@@ -75,31 +112,33 @@ export function useCommerceActions() {
         });
         throw err;
       } finally {
-        busyRef.current.delete(key);
+        setCartBusy(productId, false);
       }
     },
-    [offline, setCartQuantity],
+    [offline, setCartBusy, setCartQuantity],
   );
 
   const changeProductCartQuantity = useCallback(
     async (productId: string, nextQuantity: number) => {
-      const key = `cart:${productId}`;
-      if (busyRef.current.has(key)) return;
+      if (useCommerceBusyStore.getState().isCartBusy(productId)) return;
       if (offline) {
         showCommerceToast("Для этого действия требуется интернет", "error");
         return;
       }
-      busyRef.current.add(key);
+
+      setCartBusy(productId, true);
       try {
+        let response: Record<string, unknown>;
         if (nextQuantity <= 0) {
-          await removeCartItem(productId);
-          setCartQuantity(productId, 0);
+          response = await removeCartItem(productId);
+          applyAuthoritativeCartQuantity(response, productId, setCartQuantity, 0);
         } else {
-          await updateCartQuantity(productId, nextQuantity);
-          setCartQuantity(productId, nextQuantity);
+          response = await updateCartQuantity(productId, nextQuantity);
+          applyAuthoritativeCartQuantity(response, productId, setCartQuantity, nextQuantity);
         }
         await refreshTabBadges();
       } catch (err) {
+        await reconcileCartQuantity(productId, setCartQuantity);
         if (handleCommerceAuthFailure(err)) {
           showCommerceToast("Войдите в аккаунт для этого действия", "error");
         } else {
@@ -107,10 +146,10 @@ export function useCommerceActions() {
         }
         throw err;
       } finally {
-        busyRef.current.delete(key);
+        setCartBusy(productId, false);
       }
     },
-    [offline, setCartQuantity],
+    [offline, setCartBusy, setCartQuantity],
   );
 
   const incrementProductCart = useCallback(
@@ -131,15 +170,15 @@ export function useCommerceActions() {
 
   const toggleProductFavorite = useCallback(
     async (productId: string) => {
-      const key = `fav:${productId}`;
-      if (busyRef.current.has(key)) return;
+      if (useCommerceBusyStore.getState().isFavoriteBusy(productId)) return;
       if (offline) {
         showCommerceToast("Для этого действия требуется интернет", "error");
         return;
       }
+
       const wasFavorite = favoriteIds.has(productId);
       setFavorite(productId, !wasFavorite);
-      busyRef.current.add(key);
+      setFavoriteBusy(productId, true);
       const startedAt = Date.now();
       try {
         const res = await toggleFavorite(productId);
@@ -170,14 +209,18 @@ export function useCommerceActions() {
         });
         throw err;
       } finally {
-        busyRef.current.delete(key);
+        setFavoriteBusy(productId, false);
       }
     },
-    [favoriteIds, offline, setFavorite],
+    [favoriteIds, offline, setFavorite, setFavoriteBusy],
   );
 
   return {
     isFavorite,
+    isCartBusy,
+    isFavoriteBusy,
+    cartBusyProductIds,
+    favoriteBusyProductIds,
     addProductToCart,
     incrementProductCart,
     decrementProductCart,

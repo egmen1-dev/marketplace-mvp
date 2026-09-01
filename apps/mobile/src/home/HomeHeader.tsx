@@ -38,16 +38,10 @@ export function HomeHeader() {
   return (
     <View style={[styles.wrap, { paddingTop: Math.max(insets.top, spacing.sm) }]}>
       <View style={styles.side}>
-        <Pressable
-          style={styles.location}
-          accessibilityRole="button"
-          accessibilityLabel={`Город: ${HOME_LOCATION_LABEL}`}
-          onPress={() => router.push("/(tabs)/catalog")}
-        >
+        <View style={styles.location} accessibilityRole="text" accessibilityLabel={`Город: ${HOME_LOCATION_LABEL}`}>
           <MaterialCommunityIcons name="map-marker-outline" size={17} color={colors.black} />
           <Text style={styles.locationText}>{HOME_LOCATION_LABEL}</Text>
-          <MaterialCommunityIcons name="chevron-down" size={15} color={colors.gray500} />
-        </Pressable>
+        </View>
       </View>
 
       <Pressable
