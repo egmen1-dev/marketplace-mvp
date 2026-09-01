@@ -1,15 +1,16 @@
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, RefreshControl, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, Keyboard, RefreshControl, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { fetchCatalog, fetchCategories, type MobileProductListItem } from "../../src/api/endpoints";
+import { fetchCatalog, fetchCategories, fetchProductSuggest, type MobileProductListItem } from "../../src/api/endpoints";
 import { selectRailCategories } from "../../src/catalog/rail-categories";
 import {
   CatalogCategoryRow,
   CatalogFilterBar,
   CatalogLoadMore,
   CatalogSearchRow,
+  CatalogSearchPanel,
   CatalogSkeletonGrid,
   CatalogTitleRow,
   CATALOG_GRID_GAP,
@@ -26,9 +27,16 @@ import {
   resolveCatalogPaginationTruth,
 } from "../../src/commerce/catalog-query";
 import { ProductCard } from "../../src/commerce/product-card";
+import {
+  createSuggestRequestGeneration,
+  normalizeSearchQuery,
+  SEARCH_DEBOUNCE_MS,
+  shouldRequestSuggestions,
+  type SearchSuggestion,
+} from "../../src/commerce/search-state";
 import { HomeHeader } from "../../src/home";
 import { useCommerceActions } from "../../src/hooks/useCommerceActions";
-import { pushSearchHistory } from "../../src/storage/search-history";
+import { clearSearchHistory, loadSearchHistory, pushSearchHistory } from "../../src/storage/search-history";
 import { colors } from "../../src/theme/tokens";
 
 const SORT_VALUES = new Set<CatalogSort>(["popular", "newest", "price_asc", "price_desc"]);
@@ -67,7 +75,14 @@ export default function CatalogScreen() {
     isFavoriteBusy,
   } = useCommerceActions();
 
-  const [q, setQ] = useState(typeof params.q === "string" ? params.q : "");
+  const initialQuery = typeof params.q === "string" ? normalizeSearchQuery(params.q) : "";
+  const [inputQuery, setInputQuery] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [committedQuery, setCommittedQuery] = useState(initialQuery);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [sort, setSort] = useState<CatalogSort>(parseSort(params.sort));
   const [inStockOnly, setInStockOnly] = useState(false);
   const [dealsOnly, setDealsOnly] = useState(params.deals === "1");
@@ -93,6 +108,7 @@ export default function CatalogScreen() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const requestGenerationRef = useRef(createRequestGeneration());
+  const suggestGenerationRef = useRef(createSuggestRequestGeneration());
   const paginationInFlightRef = useRef(false);
   const lastRequestedCursorRef = useRef<string | null>(null);
   const cursorRef = useRef<string | null>(null);
@@ -103,14 +119,14 @@ export default function CatalogScreen() {
   const queryKey = useMemo(
     () =>
       buildCatalogQueryKey({
-        q,
+        q: committedQuery,
         sort,
         categoryId: category?.id,
         sellerId: sellerFilter?.id,
         inStockOnly,
         dealsOnly,
       }),
-    [q, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly],
+    [committedQuery, sort, category?.id, sellerFilter?.id, inStockOnly, dealsOnly],
   );
 
   useEffect(() => {
@@ -149,11 +165,14 @@ export default function CatalogScreen() {
           if (prev?.id === resolved.id && prev?.name === resolved.name) return prev;
           return resolved;
         });
-        setQ("");
+        setInputQuery("");
+        setCommittedQuery("");
         setSellerFilter(null);
         if (params.deals !== "1") setDealsOnly(false);
       } else if (typeof params.q === "string" && params.q.length > 0) {
-        setQ(params.q);
+        const nextQuery = normalizeSearchQuery(params.q);
+        setInputQuery(nextQuery);
+        setCommittedQuery(nextQuery);
         setCategory(null);
       }
       if (typeof params.sort === "string") setSort(parseSort(params.sort));
@@ -164,7 +183,8 @@ export default function CatalogScreen() {
           name: typeof params.sellerName === "string" ? params.sellerName : "Продавец",
         });
         setCategory(null);
-        setQ("");
+        setInputQuery("");
+        setCommittedQuery("");
       }
     }, [params.categoryId, params.q, params.sort, params.deals, params.sellerId, params.sellerName, allCategories]),
   );
@@ -174,6 +194,38 @@ export default function CatalogScreen() {
       requestAnimationFrame(() => searchInputRef.current?.focus());
     }
   }, [params.focusSearch]);
+
+  useEffect(() => {
+    const requestGeneration = suggestGenerationRef.current.invalidate();
+    setSuggestions([]);
+    setSuggestionsLoading(false);
+    setDebouncedQuery("");
+    if (!shouldRequestSuggestions(inputQuery)) return;
+
+    const timer = setTimeout(() => {
+      const query = normalizeSearchQuery(inputQuery);
+      setDebouncedQuery(query);
+      setSuggestionsLoading(true);
+      void fetchProductSuggest(query)
+        .then((response) => {
+          if (!suggestGenerationRef.current.isCurrent(requestGeneration)) return;
+          setSuggestions(response.items);
+        })
+        .catch(() => {
+          if (!suggestGenerationRef.current.isCurrent(requestGeneration)) return;
+          setSuggestions([]);
+        })
+        .finally(() => {
+          if (suggestGenerationRef.current.isCurrent(requestGeneration)) setSuggestionsLoading(false);
+        });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [inputQuery]);
+
+  const openSearch = useCallback(() => {
+    setSearchFocused(true);
+    void loadSearchHistory().then(setSearchHistory).catch(() => setSearchHistory([]));
+  }, []);
 
   const loadCatalog = useCallback(
     async (reset: boolean, requestGeneration: number, forQueryKey: string) => {
@@ -206,7 +258,7 @@ export default function CatalogScreen() {
 
       try {
         const res = await fetchCatalog({
-          q: q.trim() || undefined,
+          q: committedQuery || undefined,
           cursor: cursorToFetch,
           sort,
           categoryId: category?.id,
@@ -238,7 +290,7 @@ export default function CatalogScreen() {
         }
       }
     },
-    [category?.id, dealsOnly, inStockOnly, q, queryKey, sellerFilter?.id, sort],
+    [category?.id, committedQuery, dealsOnly, inStockOnly, queryKey, sellerFilter?.id, sort],
   );
 
   useEffect(() => {
@@ -251,16 +303,41 @@ export default function CatalogScreen() {
     void loadCatalog(true, requestGeneration, queryKey);
   }, [queryKey, loadCatalog]);
 
-  async function submitSearch(value: string) {
+  async function commitSearch(value: string) {
+    const normalized = normalizeSearchQuery(value);
+    if (!normalized) {
+      clearSearch();
+      return;
+    }
+    suggestGenerationRef.current.invalidate();
+    setSuggestions([]);
+    setSuggestionsLoading(false);
+    setInputQuery(normalized);
     setCategory(null);
     setSellerFilter(null);
     setDealsOnly(false);
-    setQ(value);
-    await pushSearchHistory(value);
+    setCommittedQuery(normalized);
+    setSearchFocused(false);
+    Keyboard.dismiss();
+    const nextHistory = await pushSearchHistory(normalized);
+    setSearchHistory(nextHistory);
+  }
+
+  function clearSearch() {
+    suggestGenerationRef.current.invalidate();
+    setSuggestions([]);
+    setSuggestionsLoading(false);
+    setDebouncedQuery("");
+    setInputQuery("");
+    setCommittedQuery("");
+    setCategory(null);
+    setSellerFilter(null);
+    setDealsOnly(false);
   }
 
   function clearFilters() {
-    setQ("");
+    setInputQuery("");
+    setCommittedQuery("");
     setCategory(null);
     setSellerFilter(null);
     setInStockOnly(false);
@@ -269,7 +346,7 @@ export default function CatalogScreen() {
   }
 
   function catalogEmptyPreset(): "catalog" | "catalogCategory" | "catalogSearch" {
-    if (q.trim()) return "catalogSearch";
+    if (committedQuery) return "catalogSearch";
     if (category) return "catalogCategory";
     return "catalog";
   }
@@ -278,15 +355,34 @@ export default function CatalogScreen() {
     void loadCatalog(false, requestGenerationRef.current.current(), queryKey);
   }, [loadCatalog, queryKey]);
 
+  const searchPanelMode = useMemo(() => {
+    if (!searchFocused) return "closed" as const;
+    if (!normalizeSearchQuery(inputQuery)) return "history" as const;
+    if (!shouldRequestSuggestions(inputQuery)) return "closed" as const;
+    if (suggestionsLoading || debouncedQuery !== normalizeSearchQuery(inputQuery)) return "loading" as const;
+    return suggestions.length > 0 ? ("suggestions" as const) : ("closed" as const);
+  }, [debouncedQuery, inputQuery, searchFocused, suggestions.length, suggestionsLoading]);
+
   const listHeader = (
     <View style={styles.headerBlock}>
       <HomeHeader />
       <CatalogSearchRow
         inputRef={searchInputRef}
-        value={q}
-        onChangeText={setQ}
-        onSubmit={() => submitSearch(q)}
+        value={inputQuery}
+        onChangeText={setInputQuery}
+        onSubmit={() => void commitSearch(inputQuery)}
+        onFocus={openSearch}
+        onClear={clearSearch}
         onFilterPress={() => setFiltersOpen(true)}
+      />
+      <CatalogSearchPanel
+        mode={searchPanelMode}
+        history={searchHistory}
+        suggestions={suggestions}
+        onSelect={(value) => void commitSearch(value)}
+        onClearHistory={() => {
+          void clearSearchHistory().then(() => setSearchHistory([]));
+        }}
       />
       <CatalogCategoryRow
         activeCategoryId={category?.id ?? null}
@@ -295,7 +391,10 @@ export default function CatalogScreen() {
           setCategory(cat);
           setSellerFilter(null);
           setDealsOnly(false);
-          if (cat) setQ("");
+          if (cat) {
+            setInputQuery("");
+            setCommittedQuery("");
+          }
           else clearFilters();
         }}
       />
@@ -336,6 +435,9 @@ export default function CatalogScreen() {
         columnWrapperStyle={styles.row}
         contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 24 }]}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={() => setSearchFocused(false)}
         ListHeaderComponent={listHeader}
         refreshControl={
           <RefreshControl

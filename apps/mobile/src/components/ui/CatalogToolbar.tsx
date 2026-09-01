@@ -151,8 +151,6 @@ export function CategoryRail({
   );
 }
 
-export { POPULAR_SEARCHES } from "../../storage/search-history";
-
 const styles = StyleSheet.create({
   wrap: { gap: spacing.xs },
   bar: { flexDirection: "row", alignItems: "center", gap: spacing.sm },

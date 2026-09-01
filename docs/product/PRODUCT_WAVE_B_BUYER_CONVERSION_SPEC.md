@@ -791,7 +791,7 @@ Manual Mac acceptance: Home viewport → search suggest → catalog filter → P
 
 ---
 
-*Document version: 1.1 — B0/B1 implemented on branch `cursor/product-wave-b1-buyer-conversion`.*
+*Document version: 1.2 — B0/B1 merged; B2 implemented on branch `cursor/product-wave-b2-search`.*
 
 ---
 
@@ -808,5 +808,9 @@ See `docs/product/PRODUCT_WAVE_B_B0_B1_IMPLEMENTATION.md` for architecture, cont
 | B0 recent views | Deferred (`DEFERRED_FROM_B1`) |
 | B1.1 canonical ProductCard | Implemented (`grid` + `rail`) |
 | B1.2 Home conversion | Implemented |
-| B2 Search UI | Deferred |
+| B2 Search UI | Implemented; native acceptance pending |
 | B3 PDP redesign | Deferred |
+
+### B2 implementation note
+
+Catalog now separates typed, debounced, and committed search values. Typing only requests real API suggestions after 300 ms; Catalog results change only on an explicit commit. Suggest requests have an independent generation guard, while committed searches continue through the B0 query-key, stale-response, pagination-reset, in-flight, and dedupe protections. Local history is normalized, case-insensitively deduplicated, newest-first, and capped at eight entries. No hardcoded popular-search content is shown. See `PRODUCT_WAVE_B_B2_SEARCH_IMPLEMENTATION.md`.
