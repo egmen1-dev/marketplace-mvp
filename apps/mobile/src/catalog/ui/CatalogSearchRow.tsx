@@ -13,6 +13,7 @@ type CatalogSearchRowProps = {
   inputRef?: Ref<TextInput>;
   onFocus?: () => void;
   onBlur?: () => void;
+  onClear?: () => void;
 };
 
 export function CatalogSearchRow({
@@ -23,6 +24,7 @@ export function CatalogSearchRow({
   inputRef,
   onFocus,
   onBlur,
+  onClear,
 }: CatalogSearchRowProps) {
   return (
     <View style={styles.wrap}>
@@ -42,6 +44,11 @@ export function CatalogSearchRow({
           onFocus={onFocus}
           onBlur={onBlur}
         />
+        {value.length > 0 ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="Очистить поиск" hitSlop={8} onPress={onClear}>
+            <MaterialCommunityIcons name="close-circle" size={18} color="#8A8A8A" />
+          </Pressable>
+        ) : null}
       </View>
       <Pressable style={styles.filterBtn} accessibilityRole="button" accessibilityLabel="Фильтры" onPress={onFilterPress}>
         <MaterialCommunityIcons name="tune-variant" size={18} color={colors.black} />
