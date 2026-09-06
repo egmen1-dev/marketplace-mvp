@@ -27,6 +27,8 @@ Verify migrations    npm run release:migration:verify
   ↓
 Verify staging       critical routes + health (schema compatible)
   ↓
+Production gate      npm run product:epic-110:production-release (EPIC 110)
+  ↓
 Release gate         npm run product:epic-108:release-candidate-final
   ↓
 Closed Beta

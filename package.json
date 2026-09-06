@@ -161,6 +161,7 @@
     "release:railway-runtime:verify": "tsx scripts/release-railway-runtime-verify.ts",
     "release:migration:preflight": "tsx scripts/migration-preflight-audit.ts",
     "release:pipeline:pr-audit": "tsx scripts/release-pipeline-pr-policy-audit.ts",
+    "product:epic-110:production-release": "tsx scripts/epic-110-production-release-gate.ts",
     "finance:invariants": "tsx scripts/check-financial-invariants.ts",
     "finance:reconcile": "tsx scripts/run-reconciliation-engine.ts",
     "product:epic-89:inventory-management": "tsx scripts/epic-89-inventory-management-gate.ts",

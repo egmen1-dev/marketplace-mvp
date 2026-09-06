@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-08-18T15:00:04.500Z",
+  "railwayUrl": "https://web-production-e56fb.up.railway.app",
+  "originMain": "74abf11b83ec88472f479cdd4b51feea5796ca36",
+  "version": {
+    "path": "/api/version",
+    "status": 200,
+    "ok": true,
+    "bodyPreview": "{\"environment\":\"staging\",\"commit\":\"74abf11\",\"buildTime\":\"2026-08-18T14:55:59.828Z\",\"version\":\"0.1.0\"}"
+  },
+  "routes": [
+    {
+      "path": "/api/version",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"environment\":\"staging\",\"commit\":\"74abf11\",\"buildTime\":\"2026-08-18T14:55:59.828Z\",\"version\":\"0.1.0\"}"
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"ok\":true,\"service\":\"marketplace-mvp\",\"timestamp\":\"2026-08-18T15:00:02.822Z\",\"version\":{\"commit\":\"74abf11\",\"buildTime\":\"2026-08-18T14:55:59.828Z\"},\"checks\":{\"database\":{\"ok\":true},\"auth\":{\"ok\":true},\"storage\":{\"ok\":true,\"optional\":true,\"detail\":\"configured\"},\"cron\":{\"ok\":true,\"optional\":true,\"detai"
+    },
+    {
+      "path": "/api/product-ops/config",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"surface\":\"mobile\",\"config\":{},\"flags\":[{\"key\":\"conversion\",\"stage\":\"PRODUCTION\",\"enabled\":true},{\"key\":\"discovery\",\"stage\":\"PRODUCTION\",\"enabled\":true},{\"key\":\"new_seller_trust\",\"stage\":\"PRODUCTION\",\"enabled\":true},{\"key\":\"promotion_center\",\"stage\":\"PRODUCTION\",\"enabled\":true},{\"key\":\"ranking_inte"
+    },
+    {
+      "path": "/api/product-ops/beta/dashboard",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"generatedAt\":\"2026-08-18T15:00:03.135Z\",\"crashRate\":20.8,\"crashFreeSessions\":79.2,\"successRate\":79.2,\"averageSessionMinutes\":2.8,\"activeBetaUsers\":4,\"buyerCompletionRate\":0,\"sellerCompletionRate\":0,\"mostCommonErrors\":[{\"label\":\"crash\",\"count\":5}],\"mostCommonFeedback\":[{\"category\":\"ux\",\"count\":33},"
+    },
+    {
+      "path": "/api/product-ops/beta/journey",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"buyer\":{\"journey\":\"buyer\",\"status\":\"FAIL\",\"steps\":[{\"step\":\"boot\",\"status\":\"PASS\",\"sessions\":0,\"errors\":0,\"dropPoint\":false,\"avgTimeMs\":null},{\"step\":\"login\",\"status\":\"FAIL\",\"sessions\":0,\"errors\":0,\"dropPoint\":false,\"avgTimeMs\":null},{\"step\":\"home\",\"status\":\"FAIL\",\"sessions\":0,\"errors\":0,\"dropPoin"
+    },
+    {
+      "path": "/api/product-ops/beta/readiness",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"generatedAt\":\"2026-08-18T15:00:03.462Z\",\"overallScore\":32,\"crashFreePercent\":79.2,\"buyerJourneyPercent\":0,\"sellerJourneyPercent\":0,\"performanceWithinLimits\":true,\"criticalBugs\":1,\"warnings\":[\"Crash-free 79.2% < 99%\",\"Buyer journey completion 0% low\",\"Seller journey completion 0% low\",\"5 release ga"
+    },
+    {
+      "path": "/api/product-ops/beta/performance",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"days\":7,\"metrics\":[{\"metric\":\"startup\",\"count\":0,\"p50Ms\":0,\"p95Ms\":0,\"p99Ms\":0,\"worstMs\":0,\"avgMs\":0},{\"metric\":\"screen_render\",\"count\":0,\"p50Ms\":0,\"p95Ms\":0,\"p99Ms\":0,\"worstMs\":0,\"avgMs\":0},{\"metric\":\"api_latency\",\"count\":0,\"p50Ms\":0,\"p95Ms\":0,\"p99Ms\":0,\"worstMs\":0,\"avgMs\":0},{\"metric\":\"image_loa"
+    },
+    {
+      "path": "/api/product-ops/beta/crashes",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"days\":7,\"heatmap\":[{\"eventType\":\"crash\",\"screen\":\"epic103_crash_test\",\"count\":5,\"userRoles\":[\"unknown\"],\"networks\":[\"unknown\"],\"builds\":[3],\"devices\":[\"unknown\"],\"stepsBeforeCrash\":[],\"severity\":\"medium\"}],\"totalEvents\":5,\"apiVersion\":\"mobile-api-v1\",\"schemaVersion\":\"mobile-schema-v1\",\"syncVersion"
+    },
+    {
+      "path": "/api/product-ops/beta/exit-report",
+      "status": 200,
+      "ok": true,
+      "bodyPreview": "{\"generatedAt\":\"2026-08-18T15:00:04.097Z\",\"verdict\":\"NOT_READY\",\"topBugs\":[{\"category\":\"bug\",\"title\":\"crash\",\"count\":1,\"severity\":\"high\",\"fixPriority\":2,\"estimatedEffort\":\"M\",\"businessImpact\":\"high\"}],\"topUxIssues\":[{\"category\":\"ux\",\"title\":\"screen_view (dup_test)\",\"count\":18,\"severity\":\"medium\",\"fi"
+    },
+    {
+      "path": "/api/mobile/checkout/web-url",
+      "status": 401,
+      "ok": true,
+      "bodyPreview": "{\"error\":\"Требуется вход\"}"
+    }
+  ],
+  "deploymentId": "b0ba36ea-d259-487c-b89d-7cb6ce581bdd",
+  "allRoutesOk": true
+}
